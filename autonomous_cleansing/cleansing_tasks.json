@@ -1,0 +1,234 @@
+{
+  "project": "Open Cure Data Cleansing",
+  "version": "1.0",
+  "created": "2025-01-19",
+  "tasks": [
+    {
+      "id": 1,
+      "name": "Normalize entity types",
+      "priority": 1,
+      "passes": true,
+      "description": "Merge duplicate entity types (Drug/drug/Compound, Gene/gene/protein, etc.) into consistent PascalCase naming",
+      "steps": [
+        "Read unified_nodes.csv",
+        "Create type mapping: drug->Drug, gene/protein->Gene, disease->Disease, etc.",
+        "Apply mapping to all nodes",
+        "Write to unified_nodes_clean.csv",
+        "Validate total node count unchanged",
+        "Log transformation counts"
+      ],
+      "acceptance": [
+        "All types use PascalCase",
+        "No duplicate types (case-insensitive)",
+        "Node count unchanged",
+        "Mapping logged to cleansing_log.json"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Download reference data",
+      "priority": 1,
+      "passes": false,
+      "description": "Download DrugBank vocabulary and NCBI gene info for name resolution",
+      "steps": [
+        "Download DrugBank open vocabulary (drugbank_vocabulary.csv)",
+        "Download NCBI Homo_sapiens.gene_info.gz",
+        "Parse and create lookup dictionaries",
+        "Save as JSON for fast loading"
+      ],
+      "acceptance": [
+        "DrugBank vocabulary available with >10,000 drugs",
+        "NCBI gene info available with >20,000 human genes",
+        "Lookup files saved in data/reference/"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Resolve drug names from DrugBank IDs",
+      "priority": 1,
+      "passes": false,
+      "description": "Replace ID-only drug names (Compound::DB02573) with actual drug names (Tobramycin)",
+      "steps": [
+        "Load DrugBank vocabulary",
+        "Extract DrugBank IDs from node names/IDs",
+        "Look up actual drug names",
+        "Update name field, preserve original in drugbank_id column",
+        "Log unresolved drugs"
+      ],
+      "acceptance": [
+        ">95% of DrugBank IDs resolved",
+        "Original IDs preserved",
+        "Spot-check 20 random drugs manually",
+        "Unresolved drugs logged"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Resolve gene symbols from NCBI IDs",
+      "priority": 2,
+      "passes": false,
+      "description": "Replace numeric gene IDs with HGNC symbols (2157 -> EGF)",
+      "steps": [
+        "Load NCBI gene info",
+        "Extract gene IDs from node names",
+        "Look up official gene symbols",
+        "Update name field, preserve original ID",
+        "Log unresolved genes"
+      ],
+      "acceptance": [
+        ">90% of genes have symbols",
+        "Symbols match HGNC conventions",
+        "Original IDs preserved"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Create relation mapping table",
+      "priority": 1,
+      "passes": false,
+      "description": "Create mapping from 143+ relation types to ~30 standardized relations",
+      "steps": [
+        "List all unique relation types",
+        "Group semantically equivalent relations",
+        "Create mapping dictionary",
+        "Document mapping decisions",
+        "Save as relation_mappings.json"
+      ],
+      "acceptance": [
+        "All 143+ relations mapped",
+        "Target: <50 unique relations",
+        "Mapping documented with rationale"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Apply relation normalization to edges",
+      "priority": 1,
+      "passes": false,
+      "description": "Apply relation mapping to unify edge types",
+      "steps": [
+        "Load relation_mappings.json",
+        "Read unified_edges.csv in chunks (16M rows)",
+        "Apply mapping to relation column",
+        "Remove source prefixes (Hetionet::, DRUGBANK::)",
+        "Write to unified_edges_clean.csv",
+        "Validate edge count unchanged"
+      ],
+      "acceptance": [
+        "<50 unique relation types",
+        "No source prefixes",
+        "Edge count unchanged",
+        "Transformation logged"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Update edge node references",
+      "priority": 1,
+      "passes": false,
+      "description": "Ensure edges reference nodes consistently after node cleaning",
+      "steps": [
+        "Load cleaned nodes",
+        "Create old_id -> new_id mapping if IDs changed",
+        "Update edge source/target columns",
+        "Validate no orphaned edges"
+      ],
+      "acceptance": [
+        "All edges reference valid nodes",
+        "No orphaned edges",
+        "Edge count unchanged"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Generate data quality report - before",
+      "priority": 1,
+      "passes": true,
+      "description": "Document baseline data quality before cleansing",
+      "steps": [
+        "Count nodes by type",
+        "Count edges by relation",
+        "Calculate coverage stats (% with names, etc.)",
+        "Save as before_stats.json"
+      ],
+      "acceptance": [
+        "Complete statistics generated",
+        "Saved for comparison"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Generate data quality report - after",
+      "priority": 1,
+      "passes": false,
+      "description": "Document data quality after cleansing and compare",
+      "steps": [
+        "Count nodes by type (cleaned)",
+        "Count edges by relation (cleaned)",
+        "Calculate coverage stats",
+        "Compare to before stats",
+        "Generate markdown report"
+      ],
+      "acceptance": [
+        "Improvement documented",
+        "data_quality_report.md generated",
+        "Before/after comparison clear"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Identify potential duplicate entities",
+      "priority": 2,
+      "passes": false,
+      "description": "Find entities that may be duplicates (same drug/gene/disease with different IDs)",
+      "steps": [
+        "Group entities by normalized name",
+        "Flag groups with multiple entries",
+        "Use external IDs to confirm/deny duplicates",
+        "Generate duplicate_candidates.json"
+      ],
+      "acceptance": [
+        "Duplicate candidates identified",
+        "Confidence scores assigned",
+        "Ready for human review or automated merge"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "Validate cleaned data integrity",
+      "priority": 1,
+      "passes": false,
+      "description": "Run integrity checks on cleaned data",
+      "steps": [
+        "Verify all node IDs unique",
+        "Verify all edges reference valid nodes",
+        "Verify no null/empty required fields",
+        "Spot-check 50 random entities",
+        "Test loading in training script"
+      ],
+      "acceptance": [
+        "All integrity checks pass",
+        "Training script loads data successfully",
+        "Spot-checks documented"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "Create cleansing documentation",
+      "priority": 2,
+      "passes": false,
+      "description": "Document all cleansing steps and transformations",
+      "steps": [
+        "Document each transformation applied",
+        "Include before/after examples",
+        "Document any data lost or modified",
+        "Create README for cleaned data"
+      ],
+      "acceptance": [
+        "cleansing_log.json complete",
+        "README.md in processed directory",
+        "Transformations reproducible"
+      ]
+    }
+  ]
+}
