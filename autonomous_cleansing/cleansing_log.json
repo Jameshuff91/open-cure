@@ -136,6 +136,35 @@
       "orphaned_edges": 0,
       "total_nodes": 273581,
       "total_edges": 16224956
+    },
+    {
+      "task": "Task 10: Identify Duplicate Entities",
+      "timestamp": "2026-01-19T12:29:15.762760",
+      "input_file": "/Users/jimhuff/github/open-cure/data/processed/unified_nodes_clean.csv",
+      "output_files": [
+        "/Users/jimhuff/github/open-cure/data/processed/validation/duplicate_candidates.json",
+        "/Users/jimhuff/github/open-cure/data/processed/validation/duplicate_summary.md"
+      ],
+      "total_nodes": 273581,
+      "duplicate_groups": 44297,
+      "total_duplicated_entities": 107973,
+      "duplicate_percentage": 39.5,
+      "high_confidence_groups": 28212,
+      "match_types": {
+        "external_id": 8138,
+        "name_only": 36159
+      },
+      "by_entity_type": {
+        "Gene": 58476,
+        "BiologicalProcess": 21168,
+        "Drug": 17363,
+        "MolecularFunction": 5104,
+        "CellularComponent": 2596,
+        "Pathway": 2266,
+        "Anatomy": 798,
+        "Disease": 202
+      },
+      "notes": "Identified potential duplicates for human review. Not merged automatically to preserve source-specific relationships."
     }
   ]
 }

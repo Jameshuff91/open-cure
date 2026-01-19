@@ -186,7 +186,7 @@
       "id": 10,
       "name": "Identify potential duplicate entities",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "description": "Find entities that may be duplicates (same drug/gene/disease with different IDs)",
       "steps": [
         "Group entities by normalized name",
@@ -198,7 +198,8 @@
         "Duplicate candidates identified",
         "Confidence scores assigned",
         "Ready for human review or automated merge"
-      ]
+      ],
+      "notes": "Identified 44,297 duplicate groups covering 107,973 entities (39.5% of nodes). 28,212 high-confidence groups. Primary duplicates: cross-source entities (drkg, hetionet, primekg) and DRKG ID variants. Saved to duplicate_candidates.json and duplicate_summary.md."
     },
     {
       "id": 11,
@@ -224,7 +225,7 @@
       "id": 12,
       "name": "Create cleansing documentation",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "description": "Document all cleansing steps and transformations",
       "steps": [
         "Document each transformation applied",
@@ -236,7 +237,8 @@
         "cleansing_log.json complete",
         "README.md in processed directory",
         "Transformations reproducible"
-      ]
+      ],
+      "notes": "Created comprehensive README.md with schema documentation, data lineage, validation instructions, and reproducibility guide. Updated cleansing_log.json with all 6 transformation records. 12 cleansing scripts available for full reproducibility."
     }
   ]
 }
