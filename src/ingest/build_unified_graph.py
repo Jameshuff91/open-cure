@@ -320,7 +320,10 @@ class UnifiedGraphBuilder:
         logger.info("Saving NetworkX graph...")
         GRAPH_DATA_DIR.mkdir(parents=True, exist_ok=True)
         G = self.build_networkx_graph()
-        nx.write_gpickle(G, GRAPH_DATA_DIR / "unified_graph.gpickle")
+        # Use pickle directly since nx.write_gpickle was removed in NetworkX 3.0
+        import pickle
+        with open(GRAPH_DATA_DIR / "unified_graph.gpickle", "wb") as f:
+            pickle.dump(G, f, pickle.HIGHEST_PROTOCOL)
 
         logger.success(f"Unified graph saved to {output_dir}")
 
