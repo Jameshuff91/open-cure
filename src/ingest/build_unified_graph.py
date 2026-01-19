@@ -179,9 +179,23 @@ class UnifiedGraphBuilder:
                 self.stats["hetionet"][f"node_type_{unified_type}"] += 1
 
         # Process edges
+        # Hetionet edge format: source_id: [type, id], target_id: [type, id]
         for edge in tqdm(data.get("edges", []), desc="Processing Hetionet edges"):
-            source_id = f"hetionet:{edge['source']}"
-            target_id = f"hetionet:{edge['target']}"
+            # Handle Hetionet's specific format
+            source_info = edge.get("source_id", edge.get("source"))
+            target_info = edge.get("target_id", edge.get("target"))
+
+            # source_info is [type, identifier] in Hetionet
+            if isinstance(source_info, list):
+                source_id = f"hetionet:{source_info[1]}"
+            else:
+                source_id = f"hetionet:{source_info}"
+
+            if isinstance(target_info, list):
+                target_id = f"hetionet:{target_info[1]}"
+            else:
+                target_id = f"hetionet:{target_info}"
+
             relation = edge.get("kind", "related_to")
 
             self.edges.append({
