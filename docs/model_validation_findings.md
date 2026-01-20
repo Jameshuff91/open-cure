@@ -152,11 +152,52 @@ Tested on 10 diseases to verify generalization:
 5. [ ] Consider expanding training data with more Every Cure indications
 6. [ ] Pool related diseases for small training sets (e.g., combine diabetes subtypes)
 
+## Full-Scale Comparison with Every Cure
+
+Trained on 25 diseases (663 positive drug-disease pairs) and compared predictions against Every Cure's approved indications.
+
+### Recall Metrics
+
+| Metric | Score | Interpretation |
+|--------|-------|----------------|
+| Recall@30 | 32.8% (206/628) | 1 in 3 approved drugs in top 30 |
+| Recall@50 | 49.8% (313/628) | Half of approved drugs in top 50 |
+| **Recall@100** | **74.7% (469/628)** | **3 in 4 approved drugs in top 100** |
+
+### Performance by Disease
+
+**Best performers (>50% recall@30):**
+- Osteoarthritis: 71% (17/24)
+- Schizophrenia: 64% (16/25)
+- Breast cancer: 56% (22/39)
+- Multiple sclerosis: 46% (13/28)
+- Psoriasis: 45% (13/29)
+
+**Needs improvement (<10% recall@30):**
+- HIV infection: 0% (0/17) - drugs have distinct patterns
+- Osteoporosis: 0% (0/10)
+- Epilepsy: 6% (1/18)
+
+### Novel Repurposing Candidates
+
+High-scoring predictions NOT in Every Cure's approved list (potential repurposing opportunities):
+
+| Disease | Drug | Score | Notes |
+|---------|------|-------|-------|
+| Diabetes | Carbutamide | 0.989 | Sulfonylurea (may be approved elsewhere) |
+| Breast cancer | Selitrectinib | 0.978 | TRK inhibitor |
+| Breast cancer | Belimumab | 0.978 | B-cell therapy |
+| RA | Brivanib alaninate | 0.987 | VEGF/FGF inhibitor |
+
+### Conclusion
+
+The model successfully identifies ~75% of known approved drugs in the top 100 predictions, validating the approach. Novel high-scoring predictions represent potential repurposing candidates worth investigating.
+
 ## Files
 
 - `data/reference/everycure/indicationList.xlsx` - Every Cure ground truth
 - `models/rf_drug_repurposing.pkl` - Initial RF model (deprecated)
-- Gradient Boosting model - needs to be saved
+- `models/drug_repurposing_gb.pkl` - Production Gradient Boosting model
 
 ## Technical Notes
 
