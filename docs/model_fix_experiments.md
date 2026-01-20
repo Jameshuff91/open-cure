@@ -142,3 +142,88 @@ All disease embeddings have >0.98 cosine similarity - they're nearly identical! 
 - `images/analysis/gb_importance.png` - Feature importance visualization
 - `images/analysis/universal_scores.png` - Universal score distribution
 - `images/analysis/disease_comparison.png` - Per-disease ranking visualization
+
+---
+
+## Update: Enhanced Benchmark (January 2025)
+
+### New Findings
+
+After the experiments above, we conducted systematic research to validate high-confidence predictions. See `docs/enhanced_evaluation_findings.md` for full details.
+
+**Key Discovery:** Many "false positives" were actually valid treatments missing from Every Cure's benchmark:
+- 18 CONFIRMED drugs (FDA approved or Phase III+)
+- 20 EXPERIMENTAL drugs (Phase I-II or preclinical)
+
+### Benchmark Improvement
+
+| Metric | Original | + CONFIRMED | Change |
+|--------|----------|-------------|--------|
+| Recall@30 | 31.1% | 33.3% | +2.2 pts |
+| Ground truth | 534 | 552 | +18 drugs |
+
+### Why Interactions Still Don't Work
+
+The root cause identified in this document (disease embeddings >0.98 similar) explains why our interaction features have 0% importance. Every Cure's KGML-xDTD uses **path-based features** instead of element-wise products, which is why their interactions work.
+
+### Next Experiments (Planned)
+
+| Fix | Approach | Expected Benefit |
+|-----|----------|------------------|
+| **Fix 4** | Retrain with enhanced ground truth (+18 drugs) | More training signal for COPD, T2D, HIV |
+| **Fix 5** | Contrastive disease learning | Force disease embeddings apart |
+| **Fix 6** | Path-based features | Capture drug→target→disease relationships |
+
+### Experiment Protocol
+
+For each fix:
+1. Train model with the modification
+2. Evaluate on CONFIRMED-only benchmark (conservative)
+3. Report per-disease breakdown for HIV, COPD, Epilepsy
+4. Compare to baseline (20.5% R@30) and current best (31.1% R@30)
+5. Document results below
+
+---
+
+## Fix 4: Retrain with Enhanced Ground Truth
+
+**Status:** Not started
+
+**Hypothesis:** Adding 18 confirmed drugs to training will improve recall for diseases that gained the most data (COPD +5, T2D +7, HIV +2).
+
+**Method:**
+- Add confirmed drugs from `enhanced_ground_truth.json` to positive training set
+- Use same GB architecture and hyperparameters
+- Evaluate on enhanced benchmark
+
+**Results:** TBD
+
+---
+
+## Fix 5: Contrastive Disease Learning
+
+**Status:** Not started
+
+**Hypothesis:** If we force disease embeddings to be more distinct during TransE training, interaction features will become useful.
+
+**Method:**
+- Modify TransE loss to include disease-disease contrastive term
+- Retrain embeddings
+- Retrain GB classifier with new embeddings
+
+**Results:** TBD
+
+---
+
+## Fix 6: Path-Based Features
+
+**Status:** Not started
+
+**Hypothesis:** Following KGML-xDTD's approach, path features between drug→disease will capture meaningful interactions that element-wise products miss.
+
+**Method:**
+- For each drug-disease pair, find top-k shortest paths in KG
+- Extract path patterns (e.g., drug→inhibits→protein→associated_with→disease)
+- Use path patterns as additional features
+
+**Results:** TBD

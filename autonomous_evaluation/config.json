@@ -1,0 +1,32 @@
+{
+  "description": "Configuration for autonomous evaluation enhancement",
+  "stopping_criteria": {
+    "max_candidates_per_disease": 30,
+    "consecutive_novel_to_stop": 5,
+    "use_auto_classification": true,
+    "require_evidence": true
+  },
+  "auto_classification_patterns": {
+    "antiviral": ["vir", "avir", "navir", "buvir", "previr", "gravir", "virine"],
+    "nucleoside": ["abine", "udine", "osine", "idine", "deoxy", "dideoxy"],
+    "immune": ["mab", "zumab", "ximab", "umab", "tuzumab"],
+    "kinase": ["tinib", "nib", "lib"]
+  },
+  "diseases_by_category": {
+    "Infectious": ["HIV infection", "Hepatitis C", "Tuberculosis"],
+    "Cancer": ["Breast cancer", "Lung cancer", "Colorectal cancer"],
+    "Cardiovascular": ["Hypertension", "Heart failure", "Atrial fibrillation"],
+    "Neurological": ["Epilepsy", "Parkinson disease", "Alzheimer disease"],
+    "Autoimmune": ["Rheumatoid arthritis", "Multiple sclerosis", "Psoriasis"],
+    "Metabolic": ["Type 2 diabetes", "Obesity"],
+    "Respiratory": ["Asthma", "COPD"],
+    "Musculoskeletal": ["Osteoporosis"]
+  },
+  "total_diseases": 20,
+  "total_every_cure_drugs": 700,
+  "quality_requirements": {
+    "confirmed": "FDA approved, was approved, or Phase III+ trials with clear efficacy",
+    "experimental": "Phase I-II trials with promising results",
+    "novel": "No evidence of treating this specific disease"
+  }
+}
