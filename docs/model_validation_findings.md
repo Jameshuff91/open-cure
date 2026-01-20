@@ -112,13 +112,45 @@ model = GradientBoostingClassifier(n_estimators=100, max_depth=5)
 
 5. **When known drugs rank highly, novel predictions become credible:** The "unexpected" drugs in the top results (e.g., Ticagrelor, Cholestyramine) are now worth investigating as repurposing candidates.
 
+## Multi-Disease Validation Results
+
+Tested on 10 diseases to verify generalization:
+
+| Disease | Training Drugs | AUROC | Known in Top 30 | Status |
+|---------|----------------|-------|-----------------|--------|
+| Rheumatoid arthritis | 55 | 0.815 | 30/30 | Excellent |
+| Hypertension | 74 | 0.850 | 26/30 | Excellent |
+| Major depressive disorder | 28 | 0.784 | 1/30 | Mixed |
+| Parkinson disease | 20 | 0.729 | 4/30 | Mixed |
+| Epilepsy | 18 | 0.693 | 0/30 | Poor |
+| Breast cancer | 39 | 0.659 | 5/30 | Moderate |
+| Schizophrenia | 25 | 0.653 | 5/30 | Moderate |
+| HIV infection | 17 | 0.606 | 9/30 | Decent |
+| Type 2 diabetes | 49 | 0.602 | 15/30 | Good |
+| Asthma | 28 | 0.515 | 4/30 | Poor |
+
+**Average:** AUROC 0.69, 9.9 known drugs in top 30
+
+### Key Observations
+
+1. **Training set size matters:** Diseases with 50+ drugs perform best (RA, hypertension)
+2. **AUROC doesn't always correlate with top-30 recall:** Depression has high AUROC but low top-30
+3. **Some diseases are harder:** Asthma and epilepsy drugs may have less distinctive embedding patterns
+
+### Recommendations
+
+- For diseases with <30 training drugs, consider pooling related diseases
+- Investigate why high AUROC doesn't always translate to good rankings
+- May need disease-specific feature engineering for challenging cases
+
 ## Next Steps
 
 1. [ ] Save the Gradient Boosting model and integrate into ensemble scorer
-2. [ ] Test on other diseases (hypertension, breast cancer) to verify generalization
+2. [x] Test on other diseases - validated on 10 diseases, avg 9.9 known in top 30
 3. [ ] Investigate unexpected top predictions for repurposing potential
 4. [ ] Fix RGCN by running full message passing (compute-intensive)
 5. [ ] Consider expanding training data with more Every Cure indications
+6. [ ] Pool related diseases for small training sets (e.g., combine diabetes subtypes)
 
 ## Files
 
