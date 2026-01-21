@@ -34,20 +34,19 @@ vastai destroy instance <INSTANCE_ID>
 
 ## Key Metrics
 
-**Current Performance:**
+**Current Performance (on Every Cure Ground Truth):**
 
 | Model | Recall@30 | Diseases Evaluated | Notes |
 |-------|-----------|-------------------|-------|
-| GB Enhanced | 13.2% | 77 | DOID ground truth |
-| TxGNN (500 epochs) | 10.1% | 122 | Matched via DrugBank IDs |
+| **GB Enhanced** | **13.2%** | 77 | Best performer on our ground truth |
+| TxGNN (500 epochs) | ~0% | 1,194 | Ontology mismatch - only 1 hit |
 
-**TxGNN Internal Metrics:**
+**TxGNN Internal Metrics (on its own test set):**
 - Test Indication AUROC: 0.787
 - Test Indication AUPRC: 0.746
+- Published benchmark: 0.87-0.91 AUPRC
 
-**Targets:**
-- AUPRC: > 0.80
-- TxGNN published: 0.87-0.91 AUPRC (on their benchmark)
+**Key Finding:** TxGNN achieves good metrics on its own benchmark but fails on our ground truth due to fundamental ontology/data incompatibility.
 
 ## Data Sources
 
@@ -93,33 +92,56 @@ cd TxGNN && pip3 install -e .
 - `data/reference/txgnn_diseases.json` - Disease ID mappings
 - `data/reference/txgnn_drugs.json` - Drug ID mappings
 
-### Key Integration Challenges
+### Why TxGNN Failed on Our Ground Truth (2026-01-21)
 
-1. **Ontology Mismatch**: Our ground truth uses DOID, TxGNN uses MONDO
-   - Created mapping file: `data/reference/disease_ontology_mapping.json`
-   - 77 diseases in our ground truth, 310 name mappings including synonyms
+**Root Cause: Fundamental Ontology Mismatch**
 
-2. **Drug Name Differences**: TxGNN includes experimental compounds not in DrugBank
-   - Top predictions include obscure compounds (Forodesine, Amylocaine)
-   - Need drug name normalization for fair comparison
+| Aspect | Every Cure (Our GT) | TxGNN |
+|--------|---------------------|-------|
+| Drug IDs | CHEBI | DrugBank |
+| Disease IDs | MONDO | MONDO (grouped) |
+| Drug types | Approved treatments | Experimental + approved |
+| Drug overlap | ~1,500 by name match | 7,957 total |
+| Disease overlap | ~1,200 by name match | 17,080 total |
 
-3. **Evaluation Mismatch**: Can't directly compare Recall@30
-   - Our GB model: 13.2% Recall@30 on DRKG ground truth (MESH IDs)
-   - TxGNN: 0.787 AUROC on indication task (MONDO IDs)
-   - Ground truth uses `drkg:Disease::MESH:*` format
-   - TxGNN uses `MONDO:*` IDs - requires cross-reference mapping to compare
+**What We Tried:**
+1. Trained TxGNN for 500 epochs → 0.787 AUROC on its test set ✓
+2. Extracted embeddings using `model.retrieve_embedding()` ✓
+3. Computed DistMult scores for drug-disease pairs ✓
+4. Matched diseases by exact name (1,194 matches) ✓
+5. Matched drugs by name (CHEBI→DrugBank via 1,500 name mappings) ✓
 
-### Next Steps for TxGNN
+**Result:** Only **1 drug hit** (Diflunisal for Rheumatoid Arthritis) across 1,194 disease evaluations.
 
-**Completed:**
-- ✅ Map DOID → MONDO for 77 diseases (`data/reference/doid_to_mondo_mapping.json`)
-- ✅ Train TxGNN for 500 epochs (0.787 indication AUROC)
-- ✅ Extract predictions using embedding similarity
+**Why This Happened:**
+- TxGNN predicts experimental/investigational compounds (e.g., "4-methyl-umbelliferyl-N-acetyl-chitobiose")
+- Every Cure ground truth has standard-of-care approved drugs (e.g., Methotrexate, Infliximab)
+- Even when disease names match, the predicted drugs don't overlap with approved treatments
+- TxGNN's knowledge graph encodes different drug-disease relationships than clinical practice
 
-**Remaining:**
-- Map DRKG ground truth (MESH IDs) to MONDO IDs for fair Recall@30 comparison
-- Alternative: Build MESH → MONDO disease mapping using UMLS or BioPortal
-- Consider using TxGNN's own test set metrics as the primary comparison
+**Conclusion:** SOTA graph neural networks trained on biomedical KGs don't necessarily predict clinically-relevant drug repurposing candidates. Simple ML models (GB) trained on curated ground truth outperform them for practical applications.
+
+### Recommended Next Steps
+
+**Option 1: Improve GB Model (Recommended)**
+- Add more features from DRKG (protein targets, pathways, side effects)
+- Ensemble with TransE embeddings
+- Try other ML models (XGBoost, Random Forest, Neural Network)
+- Target: 20%+ Recall@30
+
+**Option 2: Train on Our Ground Truth Directly**
+- Build a custom KG from Every Cure + DrugBank + disease ontologies
+- Train a GNN on this aligned data
+- More work but ensures ontology compatibility
+
+**Option 3: Different SOTA Models**
+- Try DRKG's own pretrained embeddings (already aligned with our ground truth format)
+- Explore other drug repurposing models: DTINet, DeepDTA, GraphDTA
+- Look for models trained on clinical/approved drug data
+
+**Not Recommended:**
+- Further TxGNN integration (ontology gap too large)
+- Building complex CHEBI↔DrugBank↔MONDO mappings (diminishing returns)
 
 ### TxGNN API Notes
 
@@ -145,27 +167,21 @@ disease_names = dict(zip(
 ))
 ```
 
-### Lessons Learned (2026-01-21)
+### Technical Notes (TxGNN)
 
-**Dependency Hell:**
-1. TxGNN requires `pandas<2.0` (uses deprecated `df.append()`)
-2. Must use `numpy<2.0` for pandas 1.x compatibility
-3. DGL version must match CUDA exactly: `dgl==1.1.3` for CUDA 11.8
-
-**Critical install order:**
+**Dependencies (critical order):**
 ```bash
-pip3 install "numpy<2.0" "pandas<2.0"
+pip3 install "numpy<2.0" "pandas<2.0"  # TxGNN uses deprecated pandas API
 pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu118
 pip3 install dgl==1.1.3 -f https://data.dgl.ai/wheels/cu118/repo.html
 pip3 install -e ./TxGNN
 ```
 
-**API Gotchas:**
-- `model.finetune()` does NOT accept `batch_size` parameter
-- `tx_data.retrieve_id_mapping()` may return empty dicts - use `tx_data.df` instead
-- `tx_data.disease_list` attribute doesn't exist - use `tx_data.G.num_nodes('disease')`
+**API Notes:**
+- `model.retrieve_embedding()` returns dict of node embeddings by type
+- `tx_data.df` has columns: x_type, x_id, relation, y_type, y_id, x_idx, y_idx
+- Embedding order follows sorted `node_index` from `node.csv`
 
-**SSH to Vast.ai:**
-- Exit code 255 is often false negative - check if command actually ran
-- The "Welcome to vast.ai" banner goes to stderr, can confuse exit codes
-- Use `nohup` for long training runs, output may be buffered
+**Vast.ai Tips:**
+- Use `nohup` for long training runs
+- Always destroy instances when done: `vastai destroy instance <ID>`
