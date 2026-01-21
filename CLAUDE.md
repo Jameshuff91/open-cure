@@ -34,14 +34,20 @@ vastai destroy instance <INSTANCE_ID>
 
 ## Key Metrics
 
-**Current Performance (GB Enhanced Model):**
-- AUROC: 0.78
-- AUPRC: 0.13
-- Recall@30: 13.2%
+**Current Performance:**
+
+| Model | Recall@30 | Diseases Evaluated | Notes |
+|-------|-----------|-------------------|-------|
+| GB Enhanced | 13.2% | 77 | DOID ground truth |
+| TxGNN (500 epochs) | 10.1% | 122 | Matched via DrugBank IDs |
+
+**TxGNN Internal Metrics:**
+- Test Indication AUROC: 0.787
+- Test Indication AUPRC: 0.746
 
 **Targets:**
 - AUPRC: > 0.80
-- TxGNN published: 0.87-0.91 AUPRC (on their benchmark, not ours)
+- TxGNN published: 0.87-0.91 AUPRC (on their benchmark)
 
 ## Data Sources
 
