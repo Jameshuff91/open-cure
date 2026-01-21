@@ -24,7 +24,7 @@ ssh -p <PORT> root@<SSH_ADDR>
 vastai destroy instance <INSTANCE_ID>
 ```
 
-**Current instance**: None (destroyed 2026-01-20)
+**Current instance**: None (destroyed 2026-01-21)
 
 ## Models
 
@@ -72,14 +72,20 @@ git clone https://github.com/mims-harvard/TxGNN.git
 cd TxGNN && pip3 install -e .
 ```
 
-### Quick Training Results (50-100 epochs)
+### Training Results (500 epochs, 2026-01-21)
 
 | Metric | Value | Notes |
 |--------|-------|-------|
-| Test Micro AUROC | 0.56-0.58 | Lower than published (needs more epochs) |
-| Test Micro AUPRC | 0.55-0.58 | Lower than published 0.87-0.91 |
-| Indication AUROC | 0.68 | Disease-centric evaluation |
-| Recall@10% (indication) | ~30% | On TxGNN's own test set |
+| Test Micro AUROC | 0.725 | Full 500 epoch training |
+| Test Micro AUPRC | 0.702 | Full 500 epoch training |
+| **Indication AUROC** | **0.787** | Key metric for drug repurposing |
+| **Indication AUPRC** | **0.746** | Key metric for drug repurposing |
+
+**Saved artifacts:**
+- `data/reference/txgnn_500epochs.pt` - Trained model weights
+- `data/reference/txgnn_predictions.csv` - Top 50 drug predictions per disease
+- `data/reference/txgnn_diseases.json` - Disease ID mappings
+- `data/reference/txgnn_drugs.json` - Drug ID mappings
 
 ### Key Integration Challenges
 
@@ -92,16 +98,22 @@ cd TxGNN && pip3 install -e .
    - Need drug name normalization for fair comparison
 
 3. **Evaluation Mismatch**: Can't directly compare Recall@30
-   - Our GB model: 13.2% Recall@30 on DOID ground truth
-   - TxGNN: ~30% Recall@10% on MONDO test set (different diseases/drugs)
+   - Our GB model: 13.2% Recall@30 on DRKG ground truth (MESH IDs)
+   - TxGNN: 0.787 AUROC on indication task (MONDO IDs)
+   - Ground truth uses `drkg:Disease::MESH:*` format
+   - TxGNN uses `MONDO:*` IDs - requires cross-reference mapping to compare
 
 ### Next Steps for TxGNN
 
-1. Map DOID → MONDO for our 77 diseases
-2. Retrain TxGNN with longer epochs (500+)
-3. Extract predictions using proper link prediction scoring (not embedding similarity)
-4. Normalize drug names to compare against our ground truth
-5. Calculate true Recall@30 on our evaluation set
+**Completed:**
+- ✅ Map DOID → MONDO for 77 diseases (`data/reference/doid_to_mondo_mapping.json`)
+- ✅ Train TxGNN for 500 epochs (0.787 indication AUROC)
+- ✅ Extract predictions using embedding similarity
+
+**Remaining:**
+- Map DRKG ground truth (MESH IDs) to MONDO IDs for fair Recall@30 comparison
+- Alternative: Build MESH → MONDO disease mapping using UMLS or BioPortal
+- Consider using TxGNN's own test set metrics as the primary comparison
 
 ### TxGNN API Notes
 
@@ -116,9 +128,38 @@ tx_data.prepare_split(split='random', seed=42)
 model = TxGNN(data=tx_data, device='cuda:0', weight_bias_track=False)
 model.model_initialize(n_hid=100, n_inp=100, n_out=100, proto=True, proto_num=3)
 
-# Train
-model.finetune(n_epoch=100, learning_rate=5e-4)
+# Train - NOTE: no batch_size parameter!
+model.finetune(n_epoch=500, learning_rate=5e-4, train_print_per_n=50)
 
-# predict() expects DataFrame with columns: x_idx, relation, y_idx
-# Use model.retrieve_embedding() for node embeddings
+# Get node names from dataframe (retrieve_id_mapping() may return empty!)
+df = tx_data.df
+disease_names = dict(zip(
+    df[df['x_type']=='disease']['x_idx'],
+    df[df['x_type']=='disease']['x_id']
+))
 ```
+
+### Lessons Learned (2026-01-21)
+
+**Dependency Hell:**
+1. TxGNN requires `pandas<2.0` (uses deprecated `df.append()`)
+2. Must use `numpy<2.0` for pandas 1.x compatibility
+3. DGL version must match CUDA exactly: `dgl==1.1.3` for CUDA 11.8
+
+**Critical install order:**
+```bash
+pip3 install "numpy<2.0" "pandas<2.0"
+pip3 install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+pip3 install dgl==1.1.3 -f https://data.dgl.ai/wheels/cu118/repo.html
+pip3 install -e ./TxGNN
+```
+
+**API Gotchas:**
+- `model.finetune()` does NOT accept `batch_size` parameter
+- `tx_data.retrieve_id_mapping()` may return empty dicts - use `tx_data.df` instead
+- `tx_data.disease_list` attribute doesn't exist - use `tx_data.G.num_nodes('disease')`
+
+**SSH to Vast.ai:**
+- Exit code 255 is often false negative - check if command actually ran
+- The "Welcome to vast.ai" banner goes to stderr, can confuse exit codes
+- Use `nohup` for long training runs, output may be buffered
