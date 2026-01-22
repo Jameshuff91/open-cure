@@ -28,7 +28,7 @@ vastai destroy instance <INSTANCE_ID>
 # Example: ./scripts/vastai_txgnn_setup.sh 16464 ssh3.vast.ai
 ```
 
-**Current instance**: None (destroyed 2026-01-21)
+**Current instance**: None (destroyed 2026-01-22 after fine-tuning experiments)
 
 ## Models
 
@@ -134,14 +134,35 @@ cd TxGNN && pip3 install -e .
 | Experiment | Result | Status |
 |------------|--------|--------|
 | Simple Ensemble (best_rank) | 7.5% R@30 | ✅ BEST |
-| Category Routing | 6.9% R@30 | ⚠️ Limited by MESH coverage |
+| Category Routing (MESH) | 6.9% R@30 | ⚠️ Limited by 6% MESH coverage |
+| Category Routing (Keywords) | TBD | 68% coverage via keyword patterns |
 | TxGNN as GB Features | 4.6% R@30 | ❌ Failed (ontology mismatch) |
 
 **Key Findings:**
 - Storage diseases: **83.3% Recall@30** (enzyme replacements work!)
 - Best Rank ensemble beats both models alone
-- Category routing limited by only 48 MESH-mapped diseases
+- Category routing limited by only 48 MESH-mapped diseases (6% coverage)
 - 65 diseases achieve excellent performance (≥50% R@30 or top-10)
+
+**Keyword-Based Categorization (2026-01-21):**
+- Improved coverage from 6% (MESH) to 68% (keyword patterns)
+- `src/disease_categorizer.py` - Pattern-based disease categorization
+- TxGNN preferred categories (R@30 > 20%): storage, psychiatric, dermatological, autoimmune, metabolic
+- Best-rank preferred (<15%): respiratory, renal, gastrointestinal, cancer, hematological
+- 69 diseases routed to TxGNN, 710 to best_rank ensemble
+
+**TxGNN Per-Category Performance (GPU evaluation):**
+| Category | R@30 | Sample Size |
+|----------|------|-------------|
+| Storage | 83.3% | 6 |
+| Psychiatric | 28.6% | 7 |
+| Dermatological | 25.0% | 20 |
+| Autoimmune | 22.2% | 27 |
+| Metabolic | 21.7% | 46 |
+| Neurological | 18.5% | 54 |
+| Cancer | 11.7% | 171 |
+| Respiratory | 7.3% | 41 |
+| Renal | 7.1% | 14 |
 
 **What Works Well:**
 - Enzyme replacement therapies (laronidase rank #3, imiglucerase rank #8)
@@ -153,20 +174,55 @@ cd TxGNN && pip3 install -e .
 - Complex/heterogeneous conditions
 - Diseases where GT drugs rank near-random
 
-### Recommended Next Steps
+### Fine-Tuning Experiments (FAILED - 2026-01-21)
 
-**Option 1: Fine-tune TxGNN on Our Data (GPU NEEDED)**
-- Add Every Cure indication edges to TxGNN training
-- Most promising for improving performance
-- Risk: Overfitting to small dataset
+**Experiment 1: Standard Fine-tuning (LR=5e-4)**
+- Result: Catastrophic forgetting observed
+- Training loss decreased but validation performance degraded
 
-**Option 2: Confidence-Based Model Selection (LOCAL)**
+**Experiment 2: Lower Learning Rate (LR=3e-5)**
+| Metric | Original | Fine-tuned | Change |
+|--------|----------|------------|--------|
+| Recall@30 | 8.0% | 6.6% | -1.4pp |
+| Mean Rank | 3138 | 2537 | +601 |
+| Median Rank | 1377 | 840 | +537 |
+
+**Key Finding:** Fine-tuning consistently causes catastrophic forgetting. While mean/median ranks improved, Recall@30 dropped because the model "forgot" many correct associations.
+
+**Why Fine-tuning Fails:**
+- Small dataset (1512 pairs) vs large pretrained model
+- Overfits to training pairs, loses generalization
+- TxGNN's prototype-based architecture may not adapt well
+
+**Conclusion:** Fine-tuning TxGNN is NOT a viable path. Need alternative approaches.
+
+### Promising Alternative Paths
+
+**Path 1: Better Disease/Drug Matching (LOCAL)**
+- Current evaluation only matches 340/779 diseases due to name mismatches
+- Improve DOID↔MONDO mapping could unlock more evaluation coverage
+- Potential: +50% more diseases evaluated
+
+**Path 2: Confidence-Based Model Selection (LOCAL)**
 - Train meta-model to predict when to trust each model
-- Use disease category, drug count, mechanism clarity as features
+- Features: disease category, drug count, mechanism clarity, embedding similarity
+- Route to TxGNN for storage/metabolic diseases, GB for others
 
-**Option 3: Expand Disease Coverage (LOCAL)**
-- Map more TxGNN diseases to MESH IDs
-- Currently only 48/779 diseases mapped
+**Path 3: Knowledge Graph Augmentation**
+- Add Every Cure edges directly to TxGNN's knowledge graph (not fine-tuning)
+- Retrain from scratch with augmented data
+- Risk: Expensive (500 epochs = several hours GPU)
+
+**Path 4: External Data Integration**
+- DrugBank: drug-target interactions, pharmacology
+- ChEMBL: bioactivity data
+- ClinicalTrials.gov: trial outcomes
+- Could improve GB model features significantly
+
+**Path 5: Disease-Specific Models**
+- Train specialized models for disease categories
+- Storage diseases already achieve 83.3% R@30
+- Focus resources on categories where we can win
 
 **Key Insight:** TxGNN excels for well-defined mechanisms (storage diseases, enzyme deficiencies) but struggles with complex conditions. Best ensemble approach: take minimum rank from either model.
 
