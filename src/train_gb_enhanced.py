@@ -140,8 +140,38 @@ _DISEASE_MESH_RAW = {
     "osteoarthritis": "drkg:Disease::MESH:D010003",
 }
 
-# Create lowercase lookup
-DISEASE_MESH_MAP = {k.lower(): v for k, v in _DISEASE_MESH_RAW.items()}
+# Create lowercase lookup from hardcoded mappings
+_HARDCODED_MAP = {k.lower(): v for k, v in _DISEASE_MESH_RAW.items()}
+
+
+def load_agent_mesh_mappings() -> Dict[str, str]:
+    """Load MESH mappings from agent web search results."""
+    agent_path = REFERENCE_DIR / "mesh_mappings_from_agents.json"
+    if not agent_path.exists():
+        logger.warning(f"Agent MESH mappings not found: {agent_path}")
+        return {}
+
+    with open(agent_path) as f:
+        data = json.load(f)
+
+    # Convert to DRKG format: disease_name -> drkg:Disease::MESH:Dxxxxxx
+    mappings = {}
+    for batch_name, batch_data in data.items():
+        if batch_name == "metadata" or not isinstance(batch_data, dict):
+            continue
+        for disease_name, mesh_id in batch_data.items():
+            if mesh_id is not None and mesh_id.startswith("D"):
+                # Convert D123456 -> drkg:Disease::MESH:D123456
+                drkg_id = f"drkg:Disease::MESH:{mesh_id}"
+                mappings[disease_name.lower()] = drkg_id
+
+    logger.info(f"Loaded agent MESH mappings: {len(mappings)} diseases")
+    return mappings
+
+
+# Merge hardcoded mappings with agent mappings (agent takes priority for consistency)
+_AGENT_MAPPINGS = load_agent_mesh_mappings()
+DISEASE_MESH_MAP = {**_HARDCODED_MAP, **_AGENT_MAPPINGS}
 
 
 def load_transe_embeddings() -> Tuple[torch.Tensor, Dict[str, int]]:
