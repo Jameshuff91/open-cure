@@ -1,0 +1,3190 @@
+{
+  "summary": {
+    "txgnn": {
+      "total_diseases": 779,
+      "overall_recall_at_30": 14.5,
+      "total_hits": 113
+    },
+    "gb_model": {
+      "total_diseases": 18,
+      "overall_recall_at_30": 13.2,
+      "total_hits": 55
+    }
+  },
+  "txgnn_category_performance": [
+    {
+      "category": "psychiatric",
+      "count": 7,
+      "hits": 2,
+      "recall_at_30": 28.6,
+      "hit_diseases": [
+        "alcohol withdrawal",
+        "bipolar disorder"
+      ],
+      "miss_diseases": [
+        "agoraphobia",
+        "anxiety disorder",
+        "bulimia nervosa",
+        "schizophrenia",
+        "substance withdrawal syndrome"
+      ]
+    },
+    {
+      "category": "dermatological",
+      "count": 20,
+      "hits": 5,
+      "recall_at_30": 25.0,
+      "hit_diseases": [
+        "atopic eczema",
+        "psoriasis",
+        "psoriasis-related juvenile idiopathic arthritis",
+        "rosacea",
+        "skin infection"
+      ],
+      "miss_diseases": [
+        "stevens-johnson syndrome",
+        "alopecia areata",
+        "contact dermatitis",
+        "dermatitis",
+        "dermatitis herpetiformis",
+        "hyperpigmentation of the skin",
+        "ichthyosis vulgaris",
+        "lamellar ichthyosis",
+        "pemphigus",
+        "pemphigus foliaceus"
+      ]
+    },
+    {
+      "category": "autoimmune",
+      "count": 27,
+      "hits": 6,
+      "recall_at_30": 22.2,
+      "hit_diseases": [
+        "juvenile idiopathic arthritis",
+        "osteoarthritis",
+        "psoriasis",
+        "psoriasis-related juvenile idiopathic arthritis",
+        "psoriatic arthritis",
+        "rheumatoid arthritis"
+      ],
+      "miss_diseases": [
+        "addison disease",
+        "behcet disease",
+        "crohn disease",
+        "graves disease",
+        "hashimoto thyroiditis",
+        "takayasu arteritis",
+        "adult-onset still disease",
+        "autoimmune hemolytic anemia",
+        "autoimmune hepatitis",
+        "autoimmune pulmonary alveolar proteinosis"
+      ]
+    },
+    {
+      "category": "metabolic",
+      "count": 46,
+      "hits": 10,
+      "recall_at_30": 21.7,
+      "hit_diseases": [
+        "fabry disease",
+        "gaucher disease",
+        "hurler syndrome",
+        "hurler-scheie syndrome",
+        "laron syndrome",
+        "scheie syndrome",
+        "autosomal erythropoietic protoporphyria",
+        "erythropoietic protoporphyria",
+        "homozygous familial hypercholesterolemia",
+        "hypothyroidism"
+      ],
+      "miss_diseases": [
+        "al amyloidosis",
+        "bardet-biedl syndrome",
+        "cushing syndrome",
+        "hashimoto thyroiditis",
+        "noonan syndrome",
+        "prader-willi syndrome",
+        "wilson disease",
+        "zollinger-ellison syndrome",
+        "achondroplasia",
+        "acute intermittent porphyria"
+      ]
+    },
+    {
+      "category": "neurological",
+      "count": 54,
+      "hits": 10,
+      "recall_at_30": 18.5,
+      "hit_diseases": [
+        "duchenne muscular dystrophy",
+        "lambert-eaton myasthenic syndrome",
+        "leber hereditary optic neuropathy",
+        "lennox-gastaut syndrome",
+        "cerebral palsy",
+        "multiple sclerosis",
+        "neuroblastoma",
+        "neuromyelitis optica",
+        "proximal spinal muscular atrophy",
+        "spinal muscular atrophy"
+      ],
+      "miss_diseases": [
+        "alzheimer disease",
+        "guillain-barre syndrome",
+        "huntington disease",
+        "japanese encephalitis",
+        "melas syndrome",
+        "parkinson disease",
+        "tourette syndrome",
+        "west syndrome",
+        "adult brainstem glioma",
+        "amyotrophic lateral sclerosis"
+      ]
+    },
+    {
+      "category": "musculoskeletal",
+      "count": 12,
+      "hits": 2,
+      "recall_at_30": 16.7,
+      "hit_diseases": [
+        "osteoarthritis",
+        "osteoporosis"
+      ],
+      "miss_diseases": [
+        "bone fracture",
+        "bone paget disease",
+        "bone cancer",
+        "bone giant cell tumor",
+        "bone sarcoma",
+        "bursitis",
+        "cap myopathy",
+        "cardiomyopathy",
+        "dilated cardiomyopathy",
+        "tendinitis"
+      ]
+    },
+    {
+      "category": "genetic_rare",
+      "count": 81,
+      "hits": 13,
+      "recall_at_30": 16.0,
+      "hit_diseases": [
+        "hurler syndrome",
+        "hurler-scheie syndrome",
+        "lambert-eaton myasthenic syndrome",
+        "langerhans cell histiocytosis",
+        "laron syndrome",
+        "leber hereditary optic neuropathy",
+        "lennox-gastaut syndrome",
+        "scheie syndrome",
+        "congenital generalized lipodystrophy",
+        "congenital sucrase-isomaltase deficiency"
+      ],
+      "miss_diseases": [
+        "bardet-biedl syndrome",
+        "bruton-type agammaglobulinemia",
+        "c1 inhibitor deficiency",
+        "cinca syndrome",
+        "cushing syndrome",
+        "ehlers-danlos syndrome",
+        "eisenmenger syndrome",
+        "gorham-stout disease",
+        "guillain-barre syndrome",
+        "melas syndrome"
+      ]
+    },
+    {
+      "category": "infectious",
+      "count": 69,
+      "hits": 11,
+      "recall_at_30": 15.9,
+      "hit_diseases": [
+        "chagas disease",
+        "actinomycosis",
+        "bacterial pneumonia",
+        "cholera",
+        "escherichia coli infection",
+        "gram-positive bacterial infections",
+        "influenza",
+        "plague",
+        "pneumococcal infection",
+        "skin infection"
+      ],
+      "miss_diseases": [
+        "covid-19",
+        "clostridium infectious disease",
+        "ebola hemorrhagic fever",
+        "helicobacter pylori infection, susceptibility to",
+        "japanese encephalitis",
+        "klebsiella infectious disease",
+        "lyme disease",
+        "moraxellaceae infectious disease",
+        "pseudomonas aeruginosa infectious disease",
+        "pseudomonas infection"
+      ]
+    },
+    {
+      "category": "other",
+      "count": 256,
+      "hits": 36,
+      "recall_at_30": 14.1,
+      "hit_diseases": [
+        "rickettsiosis",
+        "acromegaly",
+        "argininosuccinic aciduria",
+        "attention deficit-hyperactivity disorder",
+        "bartonellosis",
+        "candidiasis, invasive",
+        "cutaneous candidiasis",
+        "cystinosis",
+        "dacryocystitis",
+        "familial partial lipodystrophy"
+      ],
+      "miss_diseases": [
+        "acute otitis media",
+        "angiomyolipoma",
+        "castleman disease",
+        "waldenstrom macroglobulinemia",
+        "acquired immunodeficiency",
+        "adrenocortical insufficiency",
+        "alkaptonuria",
+        "alpha 1-antitrypsin deficiency",
+        "amebiasis",
+        "anaphylaxis"
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "count": 31,
+      "hits": 4,
+      "recall_at_30": 12.9,
+      "hit_diseases": [
+        "congestive heart failure",
+        "peripheral vascular disease",
+        "pulmonary arterial hypertension",
+        "stroke disorder"
+      ],
+      "miss_diseases": [
+        "eisenmenger syndrome",
+        "heart failure",
+        "pulmonary arterial hypertension associated with congenital heart disease",
+        "takayasu arteritis",
+        "arteriovenous hemangioma/malformation",
+        "brain aneurysm",
+        "cardiomyopathy",
+        "cerebral infarction",
+        "cerebrovascular disorder",
+        "chronic thromboembolic pulmonary hypertension"
+      ]
+    },
+    {
+      "category": "ophthalmological",
+      "count": 17,
+      "hits": 2,
+      "recall_at_30": 11.8,
+      "hit_diseases": [
+        "leber hereditary optic neuropathy",
+        "dry eye syndrome"
+      ],
+      "miss_diseases": [
+        "atopic conjunctivitis",
+        "blepharoconjunctivitis",
+        "cataract",
+        "conjunctivitis",
+        "fungal infection of eye",
+        "glaucoma",
+        "herpes simplex virus keratitis",
+        "keratitis",
+        "keratoconjunctivitis",
+        "neovascular glaucoma"
+      ]
+    },
+    {
+      "category": "cancer",
+      "count": 171,
+      "hits": 20,
+      "recall_at_30": 11.7,
+      "hit_diseases": [
+        "wilms tumor",
+        "acute promyelocytic leukemia",
+        "basal cell carcinoma",
+        "cervical carcinoma",
+        "cutaneous neuroendocrine carcinoma",
+        "digestive system neuroendocrine neoplasm",
+        "esophageal cancer",
+        "exocrine pancreatic carcinoma",
+        "follicular lymphoma",
+        "gastric cancer"
+      ],
+      "miss_diseases": [
+        "burkitt lymphoma",
+        "ewing sarcoma",
+        "her2-receptor negative breast cancer",
+        "osteosarcoma",
+        "tsh producing pituitary tumor",
+        "acute erythroid leukemia",
+        "acute lymphoblastic leukemia",
+        "acute megakaryoblastic leukemia",
+        "adenocarcinoma",
+        "adrenal cortex carcinoma"
+      ]
+    },
+    {
+      "category": "hematological",
+      "count": 37,
+      "hits": 4,
+      "recall_at_30": 10.8,
+      "hit_diseases": [
+        "aggressive systemic mastocytosis",
+        "indolent systemic mastocytosis",
+        "pernicious anemia",
+        "thrombocytopenia"
+      ],
+      "miss_diseases": [
+        "diamond-blackfan anemia",
+        "ebola hemorrhagic fever",
+        "acquired aplastic anemia",
+        "acquired hemophilia",
+        "acquired polycythemia vera",
+        "acquired thrombocytopenia",
+        "acute erythroid leukemia",
+        "agranulocytosis",
+        "anaplastic large cell lymphoma",
+        "anemia, hypochromic microcytic with iron overload"
+      ]
+    },
+    {
+      "category": "gastrointestinal",
+      "count": 23,
+      "hits": 2,
+      "recall_at_30": 8.7,
+      "hit_diseases": [
+        "esophageal cancer",
+        "hepatic veno-occlusive disease"
+      ],
+      "miss_diseases": [
+        "crohn disease",
+        "helicobacter pylori infection, susceptibility to",
+        "acute liver failure",
+        "bowel dysfunction",
+        "celiac disease",
+        "corneal ulcer",
+        "drug-induced liver injury",
+        "esophageal squamous cell carcinoma",
+        "gastroenteritis",
+        "hepatic encephalopathy"
+      ]
+    },
+    {
+      "category": "respiratory",
+      "count": 41,
+      "hits": 3,
+      "recall_at_30": 7.3,
+      "hit_diseases": [
+        "bacterial pneumonia",
+        "cystic fibrosis",
+        "pulmonary arterial hypertension"
+      ],
+      "miss_diseases": [
+        "copd, severe early onset",
+        "pulmonary arterial hypertension associated with congenital heart disease",
+        "allergic asthma",
+        "allergic bronchopulmonary aspergillosis",
+        "allergic respiratory disease",
+        "asthma",
+        "autoimmune pulmonary alveolar proteinosis",
+        "bronchiectasis",
+        "bronchitis",
+        "bronchopulmonary dysplasia"
+      ]
+    },
+    {
+      "category": "renal",
+      "count": 14,
+      "hits": 1,
+      "recall_at_30": 7.1,
+      "hit_diseases": [
+        "chronic kidney disease"
+      ],
+      "miss_diseases": [
+        "acute kidney failure",
+        "adrenal cortex carcinoma",
+        "aldosterone-producing adrenal cortex adenoma",
+        "congenital adrenal hyperplasia",
+        "idiopathic nephrotic syndrome",
+        "impaired renal function disease",
+        "kidney failure",
+        "kidney papillary necrosis",
+        "nephrotic syndrome",
+        "polycystic kidney disease"
+      ]
+    }
+  ],
+  "gb_category_performance": [
+    {
+      "category": "infectious",
+      "count": 3,
+      "avg_recall_at_30": 50.0,
+      "diseases": [
+        {
+          "name": "HIV infection",
+          "recall": 0.0
+        },
+        {
+          "name": "Tuberculosis",
+          "recall": 0.5
+        },
+        {
+          "name": "Hepatitis C",
+          "recall": 1.0
+        }
+      ]
+    },
+    {
+      "category": "cardiovascular",
+      "count": 3,
+      "avg_recall_at_30": 31.3,
+      "diseases": [
+        {
+          "name": "Heart failure",
+          "recall": 0.13333333333333333
+        },
+        {
+          "name": "Hypertension",
+          "recall": 0.0821917808219178
+        },
+        {
+          "name": "Atrial fibrillation",
+          "recall": 0.7222222222222222
+        }
+      ]
+    },
+    {
+      "category": "respiratory",
+      "count": 3,
+      "avg_recall_at_30": 16.0,
+      "diseases": [
+        {
+          "name": "Asthma",
+          "recall": 0.05
+        },
+        {
+          "name": "COPD",
+          "recall": 0.42857142857142855
+        },
+        {
+          "name": "Lung cancer",
+          "recall": 0.0
+        }
+      ]
+    },
+    {
+      "category": "musculoskeletal",
+      "count": 1,
+      "avg_recall_at_30": 10.0,
+      "diseases": [
+        {
+          "name": "Osteoporosis",
+          "recall": 0.1
+        }
+      ]
+    },
+    {
+      "category": "metabolic",
+      "count": 2,
+      "avg_recall_at_30": 8.0,
+      "diseases": [
+        {
+          "name": "Type 2 diabetes",
+          "recall": 0.16071428571428573
+        },
+        {
+          "name": "Obesity",
+          "recall": 0.0
+        }
+      ]
+    },
+    {
+      "category": "neurological",
+      "count": 2,
+      "avg_recall_at_30": 6.9,
+      "diseases": [
+        {
+          "name": "Multiple sclerosis",
+          "recall": 0.13793103448275862
+        },
+        {
+          "name": "Epilepsy",
+          "recall": 0.0
+        }
+      ]
+    },
+    {
+      "category": "autoimmune",
+      "count": 2,
+      "avg_recall_at_30": 2.7,
+      "diseases": [
+        {
+          "name": "Rheumatoid arthritis",
+          "recall": 0.05454545454545454
+        },
+        {
+          "name": "Psoriasis",
+          "recall": 0.0
+        }
+      ]
+    },
+    {
+      "category": "cancer",
+      "count": 3,
+      "avg_recall_at_30": 0.0,
+      "diseases": [
+        {
+          "name": "Breast cancer",
+          "recall": 0.0
+        },
+        {
+          "name": "Colorectal cancer",
+          "recall": 0.0
+        },
+        {
+          "name": "Lung cancer",
+          "recall": 0.0
+        }
+      ]
+    },
+    {
+      "category": "dermatological",
+      "count": 1,
+      "avg_recall_at_30": 0.0,
+      "diseases": [
+        {
+          "name": "Psoriasis",
+          "recall": 0.0
+        }
+      ]
+    }
+  ],
+  "model_comparison": [
+    {
+      "category": "psychiatric",
+      "txgnn_recall": 28.6,
+      "txgnn_n": 7,
+      "gb_recall": null,
+      "gb_n": null,
+      "diff": null
+    },
+    {
+      "category": "dermatological",
+      "txgnn_recall": 25.0,
+      "txgnn_n": 20,
+      "gb_recall": 0.0,
+      "gb_n": 1,
+      "diff": 25.0
+    },
+    {
+      "category": "autoimmune",
+      "txgnn_recall": 22.2,
+      "txgnn_n": 27,
+      "gb_recall": 2.7,
+      "gb_n": 2,
+      "diff": 19.5
+    },
+    {
+      "category": "metabolic",
+      "txgnn_recall": 21.7,
+      "txgnn_n": 46,
+      "gb_recall": 8.0,
+      "gb_n": 2,
+      "diff": 13.7
+    },
+    {
+      "category": "neurological",
+      "txgnn_recall": 18.5,
+      "txgnn_n": 54,
+      "gb_recall": 6.9,
+      "gb_n": 2,
+      "diff": 11.6
+    },
+    {
+      "category": "musculoskeletal",
+      "txgnn_recall": 16.7,
+      "txgnn_n": 12,
+      "gb_recall": 10.0,
+      "gb_n": 1,
+      "diff": 6.699999999999999
+    },
+    {
+      "category": "genetic_rare",
+      "txgnn_recall": 16.0,
+      "txgnn_n": 81,
+      "gb_recall": null,
+      "gb_n": null,
+      "diff": null
+    },
+    {
+      "category": "infectious",
+      "txgnn_recall": 15.9,
+      "txgnn_n": 69,
+      "gb_recall": 50.0,
+      "gb_n": 3,
+      "diff": -34.1
+    },
+    {
+      "category": "other",
+      "txgnn_recall": 14.1,
+      "txgnn_n": 256,
+      "gb_recall": null,
+      "gb_n": null,
+      "diff": null
+    },
+    {
+      "category": "cardiovascular",
+      "txgnn_recall": 12.9,
+      "txgnn_n": 31,
+      "gb_recall": 31.3,
+      "gb_n": 3,
+      "diff": -18.4
+    },
+    {
+      "category": "ophthalmological",
+      "txgnn_recall": 11.8,
+      "txgnn_n": 17,
+      "gb_recall": null,
+      "gb_n": null,
+      "diff": null
+    },
+    {
+      "category": "cancer",
+      "txgnn_recall": 11.7,
+      "txgnn_n": 171,
+      "gb_recall": 0.0,
+      "gb_n": 3,
+      "diff": 11.7
+    },
+    {
+      "category": "hematological",
+      "txgnn_recall": 10.8,
+      "txgnn_n": 37,
+      "gb_recall": null,
+      "gb_n": null,
+      "diff": null
+    },
+    {
+      "category": "gastrointestinal",
+      "txgnn_recall": 8.7,
+      "txgnn_n": 23,
+      "gb_recall": null,
+      "gb_n": null,
+      "diff": null
+    },
+    {
+      "category": "respiratory",
+      "txgnn_recall": 7.3,
+      "txgnn_n": 41,
+      "gb_recall": 16.0,
+      "gb_n": 3,
+      "diff": -8.7
+    },
+    {
+      "category": "renal",
+      "txgnn_recall": 7.1,
+      "txgnn_n": 14,
+      "gb_recall": null,
+      "gb_n": null,
+      "diff": null
+    }
+  ],
+  "routing_recommendations": {
+    "use_txgnn": [
+      "dermatological",
+      "autoimmune",
+      "metabolic",
+      "neurological",
+      "musculoskeletal",
+      "cancer"
+    ],
+    "use_gb": [
+      "infectious",
+      "cardiovascular",
+      "respiratory"
+    ],
+    "either_model": []
+  },
+  "txgnn_best_categories": [
+    "psychiatric",
+    "dermatological",
+    "autoimmune",
+    "metabolic"
+  ],
+  "txgnn_worst_categories": [
+    "gastrointestinal",
+    "respiratory",
+    "renal"
+  ],
+  "disease_categorizations": {
+    "al amyloidosis": [
+      "metabolic"
+    ],
+    "acute otitis media": [
+      "other"
+    ],
+    "addison disease": [
+      "autoimmune"
+    ],
+    "alzheimer disease": [
+      "neurological"
+    ],
+    "angiomyolipoma": [
+      "other"
+    ],
+    "bardet-biedl syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "behcet disease": [
+      "autoimmune"
+    ],
+    "bone fracture": [
+      "musculoskeletal"
+    ],
+    "bruton-type agammaglobulinemia": [
+      "genetic_rare"
+    ],
+    "burkitt lymphoma": [
+      "cancer"
+    ],
+    "c1 inhibitor deficiency": [
+      "genetic_rare"
+    ],
+    "cinca syndrome": [
+      "genetic_rare"
+    ],
+    "copd, severe early onset": [
+      "respiratory"
+    ],
+    "covid-19": [
+      "infectious"
+    ],
+    "castleman disease": [
+      "other"
+    ],
+    "chagas disease": [
+      "infectious"
+    ],
+    "clostridium infectious disease": [
+      "infectious"
+    ],
+    "crohn disease": [
+      "autoimmune",
+      "gastrointestinal"
+    ],
+    "cushing syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "diamond-blackfan anemia": [
+      "hematological"
+    ],
+    "duchenne muscular dystrophy": [
+      "neurological"
+    ],
+    "ebola hemorrhagic fever": [
+      "infectious",
+      "hematological"
+    ],
+    "ehlers-danlos syndrome": [
+      "genetic_rare"
+    ],
+    "eisenmenger syndrome": [
+      "cardiovascular",
+      "genetic_rare"
+    ],
+    "ewing sarcoma": [
+      "cancer"
+    ],
+    "fabry disease": [
+      "metabolic"
+    ],
+    "gaucher disease": [
+      "metabolic"
+    ],
+    "gorham-stout disease": [
+      "genetic_rare"
+    ],
+    "graves disease": [
+      "autoimmune"
+    ],
+    "guillain-barre syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "hashimoto thyroiditis": [
+      "autoimmune",
+      "metabolic"
+    ],
+    "heart failure": [
+      "cardiovascular"
+    ],
+    "helicobacter pylori infection, susceptibility to": [
+      "infectious",
+      "gastrointestinal"
+    ],
+    "her2-receptor negative breast cancer": [
+      "cancer"
+    ],
+    "huntington disease": [
+      "neurological"
+    ],
+    "hurler syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "hurler-scheie syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "japanese encephalitis": [
+      "neurological",
+      "infectious"
+    ],
+    "klebsiella infectious disease": [
+      "infectious"
+    ],
+    "lambert-eaton myasthenic syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "langerhans cell histiocytosis": [
+      "genetic_rare"
+    ],
+    "laron syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "leber hereditary optic neuropathy": [
+      "neurological",
+      "genetic_rare",
+      "ophthalmological"
+    ],
+    "lennox-gastaut syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "lyme disease": [
+      "infectious"
+    ],
+    "melas syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "moraxellaceae infectious disease": [
+      "infectious"
+    ],
+    "muckle-wells syndrome": [
+      "genetic_rare"
+    ],
+    "noonan syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "osteosarcoma": [
+      "cancer"
+    ],
+    "parkinson disease": [
+      "neurological"
+    ],
+    "prader-willi syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "pseudomonas aeruginosa infectious disease": [
+      "infectious"
+    ],
+    "pseudomonas infection": [
+      "infectious"
+    ],
+    "pulmonary arterial hypertension associated with congenital heart disease": [
+      "cardiovascular",
+      "respiratory",
+      "genetic_rare"
+    ],
+    "q fever": [
+      "infectious"
+    ],
+    "rickettsiosis": [
+      "other"
+    ],
+    "shox-related short stature": [
+      "genetic_rare"
+    ],
+    "scheie syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "sezary syndrome": [
+      "genetic_rare"
+    ],
+    "stevens-johnson syndrome": [
+      "genetic_rare",
+      "dermatological"
+    ],
+    "tsh producing pituitary tumor": [
+      "cancer"
+    ],
+    "takayasu arteritis": [
+      "autoimmune",
+      "cardiovascular"
+    ],
+    "tourette syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "trichomonas vaginitis urogenital infection": [
+      "infectious"
+    ],
+    "waldenstrom macroglobulinemia": [
+      "other"
+    ],
+    "west syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "wilms tumor": [
+      "cancer"
+    ],
+    "wilson disease": [
+      "metabolic"
+    ],
+    "zollinger-ellison syndrome": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "zygomycosis": [
+      "infectious"
+    ],
+    "achondroplasia": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "acquired aplastic anemia": [
+      "hematological"
+    ],
+    "acquired hemophilia": [
+      "hematological"
+    ],
+    "acquired immunodeficiency": [
+      "other"
+    ],
+    "acquired polycythemia vera": [
+      "hematological"
+    ],
+    "acquired thrombocytopenia": [
+      "hematological"
+    ],
+    "acromegaly": [
+      "other"
+    ],
+    "actinomycosis": [
+      "infectious"
+    ],
+    "acute erythroid leukemia": [
+      "cancer",
+      "hematological"
+    ],
+    "acute intermittent porphyria": [
+      "metabolic"
+    ],
+    "acute kidney failure": [
+      "renal"
+    ],
+    "acute liver failure": [
+      "gastrointestinal"
+    ],
+    "acute lymphoblastic leukemia": [
+      "cancer"
+    ],
+    "acute megakaryoblastic leukemia": [
+      "cancer"
+    ],
+    "acute promyelocytic leukemia": [
+      "cancer"
+    ],
+    "adenocarcinoma": [
+      "cancer"
+    ],
+    "adrenal cortex carcinoma": [
+      "cancer",
+      "renal"
+    ],
+    "adrenocortical insufficiency": [
+      "other"
+    ],
+    "adrenogenital syndrome": [
+      "genetic_rare"
+    ],
+    "adult brainstem glioma": [
+      "neurological",
+      "cancer"
+    ],
+    "adult-onset still disease": [
+      "autoimmune"
+    ],
+    "agammaglobulinemia": [
+      "genetic_rare"
+    ],
+    "aggressive b-cell non-hodgkin lymphoma": [
+      "cancer"
+    ],
+    "aggressive systemic mastocytosis": [
+      "hematological"
+    ],
+    "agoraphobia": [
+      "psychiatric"
+    ],
+    "agranulocytosis": [
+      "hematological"
+    ],
+    "alcohol withdrawal": [
+      "psychiatric"
+    ],
+    "aldosterone-producing adrenal cortex adenoma": [
+      "renal"
+    ],
+    "alkaptonuria": [
+      "other"
+    ],
+    "allergic asthma": [
+      "respiratory"
+    ],
+    "allergic bronchopulmonary aspergillosis": [
+      "infectious",
+      "respiratory"
+    ],
+    "allergic respiratory disease": [
+      "respiratory"
+    ],
+    "alopecia areata": [
+      "dermatological"
+    ],
+    "alpha 1-antitrypsin deficiency": [
+      "other"
+    ],
+    "amebiasis": [
+      "other"
+    ],
+    "amyotrophic lateral sclerosis": [
+      "neurological"
+    ],
+    "anaerobic bacteria infectious disease": [
+      "infectious"
+    ],
+    "anaphylaxis": [
+      "other"
+    ],
+    "anaplastic large cell lymphoma": [
+      "cancer",
+      "hematological"
+    ],
+    "anemia, hypochromic microcytic with iron overload": [
+      "hematological"
+    ],
+    "angioedema": [
+      "other"
+    ],
+    "anterior segment dysgenesis": [
+      "other"
+    ],
+    "anxiety disorder": [
+      "psychiatric"
+    ],
+    "aorta coarctation": [
+      "other"
+    ],
+    "aplastic anemia": [
+      "hematological"
+    ],
+    "aregenerative anemia": [
+      "hematological"
+    ],
+    "argininosuccinic aciduria": [
+      "other"
+    ],
+    "arteriovenous hemangioma/malformation": [
+      "cardiovascular"
+    ],
+    "aspergillosis": [
+      "infectious"
+    ],
+    "asthma": [
+      "respiratory"
+    ],
+    "atherosclerosis": [
+      "other"
+    ],
+    "atopic conjunctivitis": [
+      "ophthalmological"
+    ],
+    "atopic eczema": [
+      "dermatological"
+    ],
+    "atrial tachycardia": [
+      "other"
+    ],
+    "attention deficit-hyperactivity disorder": [
+      "other"
+    ],
+    "atypical hemolytic-uremic syndrome": [
+      "genetic_rare"
+    ],
+    "autoimmune hemolytic anemia": [
+      "autoimmune",
+      "hematological"
+    ],
+    "autoimmune hepatitis": [
+      "autoimmune",
+      "infectious"
+    ],
+    "autoimmune pulmonary alveolar proteinosis": [
+      "autoimmune",
+      "respiratory"
+    ],
+    "autonomic neuropathy": [
+      "neurological"
+    ],
+    "autosomal dominant familial periodic fever": [
+      "infectious"
+    ],
+    "autosomal erythropoietic protoporphyria": [
+      "metabolic"
+    ],
+    "bacterial meningitis": [
+      "neurological",
+      "infectious"
+    ],
+    "bacterial pneumonia": [
+      "infectious",
+      "respiratory"
+    ],
+    "bartonellosis": [
+      "other"
+    ],
+    "basal cell carcinoma": [
+      "cancer"
+    ],
+    "beta thalassemia": [
+      "hematological"
+    ],
+    "biliary tract cancer": [
+      "cancer"
+    ],
+    "bipolar disorder": [
+      "psychiatric"
+    ],
+    "bladder transitional cell carcinoma": [
+      "cancer"
+    ],
+    "blepharitis": [
+      "other"
+    ],
+    "blepharoconjunctivitis": [
+      "ophthalmological"
+    ],
+    "blood coagulation disease": [
+      "hematological"
+    ],
+    "bone paget disease": [
+      "musculoskeletal"
+    ],
+    "bone cancer": [
+      "cancer",
+      "musculoskeletal"
+    ],
+    "bone giant cell tumor": [
+      "cancer",
+      "musculoskeletal"
+    ],
+    "bone sarcoma": [
+      "cancer",
+      "musculoskeletal"
+    ],
+    "bowel dysfunction": [
+      "gastrointestinal"
+    ],
+    "brain aneurysm": [
+      "neurological",
+      "cardiovascular"
+    ],
+    "brain cancer": [
+      "neurological",
+      "cancer"
+    ],
+    "brain ischemia": [
+      "neurological"
+    ],
+    "brain neoplasm": [
+      "neurological",
+      "cancer"
+    ],
+    "brain stem glioma": [
+      "neurological",
+      "cancer"
+    ],
+    "breast adenocarcinoma": [
+      "cancer"
+    ],
+    "breast cancer": [
+      "cancer"
+    ],
+    "breast carcinoma": [
+      "cancer"
+    ],
+    "breast fibrocystic disease": [
+      "other"
+    ],
+    "bronchiectasis": [
+      "respiratory"
+    ],
+    "bronchitis": [
+      "respiratory"
+    ],
+    "bronchogenic carcinoma": [
+      "cancer"
+    ],
+    "bronchopulmonary dysplasia": [
+      "respiratory"
+    ],
+    "brucellosis": [
+      "other"
+    ],
+    "bulimia nervosa": [
+      "psychiatric"
+    ],
+    "burkholderia infectious disease": [
+      "infectious"
+    ],
+    "bursitis": [
+      "musculoskeletal"
+    ],
+    "cancer": [
+      "cancer"
+    ],
+    "candidiasis": [
+      "other"
+    ],
+    "candidiasis, invasive": [
+      "other"
+    ],
+    "cap myopathy": [
+      "musculoskeletal"
+    ],
+    "capillary infantile hemangioma": [
+      "other"
+    ],
+    "carbamoyl phosphate synthetase i deficiency disease": [
+      "other"
+    ],
+    "carbon monoxide-induced parkinsonism": [
+      "neurological"
+    ],
+    "carcinoid syndrome": [
+      "genetic_rare"
+    ],
+    "carcinoma": [
+      "cancer"
+    ],
+    "carcinoma of esophagus": [
+      "cancer"
+    ],
+    "cardiomyopathy": [
+      "cardiovascular",
+      "musculoskeletal"
+    ],
+    "carnitine-acylcarnitine translocase deficiency": [
+      "other"
+    ],
+    "cataract": [
+      "ophthalmological"
+    ],
+    "catecholaminergic polymorphic ventricular tachycardia": [
+      "other"
+    ],
+    "celiac disease": [
+      "autoimmune",
+      "gastrointestinal"
+    ],
+    "central diabetes insipidus": [
+      "metabolic"
+    ],
+    "central nervous system infectious disorder": [
+      "infectious"
+    ],
+    "cerebral infarction": [
+      "neurological",
+      "cardiovascular"
+    ],
+    "cerebral palsy": [
+      "neurological"
+    ],
+    "cerebrovascular disorder": [
+      "cardiovascular"
+    ],
+    "cervical cancer": [
+      "cancer"
+    ],
+    "cervical carcinoma": [
+      "cancer"
+    ],
+    "cervical squamous cell carcinoma": [
+      "cancer"
+    ],
+    "cheek mucosa cancer": [
+      "cancer"
+    ],
+    "chlamydia infectious disease": [
+      "infectious"
+    ],
+    "chlamydiaceae infections": [
+      "infectious"
+    ],
+    "cholangiocarcinoma": [
+      "cancer"
+    ],
+    "cholecystitis": [
+      "other"
+    ],
+    "cholera": [
+      "infectious"
+    ],
+    "cholestasis": [
+      "other"
+    ],
+    "choriocarcinoma of testis": [
+      "cancer"
+    ],
+    "choroiditis": [
+      "other"
+    ],
+    "chromomycosis": [
+      "other"
+    ],
+    "chronic diarrheal disease": [
+      "other"
+    ],
+    "chronic granulomatous disease": [
+      "other"
+    ],
+    "chronic kidney disease": [
+      "renal"
+    ],
+    "chronic lymphocytic leukemia/small lymphocytic lymphoma": [
+      "cancer"
+    ],
+    "chronic mucocutaneous candidiasis": [
+      "other"
+    ],
+    "chronic myelogenous leukemia, bcr-abl1 positive": [
+      "cancer"
+    ],
+    "chronic obstructive pulmonary disease": [
+      "respiratory"
+    ],
+    "chronic pain syndrome": [
+      "genetic_rare"
+    ],
+    "chronic rhinosinusitis": [
+      "other"
+    ],
+    "chronic thromboembolic pulmonary hypertension": [
+      "cardiovascular",
+      "respiratory"
+    ],
+    "chylous ascites": [
+      "other"
+    ],
+    "cluster headache syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "coagulation protein disease": [
+      "hematological"
+    ],
+    "coccidioidomycosis": [
+      "other"
+    ],
+    "colon carcinoma": [
+      "cancer"
+    ],
+    "colorectal cancer": [
+      "cancer"
+    ],
+    "colorectal carcinoma": [
+      "cancer"
+    ],
+    "common variable immunodeficiency": [
+      "other"
+    ],
+    "congenital adrenal hyperplasia": [
+      "genetic_rare",
+      "renal"
+    ],
+    "congenital agammaglobulinemia": [
+      "genetic_rare"
+    ],
+    "congenital factor vii deficiency": [
+      "genetic_rare"
+    ],
+    "congenital factor xiii deficiency": [
+      "genetic_rare"
+    ],
+    "congenital generalized lipodystrophy": [
+      "genetic_rare"
+    ],
+    "congenital heart disease": [
+      "cardiovascular",
+      "genetic_rare"
+    ],
+    "congenital hypogonadotropic hypogonadism": [
+      "genetic_rare"
+    ],
+    "congenital hypothyroidism": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "congenital isolated hyperinsulinism": [
+      "genetic_rare"
+    ],
+    "congenital sucrase-isomaltase deficiency": [
+      "genetic_rare"
+    ],
+    "congenital toxoplasmosis": [
+      "genetic_rare"
+    ],
+    "congestive heart failure": [
+      "cardiovascular"
+    ],
+    "conjunctivitis": [
+      "ophthalmological"
+    ],
+    "constitutional neutropenia": [
+      "hematological"
+    ],
+    "contact dermatitis": [
+      "dermatological"
+    ],
+    "corneal ulcer": [
+      "gastrointestinal"
+    ],
+    "coronary atherosclerosis": [
+      "cardiovascular"
+    ],
+    "coronary vasospasm": [
+      "cardiovascular"
+    ],
+    "cortical dysplasia-focal epilepsy syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "corticosteroid-sensitive aseptic abscess syndrome": [
+      "infectious",
+      "genetic_rare"
+    ],
+    "craniopharyngioma": [
+      "other"
+    ],
+    "cryohydrocytosis": [
+      "other"
+    ],
+    "cryopyrin-associated periodic syndrome": [
+      "genetic_rare"
+    ],
+    "cryptococcosis": [
+      "infectious"
+    ],
+    "cryptogenic organizing pneumonia": [
+      "infectious",
+      "respiratory"
+    ],
+    "cutaneous candidiasis": [
+      "other"
+    ],
+    "cutaneous neuroendocrine carcinoma": [
+      "cancer"
+    ],
+    "cyclic hematopoiesis": [
+      "other"
+    ],
+    "cystic echinococcosis": [
+      "other"
+    ],
+    "cystic fibrosis": [
+      "respiratory",
+      "genetic_rare"
+    ],
+    "cystinosis": [
+      "other"
+    ],
+    "cystinuria": [
+      "other"
+    ],
+    "cystitis": [
+      "other"
+    ],
+    "cytomegalovirus infection": [
+      "infectious"
+    ],
+    "dacryocystitis": [
+      "other"
+    ],
+    "demyelinating disease": [
+      "other"
+    ],
+    "dental caries": [
+      "other"
+    ],
+    "dermatitis": [
+      "dermatological"
+    ],
+    "dermatitis herpetiformis": [
+      "dermatological"
+    ],
+    "dermatofibrosarcoma protuberans": [
+      "cancer"
+    ],
+    "dermatomyositis": [
+      "autoimmune"
+    ],
+    "descending colon cancer": [
+      "cancer"
+    ],
+    "diabetes insipidus": [
+      "metabolic"
+    ],
+    "diabetic ketoacidosis": [
+      "other"
+    ],
+    "diabetic neuropathy": [
+      "neurological"
+    ],
+    "diabetic retinopathy": [
+      "other"
+    ],
+    "differentiated thyroid carcinoma": [
+      "cancer",
+      "metabolic"
+    ],
+    "diffuse large b-cell lymphoma": [
+      "cancer"
+    ],
+    "digestive system neoplasm": [
+      "cancer"
+    ],
+    "digestive system neuroendocrine neoplasm": [
+      "cancer"
+    ],
+    "digestive system neuroendocrine tumor, grade 1/2": [
+      "cancer"
+    ],
+    "dilated cardiomyopathy": [
+      "cardiovascular",
+      "musculoskeletal"
+    ],
+    "diphtheria": [
+      "other"
+    ],
+    "disorder of fatty acid oxidation and ketogenesis": [
+      "other"
+    ],
+    "disseminated intravascular coagulation": [
+      "cardiovascular",
+      "hematological"
+    ],
+    "drug dependence": [
+      "other"
+    ],
+    "drug-induced liver injury": [
+      "gastrointestinal"
+    ],
+    "drug-induced methemoglobinemia": [
+      "other"
+    ],
+    "dry eye syndrome": [
+      "genetic_rare",
+      "ophthalmological"
+    ],
+    "ductal breast carcinoma in situ": [
+      "cancer"
+    ],
+    "duodenal obstruction": [
+      "other"
+    ],
+    "dysentery": [
+      "other"
+    ],
+    "ear infection": [
+      "infectious"
+    ],
+    "embryonal carcinoma": [
+      "cancer"
+    ],
+    "empyema": [
+      "other"
+    ],
+    "endocarditis": [
+      "other"
+    ],
+    "endocrine exophthalmos": [
+      "other"
+    ],
+    "endometrial cancer": [
+      "cancer"
+    ],
+    "endometritis": [
+      "other"
+    ],
+    "enthesitis-related juvenile idiopathic arthritis": [
+      "autoimmune"
+    ],
+    "enuresis": [
+      "other"
+    ],
+    "eosinophilic esophagitis": [
+      "other"
+    ],
+    "ependymoma": [
+      "other"
+    ],
+    "epiglottis cancer": [
+      "cancer"
+    ],
+    "epilepsy": [
+      "neurological"
+    ],
+    "erythropoietic protoporphyria": [
+      "metabolic"
+    ],
+    "escherichia coli infection": [
+      "infectious"
+    ],
+    "esophageal cancer": [
+      "cancer",
+      "gastrointestinal"
+    ],
+    "esophageal squamous cell carcinoma": [
+      "cancer",
+      "gastrointestinal"
+    ],
+    "ethylene glycol poisoning": [
+      "other"
+    ],
+    "exercise-induced anaphylaxis": [
+      "other"
+    ],
+    "exocrine pancreatic carcinoma": [
+      "cancer"
+    ],
+    "exocrine pancreatic insufficiency": [
+      "other"
+    ],
+    "extragonadal germ cell tumor": [
+      "cancer"
+    ],
+    "extrapulmonary tuberculosis": [
+      "infectious",
+      "respiratory"
+    ],
+    "fallopian tube cancer": [
+      "cancer"
+    ],
+    "fallopian tube carcinoma": [
+      "cancer"
+    ],
+    "familial mediterranean fever": [
+      "infectious"
+    ],
+    "familial amyloid neuropathy": [
+      "neurological"
+    ],
+    "familial chylomicronemia syndrome": [
+      "genetic_rare"
+    ],
+    "familial cold autoinflammatory syndrome": [
+      "genetic_rare"
+    ],
+    "familial hypercholesterolemia": [
+      "metabolic"
+    ],
+    "familial hyperlipidemia": [
+      "metabolic"
+    ],
+    "familial isolated hypoparathyroidism due to agenesis of parathyroid gland": [
+      "metabolic"
+    ],
+    "familial lipoprotein lipase deficiency": [
+      "other"
+    ],
+    "familial or sporadic hemiplegic migraine": [
+      "neurological"
+    ],
+    "familial partial lipodystrophy": [
+      "other"
+    ],
+    "female breast carcinoma": [
+      "cancer"
+    ],
+    "female infertility": [
+      "other"
+    ],
+    "fetal cytomegalovirus syndrome": [
+      "genetic_rare"
+    ],
+    "follicular lymphoma": [
+      "cancer"
+    ],
+    "functional gastric disease": [
+      "other"
+    ],
+    "fungal infection of eye": [
+      "infectious",
+      "ophthalmological"
+    ],
+    "fungal meningitis": [
+      "neurological",
+      "infectious"
+    ],
+    "fusariosis": [
+      "other"
+    ],
+    "gastric adenocarcinoma": [
+      "cancer"
+    ],
+    "gastric cancer": [
+      "cancer"
+    ],
+    "gastroenteritis": [
+      "gastrointestinal"
+    ],
+    "germ cell tumor": [
+      "cancer"
+    ],
+    "gestational choriocarcinoma": [
+      "cancer"
+    ],
+    "gestational trophoblastic neoplasm": [
+      "cancer"
+    ],
+    "gingivitis": [
+      "other"
+    ],
+    "glaucoma": [
+      "ophthalmological"
+    ],
+    "glioma": [
+      "neurological",
+      "cancer"
+    ],
+    "glossopharyngeal neuralgia": [
+      "other"
+    ],
+    "glycogen storage disease due to acid maltase deficiency, infantile onset": [
+      "metabolic"
+    ],
+    "gonococcal cervicitis": [
+      "other"
+    ],
+    "gonorrhea": [
+      "other"
+    ],
+    "graft versus host disease": [
+      "other"
+    ],
+    "gram-negative bacterial infections": [
+      "infectious"
+    ],
+    "gram-positive bacterial infections": [
+      "infectious"
+    ],
+    "granuloma inguinale": [
+      "other"
+    ],
+    "granulomatosis with polyangiitis": [
+      "other"
+    ],
+    "haemophilus infectious disease": [
+      "infectious"
+    ],
+    "hairy cell leukemia": [
+      "cancer"
+    ],
+    "head and neck cancer": [
+      "cancer"
+    ],
+    "headache disorder": [
+      "neurological"
+    ],
+    "hemangioendothelioma": [
+      "other"
+    ],
+    "hemangioma": [
+      "other"
+    ],
+    "hematopoietic and lymphoid system neoplasm": [
+      "cancer"
+    ],
+    "hemolytic anemia": [
+      "hematological"
+    ],
+    "hemophagocytic syndrome": [
+      "genetic_rare"
+    ],
+    "hemophilia": [
+      "hematological"
+    ],
+    "hemorrhagic disease": [
+      "hematological"
+    ],
+    "hemorrhoid": [
+      "other"
+    ],
+    "hepatic encephalopathy": [
+      "neurological",
+      "gastrointestinal"
+    ],
+    "hepatic veno-occlusive disease": [
+      "gastrointestinal"
+    ],
+    "hereditary amyloidosis": [
+      "metabolic",
+      "genetic_rare"
+    ],
+    "hereditary angioedema": [
+      "genetic_rare"
+    ],
+    "hereditary breast carcinoma": [
+      "cancer",
+      "genetic_rare"
+    ],
+    "hereditary thrombophilia due to congenital protein c deficiency": [
+      "genetic_rare"
+    ],
+    "heritable pulmonary arterial hypertension": [
+      "cardiovascular",
+      "respiratory"
+    ],
+    "herpes simplex encephalitis": [
+      "neurological",
+      "infectious"
+    ],
+    "herpes simplex virus keratitis": [
+      "ophthalmological"
+    ],
+    "herpes zoster": [
+      "other"
+    ],
+    "hidradenitis": [
+      "other"
+    ],
+    "histiocytic and dendritic cell neoplasm": [
+      "cancer"
+    ],
+    "histoplasmosis": [
+      "other"
+    ],
+    "homozygous familial hypercholesterolemia": [
+      "metabolic"
+    ],
+    "hordeolum": [
+      "other"
+    ],
+    "hydatidiform mole": [
+      "other"
+    ],
+    "hyperaldosteronism": [
+      "other"
+    ],
+    "hyperammonemia due to n-acetylglutamate synthase deficiency": [
+      "other"
+    ],
+    "hyperimmunoglobulinemia d with periodic fever": [
+      "infectious"
+    ],
+    "hyperinsulinemic hypoglycemia": [
+      "other"
+    ],
+    "hyperlipidemia": [
+      "metabolic"
+    ],
+    "hyperlipidemia, familial combined, lpl related": [
+      "metabolic"
+    ],
+    "hyperlipoproteinemia": [
+      "other"
+    ],
+    "hyperopia": [
+      "other"
+    ],
+    "hyperphenylalaninemia due to tetrahydrobiopterin deficiency": [
+      "other"
+    ],
+    "hyperpigmentation of the skin": [
+      "dermatological"
+    ],
+    "hypersensitivity pneumonitis": [
+      "other"
+    ],
+    "hypersensitivity reaction disease": [
+      "other"
+    ],
+    "hypertension": [
+      "cardiovascular"
+    ],
+    "hyperthyroidism": [
+      "metabolic"
+    ],
+    "hypochromic anemia": [
+      "hematological"
+    ],
+    "hypogonadism": [
+      "other"
+    ],
+    "hypogonadotropic hypogonadism": [
+      "other"
+    ],
+    "hypokalemic periodic paralysis": [
+      "other"
+    ],
+    "hypomyelination with brain stem and spinal cord involvement and leg spasticity": [
+      "neurological"
+    ],
+    "hypoparathyroidism": [
+      "metabolic"
+    ],
+    "hypophosphatasia": [
+      "other"
+    ],
+    "hypophosphatemic rickets": [
+      "other"
+    ],
+    "hypothyroidism": [
+      "metabolic"
+    ],
+    "hypothyroidism due to deficient transcription factors involved in pituitary development or function": [
+      "metabolic"
+    ],
+    "iatrogenic or traumatic pituitary deficiency": [
+      "other"
+    ],
+    "ichthyosis vulgaris": [
+      "dermatological"
+    ],
+    "idiopathic hypereosinophilic syndrome": [
+      "genetic_rare"
+    ],
+    "idiopathic hypersomnia": [
+      "other"
+    ],
+    "idiopathic interstitial pneumonia": [
+      "infectious",
+      "respiratory"
+    ],
+    "idiopathic nephrotic syndrome": [
+      "genetic_rare",
+      "renal"
+    ],
+    "idiopathic pulmonary arterial hypertension": [
+      "cardiovascular",
+      "respiratory"
+    ],
+    "impaired renal function disease": [
+      "renal"
+    ],
+    "impetigo": [
+      "other"
+    ],
+    "in situ carcinoma": [
+      "cancer"
+    ],
+    "inborn disorder of bile acid synthesis": [
+      "other"
+    ],
+    "inborn errors of metabolism": [
+      "other"
+    ],
+    "indolent b-cell non-hodgkin lymphoma": [
+      "cancer"
+    ],
+    "indolent systemic mastocytosis": [
+      "hematological"
+    ],
+    "infantile hemangioma of rare localization": [
+      "other"
+    ],
+    "infection due to clostridium perfringens": [
+      "infectious"
+    ],
+    "infective endocarditis": [
+      "other"
+    ],
+    "infective vaginitis": [
+      "other"
+    ],
+    "inflammatory bowel disease": [
+      "autoimmune",
+      "gastrointestinal"
+    ],
+    "inflammatory myofibroblastic tumor": [
+      "cancer"
+    ],
+    "influenza": [
+      "infectious"
+    ],
+    "inhalational anthrax": [
+      "other"
+    ],
+    "intellectual disability": [
+      "other"
+    ],
+    "interstitial cystitis": [
+      "other"
+    ],
+    "interstitial lung disease": [
+      "respiratory"
+    ],
+    "intestinal obstruction": [
+      "gastrointestinal"
+    ],
+    "intracranial thrombosis": [
+      "cardiovascular"
+    ],
+    "invasive breast carcinoma": [
+      "cancer"
+    ],
+    "islet cell adenomatosis": [
+      "other"
+    ],
+    "isolated thyrotropin-releasing hormone deficiency": [
+      "other"
+    ],
+    "isovaleric acidemia": [
+      "other"
+    ],
+    "juvenile idiopathic arthritis": [
+      "autoimmune"
+    ],
+    "keloid": [
+      "other"
+    ],
+    "keratitis": [
+      "ophthalmological"
+    ],
+    "keratoconjunctivitis": [
+      "ophthalmological"
+    ],
+    "keratosis": [
+      "other"
+    ],
+    "keratosis pilaris": [
+      "other"
+    ],
+    "kidney failure": [
+      "renal"
+    ],
+    "kidney papillary necrosis": [
+      "renal"
+    ],
+    "lactic acidosis": [
+      "other"
+    ],
+    "lamellar ichthyosis": [
+      "dermatological"
+    ],
+    "laminopathy": [
+      "other"
+    ],
+    "laryngeal squamous cell carcinoma": [
+      "cancer"
+    ],
+    "laryngitis": [
+      "other"
+    ],
+    "laryngostenosis": [
+      "other"
+    ],
+    "larynx cancer": [
+      "cancer"
+    ],
+    "lead poisoning": [
+      "other"
+    ],
+    "legionellosis": [
+      "other"
+    ],
+    "leiomyosarcoma": [
+      "cancer"
+    ],
+    "leishmaniasis": [
+      "other"
+    ],
+    "leprosy": [
+      "other"
+    ],
+    "leukopenia": [
+      "hematological"
+    ],
+    "lichen planus": [
+      "other"
+    ],
+    "lip cancer": [
+      "cancer"
+    ],
+    "lipodystrophy": [
+      "other"
+    ],
+    "liposarcoma": [
+      "cancer"
+    ],
+    "listeriosis": [
+      "other"
+    ],
+    "liver cancer": [
+      "cancer",
+      "gastrointestinal"
+    ],
+    "liver failure": [
+      "gastrointestinal"
+    ],
+    "low grade glioma": [
+      "neurological",
+      "cancer"
+    ],
+    "lung cancer": [
+      "cancer",
+      "respiratory"
+    ],
+    "lung carcinoma": [
+      "cancer",
+      "respiratory"
+    ],
+    "lung neuroendocrine neoplasm": [
+      "cancer",
+      "respiratory"
+    ],
+    "lupus erythematosus": [
+      "autoimmune"
+    ],
+    "lymphangiectasis": [
+      "other"
+    ],
+    "lymphangioleiomyomatosis": [
+      "other"
+    ],
+    "lymphangioma": [
+      "other"
+    ],
+    "lymphedema": [
+      "other"
+    ],
+    "lymphoma": [
+      "cancer"
+    ],
+    "lymphoplasmacytic lymphoma": [
+      "cancer"
+    ],
+    "lymphoproliferative syndrome": [
+      "genetic_rare"
+    ],
+    "lysosomal acid lipase deficiency": [
+      "metabolic"
+    ],
+    "major depressive disorder": [
+      "other"
+    ],
+    "malabsorption syndrome": [
+      "genetic_rare"
+    ],
+    "malaria": [
+      "infectious"
+    ],
+    "malaria, susceptibility to": [
+      "infectious"
+    ],
+    "malignant epithelial tumor of ovary": [
+      "cancer"
+    ],
+    "malignant glioma": [
+      "neurological",
+      "cancer"
+    ],
+    "malignant hypertension": [
+      "cancer",
+      "cardiovascular"
+    ],
+    "malignant hyperthermia of anesthesia": [
+      "cancer"
+    ],
+    "malignant pancreatic neoplasm": [
+      "cancer"
+    ],
+    "malignant pleural mesothelioma": [
+      "cancer"
+    ],
+    "malignant tumor of nasopharynx": [
+      "cancer"
+    ],
+    "mantle cell lymphoma": [
+      "cancer"
+    ],
+    "marginal zone lymphoma": [
+      "cancer"
+    ],
+    "mast cell leukemia": [
+      "cancer"
+    ],
+    "mediastinal malignant lymphoma": [
+      "cancer"
+    ],
+    "medullary thyroid gland carcinoma": [
+      "cancer",
+      "metabolic"
+    ],
+    "medulloblastoma": [
+      "cancer"
+    ],
+    "melanoma": [
+      "cancer"
+    ],
+    "meningococcal infection": [
+      "infectious"
+    ],
+    "mercury poisoning": [
+      "other"
+    ],
+    "metastatic carcinoma": [
+      "cancer"
+    ],
+    "metastatic melanoma": [
+      "cancer"
+    ],
+    "metastatic neoplasm": [
+      "cancer"
+    ],
+    "methanol poisoning": [
+      "other"
+    ],
+    "methemoglobinemia": [
+      "other"
+    ],
+    "methylmalonic acidemia": [
+      "other"
+    ],
+    "methylmalonic acidemia due to methylmalonyl-coa epimerase deficiency": [
+      "other"
+    ],
+    "mevalonate kinase deficiency": [
+      "other"
+    ],
+    "microcytic anemia with liver iron overload": [
+      "hematological",
+      "gastrointestinal"
+    ],
+    "microscopic polyangiitis": [
+      "other"
+    ],
+    "migraine with aura": [
+      "neurological"
+    ],
+    "mixed testicular germ cell cancer": [
+      "cancer"
+    ],
+    "moderate multiminicore disease with hand involvement": [
+      "other"
+    ],
+    "monocytic leukemia": [
+      "cancer"
+    ],
+    "motion sickness": [
+      "other"
+    ],
+    "mucocutaneous lymph node syndrome": [
+      "genetic_rare"
+    ],
+    "mulibrey nanism": [
+      "other"
+    ],
+    "multifocal motor neuropathy": [
+      "neurological"
+    ],
+    "multinodular goiter": [
+      "other"
+    ],
+    "multiple endocrine neoplasia": [
+      "other"
+    ],
+    "multiple sclerosis": [
+      "neurological"
+    ],
+    "multiple system atrophy": [
+      "other"
+    ],
+    "myasthenia gravis": [
+      "other"
+    ],
+    "mycetoma": [
+      "other"
+    ],
+    "mycobacterial infectious disease": [
+      "infectious"
+    ],
+    "myelodysplastic syndrome with excess blasts": [
+      "hematological",
+      "genetic_rare"
+    ],
+    "myelodysplastic/myeloproliferative neoplasm": [
+      "cancer",
+      "hematological"
+    ],
+    "myeloid leukemia": [
+      "cancer"
+    ],
+    "myeloid/lymphoid neoplasms associated with eosinophilia and abnormality of pdgfra, pdgfrb, fgfr1 or jak2": [
+      "cancer"
+    ],
+    "myocardial ischemia": [
+      "cardiovascular"
+    ],
+    "myopia": [
+      "other"
+    ],
+    "myxedema": [
+      "other"
+    ],
+    "narcolepsy": [
+      "other"
+    ],
+    "narcolepsy-cataplexy syndrome": [
+      "genetic_rare"
+    ],
+    "neonatal diabetes mellitus": [
+      "metabolic"
+    ],
+    "neoplasm of mature b-cells": [
+      "cancer"
+    ],
+    "neoplasm of oropharynx": [
+      "cancer"
+    ],
+    "neoplasm of testis": [
+      "cancer"
+    ],
+    "neovascular glaucoma": [
+      "cardiovascular",
+      "ophthalmological"
+    ],
+    "nephropathic cystinosis": [
+      "other"
+    ],
+    "nephrotic syndrome": [
+      "genetic_rare",
+      "renal"
+    ],
+    "neuralgia": [
+      "other"
+    ],
+    "neuroblastoma": [
+      "neurological",
+      "cancer"
+    ],
+    "neuroendocrine carcinoma": [
+      "cancer"
+    ],
+    "neuroendocrine neoplasm": [
+      "cancer"
+    ],
+    "neuroma": [
+      "other"
+    ],
+    "neuromuscular disease": [
+      "other"
+    ],
+    "neuromyelitis optica": [
+      "neurological"
+    ],
+    "neuronal ceroid lipofuscinosis": [
+      "other"
+    ],
+    "neurotrophic keratopathy": [
+      "other"
+    ],
+    "neutropenia": [
+      "hematological"
+    ],
+    "neutropenia, chronic familial": [
+      "hematological"
+    ],
+    "newborn respiratory distress syndrome": [
+      "respiratory",
+      "genetic_rare"
+    ],
+    "nocardiosis": [
+      "other"
+    ],
+    "non-hodgkin lymphoma": [
+      "cancer"
+    ],
+    "non-acquired pituitary hormone deficiency": [
+      "other"
+    ],
+    "non-small cell squamous lung carcinoma": [
+      "cancer",
+      "respiratory"
+    ],
+    "obesity due to leptin receptor gene deficiency": [
+      "metabolic"
+    ],
+    "obesity due to pro-opiomelanocortin deficiency": [
+      "metabolic"
+    ],
+    "obesity due to prohormone convertase i deficiency": [
+      "metabolic"
+    ],
+    "obstructive lung disease": [
+      "respiratory"
+    ],
+    "obstructive sleep apnea syndrome": [
+      "respiratory",
+      "genetic_rare"
+    ],
+    "ocular cicatricial pemphigoid": [
+      "autoimmune",
+      "ophthalmological"
+    ],
+    "oculo-palato-cerebral syndrome": [
+      "neurological",
+      "genetic_rare"
+    ],
+    "oligospermia": [
+      "other"
+    ],
+    "onchocerciasis": [
+      "other"
+    ],
+    "open-angle glaucoma": [
+      "ophthalmological"
+    ],
+    "opiate dependence": [
+      "other"
+    ],
+    "optic neuritis": [
+      "neurological"
+    ],
+    "ornithine carbamoyltransferase deficiency": [
+      "other"
+    ],
+    "oropharynx cancer": [
+      "cancer"
+    ],
+    "orotic aciduria": [
+      "other"
+    ],
+    "orthostatic hypotension": [
+      "cardiovascular"
+    ],
+    "osteoarthritis": [
+      "autoimmune",
+      "musculoskeletal"
+    ],
+    "osteogenesis imperfecta": [
+      "genetic_rare"
+    ],
+    "osteonecrosis": [
+      "other"
+    ],
+    "osteopetrosis": [
+      "other"
+    ],
+    "osteoporosis": [
+      "musculoskeletal"
+    ],
+    "osteoradionecrosis": [
+      "other"
+    ],
+    "otitis externa": [
+      "other"
+    ],
+    "ovarian adenocarcinoma": [
+      "cancer"
+    ],
+    "ovarian cancer": [
+      "cancer"
+    ],
+    "ovarian carcinoma": [
+      "cancer"
+    ],
+    "ovarian hyperstimulation syndrome": [
+      "genetic_rare"
+    ],
+    "ovarian neoplasm": [
+      "cancer"
+    ],
+    "palmoplantar keratosis": [
+      "other"
+    ],
+    "pancreatic adenocarcinoma": [
+      "cancer"
+    ],
+    "pancreatic neuroendocrine neoplasm": [
+      "cancer"
+    ],
+    "pancreatic neuroendocrine tumor": [
+      "cancer"
+    ],
+    "pancreatitis": [
+      "gastrointestinal"
+    ],
+    "papillary carcinoma": [
+      "cancer"
+    ],
+    "paraganglioma": [
+      "neurological",
+      "cancer"
+    ],
+    "paralysis agitans, juvenile, of hunt": [
+      "other"
+    ],
+    "paranasal sinus cancer": [
+      "cancer"
+    ],
+    "paranasal sinus squamous cell carcinoma": [
+      "cancer"
+    ],
+    "paraplegia": [
+      "other"
+    ],
+    "parkinsonism with dementia of guadeloupe": [
+      "neurological"
+    ],
+    "paroxysmal nocturnal hemoglobinuria": [
+      "other"
+    ],
+    "patent ductus arteriosus": [
+      "other"
+    ],
+    "pelvic inflammatory disease": [
+      "other"
+    ],
+    "pemphigus": [
+      "autoimmune",
+      "dermatological"
+    ],
+    "pemphigus foliaceus": [
+      "autoimmune",
+      "dermatological"
+    ],
+    "pemphigus vulgaris": [
+      "autoimmune",
+      "dermatological"
+    ],
+    "penile cancer": [
+      "cancer"
+    ],
+    "periodontitis, chronic, adult": [
+      "other"
+    ],
+    "peripheral arterial disease": [
+      "cardiovascular"
+    ],
+    "peripheral vascular disease": [
+      "cardiovascular"
+    ],
+    "peritonitis": [
+      "other"
+    ],
+    "pernicious anemia": [
+      "hematological"
+    ],
+    "peroxisomal disease": [
+      "other"
+    ],
+    "pharyngitis": [
+      "other"
+    ],
+    "phenylketonuria": [
+      "metabolic"
+    ],
+    "phobic disorder": [
+      "other"
+    ],
+    "pituitary gland adenoma": [
+      "other"
+    ],
+    "pityriasis rubra pilaris": [
+      "other"
+    ],
+    "plague": [
+      "infectious"
+    ],
+    "plasma cell myeloma": [
+      "cancer"
+    ],
+    "pleural mesothelioma": [
+      "cancer"
+    ],
+    "pleural tuberculosis": [
+      "infectious"
+    ],
+    "pneumococcal infection": [
+      "infectious"
+    ],
+    "pneumocystosis": [
+      "other"
+    ],
+    "pneumonia": [
+      "infectious",
+      "respiratory"
+    ],
+    "pneumonitis": [
+      "other"
+    ],
+    "poisoning": [
+      "other"
+    ],
+    "poliomyelitis": [
+      "other"
+    ],
+    "polyarteritis nodosa": [
+      "cardiovascular"
+    ],
+    "polycystic kidney disease": [
+      "renal"
+    ],
+    "polymorphic ventricular tachycardia": [
+      "other"
+    ],
+    "polymyositis": [
+      "autoimmune"
+    ],
+    "polyneuropathy": [
+      "neurological"
+    ],
+    "postencephalitic parkinson disease": [
+      "neurological"
+    ],
+    "posterior uveitis": [
+      "ophthalmological"
+    ],
+    "precocious puberty": [
+      "other"
+    ],
+    "premature aging syndrome": [
+      "genetic_rare"
+    ],
+    "primary biliary cholangitis": [
+      "gastrointestinal"
+    ],
+    "primary brain neoplasm": [
+      "neurological",
+      "cancer"
+    ],
+    "primary cutaneous t-cell lymphoma": [
+      "cancer"
+    ],
+    "primary ovarian failure": [
+      "other"
+    ],
+    "proctitis": [
+      "other"
+    ],
+    "progeria": [
+      "other"
+    ],
+    "progressive familial intrahepatic cholestasis": [
+      "gastrointestinal"
+    ],
+    "progressive supranuclear palsy": [
+      "neurological"
+    ],
+    "propionic acidemia": [
+      "other"
+    ],
+    "prostate adenocarcinoma": [
+      "cancer"
+    ],
+    "prostate cancer": [
+      "cancer"
+    ],
+    "prostate carcinoma": [
+      "cancer"
+    ],
+    "proteinuria": [
+      "other"
+    ],
+    "prothrombin deficiency": [
+      "other"
+    ],
+    "proximal spinal muscular atrophy": [
+      "neurological"
+    ],
+    "psoriasis": [
+      "autoimmune",
+      "dermatological"
+    ],
+    "psoriasis-related juvenile idiopathic arthritis": [
+      "autoimmune",
+      "dermatological"
+    ],
+    "psoriatic arthritis": [
+      "autoimmune"
+    ],
+    "pulmonary arterial hypertension": [
+      "cardiovascular",
+      "respiratory"
+    ],
+    "pulmonary atresia-intact ventricular septum syndrome": [
+      "respiratory",
+      "genetic_rare"
+    ],
+    "pulmonary fibrosis": [
+      "respiratory"
+    ],
+    "pulmonary hypertension": [
+      "cardiovascular",
+      "respiratory"
+    ],
+    "pulmonary non-tuberculous mycobacterial infection": [
+      "infectious",
+      "respiratory"
+    ],
+    "pulmonary tuberculosis": [
+      "infectious",
+      "respiratory"
+    ],
+    "pure autonomic failure": [
+      "other"
+    ],
+    "pure red-cell aplasia": [
+      "other"
+    ],
+    "purpura fulminans": [
+      "other"
+    ],
+    "pyelitis": [
+      "other"
+    ],
+    "pyelonephritis": [
+      "renal"
+    ],
+    "pyoderma": [
+      "other"
+    ],
+    "pyoderma gangrenosum": [
+      "other"
+    ],
+    "rabies": [
+      "other"
+    ],
+    "radiation proctitis": [
+      "other"
+    ],
+    "recessive x-linked ichthyosis": [
+      "dermatological"
+    ],
+    "rectal cancer": [
+      "cancer"
+    ],
+    "rectum adenocarcinoma": [
+      "cancer"
+    ],
+    "relapsing fever": [
+      "infectious"
+    ],
+    "relapsing polychondritis": [
+      "other"
+    ],
+    "renal carcinoma": [
+      "cancer",
+      "renal"
+    ],
+    "respiratory syncytial virus infectious disease": [
+      "infectious",
+      "respiratory"
+    ],
+    "retinitis": [
+      "other"
+    ],
+    "retinoblastoma": [
+      "cancer"
+    ],
+    "retinopathy of prematurity": [
+      "other"
+    ],
+    "rheumatic fever": [
+      "infectious"
+    ],
+    "rheumatoid arthritis": [
+      "autoimmune"
+    ],
+    "rhinitis": [
+      "other"
+    ],
+    "rosacea": [
+      "dermatological"
+    ],
+    "salivary gland carcinoma": [
+      "cancer"
+    ],
+    "salmonellosis": [
+      "other"
+    ],
+    "sarcoidosis": [
+      "respiratory"
+    ],
+    "scabies": [
+      "other"
+    ],
+    "schistosomiasis": [
+      "other"
+    ],
+    "schizophrenia": [
+      "psychiatric"
+    ],
+    "scurvy": [
+      "other"
+    ],
+    "seborrheic dermatitis": [
+      "dermatological"
+    ],
+    "severe congenital neutropenia": [
+      "hematological",
+      "genetic_rare"
+    ],
+    "severe intellectual disability-short stature-behavioral abnormalities-facial dysmorphism syndrome": [
+      "genetic_rare"
+    ],
+    "sexually transmitted disease": [
+      "other"
+    ],
+    "shigellosis": [
+      "other"
+    ],
+    "short bowel syndrome": [
+      "genetic_rare",
+      "gastrointestinal"
+    ],
+    "silicosis": [
+      "other"
+    ],
+    "sinusitis": [
+      "other"
+    ],
+    "sitosterolemia": [
+      "other"
+    ],
+    "skeletal tuberculosis": [
+      "infectious"
+    ],
+    "skin cancer": [
+      "cancer",
+      "dermatological"
+    ],
+    "skin infection": [
+      "infectious",
+      "dermatological"
+    ],
+    "small cell lung carcinoma": [
+      "cancer",
+      "respiratory"
+    ],
+    "small intestine cancer": [
+      "cancer"
+    ],
+    "smallpox": [
+      "other"
+    ],
+    "soft tissue neoplasm": [
+      "cancer"
+    ],
+    "soft tissue sarcoma": [
+      "cancer"
+    ],
+    "spina bifida": [
+      "other"
+    ],
+    "spinal muscular atrophy": [
+      "neurological"
+    ],
+    "sporotrichosis": [
+      "other"
+    ],
+    "squamous cell carcinoma": [
+      "cancer"
+    ],
+    "squamous cell carcinoma of penis": [
+      "cancer"
+    ],
+    "squamous cell lung carcinoma": [
+      "cancer",
+      "respiratory"
+    ],
+    "staphylococcal infection": [
+      "infectious"
+    ],
+    "staphylococcal pneumonia": [
+      "infectious",
+      "respiratory"
+    ],
+    "staphylococcus aureus infection": [
+      "infectious"
+    ],
+    "steroid-resistant nephrotic syndrome": [
+      "genetic_rare",
+      "renal"
+    ],
+    "stiff-person syndrome": [
+      "genetic_rare"
+    ],
+    "stomach carcinoma in situ": [
+      "cancer",
+      "gastrointestinal"
+    ],
+    "stomatitis": [
+      "other"
+    ],
+    "streptococcal infection": [
+      "infectious"
+    ],
+    "stroke disorder": [
+      "cardiovascular"
+    ],
+    "substance withdrawal syndrome": [
+      "genetic_rare",
+      "psychiatric"
+    ],
+    "syndromic dyslipidemia": [
+      "other"
+    ],
+    "syphilis": [
+      "other"
+    ],
+    "systemic mastocytosis": [
+      "hematological"
+    ],
+    "systemic mycosis": [
+      "other"
+    ],
+    "systemic primary carnitine deficiency disease": [
+      "other"
+    ],
+    "systemic sclerosis": [
+      "other"
+    ],
+    "telangiectasis": [
+      "other"
+    ],
+    "temporal arteritis": [
+      "cardiovascular"
+    ],
+    "temporal lobe epilepsy": [
+      "neurological"
+    ],
+    "tendinitis": [
+      "musculoskeletal"
+    ],
+    "tenosynovial giant cell tumor": [
+      "cancer"
+    ],
+    "tenosynovitis": [
+      "other"
+    ],
+    "testicular cancer": [
+      "cancer"
+    ],
+    "testicular embryonal carcinoma": [
+      "cancer"
+    ],
+    "testicular germ cell tumor": [
+      "cancer"
+    ],
+    "tetanus": [
+      "other"
+    ],
+    "tetralogy of fallot": [
+      "other"
+    ],
+    "thalassemia": [
+      "hematological"
+    ],
+    "thrombocytopenia": [
+      "hematological"
+    ],
+    "thrombophilia": [
+      "other"
+    ],
+    "thrombotic thrombocytopenic purpura": [
+      "other"
+    ],
+    "thymus neoplasm": [
+      "cancer"
+    ],
+    "thyroid cancer": [
+      "cancer",
+      "metabolic"
+    ],
+    "thyroid gland carcinoma": [
+      "cancer",
+      "metabolic"
+    ],
+    "thyroid gland undifferentiated (anaplastic) carcinoma": [
+      "cancer",
+      "metabolic",
+      "hematological"
+    ],
+    "thyrotoxicosis": [
+      "other"
+    ],
+    "tick-borne infectious disease": [
+      "infectious"
+    ],
+    "tinea corporis": [
+      "other"
+    ],
+    "tongue cancer": [
+      "cancer"
+    ],
+    "tonsil cancer": [
+      "cancer"
+    ],
+    "tonsillitis": [
+      "other"
+    ],
+    "torsades de pointes": [
+      "other"
+    ],
+    "toxemia of pregnancy": [
+      "other"
+    ],
+    "toxic epidermal necrolysis": [
+      "other"
+    ],
+    "toxoplasmosis": [
+      "other"
+    ],
+    "tracheobronchitis": [
+      "respiratory"
+    ],
+    "transient erythroblastopenia of childhood": [
+      "other"
+    ],
+    "transitional cell carcinoma": [
+      "cancer"
+    ],
+    "transposition of the great arteries": [
+      "other"
+    ],
+    "trichinellosis": [
+      "other"
+    ],
+    "trichomoniasis": [
+      "other"
+    ],
+    "trigeminal neuralgia": [
+      "other"
+    ],
+    "triple-negative breast carcinoma": [
+      "cancer"
+    ],
+    "tuberculosis": [
+      "infectious"
+    ],
+    "tuberous sclerosis": [
+      "other"
+    ],
+    "tularemia": [
+      "other"
+    ],
+    "type 1 diabetes mellitus": [
+      "metabolic"
+    ],
+    "type 2 diabetes mellitus": [
+      "metabolic"
+    ],
+    "typhoid fever": [
+      "infectious"
+    ],
+    "typhus": [
+      "other"
+    ],
+    "ulcer disease": [
+      "gastrointestinal"
+    ],
+    "urea cycle disorder": [
+      "other"
+    ],
+    "uremia": [
+      "other"
+    ],
+    "urinary bladder cancer": [
+      "cancer"
+    ],
+    "urinary bladder, atony of": [
+      "other"
+    ],
+    "urinary tract obstruction": [
+      "other"
+    ],
+    "urolithiasis, uric acid, autosomal dominant": [
+      "other"
+    ],
+    "urothelial carcinoma": [
+      "cancer"
+    ],
+    "urticaria": [
+      "dermatological"
+    ],
+    "uterine cancer": [
+      "cancer"
+    ],
+    "uterine corpus cancer": [
+      "cancer"
+    ],
+    "uveitis": [
+      "ophthalmological"
+    ],
+    "varicella zoster infection": [
+      "infectious"
+    ],
+    "vasculitis": [
+      "autoimmune"
+    ],
+    "ventricular tachycardia": [
+      "other"
+    ],
+    "vernal keratoconjunctivitis": [
+      "ophthalmological"
+    ],
+    "vesicoureteral reflux": [
+      "other"
+    ],
+    "viral respiratory tract infection": [
+      "infectious",
+      "respiratory"
+    ],
+    "vitamin b12 deficiency": [
+      "other"
+    ],
+    "von willebrand disease (hereditary or acquired)": [
+      "hematological",
+      "genetic_rare"
+    ],
+    "vulva cancer": [
+      "cancer"
+    ],
+    "vulvar squamous cell carcinoma": [
+      "cancer"
+    ],
+    "vulvovaginitis": [
+      "other"
+    ],
+    "yaws": [
+      "other"
+    ]
+  }
+}

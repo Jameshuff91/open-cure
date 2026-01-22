@@ -76,43 +76,147 @@ TxGNN groups multiple MONDO IDs: `"13924_12592_14672_..."`. Some diseases map to
 - RA: 84.6% of GT drugs present (55/65)
 - Drugs ARE there, model just doesn't rank them highly
 
-## Future Exploration Opportunities
+## Exploration Experiments (2026-01-21)
 
-### 1. Ensemble TxGNN + GB Model
-**Hypothesis:** Models may have complementary strengths
-- TxGNN: Good at neurological diseases
-- GB: May be better at autoimmune conditions
-- **Action:** Create weighted ensemble, optimize weights per disease category
+### Experiment 1: Disease Category Analysis ✅
+**Status:** COMPLETED
+**Result:** Strong category-specific patterns found
 
-### 2. Fine-tune TxGNN on Every Cure Data
-**Hypothesis:** Adding our GT as training signal could align predictions with clinical practice
-- Add indication edges for known drug-disease pairs
-- Use Every Cure labels for supervised fine-tuning
-- **Risk:** Overfitting to small GT dataset
+| Category | TxGNN R@30 | Assessment |
+|----------|------------|------------|
+| Metabolic/Storage | **66.7%** | Excellent |
+| Psychiatric | 28.6% | Good |
+| Dermatological | 25.0% | Good |
+| Autoimmune | 22.2% | Good |
+| Metabolic | 21.7% | Good |
+| Neurological | 15.5% | Average |
+| Cancer | 15.0% | Average |
+| Gastrointestinal | 8.7% | Poor |
+| Respiratory | 7.3% | Poor |
+| Renal | 7.1% | Poor |
 
-### 3. Use TxGNN Scores as GB Features
-**Hypothesis:** TxGNN captures KG structure info that GB doesn't
-- Extract per-drug TxGNN scores for each disease
-- Add as features to GB model
-- **Benefit:** Leverages both approaches without full ensemble complexity
+**GB Model Strengths:** Infectious (50%), Cardiovascular (72% for atrial fib)
 
-### 4. Analyze Disease Categories
-**Hypothesis:** TxGNN may systematically succeed/fail on certain disease types
-- Group diseases by category (neurological, autoimmune, cancer, etc.)
-- Compute per-category Recall@30
-- **Action:** Route predictions to best model per category
+**Routing Recommendation:**
+- Use TxGNN for: Metabolic, dermatological, autoimmune
+- Use GB for: Infectious, cardiovascular, respiratory
 
-### 5. Train Custom GNN on Aligned Data
-**Hypothesis:** Ontology mismatch hurts performance
-- Build custom KG from Every Cure + DrugBank + MONDO
-- Train GNN with aligned drug-disease identifiers
-- **Risk:** Significant engineering effort
+### Experiment 2: Alzheimer's Success Patterns ✅
+**Status:** COMPLETED
+**Result:** Drug class determines success
 
-### 6. Investigate Why Alzheimer's Works
-**Hypothesis:** Understanding successes could improve failures
-- What makes Alzheimer's drugs rank highly?
-- Are there specific KG patterns TxGNN captures?
-- Can we identify similar patterns for other diseases?
+**What Works Well:**
+- Tetracyclines (doxycycline, minocycline): 17 good rankings
+- Enzyme replacements (laronidase): Rank #3
+- Cholinesterase inhibitors (rivastigmine, donepezil): Rank ~35
+
+**What Fails:**
+- Biologics (-mab, -cept drugs): Consistently poor
+- Monoclonal antibodies: TxGNN can't model them well
+
+**Actionable Pattern:** More GT drugs → better performance
+- Excellent performers: avg 7.5 GT drugs
+- Poor performers: avg 2.9 GT drugs
+
+### Experiment 3: Simple Ensemble ✅
+**Status:** COMPLETED
+**Result:** "Best Rank" ensemble beats both models
+
+| Strategy | R@30 | vs GB alone |
+|----------|------|-------------|
+| GB only | 14.6% | baseline |
+| TxGNN only | 2.1% | -12.5% |
+| Average | 0.0% | -14.6% |
+| Weighted | 0-2.1% | worse |
+| **Best Rank** | **16.7%** | **+2.1%** |
+| **RRF** | **16.7%** | **+2.1%** |
+
+**Why Average Failed:** TxGNN ranks in thousands drag down combined scores.
+**Why Best Rank Works:** Takes minimum rank, capturing each model's strengths.
+
+**Unique Contributions:**
+- TxGNN found: dantrolene for MS (rank 1 vs GB rank 219)
+- GB found: lisinopril, pergolide, pramipexole, insulin human
+
+### Experiment 4: TxGNN as GB Features ✅
+**Status:** COMPLETED
+**Result:** FAILED - ontology mismatch too severe
+
+| Model | R@30 | Change |
+|-------|------|--------|
+| GB Enhanced | 13.2% | baseline |
+| GB + TxGNN Features | 4.6% | **-64.9%** |
+
+**Why It Failed:**
+- Only 0.4% of training pairs had TxGNN coverage
+- TxGNN predicts experimental compounds, not approved drugs
+- Feature importance: TxGNN contributed only 0.016%
+
+**Conclusion:** Don't use TxGNN scores as features - ontology gap too large.
+
+## Experiment Summary
+
+| Experiment | Hypothesis | Result | Actionable? |
+|------------|------------|--------|-------------|
+| Disease Categories | Route by type | ✅ Strong patterns | YES |
+| Alzheimer's Patterns | Drug class matters | ✅ Confirmed | YES |
+| Simple Ensemble | Best rank wins | ✅ 16.7% R@30 | YES |
+| TxGNN as Features | Add to GB | ❌ Failed | NO |
+| Category Routing | Route by category | ⚠️ No improvement | LIMITED |
+
+### Experiment 5: Category-Based Routing Ensemble ✅
+**Status:** COMPLETED
+**Result:** No improvement over best_rank due to limited MESH coverage
+
+| Model | Hits@30 | Total | Recall@30 |
+|-------|---------|-------|-----------|
+| TxGNN only | 101 | 1501 | 6.7% |
+| GB only | 7 | 48 | 14.6% |
+| Best Rank | 108 | 1501 | 7.2% |
+| Category Routing | 104 | 1501 | 6.9% |
+
+**Why It Didn't Help:**
+- 85% of drugs (1276/1501) fell back to best_rank
+- Only 21 diseases have MESH mappings for GB model
+- Can't leverage GB's strengths without broader disease coverage
+
+**Bright Spot - Storage Diseases: 83.3% Recall@30!**
+- Fabry: migalastat rank 26, agalsidase beta rank 2970
+- Gaucher: velaglucerase alfa rank 8, imiglucerase rank 13
+- Hurler/Scheie: laronidase rank 3-6
+- Laron: mecasermin rank 22
+
+**Why Storage Diseases Work:**
+1. Enzyme replacement therapies have clear mechanisms
+2. TxGNN's KG captures enzyme-drug relationships well
+3. Small drug space (fewer competitors for top ranks)
+4. Strong literature signal in knowledge graph
+
+## Next Steps (Prioritized)
+
+### 1. Expand MESH Mappings (LOCAL - NEXT)
+**Priority:** HIGH
+**Effort:** Medium
+Map more TxGNN diseases to MESH IDs using disease ontology crosswalks.
+**Goal:** Enable GB model on 100+ diseases instead of 21
+
+### 2. Fine-tune TxGNN on Every Cure (GPU NEEDED)
+**Priority:** MEDIUM
+**Effort:** Medium
+Add Every Cure indication edges to TxGNN training.
+**Risk:** Overfitting to small dataset
+
+### 3. Confidence-Based Model Selection (LOCAL)
+**Priority:** MEDIUM
+**Effort:** Medium
+Train a meta-model to predict which model will perform better for each disease.
+Features: disease category, drug count, literature mentions
+
+### 4. Train Custom GNN (GPU NEEDED)
+**Priority:** LOW
+**Effort:** HIGH
+Build aligned KG from scratch.
+**Skip for now:** Too much work for uncertain gain
 
 ## Data Artifacts
 

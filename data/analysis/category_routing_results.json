@@ -1,0 +1,94 @@
+{
+  "results": {
+    "txgnn_only": {
+      "hits": 101,
+      "total": 1501,
+      "recall": 0.06728847435043304
+    },
+    "gb_only": {
+      "hits": 7,
+      "total": 48,
+      "recall": 0.14583333333333334
+    },
+    "best_rank": {
+      "hits": 108,
+      "total": 1501,
+      "recall": 0.07195203197868089
+    },
+    "routing": {
+      "hits": 104,
+      "total": 1501,
+      "recall": 0.06928714190539641
+    }
+  },
+  "routing_stats": {
+    "txgnn_routed": 210,
+    "gb_routed": 15,
+    "best_rank_fallback": 1276,
+    "per_category": {
+      "neurological": {
+        "count": 20,
+        "hits": 2
+      },
+      "cancer": {
+        "count": 137,
+        "hits": 20
+      },
+      "respiratory": {
+        "count": 20,
+        "hits": 1
+      },
+      "infectious": {
+        "count": 36,
+        "hits": 4
+      },
+      "autoimmune": {
+        "count": 13,
+        "hits": 2
+      },
+      "storage": {
+        "count": 6,
+        "hits": 5
+      },
+      "metabolic": {
+        "count": 30,
+        "hits": 2
+      },
+      "cardiovascular": {
+        "count": 15,
+        "hits": 2
+      },
+      "renal": {
+        "count": 11,
+        "hits": 0
+      },
+      "gastrointestinal": {
+        "count": 19,
+        "hits": 1
+      },
+      "psychiatric": {
+        "count": 5,
+        "hits": 1
+      },
+      "dermatological": {
+        "count": 18,
+        "hits": 2
+      }
+    }
+  },
+  "txgnn_categories": [
+    "psychiatric",
+    "neurological",
+    "storage",
+    "dermatological",
+    "autoimmune",
+    "metabolic"
+  ],
+  "gb_categories": [
+    "renal",
+    "cardiovascular",
+    "gastrointestinal",
+    "respiratory",
+    "infectious"
+  ]
+}

@@ -1,0 +1,285 @@
+{
+  "model_name": "GB with TxGNN Features",
+  "test_auroc": 0.830649071399962,
+  "test_auprc": 0.7030782171470736,
+  "aggregate_recall@30": 0.046357615894039736,
+  "total_found@30": 35,
+  "total_known": 755,
+  "training_stats": {
+    "positive_pairs": 888,
+    "negative_pairs": 2664,
+    "every_cure_pairs": 870,
+    "enhanced_pairs": 18,
+    "diseases": 26,
+    "unique_drugs": 513,
+    "txgnn_feature_hits": 14,
+    "feature_dim": 517
+  },
+  "feature_importance": {
+    "concat": 0.27435069971434267,
+    "product": 0.3680448168458995,
+    "difference": 0.3574409982633602,
+    "txgnn_total": 0.00016348517639763331,
+    "txgnn_detailed": {
+      "txgnn_normalized_score": 0.0,
+      "txgnn_normalized_rank": 0.00016345851510093,
+      "txgnn_in_top_10": 0.0,
+      "txgnn_in_top_30": 0.0,
+      "txgnn_in_top_50": 2.666129670332032e-08
+    }
+  },
+  "by_disease": {
+    "Heart failure": {
+      "recall@30": 0.02040816326530612,
+      "recall@50": 0.02040816326530612,
+      "recall@100": 0.08163265306122448,
+      "found@30": 1,
+      "found@50": 1,
+      "found@100": 4,
+      "total_known": 49
+    },
+    "Hypertension": {
+      "recall@30": 0.012658227848101266,
+      "recall@50": 0.02531645569620253,
+      "recall@100": 0.02531645569620253,
+      "found@30": 1,
+      "found@50": 2,
+      "found@100": 2,
+      "total_known": 79
+    },
+    "Type 2 diabetes": {
+      "recall@30": 0.05,
+      "recall@50": 0.1,
+      "recall@100": 0.1625,
+      "found@30": 4,
+      "found@50": 8,
+      "found@100": 13,
+      "total_known": 80
+    },
+    "Breast cancer": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 40
+    },
+    "drkg:Disease::MESH:D020521": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 39
+    },
+    "Multiple sclerosis": {
+      "recall@30": 0.034482758620689655,
+      "recall@50": 0.10344827586206896,
+      "recall@100": 0.20689655172413793,
+      "found@30": 1,
+      "found@50": 3,
+      "found@100": 6,
+      "total_known": 29
+    },
+    "Atrial fibrillation": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.1111111111111111,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 2,
+      "total_known": 18
+    },
+    "drkg:Disease::MESH:D009203": {
+      "recall@30": 0.041666666666666664,
+      "recall@50": 0.041666666666666664,
+      "recall@100": 0.10416666666666667,
+      "found@30": 2,
+      "found@50": 2,
+      "found@100": 5,
+      "total_known": 48
+    },
+    "COPD": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 18
+    },
+    "drkg:Disease::MESH:D010003": {
+      "recall@30": 0.08333333333333333,
+      "recall@50": 0.20833333333333334,
+      "recall@100": 0.625,
+      "found@30": 2,
+      "found@50": 5,
+      "found@100": 15,
+      "total_known": 24
+    },
+    "Rheumatoid arthritis": {
+      "recall@30": 0.0,
+      "recall@50": 0.03636363636363636,
+      "recall@100": 0.05454545454545454,
+      "found@30": 0,
+      "found@50": 2,
+      "found@100": 3,
+      "total_known": 55
+    },
+    "Asthma": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 31
+    },
+    "drkg:Disease::MESH:D003093": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 29
+    },
+    "Osteoporosis": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.15384615384615385,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 2,
+      "total_known": 13
+    },
+    "drkg:Disease::MESH:D003865": {
+      "recall@30": 0.3783783783783784,
+      "recall@50": 0.4594594594594595,
+      "recall@100": 0.6486486486486487,
+      "found@30": 14,
+      "found@50": 17,
+      "found@100": 24,
+      "total_known": 37
+    },
+    "Parkinson disease": {
+      "recall@30": 0.3,
+      "recall@50": 0.35,
+      "recall@100": 0.75,
+      "found@30": 6,
+      "found@50": 7,
+      "found@100": 15,
+      "total_known": 20
+    },
+    "drkg:Disease::MESH:D012559": {
+      "recall@30": 0.04,
+      "recall@50": 0.08,
+      "recall@100": 0.28,
+      "found@30": 1,
+      "found@50": 2,
+      "found@100": 7,
+      "total_known": 25
+    },
+    "Epilepsy": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 19
+    },
+    "Alzheimer disease": {
+      "recall@30": 0.25,
+      "recall@50": 0.25,
+      "recall@100": 0.25,
+      "found@30": 1,
+      "found@50": 1,
+      "found@100": 1,
+      "total_known": 4
+    },
+    "HIV infection": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 25
+    },
+    "Tuberculosis": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 13
+    },
+    "Psoriasis": {
+      "recall@30": 0.07692307692307693,
+      "recall@50": 0.07692307692307693,
+      "recall@100": 0.15384615384615385,
+      "found@30": 2,
+      "found@50": 2,
+      "found@100": 4,
+      "total_known": 26
+    },
+    "Colorectal cancer": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 12
+    },
+    "Obesity": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 8
+    },
+    "Lung cancer": {
+      "recall@30": 0.0,
+      "recall@50": 0.0,
+      "recall@100": 0.0,
+      "found@30": 0,
+      "found@50": 0,
+      "found@100": 0,
+      "total_known": 4
+    },
+    "Hepatitis C": {
+      "recall@30": 0.0,
+      "recall@50": 0.1,
+      "recall@100": 0.4,
+      "found@30": 0,
+      "found@50": 1,
+      "found@100": 4,
+      "total_known": 10
+    }
+  },
+  "analysis": {
+    "summary": "TxGNN features did not improve GB model performance",
+    "original_gb_recall30": 0.132,
+    "gb_with_txgnn_recall30": 0.046357615894039736,
+    "change_pct": -64.88059401966687,
+    "reason": "TxGNN predictions have minimal overlap with approved drug-disease pairs",
+    "details": {
+      "txgnn_feature_coverage": "14/3552 training pairs (0.4%)",
+      "root_cause": "TxGNN predicts experimental/investigational compounds (e.g., 4-methyl-umbelliferyl-N-acetyl-chitobiose) while Every Cure ground truth contains approved drugs (e.g., Methotrexate, Infliximab)",
+      "txgnn_top50_only": "TxGNN predictions file only contains top 50 drugs per disease, which are mostly experimental compounds not in approved drug lists",
+      "conclusion": "The fundamental ontology mismatch between TxGNN (predicting novel associations) and Every Cure (tracking approved indications) cannot be bridged by simply adding TxGNN scores as features"
+    },
+    "recommendations": [
+      "Focus on improving GB model with other features (protein targets, pathways, side effects)",
+      "Try ensemble methods combining TransE with other embedding approaches",
+      "Consider training a GNN on DRKG/Every Cure data directly instead of using TxGNN"
+    ]
+  }
+}
