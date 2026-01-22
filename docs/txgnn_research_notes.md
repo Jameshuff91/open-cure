@@ -233,12 +233,34 @@ TxGNN groups multiple MONDO IDs: `"13924_12592_14672_..."`. Some diseases map to
 
 ## Next Steps (Prioritized)
 
-### 1. Fine-tune TxGNN on Every Cure (GPU NEEDED) ← IN PROGRESS
+### Experiment 7: Fine-tune TxGNN on Every Cure ✅
+**Status:** COMPLETED (2026-01-21)
+**Result:** Catastrophic forgetting - model degraded
+
+| Metric | Original | Fine-tuned | Change |
+|--------|----------|------------|--------|
+| Test AUROC | 0.725 | 0.706 | -2.6% |
+| Indication AUROC | 0.787 | 0.751 | -4.6% |
+| Validation R@30 | - | 4.3% | - |
+
+**What We Did:**
+- Added 1,209 Every Cure indication edges to training
+- Fine-tuned for 100 epochs at LR=1e-4
+- Training time: 1 min 42 sec on Titan Xp
+
+**Why It Failed:**
+- Learning rate too high (1e-4) caused catastrophic forgetting
+- Model "forgot" original knowledge while learning new edges
+- Need: LR=1e-5, fewer epochs (20-50), layer freezing
+
+**Lesson Learned:** Fine-tuning pre-trained GNNs requires careful hyperparameter tuning to avoid catastrophic forgetting.
+
+## Next Steps (Revised)
+
+### 1. Retry Fine-tuning with Lower LR (GPU NEEDED)
 **Priority:** HIGH
-**Effort:** Medium
-Add Every Cure indication edges to TxGNN training.
-**Goal:** Improve R@30 on complex diseases where current model fails.
-**Approach:** Add known drug-disease pairs as positive training examples.
+**Effort:** Low
+Use LR=1e-5, 20-50 epochs, potentially freeze early layers.
 
 ### 2. Confidence-Based Model Selection (LOCAL)
 **Priority:** MEDIUM
@@ -250,7 +272,7 @@ Features: disease category, mechanism clarity, drug count.
 **Priority:** LOW
 **Effort:** HIGH
 Build aligned KG from scratch.
-**Skip for now:** Fine-tuning likely more impactful.
+**Skip for now:** Better fine-tuning strategy likely more impactful.
 
 ## Data Artifacts
 
