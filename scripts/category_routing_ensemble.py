@@ -189,30 +189,39 @@ def load_drugbank_lookup() -> Dict[str, str]:
     return name_to_id
 
 
-# Disease name to MESH ID mappings
-DISEASE_NAME_TO_MESH = {
-    "hiv infection": "drkg:Disease::MESH:D015658",
-    "hepatitis c": "drkg:Disease::MESH:D006526",
-    "tuberculosis": "drkg:Disease::MESH:D014376",
-    "breast cancer": "drkg:Disease::MESH:D001943",
-    "lung cancer": "drkg:Disease::MESH:D008175",
-    "colorectal cancer": "drkg:Disease::MESH:D015179",
-    "hypertension": "drkg:Disease::MESH:D006973",
-    "heart failure": "drkg:Disease::MESH:D006333",
-    "atrial fibrillation": "drkg:Disease::MESH:D001281",
-    "epilepsy": "drkg:Disease::MESH:D004827",
-    "parkinson disease": "drkg:Disease::MESH:D010300",
-    "alzheimer disease": "drkg:Disease::MESH:D000544",
-    "rheumatoid arthritis": "drkg:Disease::MESH:D001172",
-    "multiple sclerosis": "drkg:Disease::MESH:D009103",
-    "psoriasis": "drkg:Disease::MESH:D011565",
-    "type 2 diabetes mellitus": "drkg:Disease::MESH:D003924",
-    "obesity": "drkg:Disease::MESH:D009765",
-    "asthma": "drkg:Disease::MESH:D001249",
-    "copd": "drkg:Disease::MESH:D029424",
-    "osteoporosis": "drkg:Disease::MESH:D010024",
-    "crohn disease": "drkg:Disease::MESH:D003424",
-}
+# Load disease name to MESH ID mappings from file
+def load_disease_to_mesh_mapping() -> Dict[str, str]:
+    """Load TxGNN to MESH mapping from JSON file."""
+    mapping_path = REFERENCE_DIR / "txgnn_to_mesh_mapping.json"
+    if mapping_path.exists():
+        with open(mapping_path) as f:
+            return json.load(f)
+    # Fallback to hardcoded mappings
+    return {
+        "hiv infection": "drkg:Disease::MESH:D015658",
+        "hepatitis c": "drkg:Disease::MESH:D006526",
+        "tuberculosis": "drkg:Disease::MESH:D014376",
+        "breast cancer": "drkg:Disease::MESH:D001943",
+        "lung cancer": "drkg:Disease::MESH:D008175",
+        "colorectal cancer": "drkg:Disease::MESH:D015179",
+        "hypertension": "drkg:Disease::MESH:D006973",
+        "heart failure": "drkg:Disease::MESH:D006333",
+        "atrial fibrillation": "drkg:Disease::MESH:D001281",
+        "epilepsy": "drkg:Disease::MESH:D004827",
+        "parkinson disease": "drkg:Disease::MESH:D010300",
+        "alzheimer disease": "drkg:Disease::MESH:D000544",
+        "rheumatoid arthritis": "drkg:Disease::MESH:D001172",
+        "multiple sclerosis": "drkg:Disease::MESH:D009103",
+        "psoriasis": "drkg:Disease::MESH:D011565",
+        "type 2 diabetes mellitus": "drkg:Disease::MESH:D003924",
+        "obesity": "drkg:Disease::MESH:D009765",
+        "asthma": "drkg:Disease::MESH:D001249",
+        "copd": "drkg:Disease::MESH:D029424",
+        "osteoporosis": "drkg:Disease::MESH:D010024",
+        "crohn disease": "drkg:Disease::MESH:D003424",
+    }
+
+DISEASE_NAME_TO_MESH = load_disease_to_mesh_mapping()
 
 
 def get_gb_rankings_for_disease(

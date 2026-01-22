@@ -38,19 +38,17 @@ vastai destroy instance <INSTANCE_ID>
 
 | Model | Recall@30 | Diseases Evaluated | Notes |
 |-------|-----------|-------------------|-------|
-| **TxGNN (proper scoring)** | **14.5%** | 779 | Using model.predict() method |
-| GB Enhanced | 13.2% | 77 | Simple ML on curated features |
+| **Best Rank Ensemble** | **7.5%** | 779 | min(TxGNN rank, GB rank) - BEST |
+| TxGNN (proper scoring) | 6.7% | 779 | Per-drug R@30 |
+| GB Enhanced | 13.2% | 77 | Per-disease R@30 |
 
 **TxGNN Drug Ranking Statistics:**
 - Mean rank of GT drugs: 3473 (out of 7954) - near random
 - Median rank: 2990
-- Example: RA drugs rank #297 (methotrexate), #839 (infliximab)
+- 65 diseases achieve ≥50% R@30 or top-10 ranking
+- Storage diseases: 83.3% Recall@30 (best category)
 
-**TxGNN Internal Metrics (on its own test set):**
-- Test Indication AUROC: 0.787
-- Test Indication AUPRC: 0.746
-
-**Key Finding (2026-01-21):** TxGNN with proper scoring achieves 14.5% Recall@30, comparable to our simple GB model. Despite sophisticated GNN architecture, GT drugs rank near-random on average. Model excels at some diseases (Alzheimer's drugs rank ~35) but fails at others (RA drugs rank ~300-800).
+**Key Finding (2026-01-21):** Best Rank ensemble achieves 7.5% per-drug Recall@30, outperforming either model alone. Storage/metabolic diseases excel (83.3% R@30) due to clear enzyme mechanisms. TxGNN works well for well-defined diseases but struggles with complex conditions.
 
 ## Data Sources
 
@@ -125,25 +123,48 @@ cd TxGNN && pip3 install -e .
 
 **Conclusion:** TxGNN with proper scoring achieves comparable performance to our simple GB model (14.5% vs 13.2%). Despite sophisticated GNN architecture and 500 epochs of training, GT drugs rank near-random on average. The model has signal for some diseases but not consistently. For practical drug repurposing, simpler models trained on curated data remain competitive.
 
+### Ensemble Experiments (Completed 2026-01-21)
+
+**Experiment Results:**
+
+| Experiment | Result | Status |
+|------------|--------|--------|
+| Simple Ensemble (best_rank) | 7.5% R@30 | ✅ BEST |
+| Category Routing | 6.9% R@30 | ⚠️ Limited by MESH coverage |
+| TxGNN as GB Features | 4.6% R@30 | ❌ Failed (ontology mismatch) |
+
+**Key Findings:**
+- Storage diseases: **83.3% Recall@30** (enzyme replacements work!)
+- Best Rank ensemble beats both models alone
+- Category routing limited by only 48 MESH-mapped diseases
+- 65 diseases achieve excellent performance (≥50% R@30 or top-10)
+
+**What Works Well:**
+- Enzyme replacement therapies (laronidase rank #3, imiglucerase rank #8)
+- Well-defined mechanisms (storage diseases, porphyrias)
+- Diseases with clear drug targets
+
+**What Fails:**
+- Biologics (-mab, -cept drugs)
+- Complex/heterogeneous conditions
+- Diseases where GT drugs rank near-random
+
 ### Recommended Next Steps
 
-**Option 1: Ensemble Models (Recommended)**
-- Combine TxGNN scores with GB model predictions
-- TxGNN excels on some diseases (Alzheimer's), GB on others
-- Ensemble could leverage complementary strengths
-- Target: 20%+ Recall@30
+**Option 1: Fine-tune TxGNN on Our Data (GPU NEEDED)**
+- Add Every Cure indication edges to TxGNN training
+- Most promising for improving performance
+- Risk: Overfitting to small dataset
 
-**Option 2: Improve GB Model**
-- Add more features from DRKG (protein targets, pathways, side effects)
-- Ensemble with TransE embeddings
-- Try other ML models (XGBoost, Random Forest, Neural Network)
+**Option 2: Confidence-Based Model Selection (LOCAL)**
+- Train meta-model to predict when to trust each model
+- Use disease category, drug count, mechanism clarity as features
 
-**Option 3: Fine-tune TxGNN on Our Data**
-- Use Every Cure ground truth as additional training signal
-- Add indication edges for known drug-disease pairs
-- Re-train with our labels to align with clinical practice
+**Option 3: Expand Disease Coverage (LOCAL)**
+- Map more TxGNN diseases to MESH IDs
+- Currently only 48/779 diseases mapped
 
-**Key Insight:** Neither sophisticated GNNs nor simple ML models alone achieve great performance. The path forward likely involves combining approaches and/or training directly on clinically-curated data.
+**Key Insight:** TxGNN excels for well-defined mechanisms (storage diseases, enzyme deficiencies) but struggles with complex conditions. Best ensemble approach: take minimum rank from either model.
 
 ### TxGNN API Notes
 
