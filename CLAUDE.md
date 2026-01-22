@@ -33,18 +33,25 @@ vastai destroy instance <INSTANCE_ID>
 ## Models
 
 - `models/drug_repurposing_gb.pkl` - Baseline GB model (7.0% R@30)
-- `models/drug_repurposing_gb_enhanced.pkl` - Enhanced GB model (13.2% R@30)
+- `models/drug_repurposing_gb_enhanced.pkl` - Enhanced GB model with expanded MESH coverage
 - `models/transe.pt` - TransE knowledge graph embeddings
 
 ## Key Metrics
 
 **Current Performance (on Every Cure Ground Truth):**
 
-| Model | Recall@30 | Diseases Evaluated | Notes |
-|-------|-----------|-------------------|-------|
-| **Best Rank Ensemble** | **7.5%** | 779 | min(TxGNN rank, GB rank) - BEST |
+| Model | Per-Drug R@30 | Diseases Evaluated | Notes |
+|-------|---------------|-------------------|-------|
+| **GB Enhanced (Expanded MESH)** | **38.7%** | 700/779 | Agent web search MESH mappings - BEST |
+| GB Enhanced (18 diseases) | 17.1% | 18 | CONFIRMED diseases only |
+| Best Rank Ensemble | 7.5% | 779 | min(TxGNN rank, GB rank) |
 | TxGNN (proper scoring) | 6.7% | 779 | Per-drug R@30 |
-| GB Enhanced | 13.2% | 77 | Per-disease R@30 |
+
+**MESH Mapping Expansion (2026-01-22):**
+- Original: ~80 hardcoded MESH mappings
+- Expanded: 827 agent-searched MESH mappings (10x increase)
+- Disease coverage: 700/779 (90%) vs previous ~10%
+- 354 diseases with at least 1 correct drug in top 30
 
 **TxGNN Drug Ranking Statistics:**
 - Mean rank of GT drugs: 3473 (out of 7954) - near random
@@ -52,7 +59,7 @@ vastai destroy instance <INSTANCE_ID>
 - 65 diseases achieve ≥50% R@30 or top-10 ranking
 - Storage diseases: 83.3% Recall@30 (best category)
 
-**Key Finding (2026-01-21):** Best Rank ensemble achieves 7.5% per-drug Recall@30, outperforming either model alone. Storage/metabolic diseases excel (83.3% R@30) due to clear enzyme mechanisms. TxGNN works well for well-defined diseases but struggles with complex conditions.
+**Key Finding (2026-01-22):** GB model with expanded MESH coverage achieves **38.7%** per-drug Recall@30 on 700 diseases, dramatically outperforming TxGNN (6.7%). The key was expanding disease-to-MESH mappings via parallel agent web searches against NIH/NLM database.
 
 ## Data Sources
 
