@@ -255,12 +255,37 @@ TxGNN groups multiple MONDO IDs: `"13924_12592_14672_..."`. Some diseases map to
 
 **Lesson Learned:** Fine-tuning pre-trained GNNs requires careful hyperparameter tuning to avoid catastrophic forgetting.
 
+### Experiment 8: Fine-tune with Lower LR (3e-5) ✅
+**Status:** COMPLETED (2026-01-21)
+**Result:** No improvement - still random performance
+
+| Metric | LR=1e-4 | LR=3e-5 | Original |
+|--------|---------|---------|----------|
+| Training loss | 0.502 | 0.594 | 0.509 |
+| Train AUROC | 0.839 | 0.747 | 0.835 |
+| Mean GT rank | 3889 | 3889 | 3872 |
+| R@30 (DistMult) | 0% | 0% | 0% |
+
+**What We Did:**
+- Reduced LR to 3e-5 (1/3 of original)
+- 50 epochs instead of 100
+- 1,512 matched disease-drug pairs
+- Training time: 1 min 35 sec
+
+**Key Finding:**
+Both original and fine-tuned models show ~0% R@30 with mean rank ~3900 when evaluated with simple DistMult scoring. This suggests:
+1. TxGNN's complex prototype-based scoring is essential for good performance
+2. Simple embedding-based evaluation doesn't capture the full model behavior
+3. Fine-tuning doesn't help because the base evaluation approach is flawed
+
+**Lesson Learned:** TxGNN uses a sophisticated prototype-based scoring mechanism during evaluation that modifies disease embeddings based on similar diseases. Simple DistMult scoring (h_drug * h_rel * h_disease) doesn't replicate this, leading to near-random results.
+
 ## Next Steps (Revised)
 
-### 1. Retry Fine-tuning with Lower LR (GPU NEEDED)
+### 1. Implement Full TxGNN Evaluation Pipeline (GPU NEEDED)
 **Priority:** HIGH
-**Effort:** Low
-Use LR=1e-5, 20-50 epochs, potentially freeze early layers.
+**Effort:** Medium
+Need to use TxGNN's full forward pass with prototype embeddings, not simple DistMult scoring.
 
 ### 2. Confidence-Based Model Selection (LOCAL)
 **Priority:** MEDIUM

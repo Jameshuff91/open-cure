@@ -22,6 +22,10 @@ ssh -p <PORT> root@<SSH_ADDR>
 
 # Destroy when done (stop billing!)
 vastai destroy instance <INSTANCE_ID>
+
+# AUTOMATED SETUP (recommended)
+./scripts/vastai_txgnn_setup.sh <PORT> <HOST>
+# Example: ./scripts/vastai_txgnn_setup.sh 16464 ssh3.vast.ai
 ```
 
 **Current instance**: None (destroyed 2026-01-21)
