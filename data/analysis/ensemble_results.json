@@ -1,0 +1,1070 @@
+{
+  "num_diseases": 16,
+  "strategies": [
+    {
+      "strategy": "txgnn_only",
+      "hits": 1,
+      "total": 48,
+      "recall": 0.020833333333333332
+    },
+    {
+      "strategy": "gb_only",
+      "hits": 7,
+      "total": 48,
+      "recall": 0.14583333333333334
+    },
+    {
+      "strategy": "average",
+      "hits": 0,
+      "total": 48,
+      "recall": 0.0
+    },
+    {
+      "strategy": "weighted_txgnn_0.7",
+      "hits": 0,
+      "total": 48,
+      "recall": 0.0
+    },
+    {
+      "strategy": "weighted_txgnn_0.3",
+      "hits": 1,
+      "total": 48,
+      "recall": 0.020833333333333332
+    },
+    {
+      "strategy": "weighted_gb_0.7",
+      "hits": 1,
+      "total": 48,
+      "recall": 0.020833333333333332
+    },
+    {
+      "strategy": "best_rank",
+      "hits": 8,
+      "total": 48,
+      "recall": 0.16666666666666666
+    },
+    {
+      "strategy": "rrf",
+      "hits": 8,
+      "total": 48,
+      "recall": 0.16666666666666666
+    }
+  ],
+  "diseases": [
+    {
+      "name": "alzheimer disease",
+      "mesh_id": "drkg:Disease::MESH:D000544",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 8,
+      "gt_sample": [
+        "donepezil",
+        "memantine",
+        "rivastigmine"
+      ]
+    },
+    {
+      "name": "crohn disease",
+      "mesh_id": "drkg:Disease::MESH:D003424",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 13,
+      "gt_sample": [
+        "cyanocobalamin",
+        "budesonide",
+        "infliximab"
+      ]
+    },
+    {
+      "name": "heart failure",
+      "mesh_id": "drkg:Disease::MESH:D006333",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 37,
+      "gt_sample": [
+        "digoxin",
+        "lisinopril",
+        "valsartan"
+      ]
+    },
+    {
+      "name": "parkinson disease",
+      "mesh_id": "drkg:Disease::MESH:D010300",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 22,
+      "gt_sample": [
+        "pergolide",
+        "pramipexole",
+        "amantadine"
+      ]
+    },
+    {
+      "name": "asthma",
+      "mesh_id": "drkg:Disease::MESH:D001249",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 26,
+      "gt_sample": [
+        "prednisolone",
+        "prednisone",
+        "dexamethasone"
+      ]
+    },
+    {
+      "name": "breast cancer",
+      "mesh_id": "drkg:Disease::MESH:D001943",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 42,
+      "gt_sample": [
+        "fluoxymesterone",
+        "epirubicin",
+        "estradiol"
+      ]
+    },
+    {
+      "name": "colorectal cancer",
+      "mesh_id": "drkg:Disease::MESH:D015179",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 13,
+      "gt_sample": [
+        "oxaliplatin",
+        "capecitabine",
+        "cetuximab"
+      ]
+    },
+    {
+      "name": "epilepsy",
+      "mesh_id": "drkg:Disease::MESH:D004827",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 18,
+      "gt_sample": [
+        "gabapentin",
+        "topiramate",
+        "levetiracetam"
+      ]
+    },
+    {
+      "name": "hypertension",
+      "mesh_id": "drkg:Disease::MESH:D006973",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 74,
+      "gt_sample": [
+        "polythiazide",
+        "metolazone",
+        "atenolol"
+      ]
+    },
+    {
+      "name": "lung cancer",
+      "mesh_id": "drkg:Disease::MESH:D008175",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 7,
+      "gt_sample": [
+        "methotrexate",
+        "porfimer sodium",
+        "osimertinib"
+      ]
+    },
+    {
+      "name": "multiple sclerosis",
+      "mesh_id": "drkg:Disease::MESH:D009103",
+      "txgnn_hit_at_30": true,
+      "gt_drugs_count": 28,
+      "gt_sample": [
+        "dantrolene",
+        "baclofen",
+        "prednisolone"
+      ]
+    },
+    {
+      "name": "osteoporosis",
+      "mesh_id": "drkg:Disease::MESH:D010024",
+      "txgnn_hit_at_30": true,
+      "gt_drugs_count": 13,
+      "gt_sample": [
+        "oxandrolone",
+        "estradiol",
+        "alendronic acid"
+      ]
+    },
+    {
+      "name": "psoriasis",
+      "mesh_id": "drkg:Disease::MESH:D011565",
+      "txgnn_hit_at_30": true,
+      "gt_drugs_count": 29,
+      "gt_sample": [
+        "prednisolone",
+        "prednisone",
+        "hydrocortisone"
+      ]
+    },
+    {
+      "name": "rheumatoid arthritis",
+      "mesh_id": "drkg:Disease::MESH:D001172",
+      "txgnn_hit_at_30": true,
+      "gt_drugs_count": 56,
+      "gt_sample": [
+        "ibuprofen",
+        "prednisolone",
+        "prednisone"
+      ]
+    },
+    {
+      "name": "tuberculosis",
+      "mesh_id": "drkg:Disease::MESH:D014376",
+      "txgnn_hit_at_30": true,
+      "gt_drugs_count": 11,
+      "gt_sample": [
+        "isoniazid",
+        "acetylcysteine",
+        "tuberculin purified protein derivative"
+      ]
+    },
+    {
+      "name": "type 2 diabetes mellitus",
+      "mesh_id": "drkg:Disease::MESH:D003924",
+      "txgnn_hit_at_30": false,
+      "gt_drugs_count": 53,
+      "gt_sample": [
+        "tolazamide",
+        "metformin",
+        "insulin human"
+      ]
+    }
+  ],
+  "per_disease_results": {
+    "txgnn_only": [
+      {
+        "name": "alzheimer disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "crohn disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "heart failure",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "parkinson disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "asthma",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "breast cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "colorectal cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "epilepsy",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "hypertension",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "lung cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "multiple sclerosis",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "osteoporosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "psoriasis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "rheumatoid arthritis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "tuberculosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "type 2 diabetes mellitus",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      }
+    ],
+    "gb_only": [
+      {
+        "name": "alzheimer disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "crohn disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "heart failure",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "parkinson disease",
+        "hits": 2,
+        "total": 3,
+        "recall": 0.6666666666666666
+      },
+      {
+        "name": "asthma",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "breast cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "colorectal cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "epilepsy",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "hypertension",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "lung cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "multiple sclerosis",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "osteoporosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "psoriasis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "rheumatoid arthritis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "tuberculosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "type 2 diabetes mellitus",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      }
+    ],
+    "average": [
+      {
+        "name": "alzheimer disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "crohn disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "heart failure",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "parkinson disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "asthma",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "breast cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "colorectal cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "epilepsy",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "hypertension",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "lung cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "multiple sclerosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "osteoporosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "psoriasis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "rheumatoid arthritis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "tuberculosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "type 2 diabetes mellitus",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      }
+    ],
+    "weighted_txgnn_0.7": [
+      {
+        "name": "alzheimer disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "crohn disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "heart failure",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "parkinson disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "asthma",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "breast cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "colorectal cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "epilepsy",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "hypertension",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "lung cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "multiple sclerosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "osteoporosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "psoriasis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "rheumatoid arthritis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "tuberculosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "type 2 diabetes mellitus",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      }
+    ],
+    "weighted_txgnn_0.3": [
+      {
+        "name": "alzheimer disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "crohn disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "heart failure",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "parkinson disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "asthma",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "breast cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "colorectal cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "epilepsy",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "hypertension",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "lung cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "multiple sclerosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "osteoporosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "psoriasis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "rheumatoid arthritis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "tuberculosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "type 2 diabetes mellitus",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      }
+    ],
+    "weighted_gb_0.7": [
+      {
+        "name": "alzheimer disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "crohn disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "heart failure",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "parkinson disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "asthma",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "breast cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "colorectal cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "epilepsy",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "hypertension",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "lung cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "multiple sclerosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "osteoporosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "psoriasis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "rheumatoid arthritis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "tuberculosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "type 2 diabetes mellitus",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      }
+    ],
+    "best_rank": [
+      {
+        "name": "alzheimer disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "crohn disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "heart failure",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "parkinson disease",
+        "hits": 2,
+        "total": 3,
+        "recall": 0.6666666666666666
+      },
+      {
+        "name": "asthma",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "breast cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "colorectal cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "epilepsy",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "hypertension",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "lung cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "multiple sclerosis",
+        "hits": 2,
+        "total": 3,
+        "recall": 0.6666666666666666
+      },
+      {
+        "name": "osteoporosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "psoriasis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "rheumatoid arthritis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "tuberculosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "type 2 diabetes mellitus",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      }
+    ],
+    "rrf": [
+      {
+        "name": "alzheimer disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "crohn disease",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "heart failure",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "parkinson disease",
+        "hits": 2,
+        "total": 3,
+        "recall": 0.6666666666666666
+      },
+      {
+        "name": "asthma",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "breast cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "colorectal cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "epilepsy",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "hypertension",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      },
+      {
+        "name": "lung cancer",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "multiple sclerosis",
+        "hits": 2,
+        "total": 3,
+        "recall": 0.6666666666666666
+      },
+      {
+        "name": "osteoporosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "psoriasis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "rheumatoid arthritis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "tuberculosis",
+        "hits": 0,
+        "total": 3,
+        "recall": 0.0
+      },
+      {
+        "name": "type 2 diabetes mellitus",
+        "hits": 1,
+        "total": 3,
+        "recall": 0.3333333333333333
+      }
+    ]
+  },
+  "txgnn_only_hits": [
+    {
+      "disease": "multiple sclerosis",
+      "drug": "dantrolene",
+      "txgnn_rank": 1,
+      "gb_rank": 219
+    }
+  ],
+  "gb_only_hits": [
+    {
+      "disease": "heart failure",
+      "drug": "lisinopril",
+      "txgnn_rank": 7362,
+      "gb_rank": 18
+    },
+    {
+      "disease": "parkinson disease",
+      "drug": "pergolide",
+      "txgnn_rank": 189,
+      "gb_rank": 23
+    },
+    {
+      "disease": "parkinson disease",
+      "drug": "pramipexole",
+      "txgnn_rank": 340,
+      "gb_rank": 18
+    },
+    {
+      "disease": "asthma",
+      "drug": "prednisolone",
+      "txgnn_rank": 767,
+      "gb_rank": 10
+    },
+    {
+      "disease": "hypertension",
+      "drug": "atenolol",
+      "txgnn_rank": 119,
+      "gb_rank": 8
+    },
+    {
+      "disease": "multiple sclerosis",
+      "drug": "prednisolone",
+      "txgnn_rank": 618,
+      "gb_rank": 5
+    },
+    {
+      "disease": "type 2 diabetes mellitus",
+      "drug": "insulin human",
+      "txgnn_rank": 57,
+      "gb_rank": 10
+    }
+  ],
+  "ensemble_benefit_drugs": []
+}
