@@ -94,6 +94,34 @@ python scripts/download_graphs.py
 python src/ingest/build_unified_graph.py
 ```
 
+## GPU Resources
+
+Some models (TxGNN, large GNNs) require GPU training. We recommend **[Vast.ai](https://vast.ai)** for affordable cloud GPU rentals:
+
+| GPU | Typical Cost | Good For |
+|-----|--------------|----------|
+| GTX 1080 Ti / Titan Xp | ~$0.05-0.10/hr | Most training tasks |
+| RTX 3090 | ~$0.20-0.30/hr | Larger models |
+| A100 | ~$1.00-2.00/hr | Full-scale experiments |
+
+**Quick start:**
+```bash
+# Install CLI
+pip install vastai
+vastai set api-key YOUR_API_KEY
+
+# Find cheap GPUs
+vastai search offers 'gpu_ram>=8 cuda_vers>=11.0 reliability>0.95' --order 'dph' --limit 10
+
+# Create instance
+vastai create instance OFFER_ID --image nvidia/cuda:11.7.1-runtime-ubuntu22.04 --disk 30 --ssh
+
+# IMPORTANT: Destroy when done to stop billing!
+vastai destroy instance INSTANCE_ID
+```
+
+See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed GPU setup instructions.
+
 ## References & Acknowledgments
 
 This work stands on the shoulders of giants:
