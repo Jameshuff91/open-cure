@@ -38,15 +38,19 @@ vastai destroy instance <INSTANCE_ID>
 
 | Model | Recall@30 | Diseases Evaluated | Notes |
 |-------|-----------|-------------------|-------|
-| **GB Enhanced** | **13.2%** | 77 | Best performer on our ground truth |
-| TxGNN (500 epochs) | ~0% | 1,194 | Ontology mismatch - only 1 hit |
+| **TxGNN (proper scoring)** | **14.5%** | 779 | Using model.predict() method |
+| GB Enhanced | 13.2% | 77 | Simple ML on curated features |
+
+**TxGNN Drug Ranking Statistics:**
+- Mean rank of GT drugs: 3473 (out of 7954) - near random
+- Median rank: 2990
+- Example: RA drugs rank #297 (methotrexate), #839 (infliximab)
 
 **TxGNN Internal Metrics (on its own test set):**
 - Test Indication AUROC: 0.787
 - Test Indication AUPRC: 0.746
-- Published benchmark: 0.87-0.91 AUPRC
 
-**Key Finding:** TxGNN achieves good metrics on its own benchmark but fails on our ground truth due to fundamental ontology/data incompatibility.
+**Key Finding (2026-01-21):** TxGNN with proper scoring achieves 14.5% Recall@30, comparable to our simple GB model. Despite sophisticated GNN architecture, GT drugs rank near-random on average. Model excels at some diseases (Alzheimer's drugs rank ~35) but fails at others (RA drugs rank ~300-800).
 
 ## Data Sources
 
@@ -92,56 +96,54 @@ cd TxGNN && pip3 install -e .
 - `data/reference/txgnn_diseases.json` - Disease ID mappings
 - `data/reference/txgnn_drugs.json` - Drug ID mappings
 
-### Why TxGNN Failed on Our Ground Truth (2026-01-21)
+### TxGNN Evaluation Journey (2026-01-21)
 
-**Root Cause: Fundamental Ontology Mismatch**
+**Initial Attempt (DistMult Scoring):** ~0% Recall@30
+- Used embedding similarity with DistMult scoring
+- Wrong scoring function - TxGNN uses a learned decoder
 
-| Aspect | Every Cure (Our GT) | TxGNN |
-|--------|---------------------|-------|
-| Drug IDs | CHEBI | DrugBank |
-| Disease IDs | MONDO | MONDO (grouped) |
-| Drug types | Approved treatments | Experimental + approved |
-| Drug overlap | ~1,500 by name match | 7,957 total |
-| Disease overlap | ~1,200 by name match | 17,080 total |
+**Corrected Evaluation (model.predict()):** 14.5% Recall@30
+- Used TxGNN's actual `model.predict()` method
+- Properly matches diseases (779 evaluated) and drugs
+- Comparable to GB model's 13.2%
 
-**What We Tried:**
-1. Trained TxGNN for 500 epochs → 0.787 AUROC on its test set ✓
-2. Extracted embeddings using `model.retrieve_embedding()` ✓
-3. Computed DistMult scores for drug-disease pairs ✓
-4. Matched diseases by exact name (1,194 matches) ✓
-5. Matched drugs by name (CHEBI→DrugBank via 1,500 name mappings) ✓
+**What We Learned:**
 
-**Result:** Only **1 drug hit** (Diflunisal for Rheumatoid Arthritis) across 1,194 disease evaluations.
+| Metric | Value |
+|--------|-------|
+| Diseases evaluated | 779/854 matching |
+| Recall@30 | 14.5% (113 hits) |
+| Mean GT drug rank | 3473/7954 (near random) |
+| Median GT drug rank | 2990 |
 
-**Why This Happened:**
-- TxGNN predicts experimental/investigational compounds (e.g., "4-methyl-umbelliferyl-N-acetyl-chitobiose")
-- Every Cure ground truth has standard-of-care approved drugs (e.g., Methotrexate, Infliximab)
-- Even when disease names match, the predicted drugs don't overlap with approved treatments
-- TxGNN's knowledge graph encodes different drug-disease relationships than clinical practice
+**Per-Disease Examples:**
+- Alzheimer's: Donepezil #39, Rivastigmine #35 ✓ (good)
+- Behçet's: Adalimumab #139, Infliximab #169 (okay)
+- Addison's: Dexamethasone #494 (moderate)
+- RA: Methotrexate #297, Infliximab #839 (poor)
+- Amyloidosis: Daratumumab #7559 (essentially random)
 
-**Conclusion:** SOTA graph neural networks trained on biomedical KGs don't necessarily predict clinically-relevant drug repurposing candidates. Simple ML models (GB) trained on curated ground truth outperform them for practical applications.
+**Conclusion:** TxGNN with proper scoring achieves comparable performance to our simple GB model (14.5% vs 13.2%). Despite sophisticated GNN architecture and 500 epochs of training, GT drugs rank near-random on average. The model has signal for some diseases but not consistently. For practical drug repurposing, simpler models trained on curated data remain competitive.
 
 ### Recommended Next Steps
 
-**Option 1: Improve GB Model (Recommended)**
+**Option 1: Ensemble Models (Recommended)**
+- Combine TxGNN scores with GB model predictions
+- TxGNN excels on some diseases (Alzheimer's), GB on others
+- Ensemble could leverage complementary strengths
+- Target: 20%+ Recall@30
+
+**Option 2: Improve GB Model**
 - Add more features from DRKG (protein targets, pathways, side effects)
 - Ensemble with TransE embeddings
 - Try other ML models (XGBoost, Random Forest, Neural Network)
-- Target: 20%+ Recall@30
 
-**Option 2: Train on Our Ground Truth Directly**
-- Build a custom KG from Every Cure + DrugBank + disease ontologies
-- Train a GNN on this aligned data
-- More work but ensures ontology compatibility
+**Option 3: Fine-tune TxGNN on Our Data**
+- Use Every Cure ground truth as additional training signal
+- Add indication edges for known drug-disease pairs
+- Re-train with our labels to align with clinical practice
 
-**Option 3: Different SOTA Models**
-- Try DRKG's own pretrained embeddings (already aligned with our ground truth format)
-- Explore other drug repurposing models: DTINet, DeepDTA, GraphDTA
-- Look for models trained on clinical/approved drug data
-
-**Not Recommended:**
-- Further TxGNN integration (ontology gap too large)
-- Building complex CHEBI↔DrugBank↔MONDO mappings (diminishing returns)
+**Key Insight:** Neither sophisticated GNNs nor simple ML models alone achieve great performance. The path forward likely involves combining approaches and/or training directly on clinically-curated data.
 
 ### TxGNN API Notes
 
