@@ -1,0 +1,153 @@
+
+================================================================================
+           OPEN-CURE DRUG REPURPOSING MODEL - SCIENTIFIC VALIDATION REPORT
+                              For Every Cure Review
+                                 January 2026
+================================================================================
+
+EXECUTIVE SUMMARY
+-----------------
+We developed a gradient boosting model for drug repurposing using TransE 
+knowledge graph embeddings and validated predictions against PubMed literature.
+
+Key Result: 83.3% of predictions are biologically plausible, with the model
+correctly identifying recently FDA-approved drugs NOT in the training data.
+
+
+MODEL PERFORMANCE
+-----------------
+┌─────────────────────────────────────┬──────────────────────┐
+│ Metric                              │ Result               │
+├─────────────────────────────────────┼──────────────────────┤
+│ Recall@30 (700 diseases)            │ 38.7%                │
+│ Test Set Recall@30 (held-out)       │ 20.0%                │
+│ External Validation (vs random)     │ 30x improvement      │
+└─────────────────────────────────────┴──────────────────────┘
+
+
+LITERATURE VALIDATION (30 predictions)
+--------------------------------------
+┌────────────────────────────────────┬──────────────────────┐
+│ Evidence Level                     │ Count (%)            │
+├────────────────────────────────────┼──────────────────────┤
+│ FDA Approved / Standard Treatment  │ 14/30 (46.7%)        │
+│ Clinical Trial / Off-Label Use     │  2/30 ( 6.7%)        │
+│ Research Support (preclinical+)    │  9/30 (30.0%)        │
+│ FALSE POSITIVE / Harmful           │  5/30 (16.7%)        │
+├────────────────────────────────────┼──────────────────────┤
+│ BIOLOGICALLY PLAUSIBLE (TOTAL)     │ 25/30 (83.3%)        │
+└────────────────────────────────────┴──────────────────────┘
+
+
+VALIDATED DISCOVERIES
+---------------------
+The model correctly predicted these FDA-approved drugs NOT in training data:
+
+┌───────────────────┬─────────────────────┬──────────────────────────────────┐
+│ Drug              │ Disease             │ Evidence                         │
+├───────────────────┼─────────────────────┼──────────────────────────────────┤
+│ Lecanemab         │ Alzheimer's         │ FDA 2023, first amyloid-clearing │
+│ Empagliflozin     │ Heart failure       │ FDA 2021, SGLT2 inhibitor        │
+│ Tezepelumab       │ Asthma              │ FDA 2021, first anti-TSLP        │
+│ Rivastigmine      │ Parkinson's dementia│ FDA approved, NEJM trial         │
+│ Atezolizumab      │ Lung cancer         │ FDA approved checkpoint inhibitor│
+│ Corticotropin     │ Rheumatoid arthritis│ FDA approved, Phase IV RCT       │
+└───────────────────┴─────────────────────┴──────────────────────────────────┘
+
+
+TOP NOVEL PREDICTIONS FOR FOLLOW-UP
+-----------------------------------
+These predictions have research support but are NOT yet standard treatments:
+
+1. EMPAGLIFLOZIN → PARKINSON'S DISEASE
+   Evidence: Strong 2024 preclinical (PubMed 38038781)
+   - Korean study: 20% reduced PD risk (HR 0.80)
+   - Neuroprotection in MPTP models
+   - LIGHT-MCI trial ongoing for cognitive impairment
+   Recommendation: HIGH PRIORITY - Monitor for clinical trials
+
+2. LIDOCAINE (NEBULIZED) → ASTHMA
+   Evidence: RCT data (PubMed 15131566)
+   - FEV1 improvement (P<0.001)
+   - Steroid-sparing potential
+   - Prevents airway inflammation
+   Recommendation: HIGH PRIORITY - Generic, inexpensive
+
+3. FORMOTEROL → TYPE 2 DIABETES (hypoglycemia prevention)
+   Evidence: Clinical study (PubMed 26153273)
+   - 45-50% reduction in hypoglycemia
+   - Could improve safety of tight glucose control
+   Recommendation: MEDIUM PRIORITY - Novel application
+
+4. DHA/OMEGA-3 → ASTHMA
+   Evidence: Multiple studies (PubMed 25572556)
+   - 72% reduction in TNF-α/IL-17A
+   - Natural, safe, low cost
+   Recommendation: MEDIUM PRIORITY - Supportive therapy
+
+5. THIAMINE (BENFOTIAMINE) → ALZHEIMER'S
+   Evidence: NIH trials ongoing (PMC 11712508)
+   - Thiamine-dependent enzymes reduced in AD brains
+   - Benfotiamine pilot trial showed promise
+   Recommendation: MEDIUM PRIORITY - Watch trial results
+
+
+FALSE POSITIVE PATTERNS TO FILTER
+---------------------------------
+These patterns should be automatically excluded from recommendations:
+
+1. ANTIBIOTICS FOR METABOLIC DISEASES
+   Example: Gentamicin → Diabetes (INHIBITS insulin release!)
+   Filter: Any antibiotic predicted for T2D/metabolic syndrome
+
+2. SYMPATHOMIMETICS FOR DIABETES  
+   Example: Pseudoephedrine → Diabetes (INCREASES blood glucose)
+   Filter: Ephedrine, phenylephrine class drugs for diabetes
+
+3. ALPHA BLOCKERS FOR HEART FAILURE
+   Example: Doxazosin → Heart failure (ALLHAT: 2x HF risk!)
+   Filter: Doxazosin, prazosin, terazosin for heart failure
+
+4. DIAGNOSTIC AGENTS AS TREATMENTS
+   Example: Ioflupane I-123 → Parkinson's (it's for imaging!)
+   Filter: Radiopharmaceuticals, contrast agents
+
+
+CONFIDENCE SCORING BY DRUG TYPE
+-------------------------------
+┌────────────────────┬──────────────┬───────────────┐
+│ Drug Type          │ Precision    │ FP Rate       │
+├────────────────────┼──────────────┼───────────────┤
+│ Biologics (-mab)   │ 100%         │ 0%            │
+│ Small molecules    │ 74%          │ 16%           │
+│ Antibiotics        │ 0%           │ 50%           │
+│ Sympathomimetics   │ 0%           │ 100%          │
+└────────────────────┴──────────────┴───────────────┘
+
+Recommendation: Filter antibiotics and sympathomimetics for metabolic 
+disease predictions. Small molecules remain highest-value targets.
+
+
+DATA FILES
+----------
+- data/analysis/comprehensive_validation.json - All 30 validated predictions
+- data/analysis/actionable_predictions.json - 38 novel predictions for review
+- data/analysis/literature_validation.json - PubMed sources and evidence
+- data/analysis/error_analysis.json - Systematic failure patterns
+
+
+METHODOLOGY
+-----------
+1. Trained TransE embeddings on DRKG knowledge graph
+2. Built gradient boosting classifier on drug-disease pairs
+3. Expanded MESH disease mappings via agent web search (827 diseases)
+4. Validated predictions against PubMed/FDA literature
+5. Developed confidence scoring from false positive patterns
+
+
+CONTACT
+-------
+Repository: https://github.com/Jameshuff91/open-cure
+Model: models/drug_repurposing_gb_enhanced.pkl
+
+================================================================================

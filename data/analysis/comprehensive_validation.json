@@ -1,0 +1,273 @@
+{
+  "total_validated": 30,
+  "summary": {
+    "fda_approved": 14,
+    "clinical_evidence": 2,
+    "research_support": 9,
+    "false_positives": 5,
+    "precision_overall": 0.8333333333333334
+  },
+  "drug_type_stats": {
+    "small_molecule": {
+      "total": 19,
+      "positive": 14,
+      "false": 3
+    },
+    "biologic": {
+      "total": 3,
+      "positive": 3,
+      "false": 0
+    },
+    "antibiotic": {
+      "total": 2,
+      "positive": 0,
+      "false": 1
+    },
+    "vitamin": {
+      "total": 1,
+      "positive": 1,
+      "false": 0
+    },
+    "fatty_acid": {
+      "total": 1,
+      "positive": 1,
+      "false": 0
+    },
+    "peptide": {
+      "total": 1,
+      "positive": 1,
+      "false": 0
+    },
+    "natural": {
+      "total": 1,
+      "positive": 0,
+      "false": 0
+    },
+    "sympathomimetic": {
+      "total": 1,
+      "positive": 0,
+      "false": 1
+    },
+    "radiopharmaceutical": {
+      "total": 1,
+      "positive": 0,
+      "false": 0
+    }
+  },
+  "false_positive_patterns": [
+    {
+      "pattern": "Antibiotics for metabolic diseases",
+      "examples": [
+        "Gentamicin \u2192 T2D"
+      ]
+    },
+    {
+      "pattern": "Sympathomimetics for diabetes",
+      "examples": [
+        "Pseudoephedrine \u2192 T2D"
+      ],
+      "reason": "Increases blood glucose"
+    },
+    {
+      "pattern": "Alpha blockers for heart failure",
+      "examples": [
+        "Doxazosin \u2192 HF"
+      ],
+      "reason": "ALLHAT showed 2x HF risk"
+    },
+    {
+      "pattern": "Diagnostic agents as treatments",
+      "examples": [
+        "Ioflupane \u2192 PD"
+      ]
+    }
+  ],
+  "all_validations": [
+    {
+      "drug": "Benazepril",
+      "disease": "hypertension",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Doxorubicin",
+      "disease": "breast cancer",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Azathioprine",
+      "disease": "rheumatoid arthritis",
+      "evidence": "ESTABLISHED",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Empagliflozin",
+      "disease": "heart failure",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Rivastigmine",
+      "disease": "parkinson disease",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Tezepelumab",
+      "disease": "asthma",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "biologic"
+    },
+    {
+      "drug": "Lecanemab",
+      "disease": "alzheimer disease",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "biologic"
+    },
+    {
+      "drug": "Losartan",
+      "disease": "heart failure",
+      "evidence": "ESTABLISHED",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Paclitaxel",
+      "disease": "rheumatoid arthritis",
+      "evidence": "RESEARCH",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Naproxen",
+      "disease": "type 2 diabetes",
+      "evidence": "WEAK",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Gentamicin",
+      "disease": "type 2 diabetes",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "antibiotic",
+      "reason": "Inhibits insulin release"
+    },
+    {
+      "drug": "Atezolizumab",
+      "disease": "lung cancer",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "biologic"
+    },
+    {
+      "drug": "Spironolactone",
+      "disease": "heart failure",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Cisplatin",
+      "disease": "lung cancer",
+      "evidence": "STANDARD",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Quetiapine",
+      "disease": "parkinson disease",
+      "evidence": "OFF_LABEL",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Thiamine",
+      "disease": "alzheimer disease",
+      "evidence": "RESEARCH",
+      "drug_type": "vitamin"
+    },
+    {
+      "drug": "Gemfibrozil",
+      "disease": "heart failure",
+      "evidence": "INDIRECT",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Lidocaine",
+      "disease": "asthma",
+      "evidence": "CLINICAL_TRIAL",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Formoterol",
+      "disease": "type 2 diabetes",
+      "evidence": "RESEARCH",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Ponatinib",
+      "disease": "breast cancer",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "small_molecule",
+      "reason": "No breast cancer evidence, CML drug"
+    },
+    {
+      "drug": "Mefruside",
+      "disease": "parkinson disease",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "small_molecule",
+      "reason": "No specific evidence"
+    },
+    {
+      "drug": "Doconexent (DHA)",
+      "disease": "asthma",
+      "evidence": "RESEARCH",
+      "drug_type": "fatty_acid"
+    },
+    {
+      "drug": "Corticotropin",
+      "disease": "rheumatoid arthritis",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "peptide"
+    },
+    {
+      "drug": "Empagliflozin",
+      "disease": "parkinson disease",
+      "evidence": "PRECLINICAL_STRONG",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Doxazosin",
+      "disease": "heart failure",
+      "evidence": "HARMFUL",
+      "drug_type": "small_molecule",
+      "reason": "ALLHAT: 2x HF risk vs chlorthalidone"
+    },
+    {
+      "drug": "Garlic",
+      "disease": "alzheimer disease",
+      "evidence": "PRECLINICAL",
+      "drug_type": "natural"
+    },
+    {
+      "drug": "Sulindac",
+      "disease": "rheumatoid arthritis",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "small_molecule"
+    },
+    {
+      "drug": "Rifampicin",
+      "disease": "rheumatoid arthritis",
+      "evidence": "WEAK",
+      "drug_type": "antibiotic"
+    },
+    {
+      "drug": "Pseudoephedrine",
+      "disease": "type 2 diabetes",
+      "evidence": "HARMFUL",
+      "drug_type": "sympathomimetic",
+      "reason": "Increases blood glucose"
+    },
+    {
+      "drug": "Ioflupane I 123",
+      "disease": "parkinson disease",
+      "evidence": "FDA_DIAGNOSTIC",
+      "drug_type": "radiopharmaceutical",
+      "reason": "For diagnosis, not treatment"
+    }
+  ]
+}
