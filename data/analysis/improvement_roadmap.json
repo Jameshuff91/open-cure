@@ -1,0 +1,129 @@
+{
+  "title": "Model Performance Improvement Roadmap",
+  "current_baseline": {
+    "metric": "Per-Drug Recall@30",
+    "value": "38.7%",
+    "diseases_evaluated": 700
+  },
+  "tier_1_high_impact_easy": [
+    {
+      "name": "Add Drug-Target Interaction Features",
+      "expected_gain": "+5-10% R@30",
+      "effort": "Medium (1-2 days)",
+      "description": "Add DrugBank target data as features - the model currently has NO target information, which is why biologics fail",
+      "implementation": [
+        "Download DrugBank targets (free academic license)",
+        "Create target-disease compatibility features",
+        "Add binary features: shares_target_with_known_treatment",
+        "Add target family features (kinase, GPCR, ion channel, etc.)"
+      ],
+      "why_high_impact": "Root cause of biologic failures - model has no target understanding"
+    },
+    {
+      "name": "Add Mechanism of Action Features",
+      "expected_gain": "+3-5% R@30",
+      "effort": "Easy (0.5 day)",
+      "description": "Add ATC codes and drug class as categorical features",
+      "implementation": [
+        "Map drugs to ATC therapeutic classes",
+        "Add disease-specific mechanism relevance scores",
+        "Example: SGLT2 inhibitors \u2192 diabetes/heart failure high relevance"
+      ],
+      "why_high_impact": "Provides semantic grouping beyond embedding similarity"
+    }
+  ],
+  "tier_2_high_impact_medium_effort": [
+    {
+      "name": "Fine-tune Embeddings with Contrastive Learning",
+      "expected_gain": "+10-15% R@30",
+      "effort": "Medium (2-3 days GPU)",
+      "description": "Current TransE embeddings are generic - fine-tune for drug repurposing task",
+      "implementation": [
+        "Use Every Cure pairs as positive examples",
+        "Contrastive loss: pull known pairs closer, push random pairs apart",
+        "Fine-tune only last layer to avoid catastrophic forgetting",
+        "Use triplet loss: (drug, positive_disease, negative_disease)"
+      ],
+      "why_high_impact": "Embeddings drive 70%+ of model performance"
+    },
+    {
+      "name": "Add ChEMBL Bioactivity Features",
+      "expected_gain": "+5-8% R@30",
+      "effort": "Medium (1-2 days)",
+      "description": "Add experimental bioactivity data from ChEMBL",
+      "implementation": [
+        "Download ChEMBL drug-target activities",
+        "Create features: IC50/EC50 against relevant targets",
+        "Add target family activity profiles",
+        "Cross-reference with disease-associated targets"
+      ],
+      "why_high_impact": "Adds real experimental evidence beyond knowledge graph"
+    }
+  ],
+  "tier_3_medium_impact_higher_effort": [
+    {
+      "name": "Disease-Specific Ensemble Models",
+      "expected_gain": "+5-10% R@30 for target diseases",
+      "effort": "High (3-5 days)",
+      "description": "Train separate models for disease categories where we have enough data",
+      "implementation": [
+        "Train cancer-specific model with oncology features",
+        "Train autoimmune-specific model with immunology features",
+        "Use meta-learner to select model based on disease category"
+      ],
+      "why_high_impact": "Storage diseases already achieve 83% R@30 - specialize for other categories"
+    },
+    {
+      "name": "Graph Neural Network on Drug-Disease Graph",
+      "expected_gain": "+8-12% R@30",
+      "effort": "High (1 week GPU)",
+      "description": "Replace/augment GB with GNN that learns from graph structure",
+      "implementation": [
+        "Build drug-disease-target graph from multiple sources",
+        "Train GNN (GraphSAGE or GAT) for link prediction",
+        "Ensemble with existing GB model"
+      ],
+      "why_high_impact": "Captures multi-hop relationships (drug \u2192 target \u2192 pathway \u2192 disease)"
+    }
+  ],
+  "quick_wins_today": [
+    {
+      "name": "Add Similar Drug Features",
+      "expected_gain": "+2-3% R@30",
+      "effort": "Easy (2 hours)",
+      "description": "For each prediction, check if similar drugs treat the disease",
+      "implementation": "similarity_feature = max(cosine_sim(drug_emb, known_treatment_emb))"
+    },
+    {
+      "name": "Add Disease Similarity Features",
+      "expected_gain": "+1-2% R@30",
+      "effort": "Easy (2 hours)",
+      "description": "Check if similar diseases are treated by this drug",
+      "implementation": "disease_sim_feature = max(cosine_sim(disease_emb, known_indication_emb))"
+    },
+    {
+      "name": "Retrain with Class Weights",
+      "expected_gain": "+1-2% R@30",
+      "effort": "Easy (1 hour)",
+      "description": "Current model uses 3:1 negative ratio - try balanced weights",
+      "implementation": "class_weight='balanced' or sample_weight based on disease rarity"
+    }
+  ],
+  "data_collection_needed": [
+    {
+      "name": "ClinicalTrials.gov Integration",
+      "description": "Add features for drugs in active trials for related conditions",
+      "api": "https://clinicaltrials.gov/api/v2/studies"
+    },
+    {
+      "name": "PubMed Co-occurrence",
+      "description": "Count drug-disease co-mentions in literature",
+      "api": "NCBI E-utilities"
+    },
+    {
+      "name": "OMIM Disease Genetics",
+      "description": "Link diseases to genetic targets, match with drug targets",
+      "source": "OMIM API"
+    }
+  ]
+}
