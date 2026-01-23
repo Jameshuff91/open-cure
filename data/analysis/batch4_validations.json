@@ -1,0 +1,61 @@
+{
+  "batch": "batch4_small_molecules",
+  "timestamp": "2026-01-22T23:33:41.587643",
+  "validations": [
+    {
+      "drug": "Doxorubicin",
+      "disease": "breast cancer",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "small_molecule",
+      "reason": "FDA approved 1974, cornerstone of AC-T regimen for breast cancer"
+    },
+    {
+      "drug": "Methotrexate",
+      "disease": "breast cancer",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "small_molecule",
+      "reason": "FDA approved, CMF regimen (cyclophosphamide + methotrexate + fluorouracil)"
+    },
+    {
+      "drug": "Doxorubicin",
+      "disease": "lung cancer",
+      "evidence": "LIMITED",
+      "drug_type": "small_molecule",
+      "reason": "Used historically for SCLC, not first-line for NSCLC"
+    },
+    {
+      "drug": "Methotrexate",
+      "disease": "lung cancer",
+      "evidence": "HISTORICAL",
+      "drug_type": "small_molecule",
+      "reason": "Used in 1980s, not modern standard of care"
+    },
+    {
+      "drug": "Prednisone",
+      "disease": "lung cancer",
+      "evidence": "SUPPORTIVE_CARE",
+      "drug_type": "steroid",
+      "reason": "Symptom management, premedication; may worsen immunotherapy outcomes"
+    },
+    {
+      "drug": "Prednisone",
+      "disease": "COPD",
+      "evidence": "STANDARD",
+      "drug_type": "steroid",
+      "reason": "GOLD guidelines: 40mg/day x5 days for exacerbations, reduces relapse 27% vs 43%"
+    },
+    {
+      "drug": "MESH:C416933",
+      "disease": "hypertension",
+      "evidence": "UNKNOWN",
+      "drug_type": "unknown",
+      "reason": "MESH compound ID - requires lookup to validate"
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "fda_standard": 3,
+    "weak": 3,
+    "unknown": 1
+  }
+}

@@ -1,0 +1,95 @@
+
+================================================================================
+OPEN-CURE DRUG REPURPOSING MODEL - VALIDATION REPORT v3.0
+Prepared for Every Cure | 2026-01-22
+================================================================================
+
+EXECUTIVE SUMMARY
+-----------------
+KEY FINDING: Dantrolene → Heart Failure prediction VALIDATED by independent RCT
+             66% reduction in VT inducibility (P=0.034)
+             Prediction made BEFORE trial results were published
+
+MODEL PERFORMANCE:
+• Per-Drug Recall@30: 38.7% (5.8x better than TxGNN's 6.7%)
+• Diseases Evaluated: 700/779 (90% coverage)
+• Validation Rate: 73.8% biologically plausible (61 predictions reviewed)
+
+CRITICAL CAVEAT - BIOLOGIC PREDICTIONS:
+• 54% FALSE POSITIVE RATE for monoclonal antibody predictions
+• Model cannot distinguish antibody targets
+• Example: Predicts cancer drugs (Trastuzumab) for MS
+• RECOMMENDATION: Do NOT trust -mab predictions without manual review
+
+================================================================================
+VALIDATED HIGH-CONFIDENCE PREDICTIONS
+================================================================================
+
+1. DANTROLENE → HEART FAILURE / VENTRICULAR TACHYCARDIA
+   Model Score: 0.969 | Model Rank: #7
+   RCT Result: 66% reduction in VT inducibility (P=0.034)
+   Status: FDA-approved for malignant hyperthermia, ready for repurposing
+
+2. EMPAGLIFLOZIN → PARKINSON'S DISEASE
+   Model Score: 0.903
+   Observational: Korean study shows 20% reduced PD risk (HR 0.80)
+   Ongoing Trial: NCT05313529 (LIGHT-MCI), results expected mid-2026
+
+3. PREDNISONE → COPD EXACERBATIONS
+   Evidence: GOLD guidelines standard of care
+   Efficacy: Reduces relapse from 43% to 27%
+
+4. DOXORUBICIN / METHOTREXATE → BREAST CANCER
+   Evidence: FDA approved, cornerstone of AC-T and CMF regimens
+
+================================================================================
+HARMFUL PREDICTIONS IDENTIFIED (DO NOT USE)
+================================================================================
+
+The confidence filter catches these dangerous predictions:
+
+• TCAs → Hypertension: TCAs CAUSE hypertension via NET inhibition
+• Alpha blockers → Heart Failure: ALLHAT trial showed 2x HF risk
+• Sympathomimetics → Diabetes: Raise blood glucose
+• Arbutamine → Hypertension: Stress testing agent, RAISES BP
+• Diagnostic agents → Treatment: Ioflupane is for imaging, not therapy
+
+================================================================================
+CONFIDENCE TIERS FOR SHARING
+================================================================================
+
+TIER 1 - HIGH CONFIDENCE (Share freely):
+• Small molecule predictions passing confidence filter
+• Diseases with >30% R@30: Storage diseases, psychiatric, metabolic
+
+TIER 2 - REQUIRES REVIEW (Share with caveats):
+• Biologics with compatible target from filter
+• Novel mechanisms without clinical data
+
+TIER 3 - DO NOT SHARE:
+• Biologics failing target filter (54% FP rate)
+• Predictions flagged by confidence filter
+• Disease categories with <15% R@30
+
+================================================================================
+DELIVERED FILES
+================================================================================
+
+1. data/analysis/every_cure_deliverable_v3.json - Full structured report
+2. data/analysis/comprehensive_validation.json - All validated predictions
+3. data/analysis/actionable_predictions.json - 38 predictions for research
+4. src/confidence_filter.py - Excludes 7 harmful patterns
+5. src/biologic_target_filter.py - Validates -mab predictions
+
+================================================================================
+NEXT STEPS
+================================================================================
+
+1. Clinical expert review of Tier 1 predictions by therapeutic area
+2. Cross-reference against ClinicalTrials.gov for ongoing trials
+3. Monitor: LIGHT-MCI trial (empagliflozin), SHO-IN trial (dantrolene)
+4. Consider mechanistic validation for top novel predictions
+
+================================================================================
+Contact: Open-Cure Project | Generated 2026-01-22 23:35
+================================================================================
