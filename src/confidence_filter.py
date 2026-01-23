@@ -70,6 +70,16 @@ TUMOR_PROMOTING_HORMONE_PATTERNS = [
     r"^aldosterone$", r"^estrogen$", r"^testosterone$",  # Context dependent
 ]
 
+CARDIAC_STRESS_AGENT_PATTERNS = [
+    r"arbutamine", r"regadenoson", r"adenosine",  # Stress testing agents
+]
+
+CHEMOTHERAPY_PATTERNS = [
+    r"idarubicin", r"daunorubicin", r"epirubicin",  # Anthracyclines
+    r"vincristine", r"vinblastine",  # Vinca alkaloids
+    r"etoposide", r"topotecan",  # Topoisomerase inhibitors
+]
+
 DIAGNOSTIC_AGENT_PATTERNS = [
     r".*\s*i\s*123$", r".*\s*i-123$", r"ioflupane", r"fludeoxyglucose",
     r"^tc-99m.*", r"technetium", r"gadolinium", r"barium",
@@ -130,6 +140,14 @@ def classify_drug_type(drug_name: str) -> str:
     for pattern in TUMOR_PROMOTING_HORMONE_PATTERNS:
         if re.search(pattern, drug_lower):
             return "tumor_promoting_hormone"
+
+    for pattern in CARDIAC_STRESS_AGENT_PATTERNS:
+        if re.search(pattern, drug_lower):
+            return "cardiac_stress_agent"
+
+    for pattern in CHEMOTHERAPY_PATTERNS:
+        if re.search(pattern, drug_lower):
+            return "chemotherapy"
 
     return "small_molecule"
 
@@ -253,6 +271,30 @@ def filter_prediction(
             original_score=score,
             confidence=ConfidenceLevel.EXCLUDED,
             reason="Hormone promotes tumor growth; blocking it is therapeutic (OPPOSITE)",
+            drug_type=drug_type,
+            adjusted_score=0.0,
+        )
+
+    # Rule 8: Cardiac stress agents for hypertension (they RAISE BP, not treat it)
+    if drug_type == "cardiac_stress_agent" and is_hypertension(disease):
+        return FilteredPrediction(
+            drug=drug,
+            disease=disease,
+            original_score=score,
+            confidence=ConfidenceLevel.EXCLUDED,
+            reason="Cardiac stress testing agent - RAISES BP, doesn't treat hypertension",
+            drug_type=drug_type,
+            adjusted_score=0.0,
+        )
+
+    # Rule 9: Chemotherapy drugs for metabolic diseases (no mechanism)
+    if drug_type == "chemotherapy" and is_metabolic_disease(disease):
+        return FilteredPrediction(
+            drug=drug,
+            disease=disease,
+            original_score=score,
+            confidence=ConfidenceLevel.EXCLUDED,
+            reason="Chemotherapy drug has no mechanism for metabolic disease",
             drug_type=drug_type,
             adjusted_score=0.0,
         )

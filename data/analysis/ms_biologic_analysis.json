@@ -1,0 +1,50 @@
+{
+  "batch": "ms_biologic_deep_dive",
+  "finding": "Systematic bias in biologic predictions - model cannot distinguish drug targets",
+  "validations": [
+    {
+      "drug": "Volociximab",
+      "disease": "multiple sclerosis",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "biologic",
+      "reason": "Anti-\u03b15\u03b21 integrin for CANCER, not MS - model confused with MS drugs"
+    },
+    {
+      "drug": "Fontolizumab",
+      "disease": "multiple sclerosis",
+      "evidence": "WEAK",
+      "drug_type": "biologic",
+      "reason": "Anti-IFN-gamma for Crohn's, not studied for MS specifically"
+    },
+    {
+      "drug": "Enokizumab",
+      "disease": "multiple sclerosis",
+      "evidence": "NO_EVIDENCE",
+      "drug_type": "biologic",
+      "reason": "Anti-IL9, studied for asthma/atopic dermatitis, not MS"
+    },
+    {
+      "drug": "Adecatumumab",
+      "disease": "multiple sclerosis",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "biologic",
+      "reason": "Anti-EpCAM for CANCER, not MS"
+    },
+    {
+      "drug": "Romosozumab",
+      "disease": "multiple sclerosis",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "biologic",
+      "reason": "Anti-sclerostin for OSTEOPOROSIS, not MS"
+    },
+    {
+      "drug": "Eptinezumab",
+      "disease": "multiple sclerosis",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "biologic",
+      "reason": "Anti-CGRP for MIGRAINE prevention, not MS"
+    }
+  ],
+  "false_positive_count": 4,
+  "weak_count": 2
+}

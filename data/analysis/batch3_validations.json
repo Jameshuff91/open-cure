@@ -1,0 +1,81 @@
+{
+  "batch": "session3_batch3",
+  "timestamp": "2026-01-22T23:02:17.403821",
+  "total": 10,
+  "fda_standard": 2,
+  "clinical_offlabel": 3,
+  "weak_historical": 3,
+  "false_positives": 2,
+  "validations": [
+    {
+      "drug": "Natalizumab",
+      "disease": "multiple sclerosis",
+      "evidence": "FDA_APPROVED",
+      "drug_type": "biologic",
+      "reason": "68% reduction in relapse rate, FDA approved 2006"
+    },
+    {
+      "drug": "Rituximab",
+      "disease": "multiple sclerosis",
+      "evidence": "OFF_LABEL_VALIDATED",
+      "drug_type": "biologic",
+      "reason": "Phase II RCT positive, WHO essential medicine, widely used in Sweden"
+    },
+    {
+      "drug": "Belimumab",
+      "disease": "multiple sclerosis",
+      "evidence": "CLINICAL_TRIAL",
+      "drug_type": "biologic",
+      "reason": "NCT04767698 ongoing, approved for lupus, being tested for MS"
+    },
+    {
+      "drug": "Eculizumab",
+      "disease": "multiple sclerosis",
+      "evidence": "RELATED_APPROVAL",
+      "drug_type": "biologic",
+      "reason": "FDA approved for NMOSD (related condition), not MS specifically"
+    },
+    {
+      "drug": "Methotrexate",
+      "disease": "lung cancer",
+      "evidence": "HISTORICAL",
+      "drug_type": "small_molecule",
+      "reason": "Used in 1980s combination therapy, not modern standard"
+    },
+    {
+      "drug": "Prednisone",
+      "disease": "lung cancer",
+      "evidence": "SUPPORTIVE_CARE",
+      "drug_type": "steroid",
+      "reason": "Symptom management only; may worsen immunotherapy outcomes"
+    },
+    {
+      "drug": "Doxorubicin",
+      "disease": "lung cancer",
+      "evidence": "LIMITED",
+      "drug_type": "small_molecule",
+      "reason": "Some historical use in SCLC, not first-line for NSCLC"
+    },
+    {
+      "drug": "Arbutamine",
+      "disease": "hypertension",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "sympathomimetic",
+      "reason": "Cardiac STRESS TESTING agent - RAISES BP, doesn't treat it!"
+    },
+    {
+      "drug": "Idarubicin",
+      "disease": "type 2 diabetes",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "chemotherapy",
+      "reason": "Anthracycline for leukemia, no diabetes connection"
+    },
+    {
+      "drug": "Prednisone",
+      "disease": "rheumatoid arthritis",
+      "evidence": "STANDARD",
+      "drug_type": "steroid",
+      "reason": "Standard treatment for RA flares, bridge therapy"
+    }
+  ]
+}
