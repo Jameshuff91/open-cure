@@ -130,7 +130,8 @@ Tested classic repurposing examples NOT in Every Cure:
 
 | Drug | Disease | Evidence | Key Finding |
 |------|---------|----------|-------------|
-| **Empagliflozin** | Parkinson's | 2024 Preclinical + Observational | Korean study: 20% reduced PD risk (HR 0.80), neuroprotection in MPTP models |
+| **Empagliflozin** | Parkinson's | 2024 Preclinical + Observational | Korean study: 20% reduced PD risk (HR 0.80), LIGHT-MCI trial ongoing for cognitive impairment |
+| **Dantrolene** | Heart failure | Strong preclinical | Prevents arrhythmogenic Ca2+ release, improves LV function, reduces AF inducibility |
 | **Lidocaine (nebulized)** | Asthma | RCT P<0.001 | FEV1 improvement, steroid-sparing potential |
 | **Formoterol** | T2D hypoglycemia | Clinical study | 45-50% reduction in glucose infusion rate |
 | **DHA/Omega-3** | Asthma | Multiple studies | 72% reduction in TNF-α/IL-17A |
@@ -145,7 +146,9 @@ Tested classic repurposing examples NOT in Every Cure:
 | Sympathomimetics for diabetes | Pseudoephedrine → T2D | Increases blood glucose |
 | Alpha blockers for heart failure | Doxazosin → HF | ALLHAT: 2x HF risk! |
 | Diagnostic agents as treatments | Ioflupane → PD | It's for imaging, not treatment |
-| CML drugs for solid tumors | Ponatinib → Breast cancer | No evidence |
+| TCAs for hypertension | Protriptyline → HTN | TCAs CAUSE hypertension via NET inhibition |
+| PPIs for hypertension | Pantoprazole → HTN | 17% increased HTN risk |
+| Tumor-promoting hormones for cancer | Aldosterone → Lung cancer | Promotes tumor spread, not treats it |
 
 ### Confidence Scoring by Drug Type
 
@@ -155,15 +158,21 @@ Tested classic repurposing examples NOT in Every Cure:
 | Small molecules | 74% | 16% |
 | Antibiotics | 0% | 50% |
 | Sympathomimetics | 0% | 100% |
+| TCAs | 0% | 100% (for HTN) |
+| PPIs | 0% | 100% (for HTN) |
 
-**Recommendation:** Filter antibiotics and sympathomimetics for metabolic disease predictions.
+**Recommendation:** Use `src/confidence_filter.py` to auto-exclude harmful prediction patterns.
 
 ### Files
 
 - `data/analysis/literature_validation.json` - Initial validation (16 predictions)
 - `data/analysis/extended_validation.json` - Extended validation (8 more)
+- `data/analysis/session2_validations.json` - Session 2 validation (8 more)
 - `data/analysis/actionable_predictions.json` - 38 predictions for further review
 - `data/analysis/error_analysis.json` - Systematic failure patterns
+- `data/analysis/comprehensive_validation.json` - All validated predictions
+- `data/analysis/every_cure_summary_report.txt` - Summary report for Every Cure
+- `src/confidence_filter.py` - Auto-excludes harmful prediction patterns
 
 ## Data Sources
 
