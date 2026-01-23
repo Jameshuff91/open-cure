@@ -1,0 +1,74 @@
+{
+  "timestamp": "2026-01-22T23:31:06.720178",
+  "total_validated": 54,
+  "validation_results": {
+    "FDA_approved_standard": 13,
+    "clinical_trial_offlabel": 8,
+    "research_support": 8,
+    "weak_historical": 5,
+    "false_positives": 15,
+    "uncertain": 5
+  },
+  "key_metrics": {
+    "biologically_plausible_rate": "72.2%",
+    "false_positive_rate": "27.8%",
+    "biologic_false_positive_rate": "54%"
+  },
+  "critical_findings": [
+    {
+      "finding": "Dantrolene \u2192 Heart Failure RCT validated",
+      "significance": "P=0.034, 66% reduction in VT inducibility",
+      "confidence": "VERY_HIGH"
+    },
+    {
+      "finding": "Systematic bias in biologic predictions",
+      "significance": "Model predicts ANY -mab for autoimmune without target understanding",
+      "confidence": "HIGH"
+    },
+    {
+      "finding": "Small molecules have 74% precision",
+      "significance": "Better than biologics for most diseases",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "filter_exclusions": {
+    "harmful_predictions_caught": 7,
+    "categories": [
+      "Diagnostic agents (imaging not treatment)",
+      "TCAs for hypertension (cause HTN)",
+      "Sympathomimetics for diabetes (raise glucose)",
+      "Alpha blockers for heart failure (ALLHAT: 2x risk)",
+      "Tumor-promoting hormones for cancer",
+      "Cardiac stress agents for hypertension",
+      "Chemotherapy for metabolic diseases"
+    ]
+  },
+  "biologic_filter_results": {
+    "ms_predictions_tested": 13,
+    "passed": 6,
+    "failed": 7,
+    "pass_rate": "46%",
+    "fail_examples": [
+      "Volociximab (anti-\u03b15\u03b21 for cancer)",
+      "Trastuzumab (anti-HER2 for cancer)",
+      "Romosozumab (anti-sclerostin for bone)",
+      "Eptinezumab (anti-CGRP for migraine)"
+    ]
+  },
+  "recommendations": {
+    "share_with_every_cure": [
+      "Dantrolene \u2192 Heart failure (RCT validated)",
+      "Small molecule predictions passing confidence filter",
+      "Predictions for well-understood disease mechanisms"
+    ],
+    "do_not_share": [
+      "Biologic predictions without target validation",
+      "Any prediction flagged by confidence filter",
+      "Predictions for disease categories with <30% R@30"
+    ],
+    "requires_manual_review": [
+      "Novel biologics with compatible targets but no clinical data",
+      "Cytokine-targeting antibodies for non-studied autoimmune conditions"
+    ]
+  }
+}
