@@ -61,6 +61,68 @@ vastai destroy instance <INSTANCE_ID>
 
 **Key Finding (2026-01-22):** GB model with expanded MESH coverage achieves **38.7%** per-drug Recall@30 on 700 diseases, dramatically outperforming TxGNN (6.7%). The key was expanding disease-to-MESH mappings via parallel agent web searches against NIH/NLM database.
 
+## Scientific Validation (2026-01-22)
+
+### Literature Validation of Novel Predictions
+
+Validated 16 high-confidence novel predictions against PubMed/FDA sources:
+
+| Metric | Result |
+|--------|--------|
+| **Clinically Validated** (FDA/standard) | **68.8%** (11/16) |
+| **Biologically Plausible** (+ research) | **93.8%** (15/16) |
+| **False Positives** | **6.2%** (1/16) |
+
+### Validated Discoveries (FDA-approved drugs NOT in training data)
+
+| Drug | Disease | FDA Status | Notes |
+|------|---------|------------|-------|
+| **Lecanemab** | Alzheimer's | FDA 2023 | First amyloid-clearing therapy |
+| **Empagliflozin** | Heart failure | FDA 2021 | SGLT2 inhibitor |
+| **Tezepelumab** | Asthma | FDA 2021 | First-in-class anti-TSLP |
+| **Rivastigmine** | Parkinson's dementia | FDA approved | NEJM landmark trial |
+| **Atezolizumab** | Lung cancer | FDA approved | Checkpoint inhibitor |
+
+### Top Novel Predictions with Research Support
+
+| Drug | Disease | Evidence | Sources |
+|------|---------|----------|---------|
+| **Empagliflozin** | Parkinson's | 2024 PubMed studies | Neuroprotection in rat models |
+| **Paclitaxel** | Rheumatoid arthritis | Phase I data | Anti-angiogenic mechanism |
+| **Thiamine** | Alzheimer's | NIH clinical trials | Benfotiamine ongoing |
+| **Quetiapine** | Parkinson's psychosis | Off-label clinical use | First-line despite no FDA approval |
+
+### Error Patterns by Drug Type
+
+| Drug Type | Recall@30 | Notes |
+|-----------|-----------|-------|
+| ACE inhibitors (-pril) | 75% | Best performing |
+| Small molecules | 32% | Moderate |
+| Kinase inhibitors (-nib) | 17% | Poor |
+| Biologics (-mab) | 17% | Worst performing |
+
+**Key Insight:** Model excels at small molecule predictions but struggles with biologics. Filter -mab drugs for higher precision.
+
+### Train/Test Split Analysis
+
+| Set | Recall@30 | Notes |
+|-----|-----------|-------|
+| Training (560 diseases) | 36.5% | Expected high |
+| **Test (140 held-out)** | **20.0%** | Still 3x better than TxGNN |
+| Gap | 16.5% | Some overfitting but real generalization |
+
+### External Validation (Drug Repurposing Cases)
+
+Tested classic repurposing examples NOT in Every Cure:
+- Top 100 hits: 29% (vs 0.9% random) = **30x improvement over random**
+- Model has real biological signal for novel indications
+
+### Files
+
+- `data/analysis/literature_validation.json` - Full validation results with sources
+- `data/analysis/actionable_predictions.json` - 38 predictions for further review
+- `data/analysis/error_analysis.json` - Systematic failure patterns
+
 ## Data Sources
 
 - Every Cure: `data/reference/everycure/indicationList.xlsx`
