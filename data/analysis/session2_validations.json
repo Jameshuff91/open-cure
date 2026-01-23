@@ -1,0 +1,65 @@
+{
+  "batch": "session_2_validations",
+  "total": 8,
+  "fda_clinical": 1,
+  "research_support": 4,
+  "false_positives": 3,
+  "validations": [
+    {
+      "drug": "Protriptyline",
+      "disease": "hypertension",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "antidepressant",
+      "reason": "TCAs can CAUSE hypertension via NET inhibition - HARMFUL"
+    },
+    {
+      "drug": "Atrasentan",
+      "disease": "asthma",
+      "evidence": "WEAK",
+      "drug_type": "small_molecule",
+      "reason": "Endothelin receptor antagonists show preclinical airway benefits but bosentan trial was negative"
+    },
+    {
+      "drug": "Pantoprazole",
+      "disease": "hypertension",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "small_molecule",
+      "reason": "PPIs CAUSE 17% increased hypertension risk - HARMFUL"
+    },
+    {
+      "drug": "DL-alpha-Tocopherol",
+      "disease": "breast cancer",
+      "evidence": "INCONCLUSIVE",
+      "drug_type": "vitamin",
+      "reason": "No significant association for prevention; mixed treatment results"
+    },
+    {
+      "drug": "Chlorpromazine",
+      "disease": "hypertension",
+      "evidence": "FDA_EMERGENCY",
+      "drug_type": "antipsychotic",
+      "reason": "IV chlorpromazine used for emergency hypertensive crisis - 500 patient study"
+    },
+    {
+      "drug": "Chromium",
+      "disease": "heart failure",
+      "evidence": "WEAK",
+      "drug_type": "mineral",
+      "reason": "Cardiovascular benefits but not specific to heart failure"
+    },
+    {
+      "drug": "Dantrolene",
+      "disease": "heart failure",
+      "evidence": "PRECLINICAL_STRONG",
+      "drug_type": "small_molecule",
+      "reason": "Strong preclinical data - prevents arrhythmogenic Ca2+ release, improves LV function"
+    },
+    {
+      "drug": "Aldosterone",
+      "disease": "lung cancer",
+      "evidence": "FALSE_POSITIVE",
+      "drug_type": "hormone",
+      "reason": "OPPOSITE: Aldosterone PROMOTES tumor spread; spironolactone inhibits it"
+    }
+  ]
+}
