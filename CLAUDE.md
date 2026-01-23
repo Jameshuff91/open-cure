@@ -130,18 +130,33 @@ Tested classic repurposing examples NOT in Every Cure:
 
 | Drug | Disease | Evidence | Key Finding |
 |------|---------|----------|-------------|
-| **Empagliflozin** | Parkinson's | 2024 Preclinical | Neuroprotection in MPTP models, LIGHT-MCI trial ongoing |
+| **Empagliflozin** | Parkinson's | 2024 Preclinical + Observational | Korean study: 20% reduced PD risk (HR 0.80), neuroprotection in MPTP models |
 | **Lidocaine (nebulized)** | Asthma | RCT P<0.001 | FEV1 improvement, steroid-sparing potential |
 | **Formoterol** | T2D hypoglycemia | Clinical study | 45-50% reduction in glucose infusion rate |
 | **DHA/Omega-3** | Asthma | Multiple studies | 72% reduction in TNF-α/IL-17A |
 | **Thiamine** | Alzheimer's | NIH trials | Benfotiamine trials ongoing |
 | **Corticotropin** | RA | FDA approved | 62.9% achieved low disease activity in Phase IV RCT |
 
-### False Positives Identified
+### False Positives Identified (Filter Rules)
 
-- Gentamicin → T2D (actually inhibits insulin release)
-- Ponatinib → Breast cancer (CML drug, no breast cancer evidence)
-- Mefruside → Parkinson's (no specific evidence)
+| Pattern | Example | Reason |
+|---------|---------|--------|
+| Antibiotics for metabolic diseases | Gentamicin → T2D | Inhibits insulin release |
+| Sympathomimetics for diabetes | Pseudoephedrine → T2D | Increases blood glucose |
+| Alpha blockers for heart failure | Doxazosin → HF | ALLHAT: 2x HF risk! |
+| Diagnostic agents as treatments | Ioflupane → PD | It's for imaging, not treatment |
+| CML drugs for solid tumors | Ponatinib → Breast cancer | No evidence |
+
+### Confidence Scoring by Drug Type
+
+| Drug Type | Precision | False Positive Rate |
+|-----------|-----------|---------------------|
+| Biologics (-mab) | 100% | 0% |
+| Small molecules | 74% | 16% |
+| Antibiotics | 0% | 50% |
+| Sympathomimetics | 0% | 100% |
+
+**Recommendation:** Filter antibiotics and sympathomimetics for metabolic disease predictions.
 
 ### Files
 
