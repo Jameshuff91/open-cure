@@ -117,9 +117,36 @@ Tested classic repurposing examples NOT in Every Cure:
 - Top 100 hits: 29% (vs 0.9% random) = **30x improvement over random**
 - Model has real biological signal for novel indications
 
+### Extended Validation (24 total predictions)
+
+| Category | Count | Percentage |
+|----------|-------|------------|
+| FDA/Standard + Clinical Trial | 13/24 | 54.2% |
+| Research Support (preclinical+) | 8/24 | 33.3% |
+| **Biologically Plausible (total)** | **21/24** | **87.5%** |
+| False Positives | 3/24 | 12.5% |
+
+### Top Novel Predictions for Further Research
+
+| Drug | Disease | Evidence | Key Finding |
+|------|---------|----------|-------------|
+| **Empagliflozin** | Parkinson's | 2024 Preclinical | Neuroprotection in MPTP models, LIGHT-MCI trial ongoing |
+| **Lidocaine (nebulized)** | Asthma | RCT P<0.001 | FEV1 improvement, steroid-sparing potential |
+| **Formoterol** | T2D hypoglycemia | Clinical study | 45-50% reduction in glucose infusion rate |
+| **DHA/Omega-3** | Asthma | Multiple studies | 72% reduction in TNF-α/IL-17A |
+| **Thiamine** | Alzheimer's | NIH trials | Benfotiamine trials ongoing |
+| **Corticotropin** | RA | FDA approved | 62.9% achieved low disease activity in Phase IV RCT |
+
+### False Positives Identified
+
+- Gentamicin → T2D (actually inhibits insulin release)
+- Ponatinib → Breast cancer (CML drug, no breast cancer evidence)
+- Mefruside → Parkinson's (no specific evidence)
+
 ### Files
 
-- `data/analysis/literature_validation.json` - Full validation results with sources
+- `data/analysis/literature_validation.json` - Initial validation (16 predictions)
+- `data/analysis/extended_validation.json` - Extended validation (8 more)
 - `data/analysis/actionable_predictions.json` - 38 predictions for further review
 - `data/analysis/error_analysis.json` - Systematic failure patterns
 
