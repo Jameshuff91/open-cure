@@ -61,6 +61,78 @@ vastai destroy instance <INSTANCE_ID>
 
 **Key Finding (2026-01-22):** GB model with expanded MESH coverage achieves **38.7%** per-drug Recall@30 on 700 diseases, dramatically outperforming TxGNN (6.7%). The key was expanding disease-to-MESH mappings via parallel agent web searches against NIH/NLM database.
 
+## Similarity Feature Experiment (2026-01-24) - FAILED
+
+**Hypothesis:** Adding "guilt by association" features (similarity to known treatments) would improve predictions.
+
+**Features Added (4 new dimensions):**
+1. `max_sim_drug`: Max cosine similarity to drugs known to treat this disease
+2. `mean_sim_drug`: Mean cosine similarity to known treatments
+3. `max_sim_disease`: Max cosine similarity to diseases this drug treats
+4. `mean_sim_disease`: Mean cosine similarity to known indications
+
+### Experiment 1: Naive Training (Same Diseases for Train/Eval)
+
+**Training Results:**
+- AUROC: 0.966 (very high!)
+- AUPRC: 0.910
+- Feature importance: **80.2% from similarity features** (dominated the model)
+
+**Evaluation Results (CATASTROPHIC FAILURE):**
+- Recall@30: **0.02%** (10 hits out of 58,016 GT drugs)
+- Cause: Similarity features LEAKED training data
+
+### Experiment 2: Proper Disease-Level Split (80/20)
+
+**Setup:**
+- Training diseases: 2,887 (80%)
+- Test diseases: 722 (20%)
+- Similarity lookup built ONLY from training diseases
+
+**Training Results:**
+- Validation AUROC: 0.963
+- Validation AUPRC: 0.903
+- Feature importance: **80.3% from similarity features**
+
+**Test Results (STILL FAILED):**
+- Recall@30: **0.0%** (0 hits out of 10,672 GT drugs)
+- Cause: Test diseases have NO entries in similarity lookup → features 1-2 always = 0
+
+**Comparison with Base Model:**
+- Base model (no similarity) on same test diseases: **1.7% Recall@30**
+- Similarity model: **0.0% Recall@30**
+- **Conclusion: Similarity features HURT performance**
+
+### Root Cause Analysis
+
+The similarity features are fundamentally flawed for this task:
+
+1. **Features 1-2** (`max_sim_drug`, `mean_sim_drug`): "Is this drug similar to known treatments for THIS disease?"
+   - For test diseases: always 0 (no known treatments in lookup)
+   - Model learned: "features 1-2 = 0 → negative"
+   - Result: ALL drugs predicted as negative for test diseases
+
+2. **Features 3-4** (`max_sim_disease`, `mean_sim_disease`): "Is this disease similar to diseases this drug treats?"
+   - Can be non-zero if drug treats training diseases
+   - But model over-relies on features 1-2 (80% importance)
+
+3. **Fundamental Issue:** Similarity features encode "is this a known treatment?" which IS the label, just transformed. When held-out properly, the signal disappears.
+
+### Key Lessons
+
+1. **High training metrics ≠ good generalization** - 0.96 AUROC, 0% test recall
+2. **Feature leakage is subtle** - features derived from labels can look great during training
+3. **Disease-level holdout is essential** - pair-level splits miss cross-contamination
+4. **Simpler is better** - base embedding features work; fancy features can hurt
+
+### Files
+
+- `src/train_gb_with_similarity.py` - Initial (flawed) training script
+- `src/train_gb_similarity_split.py` - Proper disease-level split training
+- `src/evaluate_gb_similarity.py` - Evaluation script (optimized, vectorized)
+- `models/drug_repurposing_gb_similarity.pkl` - Model v1 (214MB)
+- `models/drug_repurposing_gb_similarity_split.pkl` - Model v2 with split
+
 ## Clinical Trial Validation (2026-01-22)
 
 **MAJOR FINDING: Model predictions validated by independent clinical trials**
