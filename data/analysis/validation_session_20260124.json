@@ -1,0 +1,164 @@
+{
+  "session_date": "2026-01-24",
+  "methodology": "Web search validation of filtered novel predictions",
+  "validated_predictions": [
+    {
+      "drug": "Naproxen",
+      "disease": "Type 2 Diabetes",
+      "score": 0.989,
+      "validation_status": "FALSE_POSITIVE",
+      "evidence": {
+        "summary": "Naproxen showed 'no significant influence on fasting glucose levels' in diabetics",
+        "related_finding": "Salsalate (different NSAID) showed 0.53% A1c reduction, but naproxen did not",
+        "concern": "NSAIDs increase cardiovascular risk in diabetics (JACC 2023)"
+      },
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC1401608/",
+        "https://www.jacc.org/doi/10.1016/j.jacc.2023.02.026"
+      ],
+      "actionability": "NONE - no evidence of benefit, potential harm"
+    },
+    {
+      "drug": "Linsitinib",
+      "disease": "Breast Cancer",
+      "score": 0.972,
+      "validation_status": "FALSE_POSITIVE",
+      "evidence": {
+        "summary": "Phase III trials with IGF-1R inhibitors FAILED in breast cancer",
+        "mechanism": "Could overcome tamoxifen resistance in ER+ breast cancer in preclinical models",
+        "key_finding": "TNBC: 'did not block tumour formation and had no effect on tumour growth in vivo'"
+      },
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7065127/",
+        "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0282512"
+      ],
+      "actionability": "NONE - clinical trials failed"
+    },
+    {
+      "drug": "DL-alpha-Tocopherol (Vitamin E)",
+      "disease": "Breast Cancer",
+      "score": 0.977,
+      "validation_status": "FALSE_POSITIVE",
+      "evidence": {
+        "summary": "Large-scale clinical trials showed inconsistent/disappointing results",
+        "meta_analysis": "No significant association between vitamin E consumption and breast cancer risk",
+        "key_insight": "γ-tocopherol and δ-tocopherol may be more effective than α-tocopherol"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/36963866/",
+        "https://link.springer.com/article/10.1186/s12916-022-02366-5"
+      ],
+      "actionability": "NONE - clinical evidence does not support"
+    },
+    {
+      "drug": "Volociximab",
+      "disease": "Multiple Sclerosis",
+      "score": 0.962,
+      "validation_status": "FALSE_POSITIVE",
+      "evidence": {
+        "summary": "Never tested for MS - all clinical trials were in oncology (ovarian, renal cancer)",
+        "mechanism": "Anti-α5β1 integrin antibody with anti-angiogenic properties",
+        "key_finding": "No autoimmune/MS applications ever studied"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/21276608/",
+        "https://clinicaltrials.gov/study/NCT00782093"
+      ],
+      "actionability": "NONE - mechanism not relevant to MS"
+    },
+    {
+      "drug": "Gemfibrozil",
+      "disease": "Heart Failure",
+      "score": 0.977,
+      "validation_status": "RESEARCH_SUPPORTED",
+      "evidence": {
+        "summary": "Preclinical evidence shows cardioprotective effects via sGC activation",
+        "mechanism": "Pharmacological preconditioning preserves cardiac function after heart transplant in rat models",
+        "key_finding": "Improved LV contractility, reduced nitro-oxidative stress and apoptosis",
+        "historical": "Helsinki Heart Study showed coronary heart disease prevention"
+      },
+      "sources": [
+        "https://www.nature.com/articles/s41598-017-14587-3",
+        "https://www.nejm.org/doi/full/10.1056/nejm198711123172001"
+      ],
+      "actionability": "MEDIUM - preclinical support, could warrant clinical investigation"
+    },
+    {
+      "drug": "Umeclidinium",
+      "disease": "COPD",
+      "score": 0.972,
+      "validation_status": "ALREADY_USED",
+      "evidence": {
+        "summary": "Already FDA-approved for COPD as monotherapy and in combinations",
+        "note": "Approved in Trelegy Ellipta (triple therapy) and as Incruse Ellipta"
+      },
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5406010/",
+        "https://www.nejm.org/doi/full/10.1056/NEJMoa1713901"
+      ],
+      "actionability": "NONE - already standard of care (ground truth gap)"
+    },
+    {
+      "drug": "Pergolide",
+      "disease": "Hypertension",
+      "score": 0.987,
+      "validation_status": "MECHANISTICALLY_VALID_BUT_WITHDRAWN",
+      "evidence": {
+        "summary": "Potent antihypertensive effects via dopamine receptor activation confirmed",
+        "mechanism": "Central dopamine receptor stimulation + presynaptic inhibition of norepinephrine",
+        "preclinical": "Lowered BP in spontaneously hypertensive rats, DOCA-salt models",
+        "CRITICAL": "WITHDRAWN FROM US MARKET (2007) due to cardiac valve regurgitation risk"
+      },
+      "sources": [
+        "https://www.sciencedirect.com/science/article/abs/pii/002432057990287X",
+        "https://pubmed.ncbi.nlm.nih.gov/12035871/"
+      ],
+      "actionability": "NONE - drug withdrawn due to safety concerns"
+    },
+    {
+      "drug": "Lovastatin",
+      "disease": "Multiple Myeloma",
+      "score": 0.964,
+      "validation_status": "CLINICAL_TRIAL_SUPPORTED",
+      "evidence": {
+        "summary": "RCT showed greater progression-free survival with lovastatin + thalidomide/dex",
+        "population_study": "SEER-Medicare: 45.6% of MM patients used statins, associated with reduced mortality",
+        "mechanism": "t(4;14) MM cells sensitive to lovastatin-induced apoptosis",
+        "2024_review": "Cancer Reports recognizes statins as repurposed anti-cancer agents"
+      },
+      "sources": [
+        "https://www.sciencedirect.com/science/article/abs/pii/S2152265020303372",
+        "https://onlinelibrary.wiley.com/doi/full/10.1002/cnr2.2078",
+        "https://aacrjournals.org/mct/article/6/6/1886/235978/Determinants-of-sensitivity-to-lovastatin-induced"
+      ],
+      "actionability": "HIGH - existing clinical trial evidence supports use"
+    }
+  ],
+  "summary": {
+    "total_validated": 8,
+    "clinical_trial_supported": 1,
+    "research_supported": 1,
+    "already_used": 1,
+    "mechanistically_valid_but_withdrawn": 1,
+    "false_positives": 4,
+    "precision_this_session": "25% (2/8 actionable)",
+    "key_discovery": "Lovastatin → Multiple Myeloma has RCT evidence for improved PFS"
+  },
+  "new_filter_recommendations": [
+    {
+      "pattern": "Withdrawn drugs",
+      "examples": ["Pergolide (cardiac valve risk)", "Cisapride", "Rofecoxib"],
+      "action": "Add withdrawn drug list to confidence filter"
+    },
+    {
+      "pattern": "Already FDA-approved for the indication",
+      "examples": ["Umeclidinium → COPD", "Natalizumab → MS"],
+      "action": "Cross-reference with FDA approval database"
+    },
+    {
+      "pattern": "Failed Phase III trials",
+      "examples": ["Linsitinib → breast cancer (IGF-1R inhibitors failed)"],
+      "action": "Check clinical trial failure databases"
+    }
+  ]
+}

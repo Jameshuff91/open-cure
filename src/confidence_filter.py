@@ -90,6 +90,26 @@ BIOLOGIC_PATTERNS = [
     r".*mab$", r".*cept$", r".*ase$",  # monoclonal antibodies, fusion proteins, enzymes
 ]
 
+# Drugs withdrawn from US market due to safety concerns
+WITHDRAWN_DRUG_PATTERNS = [
+    r"pergolide",  # Cardiac valve regurgitation (2007)
+    r"cisapride",  # Cardiac arrhythmias (2000)
+    r"rofecoxib",  # Cardiovascular events (Vioxx, 2004)
+    r"valdecoxib",  # Cardiovascular and skin reactions (Bextra, 2005)
+    r"sibutramine",  # Cardiovascular events (2010)
+    r"propoxyphene",  # Cardiac effects (Darvon, 2010)
+    r"tegaserod",  # Cardiovascular events (2007, limited availability)
+    r"troglitazone",  # Hepatotoxicity (Rezulin, 2000)
+    r"cerivastatin",  # Rhabdomyolysis (Baycol, 2001)
+    r"phenylpropanolamine",  # Hemorrhagic stroke (2000)
+]
+
+# Failed Phase III drugs for specific indications (don't repurpose)
+FAILED_PHASE3_COMBINATIONS = [
+    # (drug_pattern, disease_pattern, reason)
+    (r"linsitinib", r"breast.*cancer", "IGF-1R inhibitors failed Phase III breast cancer trials"),
+]
+
 # Metabolic disease names
 METABOLIC_DISEASES = [
     "diabetes", "type 2 diabetes", "type 1 diabetes", "metabolic syndrome",
@@ -190,6 +210,33 @@ def filter_prediction(
     disease_lower = disease.lower()
 
     # EXCLUSION RULES (known harmful patterns)
+
+    # Rule 0a: Withdrawn drugs (safety concerns)
+    drug_lower = drug.lower()
+    for pattern in WITHDRAWN_DRUG_PATTERNS:
+        if re.search(pattern, drug_lower):
+            return FilteredPrediction(
+                drug=drug,
+                disease=disease,
+                original_score=score,
+                confidence=ConfidenceLevel.EXCLUDED,
+                reason="Drug withdrawn from US market due to safety concerns",
+                drug_type=drug_type,
+                adjusted_score=0.0,
+            )
+
+    # Rule 0b: Failed Phase III combinations
+    for drug_pattern, disease_pattern, reason in FAILED_PHASE3_COMBINATIONS:
+        if re.search(drug_pattern, drug_lower) and re.search(disease_pattern, disease_lower):
+            return FilteredPrediction(
+                drug=drug,
+                disease=disease,
+                original_score=score,
+                confidence=ConfidenceLevel.EXCLUDED,
+                reason=reason,
+                drug_type=drug_type,
+                adjusted_score=0.0,
+            )
 
     # Rule 1: Antibiotics for metabolic diseases
     if drug_type == "antibiotic" and is_metabolic_disease(disease):

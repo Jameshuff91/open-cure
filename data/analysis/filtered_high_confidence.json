@@ -1,0 +1,910 @@
+{
+  "summary": {
+    "total_input": 50,
+    "excluded": 1,
+    "high_confidence": 10,
+    "medium_confidence": 39,
+    "low_confidence": 0,
+    "exclusion_reasons": {
+      "Chemotherapy drug has no mechanism for metabolic disease": 1
+    }
+  },
+  "excluded_predictions": [
+    {
+      "drug": "Idarubicin",
+      "disease": "type 2 diabetes",
+      "score": 1.086531974253576,
+      "target_overlap": 19,
+      "drug_type": "chemotherapy",
+      "reason": "Chemotherapy drug has no mechanism for metabolic disease"
+    }
+  ],
+  "high_confidence_for_validation": [
+    {
+      "drug": "Prednisone",
+      "disease": "cancer",
+      "score": 1.0538717001721405,
+      "target_overlap": 21,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00635",
+      "mesh_id": "D009369",
+      "rank_for_disease": 1
+    },
+    {
+      "drug": "Cetuximab",
+      "disease": "colorectal cancer",
+      "score": 1.0488215481957939,
+      "target_overlap": 24,
+      "drug_type": "biologic",
+      "drugbank_id": "DB00002",
+      "mesh_id": "D015179",
+      "rank_for_disease": 4
+    },
+    {
+      "drug": "Bevacizumab",
+      "disease": "colorectal cancer",
+      "score": 1.036188862223076,
+      "target_overlap": 20,
+      "drug_type": "biologic",
+      "drugbank_id": "DB00112",
+      "mesh_id": "D015179",
+      "rank_for_disease": 5
+    },
+    {
+      "drug": "Oxaliplatin",
+      "disease": "colorectal cancer",
+      "score": 1.035747598967397,
+      "target_overlap": 20,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00526",
+      "mesh_id": "D015179",
+      "rank_for_disease": 6
+    },
+    {
+      "drug": "Methylprednisolone",
+      "disease": "cancer",
+      "score": 0.9932049403606564,
+      "target_overlap": 27,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00959",
+      "mesh_id": "D009369",
+      "rank_for_disease": 2
+    },
+    {
+      "drug": "Erlotinib",
+      "disease": "pancreatic cancer",
+      "score": 0.9832222157812847,
+      "target_overlap": 42,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00530",
+      "mesh_id": "D010190",
+      "rank_for_disease": 3
+    },
+    {
+      "drug": "Prednisolone",
+      "disease": "cancer",
+      "score": 0.9823934304474,
+      "target_overlap": 24,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00860",
+      "mesh_id": "D009369",
+      "rank_for_disease": 3
+    },
+    {
+      "drug": "Thiotepa",
+      "disease": "cancer",
+      "score": 0.912072117863939,
+      "target_overlap": 19,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB04572",
+      "mesh_id": "D009369",
+      "rank_for_disease": 5
+    },
+    {
+      "drug": "Trastuzumab",
+      "disease": "melanoma",
+      "score": 0.9609870014436847,
+      "target_overlap": 17,
+      "drug_type": "biologic",
+      "drugbank_id": "DB00072",
+      "mesh_id": "D008545",
+      "rank_for_disease": 5
+    },
+    {
+      "drug": "Pembrolizumab",
+      "disease": "colorectal cancer",
+      "score": 1.060564886507203,
+      "target_overlap": 14,
+      "drug_type": "biologic",
+      "drugbank_id": "DB09037",
+      "mesh_id": "D015179",
+      "rank_for_disease": 1
+    }
+  ],
+  "medium_confidence_top50": [
+    {
+      "drug": "Paclitaxel",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0888164986980005,
+      "target_overlap": 31,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01229",
+      "mesh_id": "D001172",
+      "rank_for_disease": 1
+    },
+    {
+      "drug": "Doxorubicin",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0820923308040515,
+      "target_overlap": 152,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00997",
+      "mesh_id": "D001943",
+      "rank_for_disease": 1
+    },
+    {
+      "drug": "Fluvastatin",
+      "disease": "hypertension",
+      "score": 1.0787189034985911,
+      "target_overlap": 18,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01095",
+      "mesh_id": "D006973",
+      "rank_for_disease": 2
+    },
+    {
+      "drug": "Ponatinib",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0765517230742516,
+      "target_overlap": 70,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB08901",
+      "mesh_id": "D001943",
+      "rank_for_disease": 2
+    },
+    {
+      "drug": "Triamcinolone",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0738286876426542,
+      "target_overlap": 17,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00620",
+      "mesh_id": "D001172",
+      "rank_for_disease": 4
+    },
+    {
+      "drug": "Methotrexate",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0709850328090742,
+      "target_overlap": 68,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00563",
+      "mesh_id": "D001943",
+      "rank_for_disease": 4
+    },
+    {
+      "drug": "Mirtazapine",
+      "disease": "hypertension",
+      "score": 1.0702888615140227,
+      "target_overlap": 17,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00370",
+      "mesh_id": "D006973",
+      "rank_for_disease": 10
+    },
+    {
+      "drug": "Cisplatin",
+      "disease": "breast adenocarcinoma",
+      "score": 1.066861512615506,
+      "target_overlap": 18,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00515",
+      "mesh_id": "D001943",
+      "rank_for_disease": 6
+    },
+    {
+      "drug": "Digitoxin",
+      "disease": "type 2 diabetes",
+      "score": 1.0665852782140222,
+      "target_overlap": 15,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01396",
+      "mesh_id": "D003924",
+      "rank_for_disease": 2
+    },
+    {
+      "drug": "Teniposide",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0664880872289402,
+      "target_overlap": 42,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00444",
+      "mesh_id": "D001172",
+      "rank_for_disease": 5
+    },
+    {
+      "drug": "Betamethasone",
+      "disease": "psoriasis",
+      "score": 1.0646806346858466,
+      "target_overlap": 28,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00443",
+      "mesh_id": "D011565",
+      "rank_for_disease": 1
+    },
+    {
+      "drug": "Gemcitabine",
+      "disease": "psoriasis-related juvenile idiopathic arthritis",
+      "score": 1.0635369201044973,
+      "target_overlap": 25,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00441",
+      "mesh_id": "D015535",
+      "rank_for_disease": 1
+    },
+    {
+      "drug": "Cyclophosphamide",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0632986290805442,
+      "target_overlap": 21,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00531",
+      "mesh_id": "D001943",
+      "rank_for_disease": 7
+    },
+    {
+      "drug": "Docetaxel",
+      "disease": "breast adenocarcinoma",
+      "score": 1.061554465536667,
+      "target_overlap": 40,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01248",
+      "mesh_id": "D001943",
+      "rank_for_disease": 9
+    },
+    {
+      "drug": "Metformin",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0599496168406963,
+      "target_overlap": 15,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00331",
+      "mesh_id": "D001943",
+      "rank_for_disease": 10
+    },
+    {
+      "drug": "Crizotinib",
+      "disease": "type 2 diabetes",
+      "score": 1.0597012781334227,
+      "target_overlap": 17,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB08865",
+      "mesh_id": "D003924",
+      "rank_for_disease": 6
+    },
+    {
+      "drug": "Temsirolimus",
+      "disease": "type 2 diabetes",
+      "score": 1.0591726342279832,
+      "target_overlap": 14,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB06287",
+      "mesh_id": "D003924",
+      "rank_for_disease": 7
+    },
+    {
+      "drug": "Pitavastatin",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0576451860321783,
+      "target_overlap": 35,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB08860",
+      "mesh_id": "D001172",
+      "rank_for_disease": 8
+    },
+    {
+      "drug": "Estradiol",
+      "disease": "ulcerative colitis",
+      "score": 1.057592147462305,
+      "target_overlap": 28,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00783",
+      "mesh_id": "D003093",
+      "rank_for_disease": 1
+    },
+    {
+      "drug": "Etoposide",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0565966212377438,
+      "target_overlap": 22,
+      "drug_type": "chemotherapy",
+      "drugbank_id": "DB00773",
+      "mesh_id": "D001172",
+      "rank_for_disease": 10
+    },
+    {
+      "drug": "Treprostinil",
+      "disease": "hypertension",
+      "score": 1.0490139612080314,
+      "target_overlap": 23,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00374",
+      "mesh_id": "D006973",
+      "rank_for_disease": 30
+    },
+    {
+      "drug": "Fluorouracil",
+      "disease": "gastric adenocarcinoma",
+      "score": 1.0487727371998015,
+      "target_overlap": 32,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00544",
+      "mesh_id": "D013274",
+      "rank_for_disease": 3
+    },
+    {
+      "drug": "Paroxetine",
+      "disease": "hypertension",
+      "score": 1.0479290076995111,
+      "target_overlap": 23,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00715",
+      "mesh_id": "D006973",
+      "rank_for_disease": 32
+    },
+    {
+      "drug": "Zonisamide",
+      "disease": "epilepsy",
+      "score": 1.0465642634546115,
+      "target_overlap": 15,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00909",
+      "mesh_id": "D004827",
+      "rank_for_disease": 2
+    },
+    {
+      "drug": "Isotretinoin",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0460641663466943,
+      "target_overlap": 28,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00982",
+      "mesh_id": "D001172",
+      "rank_for_disease": 17
+    },
+    {
+      "drug": "Irinotecan",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0440155093797612,
+      "target_overlap": 46,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00762",
+      "mesh_id": "D001172",
+      "rank_for_disease": 19
+    },
+    {
+      "drug": "Everolimus",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0433406948967816,
+      "target_overlap": 42,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01590",
+      "mesh_id": "D001172",
+      "rank_for_disease": 20
+    },
+    {
+      "drug": "Loxapine",
+      "disease": "schizophrenia",
+      "score": 1.0390237263415956,
+      "target_overlap": 15,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00408",
+      "mesh_id": "D012559",
+      "rank_for_disease": 1
+    },
+    {
+      "drug": "Dexamethasone",
+      "disease": "psoriasis",
+      "score": 1.0358842792676595,
+      "target_overlap": 30,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01234",
+      "mesh_id": "D011565",
+      "rank_for_disease": 2
+    },
+    {
+      "drug": "Chlorpromazine",
+      "disease": "schizophrenia",
+      "score": 1.0355162398501117,
+      "target_overlap": 20,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00477",
+      "mesh_id": "D012559",
+      "rank_for_disease": 2
+    },
+    {
+      "drug": "Ziprasidone",
+      "disease": "schizophrenia",
+      "score": 1.0308258007876883,
+      "target_overlap": 15,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00246",
+      "mesh_id": "D012559",
+      "rank_for_disease": 4
+    },
+    {
+      "drug": "Quetiapine",
+      "disease": "schizophrenia",
+      "score": 1.0198839725249844,
+      "target_overlap": 18,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01224",
+      "mesh_id": "D012559",
+      "rank_for_disease": 8
+    },
+    {
+      "drug": "Sirolimus",
+      "disease": "psoriasis",
+      "score": 1.0034169989770756,
+      "target_overlap": 56,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00877",
+      "mesh_id": "D011565",
+      "rank_for_disease": 5
+    },
+    {
+      "drug": "Dasatinib",
+      "disease": "acute lymphoblastic leukemia",
+      "score": 0.9875696287916849,
+      "target_overlap": 18,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01254",
+      "mesh_id": "D054198",
+      "rank_for_disease": 4
+    },
+    {
+      "drug": "Tretinoin",
+      "disease": "psoriasis",
+      "score": 0.9766357177521583,
+      "target_overlap": 29,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00755",
+      "mesh_id": "D011565",
+      "rank_for_disease": 9
+    },
+    {
+      "drug": "Vincristine",
+      "disease": "neuroblastoma",
+      "score": 0.9765630535021697,
+      "target_overlap": 19,
+      "drug_type": "chemotherapy",
+      "drugbank_id": "DB00541",
+      "mesh_id": "D009447",
+      "rank_for_disease": 7
+    },
+    {
+      "drug": "Trametinib",
+      "disease": "melanoma",
+      "score": 0.9720812291874075,
+      "target_overlap": 84,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB08911",
+      "mesh_id": "D008545",
+      "rank_for_disease": 4
+    },
+    {
+      "drug": "Lovastatin",
+      "disease": "plasma cell myeloma",
+      "score": 0.9636284682109225,
+      "target_overlap": 21,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB00227",
+      "mesh_id": "D009101",
+      "rank_for_disease": 6
+    },
+    {
+      "drug": "Cerulenin",
+      "disease": "malaria",
+      "score": 0.9298580326815266,
+      "target_overlap": 21,
+      "drug_type": "small_molecule",
+      "drugbank_id": "DB01034",
+      "mesh_id": "D008288",
+      "rank_for_disease": 3
+    }
+  ],
+  "all_filtered_predictions": [
+    {
+      "drug": "Paclitaxel",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0888164986980005,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Doxorubicin",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0820923308040515,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Ponatinib",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0765517230742516,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Methotrexate",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0709850328090742,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Teniposide",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0664880872289402,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Betamethasone",
+      "disease": "psoriasis",
+      "score": 1.0646806346858466,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Gemcitabine",
+      "disease": "psoriasis-related juvenile idiopathic arthritis",
+      "score": 1.0635369201044973,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Cyclophosphamide",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0632986290805442,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Docetaxel",
+      "disease": "breast adenocarcinoma",
+      "score": 1.061554465536667,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Pitavastatin",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0576451860321783,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Estradiol",
+      "disease": "ulcerative colitis",
+      "score": 1.057592147462305,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Etoposide",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0565966212377438,
+      "confidence": "medium",
+      "drug_type": "chemotherapy",
+      "reason": "Default classification"
+    },
+    {
+      "drug": "Prednisone",
+      "disease": "cancer",
+      "score": 1.0538717001721405,
+      "confidence": "high",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule for cancer with high score"
+    },
+    {
+      "drug": "Cetuximab",
+      "disease": "colorectal cancer",
+      "score": 1.0488215481957939,
+      "confidence": "high",
+      "drug_type": "biologic",
+      "reason": "Biologic drugs: 100% precision in validation"
+    },
+    {
+      "drug": "Fluorouracil",
+      "disease": "gastric adenocarcinoma",
+      "score": 1.0487727371998015,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Bevacizumab",
+      "disease": "colorectal cancer",
+      "score": 1.036188862223076,
+      "confidence": "high",
+      "drug_type": "biologic",
+      "reason": "Biologic drugs: 100% precision in validation"
+    },
+    {
+      "drug": "Dexamethasone",
+      "disease": "psoriasis",
+      "score": 1.0358842792676595,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Oxaliplatin",
+      "disease": "colorectal cancer",
+      "score": 1.035747598967397,
+      "confidence": "high",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule for cancer with high score"
+    },
+    {
+      "drug": "Chlorpromazine",
+      "disease": "schizophrenia",
+      "score": 1.0355162398501117,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Fluvastatin",
+      "disease": "hypertension",
+      "score": 1.0787189034985911,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Sirolimus",
+      "disease": "psoriasis",
+      "score": 1.0034169989770756,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Cisplatin",
+      "disease": "breast adenocarcinoma",
+      "score": 1.066861512615506,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Methylprednisolone",
+      "disease": "cancer",
+      "score": 0.9932049403606564,
+      "confidence": "high",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule for cancer with high score"
+    },
+    {
+      "drug": "Erlotinib",
+      "disease": "pancreatic cancer",
+      "score": 0.9832222157812847,
+      "confidence": "high",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule for cancer with high score"
+    },
+    {
+      "drug": "Prednisolone",
+      "disease": "cancer",
+      "score": 0.9823934304474,
+      "confidence": "high",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule for cancer with high score"
+    },
+    {
+      "drug": "Tretinoin",
+      "disease": "psoriasis",
+      "score": 0.9766357177521583,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Trametinib",
+      "disease": "melanoma",
+      "score": 0.9720812291874075,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Triamcinolone",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0738286876426542,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Lovastatin",
+      "disease": "plasma cell myeloma",
+      "score": 0.9636284682109225,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Mirtazapine",
+      "disease": "hypertension",
+      "score": 1.0702888615140227,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Crizotinib",
+      "disease": "type 2 diabetes",
+      "score": 1.0597012781334227,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Quetiapine",
+      "disease": "schizophrenia",
+      "score": 1.0198839725249844,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Vincristine",
+      "disease": "neuroblastoma",
+      "score": 0.9765630535021697,
+      "confidence": "medium",
+      "drug_type": "chemotherapy",
+      "reason": "Default classification"
+    },
+    {
+      "drug": "Cerulenin",
+      "disease": "malaria",
+      "score": 0.9298580326815266,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Dasatinib",
+      "disease": "acute lymphoblastic leukemia",
+      "score": 0.9875696287916849,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Digitoxin",
+      "disease": "type 2 diabetes",
+      "score": 1.0665852782140222,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Metformin",
+      "disease": "breast adenocarcinoma",
+      "score": 1.0599496168406963,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Thiotepa",
+      "disease": "cancer",
+      "score": 0.912072117863939,
+      "confidence": "high",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule for cancer with high score"
+    },
+    {
+      "drug": "Zonisamide",
+      "disease": "epilepsy",
+      "score": 1.0465642634546115,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Loxapine",
+      "disease": "schizophrenia",
+      "score": 1.0390237263415956,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Trastuzumab",
+      "disease": "melanoma",
+      "score": 0.9609870014436847,
+      "confidence": "high",
+      "drug_type": "biologic",
+      "reason": "Biologic drugs: 100% precision in validation"
+    },
+    {
+      "drug": "Ziprasidone",
+      "disease": "schizophrenia",
+      "score": 1.0308258007876883,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Pembrolizumab",
+      "disease": "colorectal cancer",
+      "score": 1.060564886507203,
+      "confidence": "high",
+      "drug_type": "biologic",
+      "reason": "Biologic drugs: 100% precision in validation"
+    },
+    {
+      "drug": "Temsirolimus",
+      "disease": "type 2 diabetes",
+      "score": 1.0591726342279832,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Treprostinil",
+      "disease": "hypertension",
+      "score": 1.0490139612080314,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Paroxetine",
+      "disease": "hypertension",
+      "score": 1.0479290076995111,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Isotretinoin",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0460641663466943,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Irinotecan",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0440155093797612,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    },
+    {
+      "drug": "Everolimus",
+      "disease": "rheumatoid arthritis",
+      "score": 1.0433406948967816,
+      "confidence": "medium",
+      "drug_type": "small_molecule",
+      "reason": "Small molecule: 74% precision in validation"
+    }
+  ]
+}
