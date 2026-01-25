@@ -42,7 +42,8 @@ vastai destroy instance <INSTANCE_ID>
 
 | Model | Per-Drug R@30 | Diseases Evaluated | Notes |
 |-------|---------------|-------------------|-------|
-| **GB Enhanced (Expanded MESH)** | **37.4%** | 700/779 | Agent web search MESH mappings - BEST (verified 2026-01-24) |
+| **GB + Target Boost** | **39.0%** | 690/779 | Validated +1.6% improvement (p<0.0001) - BEST |
+| GB Enhanced (Expanded MESH) | 37.4% | 700/779 | Agent web search MESH mappings |
 | GB Enhanced (18 diseases) | 17.1% | 18 | CONFIRMED diseases only |
 | Best Rank Ensemble | 7.5% | 779 | min(TxGNN rank, GB rank) |
 | TxGNN (proper scoring) | 6.7% | 779 | Per-drug R@30 |
@@ -132,6 +133,85 @@ The similarity features are fundamentally flawed for this task:
 - `src/evaluate_gb_similarity.py` - Evaluation script (optimized, vectorized)
 - `models/drug_repurposing_gb_similarity.pkl` - Model v1 (214MB)
 - `models/drug_repurposing_gb_similarity_split.pkl` - Model v2 with split
+
+## Target Feature Experiment (2026-01-24) - MIXED RESULTS
+
+**Hypothesis:** Adding drug-target and disease-gene overlap features would improve predictions.
+
+**Features Added (4 new dimensions):**
+1. `n_drug_targets`: Number of targets for the drug
+2. `n_disease_genes`: Number of genes associated with disease
+3. `n_overlap`: Count of shared targets/genes
+4. `frac_overlap`: Fraction of drug targets that overlap with disease genes
+
+### Experiment 1: Retrain Model with Target Features - FAILED
+
+**Setup:**
+- 1,359 positive pairs from GT with both target and gene data available
+- Drug target coverage: 11,656 drugs (from DrugBank)
+- Disease gene coverage: 77% of MESH diseases
+
+**Training Results:**
+- Reasonable training metrics
+
+**Evaluation Results:**
+- Recall@30: **5.8%** (vs 37.4% baseline)
+- **Regression of -31.6%** - CATASTROPHIC FAILURE
+
+**Why It Failed:**
+- Trained on different/smaller dataset than baseline model
+- Model learned different patterns, lost baseline signal
+- Target features didn't compensate for training data differences
+
+### Experiment 2: Ensemble Strategy - PROMISING (NEEDS VALIDATION)
+
+Instead of retraining, boost baseline scores when target overlap exists.
+
+**Strategies Tested:**
+
+| Strategy | R@30 | Change | Formula |
+|----------|------|--------|---------|
+| baseline | 37.4% | - | score |
+| boost_if_overlap | 38.9% | +1.5% | score × 1.1 if overlap > 0 |
+| **boost_by_overlap** | **39.0%** | **+1.6%** | score × (1 + 0.01 × min(overlap, 10)) |
+| boost_by_frac | 36.9% | -0.4% | score × (1 + 0.2 × frac) |
+| multiply_frac | 34.3% | -3.0% | score × (1 + frac) |
+| add_bonus | 37.2% | -0.2% | min(1.0, score + 0.1 × frac) |
+
+**Best Strategy:** `boost_by_overlap` - multiply score by (1 + 0.01 × overlap count, capped at 10)
+
+**✓ VALIDATED (2026-01-24):**
+
+| Test | Result | Significance |
+|------|--------|--------------|
+| McNemar's test | p=0.000014 | ✓ Highly significant |
+| Sign test | p=0.000044 | ✓ Highly significant |
+| Bootstrap 95% CI | [0.88%, 2.54%] | ✓ Does not include 0 |
+
+**Detailed Results:**
+- 25 GT drugs entered top-30, only 3 left (net +22)
+- 23 diseases improved (3.3%), only 3 hurt (0.4%), 664 unchanged
+- Bootstrap: Baseline 37.4% [34.5%, 40.4%], Boosted 39.1% [36.2%, 42.1%]
+
+**Biological Plausibility (examples of boosted predictions):**
+| Drug | Disease | Target-Gene Overlap |
+|------|---------|---------------------|
+| Fulvestrant | HER2- breast cancer | 131 genes |
+| Paclitaxel | Cancer | 118 genes |
+| Estradiol | Breast cancer | 76 genes |
+| Doxorubicin | Bone sarcoma | 44 genes |
+| Fluorouracil | Breast adenocarcinoma | 28 genes |
+
+**Diseases hurt (minor):** Cholangiocarcinoma, CHF, Hypertension (-1 each)
+
+### Files
+
+- `src/train_gb_with_targets.py` - Retrained model (failed)
+- `src/extract_target_features.py` - Target/gene extraction
+- `scripts/evaluate_target_ensemble.py` - Ensemble strategy evaluation
+- `data/reference/drug_targets.json` - Drug → target gene mappings
+- `data/reference/disease_genes.json` - Disease → gene associations
+- `models/drug_repurposing_gb_with_targets.pkl` - Retrained model (don't use)
 
 ## Clinical Trial Validation (2026-01-22)
 
