@@ -108,10 +108,64 @@ WITHDRAWN_DRUG_PATTERNS = [
     r"phenylpropanolamine",  # Hemorrhagic stroke (2000)
 ]
 
+# Discontinued drugs (development stopped, not available)
+DISCONTINUED_DRUG_PATTERNS = [
+    r"aducanumab",  # Discontinued Jan 2024 (commercial factors)
+    r"lexatumumab",  # Discontinued 2015 (insufficient efficacy)
+    r"fontolizumab",  # Failed Phase II Crohn's/RA, discontinued
+    r"volociximab",  # Failed Phase II oncology, discontinued
+    r"bectumomab",  # Imaging agent only, not therapeutic
+]
+
+# Anti-IL-5 drugs (fail clinically despite reducing eosinophils)
+ANTI_IL5_PATTERNS = [
+    r"reslizumab",
+    r"mepolizumab",
+    r"benralizumab",
+]
+
+# Diseases where anti-IL-5 consistently fails (eosinophils are markers, not drivers)
+ANTI_IL5_EXCLUDED_DISEASES = [
+    "psoriasis", "ulcerative colitis", "crohn", "multiple sclerosis",
+    "atopic dermatitis", "eosinophilic esophagitis",
+]
+
+# TRAIL agonists (induce apoptosis, harmful in inflammatory diseases)
+TRAIL_AGONIST_PATTERNS = [
+    r"lexatumumab",
+    r"mapatumumab",
+    r"conatumumab",
+]
+
+# Intravitreal formulations (designed for eye injection, not systemic use)
+INTRAVITREAL_DRUG_PATTERNS = [
+    r"brolucizumab",  # Anti-VEGF for wet AMD
+    r"ranibizumab",  # Anti-VEGF for wet AMD
+    r"aflibercept",  # VEGF trap for wet AMD (also has systemic formulation)
+    r"faricimab",  # Anti-VEGF/Ang-2 for wet AMD
+]
+
+# Systemic diseases where intravitreal drugs are wrong formulation
+SYSTEMIC_DISEASES = [
+    "multiple sclerosis", "ulcerative colitis", "crohn", "rheumatoid arthritis",
+    "lupus", "psoriasis", "asthma", "diabetes", "heart failure",
+]
+
 # Failed Phase III drugs for specific indications (don't repurpose)
 FAILED_PHASE3_COMBINATIONS = [
     # (drug_pattern, disease_pattern, reason)
     (r"linsitinib", r"breast.*cancer", "IGF-1R inhibitors failed Phase III breast cancer trials"),
+    (r"fontolizumab", r"ulcerative.*colitis", "Anti-IFN-gamma wrong pathway - UC is Th2-like, not Th1"),
+    (r"fontolizumab", r"crohn", "Failed Phase II for Crohn's disease"),
+    (r"volociximab", r"multiple.*sclerosis", "α5β1 integrin is PROTECTIVE in MS - inhibiting worsens disease"),
+]
+
+# B-cell depleting drugs that paradoxically worsen psoriasis
+BCELL_DEPLETING_PATTERNS = [
+    r"rituximab",
+    r"ocrelizumab",
+    r"ofatumumab",
+    r"bectumomab",
 ]
 
 # Metabolic disease names
@@ -302,7 +356,77 @@ def filter_prediction(
                 adjusted_score=0.0,
             )
 
-    # Rule 0c: Already FDA-approved (not truly novel - ground truth gap)
+    # Rule 0c: Discontinued drugs (development stopped)
+    for pattern in DISCONTINUED_DRUG_PATTERNS:
+        if re.search(pattern, drug_lower):
+            return FilteredPrediction(
+                drug=drug,
+                disease=disease,
+                original_score=score,
+                confidence=ConfidenceLevel.EXCLUDED,
+                reason="Drug development discontinued - not available",
+                drug_type=drug_type,
+                adjusted_score=0.0,
+            )
+
+    # Rule 0d: Anti-IL-5 drugs for non-eosinophilic diseases
+    # These reduce eosinophils but fail to provide clinical benefit
+    for pattern in ANTI_IL5_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(d in disease_lower for d in ANTI_IL5_EXCLUDED_DISEASES):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Anti-IL-5 reduces eosinophils but fails clinically for this disease",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0e: Intravitreal drugs for systemic diseases (wrong formulation)
+    for pattern in INTRAVITREAL_DRUG_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(d in disease_lower for d in SYSTEMIC_DISEASES):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Intravitreal formulation - not suitable for systemic disease",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f: B-cell depleting drugs for psoriasis (paradoxically worsen)
+    for pattern in BCELL_DEPLETING_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if "psoriasis" in disease_lower:
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="B-cell depletion paradoxically induces/worsens psoriasis",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0g: TRAIL agonists for inflammatory diseases
+    for pattern in TRAIL_AGONIST_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(d in disease_lower for d in ["colitis", "crohn", "psoriasis", "arthritis"]):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="TRAIL agonists worsen epithelial damage in inflammatory diseases",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0h: Already FDA-approved (not truly novel - ground truth gap)
     if is_fda_approved_pair(drug, disease):
         return FilteredPrediction(
             drug=drug,

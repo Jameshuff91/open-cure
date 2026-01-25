@@ -108,6 +108,92 @@ Excludes known harmful patterns (from literature validation):
 | Pembrolizumab | Breast cancer | 0.95 | biologic |
 | Guselkumab | Ulcerative colitis | 0.95 | biologic |
 
+## Literature Validation of Top 20 Predictions (2026-01-25)
+
+Validated top 20 high-confidence novel predictions against PubMed, clinical trials, and FDA approvals.
+
+### Validation Results Summary
+
+**Precision: 20%** (4/20 predictions validated)
+
+| Status | Count | Examples |
+|--------|-------|----------|
+| FDA-Approved (GT gap) | 1 | Pembrolizumab → Breast cancer |
+| Research Supported | 3 | Ravulizumab → Asthma, Nimotuzumab → Psoriasis, Alirocumab → Psoriasis |
+| Mechanistically Interesting | 1 | Abciximab → MS (platelet pathway valid, drug impractical) |
+| False Positives | 15 | Anti-IL-5 drugs, discontinued drugs, wrong mechanisms |
+
+### Validated Predictions (Worth Pursuing)
+
+| Drug | Disease | Evidence | Next Step |
+|------|---------|----------|-----------|
+| **Pembrolizumab** | Breast Cancer | FDA-approved 2020-2021 for TNBC | Ground truth gap |
+| **Ravulizumab** | Asthma | Eculizumab proof-of-concept trial, C5/eosinophil mechanism | Phase II trial |
+| **Nimotuzumab** | Psoriasis | EGFR overexpressed, case reports with cetuximab | Phase II trial |
+| **Alirocumab** | Psoriasis | Mendelian Randomization p<0.003, replicated | Prevention study |
+| **Brolucizumab** | Psoriasis | Anti-VEGF rationale, bevacizumab case reports | Topical formulation |
+
+### False Positive Patterns Identified
+
+| Pattern | Examples | Reason |
+|---------|----------|--------|
+| **Anti-IL-5 class** | Reslizumab, Mepolizumab | Reduces eosinophils but no clinical benefit |
+| **Discontinued drugs** | Aducanumab, Lexatumumab, Fontolizumab | No longer available |
+| **Wrong formulation** | Brolucizumab (intravitreal) | Designed for eye injection, not systemic |
+| **Protective target** | Volociximab (α5β1) | α5β1 is protective in MS, inhibiting worsens disease |
+| **TRAIL agonists** | Lexatumumab | TRAIL worsens epithelial damage in UC/psoriasis |
+| **B-cell depletion for psoriasis** | Bectumomab | Paradoxically induces psoriasis (rituximab data) |
+| **Anti-IFN-γ for UC** | Fontolizumab | UC is Th2-like, not Th1; wrong pathway |
+
+### New Filter Rules to Add
+
+Based on validation, these patterns should be excluded:
+
+```python
+# Discontinued drugs (add to WITHDRAWN_DRUG_PATTERNS)
+DISCONTINUED_DRUGS = [
+    "aducanumab",      # Discontinued Jan 2024
+    "lexatumumab",     # Discontinued 2015
+    "fontolizumab",    # Failed Phase II, discontinued
+    "volociximab",     # Failed Phase II oncology
+    "bectumomab",      # Imaging agent only
+]
+
+# Anti-IL-5 for non-eosinophilic diseases
+# Reslizumab, Mepolizumab, Benralizumab → exclude for UC, psoriasis, MS
+
+# TRAIL agonists for inflammatory diseases
+# Lexatumumab → exclude for UC, psoriasis, Crohn's
+
+# Anti-IFN-gamma for UC (wrong Th1/Th2 pathway)
+# Fontolizumab → exclude for UC
+
+# Intravitreal formulations for systemic diseases
+# Brolucizumab, Ranibizumab → flag as wrong formulation
+```
+
+### Key Learnings
+
+1. **Anti-IL-5 is a consistent false positive** - The model correctly identifies eosinophil involvement but anti-IL-5 therapy consistently fails to provide clinical benefit despite reducing eosinophil counts. Eosinophils are markers, not drivers.
+
+2. **Drug formulation matters** - Brolucizumab is designed for intravitreal injection (26 kDa fragment). Wrong for systemic diseases even if mechanism is valid.
+
+3. **Mechanism can be opposite** - Volociximab inhibits α5β1 integrin which is PROTECTIVE in MS. Model sees "integrin + MS" but misses directionality.
+
+4. **B-cell depletion paradox in psoriasis** - Rituximab paradoxically INDUCES psoriasis. Regulatory B cells may suppress disease.
+
+5. **Th1 vs Th2 distinction in IBD** - Crohn's is Th1 (IFN-γ elevated), UC is Th2-like (normal IFN-γ). Model conflates them.
+
+6. **20% validation rate for top predictions** - Even with ML confidence ≥0.95 and rule-based filtering, only 20% of top predictions are validated. Need additional biological plausibility filters.
+
+### Actionable Next Steps
+
+1. **Add discontinued drug filter** - Exclude aducanumab, lexatumumab, fontolizumab, volociximab
+2. **Add anti-IL-5 exclusion** - For psoriasis, UC, MS (keep for eosinophilic asthma)
+3. **Add formulation check** - Flag intravitreal drugs for systemic indications
+4. **Add Th1/Th2 pathway check** - Match drug mechanism to disease immunology
+5. **Update ground truth** - Add pembrolizumab + breast cancer
+
 ## Key Metrics
 
 **Current Performance (on Every Cure Ground Truth):**

@@ -1,0 +1,150 @@
+{
+  "validation_date": "2026-01-25",
+  "total_predictions_validated": 20,
+  "precision": 0.20,
+  "validated_predictions": [
+    {
+      "drug": "Pembrolizumab",
+      "disease": "Invasive Breast Carcinoma",
+      "status": "FDA-Approved",
+      "evidence": "FDA approved 2020-2021 for TNBC (KEYNOTE-522)",
+      "recommendation": "Ground truth gap - add to known pairs"
+    },
+    {
+      "drug": "Ravulizumab",
+      "disease": "Asthma",
+      "status": "Research Supported",
+      "evidence": "Eculizumab proof-of-concept trial, C5/eosinophil mechanism",
+      "recommendation": "Phase II trial in severe eosinophilic asthma"
+    },
+    {
+      "drug": "Nimotuzumab",
+      "disease": "Psoriasis",
+      "status": "Research Supported",
+      "evidence": "EGFR overexpressed in psoriasis, case reports with cetuximab",
+      "recommendation": "Phase II trial - safer than cetuximab for skin"
+    },
+    {
+      "drug": "Alirocumab",
+      "disease": "Psoriasis",
+      "status": "Research Supported",
+      "evidence": "Mendelian Randomization p<0.003, replicated in FinnGen",
+      "recommendation": "Prevention study in high-risk patients"
+    },
+    {
+      "drug": "Brolucizumab",
+      "disease": "Psoriasis",
+      "status": "Research Supported",
+      "evidence": "Anti-VEGF rationale, bevacizumab case reports",
+      "recommendation": "Topical formulation needed - intravitreal not suitable"
+    }
+  ],
+  "false_positives": [
+    {
+      "drug": "Reslizumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "Anti-IL-5 class fails clinically despite reducing eosinophils",
+      "filter_added": true
+    },
+    {
+      "drug": "Reslizumab",
+      "disease": "Psoriasis",
+      "reason": "Anti-IL-5 class fails clinically",
+      "filter_added": true
+    },
+    {
+      "drug": "Reslizumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "No eosinophil role in MS pathogenesis",
+      "filter_added": true
+    },
+    {
+      "drug": "Brolucizumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Intravitreal formulation, safety concerns in MS patients",
+      "filter_added": true
+    },
+    {
+      "drug": "Brolucizumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "Intravitreal formulation not suitable for systemic disease",
+      "filter_added": true
+    },
+    {
+      "drug": "Mepolizumab",
+      "disease": "Psoriasis",
+      "reason": "Anti-IL-5 failed in atopic dermatitis - same class failure",
+      "filter_added": true
+    },
+    {
+      "drug": "Aducanumab",
+      "disease": "Psoriasis",
+      "reason": "Amyloid-beta unrelated to psoriasis; drug discontinued Jan 2024",
+      "filter_added": true
+    },
+    {
+      "drug": "Romosozumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Sclerostin has no role in MS; black box CV warning",
+      "filter_added": false
+    },
+    {
+      "drug": "Bectumomab",
+      "disease": "Psoriasis",
+      "reason": "B-cell depletion paradoxically induces psoriasis",
+      "filter_added": true
+    },
+    {
+      "drug": "Lexatumumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "TRAIL agonism worsens epithelial damage; drug discontinued",
+      "filter_added": true
+    },
+    {
+      "drug": "Lexatumumab",
+      "disease": "Psoriasis",
+      "reason": "TRAIL agonism worsens psoriasis; drug discontinued",
+      "filter_added": true
+    },
+    {
+      "drug": "Volociximab",
+      "disease": "Multiple Sclerosis",
+      "reason": "α5β1 integrin is PROTECTIVE in MS - inhibiting worsens disease",
+      "filter_added": true
+    },
+    {
+      "drug": "Fontolizumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Discontinued drug; complex IFN-γ biology",
+      "filter_added": true
+    },
+    {
+      "drug": "Fontolizumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "UC is Th2-like, not Th1 - wrong immunological pathway",
+      "filter_added": true
+    },
+    {
+      "drug": "Abciximab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Platelet pathway valid but drug impractical (IV-only, bleeding risk)",
+      "filter_added": false
+    }
+  ],
+  "new_filter_rules_added": [
+    "DISCONTINUED_DRUG_PATTERNS: aducanumab, lexatumumab, fontolizumab, volociximab, bectumomab",
+    "ANTI_IL5_PATTERNS + ANTI_IL5_EXCLUDED_DISEASES: reslizumab, mepolizumab, benralizumab for psoriasis/UC/MS",
+    "INTRAVITREAL_DRUG_PATTERNS + SYSTEMIC_DISEASES: brolucizumab, ranibizumab for systemic diseases",
+    "BCELL_DEPLETING_PATTERNS for psoriasis: rituximab, ocrelizumab, ofatumumab, bectumomab",
+    "TRAIL_AGONIST_PATTERNS for inflammatory diseases: lexatumumab, mapatumumab, conatumumab",
+    "FAILED_PHASE3_COMBINATIONS: fontolizumab for UC, volociximab for MS"
+  ],
+  "key_learnings": [
+    "Anti-IL-5 is a consistent false positive - reduces eosinophils but fails clinically",
+    "Drug formulation matters - intravitreal drugs wrong for systemic diseases",
+    "Mechanism can be opposite - volociximab inhibits protective α5β1 in MS",
+    "B-cell depletion paradox - rituximab induces psoriasis",
+    "Th1 vs Th2 distinction - Crohn's (Th1) vs UC (Th2) have different immunology",
+    "20% validation rate for top predictions with 95%+ ML confidence"
+  ]
+}
