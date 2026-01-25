@@ -186,13 +186,91 @@ DISCONTINUED_DRUGS = [
 
 6. **20% validation rate for top predictions** - Even with ML confidence ≥0.95 and rule-based filtering, only 20% of top predictions are validated. Need additional biological plausibility filters.
 
-### Actionable Next Steps
+### Actionable Next Steps (Batch 1)
 
-1. **Add discontinued drug filter** - Exclude aducanumab, lexatumumab, fontolizumab, volociximab
-2. **Add anti-IL-5 exclusion** - For psoriasis, UC, MS (keep for eosinophilic asthma)
-3. **Add formulation check** - Flag intravitreal drugs for systemic indications
-4. **Add Th1/Th2 pathway check** - Match drug mechanism to disease immunology
-5. **Update ground truth** - Add pembrolizumab + breast cancer
+1. ✅ **Add discontinued drug filter** - Exclude aducanumab, lexatumumab, fontolizumab, volociximab
+2. ✅ **Add anti-IL-5 exclusion** - For psoriasis, UC, MS (keep for eosinophilic asthma)
+3. ✅ **Add formulation check** - Flag intravitreal drugs for systemic indications
+4. ✅ **Add Th1/Th2 pathway check** - Match drug mechanism to disease immunology
+5. ✅ **Update ground truth** - Add pembrolizumab + breast cancer
+
+## Literature Validation Batch 2 (2026-01-25)
+
+Validated next 20 high-confidence predictions.
+
+### Validation Results Summary
+
+**Precision: 25%** (5/20 predictions validated - slight improvement over batch 1)
+
+| Status | Count | Examples |
+|--------|-------|----------|
+| FDA-Approved (GT gap) | 3 | Ustekinumab → UC (2019), Ustekinumab → Psoriasis (2009), Guselkumab → UC (2024) |
+| Mechanistically Plausible | 2 | Leronlimab → UC, Vanucizumab → Psoriasis |
+| False Positives | 15 | Discontinued, wrong pathway, wrong target |
+
+### Major Ground Truth Gaps Found
+
+| Drug | Disease | FDA Approval | Notes |
+|------|---------|--------------|-------|
+| **Ustekinumab** | Ulcerative Colitis | 2019 | UNIFI trial, 45% remission at 1 year |
+| **Ustekinumab** | Psoriasis | 2009 | First IL-12/23 inhibitor for psoriasis |
+| **Guselkumab** | Ulcerative Colitis | 2024 | QUASAR trial, 50% remission at week 44 |
+
+### New False Positive Patterns
+
+| Pattern | Examples | Reason |
+|---------|----------|--------|
+| **FDA revoked** | Olaratumab | Phase 3 failed, approval revoked 2020 |
+| **IL-6 for psoriasis** | Vobarilizumab | IL-6 is WRONG pathway, need IL-17/IL-23 |
+| **Failed UC trials** | Daclizumab | Failed Phase 2 RCT (2-7% vs 10% placebo) |
+| **Bone drugs for CNS** | Romosozumab | Sclerostin has no role in MS |
+| **Cancer antibodies** | Farletuzumab, Adecatumumab | Target tumor markers (FRα, EpCAM), not autoimmune |
+| **Wrong mechanism** | Otelixizumab | Anti-CD3 for T1D, no UC mechanism |
+
+### New Filter Rules Added
+
+```python
+# FDA approval revoked
+REVOKED_APPROVAL_PATTERNS = ["olaratumab"]
+
+# IL-6 inhibitors for psoriasis (wrong pathway)
+IL6_INHIBITOR_PATTERNS = ["vobarilizumab", "sarilumab", "sirukumab"]
+
+# Failed UC trials
+FAILED_PHASE3_COMBINATIONS += [
+    (r"daclizumab", r"ulcerative.*colitis"),
+    (r"otelixizumab", r"ulcerative.*colitis"),
+]
+
+# Cancer-specific antibodies for autoimmune
+CANCER_SPECIFIC_ANTIBODY_PATTERNS = ["farletuzumab", "adecatumumab", "nebacumab"]
+
+# Bone drugs for neurological diseases
+BONE_DRUG_PATTERNS = ["romosozumab"]
+```
+
+### Key Learnings (Batch 2)
+
+1. **IL-6 is wrong pathway for psoriasis** - IL-17/IL-23 are the correct targets. IL-6 inhibitors developed for RA only.
+2. **Anti-EGFR may be harmful in UC** - EGFR is actually PROTECTIVE in colitis. EGFR activation reduces inflammation.
+3. **Sclerostin has no CNS role** - Bone metabolism drugs should not be predicted for neurological diseases.
+4. **Cancer antibodies target tumor markers** - FRα, EpCAM are cancer markers, not autoimmune targets.
+5. **Many predictions are DISCONTINUED or REVOKED drugs** - Need comprehensive drug availability filter.
+
+### Filter Impact
+
+- Before batch 2: 189 excluded (0.8%)
+- After batch 2: 216 excluded (0.9%)
+- Net change: +27 harmful predictions removed
+
+### Combined Validation Summary (Batches 1+2)
+
+| Metric | Batch 1 | Batch 2 | Combined |
+|--------|---------|---------|----------|
+| Validated | 20 | 20 | 40 |
+| Precision | 20% | 25% | 22.5% |
+| FDA Gaps Found | 1 | 3 | 4 |
+| New Filter Rules | 7 | 6 | 13 |
 
 ## Key Metrics
 

@@ -1,0 +1,189 @@
+{
+  "validation_date": "2026-01-25",
+  "batch_number": 2,
+  "total_predictions_validated": 20,
+  "validated_predictions": [
+    {
+      "drug": "Ustekinumab",
+      "disease": "Ulcerative Colitis",
+      "status": "FDA-Approved",
+      "approval_year": 2019,
+      "evidence": "FDA approved October 2019 based on UNIFI Phase 3 trial. 45% remission at 1 year.",
+      "recommendation": "Add to ground truth - major gap"
+    },
+    {
+      "drug": "Ustekinumab",
+      "disease": "Psoriasis",
+      "status": "FDA-Approved",
+      "approval_year": 2009,
+      "evidence": "FDA approved September 2009 for moderate-to-severe plaque psoriasis.",
+      "recommendation": "Add to ground truth - major gap"
+    },
+    {
+      "drug": "Guselkumab",
+      "disease": "Ulcerative Colitis",
+      "status": "FDA-Approved",
+      "approval_year": 2024,
+      "evidence": "FDA approved September 2024 based on QUASAR Phase 3. 50% remission at week 44.",
+      "recommendation": "Add to ground truth - recent approval"
+    },
+    {
+      "drug": "Leronlimab",
+      "disease": "Ulcerative Colitis",
+      "status": "Mechanistically Plausible",
+      "evidence": "CCR5 blockade shown to reduce colitis in mouse models. Maraviroc (small molecule CCR5 inhibitor) effective in DSS/TNBS models. No clinical UC trials for leronlimab.",
+      "recommendation": "Monitor - preclinical support, no human data"
+    },
+    {
+      "drug": "Vanucizumab",
+      "disease": "Psoriasis",
+      "status": "Mechanistically Plausible",
+      "evidence": "VEGF and Ang-2 are elevated in psoriasis. Dual inhibition rationale exists. Developed for cancer only.",
+      "recommendation": "Monitor - mechanism valid, no psoriasis trials"
+    }
+  ],
+  "false_positives": [
+    {
+      "drug": "Daclizumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "Failed Phase 2 RCT (2006). 2-7% remission vs 10% placebo. No efficacy.",
+      "filter_added": true,
+      "filter_rule": "FAILED_UC_TRIALS"
+    },
+    {
+      "drug": "Enokizumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Drug DISCONTINUED. Developed for asthma (anti-IL-9), never tested in MS.",
+      "filter_added": true,
+      "filter_rule": "DISCONTINUED_DRUG_PATTERNS"
+    },
+    {
+      "drug": "Enokizumab",
+      "disease": "Psoriasis",
+      "reason": "Drug DISCONTINUED. Anti-IL-9 mechanism not relevant to psoriasis.",
+      "filter_added": true,
+      "filter_rule": "DISCONTINUED_DRUG_PATTERNS"
+    },
+    {
+      "drug": "Olaratumab",
+      "disease": "Stomach Carcinoma",
+      "reason": "Drug WITHDRAWN from market 2019. Confirmatory trial failed, FDA revoked approval.",
+      "filter_added": true,
+      "filter_rule": "WITHDRAWN_DRUG_PATTERNS"
+    },
+    {
+      "drug": "Vobarilizumab",
+      "disease": "Psoriasis",
+      "reason": "IL-6 inhibition is WRONG pathway for psoriasis. IL-17/IL-23 preferred. Developed for RA only.",
+      "filter_added": true,
+      "filter_rule": "IL6_PSORIASIS_MISMATCH"
+    },
+    {
+      "drug": "Farletuzumab",
+      "disease": "Psoriasis",
+      "reason": "Targets FR\u03b1 (cancer marker), not FR\u03b2 (activated macrophages). Wrong target for autoimmune.",
+      "filter_added": true,
+      "filter_rule": "CANCER_ANTIBODY_WRONG_TARGET"
+    },
+    {
+      "drug": "Otelixizumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "Anti-CD3 developed for Type 1 Diabetes only. No IBD research.",
+      "filter_added": false,
+      "filter_rule": null
+    },
+    {
+      "drug": "Romosozumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Sclerostin has no role in MS. Drug for osteoporosis. Black box CV warning.",
+      "filter_added": true,
+      "filter_rule": "BONE_DRUG_MS_MISMATCH"
+    },
+    {
+      "drug": "Matuzumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "EGFR antibody developed for cancer. EGFR activation may actually PROTECT in colitis.",
+      "filter_added": true,
+      "filter_rule": "EGFR_UC_PROTECTIVE"
+    },
+    {
+      "drug": "Nebacumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Anti-endotoxin antibody developed for sepsis. No MS mechanism.",
+      "filter_added": false,
+      "filter_rule": null
+    },
+    {
+      "drug": "Adecatumumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Anti-EpCAM antibody for cancer. EpCAM not expressed in CNS.",
+      "filter_added": false,
+      "filter_rule": null
+    },
+    {
+      "drug": "Iratumumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "Anti-CD30 for Hodgkin lymphoma. CD30 not major target in UC.",
+      "filter_added": false,
+      "filter_rule": null
+    },
+    {
+      "drug": "Anistreplase",
+      "disease": "Lupus Erythematosus",
+      "reason": "Thrombolytic agent for MI. Not immunomodulatory.",
+      "filter_added": false,
+      "filter_rule": null
+    },
+    {
+      "drug": "Vanucizumab",
+      "disease": "Ulcerative Colitis",
+      "reason": "Anti-VEGF/Ang-2 for cancer. VEGF inhibition may impair gut healing.",
+      "filter_added": false,
+      "filter_rule": null
+    },
+    {
+      "drug": "Dacetuzumab",
+      "disease": "Multiple Sclerosis",
+      "reason": "Anti-CD40 for B-cell malignancies. Different from CD40L pathway in MS.",
+      "filter_added": false,
+      "filter_rule": null
+    }
+  ],
+  "new_filter_rules_added": [
+    "FAILED_UC_TRIALS: daclizumab for UC",
+    "IL6_PSORIASIS_MISMATCH: IL-6 inhibitors for psoriasis (wrong pathway)",
+    "CANCER_ANTIBODY_WRONG_TARGET: FR\u03b1 antibodies for autoimmune",
+    "BONE_DRUG_MS_MISMATCH: Sclerostin inhibitors for neurological diseases",
+    "EGFR_UC_PROTECTIVE: Anti-EGFR for UC (EGFR is protective)",
+    "WITHDRAWN_DRUG_PATTERNS: Added olaratumab",
+    "DISCONTINUED_DRUG_PATTERNS: Added enokizumab"
+  ],
+  "ground_truth_gaps_identified": [
+    {
+      "drug": "Ustekinumab",
+      "disease": "ulcerative colitis",
+      "approval_year": 2019
+    },
+    {
+      "drug": "Ustekinumab",
+      "disease": "psoriasis",
+      "approval_year": 2009
+    },
+    {
+      "drug": "Guselkumab",
+      "disease": "ulcerative colitis",
+      "approval_year": 2024
+    }
+  ],
+  "precision": 0.25,
+  "fda_approved_gaps": 3,
+  "mechanistically_plausible": 2,
+  "key_learnings": [
+    "IL-6 inhibition is wrong pathway for psoriasis - IL-17/IL-23 are correct targets",
+    "Anti-EGFR may be harmful in UC - EGFR is actually protective in colitis",
+    "Sclerostin has no CNS role - bone drugs shouldn't be predicted for MS",
+    "Cancer antibodies targeting tumor markers (FR\u03b1, EpCAM) wrong for autoimmune",
+    "Many high-confidence predictions are DISCONTINUED or WITHDRAWN drugs",
+    "25% validation rate (5/20) - slightly better than batch 1 (20%)"
+  ]
+}

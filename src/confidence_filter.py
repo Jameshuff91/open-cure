@@ -115,6 +115,13 @@ DISCONTINUED_DRUG_PATTERNS = [
     r"fontolizumab",  # Failed Phase II Crohn's/RA, discontinued
     r"volociximab",  # Failed Phase II oncology, discontinued
     r"bectumomab",  # Imaging agent only, not therapeutic
+    r"enokizumab",  # Anti-IL-9 for asthma, development discontinued
+    r"matuzumab",  # Anti-EGFR for cancer, development discontinued 2008
+]
+
+# Drugs with FDA approval REVOKED (confirmed to not work)
+REVOKED_APPROVAL_PATTERNS = [
+    r"olaratumab",  # FDA revoked Feb 2020 after Phase III failed (Lartruvo)
 ]
 
 # Anti-IL-5 drugs (fail clinically despite reducing eosinophils)
@@ -158,6 +165,31 @@ FAILED_PHASE3_COMBINATIONS = [
     (r"fontolizumab", r"ulcerative.*colitis", "Anti-IFN-gamma wrong pathway - UC is Th2-like, not Th1"),
     (r"fontolizumab", r"crohn", "Failed Phase II for Crohn's disease"),
     (r"volociximab", r"multiple.*sclerosis", "α5β1 integrin is PROTECTIVE in MS - inhibiting worsens disease"),
+    (r"daclizumab", r"ulcerative.*colitis", "Failed Phase 2 RCT (2006) - 2-7% remission vs 10% placebo"),
+    (r"otelixizumab", r"ulcerative.*colitis", "Anti-CD3 developed for T1D only, no IBD mechanism"),
+]
+
+# IL-6 inhibitors (WRONG pathway for psoriasis - need IL-17/IL-23)
+IL6_INHIBITOR_PATTERNS = [
+    r"vobarilizumab",  # IL-6R nanobody for RA
+    r"sarilumab",  # IL-6R antibody for RA
+    r"sirukumab",  # IL-6 antibody for RA
+    r"olokizumab",  # IL-6 antibody for RA
+    r"clazakizumab",  # IL-6 antibody for RA
+]
+
+# Cancer-specific antibodies that target tumor markers (not autoimmune targets)
+CANCER_SPECIFIC_ANTIBODY_PATTERNS = [
+    r"farletuzumab",  # Anti-FRα for ovarian cancer
+    r"adecatumumab",  # Anti-EpCAM for cancer
+    r"nebacumab",  # Anti-endotoxin for sepsis
+    r"iratumumab",  # Anti-CD30 for Hodgkin lymphoma
+]
+
+# Bone metabolism drugs (no CNS or autoimmune mechanism)
+BONE_DRUG_PATTERNS = [
+    r"romosozumab",  # Sclerostin inhibitor for osteoporosis
+    r"denosumab",  # RANKL inhibitor (has autoimmune uses though)
 ]
 
 # B-cell depleting drugs that paradoxically worsen psoriasis
@@ -227,6 +259,18 @@ FDA_APPROVED_PAIRS: Set[Tuple[str, str]] = {
     ("tezepelumab", "asthma"),
     ("dupilumab", "asthma"),
     ("omalizumab", "asthma"),
+    # UC treatments (added from batch 2 validation)
+    ("ustekinumab", "ulcerative colitis"),
+    ("guselkumab", "ulcerative colitis"),
+    ("vedolizumab", "ulcerative colitis"),
+    ("infliximab", "ulcerative colitis"),
+    ("adalimumab", "ulcerative colitis"),
+    # Psoriasis (added from batch 2 validation)
+    ("ustekinumab", "psoriasis"),
+    ("guselkumab", "psoriasis"),
+    ("secukinumab", "psoriasis"),
+    ("ixekizumab", "psoriasis"),
+    ("risankizumab", "psoriasis"),
 }
 
 
@@ -426,7 +470,62 @@ def filter_prediction(
                     adjusted_score=0.0,
                 )
 
-    # Rule 0h: Already FDA-approved (not truly novel - ground truth gap)
+    # Rule 0h: Drugs with FDA approval REVOKED (confirmed not to work)
+    for pattern in REVOKED_APPROVAL_PATTERNS:
+        if re.search(pattern, drug_lower):
+            return FilteredPrediction(
+                drug=drug,
+                disease=disease,
+                original_score=score,
+                confidence=ConfidenceLevel.EXCLUDED,
+                reason="FDA approval revoked after confirmatory trial failed",
+                drug_type=drug_type,
+                adjusted_score=0.0,
+            )
+
+    # Rule 0i: IL-6 inhibitors for psoriasis (wrong pathway - need IL-17/IL-23)
+    for pattern in IL6_INHIBITOR_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if "psoriasis" in disease_lower:
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="IL-6 inhibition is WRONG pathway for psoriasis - need IL-17/IL-23",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0j: Bone drugs for neurological diseases (no CNS mechanism)
+    for pattern in BONE_DRUG_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(d in disease_lower for d in ["multiple sclerosis", "parkinson", "alzheimer", "dementia"]):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Bone metabolism drug has no CNS mechanism for neurological diseases",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0k: Cancer-specific antibodies for autoimmune diseases (wrong target)
+    for pattern in CANCER_SPECIFIC_ANTIBODY_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(d in disease_lower for d in ["psoriasis", "colitis", "arthritis", "lupus", "sclerosis"]):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Cancer-specific antibody targets tumor marker, not autoimmune pathway",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0l: Already FDA-approved (not truly novel - ground truth gap)
     if is_fda_approved_pair(drug, disease):
         return FilteredPrediction(
             drug=drug,

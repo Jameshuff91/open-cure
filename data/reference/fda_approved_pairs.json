@@ -1,18 +1,32 @@
 {
   "description": "FDA-approved drug-disease pairs identified during validation. These should be added to ground truth to improve evaluation accuracy.",
-  "last_updated": "2026-01-24",
+  "last_updated": "2026-01-25",
   "pairs": [
     {
       "drug": "Pembrolizumab",
       "disease": "Triple-negative breast cancer",
       "fda_approval_year": 2020,
-      "notes": "KEYNOTE-355 (metastatic), KEYNOTE-522 (early-stage)"
+      "notes": "KEYNOTE-355 (metastatic), KEYNOTE-522 (early-stage)",
+      "added_to_gt": "2026-01-25",
+      "gt_entries": [
+        "triple-negative breast carcinoma",
+        "invasive breast carcinoma",
+        "breast cancer",
+        "breast carcinoma"
+      ]
     },
     {
       "drug": "Pembrolizumab",
       "disease": "Breast cancer",
       "fda_approval_year": 2021,
-      "notes": "High-risk early-stage TNBC"
+      "notes": "High-risk early-stage TNBC",
+      "added_to_gt": "2026-01-25",
+      "gt_entries": [
+        "triple-negative breast carcinoma",
+        "invasive breast carcinoma",
+        "breast cancer",
+        "breast carcinoma"
+      ]
     },
     {
       "drug": "Doxorubicin",
@@ -79,18 +93,79 @@
       "disease": "Cancer",
       "fda_approval_year": 1959,
       "notes": "Alkylating agent, various cancers"
+    },
+    {
+      "drug": "Ustekinumab",
+      "disease": "Ulcerative colitis",
+      "fda_approval_year": 2019,
+      "notes": "UNIFI Phase 3 trial",
+      "added_to_gt": "2026-01-25"
+    },
+    {
+      "drug": "Ustekinumab",
+      "disease": "Psoriasis",
+      "fda_approval_year": 2009,
+      "notes": "First IL-12/23 inhibitor for psoriasis",
+      "added_to_gt": "2026-01-25"
+    },
+    {
+      "drug": "Guselkumab",
+      "disease": "Ulcerative colitis",
+      "fda_approval_year": 2024,
+      "notes": "QUASAR Phase 3, first IL-23 for UC",
+      "added_to_gt": "2026-01-25"
     }
   ],
   "mesh_mappings_to_add": [
-    {"drug": "Pembrolizumab", "drugbank_id": "DB09037", "disease_mesh": "D001943"},
-    {"drug": "Doxorubicin", "drugbank_id": "DB00997", "disease_mesh": "D001943"},
-    {"drug": "Methotrexate", "drugbank_id": "DB00563", "disease_mesh": "D001943"},
-    {"drug": "Natalizumab", "drugbank_id": "DB00108", "disease_mesh": "D009103"},
-    {"drug": "Erlotinib", "drugbank_id": "DB00530", "disease_mesh": "D010190"},
-    {"drug": "Cetuximab", "drugbank_id": "DB00002", "disease_mesh": "D015179"},
-    {"drug": "Oxaliplatin", "drugbank_id": "DB00526", "disease_mesh": "D015179"},
-    {"drug": "Bevacizumab", "drugbank_id": "DB00112", "disease_mesh": "D015179"},
-    {"drug": "Trametinib", "drugbank_id": "DB08911", "disease_mesh": "D008545"},
-    {"drug": "Umeclidinium", "drugbank_id": "DB09076", "disease_mesh": "D029424"}
+    {
+      "drug": "Pembrolizumab",
+      "drugbank_id": "DB09037",
+      "disease_mesh": "D001943"
+    },
+    {
+      "drug": "Doxorubicin",
+      "drugbank_id": "DB00997",
+      "disease_mesh": "D001943"
+    },
+    {
+      "drug": "Methotrexate",
+      "drugbank_id": "DB00563",
+      "disease_mesh": "D001943"
+    },
+    {
+      "drug": "Natalizumab",
+      "drugbank_id": "DB00108",
+      "disease_mesh": "D009103"
+    },
+    {
+      "drug": "Erlotinib",
+      "drugbank_id": "DB00530",
+      "disease_mesh": "D010190"
+    },
+    {
+      "drug": "Cetuximab",
+      "drugbank_id": "DB00002",
+      "disease_mesh": "D015179"
+    },
+    {
+      "drug": "Oxaliplatin",
+      "drugbank_id": "DB00526",
+      "disease_mesh": "D015179"
+    },
+    {
+      "drug": "Bevacizumab",
+      "drugbank_id": "DB00112",
+      "disease_mesh": "D015179"
+    },
+    {
+      "drug": "Trametinib",
+      "drugbank_id": "DB08911",
+      "disease_mesh": "D008545"
+    },
+    {
+      "drug": "Umeclidinium",
+      "drugbank_id": "DB09076",
+      "disease_mesh": "D029424"
+    }
   ]
 }
