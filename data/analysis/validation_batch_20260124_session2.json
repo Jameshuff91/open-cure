@@ -1,0 +1,204 @@
+{
+  "validation_date": "2026-01-24",
+  "session": 2,
+  "total_predictions": 10,
+  "summary": {
+    "FDA_APPROVED": 6,
+    "CLINICAL_TRIAL": 1,
+    "RESEARCH_SUPPORTED": 1,
+    "NOVEL_HYPOTHESIS": 0,
+    "FALSE_POSITIVE": 2
+  },
+  "predictions": [
+    {
+      "rank": 1,
+      "drug": "Vincristine",
+      "disease": "neuroblastoma",
+      "model_score": 0.977,
+      "gene_overlap": 19,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "evidence_summary": "Vincristine has been FDA-approved for neuroblastoma since 1963. It is part of standard combination chemotherapy regimens for neuroblastoma treatment. The drug is specifically indicated in the FDA label for neuroblastoma, rhabdomyosarcoma, Wilms tumor, and various leukemias.",
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/books/NBK537122/",
+        "https://www.accessdata.fda.gov/drugsatfda_docs/label/2014/071484s042lbl.pdf",
+        "https://en.wikipedia.org/wiki/Vincristine"
+      ],
+      "mechanism": "Vinca alkaloid that inhibits microtubule formation and mitotic spindle assembly, causing cell cycle arrest in metaphase"
+    },
+    {
+      "rank": 2,
+      "drug": "Cerulenin",
+      "disease": "malaria",
+      "model_score": 0.930,
+      "gene_overlap": 21,
+      "category": "RESEARCH_SUPPORTED",
+      "confidence": "MEDIUM",
+      "evidence_summary": "Cerulenin has demonstrated antimalarial activity in preclinical research. It inhibits Plasmodium falciparum fatty acid synthase (PfFAS) with IC50 of 11-20 uM. The malaria parasite has a type II fatty acid synthesis pathway in the apicoplast that is distinct from human type I FAS, making it a valid drug target. However, no clinical trials have been conducted.",
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/17485508/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1913259/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC148988/",
+        "https://onlinelibrary.wiley.com/doi/full/10.1111/j.1747-0285.2012.01389.x"
+      ],
+      "mechanism": "Irreversible inhibitor of beta-ketoacyl-ACP synthase (FabB/F) in the apicoplast fatty acid synthesis pathway, blocking essential lipid production in Plasmodium parasites"
+    },
+    {
+      "rank": 3,
+      "drug": "Dasatinib",
+      "disease": "acute lymphoblastic leukemia",
+      "model_score": 0.988,
+      "gene_overlap": 18,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "evidence_summary": "Dasatinib (Sprycel) is FDA-approved for Philadelphia chromosome-positive (Ph+) acute lymphoblastic leukemia. Initial approval in 2006 for adults resistant/intolerant to prior therapy. In January 2019, FDA expanded indication to pediatric patients (>=1 year old) with newly diagnosed Ph+ ALL in combination with chemotherapy.",
+      "sources": [
+        "https://www.drugs.com/history/sprycel.html",
+        "https://www.onclive.com/view/fda-approves-generic-dasatinib-tablets-for-cml-all",
+        "https://news.bms.com/news/details/2019/Bristol-Myers-Squibbs-Sprycel-dasatinib-Tablets-Now-Approved-in-Combination-with-Chemotherapy-in-Certain-Pediatric-Patients-with-Philadelphia-Chromosome-Positive-Acute-Lymphoblastic-Leukemia/default.aspx"
+      ],
+      "mechanism": "Second-generation BCR-ABL tyrosine kinase inhibitor that also inhibits SRC family kinases. Blocks the abnormal BCR-ABL fusion protein in Ph+ leukemias."
+    },
+    {
+      "rank": 4,
+      "drug": "Digitoxin",
+      "disease": "type 2 diabetes",
+      "model_score": 1.067,
+      "gene_overlap": 15,
+      "category": "FALSE_POSITIVE",
+      "confidence": "HIGH",
+      "evidence_summary": "HARMFUL PREDICTION. Evidence shows digitoxin and related cardiac glycosides WORSEN glucose control in diabetic patients. Case reports document HbA1c rising from 6.2% to 10.1% during digitoxin therapy. Mechanism: cardiac glycosides inhibit Na+/K+-ATPase, which opposes insulin's effects on glucose metabolism. Insulin increases Na+/K+-ATPase activity for glucose uptake, while digitoxin inhibits it.",
+      "sources": [
+        "https://onlinelibrary.wiley.com/doi/full/10.1046/j.1365-2796.1999.00587.x",
+        "https://tidsskriftet.no/en/2012/05/case-reports/elderly-man-atrial-fibrillation-and-exacerbated-diabetes",
+        "https://pubmed.ncbi.nlm.nih.gov/10583713/"
+      ],
+      "mechanism": "CONTRAINDICATED: Cardiac glycosides inhibit Na+/K+-ATPase, reducing cellular glucose uptake and metabolism. This directly opposes insulin's mechanism and worsens hyperglycemia.",
+      "warning": "This prediction should be filtered out. Digitoxin is known to exacerbate diabetes and increase glucose intolerance."
+    },
+    {
+      "rank": 5,
+      "drug": "Metformin",
+      "disease": "breast adenocarcinoma",
+      "model_score": 1.060,
+      "gene_overlap": 15,
+      "category": "CLINICAL_TRIAL",
+      "confidence": "MEDIUM",
+      "evidence_summary": "Extensive clinical trials have investigated metformin for breast cancer. The MA.32 Phase 3 RCT (3649 patients, 2010-2020) found NO significant improvement in invasive disease-free survival (HR 1.01, p=0.93) for non-diabetic patients. Window-of-opportunity studies showed decreased Ki67 (proliferation marker). Some evidence suggests benefit may be limited to patients with metabolic dysfunction or HR+/HER2- tumors. 57 trials registered on clinicaltrials.gov.",
+      "sources": [
+        "https://jamanetwork.com/journals/jama/fullarticle/2792615",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10974219/",
+        "https://www.mdpi.com/1424-8247/17/3/396",
+        "https://www.nature.com/articles/s41416-023-02204-2"
+      ],
+      "mechanism": "AMPK activation, mTOR inhibition, anti-proliferative effects. However, effective concentrations in vitro may be supratherapeutic clinically.",
+      "notes": "Despite extensive investigation, largest RCT showed no benefit. May only help specific subgroups (metabolically impaired, certain tumor subtypes)."
+    },
+    {
+      "rank": 6,
+      "drug": "Thiotepa",
+      "disease": "cancer",
+      "model_score": 0.912,
+      "gene_overlap": 19,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "evidence_summary": "Thiotepa has been FDA-approved for cancer treatment since 1959. Current indications include: breast adenocarcinoma, ovarian adenocarcinoma, superficial bladder carcinoma, lymphomas (Hodgkin and non-Hodgkin), and malignant effusions. Also approved in 2007 for conditioning prior to hematopoietic stem cell transplantation.",
+      "sources": [
+        "https://www.cancer.gov/about-cancer/treatment/drugs/thiotepa",
+        "https://en.wikipedia.org/wiki/Thiotepa",
+        "https://www.onclive.com/view/fda-approves-multi-dose-vial-of-thiotepa-for-breast-and-ovarian-cancer",
+        "https://www.drugs.com/history/tepylute.html"
+      ],
+      "mechanism": "Alkylating agent (nitrogen mustard derivative) that interferes with DNA replication and RNA transcription, leading to cancer cell death"
+    },
+    {
+      "rank": 7,
+      "drug": "Zonisamide",
+      "disease": "epilepsy",
+      "model_score": 1.047,
+      "gene_overlap": 15,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "evidence_summary": "Zonisamide (Zonegran) was FDA-approved in March 2000 for adjunctive therapy of focal/partial seizures in adults with epilepsy. First used in Japan since 1989. American Academy of Neurology recommends it for adults with treatment-resistant focal epilepsy. A new oral suspension formulation (Zonisade) was recently FDA-approved.",
+      "sources": [
+        "https://www.epilepsy.com/tools-resources/seizure-medication-list/zonisamide",
+        "https://www.ncbi.nlm.nih.gov/books/NBK507903/",
+        "https://www.neurologylive.com/view/zonisamide-oral-suspension-fda-approved-partial-seizures-epilepsy"
+      ],
+      "mechanism": "Blocks voltage-dependent sodium and T-type calcium channels, may inhibit glutamate release. Chemically unrelated to other antiepileptic drugs."
+    },
+    {
+      "rank": 8,
+      "drug": "Loxapine",
+      "disease": "schizophrenia",
+      "model_score": 1.039,
+      "gene_overlap": 15,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "evidence_summary": "Loxapine was FDA-approved in 1975 for the treatment of schizophrenia. Available as oral capsules (Loxitane) and inhaled powder (Adasuve) for acute agitation. First-generation antipsychotic that is structurally similar to clozapine. NNT of 3 vs placebo based on RCTs.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Loxapine",
+        "https://www.nami.org/about-mental-illness/treatments/mental-health-medications/types-of-medication/loxapine-adasuve/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7017975/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4391595/"
+      ],
+      "mechanism": "Dopamine D2 and serotonin 5-HT2A receptor antagonist. Rebalances dopamine to improve thinking, mood, and behavior."
+    },
+    {
+      "rank": 9,
+      "drug": "Trastuzumab",
+      "disease": "melanoma",
+      "model_score": 0.961,
+      "gene_overlap": 17,
+      "category": "FALSE_POSITIVE",
+      "confidence": "HIGH",
+      "evidence_summary": "UNLIKELY TO WORK. Large studies (n=388 melanomas) found 0% HER2 amplification in melanoma. A specific study of metastatic melanoma found 'no evidence of HER2 protein overexpression or HER2 gene amplification.' Authors concluded 'anti-HER2 therapy with trastuzumab is highly unlikely to provide benefit for patients with metastatic melanoma.' This contrasts with breast/gastric cancers where ~20% overexpress HER2.",
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4368842/",
+        "https://pubmed.ncbi.nlm.nih.gov/14502781/",
+        "https://link.springer.com/article/10.1007/s10555-015-9552-6"
+      ],
+      "mechanism": "Trastuzumab targets HER2, but melanoma does not express HER2. Without the target, the drug cannot work.",
+      "warning": "This prediction should be filtered out. Melanoma does not express HER2, making trastuzumab ineffective."
+    },
+    {
+      "rank": 10,
+      "drug": "Ziprasidone",
+      "disease": "schizophrenia",
+      "model_score": 1.031,
+      "gene_overlap": 15,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "evidence_summary": "Ziprasidone (Geodon) was FDA-approved on February 5, 2001 for the treatment of schizophrenia. Clinical trials involving >4,500 patients with schizophrenia established efficacy. Also approved for bipolar mania and acute agitation in schizophrenia (IM formulation).",
+      "sources": [
+        "https://www.accessdata.fda.gov/drugsatfda_docs/label/2015/020825s054,020919s041,021483s014lbl.pdf",
+        "https://psychopharmacologyinstitute.com/publication/ziprasidone-geodon-indications-fda-approved-uses-2164/",
+        "https://www.ncbi.nlm.nih.gov/books/NBK448157/"
+      ],
+      "mechanism": "Atypical antipsychotic with high-affinity dopamine D2 and serotonin 5-HT2A receptor antagonism. Also affects 5-HT1A, 5-HT1D, and 5-HT2C receptors."
+    }
+  ],
+  "filter_recommendations": {
+    "add_to_exclusion_list": [
+      {
+        "pattern": "Cardiac glycosides for diabetes",
+        "drugs": ["digitoxin", "digoxin", "ouabain"],
+        "diseases": ["diabetes", "type 2 diabetes", "hyperglycemia"],
+        "reason": "Cardiac glycosides inhibit Na+/K+-ATPase, opposing insulin's mechanism and worsening glucose control"
+      },
+      {
+        "pattern": "HER2-targeted drugs for HER2-negative cancers",
+        "drugs": ["trastuzumab", "pertuzumab", "trastuzumab emtansine", "trastuzumab deruxtecan"],
+        "diseases": ["melanoma", "GIST", "small cell lung cancer", "glioblastoma"],
+        "reason": "These cancers do not express HER2, making HER2-targeted therapies ineffective"
+      }
+    ]
+  },
+  "notes": [
+    "6/10 predictions (60%) are for FDA-approved indications - model correctly identifies established treatments",
+    "2/10 predictions (20%) are false positives that could be harmful - need filtering rules",
+    "Metformin for breast cancer has extensive clinical trial data showing NO benefit in largest RCT",
+    "Cerulenin for malaria is supported by preclinical research but no clinical trials",
+    "High gene overlap does not guarantee clinical validity - digitoxin had 15 overlapping genes but is contraindicated"
+  ]
+}

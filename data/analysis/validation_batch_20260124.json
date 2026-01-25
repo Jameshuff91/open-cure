@@ -1,0 +1,226 @@
+{
+  "validation_date": "2026-01-24",
+  "validation_summary": {
+    "total_predictions": 10,
+    "fda_approved": 2,
+    "clinical_trial": 3,
+    "research_supported": 3,
+    "novel_hypothesis": 1,
+    "false_positive": 1
+  },
+  "predictions": [
+    {
+      "drug": "Ponatinib",
+      "disease": "breast adenocarcinoma",
+      "score": 1.077,
+      "gene_overlap": 70,
+      "category": "RESEARCH_SUPPORTED",
+      "evidence": {
+        "summary": "Ponatinib is FDA-approved for Ph+ CML/ALL but has strong preclinical evidence for FGFR-amplified breast cancers. As a pan-FGFR inhibitor (IC50 2.2 nmol/L), it shows antiproliferative activity in breast cancer cell lines with FGFR dysregulation (GI50 7-181 nM).",
+        "fda_status": "Not approved for breast cancer",
+        "preclinical_evidence": "Strong - inhibits growth in FGFR-amplified breast cancer cell lines; active in vivo models",
+        "clinical_trials": "No breast cancer trials found; primarily studied in leukemia",
+        "mechanism": "Multi-TKI targeting FGFR1-4, SRC, ABL, PDGFR, VEGFR. FGFR amplification occurs in ~10% of breast cancers.",
+        "sources": [
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC6343508/",
+          "https://aacrjournals.org/mct/article/11/3/690/91350/Ponatinib-AP24534-a-Multitargeted-Pan-FGFR"
+        ]
+      },
+      "notes": "High gene overlap (70) aligns with FGFR/growth factor biology. Promising for FGFR-amplified breast cancer subset."
+    },
+    {
+      "drug": "Teniposide",
+      "disease": "rheumatoid arthritis",
+      "score": 1.066,
+      "gene_overlap": 42,
+      "category": "NOVEL_HYPOTHESIS",
+      "evidence": {
+        "summary": "No clinical evidence found for teniposide in rheumatoid arthritis. Teniposide is a cytotoxic chemotherapy (topoisomerase II inhibitor) approved for ALL and NHL. While low-dose chemotherapy drugs are used in autoimmune diseases, teniposide has not been studied for this purpose.",
+        "fda_status": "Not approved or studied for RA",
+        "preclinical_evidence": "None found",
+        "clinical_trials": "None found",
+        "mechanism": "Unknown for autoimmune conditions. Standard RA chemotherapy drugs include methotrexate, cyclophosphamide, and azathioprine - not teniposide.",
+        "sources": [
+          "https://www.drugs.com/dosage/teniposide.html",
+          "https://www.hopkinsarthritis.org/arthritis-info/rheumatoid-arthritis/ra-treatment/"
+        ]
+      },
+      "notes": "Truly novel hypothesis. The gene overlap may reflect general cell cycle/apoptosis pathways rather than a therapeutic mechanism."
+    },
+    {
+      "drug": "Gemcitabine",
+      "disease": "psoriasis-related juvenile idiopathic arthritis",
+      "score": 1.064,
+      "gene_overlap": 25,
+      "category": "FALSE_POSITIVE",
+      "evidence": {
+        "summary": "No evidence supports gemcitabine for psoriatic or juvenile idiopathic arthritis. Gemcitabine is a cytotoxic nucleoside analog used for solid tumors (pancreatic, lung, breast cancer). Using this chemotherapy drug in children with autoimmune arthritis would be inappropriate given toxicity profile and availability of safer biologics (golimumab, baricitinib).",
+        "fda_status": "Not approved; no studies found",
+        "preclinical_evidence": "None found",
+        "clinical_trials": "None found",
+        "mechanism": "No plausible mechanism for JIA. Modern JIA treatments target IL-17, IL-12/23, or JAK pathways - not DNA synthesis.",
+        "sources": [
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC9199423/",
+          "https://www.nejm.org/doi/full/10.1056/NEJMra2402073"
+        ]
+      },
+      "notes": "LIKELY FALSE POSITIVE. Chemotherapy for pediatric autoimmune disease is not appropriate given modern biologics."
+    },
+    {
+      "drug": "Etoposide",
+      "disease": "rheumatoid arthritis",
+      "score": 1.057,
+      "gene_overlap": 22,
+      "category": "RESEARCH_SUPPORTED",
+      "evidence": {
+        "summary": "Limited preclinical evidence exists. Etoposide has been studied for monocyte depletion in septic arthritis models, where it reduced arthritis index by depleting circulatory monocytes. However, this was for infectious arthritis, not autoimmune RA.",
+        "fda_status": "Not approved for RA",
+        "preclinical_evidence": "Limited - mouse studies in septic arthritis showed reduced joint swelling via monocyte depletion",
+        "clinical_trials": "None found for RA",
+        "mechanism": "Topoisomerase II inhibitor that depletes monocytes. Monocyte-derived macrophages drive inflammation in RA joints, providing theoretical rationale.",
+        "sources": [
+          "https://www.sciencedirect.com/science/article/abs/pii/S0165247819306133"
+        ]
+      },
+      "notes": "Weak research support. Mechanism (monocyte depletion) is plausible but would require very careful dosing to avoid toxicity."
+    },
+    {
+      "drug": "Prednisone",
+      "disease": "cancer",
+      "score": 1.054,
+      "gene_overlap": 21,
+      "category": "FDA_APPROVED",
+      "evidence": {
+        "summary": "Prednisone is FDA-approved for multiple cancer indications as palliative therapy or in combination regimens.",
+        "fda_status": "FDA APPROVED for: ALL, AML, CLL, CML, Hodgkin lymphoma, Non-Hodgkin lymphoma, Mycosis fungoides",
+        "preclinical_evidence": "N/A - already approved",
+        "clinical_trials": "Extensive use in combination chemotherapy regimens (e.g., CHOP, R-CHOP)",
+        "mechanism": "Anti-inflammatory, immunosuppressive, lymphocytolytic effects. Reduces inflammation and can directly kill lymphoid malignancies.",
+        "sources": [
+          "https://www.cancer.gov/about-cancer/treatment/drugs/prednisone",
+          "https://www.ncbi.nlm.nih.gov/books/NBK534809/"
+        ]
+      },
+      "notes": "VALIDATED - FDA approved since 1955. Core component of many cancer treatment regimens."
+    },
+    {
+      "drug": "Dexamethasone",
+      "disease": "psoriasis",
+      "score": 1.036,
+      "gene_overlap": 30,
+      "category": "CLINICAL_TRIAL",
+      "evidence": {
+        "summary": "Topical corticosteroids (including dexamethasone) are first-line treatment for psoriasis. Dexamethasone iontophoresis has shown 81% improvement in nail psoriasis. Systemic dexamethasone is less commonly used but does not increase flare risk per systematic review.",
+        "fda_status": "Topical corticosteroids are standard of care; dexamethasone used but not specifically FDA-indicated for psoriasis",
+        "preclinical_evidence": "Strong - antimitotic activity reduces keratinocyte turnover",
+        "clinical_trials": "Dexamethasone iontophoresis for nail psoriasis: 81% improvement in 27 patients",
+        "mechanism": "Anti-inflammatory, antimitotic (reduces epidermal hyperproliferation), immunosuppressive. Decreases T-cell infiltration.",
+        "sources": [
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC3508578/",
+          "https://pubmed.ncbi.nlm.nih.gov/23425157/",
+          "https://www.psoriasis.org/steroids/"
+        ]
+      },
+      "notes": "VALIDATED - Topical steroids are first-line for psoriasis. Dexamethasone iontophoresis has clinical trial evidence."
+    },
+    {
+      "drug": "Chlorpromazine",
+      "disease": "schizophrenia",
+      "score": 1.036,
+      "gene_overlap": 20,
+      "category": "FDA_APPROVED",
+      "evidence": {
+        "summary": "Chlorpromazine was the FIRST antipsychotic drug ever developed (1950) and is FDA-approved for schizophrenia. It revolutionized psychiatric treatment and is on the WHO List of Essential Medicines.",
+        "fda_status": "FDA APPROVED - First-generation antipsychotic for schizophrenia, bipolar disorder, acute psychosis",
+        "preclinical_evidence": "N/A - approved since 1950s",
+        "clinical_trials": "Extensive historical and ongoing clinical use",
+        "mechanism": "Dopamine D2 receptor antagonist. Blocks dopamine in mesolimbic pathway, reducing positive symptoms of schizophrenia.",
+        "sources": [
+          "https://www.ncbi.nlm.nih.gov/books/NBK553079/",
+          "https://en.wikipedia.org/wiki/Chlorpromazine",
+          "https://www.pbs.org/wgbh/aso/databank/entries/dh52dr.html"
+        ]
+      },
+      "notes": "VALIDATED - The original antipsychotic. Groundbreaking discovery compared to penicillin for infectious diseases."
+    },
+    {
+      "drug": "Fluvastatin",
+      "disease": "hypertension",
+      "score": 1.079,
+      "gene_overlap": 18,
+      "category": "CLINICAL_TRIAL",
+      "evidence": {
+        "summary": "Multiple clinical trials demonstrate modest blood pressure lowering effects with fluvastatin. Meta-analysis of 49 RCTs found statins lower SBP by -1.42 mmHg. Fluvastatin specifically showed -5/-2 mmHg reduction and improved exercise blood pressure in hypertensive patients.",
+        "fda_status": "Not FDA-approved for hypertension (approved for hyperlipidemia)",
+        "preclinical_evidence": "N/A",
+        "clinical_trials": "Multiple positive trials: HYRIM trial showed reduced carotid IMT and LV mass; 12-month RCT showed reduced exercise SBP (175 vs 192 mmHg, p<0.05)",
+        "mechanism": "Beyond lipid lowering: improves endothelial function, reduces arterial stiffness, decreases left ventricular mass. Effects appear independent of lipid changes.",
+        "sources": [
+          "https://pubmed.ncbi.nlm.nih.gov/8297542/",
+          "https://www.nature.com/articles/jhh201087",
+          "https://pmc.ncbi.nlm.nih.gov/articles/PMC9994171/"
+        ]
+      },
+      "notes": "CLINICAL EVIDENCE EXISTS - Secondary benefit of statin therapy. Effects modest but statistically significant."
+    },
+    {
+      "drug": "Sirolimus",
+      "disease": "psoriasis",
+      "score": 1.003,
+      "gene_overlap": 56,
+      "category": "CLINICAL_TRIAL",
+      "evidence": {
+        "summary": "Sirolimus (rapamycin) has been tested in multiple clinical trials for psoriasis. When combined with low-dose cyclosporine, achieved 63.7% PASI reduction in severe psoriasis. Topical sirolimus showed significant reduction in clinical scores and CD4+ cells.",
+        "fda_status": "Not FDA-approved for psoriasis (approved as immunosuppressant for transplant)",
+        "preclinical_evidence": "mTOR pathway is hyperactivated in psoriatic skin; rapamycin corrects this",
+        "clinical_trials": "RCT in 150 patients: sirolimus 3.0 mg/m2 + cyclosporin 1.25 mg/kg achieved 63.7% PASI reduction. Topical trial in 24 patients: significant reduction in clinical score (p=0.03) and CD4+ cells (p=0.0054)",
+        "mechanism": "mTOR inhibitor. Suppresses T-cell proliferation and cytokine production. mTOR hyperactivation in psoriasis interferes with keratinocyte maturation.",
+        "sources": [
+          "https://pubmed.ncbi.nlm.nih.gov/15840110/",
+          "https://pubmed.ncbi.nlm.nih.gov/11531834/",
+          "https://www.medicaljournals.se/acta/content/html/10.2340/00015555-2724"
+        ]
+      },
+      "notes": "VALIDATED - Clinical trial evidence exists. High gene overlap (56) aligns with mTOR biology. Not widely adopted due to toxicity and better biologics."
+    },
+    {
+      "drug": "Cisplatin",
+      "disease": "breast adenocarcinoma",
+      "score": 1.067,
+      "gene_overlap": 18,
+      "category": "CLINICAL_TRIAL",
+      "evidence": {
+        "summary": "Cisplatin is widely used OFF-LABEL for breast cancer treatment, particularly triple-negative breast cancer (TNBC) and BRCA-mutated breast cancer. Cisplatin + gemcitabine is a standard combination for metastatic breast cancer.",
+        "fda_status": "Not specifically FDA-approved for breast cancer (approved for ovarian, testicular, bladder cancer). Used off-label.",
+        "preclinical_evidence": "N/A - already in clinical use",
+        "clinical_trials": "Active clinical trials studying cisplatin in BRCA-mutated breast cancer; established use in TNBC",
+        "mechanism": "Platinum-based DNA crosslinker. TNBC and BRCA-mutated tumors have defective DNA repair (homologous recombination deficiency), making them sensitive to platinum agents.",
+        "sources": [
+          "https://www.lbbc.org/about-breast-cancer/treatments/chemotherapy/types/cisplatin",
+          "https://www.cancer.gov/about-cancer/treatment/drugs/cisplatin",
+          "https://www.ncbi.nlm.nih.gov/books/NBK547695/"
+        ]
+      },
+      "notes": "VALIDATED - Standard off-label use for TNBC and BRCA-mutated breast cancer. Active clinical trial research ongoing."
+    }
+  ],
+  "analysis_notes": {
+    "high_confidence_validations": [
+      "Chlorpromazine -> schizophrenia (FDA approved, first antipsychotic)",
+      "Prednisone -> cancer (FDA approved for multiple cancer types)",
+      "Cisplatin -> breast adenocarcinoma (standard off-label use for TNBC)"
+    ],
+    "promising_research": [
+      "Ponatinib -> breast adenocarcinoma (FGFR-amplified subset has preclinical support)",
+      "Sirolimus -> psoriasis (multiple RCTs with positive results)"
+    ],
+    "likely_false_positive": [
+      "Gemcitabine -> psoriasis-related JIA (no evidence, inappropriate for pediatric autoimmune disease)"
+    ],
+    "patterns_observed": [
+      "Gene overlap correlates with mechanism: Ponatinib (70 genes) and Sirolimus (56 genes) have clear biological rationale",
+      "Chemotherapy drugs for RA show mixed evidence - some (methotrexate, cyclophosphamide) are established, others (teniposide, etoposide) are not",
+      "Corticosteroids (prednisone, dexamethasone) correctly predicted for inflammatory/cancer indications"
+    ]
+  }
+}

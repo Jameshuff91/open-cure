@@ -1,0 +1,244 @@
+{
+  "validation_date": "2026-01-24",
+  "validated_by": "Claude (web search + literature review)",
+  "total_predictions": 10,
+  "summary": {
+    "FDA_APPROVED": 5,
+    "CLINICAL_TRIAL": 2,
+    "RESEARCH_SUPPORTED": 2,
+    "NOVEL_HYPOTHESIS": 0,
+    "FALSE_POSITIVE": 1
+  },
+  "predictions": [
+    {
+      "rank": 1,
+      "drug": "Methylprednisolone",
+      "disease": "cancer",
+      "model_score": 0.993,
+      "gene_overlap": 27,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "summary": "Methylprednisolone is a standard component of cancer chemotherapy regimens, particularly for hematological malignancies.",
+      "evidence": {
+        "fda_status": "FDA-approved as part of chemotherapy regimens for leukemia and lymphoma",
+        "clinical_use": "Standard component of CHOP regimen for NHL; high-dose methylprednisolone (HDMP) used in CLL treatment",
+        "mechanism": "Glucocorticoids have specific cytolytic effects on leukemic and lymphomatous tissue; also used for managing chemotherapy side effects",
+        "key_finding": "High doses (1 g/m2 for 5-8 days) can induce remissions in fludarabine-refractory CLL"
+      },
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/books/NBK13383/",
+        "https://www.sciencedirect.com/science/article/abs/pii/S095980491000362X",
+        "https://lymphoma-action.org.uk/about-lymphoma-treatment-lymphoma/steroids"
+      ]
+    },
+    {
+      "rank": 2,
+      "drug": "Erlotinib",
+      "disease": "pancreatic cancer",
+      "model_score": 0.983,
+      "gene_overlap": 42,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "summary": "Erlotinib (Tarceva) was FDA-approved in 2005 in combination with gemcitabine for locally advanced or metastatic pancreatic cancer.",
+      "evidence": {
+        "fda_status": "FDA-approved 2005 for first-line treatment of locally advanced/metastatic pancreatic cancer (with gemcitabine)",
+        "clinical_trials": "PA.3 Phase III trial: HR 0.82, P=0.038 for OS; 23% vs 17% 1-year survival",
+        "mechanism": "EGFR tyrosine kinase inhibitor",
+        "limitations": "Modest absolute benefit (6.24 vs 5.91 months median OS); subsequent LAP07 trial showed non-significant difference",
+        "current_guidelines": "ASCO recommends as option for ECOG PS 2 patients with dose adjustments"
+      },
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2727779/",
+        "https://www.drugs.com/history/tarceva.html",
+        "https://www.cancer.gov/about-cancer/treatment/drugs/pancreatic"
+      ]
+    },
+    {
+      "rank": 3,
+      "drug": "Prednisolone",
+      "disease": "cancer",
+      "model_score": 0.982,
+      "gene_overlap": 24,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "summary": "Prednisolone is FDA-approved and widely used in cancer chemotherapy regimens, especially for hematological malignancies.",
+      "evidence": {
+        "fda_status": "FDA-approved for ALL, AML, CLL, CML, Hodgkin lymphoma, NHL, mycosis fungoides",
+        "clinical_use": "Standard component of CHOP chemotherapy for NHL; dosages of 100 mg/days 1-5 most common (67% of trials)",
+        "mechanism": "Demonstrated anticancer effect with cytolytic activity against lymphoid cells",
+        "additional_uses": "Brain tumor/metastases (antiswelling), supportive care for symptoms"
+      },
+      "sources": [
+        "https://www.cancer.gov/about-cancer/treatment/drugs/prednisone",
+        "https://pubmed.ncbi.nlm.nih.gov/10884502/",
+        "https://chemocare.com/druginfo/Prednisolone"
+      ]
+    },
+    {
+      "rank": 4,
+      "drug": "Tretinoin",
+      "disease": "psoriasis",
+      "model_score": 0.977,
+      "gene_overlap": 29,
+      "category": "RESEARCH_SUPPORTED",
+      "confidence": "MODERATE",
+      "summary": "Tretinoin has off-label use for psoriasis with supporting clinical evidence, though tazarotene is the preferred topical retinoid.",
+      "evidence": {
+        "fda_status": "Off-label use; tazarotene is FDA-approved retinoid for psoriasis",
+        "clinical_evidence": "Best results with 0.3% tretinoin + corticosteroid for steroid-resistant psoriasis; effective for nail psoriasis",
+        "mechanism": "Antiproliferative, normalizes keratinocyte differentiation, anti-inflammatory; slows skin cell growth",
+        "limitations": "Low-level evidence compared to tazarotene; needs large-scale RCTs"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/786170/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8809163/",
+        "https://www.webmd.com/skin-problems-and-treatments/psoriasis/topical-retinoids-psoriasis"
+      ]
+    },
+    {
+      "rank": 5,
+      "drug": "Trametinib",
+      "disease": "melanoma",
+      "model_score": 0.972,
+      "gene_overlap": 84,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "summary": "Trametinib is FDA-approved for BRAF V600-mutant melanoma both as monotherapy and in combination with dabrafenib.",
+      "evidence": {
+        "fda_status": "FDA-approved May 2013 (monotherapy), January 2014 (combination with dabrafenib), April 2018 (adjuvant)",
+        "clinical_trials": "COMBI-AD: 870 patients, Stage III melanoma; COMBI-d: 25.1 vs 18.7 months OS",
+        "mechanism": "MEK1/2 inhibitor targeting MAPK pathway; ~50% of melanomas have BRAF V600E mutations",
+        "expanded_approval": "June 2022: Tumor-agnostic approval for all BRAF V600E solid tumors"
+      },
+      "sources": [
+        "https://www.fda.gov/drugs/resources-information-approved-drugs/fda-approves-dabrafenib-plus-trametinib-adjuvant-treatment-melanoma-braf-v600e-or-v600k-mutations",
+        "https://en.wikipedia.org/wiki/Trametinib",
+        "https://www.cancer.gov/news-events/cancer-currents-blog/2022/fda-dabrafenib-trametinib-braf-solid-tumors"
+      ]
+    },
+    {
+      "rank": 6,
+      "drug": "Triamcinolone",
+      "disease": "rheumatoid arthritis",
+      "model_score": 1.074,
+      "gene_overlap": 17,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "summary": "Triamcinolone is FDA-approved for rheumatoid arthritis as intra-articular injection for symptomatic relief.",
+      "evidence": {
+        "fda_status": "FDA-approved (Kenalog-10, Aristospan, Aristocort) for RA as adjunctive short-term therapy",
+        "clinical_use": "Intra-articular injection for acute episodes; 40-80 mg IM with 4-week intervals; 5-40 mg intra-articular",
+        "mechanism": "Corticosteroid reducing inflammation in affected joints",
+        "limitations": "Short-term relief (up to 8 weeks); multiple injections increase infection risk"
+      },
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/books/NBK544309/",
+        "https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/012041s045lbl.pdf",
+        "https://www.myrateam.com/treatments/aristospan"
+      ]
+    },
+    {
+      "rank": 7,
+      "drug": "Lovastatin",
+      "disease": "plasma cell myeloma",
+      "model_score": 0.964,
+      "gene_overlap": 21,
+      "category": "CLINICAL_TRIAL",
+      "confidence": "MODERATE",
+      "summary": "Lovastatin shows promise for multiple myeloma via mevalonate pathway inhibition with Phase I/II clinical trial data.",
+      "evidence": {
+        "fda_status": "Not FDA-approved for myeloma; FDA-approved for hypercholesterolemia",
+        "clinical_trials": "Phase I trial (1992-1994): 88 patients, doses up to 45 mg/kg/day tolerated; TLD regimen (thalidomide+lovastatin+dexamethasone): 88% response rate vs 67.8% TD",
+        "mechanism": "HMG-CoA reductase inhibitor; blocks mevalonate pathway causing apoptosis in subset of MM cells",
+        "key_finding": "Synergistic effect with dexamethasone; ~50% of MM cell lines are statin-sensitive based on genetic markers",
+        "limitations": "Only subset of tumors responsive; no predictive biomarkers established"
+      },
+      "sources": [
+        "https://www.nature.com/articles/2402501",
+        "https://pubmed.ncbi.nlm.nih.gov/9816194/",
+        "https://ashpublications.org/blood/article/115/23/4787/27780/Exploiting-the-mevalonate-pathway-to-distinguish"
+      ]
+    },
+    {
+      "rank": 8,
+      "drug": "Mirtazapine",
+      "disease": "hypertension",
+      "model_score": 1.070,
+      "gene_overlap": 17,
+      "category": "FALSE_POSITIVE",
+      "confidence": "HIGH",
+      "summary": "Mirtazapine can CAUSE hypertension (hypertensive urgency reported), not treat it. This is a contraindicated prediction.",
+      "evidence": {
+        "fda_status": "FDA-approved for depression only; hypertension listed as adverse effect",
+        "safety_concern": "Case report of hypertensive urgency (215/145 mmHg) after single 7.5mg dose",
+        "mechanism": "Alpha-2 receptor antagonist enhances norepinephrine release; can increase blood pressure",
+        "warning": "Product labeling lists hypertension as frequent cardiovascular side effect; requires BP monitoring"
+      },
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4401889/",
+        "https://www.drugs.com/sfx/mirtazapine-side-effects.html",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8370473/"
+      ],
+      "recommendation": "EXCLUDE - Drug causes the condition it's predicted to treat"
+    },
+    {
+      "rank": 9,
+      "drug": "Crizotinib",
+      "disease": "type 2 diabetes",
+      "model_score": 1.060,
+      "gene_overlap": 17,
+      "category": "RESEARCH_SUPPORTED",
+      "confidence": "LOW",
+      "summary": "Preclinical evidence shows crizotinib may lower blood glucose through insulin-independent mechanisms, but no clinical trials for T2D.",
+      "evidence": {
+        "fda_status": "FDA-approved for ALK+ NSCLC only; no clinical trials for diabetes",
+        "preclinical": "Rat study: 25% blood glucose reduction independent of insulin/glucagon; GLUT4 upregulation in diabetic hearts",
+        "mechanism": "May affect glucose transport via GLUT4 and PPAR pathways",
+        "limitations": "No human clinical evidence; related drug ceritinib causes hyperglycemia; cardiotoxic potential"
+      },
+      "sources": [
+        "https://cdnsciencepub.com/doi/10.1139/cjpp-2020-0572",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC3876666/"
+      ],
+      "recommendation": "Needs clinical validation; preclinical only"
+    },
+    {
+      "rank": 10,
+      "drug": "Quetiapine",
+      "disease": "schizophrenia",
+      "model_score": 1.020,
+      "gene_overlap": 18,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "summary": "Quetiapine (Seroquel) is FDA-approved for schizophrenia since 1997 and is a first-line treatment.",
+      "evidence": {
+        "fda_status": "FDA-approved September 1997; Seroquel XR approved 2007",
+        "clinical_trials": "Multiple 6-week trials showing superiority over placebo at 300-750 mg/day in adults",
+        "mechanism": "Atypical antipsychotic; antagonist at serotonin, dopamine, histamine, and adrenergic receptors",
+        "advantages": "Fewer extrapyramidal side effects and lower hyperprolactinemia risk vs other antipsychotics"
+      },
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/books/NBK459145/",
+        "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2654633/",
+        "https://www.drugs.com/history/seroquel-xr.html"
+      ]
+    }
+  ],
+  "filter_recommendations": [
+    {
+      "pattern": "Antidepressants with alpha-2 antagonism for hypertension",
+      "examples": ["Mirtazapine -> hypertension"],
+      "reason": "Alpha-2 antagonists enhance norepinephrine release, which increases blood pressure",
+      "action": "EXCLUDE"
+    }
+  ],
+  "notes": [
+    "5 of 10 predictions (50%) are already FDA-approved for the predicted indication",
+    "2 predictions have clinical trial evidence supporting the use",
+    "2 predictions have preclinical/research support but need clinical validation",
+    "1 prediction is a clear FALSE POSITIVE where the drug causes the condition",
+    "High gene overlap (84) correctly identified Trametinib-melanoma (FDA-approved)",
+    "Model successfully identified standard chemotherapy drugs (corticosteroids for cancer)",
+    "The corticosteroid predictions (methylprednisolone, prednisolone, triamcinolone) confirm model recognizes established treatments"
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "validation_date": "2026-01-24",
+  "total_predictions_validated": 50,
+  "summary": {
+    "FDA_APPROVED": 18,
+    "CLINICAL_TRIAL": 4,
+    "RESEARCH_SUPPORTED": 9,
+    "NOVEL_HYPOTHESIS": 1,
+    "FALSE_POSITIVE": 9
+  },
+  "metrics": {
+    "precision": "77.5%",
+    "false_positive_rate": "20.0%",
+    "fda_validation_rate": "45.0%"
+  },
+  "false_positive_patterns": [
+    {
+      "pattern": "Drugs that CAUSE the target condition as adverse effect",
+      "examples": [
+        "Temsirolimus -> T2D (mTOR inhibitors cause 13-50% incidence of diabetes)",
+        "Paroxetine -> hypertension (SSRIs cause hypertension, WHO signal)",
+        "Mirtazapine -> hypertension (alpha-2 antagonists increase norepinephrine)",
+        "Isotretinoin -> rheumatoid arthritis (causes RA-like arthritis in 16-25%)",
+        "Vemurafenib -> rheumatoid arthritis (BRAF inhibitors cause arthralgia in 31-58%)",
+        "Digitoxin -> T2D (cardiac glycosides inhibit Na+/K+-ATPase, worsen glucose)"
+      ],
+      "recommendation": "Cross-reference against FAERS adverse event database"
+    },
+    {
+      "pattern": "Targeted therapy for cancers lacking the target",
+      "examples": [
+        "Trastuzumab -> melanoma (0% HER2 expression in melanoma)"
+      ],
+      "recommendation": "Check target expression before predicting targeted therapies"
+    },
+    {
+      "pattern": "Wrong drug formulation for disease",
+      "examples": [
+        "Diflorasone (topical) -> rheumatoid arthritis (topical steroids can't treat systemic disease)"
+      ],
+      "recommendation": "Check drug formulation/route of administration"
+    },
+    {
+      "pattern": "Chemotherapy for pediatric autoimmune",
+      "examples": [
+        "Gemcitabine -> juvenile idiopathic arthritis (cytotoxic drugs inappropriate when biologics available)"
+      ],
+      "recommendation": "Exclude cytotoxic chemotherapy for pediatric autoimmune conditions"
+    }
+  ],
+  "key_validated_predictions": [
+    {
+      "drug": "Pitavastatin",
+      "disease": "rheumatoid arthritis",
+      "evidence": "Clinical trial: superior to methotrexate alone"
+    },
+    {
+      "drug": "Everolimus",
+      "disease": "rheumatoid arthritis",
+      "evidence": "Phase II RCT: ACR20 36.1% vs 16.7% placebo (p=0.022)"
+    },
+    {
+      "drug": "Sirolimus",
+      "disease": "psoriasis",
+      "evidence": "RCT: 63.7% PASI reduction with cyclosporine combo"
+    },
+    {
+      "drug": "Lovastatin",
+      "disease": "multiple myeloma",
+      "evidence": "Phase I/II: 88% response with TLD regimen"
+    },
+    {
+      "drug": "Fluvastatin",
+      "disease": "hypertension",
+      "evidence": "Meta-analysis: -1.42 mmHg SBP, modest but significant"
+    },
+    {
+      "drug": "Cerulenin",
+      "disease": "malaria",
+      "evidence": "Preclinical: inhibits Plasmodium FAS (IC50 11-20 uM)"
+    }
+  ],
+  "filter_rules_to_add": [
+    "mTOR inhibitors (temsirolimus, everolimus, sirolimus) for metabolic diseases -> EXCLUDE",
+    "SSRIs/SNRIs for hypertension -> EXCLUDE",
+    "Alpha-2 antagonist antidepressants (mirtazapine) for hypertension -> EXCLUDE",
+    "Retinoids (isotretinoin, tretinoin) for arthritis -> EXCLUDE",
+    "BRAF inhibitors for arthritis -> EXCLUDE",
+    "Cardiac glycosides for diabetes -> EXCLUDE",
+    "HER2-targeted drugs for HER2-negative cancers -> EXCLUDE",
+    "Topical steroids for systemic diseases -> EXCLUDE"
+  ],
+  "files_created": [
+    "data/analysis/validation_batch_20260124.json",
+    "data/analysis/prediction_validation_batch2.json",
+    "data/analysis/validation_batch_20260124_session2.json",
+    "data/analysis/validation_session3.json",
+    "data/analysis/target_boost_validation.json"
+  ]
+}

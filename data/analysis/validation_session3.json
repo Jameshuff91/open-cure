@@ -1,0 +1,232 @@
+{
+  "validation_date": "2026-01-24",
+  "validator": "Claude Opus 4.5",
+  "total_predictions": 10,
+  "summary": {
+    "FDA_APPROVED": 1,
+    "CLINICAL_TRIAL": 1,
+    "RESEARCH_SUPPORTED": 4,
+    "NOVEL_HYPOTHESIS": 0,
+    "FALSE_POSITIVE": 4
+  },
+  "predictions": [
+    {
+      "rank": 1,
+      "drug": "Temsirolimus",
+      "disease": "type 2 diabetes",
+      "score": 1.059,
+      "gene_overlap": 14,
+      "category": "FALSE_POSITIVE",
+      "confidence": "HIGH",
+      "rationale": "mTOR inhibitors like temsirolimus CAUSE hyperglycemia and diabetes, not treat it. Studies show 13-50% incidence of new-onset diabetes and 5-fold increase in severe hyperglycemia risk. Temsirolimus increases insulin resistance and impairs beta-cell function. This prediction is biologically backwards.",
+      "evidence": [
+        "mTOR inhibitors induce 5-fold increase in risk for severe hyperglycemia (PubMed 26421362)",
+        "Rapamycin worsens hyperglycemia in diabetic models (Diabetes Journal 2008)",
+        "Treatment associated with 13-50% incidence of new-onset diabetes in clinical trials"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/26421362/",
+        "https://diabetesjournals.org/diabetes/article/57/4/945/13580/mTOR-Inhibition-by-Rapamycin-Prevents-Cell"
+      ],
+      "recommendation": "DO NOT pursue. Known to worsen diabetes."
+    },
+    {
+      "rank": 2,
+      "drug": "Paroxetine",
+      "disease": "hypertension",
+      "score": 1.048,
+      "gene_overlap": 23,
+      "category": "FALSE_POSITIVE",
+      "confidence": "MODERATE",
+      "rationale": "SSRIs including paroxetine are associated with CAUSING hypertension (ROR 1.39-1.54 in WHO pharmacovigilance database), not treating it. While one study showed paroxetine has antihypertensive effects during psychological stress, overall evidence suggests SSRIs can cause hypertension as an adverse effect, particularly in younger adults.",
+      "evidence": [
+        "WHO pharmacovigilance analysis (2024-2025): SSRIs associated with hypertension reporting (aROR 1.16-1.40)",
+        "2,441 paroxetine-associated hypertension reports in VigiBase",
+        "In younger adults aged 22-29, SSRIs associated with hypertension"
+      ],
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC11888134/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8370473/"
+      ],
+      "recommendation": "DO NOT pursue. SSRIs may cause, not treat, hypertension."
+    },
+    {
+      "rank": 3,
+      "drug": "Isotretinoin",
+      "disease": "rheumatoid arthritis",
+      "score": 1.046,
+      "gene_overlap": 28,
+      "category": "FALSE_POSITIVE",
+      "confidence": "HIGH",
+      "rationale": "Isotretinoin CAUSES arthritis mimicking rheumatoid arthritis, not treats it. 16-25% of patients develop musculoskeletal symptoms including arthralgia. Case reports document isotretinoin-induced arthritis affecting wrists, MCPs, and sacroiliac joints. Retinoids activate matrix metalloproteinases (MMPs) involved in RA pathogenesis.",
+      "evidence": [
+        "20-25% incidence of musculoskeletal side effects",
+        "Case reports of isotretinoin-induced arthritis mimicking both RA and spondyloarthritis (PubMed 25294249)",
+        "Retinoids induce MMP-2 activity implicated in RA pathogenesis"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/25294249/",
+        "https://www.elsevier.es/en-revista-revista-colombiana-reumatologia-english-edition--474-articulo-isotretinoin-induced-arthritis-a-rare-but-S2444440522000383"
+      ],
+      "recommendation": "DO NOT pursue. Known to cause arthritis symptoms."
+    },
+    {
+      "rank": 4,
+      "drug": "Irinotecan",
+      "disease": "rheumatoid arthritis",
+      "score": 1.044,
+      "gene_overlap": 46,
+      "category": "RESEARCH_SUPPORTED",
+      "confidence": "LOW",
+      "rationale": "Topoisomerase I inhibitors including irinotecan have been patented for treatment of autoimmune diseases including RA. Irinotecan prevented lupus nephritis in mouse models. However, one case report documented RA onset AFTER irinotecan chemotherapy. Limited evidence, primarily preclinical.",
+      "evidence": [
+        "Patent WO2011064152A1: Topoisomerase I inhibitors for autoimmune diseases including RA",
+        "Irinotecan reversed lupus nephritis in NZB/NZW mice at low concentrations",
+        "However: failed to ameliorate multiple sclerosis and systemic sclerosis in mouse models"
+      ],
+      "sources": [
+        "https://patents.google.com/patent/WO2011064152A1/en",
+        "https://link.springer.com/article/10.1186/s13075-016-1144-5"
+      ],
+      "recommendation": "LOW PRIORITY. Preclinical evidence only. Specificity for SLE, not RA."
+    },
+    {
+      "rank": 5,
+      "drug": "Everolimus",
+      "disease": "rheumatoid arthritis",
+      "score": 1.043,
+      "gene_overlap": 42,
+      "category": "CLINICAL_TRIAL",
+      "confidence": "MODERATE",
+      "rationale": "Phase II RCT demonstrated efficacy of everolimus + methotrexate in RA. ACR20 response rate was 36.1% vs 16.7% placebo (p=0.022) at 12 weeks. Novel folate-targeted everolimus derivative (EC0565) showed superior antiarthritic activity vs etanercept. However, not FDA approved for RA.",
+      "evidence": [
+        "Phase II RCT: ACR20 36.1% vs 16.7% placebo (p=0.022) at 12 weeks (PubMed 18037627)",
+        "Rapid onset of action in combination with methotrexate",
+        "EC0565 (folate-targeted everolimus) superior to etanercept in preclinical models"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/18037627/",
+        "https://molmed.biomedcentral.com/articles/10.2119/molmed.2015.00040"
+      ],
+      "recommendation": "VALID prediction. Clinical trial evidence supports efficacy, though not FDA approved."
+    },
+    {
+      "rank": 6,
+      "drug": "Zidovudine",
+      "disease": "cancer",
+      "score": 0.889,
+      "gene_overlap": 18,
+      "category": "RESEARCH_SUPPORTED",
+      "confidence": "MODERATE",
+      "rationale": "Zidovudine (AZT) was originally developed as an anticancer agent and has documented antitumor activity. Phase I trials showed 45% objective response rate in colorectal cancer (5-FU + AZT combination). Active against ovarian, breast, lung, melanoma, and multiple myeloma in vitro. Inhibits telomerase activity.",
+      "evidence": [
+        "Originally synthesized in 1964 to treat cancers caused by retroviruses",
+        "Phase I: 45% objective response rate in colorectal cancer with 5-FU combination",
+        "Inhibits proliferation in ovarian, breast, lung, and multiple myeloma cells",
+        "Mechanism: Telomerase inhibition and cell cycle arrest"
+      ],
+      "sources": [
+        "https://www.sciencedirect.com/science/article/pii/S092375341948280X",
+        "https://ar.iiarjournals.org/content/40/10/5517"
+      ],
+      "recommendation": "INTERESTING prediction. Research supports antitumor activity. Note: IARC Group 2B carcinogen (possibly carcinogenic)."
+    },
+    {
+      "rank": 7,
+      "drug": "Vemurafenib",
+      "disease": "rheumatoid arthritis",
+      "score": 1.037,
+      "gene_overlap": 41,
+      "category": "FALSE_POSITIVE",
+      "confidence": "HIGH",
+      "rationale": "Vemurafenib CAUSES arthralgia mimicking rheumatoid arthritis in 31-58% of patients. In studies, 67% of affected patients showed RA-like symmetrical polyarticular involvement of small joints. This is a known adverse effect, not a therapeutic indication.",
+      "evidence": [
+        "58% arthralgia rate in BRIM-2 trial",
+        "31% of patients developed new-onset joint pain (BRAF inhibitor cohort 2010-2018)",
+        "67% of affected patients showed RA-like symmetrical polyarticular pattern"
+      ],
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7602871/"
+      ],
+      "recommendation": "DO NOT pursue. Known to cause RA-like arthritis symptoms."
+    },
+    {
+      "rank": 8,
+      "drug": "Estriol",
+      "disease": "breast adenocarcinoma",
+      "score": 1.035,
+      "gene_overlap": 39,
+      "category": "RESEARCH_SUPPORTED",
+      "confidence": "VERY_LOW",
+      "rationale": "Complex and controversial. Estriol is a weak estrogen used for vaginal symptoms in breast cancer survivors. 2024 target trial emulation found estriol may DECREASE disease-free survival in patients on aromatase inhibitors (-3.7% at 5 years). However, JAMA Oncology 2024 found no increased mortality with vaginal estrogen. NOT a treatment for breast cancer - contraindicated in HR+ tumors.",
+      "evidence": [
+        "2024 French study: Estriol may decrease DFS in patients on aromatase inhibitors",
+        "JAMA Oncology 2024: No increased breast cancer mortality with vaginal estrogen (HR 0.77)",
+        "Estrogen generally PROMOTES HR+ breast cancer growth"
+      ],
+      "sources": [
+        "https://www.medrxiv.org/content/10.1101/2024.10.23.24315966v1",
+        "https://jamanetwork.com/journals/jamaoncology/fullarticle/2811413"
+      ],
+      "recommendation": "DO NOT pursue for treatment. Estriol is used for symptom management in survivors, not cancer treatment. May harm patients on aromatase inhibitors."
+    },
+    {
+      "rank": 9,
+      "drug": "Nilotinib",
+      "disease": "rheumatoid arthritis",
+      "score": 1.033,
+      "gene_overlap": 30,
+      "category": "RESEARCH_SUPPORTED",
+      "confidence": "MODERATE",
+      "rationale": "Tyrosine kinase inhibitors including nilotinib show therapeutic effects in mouse arthritis models. Nilotinib suppresses T-cell-derived cytokine production. A proof-of-concept clinical trial in spondyloarthritis showed decreased synovial inflammation (CD68+, CD163+ macrophages, mast cells) after 12 weeks.",
+      "evidence": [
+        "Preclinical: Nilotinib effective in collagen-induced arthritis (CIA) mouse model",
+        "Mechanism: Inhibits Abl, KIT, PDGFR, CSF-1R; suppresses T-cell cytokine production",
+        "Clinical POC in SpA: Reduced synovial macrophages and mast cells at 12 weeks (PubMed 5081668)"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/21188449/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC5081668/"
+      ],
+      "recommendation": "VALID prediction. Preclinical and early clinical evidence. Tofacitinib (different TKI) already FDA-approved for RA."
+    },
+    {
+      "rank": 10,
+      "drug": "Lapatinib",
+      "disease": "breast adenocarcinoma",
+      "score": 1.032,
+      "gene_overlap": 25,
+      "category": "FDA_APPROVED",
+      "confidence": "HIGH",
+      "rationale": "Lapatinib is FDA-approved (2007, 2010) for HER2-positive metastatic breast cancer. Dual tyrosine kinase inhibitor of ErbB-2 and ErbB-1. Median TTP 27.1 vs 18.6 weeks with capecitabine (HR 0.57, p=0.00013). Small molecule that can cross blood-brain barrier.",
+      "evidence": [
+        "FDA approved 2007: HER2+ metastatic breast cancer with capecitabine",
+        "FDA approved 2010: HER2+ breast cancer with letrozole",
+        "PFS nearly tripled (35.4 vs 13.0 weeks) with letrozole combination"
+      ],
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/18849320/",
+        "https://www.accessdata.fda.gov/drugsatfda_docs/label/2018/022059s023lbl.pdf"
+      ],
+      "recommendation": "Already in clinical use for HER2+ breast cancer. Validates model accuracy."
+    }
+  ],
+  "key_insights": {
+    "false_positive_patterns": [
+      "Drugs that CAUSE the condition as a side effect (Temsirolimus->diabetes, Paroxetine->HTN, Isotretinoin->arthritis, Vemurafenib->arthritis)",
+      "Gene overlap may capture off-target effects rather than therapeutic mechanisms",
+      "Model may confuse drug-disease associations without understanding direction of effect"
+    ],
+    "valid_predictions": [
+      "Everolimus for RA (Phase II RCT evidence)",
+      "Nilotinib for RA (preclinical + POC clinical)",
+      "Zidovudine for cancer (historical + preclinical)",
+      "Lapatinib for breast cancer (FDA approved - validates model)"
+    ],
+    "recommendations": [
+      "Add filter for drugs known to CAUSE the target disease as adverse effect",
+      "Cross-reference predictions against adverse event databases (FAERS)",
+      "Distinguish between drug-disease associations and therapeutic relationships"
+    ]
+  }
+}
