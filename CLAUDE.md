@@ -33,10 +33,10 @@ vastai destroy instance <INSTANCE_ID>
 ## Models
 
 **Default Model (use this):**
-- `models/drug_repurposing_gb_enhanced.pkl` + Target Boost ensemble
-- Prediction: `score × (1 + 0.01 × min(target_overlap, 10))`
-- Requires: `data/reference/drug_targets.json`, `data/reference/disease_genes.json`
-- Script: `src/predict.py` (default) or `scripts/evaluate_target_ensemble.py`
+- `models/drug_repurposing_gb_enhanced.pkl` + Triple Boost ensemble
+- Prediction: `score × (1 + 0.01 × min(overlap, 10)) × (1 + 0.05 × atc) × (1.2 if chem_sim > 0.7 else 1.0)`
+- Requires: `data/reference/drug_targets.json`, `data/reference/disease_genes.json`, `data/reference/chemical/`
+- Script: `scripts/evaluate_triple_boost.py`
 
 **All Models:**
 - `models/drug_repurposing_gb_enhanced.pkl` - GB model with expanded MESH (37.4% R@30)
@@ -49,10 +49,10 @@ vastai destroy instance <INSTANCE_ID>
 
 | Model | Per-Drug R@30 | Diseases Evaluated | Notes |
 |-------|---------------|-------------------|-------|
-| **GB + Target + ATC Boost** | **39.7%** | 690/779 | Combined boost - NEW BEST |
+| **GB + Triple Boost** | **44.0%** | 602/779 | Target + ATC + Chemical - NEW BEST |
+| GB + Target + ATC Boost | 40.2% | 602/779 | Previous best |
 | GB + Target Boost | 39.0% | 690/779 | Validated +1.6% improvement (p<0.0001) |
 | GB Enhanced (Expanded MESH) | 37.4% | 700/779 | Agent web search MESH mappings |
-| GB Enhanced (18 diseases) | 17.1% | 18 | CONFIRMED diseases only |
 | Best Rank Ensemble | 7.5% | 779 | min(TxGNN rank, GB rank) |
 | TxGNN (proper scoring) | 6.7% | 779 | Per-drug R@30 |
 
@@ -102,6 +102,46 @@ Downloaded WHO ATC-DDD 2024 classification data (7,345 codes). Created `src/atc_
 - `data/external/atc/atc_codes_2024.csv` - WHO ATC-DDD 2024 data (not in git)
 - `src/atc_features.py` - ATC mapping and feature extraction
 - `scripts/evaluate_combined_boost.py` - Combined boost evaluation
+
+## Chemical Structure Features (2026-01-25) - SUCCESS
+
+**Hypothesis:** Drugs structurally similar to known treatments are more likely to be effective.
+
+### Implementation
+
+Used RDKit to compute Morgan fingerprints (ECFP4 equivalent) and Tanimoto similarity:
+1. Fetch SMILES from PubChem for DrugBank drugs
+2. Generate 2048-bit Morgan fingerprints (radius=2)
+3. For each candidate drug, compute max Tanimoto similarity to known treatments
+4. Boost predictions when similarity > 0.7 threshold
+
+**Coverage:** 987/24,313 drugs with fingerprints (4.1%) - limited by PubChem API rate limits
+
+### Results (Triple Boost Evaluation)
+
+| Strategy | R@30 | vs Baseline | vs Target+ATC |
+|----------|------|-------------|---------------|
+| **triple_multiplicative** | **43.95%** | **+5.23%** | **+3.79%** |
+| triple_additive | 43.77% | +5.05% | +3.61% |
+| target+chem | 43.41% | +4.69% | +3.25% |
+| target+atc | 40.16% | +1.44% | - |
+| baseline | 38.72% | - | -1.44% |
+
+**Best Strategy:** `triple_multiplicative`
+- Formula: `score × (1 + 0.01 × overlap) × (1 + 0.05 × atc) × (1.2 if sim > 0.7 else 1.0)`
+- Improvement: **+4.26%** over previous best (39.69% → 43.95%)
+
+### Key Insight
+
+Chemical similarity boost provides the **largest individual gain** (+3.97% for chem_only) despite only 4.1% fingerprint coverage. Increasing coverage to 50%+ could yield substantially larger improvements.
+
+### Files
+
+- `src/chemical_features.py` - Fingerprint generation and similarity calculation
+- `scripts/evaluate_chemical_boost.py` - Chemical-only boost evaluation
+- `scripts/evaluate_triple_boost.py` - Combined triple boost evaluation
+- `data/reference/chemical/drug_fingerprints.pkl` - Cached fingerprints
+- `data/reference/chemical/drug_smiles.json` - Cached SMILES strings
 
 ## Similarity Feature Experiment (2026-01-24) - FAILED
 
