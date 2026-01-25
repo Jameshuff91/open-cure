@@ -38,14 +38,14 @@ Use AI and open-source tools to accelerate drug repurposing research, making it 
 
 **Output**: `data/deliverables/` - 307 FDA-approved drug predictions, 3,834 total clean predictions
 
-### Priority 2: Make It Contributor-Friendly
+### Priority 2: Make It Contributor-Friendly ✅ COMPLETE
 **Goal**: Enable others to join and contribute
 
-- [ ] Improve README with clear setup instructions
-- [ ] Add "good first issues" on GitHub
-- [ ] Create simple query interface (CLI or web)
-- [ ] Document the methodology for non-ML people
-- [ ] Add contribution guidelines
+- [x] Improve README with clear setup instructions
+- [x] Add "good first issues" in README
+- [x] Create simple query interface (CLI): `scripts/query.py`
+- [x] Document methodology in README
+- [x] Add contribution guidelines: `CONTRIBUTING.md`
 
 ### Priority 3: Add Drug-Target Features
 **Goal**: Fix biologic prediction failures
