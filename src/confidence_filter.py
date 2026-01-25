@@ -10,10 +10,14 @@ Based on validation of 30 predictions:
 - Small molecules: 74% precision, 16% FP rate
 - Antibiotics: 0% precision, 50% FP rate
 - Sympathomimetics: 0% precision, 100% FP rate
+
+Updated 2026-01-24: Added FDA approval checking and withdrawn drug filtering.
 """
 
 import re
-from typing import Dict, List, Optional, Tuple
+import json
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple, Set
 from dataclasses import dataclass
 from enum import Enum
 
@@ -122,6 +126,66 @@ CARDIAC_CONDITIONS = [
     "heart failure", "congestive heart failure", "cardiac failure",
     "cardiomyopathy", "left ventricular dysfunction",
 ]
+
+# FDA-approved drug-disease pairs (not truly novel predictions)
+# These represent ground truth gaps, not model errors
+FDA_APPROVED_PAIRS: Set[Tuple[str, str]] = {
+    # Breast cancer treatments
+    ("pembrolizumab", "breast cancer"),
+    ("pembrolizumab", "triple-negative breast cancer"),
+    ("doxorubicin", "breast cancer"),
+    ("methotrexate", "breast cancer"),
+    ("paclitaxel", "breast cancer"),
+    ("trastuzumab", "breast cancer"),
+    # MS treatments
+    ("natalizumab", "multiple sclerosis"),
+    ("ocrelizumab", "multiple sclerosis"),
+    ("fingolimod", "multiple sclerosis"),
+    ("dimethyl fumarate", "multiple sclerosis"),
+    # Colorectal cancer
+    ("cetuximab", "colorectal cancer"),
+    ("oxaliplatin", "colorectal cancer"),
+    ("bevacizumab", "colorectal cancer"),
+    ("irinotecan", "colorectal cancer"),
+    # Melanoma
+    ("trametinib", "melanoma"),
+    ("dabrafenib", "melanoma"),
+    ("pembrolizumab", "melanoma"),
+    ("nivolumab", "melanoma"),
+    # Pancreatic cancer
+    ("erlotinib", "pancreatic cancer"),
+    ("gemcitabine", "pancreatic cancer"),
+    # Lung cancer
+    ("erlotinib", "lung cancer"),
+    ("gefitinib", "lung cancer"),
+    ("osimertinib", "lung cancer"),
+    # RA treatments
+    ("prednisone", "rheumatoid arthritis"),
+    ("prednisolone", "rheumatoid arthritis"),
+    ("methotrexate", "rheumatoid arthritis"),
+    ("adalimumab", "rheumatoid arthritis"),
+    ("etanercept", "rheumatoid arthritis"),
+    # COPD
+    ("umeclidinium", "copd"),
+    ("tiotropium", "copd"),
+    ("formoterol", "copd"),
+    # Asthma
+    ("tezepelumab", "asthma"),
+    ("dupilumab", "asthma"),
+    ("omalizumab", "asthma"),
+}
+
+
+def is_fda_approved_pair(drug: str, disease: str) -> bool:
+    """Check if a drug-disease pair is already FDA-approved."""
+    drug_lower = drug.lower()
+    disease_lower = disease.lower()
+
+    for approved_drug, approved_disease in FDA_APPROVED_PAIRS:
+        if approved_drug in drug_lower or drug_lower in approved_drug:
+            if approved_disease in disease_lower or disease_lower in approved_disease:
+                return True
+    return False
 
 
 def classify_drug_type(drug_name: str) -> str:
@@ -237,6 +301,18 @@ def filter_prediction(
                 drug_type=drug_type,
                 adjusted_score=0.0,
             )
+
+    # Rule 0c: Already FDA-approved (not truly novel - ground truth gap)
+    if is_fda_approved_pair(drug, disease):
+        return FilteredPrediction(
+            drug=drug,
+            disease=disease,
+            original_score=score,
+            confidence=ConfidenceLevel.LOW,
+            reason="Already FDA-approved for this indication (ground truth gap)",
+            drug_type=drug_type,
+            adjusted_score=score * 0.5,  # Downweight but don't exclude
+        )
 
     # Rule 1: Antibiotics for metabolic diseases
     if drug_type == "antibiotic" and is_metabolic_disease(disease):

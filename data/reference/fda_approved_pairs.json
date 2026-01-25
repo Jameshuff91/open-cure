@@ -1,0 +1,96 @@
+{
+  "description": "FDA-approved drug-disease pairs identified during validation. These should be added to ground truth to improve evaluation accuracy.",
+  "last_updated": "2026-01-24",
+  "pairs": [
+    {
+      "drug": "Pembrolizumab",
+      "disease": "Triple-negative breast cancer",
+      "fda_approval_year": 2020,
+      "notes": "KEYNOTE-355 (metastatic), KEYNOTE-522 (early-stage)"
+    },
+    {
+      "drug": "Pembrolizumab",
+      "disease": "Breast cancer",
+      "fda_approval_year": 2021,
+      "notes": "High-risk early-stage TNBC"
+    },
+    {
+      "drug": "Doxorubicin",
+      "disease": "Breast cancer",
+      "fda_approval_year": 1974,
+      "notes": "Anthracycline chemotherapy, cornerstone treatment"
+    },
+    {
+      "drug": "Methotrexate",
+      "disease": "Breast cancer",
+      "fda_approval_year": 1959,
+      "notes": "Part of CMF regimen"
+    },
+    {
+      "drug": "Natalizumab",
+      "disease": "Multiple sclerosis",
+      "fda_approval_year": 2004,
+      "notes": "Tysabri, first mAb for MS"
+    },
+    {
+      "drug": "Erlotinib",
+      "disease": "Pancreatic cancer",
+      "fda_approval_year": 2005,
+      "notes": "Tarceva + gemcitabine"
+    },
+    {
+      "drug": "Cetuximab",
+      "disease": "Colorectal cancer",
+      "fda_approval_year": 2004,
+      "notes": "Erbitux, KRAS wild-type"
+    },
+    {
+      "drug": "Oxaliplatin",
+      "disease": "Colorectal cancer",
+      "fda_approval_year": 2002,
+      "notes": "FOLFOX regimen"
+    },
+    {
+      "drug": "Bevacizumab",
+      "disease": "Colorectal cancer",
+      "fda_approval_year": 2004,
+      "notes": "Avastin, anti-VEGF"
+    },
+    {
+      "drug": "Trametinib",
+      "disease": "Melanoma",
+      "fda_approval_year": 2013,
+      "notes": "Mekinist, BRAF V600E/K"
+    },
+    {
+      "drug": "Prednisone",
+      "disease": "Rheumatoid arthritis",
+      "fda_approval_year": 2012,
+      "notes": "RAYOS delayed-release"
+    },
+    {
+      "drug": "Umeclidinium",
+      "disease": "COPD",
+      "fda_approval_year": 2014,
+      "notes": "Incruse Ellipta, also in Trelegy"
+    },
+    {
+      "drug": "Thiotepa",
+      "disease": "Cancer",
+      "fda_approval_year": 1959,
+      "notes": "Alkylating agent, various cancers"
+    }
+  ],
+  "mesh_mappings_to_add": [
+    {"drug": "Pembrolizumab", "drugbank_id": "DB09037", "disease_mesh": "D001943"},
+    {"drug": "Doxorubicin", "drugbank_id": "DB00997", "disease_mesh": "D001943"},
+    {"drug": "Methotrexate", "drugbank_id": "DB00563", "disease_mesh": "D001943"},
+    {"drug": "Natalizumab", "drugbank_id": "DB00108", "disease_mesh": "D009103"},
+    {"drug": "Erlotinib", "drugbank_id": "DB00530", "disease_mesh": "D010190"},
+    {"drug": "Cetuximab", "drugbank_id": "DB00002", "disease_mesh": "D015179"},
+    {"drug": "Oxaliplatin", "drugbank_id": "DB00526", "disease_mesh": "D015179"},
+    {"drug": "Bevacizumab", "drugbank_id": "DB00112", "disease_mesh": "D015179"},
+    {"drug": "Trametinib", "drugbank_id": "DB08911", "disease_mesh": "D008545"},
+    {"drug": "Umeclidinium", "drugbank_id": "DB09076", "disease_mesh": "D029424"}
+  ]
+}

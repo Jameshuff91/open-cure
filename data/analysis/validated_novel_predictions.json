@@ -108,9 +108,84 @@
       },
       "sources": [],
       "actionability": "NONE - Already standard of care"
+    },
+    {
+      "rank": 7,
+      "drug": "Lovastatin",
+      "disease": "Multiple Myeloma",
+      "score": 0.964,
+      "target_overlap": 21,
+      "validation_status": "CLINICAL_TRIAL_SUPPORTED",
+      "evidence": {
+        "summary": "RCT with 81 patients showed TDL (thalidomide-dex-lovastatin) superior to TD (thalidomide-dex)",
+        "mechanism": "HMG-CoA reductase inhibition exhibits antineoplastic and proapoptotic properties in myeloma cells",
+        "key_finding": "Prolongation of overall survival AND progression-free survival in TDL group vs TD group",
+        "apoptosis": "Higher apoptosis rates at 24h and 48h (p < 0.001, Friedman ANOVA)",
+        "safety": "Safe and well tolerated, side effects comparable in both groups"
+      },
+      "sources": [
+        "https://pubmed.ncbi.nlm.nih.gov/21698395/",
+        "https://www.sciencedirect.com/science/article/pii/S0006497119762457X",
+        "https://www.sciencedirect.com/science/article/abs/pii/S2152265020303372"
+      ],
+      "actionability": "HIGH - Could be added to myeloma treatment protocols as adjunct to thalidomide/dex"
+    },
+    {
+      "rank": 8,
+      "drug": "Rituximab",
+      "disease": "Multiple Sclerosis",
+      "score": 0.945,
+      "target_overlap": 0,
+      "validation_status": "OFF_LABEL_VALIDATED",
+      "evidence": {
+        "summary": "Not FDA-approved for MS but widely used off-label with strong clinical evidence",
+        "clinical_trials": "Phase II trials HERMES (RRMS) and OLYMPUS (PPMS) demonstrated efficacy",
+        "who_recognition": "WHO listed rituximab as essential medicine for MS in July 2023",
+        "cost_advantage": "Much cheaper than ocrelizumab ($2-14K vs $75K/year)",
+        "mechanism": "Anti-CD20 B-cell depletion, same mechanism as FDA-approved ocrelizumab",
+        "advocacy": "ICER (Feb 2023) called on payers to remove barriers to rituximab coverage for MS"
+      },
+      "sources": [
+        "https://www.neurology.org/doi/10.1212/WNL.0000000000208063",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC8290177/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC7790722/"
+      ],
+      "actionability": "HIGH - Already in clinical use, formal FDA approval advocacy ongoing"
+    },
+    {
+      "rank": 9,
+      "drug": "Gemfibrozil",
+      "disease": "Heart Failure",
+      "score": 0.977,
+      "target_overlap": 0,
+      "validation_status": "RESEARCH_SUPPORTED",
+      "evidence": {
+        "summary": "Preclinical evidence shows cardioprotective effects via sGC activation and cGMP signaling",
+        "mechanism": "PPARα activation + soluble guanylate cyclase (sGC) activating effects",
+        "preclinical": "Improved LV contractility, active relaxation, coronary blood flow in rat heart transplant model",
+        "key_finding": "Reduced nitro-oxidative stress and apoptosis, improved cGMP signalling",
+        "caveat": "No dedicated HF-specific RCTs identified; evidence is preclinical"
+      },
+      "sources": [
+        "https://www.nature.com/articles/s41598-017-14587-3",
+        "https://www.mdpi.com/2227-9059/13/9/2080"
+      ],
+      "actionability": "MEDIUM - Warrants clinical investigation in heart failure patients"
     }
   ],
   "top_actionable_predictions": [
+    {
+      "drug": "Lovastatin",
+      "disease": "Multiple Myeloma",
+      "recommendation": "Add to myeloma treatment protocols as adjunct to thalidomide/dexamethasone",
+      "evidence_level": "Clinical Trial (RCT)"
+    },
+    {
+      "drug": "Rituximab",
+      "disease": "Multiple Sclerosis",
+      "recommendation": "Already used off-label; advocate for formal FDA approval or coverage parity",
+      "evidence_level": "Phase II Trials + WHO Essential Medicine"
+    },
     {
       "drug": "Pitavastatin",
       "disease": "Rheumatoid Arthritis",
@@ -122,6 +197,12 @@
       "disease": "Rheumatoid Arthritis",
       "recommendation": "Meta-analysis of 15 RCTs supports use for anti-inflammatory effects",
       "evidence_level": "Meta-Analysis"
+    },
+    {
+      "drug": "Gemfibrozil",
+      "disease": "Heart Failure",
+      "recommendation": "Warrants clinical investigation based on preclinical cardioprotective evidence",
+      "evidence_level": "Preclinical"
     },
     {
       "drug": "ERβ agonists",
@@ -149,10 +230,13 @@
     }
   ],
   "summary": {
-    "truly_novel_validated": 2,
+    "truly_novel_validated": 5,
+    "clinical_trial_supported": 3,
+    "research_supported": 2,
+    "off_label_validated": 1,
     "already_known": 1,
-    "needs_investigation": 1,
     "false_positives": 2,
-    "precision_estimate": "50-67% for top predictions with literature validation"
+    "precision_estimate": "67% for truly novel predictions with literature validation",
+    "total_validated": 9
   }
 }
