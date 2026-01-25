@@ -1,0 +1,140 @@
+{
+  "date": "2026-01-24",
+  "current_performance": {
+    "model": "GB Enhanced + Target Boost",
+    "recall_at_30": "39.0%",
+    "diseases_evaluated": 690,
+    "improvement_from_baseline": "+31.9pp vs TxGNN (6.7%)"
+  },
+  "experiments_completed": {
+    "successful": [
+      {
+        "name": "Expanded MESH Mapping",
+        "result": "+30pp R@30 (from 7% to 37.4%)",
+        "status": "DEPLOYED"
+      },
+      {
+        "name": "Target Overlap Boost Ensemble",
+        "result": "+1.6pp R@30 (p<0.0001)",
+        "status": "DEPLOYED"
+      },
+      {
+        "name": "Confidence Filter",
+        "result": "Removes harmful FP patterns",
+        "status": "DEPLOYED"
+      },
+      {
+        "name": "FDA Approval Check",
+        "result": "Identifies ground truth gaps",
+        "status": "DEPLOYED"
+      }
+    ],
+    "failed": [
+      {
+        "name": "Similarity Feature Training",
+        "result": "0% test recall (feature leakage)",
+        "lesson": "Don't train on features derived from labels"
+      },
+      {
+        "name": "Target Feature Retraining",
+        "result": "-31.6pp R@30 (5.8% vs 37.4%)",
+        "lesson": "Retraining on different data loses baseline signal"
+      },
+      {
+        "name": "TxGNN Fine-tuning",
+        "result": "Catastrophic forgetting",
+        "lesson": "Small dataset causes overfitting"
+      }
+    ]
+  },
+  "validated_discoveries": {
+    "clinical_trial_supported": [
+      {"drug": "Lovastatin", "disease": "Multiple Myeloma", "evidence": "RCT: improved OS/PFS"},
+      {"drug": "Pitavastatin", "disease": "Rheumatoid Arthritis", "evidence": "15 RCT meta-analysis"},
+      {"drug": "Dantrolene", "disease": "Heart Failure/VT", "evidence": "RCT P=0.034"}
+    ],
+    "off_label_validated": [
+      {"drug": "Rituximab", "disease": "Multiple Sclerosis", "evidence": "WHO Essential Medicine 2023"}
+    ],
+    "research_supported": [
+      {"drug": "Estradiol", "disease": "Ulcerative Colitis", "evidence": "ERβ mechanism"},
+      {"drug": "Gemfibrozil", "disease": "Heart Failure", "evidence": "Preclinical cardioprotection"}
+    ],
+    "validation_precision": "67% for truly novel predictions"
+  },
+  "ground_truth_issues_identified": {
+    "fda_approved_missing": 12,
+    "examples": ["Pembrolizumab→Breast Cancer (2020)", "Natalizumab→MS (2004)", "Cetuximab→CRC (2004)"]
+  },
+  "viable_next_research_efforts": [
+    {
+      "name": "Expand Ground Truth with FDA-Approved Pairs",
+      "effort": "Easy (1 hour)",
+      "expected_impact": "Better evaluation accuracy",
+      "description": "Add 12 FDA-approved pairs we identified to ground truth",
+      "files_ready": ["data/reference/fda_approved_pairs.json"]
+    },
+    {
+      "name": "Add ATC Code / Mechanism Features",
+      "effort": "Medium (0.5 day)",
+      "expected_impact": "+3-5% R@30",
+      "description": "Add therapeutic class as categorical feature",
+      "not_tried_yet": true
+    },
+    {
+      "name": "Add ChEMBL Bioactivity Features",
+      "effort": "Medium (1-2 days)",
+      "expected_impact": "+5-8% R@30",
+      "description": "Add experimental IC50/EC50 against relevant targets",
+      "not_tried_yet": true
+    },
+    {
+      "name": "Contrastive Embedding Fine-tuning",
+      "effort": "Medium (2-3 days GPU)",
+      "expected_impact": "+10-15% R@30",
+      "description": "Fine-tune embeddings for drug repurposing task",
+      "not_tried_yet": true
+    },
+    {
+      "name": "Continue Literature Validation",
+      "effort": "Ongoing",
+      "expected_impact": "More validated discoveries",
+      "description": "279 filtered candidates remain for validation",
+      "files_ready": ["data/analysis/validation_batch_next.json"]
+    },
+    {
+      "name": "Disease-Specific Models",
+      "effort": "High (3-5 days)",
+      "expected_impact": "+5-10% for target diseases",
+      "description": "Train specialized models for cancer, autoimmune, etc.",
+      "not_tried_yet": true
+    }
+  ],
+  "do_not_retry": [
+    "Similarity features (training) - causes feature leakage",
+    "TxGNN fine-tuning - causes catastrophic forgetting",
+    "Full model retraining with new features - loses baseline signal"
+  ],
+  "files_summary": {
+    "models": {
+      "primary": "models/drug_repurposing_gb_enhanced.pkl",
+      "embeddings": "models/transe.pt"
+    },
+    "data": {
+      "ground_truth": "data/reference/expanded_ground_truth.json",
+      "fda_pairs": "data/reference/fda_approved_pairs.json",
+      "drug_targets": "data/reference/drug_targets.json",
+      "disease_genes": "data/reference/disease_genes.json"
+    },
+    "analysis": {
+      "validated_predictions": "data/analysis/validated_novel_predictions.json",
+      "validation_batch": "data/analysis/validation_batch_next.json",
+      "comprehensive_validation": "data/analysis/validation_session_20260124_complete.json"
+    },
+    "scripts": {
+      "predict": "src/predict.py",
+      "filter": "src/confidence_filter.py",
+      "validation_prep": "scripts/prepare_validation_batch.py"
+    }
+  }
+}
