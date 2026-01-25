@@ -49,7 +49,8 @@ vastai destroy instance <INSTANCE_ID>
 
 | Model | Per-Drug R@30 | Diseases Evaluated | Notes |
 |-------|---------------|-------------------|-------|
-| **GB + Target Boost** | **39.0%** | 690/779 | Validated +1.6% improvement (p<0.0001) - BEST |
+| **GB + Target + ATC Boost** | **39.7%** | 690/779 | Combined boost - NEW BEST |
+| GB + Target Boost | 39.0% | 690/779 | Validated +1.6% improvement (p<0.0001) |
 | GB Enhanced (Expanded MESH) | 37.4% | 700/779 | Agent web search MESH mappings |
 | GB Enhanced (18 diseases) | 17.1% | 18 | CONFIRMED diseases only |
 | Best Rank Ensemble | 7.5% | 779 | min(TxGNN rank, GB rank) |
@@ -68,6 +69,39 @@ vastai destroy instance <INSTANCE_ID>
 - Storage diseases: 83.3% Recall@30 (best category)
 
 **Key Finding (2026-01-24):** GB model with target overlap boosting achieves **39.0%** per-drug Recall@30 (p<0.0001 vs baseline). The improvement comes from boosting drug scores when drug targets overlap with disease-associated genes. Combined with expanded MESH mappings (827 diseases), this dramatically outperforms TxGNN (6.7%).
+
+## ATC Classification Feature Experiment (2026-01-24) - SUCCESS
+
+**Hypothesis:** Adding ATC (Anatomical Therapeutic Chemical) classification boosting would improve predictions when drug mechanism matches disease category.
+
+### Implementation
+
+Downloaded WHO ATC-DDD 2024 classification data (7,345 codes). Created `src/atc_features.py` to:
+1. Map DrugBank drugs to ATC codes by name matching
+2. Score drug-disease mechanism relevance based on ATC level 1 categories
+3. Boost predictions where drug ATC class is relevant for disease type
+
+**ATC Coverage:**
+- 2,959 drugs mapped to ATC codes (12.2% of 24,313 evaluation drugs)
+- 28.4% of DrugBank drugs (2,979/10,474) have ATC mappings
+
+### Results
+
+| Strategy | R@30 | vs Baseline | vs Target Only |
+|----------|------|-------------|----------------|
+| Baseline | 37.39% | - | -1.63% |
+| Target only | 39.02% | +1.63% | - |
+| ATC only (10%) | 38.28% | +0.89% | -0.74% |
+| **Combined (add)** | **39.69%** | **+2.30%** | **+0.67%** |
+| Combined (tiered) | 39.39% | +2.00% | +0.37% |
+
+**Best Strategy:** `combined_add` - `score × (1 + 0.01×target_overlap + 0.05×atc_score)`
+
+### Files
+
+- `data/external/atc/atc_codes_2024.csv` - WHO ATC-DDD 2024 data (not in git)
+- `src/atc_features.py` - ATC mapping and feature extraction
+- `scripts/evaluate_combined_boost.py` - Combined boost evaluation
 
 ## Similarity Feature Experiment (2026-01-24) - FAILED
 
