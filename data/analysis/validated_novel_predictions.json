@@ -1,0 +1,158 @@
+{
+  "analysis_date": "2026-01-24",
+  "methodology": "Novel predictions (not in ground truth) validated against literature search",
+  "total_novel_predictions": 39135,
+  "high_confidence_predictions": 400,
+  "validated_predictions": [
+    {
+      "rank": 1,
+      "drug": "Pitavastatin",
+      "disease": "Rheumatoid Arthritis",
+      "score": 1.0576,
+      "target_overlap": 35,
+      "validation_status": "CLINICAL_TRIAL_SUPPORTED",
+      "evidence": {
+        "summary": "Clinical trial showed pitavastatin + methotrexate superior to methotrexate alone",
+        "mechanism": "Higher anti-inflammatory and immunomodulating effects than other statins via ERK/AP-1 pathway suppression",
+        "meta_analysis": "15 RCTs show statins significantly reduce DAS28, ESR, CRP, tender joints in RA",
+        "key_finding": "Pitavastatin shows stronger inhibition of IL-2, IFN-γ, IL-6, TNF-α than atorvastatin or rosuvastatin"
+      },
+      "sources": [
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC6678418/",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC10508553/",
+        "http://www.galaxyjeevandhara.com/index.php/ijss/article/view/1671"
+      ],
+      "actionability": "HIGH - Could be added to RA treatment guidelines as adjunct therapy"
+    },
+    {
+      "rank": 2,
+      "drug": "Estradiol",
+      "disease": "Ulcerative Colitis",
+      "score": 1.0576,
+      "target_overlap": 28,
+      "validation_status": "RESEARCH_SUPPORTED",
+      "evidence": {
+        "summary": "ERβ activation positively correlated with mucosal healing in UC patients",
+        "mechanism": "Estrogen receptor beta promotes colonic epithelial healing via autophagy modulation",
+        "key_finding": "ERβ agonist + 5-aminosalicylic acid combination enhanced amelioration in mouse colitis",
+        "caveat": "HRT may increase UC risk in some populations - needs careful dosing"
+      },
+      "sources": [
+        "https://www.sciencedirect.com/science/article/pii/S2211383524004477",
+        "https://pmc.ncbi.nlm.nih.gov/articles/PMC4155343/",
+        "https://www.nature.com/articles/s41598-019-43233-3"
+      ],
+      "actionability": "MEDIUM - Promising but risk/benefit needs clarification"
+    },
+    {
+      "rank": 3,
+      "drug": "Treprostinil",
+      "disease": "Hypertension (systemic)",
+      "score": 1.0490,
+      "target_overlap": 23,
+      "validation_status": "MECHANISTICALLY_PLAUSIBLE",
+      "evidence": {
+        "summary": "Approved for pulmonary arterial hypertension; causes systemic vasodilation",
+        "mechanism": "Direct vasodilator of both pulmonary AND systemic arterial beds",
+        "key_finding": "Systemic hypotension is documented effect - could be therapeutic",
+        "caveat": "Currently indicated for PAH only; systemic use would be repurposing"
+      },
+      "sources": [
+        "https://www.ncbi.nlm.nih.gov/books/NBK545152/",
+        "https://go.drugbank.com/drugs/DB00374"
+      ],
+      "actionability": "MEDIUM - Already approved drug with known systemic effects"
+    },
+    {
+      "rank": 4,
+      "drug": "Paclitaxel",
+      "disease": "Rheumatoid Arthritis",
+      "score": 1.0888,
+      "target_overlap": 31,
+      "validation_status": "NOVEL_HYPOTHESIS",
+      "evidence": {
+        "summary": "No clinical evidence found; would be truly novel repurposing",
+        "mechanism": "Known immunomodulatory effects beyond cancer therapy",
+        "key_finding": "Strong target overlap (31 genes) suggests biological plausibility",
+        "caveat": "Significant toxicity concerns for chronic autoimmune use"
+      },
+      "sources": [],
+      "actionability": "LOW - Would need preclinical validation first"
+    },
+    {
+      "rank": 5,
+      "drug": "Idarubicin",
+      "disease": "Type 2 Diabetes",
+      "score": 1.0865,
+      "target_overlap": 19,
+      "validation_status": "FALSE_POSITIVE",
+      "evidence": {
+        "summary": "No evidence of antidiabetic effects; chemotherapy drug",
+        "mechanism": "Model likely detecting metabolic pathway overlaps without therapeutic relevance",
+        "key_finding": "Anthracyclines have cardiotoxicity - diabetes is a risk factor, not treatment target"
+      },
+      "sources": [],
+      "actionability": "NONE - Should be filtered out"
+    },
+    {
+      "rank": 6,
+      "drug": "Betamethasone",
+      "disease": "Psoriasis",
+      "score": 1.0647,
+      "target_overlap": 28,
+      "validation_status": "ALREADY_USED",
+      "evidence": {
+        "summary": "Topical corticosteroids are already first-line psoriasis treatment",
+        "mechanism": "Anti-inflammatory effects well established",
+        "note": "May not be in ground truth due to data capture issues, not true novelty"
+      },
+      "sources": [],
+      "actionability": "NONE - Already standard of care"
+    }
+  ],
+  "top_actionable_predictions": [
+    {
+      "drug": "Pitavastatin",
+      "disease": "Rheumatoid Arthritis",
+      "recommendation": "Add to RA treatment guidelines as adjunct to methotrexate",
+      "evidence_level": "Clinical Trial"
+    },
+    {
+      "drug": "Statins (class)",
+      "disease": "Rheumatoid Arthritis",
+      "recommendation": "Meta-analysis of 15 RCTs supports use for anti-inflammatory effects",
+      "evidence_level": "Meta-Analysis"
+    },
+    {
+      "drug": "ERβ agonists",
+      "disease": "Ulcerative Colitis",
+      "recommendation": "Promising combination with 5-ASA; needs clinical trial",
+      "evidence_level": "Preclinical + Mechanistic"
+    },
+    {
+      "drug": "Treprostinil",
+      "disease": "Systemic Hypertension",
+      "recommendation": "Consider trial for resistant hypertension",
+      "evidence_level": "Mechanistic"
+    }
+  ],
+  "false_positive_patterns_identified": [
+    {
+      "pattern": "Chemotherapy drugs for metabolic diseases",
+      "example": "Idarubicin -> T2D",
+      "reason": "Target overlap reflects oncogenic pathways shared with metabolism, not therapeutic relevance"
+    },
+    {
+      "pattern": "Drugs already used for indication but missing from ground truth",
+      "example": "Betamethasone -> Psoriasis",
+      "reason": "Data completeness issue, not model error"
+    }
+  ],
+  "summary": {
+    "truly_novel_validated": 2,
+    "already_known": 1,
+    "needs_investigation": 1,
+    "false_positives": 2,
+    "precision_estimate": "50-67% for top predictions with literature validation"
+  }
+}

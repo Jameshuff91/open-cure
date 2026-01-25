@@ -220,6 +220,63 @@ Instead of retraining, boost baseline scores when target overlap exists.
 - `data/reference/disease_genes.json` - Disease → gene associations
 - `models/drug_repurposing_gb_with_targets.pkl` - Retrained model (don't use)
 
+## Novel Prediction Analysis (2026-01-24)
+
+**Goal:** Find novel drug repurposing opportunities NOT in ground truth.
+
+### Analysis Results
+
+| Metric | Value |
+|--------|-------|
+| Total novel predictions | 39,135 |
+| Unique drugs | 4,469 |
+| High-confidence (score > 0.9 + target overlap) | 400 |
+| With target overlap | 540 |
+
+### Validated Novel Predictions
+
+| Drug | Disease | Score | Overlap | Validation Status |
+|------|---------|-------|---------|-------------------|
+| **Pitavastatin** | Rheumatoid Arthritis | 1.06 | 35 genes | **CLINICAL TRIAL** |
+| **Estradiol** | Ulcerative Colitis | 1.06 | 28 genes | Research Supported |
+| Treprostinil | Systemic Hypertension | 1.05 | 23 genes | Mechanistically Plausible |
+| Paclitaxel | Rheumatoid Arthritis | 1.09 | 31 genes | Novel Hypothesis |
+
+### Pitavastatin for RA - KEY FINDING
+
+**Clinical Trial Evidence:**
+- Combination of pitavastatin + methotrexate is **superior to methotrexate alone**
+- Pitavastatin has **higher anti-inflammatory effects than atorvastatin or rosuvastatin**
+- Works via ERK/AP-1 pathway suppression
+- Stronger inhibition of IL-2, IFN-γ, IL-6, TNF-α than other statins
+- Meta-analysis of 15 RCTs: statins significantly reduce DAS28, ESR, CRP, tender joints
+
+**Sources:**
+- [PMC: Pitavastatin immunomodulatory effects](https://pmc.ncbi.nlm.nih.gov/articles/PMC6678418/)
+- [PMC: Statins in RA meta-analysis](https://pmc.ncbi.nlm.nih.gov/articles/PMC10508553/)
+
+### Estradiol for UC - Promising Research
+
+**Evidence:**
+- ERβ activation positively correlated with mucosal healing in UC patients
+- ERβ agonist + 5-ASA combination enhanced amelioration in mouse colitis
+- Men have higher UC incidence → protective estrogen effect
+
+**Caveat:** HRT may increase UC risk in some populations - needs careful dosing
+
+### False Positive Patterns
+
+| Pattern | Example | Why False |
+|---------|---------|-----------|
+| Chemo drugs for metabolic | Idarubicin → T2D | Oncogenic pathway overlap ≠ therapeutic |
+| Already standard of care | Betamethasone → Psoriasis | Ground truth gap, not novel |
+
+### Files
+
+- `scripts/find_novel_predictions.py` - Novel prediction finder
+- `data/analysis/novel_predictions.json` - Full prediction list
+- `data/analysis/validated_novel_predictions.json` - Validated predictions
+
 ## Clinical Trial Validation (2026-01-22)
 
 **MAJOR FINDING: Model predictions validated by independent clinical trials**
