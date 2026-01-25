@@ -32,8 +32,15 @@ vastai destroy instance <INSTANCE_ID>
 
 ## Models
 
-- `models/drug_repurposing_gb.pkl` - Baseline GB model (7.0% R@30)
-- `models/drug_repurposing_gb_enhanced.pkl` - Enhanced GB model with expanded MESH coverage
+**Default Model (use this):**
+- `models/drug_repurposing_gb_enhanced.pkl` + Target Boost ensemble
+- Prediction: `score × (1 + 0.01 × min(target_overlap, 10))`
+- Requires: `data/reference/drug_targets.json`, `data/reference/disease_genes.json`
+- Script: `src/predict.py` (default) or `scripts/evaluate_target_ensemble.py`
+
+**All Models:**
+- `models/drug_repurposing_gb_enhanced.pkl` - GB model with expanded MESH (37.4% R@30)
+- `models/drug_repurposing_gb.pkl` - Original baseline GB model (7.0% R@30)
 - `models/transe.pt` - TransE knowledge graph embeddings
 
 ## Key Metrics
@@ -60,7 +67,7 @@ vastai destroy instance <INSTANCE_ID>
 - 65 diseases achieve ≥50% R@30 or top-10 ranking
 - Storage diseases: 83.3% Recall@30 (best category)
 
-**Key Finding (2026-01-22, verified 2026-01-24):** GB model with expanded MESH coverage achieves **37.4%** per-drug Recall@30 on 700 diseases, dramatically outperforming TxGNN (6.7%). The key was expanding disease-to-MESH mappings via parallel agent web searches against NIH/NLM database.
+**Key Finding (2026-01-24):** GB model with target overlap boosting achieves **39.0%** per-drug Recall@30 (p<0.0001 vs baseline). The improvement comes from boosting drug scores when drug targets overlap with disease-associated genes. Combined with expanded MESH mappings (827 diseases), this dramatically outperforms TxGNN (6.7%).
 
 ## Similarity Feature Experiment (2026-01-24) - FAILED
 
