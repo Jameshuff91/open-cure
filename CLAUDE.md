@@ -33,10 +33,10 @@ vastai destroy instance <INSTANCE_ID>
 ## Models
 
 **Default Model (use this):**
-- `models/drug_repurposing_gb_enhanced.pkl` + Triple Boost ensemble
-- Prediction: `score × (1 + 0.01 × min(overlap, 10)) × (1 + 0.05 × atc) × (1.2 if chem_sim > 0.7 else 1.0)`
-- Requires: `data/reference/drug_targets.json`, `data/reference/disease_genes.json`, `data/reference/chemical/`
-- Script: `scripts/evaluate_triple_boost.py`
+- `models/drug_repurposing_gb_enhanced.pkl` + Quad Boost ensemble
+- Prediction: `score × (1 + 0.01×overlap + 0.05×atc + 0.01×pathway) × (1.2 if chem_sim > 0.7 else 1.0)`
+- Requires: `data/reference/drug_targets.json`, `data/reference/disease_genes.json`, `data/reference/chemical/`, `data/reference/pathway/`
+- Script: `scripts/evaluate_pathway_boost.py`
 
 **All Models:**
 - `models/drug_repurposing_gb_enhanced.pkl` - GB model with expanded MESH (37.4% R@30)
@@ -49,7 +49,8 @@ vastai destroy instance <INSTANCE_ID>
 
 | Model | Per-Drug R@30 | Diseases Evaluated | Notes |
 |-------|---------------|-------------------|-------|
-| **GB + Triple Boost (91% FP)** | **47.1%** | 602/779 | Target + ATC + Chemical - NEW BEST |
+| **GB + Quad Boost** | **47.5%** | 602/779 | Target + ATC + Chemical + Pathway - NEW BEST |
+| GB + Triple Boost (91% FP) | 47.1% | 602/779 | Target + ATC + Chemical |
 | GB + Triple Boost (4% FP) | 44.0% | 602/779 | Limited fingerprint coverage |
 | GB + Target + ATC Boost | 40.2% | 602/779 | Previous best |
 | GB + Target Boost | 39.0% | 690/779 | Validated +1.6% improvement (p<0.0001) |
@@ -147,10 +148,92 @@ Chemical similarity boost provides the **largest individual gain** (+7.94% for c
 ### Files
 
 - `src/chemical_features.py` - Fingerprint generation and similarity calculation
+- `scripts/fetch_smiles_batch.py` - Batch SMILES fetcher from PubChem
 - `scripts/evaluate_chemical_boost.py` - Chemical-only boost evaluation
 - `scripts/evaluate_triple_boost.py` - Combined triple boost evaluation
-- `data/reference/chemical/drug_fingerprints.pkl` - Cached fingerprints
+- `data/reference/chemical/drug_fingerprints.pkl` - Cached fingerprints (9,584 drugs)
 - `data/reference/chemical/drug_smiles.json` - Cached SMILES strings
+
+## Key Learnings (2026-01-25)
+
+### What Works
+
+1. **Boosting > Retraining** - Boosting baseline predictions with domain features (target overlap, ATC, chemical similarity) consistently outperforms retraining the model with new features. Retraining often loses baseline signal.
+
+2. **Coverage Matters** - Chemical fingerprint coverage improvement (4% → 91%) added +3.16% R@30. Always maximize feature coverage before evaluating.
+
+3. **Multiplicative Stacking** - Multiple boosts combine best multiplicatively: `score × (1 + boost1) × (1 + boost2) × boost3`. Additive stacking is slightly worse.
+
+4. **Chemical Similarity is Powerful** - Tanimoto similarity to known treatments (+7.94% alone) is the single largest contributor. "Guilt by association" works when using chemical structure, not embedding similarity.
+
+5. **Simple Thresholds Work** - Binary boost at Tanimoto > 0.7 (20% boost) outperforms scaled approaches. Sharp cutoffs capture the biological reality of structural similarity.
+
+### What Fails
+
+1. **Embedding Similarity** - Using TransE embedding cosine similarity for "guilt by association" causes catastrophic data leakage. Chemical fingerprints avoid this because they're independent of training.
+
+2. **Retraining with New Features** - Adding target overlap features and retraining dropped R@30 from 37% to 6%. The model learns different patterns and loses baseline signal.
+
+3. **Complex Feature Engineering** - Scaled or continuous boosts (e.g., `score × (1 + 0.1 × similarity)`) underperform simple thresholds.
+
+4. **Correlated Features** - Pathway enrichment adds only +0.36% on top of target+chemical because pathway overlap is derived from the same gene data as target overlap.
+
+### Progression Summary
+
+| Date | Model | R@30 | Key Change |
+|------|-------|------|------------|
+| Jan 22 | GB Enhanced | 37.4% | Expanded MESH mappings |
+| Jan 24 | + Target Boost | 39.0% | Drug-disease gene overlap |
+| Jan 24 | + ATC Boost | 39.7% | Mechanism category matching |
+| Jan 25 | + Chemical (4%) | 44.0% | Tanimoto fingerprint similarity |
+| Jan 25 | + Chemical (91%) | 47.1% | Expanded fingerprint coverage |
+| **Jan 25** | **+ Pathway Boost** | **47.5%** | **KEGG pathway overlap (quad_additive)** |
+
+## Pathway Enrichment Features (2026-01-25) - MARGINAL SUCCESS
+
+**Hypothesis:** Drugs that target pathways dysregulated in a disease are more likely to be therapeutic.
+
+### Implementation
+
+Used KEGG REST API to build pathway mappings:
+1. Bulk download all human gene-pathway associations (~9,500 genes)
+2. Map drugs → pathways via drug targets
+3. Map diseases → pathways via disease genes
+4. Compute pathway overlap and Jaccard similarity
+
+**Coverage:**
+- 9,594/11,656 drugs (82%) have pathway data
+- 2,822/3,454 diseases (82%) have pathway data
+
+### Results
+
+| Strategy | R@30 | vs Triple |
+|----------|------|-----------|
+| **quad_additive** | **47.47%** | **+0.36%** |
+| quad_multiplicative | 47.47% | +0.36% |
+| triple (no pathway) | 47.11% | - |
+| pathway_only | 40.25% | -6.86% |
+
+**Best Strategy:** `quad_additive`
+- Formula: `score × (1 + 0.01×overlap + 0.05×atc + 0.01×pathway_overlap) × (1.2 if chem>0.7 else 1.0)`
+- Improvement: **+0.36%** over triple boost
+
+### Key Insight
+
+Pathway enrichment adds only marginal improvement (+0.36%) because:
+1. Pathway overlap is highly correlated with target overlap (both gene-derived)
+2. Chemical similarity already captures structural mechanisms
+3. Diminishing returns from adding correlated features
+
+Pathway boost is still worth including for explainability and edge cases.
+
+### Files
+
+- `src/pathway_features.py` - Pathway enrichment computation
+- `scripts/evaluate_pathway_boost.py` - Pathway boost evaluation
+- `data/reference/pathway/gene_pathways.json` - Gene → pathway mappings
+- `data/reference/pathway/drug_pathways.json` - Drug → pathway mappings
+- `data/reference/pathway/disease_pathways.json` - Disease → pathway mappings
 
 ## Similarity Feature Experiment (2026-01-24) - FAILED
 
