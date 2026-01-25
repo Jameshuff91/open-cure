@@ -237,10 +237,40 @@ Instead of retraining, boost baseline scores when target overlap exists.
 
 | Drug | Disease | Score | Overlap | Validation Status |
 |------|---------|-------|---------|-------------------|
+| **Lovastatin** | Multiple Myeloma | 0.96 | 21 genes | **RCT VALIDATED** |
+| **Rituximab** | Multiple Sclerosis | 0.95 | 0 | **WHO ESSENTIAL MEDICINE** |
 | **Pitavastatin** | Rheumatoid Arthritis | 1.06 | 35 genes | **CLINICAL TRIAL** |
 | **Estradiol** | Ulcerative Colitis | 1.06 | 28 genes | Research Supported |
+| Gemfibrozil | Heart Failure | 0.98 | 0 | Research Supported |
 | Treprostinil | Systemic Hypertension | 1.05 | 23 genes | Mechanistically Plausible |
-| Paclitaxel | Rheumatoid Arthritis | 1.09 | 31 genes | Novel Hypothesis |
+
+### Lovastatin for Multiple Myeloma - NEW KEY FINDING (2026-01-24)
+
+**RCT Evidence:**
+- 81 patients: TDL (thalidomide-dex-lovastatin) vs TD (thalidomide-dex)
+- **Prolongation of overall survival AND progression-free survival** in TDL group
+- Higher apoptosis rates (p < 0.001, Friedman ANOVA)
+- Safe and well tolerated, side effects comparable in both groups
+
+**Population Study (SEER-Medicare):**
+- 5,922 myeloma patients, 45.6% used statins
+- Associated with reduced all-cause and myeloma-specific mortality
+
+**Sources:**
+- [PubMed: TDL salvage therapy](https://pubmed.ncbi.nlm.nih.gov/21698395/)
+- [ScienceDirect: Statins in MM](https://www.sciencedirect.com/science/article/abs/pii/S2152265020303372)
+
+### Rituximab for MS - OFF-LABEL VALIDATED
+
+**Status:** NOT FDA-approved for MS, but widely used off-label
+- **WHO Essential Medicine** for MS (July 2023)
+- Phase II trials (HERMES, OLYMPUS) demonstrated efficacy
+- Cost: $2-14K/year vs ocrelizumab $75K/year (same mechanism)
+- ICER (Feb 2023): Called for removal of coverage barriers
+
+**Sources:**
+- [Neurology: Rituximab for MS](https://www.neurology.org/doi/10.1212/WNL.0000000000208063)
+- [PMC: Are we ready for approval?](https://pmc.ncbi.nlm.nih.gov/articles/PMC8290177/)
 
 ### Pitavastatin for RA - KEY FINDING
 
@@ -264,18 +294,40 @@ Instead of retraining, boost baseline scores when target overlap exists.
 
 **Caveat:** HRT may increase UC risk in some populations - needs careful dosing
 
+### Validation Summary (2026-01-24)
+
+| Category | Count | Precision |
+|----------|-------|-----------|
+| Clinical trial supported | 3 | - |
+| Research supported | 2 | - |
+| Off-label validated | 1 | - |
+| **Truly novel & actionable** | **6** | **67%** |
+| Already FDA-approved (ground truth gap) | 12 | - |
+| False positives | 6 | - |
+
+**Key Insight:** Many "novel" predictions are actually FDA-approved drugs missing from ground truth. Updated confidence filter to detect these.
+
 ### False Positive Patterns
 
 | Pattern | Example | Why False |
 |---------|---------|-----------|
 | Chemo drugs for metabolic | Idarubicin → T2D | Oncogenic pathway overlap ≠ therapeutic |
 | Already standard of care | Betamethasone → Psoriasis | Ground truth gap, not novel |
+| Failed Phase III | Linsitinib → Breast Cancer | IGF-1R inhibitors failed in trials |
+| Withdrawn drugs | Pergolide → Hypertension | Cardiac valve risk, withdrawn 2007 |
+| Never tested for indication | Volociximab → MS | Only tested in oncology |
+| No clinical evidence | Naproxen → T2D | "No significant influence on glucose" |
 
 ### Files
 
 - `scripts/find_novel_predictions.py` - Novel prediction finder
+- `scripts/filter_high_confidence.py` - Apply confidence filter
+- `scripts/prepare_validation_batch.py` - Prepare validation batches
 - `data/analysis/novel_predictions.json` - Full prediction list
 - `data/analysis/validated_novel_predictions.json` - Validated predictions
+- `data/analysis/validation_session_20260124_complete.json` - Full validation session
+- `data/reference/fda_approved_pairs.json` - FDA-approved pairs (ground truth gaps)
+- `src/confidence_filter.py` - Filter with FDA check, withdrawn drugs, failed trials
 
 ## Clinical Trial Validation (2026-01-22)
 
