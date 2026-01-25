@@ -160,13 +160,17 @@ Chemical similarity boost provides the **largest individual gain** (+7.94% for c
 
 1. **Boosting > Retraining** - Boosting baseline predictions with domain features (target overlap, ATC, chemical similarity) consistently outperforms retraining the model with new features. Retraining often loses baseline signal.
 
-2. **Coverage Matters** - Chemical fingerprint coverage improvement (4% → 91%) added +3.16% R@30. Always maximize feature coverage before evaluating.
+2. **Coverage Matters** - Chemical fingerprint coverage improvement (4% → 91%) added +3.16% R@30. Always maximize feature coverage before evaluating. Bulk APIs (KEGG, PubChem) are faster than per-item queries.
 
 3. **Multiplicative Stacking** - Multiple boosts combine best multiplicatively: `score × (1 + boost1) × (1 + boost2) × boost3`. Additive stacking is slightly worse.
 
 4. **Chemical Similarity is Powerful** - Tanimoto similarity to known treatments (+7.94% alone) is the single largest contributor. "Guilt by association" works when using chemical structure, not embedding similarity.
 
 5. **Simple Thresholds Work** - Binary boost at Tanimoto > 0.7 (20% boost) outperforms scaled approaches. Sharp cutoffs capture the biological reality of structural similarity.
+
+6. **External Data Beats Model Complexity** - Adding external features (fingerprints, pathways, ATC) provides more improvement than model architecture changes (TxGNN, ensembles).
+
+7. **Orthogonal Features Stack Well** - Chemical similarity (+7.94%) and target overlap (+1.63%) stack because they capture different information. Correlated features (pathway/target) don't add much.
 
 ### What Fails
 
@@ -178,6 +182,10 @@ Chemical similarity boost provides the **largest individual gain** (+7.94% for c
 
 4. **Correlated Features** - Pathway enrichment adds only +0.36% on top of target+chemical because pathway overlap is derived from the same gene data as target overlap.
 
+5. **Biologics Underperform** - Monoclonal antibodies achieve only 27.3% recall vs 47.5% average. The model struggles with large molecules that don't have traditional target-based mechanisms.
+
+6. **Infectious Diseases Are Hardest** - Only 13.6% recall for infectious diseases, likely because antibiotics/antivirals have different mechanisms than typical drug-target interactions.
+
 ### Progression Summary
 
 | Date | Model | R@30 | Key Change |
@@ -188,6 +196,53 @@ Chemical similarity boost provides the **largest individual gain** (+7.94% for c
 | Jan 25 | + Chemical (4%) | 44.0% | Tanimoto fingerprint similarity |
 | Jan 25 | + Chemical (91%) | 47.1% | Expanded fingerprint coverage |
 | **Jan 25** | **+ Pathway Boost** | **47.5%** | **KEGG pathway overlap (quad_additive)** |
+
+## Error Analysis (2026-01-25)
+
+### Performance by Drug Type
+
+| Drug Type | Recall | Notes |
+|-----------|--------|-------|
+| ACE inhibitors | 66.7% | Best - clear target mechanism |
+| Antibiotics | 63.8% | Good |
+| Macrolides | 43.6% | Moderate |
+| Kinase inhibitors | 41.5% | Moderate |
+| Beta blockers | 33.3% | Below average |
+| Statins | 30.8% | Below average |
+| Peptide hormones | 30.0% | Biologics struggle |
+| **Monoclonal antibodies** | **27.3%** | **Worst - large molecules** |
+| PPIs | 16.7% | Very poor |
+
+### Performance by Disease Category
+
+| Disease Category | Recall | Notes |
+|-----------------|--------|-------|
+| Autoimmune | 63.0% | Best |
+| Psychiatric | 62.5% | Good |
+| Cardiovascular | 57.6% | Good |
+| Respiratory | 47.4% | Average |
+| Cancer | 40.2% | Below average |
+| Neurological | 35.3% | Below average |
+| **Infectious** | **13.6%** | **Worst - antibiotics have different mechanisms** |
+
+### Feature Coverage for Misses
+
+- 16.8% of missed drugs have no fingerprint
+- 4.7% have no drug targets
+- 8.6% have no ATC codes
+
+### Rank Distribution of Misses
+
+- Median rank: 4,236 (out of 24,313)
+- 30% of missed drugs are in top 1,000 (could recover with threshold adjustment)
+- 70% have no strong signal - fundamentally hard cases
+
+### Key Insights
+
+1. **Biologics need different approach** - Large molecules (mAbs, fusion proteins) don't fit the small molecule paradigm
+2. **Infectious diseases need pathogen data** - Our model lacks pathogen-specific features
+3. **Some misses are recoverable** - 30% are in top 1,000, could use disease-specific thresholds
+4. **Most misses are hard** - Median rank 4,236 suggests these drug-disease pairs lack good signal in our features
 
 ## Pathway Enrichment Features (2026-01-25) - MARGINAL SUCCESS
 
