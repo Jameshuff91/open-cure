@@ -1,0 +1,2055 @@
+{
+  "generated": "2026-01-25",
+  "model": "GB + Target + ATC Boost (39.76% R@30)",
+  "methodology": {
+    "score_formula": "base \u00d7 (1 + 0.01\u00d7target_overlap + 0.05\u00d7atc_score)",
+    "priority_formula": "enhanced_score + 0.05\u00d7target_overlap + 0.1\u00d7atc_score",
+    "tiers": {
+      "tier1": "target_overlap >= 10 AND atc_score >= 0.5",
+      "tier2": "target_overlap >= 5 OR atc_score >= 0.5",
+      "tier3": "all others with score > 0.9"
+    }
+  },
+  "summary": {
+    "total_predictions": 100,
+    "truly_novel": 100,
+    "tier1_count": 98,
+    "tier2_count": 2,
+    "tier3_count": 0
+  },
+  "tiers": {
+    "tier1_highest": [
+      {
+        "drug_name": "Paclitaxel",
+        "drugbank_id": "DB01229",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0888164986980005,
+        "base_score": 0.9898331806345457,
+        "target_overlap": 31,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 3.266449496094001,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2521389735027006,
+        "priority_score": 2.3521389735027007
+      },
+      {
+        "drug_name": "Teniposide",
+        "drugbank_id": "DB00444",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0664880872289402,
+        "base_score": 0.969534624753582,
+        "target_overlap": 42,
+        "rank_for_disease": 5,
+        "has_biological_signal": true,
+        "composite_score": 3.1994642616868205,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2264613003132814,
+        "priority_score": 2.3264613003132815
+      },
+      {
+        "drug_name": "Betamethasone",
+        "drugbank_id": "DB00443",
+        "disease_name": "psoriasis",
+        "mesh_id": "D011565",
+        "score": 1.0646806346858466,
+        "base_score": 0.9678914860780422,
+        "target_overlap": 28,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 3.19404190405754,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "S",
+          "R",
+          "C",
+          "H",
+          "A",
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2243827298887238,
+        "priority_score": 2.324382729888724
+      },
+      {
+        "drug_name": "Gemcitabine",
+        "drugbank_id": "DB00441",
+        "disease_name": "psoriasis-related juvenile idiopathic arthritis",
+        "mesh_id": "D015535",
+        "score": 1.0635369201044973,
+        "base_score": 0.966851745549543,
+        "target_overlap": 25,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 3.1906107603134917,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.223067458120172,
+        "priority_score": 2.323067458120172
+      },
+      {
+        "drug_name": "Etoposide",
+        "drugbank_id": "DB00773",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0565966212377438,
+        "base_score": 0.9605423829434033,
+        "target_overlap": 22,
+        "rank_for_disease": 10,
+        "has_biological_signal": true,
+        "composite_score": 3.1697898637132313,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2150861144234055,
+        "priority_score": 2.3150861144234054
+      },
+      {
+        "drug_name": "Cetuximab",
+        "drugbank_id": "DB00002",
+        "disease_name": "colorectal cancer",
+        "mesh_id": "D015179",
+        "score": 1.0488215481957939,
+        "base_score": 0.953474134723449,
+        "target_overlap": 24,
+        "rank_for_disease": 4,
+        "has_biological_signal": true,
+        "composite_score": 3.1464646445873816,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.206144780425163,
+        "priority_score": 2.306144780425163
+      },
+      {
+        "drug_name": "Irinotecan",
+        "drugbank_id": "DB00762",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0440155093797612,
+        "base_score": 0.9491050085270556,
+        "target_overlap": 46,
+        "rank_for_disease": 19,
+        "has_biological_signal": true,
+        "composite_score": 2.5056372225114267,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2006178357867254,
+        "priority_score": 2.3006178357867255
+      },
+      {
+        "drug_name": "Everolimus",
+        "drugbank_id": "DB01590",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0433406948967816,
+        "base_score": 0.948491540815256,
+        "target_overlap": 42,
+        "rank_for_disease": 20,
+        "has_biological_signal": true,
+        "composite_score": 2.504017667752276,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.199841799131299,
+        "priority_score": 2.299841799131299
+      },
+      {
+        "drug_name": "Vemurafenib",
+        "drugbank_id": "DB08881",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0368313368824829,
+        "base_score": 0.9425739426204389,
+        "target_overlap": 41,
+        "rank_for_disease": 23,
+        "has_biological_signal": true,
+        "composite_score": 2.488395208517959,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1923560374148554,
+        "priority_score": 2.2923560374148555
+      },
+      {
+        "drug_name": "Bevacizumab",
+        "drugbank_id": "DB00112",
+        "disease_name": "colorectal cancer",
+        "mesh_id": "D015179",
+        "score": 1.036188862223076,
+        "base_score": 0.9419898747482508,
+        "target_overlap": 20,
+        "rank_for_disease": 5,
+        "has_biological_signal": true,
+        "composite_score": 3.1085665866692276,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "S",
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1916171915565374,
+        "priority_score": 2.2916171915565378
+      },
+      {
+        "drug_name": "Dexamethasone",
+        "drugbank_id": "DB01234",
+        "disease_name": "psoriasis",
+        "mesh_id": "D011565",
+        "score": 1.0358842792676595,
+        "base_score": 0.9417129811524175,
+        "target_overlap": 30,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 3.1076528378029784,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "S",
+          "R",
+          "C",
+          "H",
+          "A",
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1912669211578086,
+        "priority_score": 2.2912669211578085
+      },
+      {
+        "drug_name": "Oxaliplatin",
+        "drugbank_id": "DB00526",
+        "disease_name": "colorectal cancer",
+        "mesh_id": "D015179",
+        "score": 1.035747598967397,
+        "base_score": 0.9415887263339973,
+        "target_overlap": 20,
+        "rank_for_disease": 6,
+        "has_biological_signal": true,
+        "composite_score": 3.1072427969021907,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1911097388125067,
+        "priority_score": 2.291109738812507
+      },
+      {
+        "drug_name": "Chlorpromazine",
+        "drugbank_id": "DB00477",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 1.0355162398501117,
+        "base_score": 0.9413783998637378,
+        "target_overlap": 20,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 3.106548719550335,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1908436758276286,
+        "priority_score": 2.2908436758276287
+      },
+      {
+        "drug_name": "Nilotinib",
+        "drugbank_id": "DB04868",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0333991115383037,
+        "base_score": 0.9394537377620942,
+        "target_overlap": 30,
+        "rank_for_disease": 28,
+        "has_biological_signal": true,
+        "composite_score": 2.480157867691929,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1884089782690495,
+        "priority_score": 2.2884089782690498
+      },
+      {
+        "drug_name": "Cytarabine",
+        "drugbank_id": "DB00987",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0209534957455977,
+        "base_score": 0.9281395415869068,
+        "target_overlap": 25,
+        "rank_for_disease": 34,
+        "has_biological_signal": true,
+        "composite_score": 2.4502883897894345,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1740965201074374,
+        "priority_score": 2.2740965201074377
+      },
+      {
+        "drug_name": "Dactinomycin",
+        "drugbank_id": "DB00970",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.018288873726887,
+        "base_score": 0.9257171579335335,
+        "target_overlap": 45,
+        "rank_for_disease": 36,
+        "has_biological_signal": true,
+        "composite_score": 2.4438932969445286,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.17103220478592,
+        "priority_score": 2.27103220478592
+      },
+      {
+        "drug_name": "Topiramate",
+        "drugbank_id": "DB00273",
+        "disease_name": "epilepsy",
+        "mesh_id": "D004827",
+        "score": 1.01758657742301,
+        "base_score": 0.9250787067481907,
+        "target_overlap": 20,
+        "rank_for_disease": 15,
+        "has_biological_signal": true,
+        "composite_score": 2.4422077858152242,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1702245640364617,
+        "priority_score": 2.270224564036462
+      },
+      {
+        "drug_name": "Doxorubicin",
+        "drugbank_id": "DB00997",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0820923308040515,
+        "base_score": 0.9837203007309558,
+        "target_overlap": 152,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 3.2462769924121546,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.217353872154558,
+        "priority_score": 2.267353872154558
+      },
+      {
+        "drug_name": "Vorinostat",
+        "drugbank_id": "DB02546",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0118227428928859,
+        "base_score": 0.9198388571753507,
+        "target_overlap": 39,
+        "rank_for_disease": 42,
+        "has_biological_signal": true,
+        "composite_score": 2.428374582942926,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.163596154326819,
+        "priority_score": 2.263596154326819
+      },
+      {
+        "drug_name": "Ponatinib",
+        "drugbank_id": "DB08901",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0765517230742516,
+        "base_score": 0.9786833846129559,
+        "target_overlap": 70,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 3.229655169222755,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.211120688458533,
+        "priority_score": 2.261120688458533
+      },
+      {
+        "drug_name": "Daunorubicin",
+        "drugbank_id": "DB00694",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0082940043715414,
+        "base_score": 0.9166309130650375,
+        "target_overlap": 37,
+        "rank_for_disease": 47,
+        "has_biological_signal": true,
+        "composite_score": 2.4199056104916994,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1595381050272726,
+        "priority_score": 2.2595381050272727
+      },
+      {
+        "drug_name": "Methotrexate",
+        "drugbank_id": "DB00563",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0709850328090742,
+        "base_score": 0.9736227570991582,
+        "target_overlap": 68,
+        "rank_for_disease": 4,
+        "has_biological_signal": true,
+        "composite_score": 3.212955098427223,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2048581619102086,
+        "priority_score": 2.2548581619102084
+      },
+      {
+        "drug_name": "Sirolimus",
+        "drugbank_id": "DB00877",
+        "disease_name": "psoriasis",
+        "mesh_id": "D011565",
+        "score": 1.0034169989770756,
+        "base_score": 0.9121972717973414,
+        "target_overlap": 56,
+        "rank_for_disease": 5,
+        "has_biological_signal": true,
+        "composite_score": 3.0102509969312266,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "S",
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.153929548823637,
+        "priority_score": 2.253929548823637
+      },
+      {
+        "drug_name": "Cyclophosphamide",
+        "drugbank_id": "DB00531",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0632986290805442,
+        "base_score": 0.9666351173459492,
+        "target_overlap": 21,
+        "rank_for_disease": 7,
+        "has_biological_signal": true,
+        "composite_score": 3.1898958872416325,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1962109577156121,
+        "priority_score": 2.246210957715612
+      },
+      {
+        "drug_name": "Docetaxel",
+        "drugbank_id": "DB01248",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.061554465536667,
+        "base_score": 0.9650495141242428,
+        "target_overlap": 40,
+        "rank_for_disease": 9,
+        "has_biological_signal": true,
+        "composite_score": 3.1846633966100013,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1942487737287504,
+        "priority_score": 2.24424877372875
+      },
+      {
+        "drug_name": "Fluvastatin",
+        "drugbank_id": "DB01095",
+        "disease_name": "hypertension",
+        "mesh_id": "D006973",
+        "score": 1.0787189034985911,
+        "base_score": 0.9806535486350827,
+        "target_overlap": 18,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 3.020412929796055,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2405267390233798,
+        "priority_score": 2.24052673902338
+      },
+      {
+        "drug_name": "Pitavastatin",
+        "drugbank_id": "DB08860",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0576451860321783,
+        "base_score": 0.9614956236656165,
+        "target_overlap": 35,
+        "rank_for_disease": 8,
+        "has_biological_signal": true,
+        "composite_score": 3.172935558096535,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1898508342862006,
+        "priority_score": 2.2398508342862007
+      },
+      {
+        "drug_name": "Estradiol",
+        "drugbank_id": "DB00783",
+        "disease_name": "ulcerative colitis",
+        "mesh_id": "D003093",
+        "score": 1.057592147462305,
+        "base_score": 0.9614474067839134,
+        "target_overlap": 28,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 3.1727764423869145,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "G"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.189791165895093,
+        "priority_score": 2.2397911658950926
+      },
+      {
+        "drug_name": "Prednisone",
+        "drugbank_id": "DB00635",
+        "disease_name": "cancer",
+        "mesh_id": "D009369",
+        "score": 1.0538717001721405,
+        "base_score": 0.958065181974673,
+        "target_overlap": 21,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 3.1616151005164213,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "H",
+          "A"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.185605662693658,
+        "priority_score": 2.235605662693658
+      },
+      {
+        "drug_name": "Amitriptyline",
+        "drugbank_id": "DB00321",
+        "disease_name": "epilepsy",
+        "mesh_id": "D004827",
+        "score": 0.9865398757808462,
+        "base_score": 0.896854432528042,
+        "target_overlap": 20,
+        "rank_for_disease": 42,
+        "has_biological_signal": true,
+        "composite_score": 2.3676957018740312,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1345208571479732,
+        "priority_score": 2.2345208571479733
+      },
+      {
+        "drug_name": "Erlotinib",
+        "drugbank_id": "DB00530",
+        "disease_name": "pancreatic cancer",
+        "mesh_id": "D010190",
+        "score": 0.9832222157812847,
+        "base_score": 0.8938383779829859,
+        "target_overlap": 42,
+        "rank_for_disease": 3,
+        "has_biological_signal": true,
+        "composite_score": 2.9496666473438538,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1307055481484776,
+        "priority_score": 2.2307055481484777
+      },
+      {
+        "drug_name": "Treprostinil",
+        "drugbank_id": "DB00374",
+        "disease_name": "hypertension",
+        "mesh_id": "D006973",
+        "score": 1.0490139612080314,
+        "base_score": 0.9536490556436648,
+        "target_overlap": 23,
+        "rank_for_disease": 30,
+        "has_biological_signal": true,
+        "composite_score": 2.5176335068992755,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "B"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1801407063590352,
+        "priority_score": 2.230140706359035
+      },
+      {
+        "drug_name": "Fluorouracil",
+        "drugbank_id": "DB00544",
+        "disease_name": "gastric adenocarcinoma",
+        "mesh_id": "D013274",
+        "score": 1.0487727371998015,
+        "base_score": 0.9534297610907285,
+        "target_overlap": 32,
+        "rank_for_disease": 3,
+        "has_biological_signal": true,
+        "composite_score": 3.1463182115994046,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1798693293497766,
+        "priority_score": 2.2298693293497767
+      },
+      {
+        "drug_name": "Paroxetine",
+        "drugbank_id": "DB00715",
+        "disease_name": "hypertension",
+        "mesh_id": "D006973",
+        "score": 1.0479290076995111,
+        "base_score": 0.9526627342722829,
+        "target_overlap": 23,
+        "rank_for_disease": 32,
+        "has_biological_signal": true,
+        "composite_score": 2.515029618478827,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1789201336619501,
+        "priority_score": 2.22892013366195
+      },
+      {
+        "drug_name": "Mitoxantrone",
+        "drugbank_id": "DB01204",
+        "disease_name": "ulcerative colitis",
+        "mesh_id": "D003093",
+        "score": 0.9799899314032365,
+        "base_score": 0.8908999376393059,
+        "target_overlap": 32,
+        "rank_for_disease": 26,
+        "has_biological_signal": true,
+        "composite_score": 2.3519758353677678,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1269884211137222,
+        "priority_score": 2.2269884211137225
+      },
+      {
+        "drug_name": "Isotretinoin",
+        "drugbank_id": "DB00982",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0460641663466943,
+        "base_score": 0.9509674239515402,
+        "target_overlap": 28,
+        "rank_for_disease": 17,
+        "has_biological_signal": true,
+        "composite_score": 2.5105539992320667,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.176822187140031,
+        "priority_score": 2.226822187140031
+      },
+      {
+        "drug_name": "Tretinoin",
+        "drugbank_id": "DB00755",
+        "disease_name": "psoriasis",
+        "mesh_id": "D011565",
+        "score": 0.9766357177521583,
+        "base_score": 0.887850652501962,
+        "target_overlap": 29,
+        "rank_for_disease": 9,
+        "has_biological_signal": true,
+        "composite_score": 2.929907153256475,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L",
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1231310754149821,
+        "priority_score": 2.2231310754149822
+      },
+      {
+        "drug_name": "Idarubicin",
+        "drugbank_id": "DB01177",
+        "disease_name": "type 2 diabetes",
+        "mesh_id": "D003924",
+        "score": 1.086531974253576,
+        "base_score": 0.9877563402305236,
+        "target_overlap": 19,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 3.1509427253353706,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.222348471035273,
+        "priority_score": 2.2223484710352728
+      },
+      {
+        "drug_name": "Trametinib",
+        "drugbank_id": "DB08911",
+        "disease_name": "melanoma",
+        "mesh_id": "D008545",
+        "score": 0.9720812291874075,
+        "base_score": 0.8837102083521885,
+        "target_overlap": 84,
+        "rank_for_disease": 4,
+        "has_biological_signal": true,
+        "composite_score": 2.9162436875622224,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1178934135655187,
+        "priority_score": 2.217893413565519
+      },
+      {
+        "drug_name": "Estriol",
+        "drugbank_id": "DB04573",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0353228318656222,
+        "base_score": 0.9412025744232929,
+        "target_overlap": 39,
+        "rank_for_disease": 22,
+        "has_biological_signal": true,
+        "composite_score": 2.4847747964774936,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "G"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.164738185848825,
+        "priority_score": 2.214738185848825
+      },
+      {
+        "drug_name": "Lapatinib",
+        "drugbank_id": "DB01259",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0320906320540408,
+        "base_score": 0.9382642109582188,
+        "target_overlap": 25,
+        "rank_for_disease": 24,
+        "has_biological_signal": true,
+        "composite_score": 2.477017516929698,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.161101961060796,
+        "priority_score": 2.2111019610607956
+      },
+      {
+        "drug_name": "Thioridazine",
+        "drugbank_id": "DB00679",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 0.9661331697051315,
+        "base_score": 0.8783028815501195,
+        "target_overlap": 39,
+        "rank_for_disease": 33,
+        "has_biological_signal": true,
+        "composite_score": 2.3187196072923157,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1110531451609014,
+        "priority_score": 2.2110531451609012
+      },
+      {
+        "drug_name": "Haloperidol",
+        "drugbank_id": "DB00502",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 0.9632339718858837,
+        "base_score": 0.875667247168985,
+        "target_overlap": 23,
+        "rank_for_disease": 37,
+        "has_biological_signal": true,
+        "composite_score": 2.311761532526121,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1077190676687663,
+        "priority_score": 2.207719067668766
+      },
+      {
+        "drug_name": "Tamoxifen",
+        "drugbank_id": "DB00675",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0276078247443834,
+        "base_score": 0.934188931585803,
+        "target_overlap": 72,
+        "rank_for_disease": 29,
+        "has_biological_signal": true,
+        "composite_score": 2.46625877938652,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1560588028374312,
+        "priority_score": 2.206058802837431
+      },
+      {
+        "drug_name": "Fulvestrant",
+        "drugbank_id": "DB00947",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0270569960980935,
+        "base_score": 0.933688178270994,
+        "target_overlap": 131,
+        "rank_for_disease": 30,
+        "has_biological_signal": true,
+        "composite_score": 2.4649367906354245,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1554391206103551,
+        "priority_score": 2.2054391206103547
+      },
+      {
+        "drug_name": "Selumetinib",
+        "drugbank_id": "DB11689",
+        "disease_name": "colorectal cancer",
+        "mesh_id": "D015179",
+        "score": 0.9594375946737084,
+        "base_score": 0.8722159951579166,
+        "target_overlap": 23,
+        "rank_for_disease": 25,
+        "has_biological_signal": true,
+        "composite_score": 2.3026502272169003,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1033532338747647,
+        "priority_score": 2.203353233874765
+      },
+      {
+        "drug_name": "Clofarabine",
+        "drugbank_id": "DB00631",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.023004605922812,
+        "base_score": 0.9300041872025562,
+        "target_overlap": 63,
+        "rank_for_disease": 37,
+        "has_biological_signal": true,
+        "composite_score": 2.455211054214749,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1508801816631635,
+        "priority_score": 2.2008801816631633
+      },
+      {
+        "drug_name": "Carboplatin",
+        "drugbank_id": "DB00958",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0226959226018484,
+        "base_score": 0.9297235660016803,
+        "target_overlap": 20,
+        "rank_for_disease": 38,
+        "has_biological_signal": true,
+        "composite_score": 2.454470214244436,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1505329129270794,
+        "priority_score": 2.200532912927079
+      },
+      {
+        "drug_name": "Triamcinolone",
+        "drugbank_id": "DB00620",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0738286876426542,
+        "base_score": 0.9762078978569582,
+        "target_overlap": 17,
+        "rank_for_disease": 4,
+        "has_biological_signal": true,
+        "composite_score": 2.8993374566351666,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "S",
+          "R",
+          "C",
+          "H",
+          "A",
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2349029907890525,
+        "priority_score": 2.1849029907890527
+      },
+      {
+        "drug_name": "Regorafenib",
+        "drugbank_id": "DB08896",
+        "disease_name": "colorectal cancer",
+        "mesh_id": "D015179",
+        "score": 0.9425197399351278,
+        "base_score": 0.8568361272137525,
+        "target_overlap": 20,
+        "rank_for_disease": 31,
+        "has_biological_signal": true,
+        "composite_score": 2.262047375844307,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.0838977009253972,
+        "priority_score": 2.1838977009253973
+      },
+      {
+        "drug_name": "Heparin",
+        "drugbank_id": "DB01109",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0438236780157457,
+        "base_score": 0.9489306163779506,
+        "target_overlap": 19,
+        "rank_for_disease": 17,
+        "has_biological_signal": true,
+        "composite_score": 2.4216709329965305,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "B",
+          "S",
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.174301637767714,
+        "priority_score": 2.174301637767714
+      },
+      {
+        "drug_name": "Quetiapine",
+        "drugbank_id": "DB01224",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 1.0198839725249844,
+        "base_score": 0.9271672477499858,
+        "target_overlap": 18,
+        "rank_for_disease": 8,
+        "has_biological_signal": true,
+        "composite_score": 2.855675123069956,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1728665684037323,
+        "priority_score": 2.1728665684037325
+      },
+      {
+        "drug_name": "Methylprednisolone",
+        "drugbank_id": "DB00959",
+        "disease_name": "cancer",
+        "mesh_id": "D009369",
+        "score": 0.9932049403606564,
+        "base_score": 0.9029135821460512,
+        "target_overlap": 27,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 2.9796148210819693,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "H",
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1173555579057384,
+        "priority_score": 2.167355557905738
+      },
+      {
+        "drug_name": "Topotecan",
+        "drugbank_id": "DB01030",
+        "disease_name": "lung cancer",
+        "mesh_id": "D008175",
+        "score": 0.9281099355290707,
+        "base_score": 0.8437363050264278,
+        "target_overlap": 90,
+        "rank_for_disease": 11,
+        "has_biological_signal": true,
+        "composite_score": 2.22746384526977,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.0673264258584314,
+        "priority_score": 2.1673264258584317
+      },
+      {
+        "drug_name": "Bosutinib",
+        "drugbank_id": "DB06616",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0107037984325056,
+        "base_score": 0.9188216349386413,
+        "target_overlap": 18,
+        "rank_for_disease": 44,
+        "has_biological_signal": true,
+        "composite_score": 2.2639765084888124,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1623093681973815,
+        "priority_score": 2.1623093681973815
+      },
+      {
+        "drug_name": "Vinorelbine",
+        "drugbank_id": "DB00361",
+        "disease_name": "lung cancer",
+        "mesh_id": "D008175",
+        "score": 0.9215679004337499,
+        "base_score": 0.837789000394318,
+        "target_overlap": 46,
+        "rank_for_disease": 12,
+        "has_biological_signal": true,
+        "composite_score": 2.211762961041,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.0598030854988125,
+        "priority_score": 2.1598030854988126
+      },
+      {
+        "drug_name": "Prednisolone",
+        "drugbank_id": "DB00860",
+        "disease_name": "cancer",
+        "mesh_id": "D009369",
+        "score": 0.9823934304474,
+        "base_score": 0.8930849367703636,
+        "target_overlap": 24,
+        "rank_for_disease": 3,
+        "has_biological_signal": true,
+        "composite_score": 2.9471802913422,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "S",
+          "R",
+          "C",
+          "H",
+          "A",
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.105192609253325,
+        "priority_score": 2.1551926092533247
+      },
+      {
+        "drug_name": "Cisplatin",
+        "drugbank_id": "DB00515",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.066861512615506,
+        "base_score": 0.9698741023777327,
+        "target_overlap": 18,
+        "rank_for_disease": 6,
+        "has_biological_signal": true,
+        "composite_score": 2.9872122353234167,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2002192016924444,
+        "priority_score": 2.1502192016924444
+      },
+      {
+        "drug_name": "Clozapine",
+        "drugbank_id": "DB00363",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 0.9900532089987165,
+        "base_score": 0.9000483718170149,
+        "target_overlap": 18,
+        "rank_for_disease": 20,
+        "has_biological_signal": true,
+        "composite_score": 2.217719188157125,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1385611903485242,
+        "priority_score": 2.138561190348524
+      },
+      {
+        "drug_name": "Lovastatin",
+        "drugbank_id": "DB00227",
+        "disease_name": "plasma cell myeloma",
+        "mesh_id": "D009101",
+        "score": 0.9636284682109225,
+        "base_score": 0.8760258801917477,
+        "target_overlap": 21,
+        "rank_for_disease": 6,
+        "has_biological_signal": true,
+        "composite_score": 2.8908854046327677,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.084082026737288,
+        "priority_score": 2.1340820267372878
+      },
+      {
+        "drug_name": "Perhexiline",
+        "drugbank_id": "DB01074",
+        "disease_name": "type 2 diabetes",
+        "mesh_id": "D003924",
+        "score": 1.0268903974772865,
+        "base_score": 0.9335367249793514,
+        "target_overlap": 17,
+        "rank_for_disease": 35,
+        "has_biological_signal": true,
+        "composite_score": 2.218083258550939,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1809239570988797,
+        "priority_score": 2.13092395709888
+      },
+      {
+        "drug_name": "Niclosamide",
+        "drugbank_id": "DB06803",
+        "disease_name": "psoriasis",
+        "mesh_id": "D011565",
+        "score": 0.9475000106054613,
+        "base_score": 0.8613636460049647,
+        "target_overlap": 47,
+        "rank_for_disease": 39,
+        "has_biological_signal": true,
+        "composite_score": 2.274000025453107,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "P"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.065937511931144,
+        "priority_score": 2.115937511931144
+      },
+      {
+        "drug_name": "Digoxin",
+        "drugbank_id": "DB00390",
+        "disease_name": "type 2 diabetes",
+        "mesh_id": "D003924",
+        "score": 1.0516930088948515,
+        "base_score": 0.956084553540774,
+        "target_overlap": 16,
+        "rank_for_disease": 11,
+        "has_biological_signal": true,
+        "composite_score": 2.1875214585012914,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2094469602290794,
+        "priority_score": 2.1094469602290795
+      },
+      {
+        "drug_name": "Mirtazapine",
+        "drugbank_id": "DB00370",
+        "disease_name": "hypertension",
+        "mesh_id": "D006973",
+        "score": 1.0702888615140227,
+        "base_score": 0.9729898741036569,
+        "target_overlap": 17,
+        "rank_for_disease": 10,
+        "has_biological_signal": true,
+        "composite_score": 2.8897799260878614,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2040749692032755,
+        "priority_score": 2.1040749692032756
+      },
+      {
+        "drug_name": "Thiotepa",
+        "drugbank_id": "DB04572",
+        "disease_name": "cancer",
+        "mesh_id": "D009369",
+        "score": 0.912072117863939,
+        "base_score": 0.8291564707853991,
+        "target_overlap": 19,
+        "rank_for_disease": 5,
+        "has_biological_signal": true,
+        "composite_score": 2.6450091418054233,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.04888293554353,
+        "priority_score": 2.0988829355435303
+      },
+      {
+        "drug_name": "Vincristine",
+        "drugbank_id": "DB00541",
+        "disease_name": "neuroblastoma",
+        "mesh_id": "D009447",
+        "score": 0.9765630535021697,
+        "base_score": 0.8877845940928815,
+        "target_overlap": 19,
+        "rank_for_disease": 7,
+        "has_biological_signal": true,
+        "composite_score": 2.8320328551562923,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.098633435189941,
+        "priority_score": 2.098633435189941
+      },
+      {
+        "drug_name": "Crizotinib",
+        "drugbank_id": "DB08865",
+        "disease_name": "type 2 diabetes",
+        "mesh_id": "D003924",
+        "score": 1.0597012781334227,
+        "base_score": 0.9633647983031115,
+        "target_overlap": 17,
+        "rank_for_disease": 6,
+        "has_biological_signal": true,
+        "composite_score": 2.8611934509602417,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1921639379001006,
+        "priority_score": 2.0921639379001005
+      },
+      {
+        "drug_name": "Digitoxin",
+        "drugbank_id": "DB01396",
+        "disease_name": "type 2 diabetes",
+        "mesh_id": "D003924",
+        "score": 1.0665852782140222,
+        "base_score": 0.9696229801945655,
+        "target_overlap": 15,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 2.6664631955350555,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2265730699461257,
+        "priority_score": 2.0765730699461256
+      },
+      {
+        "drug_name": "Hydrocortisone",
+        "drugbank_id": "DB00741",
+        "disease_name": "gastric adenocarcinoma",
+        "mesh_id": "D013274",
+        "score": 0.9124153110723445,
+        "base_score": 0.8294684646112223,
+        "target_overlap": 25,
+        "rank_for_disease": 50,
+        "has_biological_signal": true,
+        "composite_score": 2.1897967465736268,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "S",
+          "C",
+          "H",
+          "A",
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.0264672249563875,
+        "priority_score": 2.0764672249563874
+      },
+      {
+        "drug_name": "Dasatinib",
+        "drugbank_id": "DB01254",
+        "disease_name": "acute lymphoblastic leukemia",
+        "mesh_id": "D054198",
+        "score": 0.9875696287916849,
+        "base_score": 0.8977905716288044,
+        "target_overlap": 18,
+        "rank_for_disease": 4,
+        "has_biological_signal": true,
+        "composite_score": 2.7651949606167174,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1110158323906454,
+        "priority_score": 2.061015832390645
+      },
+      {
+        "drug_name": "Trastuzumab",
+        "drugbank_id": "DB00072",
+        "disease_name": "melanoma",
+        "mesh_id": "D008545",
+        "score": 0.9609870014436847,
+        "base_score": 0.873624546766986,
+        "target_overlap": 17,
+        "rank_for_disease": 5,
+        "has_biological_signal": true,
+        "composite_score": 2.594664903897949,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1051350516602374,
+        "priority_score": 2.0551350516602374
+      },
+      {
+        "drug_name": "Zonisamide",
+        "drugbank_id": "DB00909",
+        "disease_name": "epilepsy",
+        "mesh_id": "D004827",
+        "score": 1.0465642634546115,
+        "base_score": 0.9514220576860103,
+        "target_overlap": 15,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 2.6164106586365286,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2035489029728035,
+        "priority_score": 2.0535489029728033
+      },
+      {
+        "drug_name": "Loxapine",
+        "drugbank_id": "DB00408",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 1.0390237263415956,
+        "base_score": 0.944567023946905,
+        "target_overlap": 15,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 2.5975593158539887,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.194877285292835,
+        "priority_score": 2.044877285292835
+      },
+      {
+        "drug_name": "Clopidogrel",
+        "drugbank_id": "DB00758",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.011159398423682,
+        "base_score": 0.9192358167488016,
+        "target_overlap": 17,
+        "rank_for_disease": 43,
+        "has_biological_signal": true,
+        "composite_score": 2.1841043005951533,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "B"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1375543232266423,
+        "priority_score": 2.0375543232266424
+      },
+      {
+        "drug_name": "Ziprasidone",
+        "drugbank_id": "DB00246",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 1.0308258007876883,
+        "base_score": 0.9371143643524439,
+        "target_overlap": 15,
+        "rank_for_disease": 4,
+        "has_biological_signal": true,
+        "composite_score": 2.577064501969221,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1854496709058417,
+        "priority_score": 2.035449670905842
+      },
+      {
+        "drug_name": "Pembrolizumab",
+        "drugbank_id": "DB09037",
+        "disease_name": "colorectal cancer",
+        "mesh_id": "D015179",
+        "score": 1.060564886507203,
+        "base_score": 0.96414989682473,
+        "target_overlap": 14,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 2.5453557276172876,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2196496194832835,
+        "priority_score": 2.0196496194832836
+      },
+      {
+        "drug_name": "Metformin",
+        "drugbank_id": "DB00331",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0599496168406963,
+        "base_score": 0.9635905607642693,
+        "target_overlap": 15,
+        "rank_for_disease": 10,
+        "has_biological_signal": true,
+        "composite_score": 2.649874042101741,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "A"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1924433189457835,
+        "priority_score": 1.9924433189457835
+      },
+      {
+        "drug_name": "Verapamil",
+        "drugbank_id": "DB00661",
+        "disease_name": "hypertension",
+        "mesh_id": "D006973",
+        "score": 1.072645055465515,
+        "base_score": 0.9751318686050134,
+        "target_overlap": 13,
+        "rank_for_disease": 7,
+        "has_biological_signal": true,
+        "composite_score": 2.467083627570684,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2335418137853422,
+        "priority_score": 1.9835418137853424
+      },
+      {
+        "drug_name": "Reserpine",
+        "drugbank_id": "DB00206",
+        "disease_name": "hypertension",
+        "mesh_id": "D006973",
+        "score": 1.070849709515751,
+        "base_score": 0.9734997359234099,
+        "target_overlap": 13,
+        "rank_for_disease": 8,
+        "has_biological_signal": true,
+        "composite_score": 2.4629543318862273,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2314771659431138,
+        "priority_score": 1.9814771659431138
+      },
+      {
+        "drug_name": "Phenobarbital",
+        "drugbank_id": "DB01174",
+        "disease_name": "epilepsy",
+        "mesh_id": "D004827",
+        "score": 1.0507746661460933,
+        "base_score": 0.9552496964964484,
+        "target_overlap": 13,
+        "rank_for_disease": 1,
+        "has_biological_signal": true,
+        "composite_score": 2.4167817321360143,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2083908660680074,
+        "priority_score": 1.9583908660680076
+      },
+      {
+        "drug_name": "Zidovudine",
+        "drugbank_id": "DB00495",
+        "disease_name": "cancer",
+        "mesh_id": "D009369",
+        "score": 0.889439138697974,
+        "base_score": 0.8085810351799763,
+        "target_overlap": 18,
+        "rank_for_disease": 9,
+        "has_biological_signal": true,
+        "composite_score": 2.490429588354327,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "J"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.0006190310352208,
+        "priority_score": 1.950619031035221
+      },
+      {
+        "drug_name": "Temsirolimus",
+        "drugbank_id": "DB06287",
+        "disease_name": "type 2 diabetes",
+        "mesh_id": "D003924",
+        "score": 1.0591726342279832,
+        "base_score": 0.9628842129345302,
+        "target_overlap": 14,
+        "rank_for_disease": 7,
+        "has_biological_signal": true,
+        "composite_score": 2.54201432214716,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1915692135064813,
+        "priority_score": 1.9415692135064815
+      },
+      {
+        "drug_name": "Amantadine",
+        "drugbank_id": "DB00915",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 1.0354262541554526,
+        "base_score": 0.941296594686775,
+        "target_overlap": 13,
+        "rank_for_disease": 3,
+        "has_biological_signal": true,
+        "composite_score": 2.3814803845575407,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1907401922787706,
+        "priority_score": 1.9407401922787706
+      },
+      {
+        "drug_name": "Captopril",
+        "drugbank_id": "DB01197",
+        "disease_name": "hypertension",
+        "mesh_id": "D006973",
+        "score": 1.0728948459436338,
+        "base_score": 0.9753589508578488,
+        "target_overlap": 12,
+        "rank_for_disease": 6,
+        "has_biological_signal": true,
+        "composite_score": 2.3603686610759946,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.233829072835179,
+        "priority_score": 1.9338290728351792
+      },
+      {
+        "drug_name": "Trifluoperazine",
+        "drugbank_id": "DB00831",
+        "disease_name": "schizophrenia",
+        "mesh_id": "D012559",
+        "score": 1.0245312728162657,
+        "base_score": 0.931392066196605,
+        "target_overlap": 13,
+        "rank_for_disease": 5,
+        "has_biological_signal": true,
+        "composite_score": 2.356421927477411,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1782109637387057,
+        "priority_score": 1.9282109637387057
+      },
+      {
+        "drug_name": "Simvastatin",
+        "drugbank_id": "DB00641",
+        "disease_name": "type 2 diabetes",
+        "mesh_id": "D003924",
+        "score": 1.0579753353303405,
+        "base_score": 0.9617957593912186,
+        "target_overlap": 12,
+        "rank_for_disease": 8,
+        "has_biological_signal": true,
+        "composite_score": 2.327545737726749,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2166716356298917,
+        "priority_score": 1.9166716356298918
+      },
+      {
+        "drug_name": "Binimetinib",
+        "drugbank_id": "DB11967",
+        "disease_name": "colorectal cancer",
+        "mesh_id": "D015179",
+        "score": 1.0496640255743128,
+        "base_score": 0.9542400232493753,
+        "target_overlap": 12,
+        "rank_for_disease": 3,
+        "has_biological_signal": true,
+        "composite_score": 2.309260856263488,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2071136294104599,
+        "priority_score": 1.90711362941046
+      },
+      {
+        "drug_name": "Lamotrigine",
+        "drugbank_id": "DB00555",
+        "disease_name": "epilepsy",
+        "mesh_id": "D004827",
+        "score": 1.0394697685822487,
+        "base_score": 0.9449725168929534,
+        "target_overlap": 12,
+        "rank_for_disease": 5,
+        "has_biological_signal": true,
+        "composite_score": 2.2868334908809476,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.195390233869586,
+        "priority_score": 1.8953902338695863
+      },
+      {
+        "drug_name": "Diflorasone",
+        "drugbank_id": "DB00223",
+        "disease_name": "rheumatoid arthritis",
+        "mesh_id": "D001172",
+        "score": 1.0602502321103349,
+        "base_score": 0.9638638473730315,
+        "target_overlap": 13,
+        "rank_for_disease": 7,
+        "has_biological_signal": true,
+        "composite_score": 2.43857553385377,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "D"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1927815111241267,
+        "priority_score": 1.8927815111241266
+      },
+      {
+        "drug_name": "Nortriptyline",
+        "drugbank_id": "DB00540",
+        "disease_name": "epilepsy",
+        "mesh_id": "D004827",
+        "score": 1.0333813886472003,
+        "base_score": 0.9394376260429094,
+        "target_overlap": 12,
+        "rank_for_disease": 8,
+        "has_biological_signal": true,
+        "composite_score": 2.273439055023841,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "N"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1883885969442805,
+        "priority_score": 1.8883885969442806
+      },
+      {
+        "drug_name": "Bisacodyl",
+        "drugbank_id": "DB09020",
+        "disease_name": "type 2 diabetes",
+        "mesh_id": "D003924",
+        "score": 1.0564932092218062,
+        "base_score": 0.9604483720198237,
+        "target_overlap": 11,
+        "rank_for_disease": 9,
+        "has_biological_signal": true,
+        "composite_score": 2.2186357393657934,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "A"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2149671906050774,
+        "priority_score": 1.8649671906050775
+      },
+      {
+        "drug_name": "Nivolumab",
+        "drugbank_id": "DB09035",
+        "disease_name": "colorectal cancer",
+        "mesh_id": "D015179",
+        "score": 1.0520661386204566,
+        "base_score": 0.9564237623822331,
+        "target_overlap": 11,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 2.209338891102959,
+        "atc_score": 1.0,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2098760594135252,
+        "priority_score": 1.8598760594135253
+      },
+      {
+        "drug_name": "Olaparib",
+        "drugbank_id": "DB09074",
+        "disease_name": "breast adenocarcinoma",
+        "mesh_id": "D001943",
+        "score": 1.0671564060848664,
+        "base_score": 0.9701421873498784,
+        "target_overlap": 12,
+        "rank_for_disease": 5,
+        "has_biological_signal": true,
+        "composite_score": 2.3477440933867064,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2005509568454746,
+        "priority_score": 1.8505509568454748
+      },
+      {
+        "drug_name": "Panitumumab",
+        "drugbank_id": "DB01269",
+        "disease_name": "gastric adenocarcinoma",
+        "mesh_id": "D013274",
+        "score": 1.0198473786656443,
+        "base_score": 0.9271339806051312,
+        "target_overlap": 13,
+        "rank_for_disease": 8,
+        "has_biological_signal": true,
+        "composite_score": 2.345648970930982,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.14732830099885,
+        "priority_score": 1.8473283009988501
+      },
+      {
+        "drug_name": "Busulfan",
+        "drugbank_id": "DB01008",
+        "disease_name": "plasma cell myeloma",
+        "mesh_id": "D009101",
+        "score": 0.9412769660730476,
+        "base_score": 0.8557063327936796,
+        "target_overlap": 14,
+        "rank_for_disease": 9,
+        "has_biological_signal": true,
+        "composite_score": 2.2590647185753143,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "L"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.0589365868321785,
+        "priority_score": 1.8089365868321787
+      },
+      {
+        "drug_name": "Yohimbine",
+        "drugbank_id": "DB01392",
+        "disease_name": "hypertension",
+        "mesh_id": "D006973",
+        "score": 1.0705017543554451,
+        "base_score": 0.9731834130504046,
+        "target_overlap": 11,
+        "rank_for_disease": 9,
+        "has_biological_signal": true,
+        "composite_score": 2.2480536841464347,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "G"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.2043144736498759,
+        "priority_score": 1.804314473649876
+      },
+      {
+        "drug_name": "Pindolol",
+        "drugbank_id": "DB00960",
+        "disease_name": "chronic obstructive pulmonary disease",
+        "mesh_id": "D029424",
+        "score": 1.0057669681770889,
+        "base_score": 0.9143336074337172,
+        "target_overlap": 12,
+        "rank_for_disease": 2,
+        "has_biological_signal": true,
+        "composite_score": 2.212687329989596,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "C"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.131487839199225,
+        "priority_score": 1.781487839199225
+      },
+      {
+        "drug_name": "Naloxone",
+        "drugbank_id": "DB01183",
+        "disease_name": "epilepsy",
+        "mesh_id": "D004827",
+        "score": 1.0412240775512014,
+        "base_score": 0.9465673432283649,
+        "target_overlap": 11,
+        "rank_for_disease": 3,
+        "has_biological_signal": true,
+        "composite_score": 2.186570562857523,
+        "atc_score": 0.5,
+        "atc_level1": [
+          "V",
+          "A"
+        ],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.1713770872451015,
+        "priority_score": 1.7713770872451016
+      }
+    ],
+    "tier2_high": [
+      {
+        "drug_name": "Ouabain",
+        "drugbank_id": "DB01092",
+        "disease_name": "ulcerative colitis",
+        "mesh_id": "D003093",
+        "score": 0.9940973180815544,
+        "base_score": 0.9037248346195949,
+        "target_overlap": 28,
+        "rank_for_disease": 16,
+        "has_biological_signal": true,
+        "composite_score": 2.385833563395731,
+        "atc_score": 0.0,
+        "atc_level1": [],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.09350704988971,
+        "priority_score": 2.09350704988971
+      },
+      {
+        "drug_name": "Cerulenin",
+        "drugbank_id": "DB01034",
+        "disease_name": "malaria",
+        "mesh_id": "D008288",
+        "score": 0.9298580326815266,
+        "base_score": 0.8453254842559331,
+        "target_overlap": 21,
+        "rank_for_disease": 3,
+        "has_biological_signal": true,
+        "composite_score": 2.7895740980445796,
+        "atc_score": 0.0,
+        "atc_level1": [],
+        "prior_validation": null,
+        "is_fda_approved": false,
+        "enhanced_score": 1.0228438359496792,
+        "priority_score": 2.022843835949679
+      }
+    ],
+    "tier3_moderate": []
+  }
+}
