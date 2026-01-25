@@ -49,7 +49,8 @@ vastai destroy instance <INSTANCE_ID>
 
 | Model | Per-Drug R@30 | Diseases Evaluated | Notes |
 |-------|---------------|-------------------|-------|
-| **GB + Triple Boost** | **44.0%** | 602/779 | Target + ATC + Chemical - NEW BEST |
+| **GB + Triple Boost (91% FP)** | **47.1%** | 602/779 | Target + ATC + Chemical - NEW BEST |
+| GB + Triple Boost (4% FP) | 44.0% | 602/779 | Limited fingerprint coverage |
 | GB + Target + ATC Boost | 40.2% | 602/779 | Previous best |
 | GB + Target Boost | 39.0% | 690/779 | Validated +1.6% improvement (p<0.0001) |
 | GB Enhanced (Expanded MESH) | 37.4% | 700/779 | Agent web search MESH mappings |
@@ -115,25 +116,33 @@ Used RDKit to compute Morgan fingerprints (ECFP4 equivalent) and Tanimoto simila
 3. For each candidate drug, compute max Tanimoto similarity to known treatments
 4. Boost predictions when similarity > 0.7 threshold
 
-**Coverage:** 987/24,313 drugs with fingerprints (4.1%) - limited by PubChem API rate limits
+**Coverage:** 9,584/10,474 DrugBank drugs with fingerprints (91.5%) - fetched from PubChem in batch
 
-### Results (Triple Boost Evaluation)
+### Results (Triple Boost Evaluation - 91% FP Coverage)
 
 | Strategy | R@30 | vs Baseline | vs Target+ATC |
 |----------|------|-------------|---------------|
-| **triple_multiplicative** | **43.95%** | **+5.23%** | **+3.79%** |
-| triple_additive | 43.77% | +5.05% | +3.61% |
-| target+chem | 43.41% | +4.69% | +3.25% |
+| **triple_multiplicative** | **47.11%** | **+8.39%** | **+6.95%** |
+| target+chem | 46.84% | +8.12% | +6.68% |
+| chem_only | 46.66% | +7.94% | +6.50% |
 | target+atc | 40.16% | +1.44% | - |
 | baseline | 38.72% | - | -1.44% |
 
 **Best Strategy:** `triple_multiplicative`
 - Formula: `score × (1 + 0.01 × overlap) × (1 + 0.05 × atc) × (1.2 if sim > 0.7 else 1.0)`
-- Improvement: **+4.26%** over previous best (39.69% → 43.95%)
+- Improvement: **+8.39%** over baseline (38.72% → 47.11%)
+- Improvement: **+6.95%** over previous best target+atc
+
+### Coverage Expansion Impact
+
+| Coverage | R@30 | Change |
+|----------|------|--------|
+| 4.1% | 43.95% | - |
+| **91.5%** | **47.11%** | **+3.16%** |
 
 ### Key Insight
 
-Chemical similarity boost provides the **largest individual gain** (+3.97% for chem_only) despite only 4.1% fingerprint coverage. Increasing coverage to 50%+ could yield substantially larger improvements.
+Chemical similarity boost provides the **largest individual gain** (+7.94% for chem_only). Expanding fingerprint coverage from 4% to 91% added another +3.16% improvement.
 
 ### Files
 

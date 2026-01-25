@@ -60,10 +60,12 @@ def fetch_smiles_from_pubchem(drug_name: str, max_retries: int = 3) -> Optional[
                 data = response.json()
                 props = data.get('PropertyTable', {}).get('Properties', [])
                 if props:
-                    # Try different SMILES fields
-                    smiles = (props[0].get('CanonicalSMILES') or
-                              props[0].get('IsomericSMILES') or
-                              props[0].get('ConnectivitySMILES'))
+                    # Try different SMILES field names (PubChem uses different ones)
+                    p = props[0]
+                    smiles = (p.get('CanonicalSMILES') or
+                              p.get('IsomericSMILES') or
+                              p.get('SMILES') or
+                              p.get('ConnectivitySMILES'))
                     return smiles
             elif response.status_code == 404:
                 # Compound not found
@@ -350,6 +352,53 @@ class DrugFingerprinter:
             'with_fingerprints': has_fp,
             'smiles_coverage': has_smiles / len(drug_names) if drug_names else 0,
             'fp_coverage': has_fp / len(drug_names) if drug_names else 0,
+        }
+
+    def regenerate_all_fingerprints(self) -> Dict[str, int]:
+        """
+        Regenerate fingerprints from all cached SMILES.
+
+        Useful after batch SMILES fetching to update fingerprints.
+
+        Returns:
+            Dict with counts: generated, failed, total_smiles
+        """
+        # Reload SMILES cache to get latest
+        self.smiles_cache = load_smiles_cache()
+
+        # Filter to valid SMILES (non-empty, non-None)
+        valid_smiles = {
+            name: smiles for name, smiles in self.smiles_cache.items()
+            if smiles and smiles.strip()
+        }
+
+        print(f"Regenerating fingerprints from {len(valid_smiles):,} SMILES...")
+
+        generated = 0
+        failed = 0
+
+        for name, smiles in tqdm(valid_smiles.items(), desc="Generating"):
+            fp = smiles_to_fingerprint(smiles, self.radius, self.n_bits)
+            if fp is not None:
+                self.fingerprints[name] = fp
+                generated += 1
+            else:
+                failed += 1
+
+        # Save fingerprints
+        ensure_cache_dir()
+        with open(FINGERPRINT_CACHE, 'wb') as f:
+            pickle.dump(self.fingerprints, f)
+
+        print(f"\n✓ Generated: {generated:,}")
+        print(f"✗ Failed: {failed:,}")
+        print(f"Total fingerprints: {len(self.fingerprints):,}")
+
+        return {
+            'generated': generated,
+            'failed': failed,
+            'total_smiles': len(valid_smiles),
+            'total_fingerprints': len(self.fingerprints),
         }
 
 
