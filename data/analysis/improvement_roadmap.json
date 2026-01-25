@@ -1,129 +1,220 @@
 {
   "title": "Model Performance Improvement Roadmap",
-  "current_baseline": {
+  "last_updated": "2026-01-25",
+  "current_best": {
+    "model": "GB + Target + ATC Boost",
     "metric": "Per-Drug Recall@30",
-    "value": "38.7%",
-    "diseases_evaluated": 700
+    "value": "39.7%",
+    "diseases_evaluated": 690,
+    "formula": "score × (1 + 0.01×target_overlap + 0.05×atc_score)"
   },
-  "tier_1_high_impact_easy": [
+  "completed_experiments": [
     {
-      "name": "Add Drug-Target Interaction Features",
-      "expected_gain": "+5-10% R@30",
-      "effort": "Medium (1-2 days)",
-      "description": "Add DrugBank target data as features - the model currently has NO target information, which is why biologics fail",
-      "implementation": [
-        "Download DrugBank targets (free academic license)",
-        "Create target-disease compatibility features",
-        "Add binary features: shares_target_with_known_treatment",
-        "Add target family features (kinase, GPCR, ion channel, etc.)"
-      ],
-      "why_high_impact": "Root cause of biologic failures - model has no target understanding"
+      "name": "Target Overlap Boosting",
+      "result": "+1.63% R@30",
+      "status": "SUCCESS",
+      "date": "2026-01-24",
+      "files": ["scripts/evaluate_target_ensemble.py", "data/reference/drug_targets.json"]
     },
     {
-      "name": "Add Mechanism of Action Features",
-      "expected_gain": "+3-5% R@30",
-      "effort": "Easy (0.5 day)",
-      "description": "Add ATC codes and drug class as categorical features",
-      "implementation": [
-        "Map drugs to ATC therapeutic classes",
-        "Add disease-specific mechanism relevance scores",
-        "Example: SGLT2 inhibitors \u2192 diabetes/heart failure high relevance"
-      ],
-      "why_high_impact": "Provides semantic grouping beyond embedding similarity"
-    }
-  ],
-  "tier_2_high_impact_medium_effort": [
-    {
-      "name": "Fine-tune Embeddings with Contrastive Learning",
-      "expected_gain": "+10-15% R@30",
-      "effort": "Medium (2-3 days GPU)",
-      "description": "Current TransE embeddings are generic - fine-tune for drug repurposing task",
-      "implementation": [
-        "Use Every Cure pairs as positive examples",
-        "Contrastive loss: pull known pairs closer, push random pairs apart",
-        "Fine-tune only last layer to avoid catastrophic forgetting",
-        "Use triplet loss: (drug, positive_disease, negative_disease)"
-      ],
-      "why_high_impact": "Embeddings drive 70%+ of model performance"
+      "name": "ATC Classification Boosting",
+      "result": "+0.67% R@30 (additive with target)",
+      "status": "SUCCESS",
+      "date": "2026-01-24",
+      "files": ["src/atc_features.py", "scripts/evaluate_combined_boost.py"]
     },
     {
-      "name": "Add ChEMBL Bioactivity Features",
-      "expected_gain": "+5-8% R@30",
-      "effort": "Medium (1-2 days)",
-      "description": "Add experimental bioactivity data from ChEMBL",
-      "implementation": [
-        "Download ChEMBL drug-target activities",
-        "Create features: IC50/EC50 against relevant targets",
-        "Add target family activity profiles",
-        "Cross-reference with disease-associated targets"
-      ],
-      "why_high_impact": "Adds real experimental evidence beyond knowledge graph"
+      "name": "Similarity Features (guilt by association)",
+      "result": "0% R@30 on test set",
+      "status": "FAILED",
+      "date": "2026-01-24",
+      "reason": "Data leakage - features encode training labels",
+      "files": ["src/train_gb_with_similarity.py"]
+    },
+    {
+      "name": "TxGNN Fine-tuning",
+      "result": "-1.4% R@30",
+      "status": "FAILED",
+      "date": "2026-01-21",
+      "reason": "Catastrophic forgetting"
+    },
+    {
+      "name": "TxGNN as GB Features",
+      "result": "4.6% R@30",
+      "status": "FAILED",
+      "date": "2026-01-21",
+      "reason": "Ontology mismatch (MONDO vs DOID)"
+    },
+    {
+      "name": "Expanded MESH Mappings",
+      "result": "+20% R@30 (17% → 37%)",
+      "status": "SUCCESS",
+      "date": "2026-01-22",
+      "notes": "827 agent-searched mappings vs 80 hardcoded"
     }
   ],
-  "tier_3_medium_impact_higher_effort": [
+  "quick_wins": [
     {
-      "name": "Disease-Specific Ensemble Models",
-      "expected_gain": "+5-10% R@30 for target diseases",
+      "id": "QW1",
+      "name": "Expand ATC Coverage via DrugBank",
+      "expected_gain": "+0.5-1% R@30",
+      "effort": "Low (2-3 hours)",
+      "status": "TODO",
+      "description": "Currently only 12.2% of drugs have ATC mapping. DrugBank has ATC codes for 28% of drugs - use direct mapping instead of name matching.",
+      "implementation": [
+        "Parse DrugBank XML for ATC codes",
+        "Map by DrugBank ID instead of name matching",
+        "Should increase coverage from 12% to 25-30%"
+      ]
+    },
+    {
+      "id": "QW2",
+      "name": "Novel Prediction Deep Validation",
+      "expected_gain": "External impact (Every Cure)",
+      "effort": "Low (2-3 hours)",
+      "status": "TODO",
+      "description": "Deep-dive on top 50 high-confidence novel predictions for actionable drug repurposing candidates.",
+      "implementation": [
+        "Filter top predictions by score + target overlap + ATC relevance",
+        "Cross-reference with ClinicalTrials.gov for ongoing trials",
+        "Identify FDA-approved drugs with off-label potential",
+        "Create prioritized list for Every Cure review"
+      ]
+    }
+  ],
+  "tier_1_high_impact": [
+    {
+      "id": "T1.1",
+      "name": "Chemical Structure Features (Fingerprints)",
+      "expected_gain": "+2-5% R@30",
+      "effort": "Medium (1-2 days)",
+      "status": "TODO",
+      "description": "Add molecular fingerprints for drugs without target data. Many drugs lack target annotations but have structure.",
+      "implementation": [
+        "Download SMILES from PubChem/DrugBank",
+        "Generate Morgan fingerprints (RDKit)",
+        "Add Tanimoto similarity to known treatments as feature",
+        "Helps drugs with no target data"
+      ]
+    },
+    {
+      "id": "T1.2",
+      "name": "Pathway Enrichment Features",
+      "expected_gain": "+1-3% R@30",
+      "effort": "Medium (1 day)",
+      "status": "TODO",
+      "description": "Replace raw target-gene overlap with pathway-level analysis. More biologically meaningful.",
+      "implementation": [
+        "Map drug targets to KEGG/Reactome pathways",
+        "Map disease genes to pathways",
+        "Score pathway overlap instead of gene overlap",
+        "Captures functional relationships"
+      ]
+    },
+    {
+      "id": "T1.3",
+      "name": "Expand Training Data (ChEMBL/DrugBank)",
+      "expected_gain": "+3-8% R@30",
+      "effort": "Medium (2-3 days)",
+      "status": "TODO",
+      "description": "Current model trained on ~50k Every Cure pairs. ChEMBL and DrugBank have additional indication data.",
+      "implementation": [
+        "Download ChEMBL drug indications",
+        "Download DrugBank therapeutic indications",
+        "Map to DOID ontology",
+        "Retrain with expanded positive set"
+      ]
+    }
+  ],
+  "tier_2_specialized": [
+    {
+      "id": "T2.1",
+      "name": "Disease-Specific Models",
+      "expected_gain": "+5-10% for target categories",
       "effort": "High (3-5 days)",
-      "description": "Train separate models for disease categories where we have enough data",
+      "status": "TODO",
+      "description": "Train specialized models for disease categories. Storage diseases already at 83% - replicate for others.",
       "implementation": [
-        "Train cancer-specific model with oncology features",
-        "Train autoimmune-specific model with immunology features",
-        "Use meta-learner to select model based on disease category"
-      ],
-      "why_high_impact": "Storage diseases already achieve 83% R@30 - specialize for other categories"
+        "Cancer-specific model with oncology features",
+        "Autoimmune-specific model with immunology features",
+        "Metabolic-specific model with pathway features",
+        "Meta-learner for model selection"
+      ]
     },
     {
-      "name": "Graph Neural Network on Drug-Disease Graph",
-      "expected_gain": "+8-12% R@30",
+      "id": "T2.2",
+      "name": "Confidence-Based Model Selection",
+      "expected_gain": "+2-4% R@30",
+      "effort": "Medium (2 days)",
+      "status": "TODO",
+      "description": "Train meta-model to predict when to trust GB vs TxGNN vs ensemble.",
+      "implementation": [
+        "Features: disease category, drug count, embedding similarity",
+        "Train on held-out validation set",
+        "Route predictions to best model per-case"
+      ]
+    },
+    {
+      "id": "T2.3",
+      "name": "Better Disease Matching (DOID↔MONDO)",
+      "expected_gain": "+5-10% coverage",
+      "effort": "Medium (1-2 days)",
+      "status": "TODO",
+      "description": "TxGNN evaluation only matches 340/779 diseases due to MONDO↔DOID gaps.",
+      "implementation": [
+        "Build comprehensive MONDO↔DOID mapping",
+        "Use OBO foundry cross-references",
+        "Manual mapping for high-value diseases"
+      ]
+    }
+  ],
+  "tier_3_experimental": [
+    {
+      "id": "T3.1",
+      "name": "Fine-tune Embeddings (Contrastive Learning)",
+      "expected_gain": "+10-15% R@30 (speculative)",
+      "effort": "High (3-5 days GPU)",
+      "status": "TODO",
+      "description": "Current TransE embeddings are generic. Fine-tune for drug repurposing.",
+      "implementation": [
+        "Contrastive loss on Every Cure pairs",
+        "Triplet loss: (drug, pos_disease, neg_disease)",
+        "Fine-tune last layer only to avoid forgetting"
+      ],
+      "risk": "May suffer same catastrophic forgetting as TxGNN"
+    },
+    {
+      "id": "T3.2",
+      "name": "Graph Neural Network Ensemble",
+      "expected_gain": "+5-10% R@30 (speculative)",
       "effort": "High (1 week GPU)",
-      "description": "Replace/augment GB with GNN that learns from graph structure",
+      "status": "TODO",
+      "description": "Train GNN on drug-target-pathway-disease graph.",
       "implementation": [
-        "Build drug-disease-target graph from multiple sources",
-        "Train GNN (GraphSAGE or GAT) for link prediction",
-        "Ensemble with existing GB model"
-      ],
-      "why_high_impact": "Captures multi-hop relationships (drug \u2192 target \u2192 pathway \u2192 disease)"
+        "Build multi-relational graph",
+        "Train GraphSAGE or GAT",
+        "Ensemble with GB model"
+      ]
     }
   ],
-  "quick_wins_today": [
+  "data_sources_to_integrate": [
     {
-      "name": "Add Similar Drug Features",
-      "expected_gain": "+2-3% R@30",
-      "effort": "Easy (2 hours)",
-      "description": "For each prediction, check if similar drugs treat the disease",
-      "implementation": "similarity_feature = max(cosine_sim(drug_emb, known_treatment_emb))"
-    },
-    {
-      "name": "Add Disease Similarity Features",
-      "expected_gain": "+1-2% R@30",
-      "effort": "Easy (2 hours)",
-      "description": "Check if similar diseases are treated by this drug",
-      "implementation": "disease_sim_feature = max(cosine_sim(disease_emb, known_indication_emb))"
-    },
-    {
-      "name": "Retrain with Class Weights",
-      "expected_gain": "+1-2% R@30",
-      "effort": "Easy (1 hour)",
-      "description": "Current model uses 3:1 negative ratio - try balanced weights",
-      "implementation": "class_weight='balanced' or sample_weight based on disease rarity"
-    }
-  ],
-  "data_collection_needed": [
-    {
-      "name": "ClinicalTrials.gov Integration",
-      "description": "Add features for drugs in active trials for related conditions",
+      "name": "ClinicalTrials.gov",
+      "description": "Active trials for drug-disease pairs",
+      "status": "TODO",
       "api": "https://clinicaltrials.gov/api/v2/studies"
     },
     {
-      "name": "PubMed Co-occurrence",
-      "description": "Count drug-disease co-mentions in literature",
-      "api": "NCBI E-utilities"
+      "name": "PubChem",
+      "description": "Chemical structures, synonyms, activities",
+      "status": "TODO",
+      "api": "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
     },
     {
-      "name": "OMIM Disease Genetics",
-      "description": "Link diseases to genetic targets, match with drug targets",
-      "source": "OMIM API"
+      "name": "ChEMBL",
+      "description": "Bioactivity data, drug indications",
+      "status": "TODO",
+      "api": "https://www.ebi.ac.uk/chembl/api/data"
     }
   ]
 }

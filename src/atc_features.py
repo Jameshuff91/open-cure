@@ -63,8 +63,9 @@ DISEASE_ATC_RELEVANCE = {
 class ATCMapper:
     """Maps drugs to ATC codes and creates therapeutic features."""
 
-    # Common drug name synonyms (US name -> ATC name)
+    # Common drug name synonyms (US/DrugBank name -> ATC name)
     SYNONYMS = {
+        # US generic names -> International names
         'acetaminophen': 'paracetamol',
         'epinephrine': 'adrenaline',
         'norepinephrine': 'noradrenaline',
@@ -75,15 +76,59 @@ class ATCMapper:
         'phenytoin': 'diphenylhydantoin',
         'levalbuterol': 'levosalbutamol',
         'amphetamine': 'amfetamine',
-        'metformin': 'metformin',  # Should match directly
-        'sulfasalazine': 'sulfasalazine',
-        'simvastatin': 'simvastatin',
-        'atorvastatin': 'atorvastatin',
-        'lovastatin': 'lovastatin',
-        'ibuprofen': 'ibuprofen',
         'aspirin': 'acetylsalicylic acid',
         'tylenol': 'paracetamol',
         'advil': 'ibuprofen',
+        # Prodrugs / salt forms -> active compound
+        'alendronate': 'alendronic acid',
+        'risedronate': 'risedronic acid',
+        'ibandronate': 'ibandronic acid',
+        'zoledronate': 'zoledronic acid',
+        'pamidronate': 'pamidronic acid',
+        'etidronate': 'etidronic acid',
+        'tiludronate': 'tiludronic acid',
+        'clodronate': 'clodronic acid',
+        'olmesartan': 'olmesartan medoxomil',
+        'candesartan': 'candesartan cilexetil',
+        'dalfampridine': 'fampridine',
+        # Different chemical names
+        'succinylcholine': 'suxamethonium',
+        'meperidine': 'pethidine',
+        'isoproterenol': 'isoprenaline',
+        'aminosalicylicacid': '4aminosalicylicacid',
+        'aminosalicylic': '4aminosalicylicacid',
+        'paraaminosalicylicacid': '4aminosalicylicacid',
+        'clorazepate': 'potassium clorazepate',
+        'dicyclomine': 'dicycloverine',
+        'carisoprodol': 'carisoprodol',
+        'lidocaine': 'lidocaine',
+        'methylphenidate': 'methylphenidate',
+        # Biologics naming variations
+        'adalimumab': 'adalimumab',
+        'infliximab': 'infliximab',
+        'etanercept': 'etanercept',
+        'rituximab': 'rituximab',
+        'trastuzumab': 'trastuzumab',
+        'bevacizumab': 'bevacizumab',
+        # Common variations
+        'dexameth': 'dexamethasone',
+        'prednis': 'prednisolone',
+        'hydrochlorothiazide': 'hydrochlorothiazide',
+        'lisinopril': 'lisinopril',
+        'amlodipine': 'amlodipine',
+        'metoprolol': 'metoprolol',
+        'atenolol': 'atenolol',
+        'propranolol': 'propranolol',
+        'carvedilol': 'carvedilol',
+        'valsartan': 'valsartan',
+        'losartan': 'losartan',
+        'irbesartan': 'irbesartan',
+        'telmisartan': 'telmisartan',
+        'enalapril': 'enalapril',
+        'ramipril': 'ramipril',
+        'captopril': 'captopril',
+        'benazepril': 'benazepril',
+        'perindopril': 'perindopril',
     }
 
     def __init__(self, atc_file: str = 'data/external/atc/atc_codes_2024.csv'):
@@ -118,14 +163,24 @@ class ATCMapper:
     def _build_name_to_atc(self) -> None:
         """Build mapping from drug names to ATC codes."""
         self.name_to_atc: Dict[str, List[str]] = defaultdict(list)
+        self.stem_to_atc: Dict[str, List[str]] = defaultdict(list)
 
         # Only use level 5 (actual drugs)
         level5 = self.atc_df[self.atc_df['level'] == 7]
 
         for _, row in level5.iterrows():
-            name = self._normalize_name(row['atc_name'])
+            atc_name = row['atc_name']
+            if not isinstance(atc_name, str):
+                continue
+            name = self._normalize_name(atc_name)
             if name and name != 'combinations':
                 self.name_to_atc[name].append(row['atc_code'])
+
+                # Also index by first word (for "olmesartan medoxomil" -> "olmesartan")
+                first_word = atc_name.lower().split()[0] if atc_name else ''
+                first_word_norm = re.sub(r'[^a-z0-9]', '', first_word)
+                if first_word_norm and first_word_norm != name and len(first_word_norm) >= 5:
+                    self.stem_to_atc[first_word_norm].append(row['atc_code'])
 
     def _build_atc_hierarchy(self) -> None:
         """Build ATC hierarchy for level lookups."""
@@ -152,7 +207,13 @@ class ATCMapper:
 
         # Try without synonyms
         normalized = self._normalize_name(drug_name, apply_synonyms=False)
-        return self.name_to_atc.get(normalized, [])
+        codes = self.name_to_atc.get(normalized, [])
+        if codes:
+            return codes
+
+        # Try stem matching (for "olmesartan" -> "olmesartan medoxomil")
+        codes = self.stem_to_atc.get(normalized, [])
+        return codes
 
     def get_atc_level1(self, drug_name: str) -> List[str]:
         """Get ATC level 1 codes (main therapeutic group) for a drug."""
