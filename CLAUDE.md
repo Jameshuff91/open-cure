@@ -42,7 +42,7 @@ vastai destroy instance <INSTANCE_ID>
 
 | Model | Per-Drug R@30 | Diseases Evaluated | Notes |
 |-------|---------------|-------------------|-------|
-| **GB Enhanced (Expanded MESH)** | **38.7%** | 700/779 | Agent web search MESH mappings - BEST |
+| **GB Enhanced (Expanded MESH)** | **37.4%** | 700/779 | Agent web search MESH mappings - BEST (verified 2026-01-24) |
 | GB Enhanced (18 diseases) | 17.1% | 18 | CONFIRMED diseases only |
 | Best Rank Ensemble | 7.5% | 779 | min(TxGNN rank, GB rank) |
 | TxGNN (proper scoring) | 6.7% | 779 | Per-drug R@30 |
@@ -59,7 +59,7 @@ vastai destroy instance <INSTANCE_ID>
 - 65 diseases achieve ≥50% R@30 or top-10 ranking
 - Storage diseases: 83.3% Recall@30 (best category)
 
-**Key Finding (2026-01-22):** GB model with expanded MESH coverage achieves **38.7%** per-drug Recall@30 on 700 diseases, dramatically outperforming TxGNN (6.7%). The key was expanding disease-to-MESH mappings via parallel agent web searches against NIH/NLM database.
+**Key Finding (2026-01-22, verified 2026-01-24):** GB model with expanded MESH coverage achieves **37.4%** per-drug Recall@30 on 700 diseases, dramatically outperforming TxGNN (6.7%). The key was expanding disease-to-MESH mappings via parallel agent web searches against NIH/NLM database.
 
 ## Similarity Feature Experiment (2026-01-24) - FAILED
 
