@@ -42,6 +42,71 @@ vastai destroy instance <INSTANCE_ID>
 - `models/drug_repurposing_gb_enhanced.pkl` - GB model with expanded MESH (37.4% R@30)
 - `models/drug_repurposing_gb.pkl` - Original baseline GB model (7.0% R@30)
 - `models/transe.pt` - TransE knowledge graph embeddings
+- `models/confidence_calibrator.pkl` - ML model predicting top-30 hit probability
+
+## Confidence Calibration (2026-01-25)
+
+**Purpose:** Predict "how confident should we be in this prediction?" to prioritize novel predictions.
+
+### ML Confidence Model
+
+Trained logistic regression on GT drug-disease pairs to predict probability of being in top-30.
+
+**Performance:**
+- Brier Score: 0.059 (excellent calibration)
+- AUROC: 0.962
+- AUPRC: 0.901
+
+**Calibration by Tier:**
+
+| Tier | Samples | Actual Hit Rate |
+|------|---------|-----------------|
+| Very High (≥0.8) | 529 | 90.9% |
+| High (0.6-0.8) | 79 | 73.4% |
+| Medium (0.4-0.6) | 38 | 31.6% |
+| Low (0.2-0.4) | 40 | 12.5% |
+| Very Low (<0.2) | 665 | 0.5% |
+
+**Top Features:**
+1. `base_score` (+5.07) - GB model score
+2. `boosted_score` (+4.90)
+3. `is_biologic` (-0.31) - Biologics have lower confidence
+4. `is_cancer` (-0.42) - Cancer predictions lower confidence
+
+### Rule-Based Filter
+
+Excludes known harmful patterns (from literature validation):
+- Withdrawn drugs (Pergolide, Cisapride, etc.)
+- Antibiotics for metabolic diseases
+- Sympathomimetics for diabetes
+- TCAs for hypertension
+- PPIs for hypertension
+- Alpha blockers for heart failure
+
+**Filter Stats (on 24,365 novel predictions):**
+- Excluded: 155 (0.6%)
+- Passed: 24,210
+- High-confidence biologics: 403
+
+### Files
+
+- `src/confidence_calibration.py` - ML confidence predictor
+- `src/confidence_filter.py` - Rule-based exclusion filter
+- `scripts/train_confidence_model.py` - Train calibrator
+- `scripts/generate_novel_predictions.py` - Generate predictions with confidence
+- `scripts/filter_novel_predictions.py` - Apply both ML + rule filter
+- `data/analysis/filtered_novel_predictions.json` - Filtered predictions
+- `data/analysis/top_candidates_for_validation.json` - Top 100 for validation
+
+### Top Novel Predictions (after filtering)
+
+| Drug | Disease | ML Conf | Type |
+|------|---------|---------|------|
+| Reslizumab | Ulcerative colitis | 0.97 | biologic |
+| Brolucizumab | Multiple sclerosis | 0.96 | biologic |
+| Mepolizumab | Psoriasis | 0.96 | biologic |
+| Pembrolizumab | Breast cancer | 0.95 | biologic |
+| Guselkumab | Ulcerative colitis | 0.95 | biologic |
 
 ## Key Metrics
 
