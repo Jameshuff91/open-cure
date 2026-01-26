@@ -68,7 +68,8 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 3. **Correlated Features** - Pathway adds only +0.36% (correlates with target)
 4. **Biologics** - mAbs achieve only 27.3% recall vs 47.5% average
 5. **Infectious Diseases** - Only 13.6% recall (different mechanisms)
-6. **Circular Boost Features** - Target overlap, chemical similarity, ATC codes are circular (use ground truth to predict ground truth)
+6. **Circular Boost Features** - Target overlap, chemical similarity, ATC codes are circular
+7. **Biologic Naming Penalty** - WHO INN naming convention unreliable for filtering
 
 ## Error Patterns
 
@@ -123,6 +124,31 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 - Only check synonyms ≥6 chars for substring matching
 - Require long disease names (>20 chars) for fuzzy substring matching
 - Normalizes whitespace, punctuation, possessives
+
+## External Validation Pipeline (2026-01-25)
+
+**Script:** `src/external_validation.py`
+**Output:** `data/validation/`
+
+Validates predictions against ClinicalTrials.gov and PubMed. Results on top 100 predictions:
+
+| Evidence Level | Count | Interpretation |
+|----------------|-------|----------------|
+| Strong (≥0.5) | 57% | Model learns real drug-disease relationships |
+| Moderate (0.2-0.5) | 10% | **Best repurposing candidates** |
+| Weak (<0.2) | 23% | Needs investigation |
+| None | 10% | Truly novel or spurious |
+
+**Key Findings:**
+- 61% have active clinical trials
+- 89% have PubMed publications
+- Model correctly predicts approved indications (Cetuximab/CRC, etc.)
+
+**Top Repurposing Candidates (moderate evidence, not yet approved):**
+- Sirolimus → Psoriasis (mTOR inhibitor for autoimmune)
+- Clopidogrel → RA (platelet-inflammation link)
+- Digoxin → T2D (8 trials, 45 pubs - unexpected!)
+- Metformin → Breast Cancer (known epidemiological signal)
 
 ## TxGNN Summary
 

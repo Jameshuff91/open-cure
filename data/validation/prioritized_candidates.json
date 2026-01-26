@@ -1,0 +1,109 @@
+{
+  "generated_at": "2026-01-25",
+  "methodology": "External validation via ClinicalTrials.gov and PubMed",
+  "prioritized_candidates": {
+    "tier_1_high_priority": {
+      "description": "Strong model signal + moderate external evidence = potential novel repurposing",
+      "candidates": [
+        {
+          "drug": "Sirolimus",
+          "disease": "Psoriasis",
+          "model_score": "High",
+          "validation_score": 0.40,
+          "rationale": "mTOR inhibitor. mTOR pathway implicated in psoriasis pathogenesis. Could be alternative to biologics.",
+          "next_steps": ["Literature deep dive on mTOR in psoriasis", "Check for ongoing trials"]
+        },
+        {
+          "drug": "Clopidogrel",
+          "disease": "Rheumatoid Arthritis",
+          "model_score": "High",
+          "validation_score": 0.37,
+          "rationale": "Antiplatelet agent. Emerging evidence for platelet-immune system crosstalk in RA.",
+          "next_steps": ["Review platelet-inflammation research", "Assess safety profile for chronic use"]
+        },
+        {
+          "drug": "Everolimus",
+          "disease": "Rheumatoid Arthritis",
+          "model_score": "High",
+          "validation_score": 0.30,
+          "rationale": "mTOR inhibitor already used in transplant. Shares mechanism with sirolimus.",
+          "next_steps": ["Compare to sirolimus RA data", "Check for synergy with existing DMARDs"]
+        },
+        {
+          "drug": "Metformin",
+          "disease": "Breast Cancer",
+          "model_score": "High",
+          "validation_score": 0.21,
+          "rationale": "Well-known repurposing candidate. Multiple epidemiological studies show reduced cancer risk in diabetics on metformin.",
+          "next_steps": ["This is already being actively investigated - review trial status"]
+        },
+        {
+          "drug": "Digoxin",
+          "disease": "Type 2 Diabetes",
+          "model_score": 1.05,
+          "validation_score": 0.88,
+          "rationale": "Cardiac glycoside with 8 trials and 45 publications. Unexpected metabolic connection.",
+          "next_steps": ["Deep dive on digoxin-glucose metabolism link", "Check for Na/K-ATPase metabolic effects"]
+        }
+      ]
+    },
+    "tier_2_emerging": {
+      "description": "Novel predictions with some literature support",
+      "candidates": [
+        {
+          "drug": "Panitumumab",
+          "disease": "Gastric Adenocarcinoma",
+          "validation_score": 0.45,
+          "rationale": "Anti-EGFR mAb. EGFR overexpressed in gastric cancer. Extension of CRC indication."
+        },
+        {
+          "drug": "Olaparib",
+          "disease": "Breast Cancer",
+          "validation_score": 0.34,
+          "rationale": "PARP inhibitor. Already approved for BRCA+ breast cancer - model capturing this."
+        },
+        {
+          "drug": "Busulfan",
+          "disease": "Plasma Cell Myeloma",
+          "validation_score": 0.36,
+          "rationale": "Alkylating agent used in conditioning. Some use in myeloma protocols."
+        }
+      ]
+    },
+    "tier_3_novel_unvalidated": {
+      "description": "High model scores with minimal external evidence - truly novel or spurious",
+      "candidates": [
+        {
+          "drug": "Paclitaxel",
+          "disease": "Rheumatoid Arthritis",
+          "model_score": 1.09,
+          "validation_score": 0.0,
+          "note": "Top model prediction but no trials/pubs. Mechanism unclear - needs investigation."
+        },
+        {
+          "drug": "Teniposide",
+          "disease": "Rheumatoid Arthritis",
+          "model_score": 1.07,
+          "validation_score": 0.0,
+          "note": "Topoisomerase II inhibitor. Why RA? Possible anti-proliferative effect on synoviocytes?"
+        }
+      ]
+    }
+  },
+  "validation_statistics": {
+    "total_validated": 100,
+    "with_trials": 61,
+    "with_publications": 89,
+    "strong_evidence": 57,
+    "moderate_evidence": 10,
+    "weak_evidence": 23,
+    "no_evidence": 10
+  },
+  "key_findings": [
+    "57% of top predictions have strong external evidence - model is learning real patterns",
+    "10% have moderate evidence - best repurposing candidates for follow-up",
+    "Model correctly identifies approved indications (Cetuximab/CRC, Bevacizumab/CRC, etc.)",
+    "mTOR inhibitors (Sirolimus, Everolimus) show consistent signal for autoimmune diseases",
+    "Digoxin for T2D is unexpected but has 8 trials - warrants investigation"
+  ]
+}
