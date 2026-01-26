@@ -1,6 +1,9 @@
 #!/bin/bash
 # Setup script for Every Cure MATRIX pipeline on Vast.ai
-# Usage: ./vastai_everycure_setup.sh <PORT> <HOST>
+# Usage: NEO4J_PASSWORD=yourpassword ./vastai_everycure_setup.sh <PORT> <HOST>
+#
+# Environment variables:
+#   NEO4J_PASSWORD - Neo4j database password (required for security)
 
 set -e
 
@@ -56,7 +59,7 @@ server.default_listen_address=0.0.0.0
 EOF
 
 # Set Neo4j password
-neo4j-admin dbms set-initial-password everycure123
+neo4j-admin dbms set-initial-password ${NEO4J_PASSWORD:-changeme}
 
 # Start Neo4j
 systemctl enable neo4j
@@ -97,7 +100,7 @@ import pandas as pd
 from neo4j import GraphDatabase
 from tqdm import tqdm
 
-driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "everycure123"))
+driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "${NEO4J_PASSWORD:-changeme}"))
 
 def import_drkg():
     # Load DRKG triples
@@ -148,7 +151,7 @@ import numpy as np
 import json
 
 # Connect to Neo4j
-gds = GraphDataScience("bolt://localhost:7687", auth=("neo4j", "everycure123"))
+gds = GraphDataScience("bolt://localhost:7687", auth=("neo4j", "${NEO4J_PASSWORD:-changeme}"))
 print(f"GDS version: {gds.version()}")
 
 # Create in-memory graph projection
@@ -218,7 +221,7 @@ echo "=== Setup Complete ==="
 echo ""
 echo "Neo4j running at: bolt://localhost:7687"
 echo "  Username: neo4j"
-echo "  Password: everycure123"
+echo "  Password: ${NEO4J_PASSWORD:-changeme}"
 echo ""
 echo "Next steps:"
 echo "  1. Import DRKG: python /root/import_drkg.py"
