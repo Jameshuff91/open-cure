@@ -151,10 +151,12 @@ def get_canonical_name(disease_name: str) -> str:
     if normalized in DISEASE_SYNONYMS:
         return DISEASE_SYNONYMS[normalized]
 
-    # Check if any synonym is contained in the name
+    # Only check for longer synonyms (>=6 chars) to avoid false substring matches
+    # Short synonyms like "ra", "as", "mm" would match inside unrelated words
     for synonym, canonical in DISEASE_SYNONYMS.items():
-        if synonym in normalized or normalized in synonym:
-            return canonical
+        if len(synonym) >= 6:
+            if synonym in normalized or normalized in synonym:
+                return canonical
 
     return normalized
 
@@ -211,11 +213,13 @@ class DiseaseMatcher:
             if canonical == mapped_canonical:
                 return mesh_id
 
-        # 4. Try substring matching for longer disease names
-        if len(normalized) > 10:
+        # 4. Try substring matching for very long disease names (>20 chars)
+        # and only if both strings are long enough to avoid false matches
+        if len(normalized) > 20:
             for mapped_name, mesh_id in self.normalized_mappings.items():
-                if mapped_name in normalized or normalized in mapped_name:
-                    return mesh_id
+                if len(mapped_name) > 10:  # Only match against longer disease names
+                    if mapped_name in normalized or normalized in mapped_name:
+                        return mesh_id
 
         return None
 
