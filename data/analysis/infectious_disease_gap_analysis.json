@@ -1,0 +1,34 @@
+{
+  "summary": {
+    "root_cause": "Model learns wrong patterns for antibiotics despite abundant data",
+    "key_finding": "Antibiotics predicted for diabetes, stroke, hypertension, depression, cancer"
+  },
+  "antibiotic_class_performance": {
+    "antivirals": {
+      "hit_rate": "20%",
+      "avg_rank": 1341
+    },
+    "tetracyclines": {
+      "hit_rate": "18%",
+      "avg_rank": 1445
+    },
+    "beta_lactams": {
+      "hit_rate": "12%",
+      "avg_rank": 1643
+    },
+    "fluoroquinolones": {
+      "hit_rate": "0%",
+      "avg_rank": 2385
+    },
+    "azoles": {
+      "hit_rate": "9%",
+      "avg_rank": 3777
+    },
+    "macrolides": {
+      "hit_rate": "6%",
+      "avg_rank": 4324
+    }
+  },
+  "spurious_predictions": 30,
+  "recommendation": "Filter antibiotics predicted for clearly non-infectious diseases"
+}

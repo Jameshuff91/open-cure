@@ -100,6 +100,28 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 **Fix Applied:** Filter 16 weak oncology mAb predictions (precision improvement)
 **Future:** Mechanism-based boosting for recall improvement
 
+## Infectious Disease Gap Analysis (2026-01-25)
+
+**Root Cause:** Model learns wrong patterns despite abundant data (OPPOSITE of biologics)
+- Fluoroquinolones: 0% hit rate despite 144 diseases/drug
+- Macrolides: 6% hit rate despite 81 diseases/drug
+
+**Paradox:** More training data correlates with WORSE performance for antibiotics
+
+| Antibiotic Class | Avg Rank | Hit@30 |
+|------------------|----------|--------|
+| Antivirals | 1,341 | 20% |
+| Tetracyclines | 1,445 | 18% |
+| Fluoroquinolones | 2,385 | **0%** |
+| Macrolides | 4,324 | 6% |
+
+**Problem:** Model predicts antibiotics for non-infectious diseases
+- Levofloxacin → diabetes, arthritis
+- Telithromycin → heart failure
+- Azithromycin → stroke
+
+**Fix Applied:** Filter 20 spurious antibiotic predictions for non-infectious diseases
+
 ## Error Patterns
 
 | Best Performance | Worst Performance |
