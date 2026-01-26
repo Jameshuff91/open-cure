@@ -167,6 +167,19 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 | Exact match only | 397 (9.2%) | 2,212 | 37.6% |
 | Fuzzy (fixed) | 1,236 (30.9%) | 3,618 | **41.8%** |
 
+## Disease Coverage Expansion (2026-01-25)
+
+**Integrated `mondo_to_mesh.json`** mapping into disease matcher.
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Total mappings | 836 | 9,090 |
+| EC diseases mapped | 17.2% | **44.7%** |
+| EC pairs mapped | - | **63.4%** |
+
+**Key insight:** Every Cure uses MONDO IDs, embeddings use MESH IDs.
+MONDO→MESH mapping bridges this gap.
+
 **Bug Found & Fixed:** Short synonyms ("ra", "as", "mm") caused false substring matches:
 - "ab**ra**sions" → rheumatoid arthritis (wrong!)
 - "metast**as**is" → ankylosing spondylitis (wrong!)

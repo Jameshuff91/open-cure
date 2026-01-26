@@ -317,8 +317,27 @@ def load_mesh_mappings() -> Dict[str, str]:
                 if mesh_id is not None and mesh_id.startswith("D"):
                     agent_mappings[disease_name.lower()] = f"drkg:Disease::MESH:{mesh_id}"
 
-    # Merge (agent takes priority)
-    return {**hardcoded, **agent_mappings}
+    # MONDO to MESH mappings (adds ~8000 disease ID mappings)
+    # Coverage: 44.7% of Every Cure diseases (up from 17.2%)
+    mondo_path = REFERENCE_DIR / "mondo_to_mesh.json"
+    mondo_mappings = {}
+
+    if mondo_path.exists():
+        with open(mondo_path) as f:
+            mondo_data = json.load(f)
+
+        # Store MONDO ID -> DRKG disease ID mapping for lookup
+        # Format: "drkg:Disease::MESH:D..." to match GT format
+        for mondo_id, mesh_id in mondo_data.items():
+            if mesh_id and mesh_id.startswith("MESH:"):
+                # Store as lowercase MONDO ID for lookup
+                mondo_mappings[mondo_id.lower()] = f"drkg:Disease::{mesh_id}"
+
+    # Merge (agent takes priority over hardcoded, mondo is separate lookup)
+    name_mappings = {**hardcoded, **agent_mappings}
+
+    # Return combined dict - name_mappings + mondo_mappings
+    return {**name_mappings, **mondo_mappings}
 
 
 def test_matcher():
