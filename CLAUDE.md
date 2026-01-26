@@ -210,6 +210,21 @@ Scans 568 validated predictions for confounding patterns. Found 9 suspicious pre
 - Best use: ensemble with min(TxGNN_rank, GB_rank)
 - **Details:** `docs/archive/txgnn_learnings.md`
 
+## Validation Pipeline (2026-01-25)
+
+**Script:** `src/external_validation.py` (with confounding integration)
+**Extended validation:** `scripts/run_extended_validation.py`
+
+The validation pipeline now:
+1. Queries ClinicalTrials.gov and PubMed for evidence
+2. Detects confounding patterns automatically
+3. Computes adjusted_score that penalizes confounded predictions
+4. Caches results for efficiency
+
+**Example:** Simvastatin→T2D
+- validation_score: 0.96 (high trial/pub count)
+- adjusted_score: 0.10 (90% penalty for inverse indication)
+
 ## Archive Index
 
 | Archive | Content |
