@@ -114,6 +114,28 @@
           "note": "Mouse studies show digoxin improves fatty liver via PKM2-HIF-1a. May indirectly benefit T2D patients with NAFLD. No human trials yet."
         },
         "confounding_pattern": "CARDIAC_METABOLIC_COMORBIDITY"
+      },
+      {
+        "drug": "Simvastatin",
+        "disease": "Type 2 Diabetes",
+        "model_score": 1.06,
+        "validation_score": 0.96,
+        "status": "FALSE_POSITIVE",
+        "deep_dive_date": "2026-01-25",
+        "reason": "Inverse indication - statins CAUSE T2D, prescribed FOR CV protection in diabetics",
+        "evidence_summary": {
+          "negative": [
+            "Lancet 2024 meta-analysis: statins increase new-onset diabetes (dose-dependent)",
+            "Simvastatin HR 1.12 for T2D risk vs pravastatin",
+            "Mechanism: statins increase insulin resistance"
+          ],
+          "actual_use": [
+            "33 trials are for CV risk reduction IN diabetics, not treating diabetes",
+            "ADA recommends statins for diabetics >40yo for heart protection",
+            "CARDS trial: statins reduce CV events in T2D patients"
+          ]
+        },
+        "confounding_pattern": "INVERSE_INDICATION"
       }
     ]
   },
@@ -131,6 +153,13 @@
         "id": "POLYPHARMACY_INTERACTION",
         "description": "Trials exist for drug-drug interactions, not treatment efficacy",
         "detection": "Check if trials are Phase 1 PK studies rather than efficacy trials"
+      },
+      {
+        "id": "INVERSE_INDICATION",
+        "description": "Drug causes the disease as adverse effect, but is prescribed to patients with that disease for other benefits",
+        "drugs_at_risk": ["simvastatin", "atorvastatin", "rosuvastatin", "antipsychotics"],
+        "diseases_at_risk": ["type 2 diabetes", "metabolic syndrome", "weight gain"],
+        "detection": "Check if drug is known to CAUSE the disease (adverse effect), not treat it"
       }
     ]
   },
@@ -142,7 +171,7 @@
     "moderate_evidence": 10,
     "weak_evidence": 23,
     "no_evidence": 10,
-    "confirmed_false_positives": 1
+    "confirmed_false_positives": 2
   },
   "key_findings": [
     "57% of top predictions have strong external evidence - model is learning real patterns",

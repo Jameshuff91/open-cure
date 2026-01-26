@@ -156,6 +156,7 @@ Validates predictions against ClinicalTrials.gov and PubMed. Results on top 100 
 | Prediction | Validation Score | Status | Reason |
 |------------|------------------|--------|--------|
 | Digoxin → T2D | 0.88 | **FALSE POSITIVE** | Comorbidity confounding |
+| Simvastatin → T2D | 0.96 | **FALSE POSITIVE** | Inverse indication (statins cause T2D) |
 
 **Digoxin → T2D Deep Dive:**
 - 8 trials were DDI studies, not treatment trials
@@ -164,9 +165,15 @@ Validates predictions against ClinicalTrials.gov and PubMed. Results on top 100 
 - DIG trial (n=6,800): No difference in diabetes outcomes
 - Related: Digoxin shows promise for NAFLD/NASH (preclinical only)
 
+**Simvastatin → T2D Deep Dive:**
+- Statins INCREASE T2D risk (Lancet 2024: HR 1.12-1.44)
+- 33 trials are for CV protection IN diabetics, not treating T2D
+- ADA recommends statins for diabetics despite metabolic risk
+
 **Confounding Patterns to Watch:**
 1. **Cardiac-Metabolic Comorbidity** - HF drugs appear connected to T2D (digoxin, furosemide, etc.)
 2. **Polypharmacy Interactions** - Phase 1 PK studies miscounted as treatment trials
+3. **Inverse Indication** - Drug CAUSES disease but prescribed for other benefits (statins → T2D)
 
 ## TxGNN Summary
 
