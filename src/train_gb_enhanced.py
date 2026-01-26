@@ -10,6 +10,9 @@ This script:
 5. Evaluates on enhanced benchmark
 
 Fix 4 from model_fix_experiments.md
+
+2026-01-25 Update: Uses DiseaseMatcher for fuzzy disease name matching.
+Previously lost 77.9% of training data due to exact string matching.
 """
 
 import json
@@ -26,6 +29,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score, average_precision_score
 from tqdm import tqdm
 from loguru import logger
+
+from disease_name_matcher import DiseaseMatcher, load_mesh_mappings
 
 # Paths
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -173,6 +178,10 @@ def load_agent_mesh_mappings() -> Dict[str, str]:
 _AGENT_MAPPINGS = load_agent_mesh_mappings()
 DISEASE_MESH_MAP = {**_HARDCODED_MAP, **_AGENT_MAPPINGS}
 
+# Initialize the fuzzy disease matcher (fixes 77.9% data loss from exact matching)
+_FUZZY_MESH_MAPPINGS = load_mesh_mappings()
+DISEASE_MATCHER = DiseaseMatcher(_FUZZY_MESH_MAPPINGS)
+
 
 def load_transe_embeddings() -> Tuple[torch.Tensor, Dict[str, int]]:
     """Load TransE embeddings and entity mapping."""
@@ -295,12 +304,24 @@ def build_training_data(
     positive_pairs: List[Tuple[str, str]] = []  # (drug_id, disease_mesh_id)
     disease_to_drugs: Dict[str, Set[str]] = defaultdict(set)
 
-    # 1. Add Every Cure pairs
+    # Track mapping statistics
+    diseases_mapped = 0
+    diseases_failed = []
+
+    # 1. Add Every Cure pairs (using fuzzy matcher)
     for disease_name, drugs in disease_drugs.items():
-        disease_mesh = DISEASE_MESH_MAP.get(disease_name.lower())
+        # Use fuzzy matcher instead of exact lookup (fixes 77.9% data loss)
+        disease_mesh = DISEASE_MATCHER.get_mesh_id(disease_name)
+
+        # Fall back to exact lookup if fuzzy fails
+        if not disease_mesh:
+            disease_mesh = DISEASE_MESH_MAP.get(disease_name.lower())
+
         if not disease_mesh or disease_mesh not in entity2id:
+            diseases_failed.append(disease_name)
             continue
 
+        diseases_mapped += 1
         for drug_name in drugs:
             # Try to map drug name to DrugBank ID
             drug_name_lower = drug_name.lower()
@@ -310,12 +331,18 @@ def build_training_data(
                 positive_pairs.append((drug_id, disease_mesh))
                 disease_to_drugs[disease_mesh].add(drug_id)
 
+    total_diseases = len(disease_drugs)
+    logger.info(f"Disease mapping: {diseases_mapped}/{total_diseases} ({diseases_mapped/total_diseases*100:.1f}%)")
     logger.info(f"Every Cure positive pairs: {len(positive_pairs)}")
 
     # 2. Add enhanced ground truth (CONFIRMED only)
     enhanced_count = 0
     for disease_name, drugs in enhanced_gt.items():
-        disease_mesh = DISEASE_MESH_MAP.get(disease_name.lower())
+        # Use fuzzy matcher for enhanced ground truth too
+        disease_mesh = DISEASE_MATCHER.get_mesh_id(disease_name)
+        if not disease_mesh:
+            disease_mesh = DISEASE_MESH_MAP.get(disease_name.lower())
+
         if not disease_mesh or disease_mesh not in entity2id:
             logger.warning(f"Disease not mapped: {disease_name}")
             continue
@@ -371,6 +398,10 @@ def build_training_data(
 
     y = np.array(labels, dtype=np.int32)
 
+    # Log a sample of unmapped diseases for future improvement
+    if diseases_failed:
+        logger.info(f"Sample unmapped diseases: {diseases_failed[:10]}")
+
     stats = {
         "positive_pairs": len(positive_pairs),
         "negative_pairs": len(negative_pairs),
@@ -378,6 +409,9 @@ def build_training_data(
         "enhanced_pairs": enhanced_count,
         "diseases": len(disease_to_drugs),
         "unique_drugs": len(all_drugs_with_indications),
+        "disease_mapping_coverage": diseases_mapped / total_diseases if total_diseases > 0 else 0,
+        "diseases_mapped": diseases_mapped,
+        "diseases_total": total_diseases,
     }
 
     return X, y, stats
