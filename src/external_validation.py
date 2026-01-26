@@ -17,10 +17,14 @@ from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
-from urllib.parse import quote
+import sys
 
 import requests
 from tqdm import tqdm
+
+# Add src to path for local imports
+sys.path.insert(0, str(Path(__file__).parent))
+from confounding_detector import detect_confounding, ConfoundingType
 
 PROJECT_ROOT = Path(__file__).parent.parent
 DATA_DIR = PROJECT_ROOT / "data"
@@ -55,6 +59,15 @@ class PubMedEvidence:
 
 
 @dataclass
+class ConfoundingInfo:
+    """Confounding detection result."""
+    is_confounded: bool = False
+    confounding_type: str = "none"
+    confidence: float = 0.0
+    reason: str = ""
+
+
+@dataclass
 class ValidationResult:
     """Combined validation result for a drug-disease prediction."""
     drug_name: str
@@ -67,10 +80,14 @@ class ValidationResult:
     clinical_trials: Optional[ClinicalTrialEvidence] = None
     pubmed: Optional[PubMedEvidence] = None
 
+    # Confounding detection
+    confounding: Optional[ConfoundingInfo] = None
+
     # Computed scores
     trial_score: float = 0.0
     literature_score: float = 0.0
     validation_score: float = 0.0
+    adjusted_score: float = 0.0  # Score after confounding adjustment
 
     # Metadata
     validated_at: str = ""
@@ -103,6 +120,14 @@ class ValidationResult:
             self.trial_score * 0.6 +  # Trials are stronger evidence
             self.literature_score * 0.4
         )
+
+        # Adjust for confounding
+        if self.confounding and self.confounding.is_confounded:
+            # Reduce score based on confounding confidence
+            penalty = self.confounding.confidence
+            self.adjusted_score = self.validation_score * (1 - penalty)
+        else:
+            self.adjusted_score = self.validation_score
 
 
 class ClinicalTrialsAPI:
@@ -311,6 +336,25 @@ class ExternalValidator:
         # Check cache
         if use_cache and cache_key in self.cache:
             cached = self.cache[cache_key]
+
+            # Load confounding info if present in cache, otherwise detect it
+            confounding_data = cached.get("confounding", {})
+            if confounding_data:
+                confounding_info = ConfoundingInfo(**confounding_data)
+            else:
+                # Detect confounding for cached entries that don't have it
+                trial_count = cached.get("clinical_trials", {}).get("trial_count", 0)
+                confounding_result = detect_confounding(drug_name, disease_name, trial_count)
+                if confounding_result.confounding_type != ConfoundingType.NONE:
+                    confounding_info = ConfoundingInfo(
+                        is_confounded=True,
+                        confounding_type=confounding_result.confounding_type.value,
+                        confidence=confounding_result.confidence,
+                        reason=confounding_result.reason
+                    )
+                else:
+                    confounding_info = ConfoundingInfo()
+
             result = ValidationResult(
                 drug_name=drug_name,
                 disease_name=disease_name,
@@ -319,6 +363,7 @@ class ExternalValidator:
                 model_score=model_score,
                 clinical_trials=ClinicalTrialEvidence(**cached.get("clinical_trials", {})),
                 pubmed=PubMedEvidence(**cached.get("pubmed", {})),
+                confounding=confounding_info,
                 validated_at=cached.get("validated_at", "")
             )
             result.compute_scores()
@@ -340,6 +385,20 @@ class ExternalValidator:
         # PubMed
         result.pubmed = self.pubmed_api.search(drug_name, disease_name)
 
+        # Check for confounding patterns
+        trial_count = result.clinical_trials.trial_count if result.clinical_trials else 0
+        confounding_result = detect_confounding(drug_name, disease_name, trial_count)
+
+        if confounding_result.confounding_type != ConfoundingType.NONE:
+            result.confounding = ConfoundingInfo(
+                is_confounded=True,
+                confounding_type=confounding_result.confounding_type.value,
+                confidence=confounding_result.confidence,
+                reason=confounding_result.reason
+            )
+        else:
+            result.confounding = ConfoundingInfo()
+
         # Compute scores
         result.compute_scores()
 
@@ -347,6 +406,7 @@ class ExternalValidator:
         self.cache[cache_key] = {
             "clinical_trials": asdict(result.clinical_trials) if result.clinical_trials else {},
             "pubmed": asdict(result.pubmed) if result.pubmed else {},
+            "confounding": asdict(result.confounding) if result.confounding else {},
             "validated_at": result.validated_at
         }
 
@@ -400,6 +460,10 @@ class ExternalValidator:
         with_trials = [r for r in results if r.clinical_trials and r.clinical_trials.has_trials]
         with_pubs = [r for r in results if r.pubmed and r.pubmed.has_publications]
 
+        # Count confounded
+        confounded = [r for r in results if r.confounding and r.confounding.is_confounded]
+        high_conf_confounded = [r for r in confounded if r.confounding and r.confounding.confidence >= 0.7]
+
         report = {
             "summary": {
                 "total_validated": len(results),
@@ -409,6 +473,8 @@ class ExternalValidator:
                 "no_evidence": len(no_evidence),
                 "with_clinical_trials": len(with_trials),
                 "with_publications": len(with_pubs),
+                "confounded_predictions": len(confounded),
+                "high_confidence_confounded": len(high_conf_confounded),
             },
             "top_validated": [
                 {
@@ -416,12 +482,27 @@ class ExternalValidator:
                     "disease": r.disease_name,
                     "model_score": r.model_score,
                     "validation_score": round(r.validation_score, 3),
+                    "adjusted_score": round(r.adjusted_score, 3),
                     "trial_count": r.clinical_trials.trial_count if r.clinical_trials else 0,
                     "phases": r.clinical_trials.phases if r.clinical_trials else [],
                     "pub_count": r.pubmed.publication_count if r.pubmed else 0,
                     "recent_pubs": r.pubmed.recent_count if r.pubmed else 0,
+                    "is_confounded": r.confounding.is_confounded if r.confounding else False,
+                    "confounding_type": r.confounding.confounding_type if r.confounding else "none",
+                    "confounding_reason": r.confounding.reason if r.confounding and r.confounding.is_confounded else "",
                 }
                 for r in sorted_results[:50]
+            ],
+            "confounded_predictions": [
+                {
+                    "drug": r.drug_name,
+                    "disease": r.disease_name,
+                    "confounding_type": r.confounding.confounding_type if r.confounding else "",
+                    "confidence": r.confounding.confidence if r.confounding else 0,
+                    "reason": r.confounding.reason if r.confounding else "",
+                    "validation_score": round(r.validation_score, 3),
+                }
+                for r in confounded
             ],
             "by_evidence_category": {
                 "strong": [{"drug": r.drug_name, "disease": r.disease_name, "score": r.validation_score}
