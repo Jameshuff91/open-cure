@@ -8,6 +8,16 @@
 - Archive location: `docs/archive/`
 - Keep CLAUDE.md lean (<400 lines) for efficient context loading
 
+## Session End Protocol
+
+**ALWAYS end sessions by recommending the highest-ROI next steps:**
+1. Analyze current model performance gaps
+2. Identify improvement opportunities achievable with existing data
+3. Rank by expected impact vs effort
+4. Present top 2-3 actionable recommendations
+
+**Constraints:** Prioritize approaches that don't require additional external data or GPU resources unless absolutely necessary.
+
 ## Cloud GPU (Vast.ai)
 
 ```bash
@@ -66,10 +76,29 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 1. **Embedding Similarity** - TransE cosine similarity causes data leakage
 2. **Retraining with Features** - Adding features and retraining: 37%→6%
 3. **Correlated Features** - Pathway adds only +0.36% (correlates with target)
-4. **Biologics** - mAbs achieve only 27.3% recall vs 47.5% average
+4. **Biologics** - mAbs achieve only 16.7% recall vs 32.1% small molecules
 5. **Infectious Diseases** - Only 13.6% recall (different mechanisms)
 6. **Circular Boost Features** - Target overlap, chemical similarity, ATC codes are circular
 7. **Biologic Naming Penalty** - WHO INN naming convention unreliable for filtering
+
+## Biologic Gap Analysis (2026-01-25)
+
+**Root Cause:** Data sparsity - mAbs have 5x fewer training examples
+- mAbs: 2.13 diseases/drug in DRKG
+- Small molecules: 11.08 diseases/drug
+
+**Performance by mAb Class:**
+| Class | Strong% | Notes |
+|-------|---------|-------|
+| Anti-TNF | 100% | Immunology works |
+| Anti-CD20 | 100% | Immunology works |
+| Anti-integrin | 100% | Immunology works |
+| Checkpoint | 42% | Mixed |
+| Anti-HER2 | 0% | **Oncology fails** |
+| Anti-EGFR | 17% | Oncology fails |
+
+**Fix Applied:** Filter 16 weak oncology mAb predictions (precision improvement)
+**Future:** Mechanism-based boosting for recall improvement
 
 ## Error Patterns
 
