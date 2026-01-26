@@ -175,6 +175,33 @@ Validates predictions against ClinicalTrials.gov and PubMed. Results on top 100 
 2. **Polypharmacy Interactions** - Phase 1 PK studies miscounted as treatment trials
 3. **Inverse Indication** - Drug CAUSES disease but prescribed for other benefits (statins → T2D)
 
+## Confounding Detection (2026-01-25)
+
+**Script:** `src/confounding_detector.py`
+**Output:** `data/analysis/confounding_analysis.json`
+
+Scans 568 validated predictions for confounding patterns. Found 9 suspicious predictions (1.6%).
+
+**High-Confidence False Positives (7):**
+
+| Drug | Disease | Type | Reason |
+|------|---------|------|--------|
+| Simvastatin | T2D | Inverse indication | Statins INCREASE T2D risk (HR 1.12-1.44) |
+| Hydrochlorothiazide | T2D | Inverse indication | Thiazides cause hyperglycemia |
+| Quetiapine | T2D | Inverse indication | Antipsychotics cause metabolic syndrome |
+| Digoxin | T2D | Mechanism mismatch | Na+/K+-ATPase inhibition worsens glucose |
+| Digitoxin | T2D | Mechanism mismatch | Same as digoxin |
+| Pembrolizumab | UC | Mechanism mismatch | Checkpoint inhibitors CAUSE colitis (irAE) |
+| Quetiapine | Parkinson's | Mechanism mismatch | Antipsychotics cause drug-induced parkinsonism |
+
+**True Positives (drugs that actually help T2D):**
+- ACE inhibitors (ramipril, etc.) - HOPE trial: 34% reduction in new T2D
+- Verapamil - RCT: HbA1c reduction, beta-cell preservation
+
+**Medium Confidence - Need Review:**
+- Felodipine → T2D (cardiac-metabolic comorbidity)
+- Amiloride → T2D (cardiac-metabolic comorbidity)
+
 ## TxGNN Summary
 
 - 14.5% R@30 (comparable to early GB model)

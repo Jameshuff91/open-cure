@@ -1,0 +1,209 @@
+{
+  "total": 568,
+  "confounded": [
+    {
+      "drug": "digitoxin",
+      "disease": "type 2 diabetes",
+      "type": "mechanism_mismatch",
+      "confidence": 0.85,
+      "reason": "Na+/K+-ATPase inhibition reduces GLUT4 translocation, worsening glucose",
+      "evidence": "Drug mechanism worsens disease pathophysiology",
+      "trial_count": 0,
+      "pub_count": 1
+    },
+    {
+      "drug": "simvastatin",
+      "disease": "type 2 diabetes",
+      "type": "inverse_indication",
+      "confidence": 0.9,
+      "reason": "Statins INCREASE T2D risk (HR 1.12-1.44) but prescribed for CV protection",
+      "evidence": "Drug is known to CAUSE or WORSEN this condition",
+      "trial_count": 33,
+      "pub_count": 345
+    },
+    {
+      "drug": "digoxin",
+      "disease": "type 2 diabetes",
+      "type": "mechanism_mismatch",
+      "confidence": 0.85,
+      "reason": "Na+/K+-ATPase inhibition reduces GLUT4 translocation, worsening glucose",
+      "evidence": "Drug mechanism worsens disease pathophysiology",
+      "trial_count": 8,
+      "pub_count": 45
+    },
+    {
+      "drug": "felodipine",
+      "disease": "type 2 diabetes mellitus",
+      "type": "cardiac_metabolic",
+      "confidence": 0.5,
+      "reason": "Cardiac drug predicted for metabolic disease - comorbidity confounding possible",
+      "evidence": "HF and T2D frequently co-occur, creating false association",
+      "trial_count": 0,
+      "pub_count": 2
+    },
+    {
+      "drug": "hydrochlorothiazide",
+      "disease": "type 2 diabetes mellitus",
+      "type": "inverse_indication",
+      "confidence": 0.9,
+      "reason": "Thiazides cause hyperglycemia but prescribed for hypertension",
+      "evidence": "Drug is known to CAUSE or WORSEN this condition",
+      "trial_count": 15,
+      "pub_count": 71
+    },
+    {
+      "drug": "pembrolizumab",
+      "disease": "ulcerative colitis",
+      "type": "mechanism_mismatch",
+      "confidence": 0.85,
+      "reason": "Checkpoint inhibitors CAUSE immune-related colitis",
+      "evidence": "Drug mechanism worsens disease pathophysiology",
+      "trial_count": 1,
+      "pub_count": 9
+    },
+    {
+      "drug": "quetiapine",
+      "disease": "parkinson disease",
+      "type": "mechanism_mismatch",
+      "confidence": 0.85,
+      "reason": "Antipsychotics cause drug-induced parkinsonism via D2 blockade",
+      "evidence": "Drug mechanism worsens disease pathophysiology",
+      "trial_count": 4,
+      "pub_count": 49
+    },
+    {
+      "drug": "amiloride",
+      "disease": "type 2 diabetes mellitus",
+      "type": "cardiac_metabolic",
+      "confidence": 0.5,
+      "reason": "Cardiac drug predicted for metabolic disease - comorbidity confounding possible",
+      "evidence": "HF and T2D frequently co-occur, creating false association",
+      "trial_count": 1,
+      "pub_count": 12
+    },
+    {
+      "drug": "quetiapine",
+      "disease": "type 2 diabetes mellitus",
+      "type": "inverse_indication",
+      "confidence": 0.9,
+      "reason": "Atypical antipsychotics CAUSE metabolic syndrome and T2D",
+      "evidence": "Drug is known to CAUSE or WORSEN this condition",
+      "trial_count": 1,
+      "pub_count": 22
+    }
+  ],
+  "by_type": {
+    "none": [],
+    "cardiac_metabolic": [
+      {
+        "drug": "felodipine",
+        "disease": "type 2 diabetes mellitus",
+        "type": "cardiac_metabolic",
+        "confidence": 0.5,
+        "reason": "Cardiac drug predicted for metabolic disease - comorbidity confounding possible",
+        "evidence": "HF and T2D frequently co-occur, creating false association",
+        "trial_count": 0,
+        "pub_count": 2
+      },
+      {
+        "drug": "amiloride",
+        "disease": "type 2 diabetes mellitus",
+        "type": "cardiac_metabolic",
+        "confidence": 0.5,
+        "reason": "Cardiac drug predicted for metabolic disease - comorbidity confounding possible",
+        "evidence": "HF and T2D frequently co-occur, creating false association",
+        "trial_count": 1,
+        "pub_count": 12
+      }
+    ],
+    "inverse_indication": [
+      {
+        "drug": "simvastatin",
+        "disease": "type 2 diabetes",
+        "type": "inverse_indication",
+        "confidence": 0.9,
+        "reason": "Statins INCREASE T2D risk (HR 1.12-1.44) but prescribed for CV protection",
+        "evidence": "Drug is known to CAUSE or WORSEN this condition",
+        "trial_count": 33,
+        "pub_count": 345
+      },
+      {
+        "drug": "hydrochlorothiazide",
+        "disease": "type 2 diabetes mellitus",
+        "type": "inverse_indication",
+        "confidence": 0.9,
+        "reason": "Thiazides cause hyperglycemia but prescribed for hypertension",
+        "evidence": "Drug is known to CAUSE or WORSEN this condition",
+        "trial_count": 15,
+        "pub_count": 71
+      },
+      {
+        "drug": "quetiapine",
+        "disease": "type 2 diabetes mellitus",
+        "type": "inverse_indication",
+        "confidence": 0.9,
+        "reason": "Atypical antipsychotics CAUSE metabolic syndrome and T2D",
+        "evidence": "Drug is known to CAUSE or WORSEN this condition",
+        "trial_count": 1,
+        "pub_count": 22
+      }
+    ],
+    "polypharmacy": [],
+    "comorbidity": [],
+    "mechanism_mismatch": [
+      {
+        "drug": "digitoxin",
+        "disease": "type 2 diabetes",
+        "type": "mechanism_mismatch",
+        "confidence": 0.85,
+        "reason": "Na+/K+-ATPase inhibition reduces GLUT4 translocation, worsening glucose",
+        "evidence": "Drug mechanism worsens disease pathophysiology",
+        "trial_count": 0,
+        "pub_count": 1
+      },
+      {
+        "drug": "digoxin",
+        "disease": "type 2 diabetes",
+        "type": "mechanism_mismatch",
+        "confidence": 0.85,
+        "reason": "Na+/K+-ATPase inhibition reduces GLUT4 translocation, worsening glucose",
+        "evidence": "Drug mechanism worsens disease pathophysiology",
+        "trial_count": 8,
+        "pub_count": 45
+      },
+      {
+        "drug": "pembrolizumab",
+        "disease": "ulcerative colitis",
+        "type": "mechanism_mismatch",
+        "confidence": 0.85,
+        "reason": "Checkpoint inhibitors CAUSE immune-related colitis",
+        "evidence": "Drug mechanism worsens disease pathophysiology",
+        "trial_count": 1,
+        "pub_count": 9
+      },
+      {
+        "drug": "quetiapine",
+        "disease": "parkinson disease",
+        "type": "mechanism_mismatch",
+        "confidence": 0.85,
+        "reason": "Antipsychotics cause drug-induced parkinsonism via D2 blockade",
+        "evidence": "Drug mechanism worsens disease pathophysiology",
+        "trial_count": 4,
+        "pub_count": 49
+      }
+    ]
+  },
+  "summary": {
+    "total_scanned": 568,
+    "total_confounded": 9,
+    "confounded_pct": 1.584507042253521,
+    "by_type_counts": {
+      "none": 0,
+      "cardiac_metabolic": 2,
+      "inverse_indication": 3,
+      "polypharmacy": 0,
+      "comorbidity": 0,
+      "mechanism_mismatch": 4
+    }
+  }
+}
