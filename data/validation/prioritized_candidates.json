@@ -1,5 +1,6 @@
 {
   "generated_at": "2026-01-25",
+  "updated_at": "2026-01-25",
   "methodology": "External validation via ClinicalTrials.gov and PubMed",
   "prioritized_candidates": {
     "tier_1_high_priority": {
@@ -36,14 +37,6 @@
           "validation_score": 0.21,
           "rationale": "Well-known repurposing candidate. Multiple epidemiological studies show reduced cancer risk in diabetics on metformin.",
           "next_steps": ["This is already being actively investigated - review trial status"]
-        },
-        {
-          "drug": "Digoxin",
-          "disease": "Type 2 Diabetes",
-          "model_score": 1.05,
-          "validation_score": 0.88,
-          "rationale": "Cardiac glycoside with 8 trials and 45 publications. Unexpected metabolic connection.",
-          "next_steps": ["Deep dive on digoxin-glucose metabolism link", "Check for Na/K-ATPase metabolic effects"]
         }
       ]
     },
@@ -90,6 +83,57 @@
       ]
     }
   },
+  "false_positives": {
+    "description": "Predictions that appear valid but are confounded by comorbidity or other factors",
+    "candidates": [
+      {
+        "drug": "Digoxin",
+        "disease": "Type 2 Diabetes",
+        "model_score": 1.05,
+        "validation_score": 0.88,
+        "status": "FALSE_POSITIVE",
+        "deep_dive_date": "2026-01-25",
+        "reason": "Comorbidity confounding - HF patients often have T2D",
+        "evidence_summary": {
+          "negative": [
+            "Spigset 1999: HbA1c 5-6% OFF digoxin vs 7-8% ON digoxin (worsens glucose)",
+            "Mechanism: Na+/K+-ATPase inhibition reduces glucose transport into cells",
+            "Animal studies: digoxin raises blood sugar"
+          ],
+          "neutral": [
+            "DIG trial (n=6,800): No difference in diabetes onset between digoxin vs placebo"
+          ],
+          "misleading_trials": [
+            "8 trials are mostly drug-drug interaction studies (diabetes drugs + digoxin)",
+            "Heart failure subgroup analyses, not digoxin treating T2D"
+          ]
+        },
+        "related_finding": {
+          "indication": "NAFLD/NASH",
+          "status": "preclinical_only",
+          "note": "Mouse studies show digoxin improves fatty liver via PKM2-HIF-1a. May indirectly benefit T2D patients with NAFLD. No human trials yet."
+        },
+        "confounding_pattern": "CARDIAC_METABOLIC_COMORBIDITY"
+      }
+    ]
+  },
+  "confounding_patterns": {
+    "description": "Known patterns that cause false positive predictions",
+    "patterns": [
+      {
+        "id": "CARDIAC_METABOLIC_COMORBIDITY",
+        "description": "Heart failure drugs appear connected to T2D/metabolic diseases because HF and metabolic syndrome frequently co-occur",
+        "drugs_at_risk": ["digoxin", "furosemide", "spironolactone", "carvedilol"],
+        "diseases_at_risk": ["type 2 diabetes", "obesity", "metabolic syndrome"],
+        "detection": "High validation score but mechanism is antagonistic to treatment"
+      },
+      {
+        "id": "POLYPHARMACY_INTERACTION",
+        "description": "Trials exist for drug-drug interactions, not treatment efficacy",
+        "detection": "Check if trials are Phase 1 PK studies rather than efficacy trials"
+      }
+    ]
+  },
   "validation_statistics": {
     "total_validated": 100,
     "with_trials": 61,
@@ -97,13 +141,15 @@
     "strong_evidence": 57,
     "moderate_evidence": 10,
     "weak_evidence": 23,
-    "no_evidence": 10
+    "no_evidence": 10,
+    "confirmed_false_positives": 1
   },
   "key_findings": [
     "57% of top predictions have strong external evidence - model is learning real patterns",
     "10% have moderate evidence - best repurposing candidates for follow-up",
     "Model correctly identifies approved indications (Cetuximab/CRC, Bevacizumab/CRC, etc.)",
     "mTOR inhibitors (Sirolimus, Everolimus) show consistent signal for autoimmune diseases",
-    "Digoxin for T2D is unexpected but has 8 trials - warrants investigation"
+    "CAUTION: High validation scores can be misleading - Digoxin/T2D had 0.88 score but is FALSE POSITIVE",
+    "Cardiac-metabolic comorbidity is a major confounding pattern to watch for"
   ]
 }

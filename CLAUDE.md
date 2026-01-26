@@ -147,8 +147,26 @@ Validates predictions against ClinicalTrials.gov and PubMed. Results on top 100 
 **Top Repurposing Candidates (moderate evidence, not yet approved):**
 - Sirolimus → Psoriasis (mTOR inhibitor for autoimmune)
 - Clopidogrel → RA (platelet-inflammation link)
-- Digoxin → T2D (8 trials, 45 pubs - unexpected!)
 - Metformin → Breast Cancer (known epidemiological signal)
+
+## Validation False Positives (2026-01-25)
+
+**CRITICAL:** High validation scores can be misleading. Deep dives required.
+
+| Prediction | Validation Score | Status | Reason |
+|------------|------------------|--------|--------|
+| Digoxin → T2D | 0.88 | **FALSE POSITIVE** | Comorbidity confounding |
+
+**Digoxin → T2D Deep Dive:**
+- 8 trials were DDI studies, not treatment trials
+- Spigset 1999: Digoxin WORSENS glucose (HbA1c 5-6% → 7-8%)
+- Mechanism: Na+/K+-ATPase inhibition reduces glucose transport
+- DIG trial (n=6,800): No difference in diabetes outcomes
+- Related: Digoxin shows promise for NAFLD/NASH (preclinical only)
+
+**Confounding Patterns to Watch:**
+1. **Cardiac-Metabolic Comorbidity** - HF drugs appear connected to T2D (digoxin, furosemide, etc.)
+2. **Polypharmacy Interactions** - Phase 1 PK studies miscounted as treatment trials
 
 ## TxGNN Summary
 
