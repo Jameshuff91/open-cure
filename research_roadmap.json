@@ -1,0 +1,471 @@
+{
+  "project": "open-cure",
+  "baseline_metric": "41.8% R@30",
+  "evaluation_details": {
+    "diseases": 1236,
+    "pairs": 3618,
+    "model": "GB + Fuzzy Matcher"
+  },
+  "last_updated": "2026-01-26",
+  "hypotheses": [
+    {
+      "id": "h1",
+      "title": "GB + TxGNN Best-Rank Ensemble",
+      "category": "ensemble",
+      "rationale": "TxGNN excels at storage diseases (83.3% R@30) while GB is better overall (41.8%). Archive shows simple best_rank ensemble achieved 7.5% vs 6.7% TxGNN alone. Taking min(GB_rank, TxGNN_rank) should capture best of both.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load TxGNN predictions from data/reference/txgnn_predictions.csv",
+        "Step 2: For each disease-drug pair, compute min(GB_rank, TxGNN_rank)",
+        "Step 3: Evaluate R@30 on held-out disease set using disease-level split",
+        "Step 4: Success criteria: >43% R@30 (>1.2% improvement over baseline)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h2",
+      "title": "Category-Routed Ensemble",
+      "category": "ensemble",
+      "rationale": "TxGNN dominates on storage (83%), psychiatric (28%), dermatological (25%), autoimmune (22%) categories. Route these to TxGNN, rest to GB. Keyword categorization achieves 68% disease coverage.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Use src/disease_categorizer.py to classify all evaluation diseases",
+        "Step 2: Route storage/psychiatric/dermatological/autoimmune to TxGNN predictions",
+        "Step 3: Route cancer/respiratory/renal/gastrointestinal to GB",
+        "Step 4: Evaluate R@30 with proper held-out split",
+        "Step 5: Success criteria: >44% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h3",
+      "title": "Infectious Disease Specialist Model",
+      "category": "architecture",
+      "rationale": "Infectious diseases have 13.6% recall vs 63% autoimmune. Model predicts antibiotics for wrong diseases. A specialist model trained on infectious disease pairs could learn pathogen-specific patterns.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract infectious disease pairs from ground truth (identify by ICD codes or keywords)",
+        "Step 2: Extract antibiotic/antiviral drugs from DrugBank by ATC codes (J01, J05)",
+        "Step 3: Train specialist XGBoost model on infectious pairs only",
+        "Step 4: Evaluate on held-out infectious diseases",
+        "Step 5: Success criteria: >30% R@30 for infectious diseases (2x improvement)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h4",
+      "title": "Expand Ground Truth with DrugBank/ChEMBL Indications",
+      "category": "data",
+      "rationale": "Current GT is Every Cure (~50K pairs). DrugBank and ChEMBL have additional FDA-approved indications. Validation sessions found 4 FDA-approved drugs missing from GT (Ustekinumab, Guselkumab, Pembrolizumab).",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Download DrugBank approved indications (data/reference/drugbank_lookup.json exists)",
+        "Step 2: Download ChEMBL approved indications via API",
+        "Step 3: Map to DRKG disease IDs using disease_name_matcher.py",
+        "Step 4: Add new positive pairs and retrain GB model",
+        "Step 5: Evaluate on original test set",
+        "Step 6: Success criteria: >43% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h5",
+      "title": "Hard Negative Mining",
+      "category": "data",
+      "rationale": "Current model uses random negative sampling. Learning from hard negatives (drugs that seem plausible but aren't treatments) could improve discrimination. Confounding analysis identified 9 false positive patterns.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: Generate hard negatives: drugs with high GB score but not in GT",
+        "Step 2: Include confounding patterns (statins->T2D, checkpoint->UC) as explicit negatives",
+        "Step 3: Retrain GB with 50% hard negatives, 50% random negatives",
+        "Step 4: Evaluate R@30 on held-out diseases",
+        "Step 5: Success criteria: >42.5% R@30 + reduced false positive rate"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h6",
+      "title": "Biologic-Specific Features",
+      "category": "feature",
+      "rationale": "Biologics achieve only 27.3% recall vs 63% for ACE inhibitors. Root cause: data sparsity (2.1 vs 11.1 diseases/drug). Adding mAb-specific features (target antigen, immunology pathway) could help.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 6,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract mAb target antigens from DrugBank (e.g., TNF-alpha, CD20, IL-17)",
+        "Step 2: Map diseases to immunology pathways (Th1, Th2, Th17)",
+        "Step 3: Create feature: mAb_target_pathway_match",
+        "Step 4: Boost predictions where target matches disease pathway",
+        "Step 5: Evaluate R@30 for biologics specifically",
+        "Step 6: Success criteria: >35% R@30 for biologics"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h7",
+      "title": "Graph Path Features",
+      "category": "feature",
+      "rationale": "Current features use embedding similarity. Adding explicit graph structure features (path length, shared neighbors, metapath counts) could capture different signals from DRKG.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 7,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load DRKG graph from data/drkg/drkg.tsv",
+        "Step 2: Compute for each drug-disease pair: shortest path, #paths<=3, shared gene neighbors",
+        "Step 3: Add as features to existing GB model",
+        "Step 4: Retrain with graph features",
+        "Step 5: Evaluate on held-out diseases",
+        "Step 6: Success criteria: >43% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h8",
+      "title": "Confidence-Based Post-Filtering",
+      "category": "evaluation",
+      "rationale": "Confidence calibrator achieves 0.962 AUROC. Using it to filter low-confidence predictions could improve precision without hurting recall. Filter threshold analysis needed.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 8,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load confidence_calibrator.pkl model",
+        "Step 2: Score all predictions in evaluation set",
+        "Step 3: Analyze R@30 at different confidence thresholds (0.2, 0.4, 0.6, 0.8)",
+        "Step 4: Find optimal threshold for precision-recall tradeoff",
+        "Step 5: Success criteria: Maintain >40% R@30 with >30% precision improvement"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h9",
+      "title": "Disease Coverage Expansion via UMLS",
+      "category": "data",
+      "rationale": "Currently 30.9% of EC diseases mapped via fuzzy matching. UMLS has comprehensive cross-references (MESH, MONDO, DOID, SNOMED). Could improve to 50%+ coverage.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 9,
+      "status": "pending",
+      "steps": [
+        "Step 1: Download UMLS Metathesaurus (requires license)",
+        "Step 2: Extract MESH<->MONDO<->DOID cross-references",
+        "Step 3: Integrate into disease_name_matcher.py",
+        "Step 4: Re-evaluate with expanded disease coverage",
+        "Step 5: Success criteria: >45% disease coverage, maintain R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h10",
+      "title": "Temporal Validation Split",
+      "category": "evaluation",
+      "rationale": "Current evaluation uses random disease split. Temporal split (train on pre-2020 approvals, test on 2020-2025) would better simulate real-world drug discovery and reduce optimistic bias.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 10,
+      "status": "pending",
+      "steps": [
+        "Step 1: Download FDA approval dates from DrugBank or OpenFDA",
+        "Step 2: Split GT: train on approvals pre-2020, test on 2020-2025",
+        "Step 3: Retrain model on temporal training set",
+        "Step 4: Evaluate R@30 on temporal test set",
+        "Step 5: Report both temporal and random-split metrics",
+        "Step 6: Success criteria: Establish temporal baseline, identify gap"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h11",
+      "title": "Mechanism of Action Features",
+      "category": "feature",
+      "rationale": "Current model doesn't use drug mechanism directly. DrugBank has MoA annotations (agonist, antagonist, inhibitor). Matching MoA to disease pathophysiology could improve predictions.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 11,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract MoA from DrugBank (action field)",
+        "Step 2: Create MoA categories: agonist, antagonist, inhibitor, modulator",
+        "Step 3: Map diseases to expected MoA (e.g., diabetes -> agonist for insulin pathway)",
+        "Step 4: Add MoA_match feature",
+        "Step 5: Evaluate impact on R@30",
+        "Step 6: Success criteria: >42.5% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h12",
+      "title": "Node2Vec Embedding Refresh",
+      "category": "architecture",
+      "rationale": "Archive shows Node2Vec+XGBoost achieved 41.9% R@30 on held-out diseases (fair evaluation). Current TransE may be suboptimal. Retraining Node2Vec with DRKG + EC edges could improve.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 12,
+      "status": "pending",
+      "steps": [
+        "Step 1: Augment DRKG with Every Cure treatment edges",
+        "Step 2: Retrain Node2Vec embeddings (256-dim) on augmented graph",
+        "Step 3: Extract new embeddings for all drugs/diseases",
+        "Step 4: Retrain XGBoost on new embeddings",
+        "Step 5: Evaluate on held-out diseases",
+        "Step 6: Success criteria: >43% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h13",
+      "title": "Confounding Pattern Expansion",
+      "category": "data",
+      "rationale": "Current confounding detector finds 9 patterns (1.6%). Expanding rules based on validation sessions (anti-IL-5, anti-IFN-gamma, TRAIL agonists) could filter more false positives.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 13,
+      "status": "pending",
+      "steps": [
+        "Step 1: Review all false positive patterns from validation_sessions.md",
+        "Step 2: Add rules for: anti-IL-5 for non-eosinophilic, IL-6 for psoriasis, anti-IFN-gamma for UC",
+        "Step 3: Update confounding_detector.py with new patterns",
+        "Step 4: Re-run confounding analysis",
+        "Step 5: Success criteria: >5% confounding detection rate"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h14",
+      "title": "Drug Formulation Filter",
+      "category": "feature",
+      "rationale": "Validation found intravitreal drugs (Brolucizumab) predicted for systemic diseases. Adding route-of-administration constraints could filter impractical predictions.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 14,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract drug formulation from DrugBank (route field)",
+        "Step 2: Flag intravitreal, topical-only, diagnostic-only drugs",
+        "Step 3: Penalize predictions where route doesn't match disease type",
+        "Step 4: Evaluate precision improvement",
+        "Step 5: Success criteria: 10%+ precision improvement on biologics"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h15",
+      "title": "Oncology Specialist Boosting",
+      "category": "architecture",
+      "rationale": "Oncology mAbs achieve 0-17% recall. Anti-HER2 and anti-EGFR particularly weak. Separate oncology model with tumor gene features could improve.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 15,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract cancer disease subset from GT",
+        "Step 2: Add tumor-specific features: driver mutations, tumor suppressor status",
+        "Step 3: Train oncology-specific XGBoost model",
+        "Step 4: Ensemble with general model for cancer predictions",
+        "Step 5: Evaluate R@30 for cancer diseases",
+        "Step 6: Success criteria: >25% R@30 for oncology (up from ~11%)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h16",
+      "title": "Clinical Trial Phase Features",
+      "category": "feature",
+      "rationale": "External validation uses ClinicalTrials.gov data. Adding trial phase as a feature (Phase 1/2/3) for known pairs could help model learn which combinations advance.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 16,
+      "status": "pending",
+      "steps": [
+        "Step 1: Query ClinicalTrials.gov API for all drug-disease pairs",
+        "Step 2: Extract max trial phase reached",
+        "Step 3: Use as auxiliary training signal (semi-supervised)",
+        "Step 4: Evaluate impact on novel prediction quality",
+        "Step 5: Success criteria: >25% validation precision (up from 22.5%)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h17",
+      "title": "PPI Network Distance Features",
+      "category": "feature",
+      "rationale": "Drugs that target proteins close to disease genes in PPI network may be more effective. STRING database has PPI distances.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 17,
+      "status": "pending",
+      "steps": [
+        "Step 1: Download STRING PPI network for human",
+        "Step 2: Compute shortest path from drug targets to disease genes",
+        "Step 3: Add as feature: min_ppi_distance, mean_ppi_distance",
+        "Step 4: Retrain GB with PPI features",
+        "Step 5: Evaluate on held-out diseases",
+        "Step 6: Success criteria: >42.5% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h18",
+      "title": "Withdrawn Drug Filter Enhancement",
+      "category": "data",
+      "rationale": "Validation found predictions for withdrawn drugs (Pergolide, Aducanumab). Comprehensive withdrawn drug list could improve practical value of predictions.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 18,
+      "status": "pending",
+      "steps": [
+        "Step 1: Download FDA withdrawn drug list from openFDA",
+        "Step 2: Cross-reference with DrugBank withdrawal status",
+        "Step 3: Add to confidence_filter.py exclusion list",
+        "Step 4: Re-run filtering on all predictions",
+        "Step 5: Success criteria: 100% exclusion of withdrawn drugs"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h19",
+      "title": "Disease Phenotype Similarity",
+      "category": "feature",
+      "rationale": "Drugs that work for similar diseases may work for the target disease. HPO (Human Phenotype Ontology) similarity could capture this.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 19,
+      "status": "pending",
+      "steps": [
+        "Step 1: Download HPO annotations for diseases",
+        "Step 2: Compute disease-disease similarity using HPO semantic similarity",
+        "Step 3: For each drug-disease pair, find max similarity to known indications",
+        "Step 4: Add as feature (careful about leakage - use training diseases only)",
+        "Step 5: Evaluate R@30 on held-out diseases",
+        "Step 6: Success criteria: >42.5% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h20",
+      "title": "Ensemble Score Calibration",
+      "category": "ensemble",
+      "rationale": "Current boosting formula (Quad Boost) was derived heuristically. Proper calibration via Platt scaling or isotonic regression could improve score interpretation.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 20,
+      "status": "pending",
+      "steps": [
+        "Step 1: Hold out 20% of training pairs for calibration",
+        "Step 2: Apply Platt scaling to raw GB scores",
+        "Step 3: Evaluate calibration (Brier score, reliability diagram)",
+        "Step 4: Compare calibrated vs uncalibrated R@30",
+        "Step 5: Success criteria: Brier score < 0.15, maintain R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h21",
+      "title": "Multi-Indication Drug Bonus",
+      "category": "feature",
+      "rationale": "Drugs with many indications may have pleiotropic effects. Adding indication_count as feature could help identify repurposing candidates.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 21,
+      "status": "pending",
+      "steps": [
+        "Step 1: Count known indications per drug from GT",
+        "Step 2: Add indication_count as feature",
+        "Step 3: Evaluate correlation with successful predictions",
+        "Step 4: If positive, include in boosting formula",
+        "Step 5: Success criteria: Positive correlation + >41.8% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h22",
+      "title": "Rare Disease Focus Evaluation",
+      "category": "evaluation",
+      "rationale": "Every Cure prioritizes rare diseases. Separate evaluation on rare vs common diseases could identify where model performs best and where to focus improvements.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 22,
+      "status": "pending",
+      "steps": [
+        "Step 1: Classify diseases as rare (prevalence < 1/2000) using Orphanet",
+        "Step 2: Evaluate R@30 separately for rare vs common diseases",
+        "Step 3: Identify performance gaps",
+        "Step 4: Document findings for prioritization",
+        "Step 5: Success criteria: Establish rare disease baseline metrics"
+      ],
+      "findings": null,
+      "result_metric": null
+    }
+  ],
+  "completed": [],
+  "learnings": [
+    {
+      "date": "2026-01-25",
+      "finding": "Fuzzy disease matching improved R@30 from 37.4% to 41.8%",
+      "source": "CLAUDE.md"
+    },
+    {
+      "date": "2026-01-25",
+      "finding": "Quad Boost features (target, ATC, chemical, pathway) are CIRCULAR and inflate metrics",
+      "source": "CLAUDE.md"
+    },
+    {
+      "date": "2026-01-25",
+      "finding": "TxGNN achieves 83.3% R@30 on storage diseases but only 6.7% overall",
+      "source": "txgnn_learnings.md"
+    },
+    {
+      "date": "2026-01-25",
+      "finding": "Biologic gap: mAbs have 2.1 diseases/drug vs 11.1 for small molecules",
+      "source": "CLAUDE.md"
+    },
+    {
+      "date": "2026-01-25",
+      "finding": "Infectious disease paradox: more training data correlates with WORSE performance",
+      "source": "CLAUDE.md"
+    },
+    {
+      "date": "2026-01-25",
+      "finding": "Validation precision: 22.5% for top predictions (batches 1+2)",
+      "source": "validation_sessions.md"
+    }
+  ]
+}
