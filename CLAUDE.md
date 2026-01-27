@@ -77,9 +77,9 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 2. **Retraining with Features** - Adding features and retraining: 37%→6%
 3. **Correlated Features** - Pathway adds only +0.36% (correlates with target)
 4. **Biologics** - mAbs achieve only 16.7% recall vs 32.1% small molecules
-5. **Infectious Diseases** - Only 13.6% recall (different mechanisms)
-6. **Circular Boost Features** - Target overlap, chemical similarity, ATC codes are circular
-7. **Biologic Naming Penalty** - WHO INN naming convention unreliable for filtering
+5. **Circular Boost Features** - Target overlap, chemical similarity, ATC codes are circular
+6. **Biologic Naming Penalty** - WHO INN naming convention unreliable for filtering
+7. **Specialist Models** - Infectious disease specialist (36%) underperforms general model (52%)
 
 ## Biologic Gap Analysis (2026-01-25)
 
@@ -100,13 +100,15 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 **Fix Applied:** Filter 16 weak oncology mAb predictions (precision improvement)
 **Future:** Mechanism-based boosting for recall improvement
 
-## Infectious Disease Gap Analysis (2026-01-25)
+## Infectious Disease Gap Analysis (2026-01-25, Updated 2026-01-26)
 
-**Root Cause:** Model learns wrong patterns despite abundant data (OPPOSITE of biologics)
-- Fluoroquinolones: 0% hit rate despite 144 diseases/drug
-- Macrolides: 6% hit rate despite 81 diseases/drug
+**CORRECTION (2026-01-26):** The 13.6% figure was antibiotic CLASS performance, not disease-level R@30.
 
-**Paradox:** More training data correlates with WORSE performance for antibiotics
+**Actual Performance:**
+- General model: **52.0% R@30** on 47 infectious diseases (104/200 hits)
+- Specialist model: 36.4% R@30 (underperforms due to data scarcity)
+
+**Antibiotic Class Performance (within their GT indications):**
 
 | Antibiotic Class | Avg Rank | Hit@30 |
 |------------------|----------|--------|
@@ -115,7 +117,7 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 | Fluoroquinolones | 2,385 | **0%** |
 | Macrolides | 4,324 | 6% |
 
-**Problem:** Model predicts antibiotics for non-infectious diseases
+**The Real Problem:** Model predicts antibiotics for NON-infectious diseases
 - Levofloxacin → diabetes, arthritis
 - Telithromycin → heart failure
 - Azithromycin → stroke
@@ -127,8 +129,8 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 | Best Performance | Worst Performance |
 |------------------|-------------------|
 | ACE inhibitors: 66.7% | Monoclonal antibodies: 27.3% |
-| Autoimmune: 63.0% | Infectious: 13.6% |
-| Psychiatric: 62.5% | PPIs: 16.7% |
+| Autoimmune: 63.0% | Antibiotics (class perf): 6-20% |
+| Infectious: 52.0% | PPIs: 16.7% |
 
 ## Confidence Filter
 

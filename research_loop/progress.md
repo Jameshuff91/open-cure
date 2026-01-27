@@ -1,6 +1,84 @@
 # Research Loop Progress
 
-## Current Session: h1 Evaluation (2026-01-26)
+## Current Session: h3 Evaluation (2026-01-26)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed
+**Hypothesis Tested:** h3 (Infectious Disease Specialist Model)
+**Outcome:** INVALIDATED
+
+### Experiment Details
+
+**Objective:** Test if a specialist XGBoost model trained only on infectious disease pairs can outperform the general GB model.
+
+**Reported Baseline:** 13.6% R@30 for infectious diseases (from CLAUDE.md)
+**Actual Baseline:** 52.0% R@30 on 47 mappable infectious diseases
+
+### Critical Finding: Baseline Discrepancy
+
+The 13.6% figure in CLAUDE.md was based on **antibiotic CLASS performance** (e.g., fluoroquinolones 0%, macrolides 6%), not disease-level evaluation.
+
+**Actual General Model Performance:**
+- 52.0% R@30 on infectious diseases (104/200 hits)
+- 47 diseases evaluated with proper EC-to-DRKG mapping
+- Best performers: E. coli infections 100%, Herpes zoster 100%
+- Worst performers: Diabetic foot infections 0%, Cutaneous candidiasis 0%
+
+### Specialist Model Results
+
+| Model | R@30 | Test Diseases | Notes |
+|-------|------|---------------|-------|
+| General GB | 63.6% | 12 | Baseline |
+| Specialist | 36.4% | 12 | **Underperforms by 27.3%** |
+
+**Root Cause of Specialist Underperformance:**
+1. Insufficient training data: 294 positive pairs vs ~3000 for general model
+2. Disease-level split left only 12 test diseases
+3. General model's broader training data provides better feature learning
+
+### Key Insights
+
+1. **The "infectious disease problem" was mischaracterized.** The real issue is antibiotics being predicted for NON-infectious diseases (spurious predictions), not poor recall ON infectious diseases.
+
+2. **General model already performs well (52% R@30)** on infectious diseases when evaluated properly.
+
+3. **Specialist approach is unnecessary.** The confidence_filter.py already handles spurious antibiotic predictions.
+
+### Hypotheses Updated
+
+| ID | Title | Status | Change |
+|----|-------|--------|--------|
+| h3 | Infectious Disease Specialist | **invalidated** | General model outperforms |
+| h26 | Antibiotic Prediction Filtering Analysis | **added** | Low priority |
+| h27 | Per-Category Baseline Documentation | **added** | Verify other categories |
+
+### Files Created/Modified
+
+| File | Action |
+|------|--------|
+| `scripts/evaluate_infectious_specialist.py` | Created |
+| `data/analysis/h3_infectious_specialist_results.json` | Created |
+| `data/analysis/infectious_baseline_evaluation.json` | Created |
+| `data/analysis/infectious_antimicrobial_analysis.json` | Created |
+| `research_roadmap.json` | Updated |
+
+### Recommended Next Hypothesis
+
+**h4: Expand Ground Truth with DrugBank/ChEMBL Indications** (Priority 4)
+
+**Why:**
+- Medium impact, medium effort
+- Addresses data sparsity root cause
+- Can directly increase training examples
+- Validation found 4 FDA-approved drugs missing from GT
+
+**Alternative:** h5 (Hard Negative Mining) - addresses model discrimination quality
+
+---
+
+## Previous Session: h1 Evaluation (2026-01-26)
 
 ### Session Summary
 

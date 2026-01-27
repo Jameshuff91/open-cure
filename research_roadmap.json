@@ -53,7 +53,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Extract infectious disease pairs from ground truth (identify by ICD codes or keywords)",
         "Step 2: Extract antibiotic/antiviral drugs from DrugBank by ATC codes (J01, J05)",
@@ -61,8 +61,8 @@
         "Step 4: Evaluate on held-out infectious diseases",
         "Step 5: Success criteria: >30% R@30 for infectious diseases (2x improvement)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: The baseline 13.6% R@30 figure in CLAUDE.md was based on antibiotic CLASS performance, not overall infectious disease evaluation.\n\nACTUAL BASELINE: General GB model achieves 52.0% R@30 on 47 mappable infectious diseases (104/200 hits).\n\nSPECIALIST MODEL: Trained on 294 positive pairs, 756 negatives. Achieved only 36.4% R@30 on held-out test diseases (12 diseases, 22 GT drugs).\n\nGENERAL MODEL COMPARISON: On same test set, general model achieved 63.6% R@30.\n\nKEY FINDINGS:\n1. General model OUTPERFORMS specialist by 27.3% on infectious diseases\n2. Specialist has insufficient training data (294 pairs vs ~3000 for general model)\n3. The infectious disease \"problem\" identified in CLAUDE.md was about antibiotics being predicted for NON-infectious diseases, not about recall on actual infectious diseases\n4. The general model already performs well (52% R@30) on infectious diseases when evaluated properly\n\nIMPLICATION: A specialist model approach is not needed for infectious diseases. The real problem is filtering spurious antibiotic predictions for non-infectious diseases (already addressed by confidence_filter.py).",
+      "result_metric": "36.4% R@30 (specialist) vs 52.0% R@30 (general baseline) - specialist underperforms"
     },
     {
       "id": "h4",
@@ -490,10 +490,49 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h26",
+      "title": "Antibiotic Prediction Filtering Analysis",
+      "category": "evaluation",
+      "rationale": "The 13.6% figure was about antibiotics ranking poorly for infectious diseases. But evaluation shows model actually achieves 52% R@30 on infectious diseases. Need to understand: (1) which antibiotics are causing spurious predictions, (2) which non-infectious diseases they're predicted for, (3) whether existing confidence_filter.py adequately addresses this.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 26,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify all antibiotic predictions in top-100 for non-infectious diseases",
+        "Step 2: Categorize by antibiotic class and disease type",
+        "Step 3: Analyze overlap with existing confidence_filter.py rules",
+        "Step 4: Propose additional filtering rules if needed",
+        "Step 5: Document patterns for future reference"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h27",
+      "title": "Per-Category Baseline Documentation",
+      "category": "evaluation",
+      "rationale": "The discrepancy between reported 13.6% and actual 52% R@30 for infectious diseases suggests other category metrics may also be inaccurate. Need comprehensive baseline by disease category.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 27,
+      "status": "pending",
+      "steps": [
+        "Step 1: Evaluate GB model on all disease categories (cancer, autoimmune, cardiovascular, etc.)",
+        "Step 2: Record R@30 for each category with proper EC-to-DRKG mapping",
+        "Step 3: Compare with figures in CLAUDE.md",
+        "Step 4: Update CLAUDE.md with accurate category baselines",
+        "Step 5: Identify categories that actually underperform for targeted improvement"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
-    "h1"
+    "h1",
+    "h3"
   ],
   "learnings": [
     {
@@ -531,6 +570,12 @@
       "hypothesis_id": "h1",
       "finding": "TxGNN pre-computed predictions contain only top-50 drugs per disease. GT drugs are NOT in top-50 for most diseases (0% coverage). Ensemble blocked without GPU inference.",
       "implication": "h2 (Category-Routed Ensemble) has same blocker. TxGNN-based ensembles require live GPU inference, not pre-computed files."
+    },
+    {
+      "date": "2026-01-26",
+      "hypothesis_id": "h3",
+      "finding": "The 13.6% infectious disease recall was antibiotic CLASS performance, not disease-level evaluation. Actual general model R@30 on infectious diseases is 52.0%.",
+      "implication": "Specialist model unnecessary - general model already performs well. The real problem is spurious antibiotic predictions for non-infectious diseases, already handled by confidence_filter.py."
     }
   ]
 }

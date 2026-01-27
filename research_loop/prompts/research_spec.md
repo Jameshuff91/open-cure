@@ -1,0 +1,63 @@
+# Open-Cure Drug Repurposing Research Specification
+
+## Project Goal
+Improve drug repurposing predictions using the DRKG knowledge graph and machine learning models.
+
+## Current Baseline
+- **Model:** Gradient Boosting + Fuzzy Disease Matcher
+- **Performance:** 41.8% Recall@30 (per-drug)
+- **Evaluation:** 1,236 diseases, 3,618 drug-disease pairs
+
+## Key Files & Scripts
+
+### Models
+- `models/drug_repurposing_gb_enhanced.pkl` - Main GB model
+- `models/transe.pt` - TransE embeddings
+- `models/confidence_calibrator.pkl` - Confidence predictor
+
+### Evaluation Scripts
+- `scripts/evaluate_pathway_boost.py` - Main evaluation with Quad Boost
+- `src/disease_name_matcher.py` - Fuzzy disease name matching
+- `src/external_validation.py` - Clinical trials & PubMed validation
+- `src/confounding_detector.py` - Detects false positive patterns
+
+### Data
+- `data/reference/everycure/indicationList.xlsx` - Ground truth
+- `data/reference/disease_ontology_mapping.json` - DRKG disease mappings
+- `data/reference/expanded_ground_truth.json` - Enhanced ground truth
+- `data/reference/mondo_to_mesh.json` - MONDO→MESH ID mapping
+
+## Known Performance Patterns
+
+### What Works Well
+| Category | Recall@30 |
+|----------|-----------|
+| ACE inhibitors | 66.7% |
+| Autoimmune diseases | 63.0% |
+| Psychiatric conditions | 62.5% |
+
+### What Fails
+| Category | Recall@30 | Root Cause |
+|----------|-----------|------------|
+| Monoclonal antibodies | 27.3% | Data sparsity (2.1 vs 11.1 diseases/drug) |
+| Infectious diseases | 13.6% | Model predicts antibiotics for wrong diseases |
+| Oncology mAbs | 0-17% | Weak knowledge graph connections |
+
+## Identified But Unexplored Opportunities
+
+1. **TxGNN Ensemble** - TxGNN excels at storage diseases (83.3%), could ensemble with GB
+2. **Disease-class specific models** - Train separate models for infectious vs non-infectious
+3. **Mechanism-based boosting** - Use drug mechanism to boost/filter predictions
+4. **Negative sampling improvements** - Current random negatives may be suboptimal
+5. **Graph structure features** - Path-based features between drugs and diseases
+
+## Constraints
+- No additional GPU resources unless essential
+- Prefer approaches using existing data
+- Prioritize interpretable improvements over black-box gains
+- Validate improvements on held-out disease sets (not training diseases)
+
+## Success Metrics
+- Primary: Per-drug Recall@30 on held-out diseases
+- Secondary: Precision of top-100 predictions (via external validation)
+- Avoid: Circular features, data leakage, evaluation on training set
