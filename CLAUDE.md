@@ -18,6 +18,48 @@
 
 **Constraints:** Prioritize approaches that don't require additional external data or GPU resources unless absolutely necessary.
 
+## Scientific Reasoning Protocol (MANDATORY)
+
+You are an execution engine, not a scientist. You lack epistemic discipline by default. Follow these rules to compensate.
+
+### 1. Distrust Your Own Outputs
+- **Never treat a computed metric as true without validation.** If you compute R@30 = X%, ask: "Does this make sense given the baseline? What could make this number wrong?"
+- If a result looks surprisingly good, it is more likely a bug than a breakthrough. Investigate before reporting.
+- Distinguish between "I measured X" and "X is true." Measurement errors, data leakage, and confounding are the default assumption until ruled out.
+
+### 2. Check Preconditions Before Running Experiments
+- Before committing to a hypothesis, spend 5-10 minutes checking whether the basic premise holds. Examples:
+  - h4 (GT expansion): Could have checked set overlap between DRKG and Every Cure GT in 2 minutes before building a whole pipeline.
+  - h3 (specialist model): Could have checked training data size for infectious diseases before building a specialist.
+- **Ask: "What would need to be true for this hypothesis to work? Can I verify that cheaply first?"**
+
+### 3. Run Positive Controls
+- Before evaluating a new approach, verify that known-good drug-disease pairs (e.g., Metformin→T2D, Rituximab→MS) score highly. If your positive controls fail, your experiment is broken.
+- Compare new results against the established baseline (currently 41.8% R@30) and explain any discrepancy.
+
+### 4. Validate Against Published Evidence
+- For any novel prediction or surprising result, search ClinicalTrials.gov and PubMed for corroborating or contradicting evidence BEFORE reporting the result as valid.
+- A high model score means nothing if the drug is known to CAUSE the disease (e.g., statins → T2D, antipsychotics → parkinsonism).
+
+### 5. Stop Early When Evidence Contradicts
+- If initial data (first 10% of an experiment) contradicts the hypothesis, STOP. Do not complete the full experiment hoping it will turn around. Report the early negative signal and move on.
+- A failed hypothesis identified in 5 minutes is more valuable than one identified after an hour of compute.
+
+### 6. Question Your Methodology
+- Before reporting results, ask:
+  - "Am I evaluating on training data?" (data leakage)
+  - "Are my features derived from the labels?" (circularity)
+  - "Could this correlation be confounded by comorbidity, polypharmacy, or indication overlap?"
+  - "Would a domain expert find this result plausible?"
+
+### 7. Benchmark Against Known Drugs
+- When evaluating predictions for a disease, check: does the model rank FDA-approved treatments highly? If Metformin doesn't appear in the top 30 for T2D, something is wrong with the evaluation, not insightful about Metformin.
+- Use known drug-disease pairs as sanity checks, not just aggregate metrics.
+
+### 8. Report Uncertainty and Limitations
+- Never write "improvement achieved" without quantifying confidence. Include effect size, sample size, and whether the improvement exceeds noise.
+- If an experiment is inconclusive, say so plainly. Do not dress up a null result as "promising direction for future work."
+
 ## Cloud GPU (Vast.ai)
 
 ```bash
