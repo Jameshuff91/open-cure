@@ -16,15 +16,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Load TxGNN predictions from data/reference/txgnn_predictions.csv",
         "Step 2: For each disease-drug pair, compute min(GB_rank, TxGNN_rank)",
         "Step 3: Evaluate R@30 on held-out disease set using disease-level split",
         "Step 4: Success criteria: >43% R@30 (>1.2% improvement over baseline)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "CRITICAL BLOCKER: The pre-computed TxGNN predictions file (txgnn_predictions_final.csv) only contains TOP 50 drugs per disease. Ground truth drugs almost NEVER appear in TxGNN's top-50 predictions (0% coverage for common diseases). The 14.5% R@30 in archive was based on full TxGNN inference (where GT drugs might rank within 30 among 7954 drugs), not pre-computed rankings. Ensemble using pre-computed file achieves 0% TxGNN contribution + 42.0% GB = 42.0% ensemble (no improvement). To implement this properly, we would need to: (1) Run TxGNN inference on GPU for all drug-disease pairs, OR (2) Store full rankings (not just top-50). Current approach is blocked without GPU.",
+      "result_metric": "42.0% R@30 (ensemble) - no improvement over 42.0% GB baseline"
     },
     {
       "id": "h2",
@@ -34,7 +34,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Use src/disease_categorizer.py to classify all evaluation diseases",
         "Step 2: Route storage/psychiatric/dermatological/autoimmune to TxGNN predictions",
@@ -42,7 +42,7 @@
         "Step 4: Evaluate R@30 with proper held-out split",
         "Step 5: Success criteria: >44% R@30"
       ],
-      "findings": null,
+      "findings": "BLOCKED: Same issue as h1 - TxGNN pre-computed predictions only contain top-50 drugs per disease. GT drugs not in top-50 for most diseases. Category routing would have 0% contribution from TxGNN without live GPU inference. Requires GPU access to implement properly.",
       "result_metric": null
     },
     {
@@ -433,9 +433,68 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h23",
+      "title": "TxGNN Full Ranking Storage (GPU Required)",
+      "category": "data",
+      "rationale": "To enable TxGNN ensembles, store full drug rankings (not just top-50) for all diseases. This requires GPU to generate but enables offline ensemble evaluation.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 23,
+      "status": "pending",
+      "steps": [
+        "Step 1: Provision GPU on Vast.ai",
+        "Step 2: Load TxGNN model (txgnn_500epochs.pt)",
+        "Step 3: For each disease in ground truth, rank ALL 7954 drugs",
+        "Step 4: Save as txgnn_full_rankings.csv (disease, drug, rank)",
+        "Step 5: Re-test h1 and h2 with full rankings"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h24",
+      "title": "GB Model Error Analysis by Drug Class",
+      "category": "evaluation",
+      "rationale": "GB model achieves 42% overall but varies by drug class. Understanding which drug classes perform best/worst can guide targeted improvements without TxGNN.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 24,
+      "status": "pending",
+      "steps": [
+        "Step 1: Classify all drugs by ATC code (1st level)",
+        "Step 2: Calculate R@30 per drug class",
+        "Step 3: Identify best performers (e.g., ACE inhibitors 66.7%)",
+        "Step 4: Identify worst performers (e.g., biologics 27.3%)",
+        "Step 5: Document patterns for targeted feature engineering"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h25",
+      "title": "Embedding Distance Calibration",
+      "category": "feature",
+      "rationale": "Current GB model uses raw embedding distances. Calibrating distances by drug/disease class could improve predictions for underperforming categories.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 25,
+      "status": "pending",
+      "steps": [
+        "Step 1: Compute embedding distances for all GT pairs",
+        "Step 2: Compute distances for random negatives",
+        "Step 3: Fit class-specific distance thresholds",
+        "Step 4: Calibrate model predictions using class-specific priors",
+        "Step 5: Evaluate R@30 improvement"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
-  "completed": [],
+  "completed": [
+    "h1"
+  ],
   "learnings": [
     {
       "date": "2026-01-25",
@@ -466,6 +525,12 @@
       "date": "2026-01-25",
       "finding": "Validation precision: 22.5% for top predictions (batches 1+2)",
       "source": "validation_sessions.md"
+    },
+    {
+      "date": "2026-01-26",
+      "hypothesis_id": "h1",
+      "finding": "TxGNN pre-computed predictions contain only top-50 drugs per disease. GT drugs are NOT in top-50 for most diseases (0% coverage). Ensemble blocked without GPU inference.",
+      "implication": "h2 (Category-Routed Ensemble) has same blocker. TxGNN-based ensembles require live GPU inference, not pre-computed files."
     }
   ]
 }

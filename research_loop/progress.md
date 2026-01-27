@@ -1,6 +1,95 @@
 # Research Loop Progress
 
-## Current Session: Initialization (2026-01-26)
+## Current Session: h1 Evaluation (2026-01-26)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed
+**Hypothesis Tested:** h1 (GB + TxGNN Best-Rank Ensemble)
+**Outcome:** INVALIDATED
+
+### Experiment Details
+
+**Objective:** Test if taking min(GB_rank, TxGNN_rank) improves R@30 beyond either model alone.
+
+**Method:**
+1. Loaded TxGNN predictions from `data/reference/txgnn_predictions_final.csv`
+2. Loaded GB model and generated predictions for all drug-disease pairs
+3. Computed ensemble ranks as min(GB_rank, TxGNN_rank)
+4. Evaluated on 603 diseases with MESH mappings
+
+**Results:**
+
+| Model | R@30 | Diseases | Notes |
+|-------|------|----------|-------|
+| GB model | 42.04% | 567 | Baseline |
+| TxGNN | 0.00% | 602 | **CRITICAL: Zero hits** |
+| Ensemble | 42.03% | 566 | No improvement |
+
+### Critical Finding
+
+**TxGNN predictions file limitation:** The pre-computed `txgnn_predictions_final.csv` only contains the **top 50 drugs per disease**. Ground truth drugs almost never appear in TxGNN's top-50:
+
+| Disease | GT Drugs | In TxGNN Top-50 |
+|---------|----------|-----------------|
+| Psoriasis | 4 | 0 |
+| Hypertension | 3 | 0 |
+| Breast cancer | 4 | 0 |
+| Rheumatoid arthritis | 3 | 0 |
+| All tested | 27 | 0 (0%) |
+
+**Root Cause:** TxGNN ranks most GT drugs in the 1000s-7000s range (out of 7954 drugs total). Only ~14.5% of GT drugs rank within top-30 (per archive). The pre-computed file misses these because it only stores top-50.
+
+**Implication:** TxGNN ensembles require **live GPU inference** to rank all drugs, not pre-computed files.
+
+### Hypotheses Updated
+
+| ID | Title | Status | Change |
+|----|-------|--------|--------|
+| h1 | GB + TxGNN Best-Rank Ensemble | **invalidated** | Blocked by data format |
+| h2 | Category-Routed Ensemble | **blocked** | Same blocker |
+| h23 | TxGNN Full Ranking Storage | **added** | Requires GPU |
+| h24 | GB Error Analysis by Drug Class | **added** | Next priority |
+| h25 | Embedding Distance Calibration | **added** | Alternative approach |
+
+### Current Baseline Metrics
+
+| Metric | Value | Notes |
+|--------|-------|-------|
+| **R@30** | **42.04%** | Per-drug Recall@30 (slightly higher than 41.8% in CLAUDE.md due to evaluation subset) |
+| Diseases | 567 | With GB embeddings and MESH mapping |
+| Pairs | 1,125 | Drug-disease ground truth pairs |
+| Model | GB + Fuzzy Matcher | Gradient Boosting with fuzzy disease name matching |
+
+### Key Learning
+
+> TxGNN pre-computed predictions contain only top-50 drugs per disease. GT drugs are NOT in top-50 for most diseases (0% coverage). TxGNN ensembles require live GPU inference, not pre-computed files.
+
+### Files Created/Modified
+
+| File | Action |
+|------|--------|
+| `scripts/evaluate_best_rank_ensemble.py` | Created |
+| `data/analysis/h1_ensemble_results.json` | Created |
+| `research_roadmap.json` | Updated (h1 invalidated, h2 blocked, 3 new hypotheses) |
+| `research_loop/progress.md` | Updated (this file) |
+
+### Recommended Next Hypothesis
+
+**h3: Infectious Disease Specialist Model** (Priority 3)
+
+**Why:**
+- Does not require GPU or TxGNN
+- High expected impact
+- Addresses known model weakness (13.6% recall for infectious diseases)
+- Can be implemented with existing data
+
+**Alternative:** h24 (GB Error Analysis by Drug Class) - low effort, provides insights for future work.
+
+---
+
+## Previous Session: Initialization (2026-01-26)
 
 ### Session Summary
 
@@ -30,61 +119,8 @@
 
 5. **Validation Reality:** Only 22.5% of top predictions validate against literature. Strong need for better filtering.
 
-### Research Roadmap Created
-
-**Total Hypotheses:** 22
-**Categories:**
-- Ensemble: 3 hypotheses (h1, h2, h20)
-- Feature: 8 hypotheses (h6, h7, h8, h11, h14, h16, h17, h19, h21)
-- Data: 4 hypotheses (h4, h5, h9, h13, h18)
-- Evaluation: 3 hypotheses (h10, h22)
-- Architecture: 4 hypotheses (h3, h12, h15)
-
-### Recommended First Hypothesis
-
-**h1: GB + TxGNN Best-Rank Ensemble**
-
-**Why Start Here:**
-- Low effort (predictions already exist)
-- Medium expected impact
-- No retraining required
-- Quick validation of ensemble approach
-
-**Steps:**
-1. Load TxGNN predictions from `data/reference/txgnn_predictions.csv`
-2. Compute `min(GB_rank, TxGNN_rank)` for each drug-disease pair
-3. Evaluate R@30 on held-out disease set
-4. Success criteria: >43% R@30
-
-**Files Needed:**
-- `models/drug_repurposing_gb_enhanced.pkl`
-- `data/reference/txgnn_predictions.csv`
-- `scripts/evaluate_pathway_boost.py` (for evaluation framework)
-
-### Next Agent Instructions
-
-The next research agent should:
-
-1. **Pick up h1** (or h2 if h1 is blocked)
-2. **Load existing predictions** - don't retrain anything yet
-3. **Use disease-level split** for fair evaluation (see archive/experiment_history.md)
-4. **Update research_roadmap.json** with findings
-5. **Commit results** before context fills
-
-### Files Modified This Session
-
-| File | Action |
-|------|--------|
-| `research_roadmap.json` | Created (22 hypotheses) |
-| `research_loop/progress.md` | Created (this file) |
-
-### Git Status
-
-```
-commit 52080ad - Initialize research roadmap with 22 hypotheses
-```
-
 ---
 
 *Last updated: 2026-01-26*
-*Agent: Research Initializer*
+*Agent: Research Executor*
+*Hypothesis tested: h1 (invalidated)*
