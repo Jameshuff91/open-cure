@@ -1,0 +1,26 @@
+{
+  "hypothesis": "h5",
+  "title": "Hard Negative Mining",
+  "baseline": {
+    "recall_at_30": 0.4141519250780437,
+    "total_hits": 1194,
+    "total_gt_drugs": 2883
+  },
+  "hard_negative_model": {
+    "recall_at_30": 0.14498785986819285,
+    "total_hits": 418,
+    "total_gt_drugs": 2883,
+    "auroc": 0.9409057923208867,
+    "auprc": 0.8621519733301225
+  },
+  "training_stats": {
+    "positive_pairs": 2861,
+    "negative_pairs": 5299,
+    "hard_negatives_fp": 1000,
+    "hard_negatives_confounding": 7,
+    "random_negatives": 4292,
+    "hard_neg_ratio_actual": 0.19003585582185317
+  },
+  "improvement": -0.26916406520985087,
+  "success": false
+}

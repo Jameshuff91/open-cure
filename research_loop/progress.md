@@ -1,6 +1,96 @@
 # Research Loop Progress
 
-## Current Session: h4 Evaluation (2026-01-26)
+## Current Session: h5 Evaluation (2026-01-27)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed
+**Hypothesis Tested:** h5 (Hard Negative Mining)
+**Outcome:** INVALIDATED — **CRITICAL DISCOVERY: Model generalization failure**
+
+### Experiment Details
+
+**Objective:** Test whether training with hard negatives (high-scoring false positives, confounding patterns) improves R@30.
+
+**Key Innovation (v2):** Used disease-level holdout (80/20 split) instead of pair-level split. This is the CORRECT methodology for evaluating novel disease generalization.
+
+**Approach:**
+1. Split 465 GT diseases into 354 train / 88 test (disease-level holdout)
+2. Trained 5 strategies: random negatives, drug-treats-other, model-scored FP (25%, 50%), and confounding patterns
+3. Evaluated ALL strategies + existing baseline model on held-out test diseases
+4. Ran positive controls (Metformin→T2D, Rituximab→MS, Imatinib→CML, Lisinopril→HTN)
+
+### Results
+
+| Strategy | R@30 (test) | Delta |
+|----------|-------------|-------|
+| **Baseline (existing model)** | **45.89%** | **---** |
+| A: Random negatives | 12.43% | -33.5% |
+| B: Drug-treats-other | 3.29% | -42.6% |
+| C: B + 50% model FP | 5.67% | -40.2% |
+| D: B + 25% model FP | 8.59% | -37.3% |
+| E: D + confounding | 7.31% | -38.6% |
+
+### CRITICAL DISCOVERY
+
+**The GB model with TransE embedding features CANNOT generalize to unseen diseases.**
+
+Every freshly trained model collapses to 3-12% R@30 on held-out diseases, regardless of negative sampling strategy. The existing model works (45.89%) because it was trained on ALL diseases using pair-level split — it memorizes per-disease patterns.
+
+**Root Cause Analysis:**
+- TransE embeddings encode entity-specific information
+- concat/product/diff features capture pairwise relationships that are disease-specific
+- GB model learns to recognize specific disease embedding patterns, not transferable drug-disease rules
+- With 20% of diseases removed from training, the model has no basis for scoring unseen diseases
+
+**Implications:**
+1. The reported 41.8% R@30 is within-distribution performance, NOT novel disease generalization
+2. The Node2Vec "41.9% on held-out diseases" is UNVERIFIED (code uses pair-level split)
+3. Hard negative mining is irrelevant — the bottleneck is architectural, not data quality
+4. Future work must focus on inductive approaches: graph features, gene-based representations, or models that can score unseen diseases
+
+**Positive Controls:**
+| Drug | Baseline Rank | Strategy A Rank | Strategy B Rank |
+|------|--------------|-----------------|-----------------|
+| Rituximab→MS | 6 | 49 | 189 |
+| Imatinib→CML | 1 | 15 | 93 |
+| Lisinopril→HTN | 12 | 406 | 69 |
+| Metformin→T2D | 3,426 | 317 | 485 |
+
+### Files Created/Modified
+
+| File | Action |
+|------|--------|
+| `scripts/evaluate_hard_negatives_v2.py` | Created |
+| `data/analysis/h5_hard_negatives_v2_results.json` | Created |
+| `research_roadmap.json` | Updated (h5 invalidated, 5 new hypotheses) |
+| `CLAUDE.md` | Updated with generalization gap finding |
+
+### New Hypotheses Added
+
+| ID | Title | Priority | Rationale |
+|----|-------|----------|-----------|
+| h29 | Verify Node2Vec Held-Out Generalization | 1 | Must verify if Node2Vec actually generalizes |
+| h30 | Graph Feature-Based Generalization | 2 | Topological features may transfer |
+| h31 | Inductive Disease Representation via Genes | 3 | Gene-based features are inductive |
+| h32 | Embedding Similarity Ranking (No ML) | 4 | Cosine similarity needs no training |
+| h33 | Quantify Generalization Gap | 5 | Statistical verification with multiple seeds |
+
+### Recommended Next Hypothesis
+
+**h29: Verify Node2Vec Held-Out Disease Generalization** (Priority 1)
+
+**Why:**
+- Highest priority: must establish whether ANY approach generalizes before investing in new architectures
+- Low effort: just re-run existing evaluation with disease-level split on Node2Vec embeddings
+- Resolves whether the "41.9%" claim is valid
+- If Node2Vec generalizes, we know the embedding method matters (not just the classifier)
+- If it doesn't generalize, we need fundamentally new approaches (graph features, gene-based, inductive)
+
+---
+
+## Previous Session: h4 Evaluation (2026-01-26)
 
 ### Session Summary
 

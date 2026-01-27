@@ -92,7 +92,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Generate hard negatives: drugs with high GB score but not in GT",
         "Step 2: Include confounding patterns (statins->T2D, checkpoint->UC) as explicit negatives",
@@ -100,8 +100,8 @@
         "Step 4: Evaluate R@30 on held-out diseases",
         "Step 5: Success criteria: >42.5% R@30 + reduced false positive rate"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Comprehensive experiment with 5 negative sampling strategies (v2) reveals a FUNDAMENTAL problem: the GB model cannot generalize to unseen diseases under disease-level holdout.\n\nRESULTS (88 held-out test diseases, 547 GT pairs):\n- Baseline (existing model, trained on ALL diseases): 45.89% R@30\n- Strategy A (random negatives): 12.43% R@30 (-33.5%)\n- Strategy B (drug-treats-other): 3.29% R@30 (-42.6%)\n- Strategy C (B + 50% model FP): 5.67% R@30 (-40.2%)\n- Strategy D (B + 25% model FP): 8.59% R@30 (-37.3%)\n- Strategy E (D + confounding): 7.31% R@30 (-38.6%)\n\nALL freshly trained models collapse on held-out diseases, regardless of negative sampling strategy.\n\nROOT CAUSE: The existing model was trained using random pair-level split (train_test_split with stratify=y), NOT disease-level holdout. It learns disease-specific embedding patterns that don't transfer to unseen diseases. The 41.8% R@30 baseline metric reflects within-distribution performance, not novel disease generalization.\n\nThe prior v1 result (14.5% collapse) was also caused by this fundamental issue, not by hard negative mining specifically.\n\nCRITICAL INSIGHT: Hard negative mining is irrelevant when the model architecture itself cannot generalize. The GB model operating on TransE embedding features (concat/product/diff) essentially memorizes per-disease patterns rather than learning transferable drug-disease relationships.\n\nPOSITIVE CONTROLS:\n- Baseline: Rituximab→MS rank 6, Imatinib→CML rank 1, Lisinopril→HTN rank 12, Metformin→T2D rank 3426\n- All retrained models: positive controls degraded significantly\n\nNote: Node2Vec + XGBoost reportedly achieved 41.9% R@30 on held-out diseases, suggesting the embedding method matters more than the negative sampling strategy.",
+      "result_metric": "ALL strategies failed: best retrained model 12.43% R@30 vs 45.89% baseline on held-out diseases"
     },
     {
       "id": "h6",
@@ -147,10 +147,10 @@
       "id": "h8",
       "title": "Confidence-Based Post-Filtering",
       "category": "evaluation",
-      "rationale": "Confidence calibrator achieves 0.962 AUROC. Using it to filter low-confidence predictions could improve precision without hurting recall. Filter threshold analysis needed.",
+      "rationale": "Confidence calibrator achieves 0.962 AUROC. Using it to filter low-confidence predictions could improve precision without hurting recall. Filter threshold analysis needed. NOTE: h5 findings suggest this operates on within-distribution performance only. Still useful for the current (non-generalizing) model's predictions.",
       "expected_impact": "low",
       "effort": "low",
-      "priority": 8,
+      "priority": 15,
       "status": "pending",
       "steps": [
         "Step 1: Load confidence_calibrator.pkl model",
@@ -549,11 +549,114 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h29",
+      "title": "Verify Node2Vec Held-Out Disease Generalization",
+      "category": "evaluation",
+      "rationale": "h5 revealed GB+TransE can't generalize to unseen diseases (45.89% -> 3-12% R@30 with disease holdout). CLAUDE.md claims Node2Vec+XGBoost achieved 41.9% on held-out diseases, but code review shows train_with_node2vec.py uses PAIR-LEVEL split, not disease-level. Must verify: does Node2Vec genuinely generalize, or was this also inflated?",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load Node2Vec embeddings (256-dim from DRKG)",
+        "Step 2: Apply SAME disease-level 80/20 split used in h5",
+        "Step 3: Train XGBoost on training diseases only",
+        "Step 4: Evaluate R@30 on held-out test diseases",
+        "Step 5: Compare with TransE-based model under identical conditions",
+        "Step 6: If Node2Vec generalizes, determine WHY (embedding properties, dimensionality, training method)",
+        "Success criteria: Establish honest baseline for novel disease generalization"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h30",
+      "title": "Graph Feature-Based Generalization",
+      "category": "architecture",
+      "rationale": "h5 showed embedding-only features (concat/product/diff) don't generalize to unseen diseases. Graph structural features (degree, path count, shared neighbors) may generalize better because they capture TOPOLOGICAL patterns that transfer across diseases. A drug that shares gene targets with known treatments for SIMILAR diseases should generalize.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load DRKG graph (data/drkg/drkg.tsv)",
+        "Step 2: For each drug-disease pair, compute: shortest path, number of paths <=3 hops, shared gene neighbors, drug degree, disease degree",
+        "Step 3: Train XGBoost on graph features ONLY (no embeddings) with disease-level holdout",
+        "Step 4: Train XGBoost on graph features + embeddings with disease-level holdout",
+        "Step 5: Evaluate R@30 on held-out diseases",
+        "Step 6: Compare generalization of graph-only vs embedding-only vs combined",
+        "Success criteria: >20% R@30 on held-out diseases (vs 3-12% for embedding-only)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h31",
+      "title": "Inductive Disease Representation via Gene-Disease Features",
+      "category": "architecture",
+      "rationale": "The GB model fails on unseen diseases because disease EMBEDDINGS are opaque vectors that the model memorizes. If instead we represent diseases by their GENE associations (from disease_genes.json), the model could learn transferable patterns: 'drugs targeting protein X help diseases involving gene Y'. This is inductive — new diseases with known gene associations can be scored.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load disease_genes.json and drug_targets.json",
+        "Step 2: Create disease feature vector: binary/count of associated genes (or top-N PCA components)",
+        "Step 3: Create drug feature vector: binary/count of target genes",
+        "Step 4: Features for pair: target-gene overlap, shared pathway count, drug target PCA, disease gene PCA",
+        "Step 5: Train XGBoost with disease-level holdout",
+        "Step 6: Evaluate R@30 on held-out diseases",
+        "Success criteria: >25% R@30 on held-out diseases"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h32",
+      "title": "Embedding Similarity Ranking (No ML Model)",
+      "category": "evaluation",
+      "rationale": "Perhaps the simplest approach is the right one: rank drugs by COSINE SIMILARITY to disease in embedding space, without training any ML model. This is inherently inductive (no disease-specific training needed). Previous attempts with TransE cosine caused data leakage, but with Node2Vec or properly evaluated TransE, simple similarity might be competitive.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each test disease, compute cosine similarity to ALL drugs using TransE embeddings",
+        "Step 2: Rank drugs by similarity and compute R@30",
+        "Step 3: Repeat with Node2Vec embeddings",
+        "Step 4: Compare with GB model baseline",
+        "Step 5: This requires NO training, so disease-level holdout is automatic",
+        "Success criteria: Establish model-free baseline R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h33",
+      "title": "Quantify Existing Model's True Generalization Gap",
+      "category": "evaluation",
+      "rationale": "The h5 experiment used a single 80/20 disease split with seed=42. The 45.89% baseline vs 3-12% retrained gap needs statistical verification: (1) multiple random seeds for disease splits, (2) varying train/test ratios, (3) stratified splits by disease category. This establishes the true generalization gap with confidence intervals.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: Run existing model evaluation with 5 different random seeds for disease splits",
+        "Step 2: Run B_drug_treats_other strategy with same 5 seeds",
+        "Step 3: Compute mean and std R@30 for both",
+        "Step 4: Verify the generalization gap is consistent (not a fluke of one split)",
+        "Success criteria: Quantify gap with confidence intervals"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
     "h1",
-    "h3"
+    "h3",
+    "h5"
   ],
   "learnings": [
     {
@@ -603,6 +706,12 @@
       "hypothesis_id": "h4",
       "finding": "All 4,968 DRKG treatment edges are already in the 58K-pair GT. Only 6 additional FDA pairs found via manual search, 5/6 hit@30. Impact: +0.22 pp.",
       "implication": "GT expansion from public databases provides diminishing returns. Every Cure GT is comprehensive. Future expansion requires proprietary indication databases or careful manual curation."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h5",
+      "finding": "CRITICAL FINDING: GB model with TransE embedding features (concat/product/diff) cannot generalize to held-out diseases. ALL 5 negative sampling strategies collapsed from 45.89% to 3-12% R@30 on disease-level holdout. The existing model's 41.8% R@30 is within-distribution performance, not novel disease generalization.",
+      "implication": "This fundamentally changes the research direction: (1) Feature engineering and negative sampling improvements are IRRELEVANT if the model can't generalize; (2) The reported 41.8% R@30 is inflated — true generalization performance is much lower; (3) The Node2Vec approach (reportedly 41.9% on held-out diseases) may use a fundamentally different/better evaluation or embedding approach; (4) Future work must focus on architecture changes (better embeddings, graph features, or inductive models) rather than training data improvements."
     }
   ]
 }

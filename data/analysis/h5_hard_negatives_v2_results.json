@@ -1,0 +1,272 @@
+{
+  "hypothesis": "h5",
+  "title": "Hard Negative Mining v2",
+  "version": "v2",
+  "design": {
+    "disease_level_holdout": true,
+    "train_diseases": 354,
+    "test_diseases": 88,
+    "train_pairs": 2331,
+    "test_pairs": 552
+  },
+  "results": {
+    "baseline": {
+      "recall_at_30": 0.45886654478976235,
+      "total_hits": 251,
+      "total_gt_drugs": 547,
+      "diseases_evaluated": 87,
+      "positive_controls": [
+        {
+          "drug": "metformin",
+          "disease_id": "drkg:Disease::MESH:D003924",
+          "rank": 3426,
+          "score": 0.6272129217557212,
+          "hit_at_30": false
+        },
+        {
+          "drug": "rituximab",
+          "disease_id": "drkg:Disease::MESH:D009103",
+          "rank": 6,
+          "score": 0.9552381042811691,
+          "hit_at_30": true
+        },
+        {
+          "drug": "imatinib",
+          "disease_id": "drkg:Disease::MESH:D015464",
+          "rank": 1,
+          "score": 0.9413603919405689,
+          "hit_at_30": true
+        },
+        {
+          "drug": "lisinopril",
+          "disease_id": "drkg:Disease::MESH:D006973",
+          "rank": 12,
+          "score": 0.9569727233643651,
+          "hit_at_30": true
+        }
+      ]
+    },
+    "A_random": {
+      "description": "Random negatives only",
+      "recall_at_30": 0.12431444241316271,
+      "delta_vs_baseline": -0.33455210237659966,
+      "total_hits": 68,
+      "total_gt_drugs": 547,
+      "diseases_evaluated": 87,
+      "training_stats": {
+        "positive_pairs": 2314,
+        "negative_pairs": 6942,
+        "strategy": "random",
+        "neg_ratio": 3
+      },
+      "positive_controls": [
+        {
+          "drug": "metformin",
+          "disease_id": "drkg:Disease::MESH:D003924",
+          "rank": 317,
+          "score": 0.9923414470283968,
+          "hit_at_30": false
+        },
+        {
+          "drug": "rituximab",
+          "disease_id": "drkg:Disease::MESH:D009103",
+          "rank": 49,
+          "score": 0.9919951908016379,
+          "hit_at_30": false
+        },
+        {
+          "drug": "imatinib",
+          "disease_id": "drkg:Disease::MESH:D015464",
+          "rank": 15,
+          "score": 0.9919314050052236,
+          "hit_at_30": true
+        },
+        {
+          "drug": "lisinopril",
+          "disease_id": "drkg:Disease::MESH:D006973",
+          "rank": 406,
+          "score": 0.991337293608745,
+          "hit_at_30": false
+        }
+      ]
+    },
+    "B_drug_treats_other": {
+      "description": "Drugs-treat-other-disease negatives (current approach)",
+      "recall_at_30": 0.03290676416819013,
+      "delta_vs_baseline": -0.42595978062157225,
+      "total_hits": 18,
+      "total_gt_drugs": 547,
+      "diseases_evaluated": 87,
+      "training_stats": {
+        "positive_pairs": 2314,
+        "negative_pairs": 6942,
+        "strategy": "drug_treats_other",
+        "neg_ratio": 3
+      },
+      "positive_controls": [
+        {
+          "drug": "metformin",
+          "disease_id": "drkg:Disease::MESH:D003924",
+          "rank": 485,
+          "score": 0.9166579914976911,
+          "hit_at_30": false
+        },
+        {
+          "drug": "rituximab",
+          "disease_id": "drkg:Disease::MESH:D009103",
+          "rank": 189,
+          "score": 0.905350825912164,
+          "hit_at_30": false
+        },
+        {
+          "drug": "imatinib",
+          "disease_id": "drkg:Disease::MESH:D015464",
+          "rank": 93,
+          "score": 0.8103178278812622,
+          "hit_at_30": false
+        },
+        {
+          "drug": "lisinopril",
+          "disease_id": "drkg:Disease::MESH:D006973",
+          "rank": 69,
+          "score": 0.9752394779158738,
+          "hit_at_30": false
+        }
+      ]
+    },
+    "C_model_fp_50": {
+      "description": "B + 50% model-scored false positives",
+      "recall_at_30": 0.056672760511883,
+      "delta_vs_baseline": -0.40219378427787933,
+      "total_hits": 31,
+      "total_gt_drugs": 547,
+      "diseases_evaluated": 87,
+      "training_stats": {
+        "positive_pairs": 2314,
+        "negative_pairs": 6942,
+        "strategy": "model_fp",
+        "neg_ratio": 3
+      },
+      "positive_controls": [
+        {
+          "drug": "metformin",
+          "disease_id": "drkg:Disease::MESH:D003924",
+          "rank": 386,
+          "score": 0.9232718865614573,
+          "hit_at_30": false
+        },
+        {
+          "drug": "rituximab",
+          "disease_id": "drkg:Disease::MESH:D009103",
+          "rank": 8,
+          "score": 0.9507921079337714,
+          "hit_at_30": true
+        },
+        {
+          "drug": "imatinib",
+          "disease_id": "drkg:Disease::MESH:D015464",
+          "rank": 6,
+          "score": 0.9409943757851377,
+          "hit_at_30": true
+        },
+        {
+          "drug": "lisinopril",
+          "disease_id": "drkg:Disease::MESH:D006973",
+          "rank": 32,
+          "score": 0.989687080575941,
+          "hit_at_30": false
+        }
+      ]
+    },
+    "D_model_fp_25": {
+      "description": "B + 25% model-scored false positives",
+      "recall_at_30": 0.08592321755027423,
+      "delta_vs_baseline": -0.37294332723948814,
+      "total_hits": 47,
+      "total_gt_drugs": 547,
+      "diseases_evaluated": 87,
+      "training_stats": {
+        "positive_pairs": 2314,
+        "negative_pairs": 6942,
+        "strategy": "model_fp",
+        "neg_ratio": 3
+      },
+      "positive_controls": [
+        {
+          "drug": "metformin",
+          "disease_id": "drkg:Disease::MESH:D003924",
+          "rank": 698,
+          "score": 0.8537377543033916,
+          "hit_at_30": false
+        },
+        {
+          "drug": "rituximab",
+          "disease_id": "drkg:Disease::MESH:D009103",
+          "rank": 14,
+          "score": 0.9239276115628491,
+          "hit_at_30": true
+        },
+        {
+          "drug": "imatinib",
+          "disease_id": "drkg:Disease::MESH:D015464",
+          "rank": 3,
+          "score": 0.9060482104841702,
+          "hit_at_30": true
+        },
+        {
+          "drug": "lisinopril",
+          "disease_id": "drkg:Disease::MESH:D006973",
+          "rank": 61,
+          "score": 0.9765777444674819,
+          "hit_at_30": false
+        }
+      ]
+    },
+    "E_model_fp_25_confounding": {
+      "description": "B + 25% model FP + confounding patterns",
+      "recall_at_30": 0.07312614259597806,
+      "delta_vs_baseline": -0.3857404021937843,
+      "total_hits": 40,
+      "total_gt_drugs": 547,
+      "diseases_evaluated": 87,
+      "training_stats": {
+        "positive_pairs": 2314,
+        "negative_pairs": 6942,
+        "strategy": "model_fp_confounding",
+        "neg_ratio": 3
+      },
+      "positive_controls": [
+        {
+          "drug": "metformin",
+          "disease_id": "drkg:Disease::MESH:D003924",
+          "rank": 678,
+          "score": 0.854267055481224,
+          "hit_at_30": false
+        },
+        {
+          "drug": "rituximab",
+          "disease_id": "drkg:Disease::MESH:D009103",
+          "rank": 4,
+          "score": 0.938686357239652,
+          "hit_at_30": true
+        },
+        {
+          "drug": "imatinib",
+          "disease_id": "drkg:Disease::MESH:D015464",
+          "rank": 1,
+          "score": 0.9252112036064006,
+          "hit_at_30": true
+        },
+        {
+          "drug": "lisinopril",
+          "disease_id": "drkg:Disease::MESH:D006973",
+          "rank": 233,
+          "score": 0.9727782748002151,
+          "hit_at_30": false
+        }
+      ]
+    }
+  },
+  "best_strategy": "A_random",
+  "success": false
+}

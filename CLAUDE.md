@@ -94,25 +94,35 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 | Model | Per-Drug R@30 | Notes |
 |-------|---------------|-------|
 | **GB + Fuzzy Matcher (fixed)** | **41.8%** | Best baseline, 1,236 diseases, 3,618 pairs |
-| Node2Vec (held-out diseases) | 41.9% | Fair evaluation for novel discovery |
+| GB + Fuzzy (held-out diseases) | **45.9% / 3-12%*** | *Existing model OK, retrained collapses |
+| Node2Vec (held-out diseases) | 41.9%?? | **UNVERIFIED** — likely pair-level split, not true disease holdout |
 | GB + Quad Boost (inflated) | 47.5%* | *Circular features - NOT real improvement |
 | TxGNN | 6.7% | Near-random for most diseases |
 
 *The 47.5% was inflated by evaluating on training diseases with circular boost features
+**CRITICAL (2026-01-27): GB model trained from scratch cannot generalize to unseen diseases (3-12% R@30 on disease-level holdout). The 41.8% is within-distribution performance.
 
-**Progression:** 37.4% → 41.8% (fuzzy matcher fix)
+**Progression:** 37.4% → 41.8% (fuzzy matcher fix) → **Generalization crisis identified**
 
 ## Key Learnings
 
 ### What Works
 1. **Fuzzy Disease Matching** - 41.8% R@30 (up from 37.4% exact-only)
-2. **Node2Vec + XGBoost** - 41.9% R@30 on held-out diseases (fair evaluation)
-3. **Disease holdout splits** - Required for honest novel discovery evaluation
-4. **DRKG graph embeddings** - 256-dim Node2Vec captures treatment relationships
+2. **Disease holdout splits** - Required for honest novel discovery evaluation
+3. **DRKG graph embeddings** - 256-dim Node2Vec captures treatment relationships
+
+### CRITICAL: Generalization Gap (2026-01-27)
+- **GB + TransE features (concat/product/diff) does NOT generalize to unseen diseases**
+- Existing model: 45.9% R@30 on held-out test diseases (trained on ALL diseases with pair-level split)
+- Retrained with disease-level holdout: 3-12% R@30 (5 strategies all collapsed)
+- Root cause: model memorizes per-disease embedding patterns, doesn't learn transferable drug-disease relationships
+- Node2Vec "41.9% on held-out diseases" is UNVERIFIED — code uses pair-level split
+- **Next priority**: Verify Node2Vec generalization, then explore graph features or inductive approaches
 
 ### What SEEMED to Work (but was data leakage)
 1. **Boost features** - Target overlap, chemical similarity, ATC were circular
 2. **Evaluating on training diseases** - Inflated recall from 41.9% to 47.5%
+3. **All negative sampling strategies** - Hard negatives, random, drug-treats-other ALL fail under disease holdout
 
 ### What Fails
 1. **Embedding Similarity** - TransE cosine similarity causes data leakage
@@ -122,6 +132,8 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 5. **Circular Boost Features** - Target overlap, chemical similarity, ATC codes are circular
 6. **Biologic Naming Penalty** - WHO INN naming convention unreliable for filtering
 7. **Specialist Models** - Infectious disease specialist (36%) underperforms general model (52%)
+8. **GB Disease Generalization** - Model cannot generalize to unseen diseases (45.9% → 3-12% R@30)
+9. **Hard Negative Mining** - All 5 strategies fail under disease holdout (not a sampling issue, architectural)
 
 ## Biologic Gap Analysis (2026-01-25)
 
