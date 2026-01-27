@@ -1,6 +1,93 @@
 # Research Loop Progress
 
-## Current Session: h3 Evaluation (2026-01-26)
+## Current Session: h4 Evaluation (2026-01-26)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed
+**Hypothesis Tested:** h4 (Expand Ground Truth with DrugBank/ChEMBL Indications)
+**Outcome:** INCONCLUSIVE
+
+### Experiment Details
+
+**Objective:** Expand the ground truth dataset with additional FDA-approved indications from DrugBank/ChEMBL to improve evaluation accuracy and potentially R@30.
+
+**Approach:**
+1. Analyzed existing DrugBank data availability
+2. Compared DRKG treatment edges with current GT
+3. Identified missing FDA-approved pairs from validation
+4. Evaluated impact of adding new pairs
+
+### Key Findings
+
+**1. GT Already Contains DRKG:**
+- All 4,968 DRKG `DRUGBANK::treats` edges are in the current GT
+- GT has 58,016 pairs (53K more than DRKG alone)
+- Every Cure annotations provide comprehensive coverage
+
+**2. Missing FDA Pairs Identified:**
+| Drug | Disease | Rank | Hit@30 |
+|------|---------|------|--------|
+| Pembrolizumab | Breast Cancer | 7 | ✓ |
+| Natalizumab | Multiple Sclerosis | 16 | ✓ |
+| Erlotinib | Pancreatic Cancer | 16 | ✓ |
+| Cetuximab | Colorectal Cancer | 1 | ✓ |
+| Oxaliplatin | Colorectal Cancer | 37 | ✗ |
+| Bevacizumab | Colorectal Cancer | 7 | ✓ |
+
+**3. Impact Analysis:**
+- 5/6 (83.3%) missing pairs already hit@30
+- Adding 6 pairs: R@30 increases by **+0.22 pp** (42.04% → 42.26%)
+- Impact is marginal because few pairs missing and most already hit
+
+### Data Availability Blockers
+
+| Data Source | Status | Notes |
+|-------------|--------|-------|
+| DrugBank lookup | ✓ Available | Only ID-name mappings, no indications |
+| DrugBank XML | ✗ Missing | Requires license/download |
+| ChEMBL API | ✗ Not implemented | Would need API integration |
+| DRKG treats | ✓ Already in GT | 100% overlap with current GT |
+
+### Conclusions
+
+1. **The Every Cure GT is highly comprehensive** - already contains all DRKG treatment edges
+2. **Missing FDA pairs are few** - manual search found only 6 significant gaps
+3. **Model already learns relationships** - 83% of missing pairs would hit@30
+4. **Marginal impact** - +0.22 pp improvement from 6 additions
+5. **Systematic expansion blocked** - requires DrugBank XML license or ChEMBL API
+
+### Hypotheses Updated
+
+| ID | Title | Status | Change |
+|----|-------|--------|--------|
+| h4 | Expand GT with DrugBank/ChEMBL | **inconclusive** | Blocked by data access |
+| h28 | DrugBank XML Indication Extraction | **added** | For future with proper data |
+
+### Files Created/Modified
+
+| File | Action |
+|------|--------|
+| `data/reference/expanded_ground_truth_h4.json` | Created (GT + 6 new pairs) |
+| `data/analysis/h4_gt_expansion_results.json` | Created |
+| `research_roadmap.json` | Updated |
+
+### Recommended Next Hypothesis
+
+**h5: Hard Negative Mining** (Priority 5)
+
+**Why:**
+- Medium impact, medium effort
+- Addresses model discrimination quality
+- Can use existing confounding patterns as negatives
+- Does not require external data
+
+**Alternative:** h8 (Confidence-Based Post-Filtering) - low effort, quick validation
+
+---
+
+## Previous Session: h3 Evaluation (2026-01-26)
 
 ### Session Summary
 
@@ -201,4 +288,4 @@ The 13.6% figure in CLAUDE.md was based on **antibiotic CLASS performance** (e.g
 
 *Last updated: 2026-01-26*
 *Agent: Research Executor*
-*Hypothesis tested: h1 (invalidated)*
+*Hypothesis tested: h4 (inconclusive)*

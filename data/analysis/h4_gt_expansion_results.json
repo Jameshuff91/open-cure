@@ -1,0 +1,84 @@
+{
+  "hypothesis": "h4",
+  "title": "Expand Ground Truth with DrugBank/ChEMBL Indications",
+  "status": "inconclusive",
+  "date": "2026-01-26",
+  "baseline_metrics": {
+    "gt_diseases": 3609,
+    "gt_pairs": 58016,
+    "drkg_treats_edges": 4968,
+    "drkg_overlap_with_gt": "100%"
+  },
+  "new_pairs_identified": [
+    {
+      "drug": "Pembrolizumab",
+      "drugbank_id": "DB09037",
+      "disease": "Breast Cancer",
+      "mesh_id": "D001943",
+      "rank": 7,
+      "hit": true
+    },
+    {
+      "drug": "Natalizumab",
+      "drugbank_id": "DB00108",
+      "disease": "Multiple Sclerosis",
+      "mesh_id": "D009103",
+      "rank": 16,
+      "hit": true
+    },
+    {
+      "drug": "Erlotinib",
+      "drugbank_id": "DB00530",
+      "disease": "Pancreatic Cancer",
+      "mesh_id": "D010190",
+      "rank": 16,
+      "hit": true
+    },
+    {
+      "drug": "Cetuximab",
+      "drugbank_id": "DB00002",
+      "disease": "Colorectal Cancer",
+      "mesh_id": "D015179",
+      "rank": 1,
+      "hit": true
+    },
+    {
+      "drug": "Oxaliplatin",
+      "drugbank_id": "DB00526",
+      "disease": "Colorectal Cancer",
+      "mesh_id": "D015179",
+      "rank": 37,
+      "hit": false
+    },
+    {
+      "drug": "Bevacizumab",
+      "drugbank_id": "DB00112",
+      "disease": "Colorectal Cancer",
+      "mesh_id": "D015179",
+      "rank": 7,
+      "hit": true
+    }
+  ],
+  "new_pairs_summary": {
+    "total": 6,
+    "hits_at_30": 5,
+    "hit_rate": "83.3%"
+  },
+  "impact": {
+    "before_recall": 0.4204,
+    "before_hits": 473,
+    "before_total": 1125,
+    "after_recall": 0.4226,
+    "after_hits": 478,
+    "after_total": 1131,
+    "change_pp": 0.0022
+  },
+  "conclusions": [
+    "DRKG treatment edges are fully contained within Every Cure GT",
+    "Manual identification found only 6 missing FDA pairs",
+    "5/6 (83.3%) missing pairs already hit@30, suggesting model learns relationships",
+    "Impact of adding 6 pairs is marginal: +0.22 percentage points",
+    "DrugBank lookup file only contains ID-name mappings, not indications",
+    "Full indication extraction requires DrugBank XML or ChEMBL API"
+  ]
+}

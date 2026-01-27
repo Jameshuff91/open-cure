@@ -72,7 +72,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Step 1: Download DrugBank approved indications (data/reference/drugbank_lookup.json exists)",
         "Step 2: Download ChEMBL approved indications via API",
@@ -81,8 +81,8 @@
         "Step 5: Evaluate on original test set",
         "Step 6: Success criteria: >43% R@30"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "PARTIAL VALIDATION: The hypothesis premise was partially correct but the impact is too small to be meaningful.\n\nKEY FINDINGS:\n1. All DRKG treatment edges (4,968) are already included in the current GT (58,016 pairs)\n2. The GT is much larger than DRKG because it includes Every Cure annotations\n3. We identified 6 FDA-approved drug-disease pairs missing from GT:\n   - Pembrolizumab -> Breast Cancer (Rank 7, Hit)\n   - Natalizumab -> Multiple Sclerosis (Rank 16, Hit)\n   - Erlotinib -> Pancreatic Cancer (Rank 16, Hit)\n   - Cetuximab -> Colorectal Cancer (Rank 1, Hit)\n   - Oxaliplatin -> Colorectal Cancer (Rank 37, Miss)\n   - Bevacizumab -> Colorectal Cancer (Rank 7, Hit)\n4. 5/6 (83.3%) of these pairs hit@30 - suggesting the model already learns these relationships\n5. Impact: Adding these 6 pairs would improve R@30 by only +0.22 pp (42.04% \u2192 42.26%)\n\nBLOCKERS:\n- DrugBank data available (drugbank_lookup.json) only has name mappings, not indication data\n- Full DrugBank indication data requires license/download (not available)\n- ChEMBL API access not implemented\n- Manual curation of missing pairs is not scalable\n\nCONCLUSION: The approach is theoretically sound (adding correct FDA pairs improves accuracy) but:\n1. Most FDA-approved pairs are already in GT\n2. Missing pairs are few in number\n3. Impact is marginal (<0.3 pp)\n4. Accessing comprehensive indication databases requires additional setup\n\nRecommend: Mark as inconclusive pending access to DrugBank/ChEMBL full indication data.",
+      "result_metric": "+0.22 pp (42.04% \u2192 42.26%) from 6 manual additions"
     },
     {
       "id": "h5",
@@ -528,6 +528,27 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h28",
+      "title": "DrugBank XML Indication Extraction",
+      "category": "data",
+      "rationale": "h4 showed 83% of identified missing FDA pairs hit@30, indicating value in GT expansion. Full DrugBank XML contains ~12K drug-indication pairs. Systematic extraction could add hundreds of missing pairs.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 28,
+      "status": "pending",
+      "steps": [
+        "Step 1: Download full DrugBank XML (requires academic license)",
+        "Step 2: Parse indication data for all drugs",
+        "Step 3: Map indications to MESH IDs using disease_name_matcher.py",
+        "Step 4: Identify pairs not in current GT",
+        "Step 5: Evaluate hit rate for new pairs",
+        "Step 6: Add validated pairs to GT",
+        "Success criteria: Identify >100 missing pairs with >70% hit@30"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -576,6 +597,12 @@
       "hypothesis_id": "h3",
       "finding": "The 13.6% infectious disease recall was antibiotic CLASS performance, not disease-level evaluation. Actual general model R@30 on infectious diseases is 52.0%.",
       "implication": "Specialist model unnecessary - general model already performs well. The real problem is spurious antibiotic predictions for non-infectious diseases, already handled by confidence_filter.py."
+    },
+    {
+      "date": "2026-01-26",
+      "hypothesis_id": "h4",
+      "finding": "All 4,968 DRKG treatment edges are already in the 58K-pair GT. Only 6 additional FDA pairs found via manual search, 5/6 hit@30. Impact: +0.22 pp.",
+      "implication": "GT expansion from public databases provides diminishing returns. Every Cure GT is comprehensive. Future expansion requires proprietary indication databases or careful manual curation."
     }
   ]
 }
