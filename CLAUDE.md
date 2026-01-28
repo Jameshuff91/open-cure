@@ -139,6 +139,10 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 7. **Specialist Models** - Infectious disease specialist (36%) underperforms general model (52%)
 8. **GB Disease Generalization** - Model cannot generalize to unseen diseases (45.9% → 3-12% R@30)
 9. **Hard Negative Mining** - All 5 strategies fail under disease holdout (not a sampling issue, architectural)
+10. **Gene Feature Hybrid** (h35) - Gene overlap/Jaccard adds +0.73 pp (sparsity, already in embeddings)
+11. **Graph Feature Hybrid** (h34) - Graph topo features add NOTHING once treatment edges removed (initial 45.82% was leakage via direct_connection feature)
+12. **Cosine Similarity** (h32) - 0-1.27% R@30 without ML; ML model IS required
+13. **DRKG Feature Ceiling** - Gene, graph, and embedding features from SAME KG are redundant; improvement needs EXTERNAL data or DIFFERENT architectures
 
 ## Biologic Gap Analysis (2026-01-25)
 

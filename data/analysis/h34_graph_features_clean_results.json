@@ -1,0 +1,31 @@
+{
+  "hypothesis": "h34",
+  "title": "Node2Vec + Clean Graph Features",
+  "results": {
+    "n2v_only": {
+      "desc": "Node2Vec only",
+      "r30": 0.2672727272727273,
+      "hits": 147,
+      "gt": 550,
+      "importance": null
+    },
+    "graph_clean": {
+      "desc": "Graph features (NO treatment edges)",
+      "r30": 0.14388489208633093,
+      "hits": 80,
+      "gt": 556,
+      "importance": null
+    },
+    "hybrid_clean": {
+      "desc": "Node2Vec + Clean Graph (HYBRID)",
+      "r30": 0.26545454545454544,
+      "hits": 146,
+      "gt": 550,
+      "importance": {
+        "n2v_pct": 89.41015625,
+        "graph_pct": 10.589849472045898
+      }
+    }
+  },
+  "elapsed": 235.32647919654846
+}

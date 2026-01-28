@@ -1,6 +1,53 @@
 # Research Loop Progress
 
-## Current Session: h29 Evaluation (2026-01-27)
+## Current Session: h29/h37/h35/h34 Multi-Hypothesis (2026-01-27)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed (4 hypotheses tested)
+**Hypotheses Tested:** h29, h37, h35, h34
+**Key Discovery:** DRKG feature ceiling — gene, graph, and embedding features from same KG are redundant
+
+### Results Summary
+
+| Hypothesis | Status | Key Finding |
+|---|---|---|
+| h29: Node2Vec Generalization | VALIDATED | 28.73% R@30 on disease-level holdout (1.73x better than TransE 16.64%) |
+| h37: Category Analysis | VALIDATED | Ophthalmological 100%, hematological 70%, infectious/GI/rare 0% |
+| h35: Gene Feature Hybrid | INVALIDATED | +0.73 pp (negligible; sparsity, already captured by embeddings) |
+| h34: Graph Feature Hybrid | INVALIDATED | 45.82% was leakage! Clean: -0.18 pp (NO improvement) |
+| h32: Cosine Similarity | INVALIDATED | 0-1.27% without ML model (tested as part of h29) |
+
+### Critical Learning: DRKG Feature Ceiling
+
+Features derived from the SAME knowledge graph (DRKG) used for embeddings are **redundant**:
+- Gene overlap features → already captured by Node2Vec walks through Gene nodes
+- Graph topology features → already captured by Node2Vec random walks
+- Treatment edges → circular (they ARE the labels)
+
+**Implication:** Improvement beyond 28.73% requires:
+1. **External data sources** (clinical trials, literature, gene expression)
+2. **Different model architectures** (GNN, meta-learning, attention)
+3. **Better training strategy** (XGBoost hyperparameter tuning, similarity-weighted training)
+
+### New Hypotheses Added
+
+| ID | Title | Priority | Rationale |
+|----|-------|----------|-----------|
+| h38 | XGBoost Hyperparameter Tuning | 1 | Lowest-effort improvement: shallower trees, more regularization |
+| h39 | Disease Similarity Transfer Learning | 2 | Weight training examples by similarity to test disease |
+| h40 | Multi-Seed Stability Check | 3 | Verify 28.73% is not a fluke of seed=42 |
+
+### Recommended Next Steps
+
+1. **h38 (XGBoost Hyperparameter Tuning)** — Lowest effort, may squeeze out a few more pp
+2. **h39 (Disease Similarity Transfer)** — Novel approach, medium effort, high potential
+3. **h40 (Multi-Seed Check)** — Quick validation of baseline stability
+
+---
+
+## Previous Session: h29 Evaluation (2026-01-27)
 
 ### Session Summary
 

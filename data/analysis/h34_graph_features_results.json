@@ -1,0 +1,48 @@
+{
+  "hypothesis": "h34",
+  "title": "Node2Vec + Graph Topological Features Hybrid",
+  "date": "2026-01-27",
+  "results": {
+    "A_n2v_only": {
+      "description": "Node2Vec only (baseline)",
+      "recall_at_30": 0.3,
+      "diseases_evaluated": 88,
+      "total_hits": 165,
+      "total_gt_drugs": 550,
+      "importance": null
+    },
+    "B_graph_only": {
+      "description": "Graph features only",
+      "recall_at_30": 0.3776978417266187,
+      "diseases_evaluated": 88,
+      "total_hits": 210,
+      "total_gt_drugs": 556,
+      "importance": null
+    },
+    "C_n2v_graph_hybrid": {
+      "description": "Node2Vec + Graph features (HYBRID)",
+      "recall_at_30": 0.4581818181818182,
+      "diseases_evaluated": 88,
+      "total_hits": 252,
+      "total_gt_drugs": 550,
+      "importance": {
+        "n2v_pct": 82.96056592934538,
+        "graph_pct": 17.039428110190855,
+        "graph_breakdown": {
+          "drug_degree": 0.09983562678098679,
+          "disease_degree": 0.0027195902075618505,
+          "shared_neighbors": 0.0019524230156093836,
+          "shared_gene_neighbors": 0.0023408725392073393,
+          "direct_connection": 0.0436086505651474,
+          "jaccard": 0.0028161448426544666,
+          "adamic_adar": 0.0037252437323331833,
+          "drug_gene_degree": 0.010712238028645515,
+          "disease_gene_degree": 0.0026835270691663027,
+          "log_drug_degree": 0.0,
+          "log_disease_degree": 0.0
+        }
+      }
+    }
+  },
+  "elapsed_seconds": 253.82207107543945
+}

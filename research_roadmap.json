@@ -656,11 +656,11 @@
       "id": "h34",
       "title": "Node2Vec + Graph Topological Features Hybrid",
       "category": "architecture",
-      "rationale": "h29 established Node2Vec+XGBoost at 29.45% R@30 on disease-level holdout. Graph topological features (shortest path, shared neighbors, path counts) are inherently inductive and could provide COMPLEMENTARY signal to Node2Vec embeddings.",
+      "rationale": "h29 established Node2Vec+XGBoost at 28.73% R@30 on disease-level holdout. Graph topological features (shortest path, shared neighbors, path counts) are inherently inductive and could provide COMPLEMENTARY signal to Node2Vec embeddings.",
       "expected_impact": "high",
       "effort": "high",
       "priority": 1,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Load DRKG graph from data/drkg/drkg.tsv",
         "Step 2: For each drug-disease pair, compute: shortest path length, number of paths <=3 hops, shared gene neighbors, drug degree, disease degree",
@@ -668,10 +668,10 @@
         "Step 4: Train XGBoost on graph+Node2Vec features with disease-level holdout (seed=42)",
         "Step 5: Also test graph features ONLY (without Node2Vec) for comparison",
         "Step 6: Evaluate R@30 on same 88 held-out test diseases from h29",
-        "Success criteria: >33% R@30 (>3.5 pp improvement over Node2Vec-only 29.45%)"
+        "Success criteria: >33% R@30 (>3.5 pp improvement over Node2Vec-only)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Graph topological features do NOT improve generalization once treatment-edge leakage is removed.\n\nINITIAL RESULT (WITH LEAKAGE):\n- Node2Vec only: 30.0%\n- Graph only (including treatment edges): 37.77%\n- Node2Vec + Graph hybrid: 45.82% (+15.8 pp!)\n\nBut the 'direct_connection' feature (importance 0.044) encoded treatment edges from DRKG — which IS the label. DRKG contains 4,968 DRUGBANK::treats and 54,020 GNBR::T treatment edges that overlap with GT.\n\nCLEAN RESULT (treatment edges EXCLUDED from graph):\n- Node2Vec only: 26.73%\n- Graph only (clean): 14.39%\n- Node2Vec + Clean Graph: 26.55% (-0.18 pp — NO improvement)\n\nFeature importance (clean): Node2Vec 89.4%, Graph 10.6%. Drug_degree (0.072) dominates, but it doesn't help generalization.\n\nKEY INSIGHT: The 45.82% 'breakthrough' was entirely data leakage. Without treatment edges, graph features (degree, shared gene neighbors, Adamic-Adar) are uninformative for drug repurposing prediction. The graph features capture proximity which is already encoded in Node2Vec embeddings.",
+      "result_metric": "26.55% R@30 (clean hybrid) vs 26.73% (Node2Vec only) — NO improvement after leakage removal"
     },
     {
       "id": "h35",
@@ -733,6 +733,63 @@
       ],
       "findings": "VALIDATED: Per-category analysis reveals extreme variation in Node2Vec generalization. TOP categories: ophthalmological 100% (2 diseases), hematological 70% (4), autoimmune 43.5% (6). MODERATE: cancer 19.3% (12), respiratory 31% (2). ZERO generalization: GI 0% (4), infectious 0% (5), rare/genetic 0% (2). Cardiovascular 10.2% (3) is a key gap. 49 diseases in 'other' category (19.1%) need better categorization. Best individuals: sarcoidosis 100%, autoimmune hemolytic anemia 100%, optic neuritis 100%. Worst: allergic rhinitis 0% (14 GT drugs), sepsis 0% (7 GT drugs). IMPLICATIONS: (1) Cardiovascular and infectious are highest-impact improvement targets, (2) Graph features (h34) may help sparse-connectivity diseases, (3) Gene features (h35) may help rare/genetic diseases.",
       "result_metric": "Overall 28.73% R@30; Best categories: ophthalmological 100%, hematological 70%, autoimmune 43.5%; Worst: GI/infectious/rare 0%"
+    },
+    {
+      "id": "h38",
+      "title": "XGBoost Hyperparameter Tuning for Generalization",
+      "category": "architecture",
+      "rationale": "All experiments used identical XGBoost params (100 estimators, max_depth=6, lr=0.1). These may overfit to training diseases. Shallower trees (max_depth=3-4), more trees (200-500), lower learning rate, and stronger regularization could improve generalization. This is lowest-effort improvement to try before architectural changes.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Step 1: Use Node2Vec+XGBoost (concat) as base",
+        "Step 2: Grid search: max_depth={3,4,6,8}, n_estimators={100,200,500}, lr={0.01,0.05,0.1}, min_child_weight={1,5,10}, reg_alpha={0,0.1,1}, reg_lambda={1,5,10}",
+        "Step 3: Evaluate each on disease-level holdout (same 88 test diseases)",
+        "Step 4: Report best configuration and delta vs default",
+        "Success criteria: >33% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h39",
+      "title": "Disease Similarity Transfer Learning",
+      "category": "architecture",
+      "rationale": "h34/h35 showed that augmenting Node2Vec with explicit features from the SAME knowledge graph provides no improvement. But we haven't tried TRANSFERRING knowledge from similar diseases. For a new test disease, we could weight training examples from the most similar training diseases (by Node2Vec cosine similarity). This is a form of meta-learning within the existing framework.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each test disease, compute Node2Vec cosine similarity to all training diseases",
+        "Step 2: Weight training examples by similarity (closer diseases get higher weight)",
+        "Step 3: Train disease-specific or similarity-weighted XGBoost models",
+        "Step 4: Compare with uniform-weight baseline",
+        "Step 5: Alternatively, use k-nearest training diseases only (k=5,10,20)",
+        "Success criteria: >33% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h40",
+      "title": "Multi-Seed Disease Holdout Stability Check",
+      "category": "evaluation",
+      "rationale": "All results use seed=42. The 28.73% baseline might be unusually high or low for this split. Running 5 seeds would give mean +/- std. Important for establishing reliable baseline before trying more complex approaches.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Run Node2Vec+XGBoost (concat) with seeds 42,123,456,789,1024",
+        "Step 2: Report mean, std, min, max R@30",
+        "Step 3: If variance is high (>5 pp), results from single-seed experiments are unreliable",
+        "Success criteria: Establish confidence interval for 28.73%"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -741,6 +798,7 @@
     "h5",
     "h29",
     "h32",
+    "h34",
     "h35",
     "h37"
   ],
@@ -816,6 +874,12 @@
       "hypothesis_id": "h37",
       "finding": "Node2Vec generalization varies dramatically by disease category: ophthalmological 100%, hematological 70%, autoimmune 43.5%, cancer 19.3%, cardiovascular 10.2%, infectious 0%, GI 0%, rare/genetic 0%. Dense KG connectivity correlates with generalization success.",
       "implication": "Improvement efforts should target: (1) cardiovascular diseases (10.2% with 59 GT drugs — high volume, moderate performance), (2) infectious diseases (0% with 14 GT drugs — complete failure), (3) GI diseases (0% with 9 GT drugs). Dense diseases (autoimmune, hematological) already work well. Graph topological features (h34) may help sparse-connectivity disease categories."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h34",
+      "finding": "Graph topological features (degree, shared gene neighbors, Adamic-Adar) do NOT improve over Node2Vec once treatment-edge leakage is removed. Initial result of 45.82% was entirely due to direct_connection feature encoding treatment edges from DRKG (4,968 DRUGBANK::treats + 54,020 GNBR::T edges). Clean result: 26.55% hybrid vs 26.73% Node2Vec-only (-0.18 pp).",
+      "implication": "CRITICAL FINDING: Feature engineering from the SAME knowledge graph used for embeddings provides NO additional signal. Node2Vec already captures all relevant graph structure. Improvement must come from: (1) DIFFERENT data sources (clinical trials, literature, gene expression), (2) DIFFERENT embedding methods (GNN, attention-based), (3) DIFFERENT architectures (multi-task, meta-learning). The 28.73% Node2Vec baseline may be near the ceiling for DRKG-only approaches."
     }
   ]
 }
