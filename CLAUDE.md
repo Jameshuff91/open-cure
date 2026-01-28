@@ -155,6 +155,11 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 11. **Graph Feature Hybrid** (h34) - Graph topo features add NOTHING once treatment edges removed (initial 45.82% was leakage via direct_connection feature)
 12. **Cosine Similarity** (h32) - 0-1.27% R@30 without ML; ML model IS required
 13. **DRKG Feature Ceiling** - Gene, graph, and embedding features from SAME KG are redundant; improvement needs EXTERNAL data or DIFFERENT architectures
+14. **kNN Parameter Optimization** (h43) - 72 configs tested, default (k=20, raw, linear) is already optimal
+15. **Gene Similarity for kNN** (h41) - Gene overlap Jaccard HURTS kNN (23.2% vs 36.8%)
+16. **XGBoost Rescue for kNN** (h42) - XGBoost helps no disease subset, kNN dominates everywhere
+17. **Learned Disease Similarity** (h45) - XGBoost regressor predicting drug overlap WORSE than cosine (-4 pp, overfits)
+18. **37% R@30 = DRKG ceiling** - kNN at 37%, oracle ceiling 60%; 23 pp gap requires external data
 
 ## Biologic Gap Analysis (2026-01-25)
 

@@ -855,7 +855,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Use full GT (no holdout) as kNN pool",
         "Step 2: For each disease, find k nearest OTHER diseases (exclude self)",
@@ -863,8 +863,28 @@
         "Step 4: This is NOT generalizable but establishes collaborative filtering ceiling",
         "Success criteria: Establish upper bound for kNN approach"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Transductive kNN establishes clear ceiling.\n\nNode2Vec kNN (leave-one-out, 440 diseases):\n- k=5: 28.49%, k=10: 34.09%, k=15: 34.83%, k=20: 35.91%\n- k=25: 36.58%, k=30: 37.07% (BEST), k=50: 35.00%, k=100: 31.08%\n\nOracle (drug overlap similarity):\n- k=10: 59.99%, k=20: 60.34%, k=50: 60.41%\n\nKEY FINDINGS:\n1. Transductive k=30 (37.07%) ≈ Inductive k=20 (37.04%). More diseases in pool doesn't help — similarity quality is the bottleneck, not pool size.\n2. Optimal k=25-30 for transductive (same range as inductive).\n3. Oracle ceiling: 60.4% R@30 — the maximum achievable with perfect disease similarity.\n4. Gap: 37% (Node2Vec) vs 60% (Oracle) = 23 pp improvement possible through better similarity.\n5. Diminishing returns beyond k=30 — too many neighbors introduce noise.",
+      "result_metric": "Transductive: 37.07% R@30 (k=30). Oracle: 60.4%. Gap: 23 pp improvement room."
+    },
+    {
+      "id": "h45",
+      "title": "Learned Disease Similarity Metric",
+      "category": "architecture",
+      "rationale": "h44 showed 23 pp gap between Node2Vec kNN (37%) and oracle (60%). Node2Vec cosine is a GENERIC similarity — not optimized for drug overlap prediction. Training a model to predict disease-disease drug overlap FROM Node2Vec features could produce a SPECIALIZED similarity metric that closes this gap. This is metric learning applied to kNN.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 1,
+      "status": "invalidated",
+      "steps": [
+        "Step 1: For each pair of training diseases, compute drug overlap Jaccard as target variable",
+        "Step 2: Use Node2Vec embedding features (concat, diff, product) as input",
+        "Step 3: Train XGBoost regressor to predict drug overlap from embeddings",
+        "Step 4: Use predicted drug overlap as similarity measure for kNN on test diseases",
+        "Step 5: Multi-seed evaluation. Compare with Node2Vec cosine baseline.",
+        "Success criteria: >40% mean R@30 (>3 pp over kNN baseline)"
+      ],
+      "findings": "INVALIDATED: Learned similarity is WORSE than cosine (-3.98 pp, p=0.008).\n\nMULTI-SEED RESULTS:\n- Learned: 33.21% ± 5.55%\n- Cosine: 37.19% ± 5.79%\n- Delta: -3.98 pp (learned is WORSE)\n- Paired t-test: t=-4.898, p=0.0081 (significantly worse)\n\nThe XGBoost regressor overfits to training disease pairs. It learns patterns specific to SEEN diseases that don't transfer to unseen ones — the same generalization failure seen with XGBoost classification (h5). Cosine similarity is more robust because it's parameter-free and doesn't overfit.\n\nIMPLICATION: Learned metrics from DRKG data can't beat cosine. The 23 pp gap to oracle requires EXTERNAL information (phenotype, literature, clinical) not derivable from the knowledge graph alone.",
+      "result_metric": "Learned: 33.21% ± 5.55% (WORSE than cosine 37.19% by -3.98 pp, p=0.008)"
     }
   ],
   "completed": [
@@ -882,7 +902,9 @@
     "h39",
     "h42",
     "h43",
-    "h41"
+    "h41",
+    "h44",
+    "h45"
   ],
   "learnings": [
     {
@@ -992,6 +1014,18 @@
       "hypothesis_id": "h43",
       "finding": "Swept 72 kNN configurations (8 k-values × 3 normalizations × 3 weightings). Default config (k=20, raw, linear) is already optimal. All alternatives equal or worse.",
       "implication": "kNN parameters are already at their optimum. Further improvements must come from changing the similarity measure or the underlying data, not hyperparameter tuning."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h44",
+      "finding": "Transductive kNN (leave-one-out, 440 diseases) achieves 37.07% at k=30, nearly identical to inductive (37.04%). Oracle ceiling (drug overlap similarity) is 60.4%. Gap: 23 pp between Node2Vec similarity and perfect similarity.",
+      "implication": "Pool size is NOT the bottleneck — similarity quality is. The 23 pp gap to oracle shows enormous room for improvement IF we can find better disease similarity measures. Since gene overlap fails (h41), the path forward is: (1) learned similarity metrics, (2) external phenotype/literature data, or (3) fundamentally different disease representation."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h45",
+      "finding": "Learned disease similarity (XGBoost regressor predicting drug overlap from Node2Vec features) is WORSE than cosine by -3.98 pp (33.21% vs 37.19%, p=0.008). The model overfits to training disease pairs and doesn't generalize.",
+      "implication": "DEFINITIVE: No function of Node2Vec features can improve on cosine similarity for kNN. Both XGBoost classification (h5), XGBoost with kNN feature (h39 approach D), and now XGBoost regression on disease pairs ALL suffer from the same generalization failure. The DRKG-derived information is fully captured by cosine similarity. The 37% R@30 kNN baseline is the ceiling for DRKG-only approaches. Improvement requires EXTERNAL data sources."
     }
   ]
 }

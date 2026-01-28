@@ -1,13 +1,13 @@
 # Research Loop Progress
 
-## Current Session: h40/h39/h42/h43/h41 Multi-Hypothesis (2026-01-27)
+## Current Session: h40/h39/h42/h43/h41/h44/h45 Multi-Hypothesis (2026-01-27)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (5 hypotheses tested)
-**Hypotheses Tested:** h40, h39, h42, h43, h41
-**Key Discovery:** kNN collaborative filtering achieves 37.04% R@30 — BEST method, outperforming all ML models
+**Status:** Completed (7 hypotheses tested)
+**Hypotheses Tested:** h40, h39, h42, h43, h41, h44, h45
+**Key Discovery:** kNN collaborative filtering achieves 37.04% R@30 — BEST method. DRKG ceiling identified at ~37%. Oracle ceiling 60%.
 
 ### Results Summary
 
@@ -18,6 +18,8 @@
 | h42: kNN + XGBoost Rescue | INVALIDATED | XGBoost rescue helps NO disease subset. kNN dominates everywhere. |
 | h43: kNN Optimization | INVALIDATED | Default config (k=20, raw, linear) already optimal. 72 configs tested. |
 | h41: Improved Similarity Measure | INVALIDATED | Gene overlap hurts (23.2%). Node2Vec cosine is best fair measure. |
+| h44: Transductive kNN (upper bound) | VALIDATED | LOO = 37.07% (k=30). Oracle ceiling = 60.4%. 23 pp gap. |
+| h45: Learned Disease Similarity | INVALIDATED | XGBoost regressor WORSE than cosine (-3.98 pp, p=0.008). |
 
 ### Critical Findings
 
