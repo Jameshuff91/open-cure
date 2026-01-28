@@ -718,11 +718,11 @@
       "id": "h37",
       "title": "Node2Vec Generalization Analysis by Disease Category",
       "category": "evaluation",
-      "rationale": "h29 showed 29.45% overall R@30, but performance likely varies by disease category. Understanding which categories Node2Vec generalizes well/poorly for guides targeted improvement.",
+      "rationale": "h29 showed 28.73% overall R@30, but performance likely varies by disease category. Understanding which categories Node2Vec generalizes well/poorly for guides targeted improvement.",
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Load h29 per-disease results from data/analysis/h29_node2vec_generalization_results.json",
         "Step 2: Categorize test diseases (cancer, autoimmune, cardiovascular, infectious, metabolic, neurological, etc.)",
@@ -731,8 +731,8 @@
         "Step 5: Compare with known category performance from CLAUDE.md (e.g., autoimmune 63%)",
         "Success criteria: Identify top 3 categories for improvement"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Per-category analysis reveals extreme variation in Node2Vec generalization. TOP categories: ophthalmological 100% (2 diseases), hematological 70% (4), autoimmune 43.5% (6). MODERATE: cancer 19.3% (12), respiratory 31% (2). ZERO generalization: GI 0% (4), infectious 0% (5), rare/genetic 0% (2). Cardiovascular 10.2% (3) is a key gap. 49 diseases in 'other' category (19.1%) need better categorization. Best individuals: sarcoidosis 100%, autoimmune hemolytic anemia 100%, optic neuritis 100%. Worst: allergic rhinitis 0% (14 GT drugs), sepsis 0% (7 GT drugs). IMPLICATIONS: (1) Cardiovascular and infectious are highest-impact improvement targets, (2) Graph features (h34) may help sparse-connectivity diseases, (3) Gene features (h35) may help rare/genetic diseases.",
+      "result_metric": "Overall 28.73% R@30; Best categories: ophthalmological 100%, hematological 70%, autoimmune 43.5%; Worst: GI/infectious/rare 0%"
     }
   ],
   "completed": [
@@ -740,7 +740,8 @@
     "h3",
     "h5",
     "h29",
-    "h32"
+    "h32",
+    "h37"
   ],
   "learnings": [
     {

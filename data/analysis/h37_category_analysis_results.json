@@ -1,0 +1,1545 @@
+{
+  "hypothesis": "h37",
+  "title": "Node2Vec Generalization Analysis by Disease Category",
+  "date": "2026-01-27",
+  "overall_r30": 0.2872727272727273,
+  "overall_hits": 158,
+  "overall_gt_drugs": 550,
+  "diseases_evaluated": 88,
+  "per_category": {
+    "ophthalmological": {
+      "r30": 1.0,
+      "hits": 18,
+      "gt_drugs": 18,
+      "diseases": 2,
+      "disease_details": [
+        {
+          "name": "optic neuritis",
+          "recall": 1.0,
+          "gt_drugs": 9,
+          "hits": 9
+        },
+        {
+          "name": "diffuse posterior uveitis",
+          "recall": 1.0,
+          "gt_drugs": 9,
+          "hits": 9
+        }
+      ]
+    },
+    "hematological": {
+      "r30": 0.7,
+      "hits": 28,
+      "gt_drugs": 40,
+      "diseases": 4,
+      "disease_details": [
+        {
+          "name": "autoimmune hemolytic anemia",
+          "recall": 1.0,
+          "gt_drugs": 10,
+          "hits": 10
+        },
+        {
+          "name": "hypochromic anemia",
+          "recall": 1.0,
+          "gt_drugs": 1,
+          "hits": 1
+        },
+        {
+          "name": "acquired hemolytic anemia",
+          "recall": 0.875,
+          "gt_drugs": 8,
+          "hits": 7
+        },
+        {
+          "name": "secondary thrombocytopenia",
+          "recall": 0.47619047619047616,
+          "gt_drugs": 21,
+          "hits": 10
+        }
+      ]
+    },
+    "autoimmune/inflammatory": {
+      "r30": 0.4351145038167939,
+      "hits": 57,
+      "gt_drugs": 131,
+      "diseases": 6,
+      "disease_details": [
+        {
+          "name": "autoimmune hemolytic anemia",
+          "recall": 1.0,
+          "gt_drugs": 10,
+          "hits": 10
+        },
+        {
+          "name": "osteoarthritis",
+          "recall": 0.125,
+          "gt_drugs": 24,
+          "hits": 3
+        },
+        {
+          "name": "symptomatic sarcoidosis",
+          "recall": 1.0,
+          "gt_drugs": 11,
+          "hits": 11
+        },
+        {
+          "name": "psoriatic arthritis",
+          "recall": 0.42857142857142855,
+          "gt_drugs": 28,
+          "hits": 12
+        },
+        {
+          "name": "ankylosing spondylitis",
+          "recall": 0.35714285714285715,
+          "gt_drugs": 28,
+          "hits": 10
+        },
+        {
+          "name": "ulcerative colitis",
+          "recall": 0.36666666666666664,
+          "gt_drugs": 30,
+          "hits": 11
+        }
+      ]
+    },
+    "respiratory": {
+      "r30": 0.3103448275862069,
+      "hits": 9,
+      "gt_drugs": 29,
+      "diseases": 2,
+      "disease_details": [
+        {
+          "name": "idiopathic pulmonary fibrosis",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "aspiration pneumonitis",
+          "recall": 0.32142857142857145,
+          "gt_drugs": 28,
+          "hits": 9
+        }
+      ]
+    },
+    "cancer/oncology": {
+      "r30": 0.19298245614035087,
+      "hits": 11,
+      "gt_drugs": 57,
+      "diseases": 12,
+      "disease_details": [
+        {
+          "name": "pleural mesothelioma",
+          "recall": 1.0,
+          "gt_drugs": 1,
+          "hits": 1
+        },
+        {
+          "name": "giant follicular lymphoma",
+          "recall": 0.1,
+          "gt_drugs": 10,
+          "hits": 1
+        },
+        {
+          "name": "metastatic colorectal carcinoma",
+          "recall": 0.125,
+          "gt_drugs": 16,
+          "hits": 2
+        },
+        {
+          "name": "pancreatic neuroendocrine tumors",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "acute erythroid leukemia",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "oropharynx cancer",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "small intestine cancer",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "urothelial carcinoma",
+          "recall": 0.16666666666666666,
+          "gt_drugs": 6,
+          "hits": 1
+        },
+        {
+          "name": "osteosarcoma",
+          "recall": 0.4,
+          "gt_drugs": 5,
+          "hits": 2
+        },
+        {
+          "name": "relapsed nonhodgkin lymphoma",
+          "recall": 0.5,
+          "gt_drugs": 6,
+          "hits": 3
+        },
+        {
+          "name": "superficial basal cell carcinomas",
+          "recall": 0.0,
+          "gt_drugs": 6,
+          "hits": 0
+        },
+        {
+          "name": "cutaneous t cell lymphoma",
+          "recall": 1.0,
+          "gt_drugs": 1,
+          "hits": 1
+        }
+      ]
+    },
+    "other": {
+      "r30": 0.19101123595505617,
+      "hits": 34,
+      "gt_drugs": 178,
+      "diseases": 49,
+      "disease_details": [
+        {
+          "name": "smallpox",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "spina bifida",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "poliomyelitis",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "silicosis",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "scabies",
+          "recall": 0.0,
+          "gt_drugs": 5,
+          "hits": 0
+        },
+        {
+          "name": "duodenal ulcer",
+          "recall": 0.06666666666666667,
+          "gt_drugs": 15,
+          "hits": 1
+        },
+        {
+          "name": "gingivitis",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "pain",
+          "recall": 0.03333333333333333,
+          "gt_drugs": 30,
+          "hits": 1
+        },
+        {
+          "name": "panic disorder with agoraphobia",
+          "recall": 0.2,
+          "gt_drugs": 5,
+          "hits": 1
+        },
+        {
+          "name": "takayasu arteritis",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "ornithine carbamoyltransferase deficiency",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "multiple system atrophy",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "processingdeficient progeroid laminopathy",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "hypoestrogenism due to primary ovarian failure",
+          "recall": 0.0,
+          "gt_drugs": 4,
+          "hits": 0
+        },
+        {
+          "name": "primary biliary cholangitis pbc",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "trigeminal neuralgia",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "thrombophilia",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "onchocerciasis",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "microscopic polyangiitis",
+          "recall": 0.6666666666666666,
+          "gt_drugs": 3,
+          "hits": 2
+        },
+        {
+          "name": "pyoderma gangrenosum",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "acute nonspecific tenosynovitis",
+          "recall": 0.8333333333333334,
+          "gt_drugs": 12,
+          "hits": 10
+        },
+        {
+          "name": "toxoplasmosis",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "anticoagulantinduced prothrombin deficiency",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "impetigo",
+          "recall": 0.2,
+          "gt_drugs": 5,
+          "hits": 1
+        },
+        {
+          "name": "langerhans cell histiocytosis",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "chronic peptic ulcer disease",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "acute hyperammonemia due to methylmalonic acidemia mma",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "typhoid fever",
+          "recall": 1.0,
+          "gt_drugs": 2,
+          "hits": 2
+        },
+        {
+          "name": "lennox gastaut syndrome",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "primary dysbetalipoproteinemia type iii hyperlipoproteinemia",
+          "recall": 0.2,
+          "gt_drugs": 5,
+          "hits": 1
+        },
+        {
+          "name": "cystinuria",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "interstitial cystitis",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "chronic malabsorption syndromes",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "endometritis",
+          "recall": 0.16666666666666666,
+          "gt_drugs": 6,
+          "hits": 1
+        },
+        {
+          "name": "primary hyperaldosteronism",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "leprosy",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "tularemia",
+          "recall": 0.8571428571428571,
+          "gt_drugs": 7,
+          "hits": 6
+        },
+        {
+          "name": "allergic rhinitis",
+          "recall": 0.0,
+          "gt_drugs": 14,
+          "hits": 0
+        },
+        {
+          "name": "diarrhea",
+          "recall": 0.0,
+          "gt_drugs": 3,
+          "hits": 0
+        },
+        {
+          "name": "anaphylaxis",
+          "recall": 0.0,
+          "gt_drugs": 3,
+          "hits": 0
+        },
+        {
+          "name": "tendinitis",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "mercury poisoning",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "chronic pain",
+          "recall": 0.0,
+          "gt_drugs": 4,
+          "hits": 0
+        },
+        {
+          "name": "chronic granulomatous disease",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "carcinoid syndrome diarrhea",
+          "recall": 0.0,
+          "gt_drugs": 3,
+          "hits": 0
+        },
+        {
+          "name": "coccidioidomycosis",
+          "recall": 0.5,
+          "gt_drugs": 4,
+          "hits": 2
+        },
+        {
+          "name": "syphilis",
+          "recall": 1.0,
+          "gt_drugs": 6,
+          "hits": 6
+        },
+        {
+          "name": "familial mediterranean fever",
+          "recall": 0.0,
+          "gt_drugs": 3,
+          "hits": 0
+        },
+        {
+          "name": "systemic mastocytosis",
+          "recall": 0.0,
+          "gt_drugs": 6,
+          "hits": 0
+        }
+      ]
+    },
+    "dermatological": {
+      "r30": 0.18181818181818182,
+      "hits": 2,
+      "gt_drugs": 11,
+      "diseases": 1,
+      "disease_details": [
+        {
+          "name": "acne vulgaris",
+          "recall": 0.18181818181818182,
+          "gt_drugs": 11,
+          "hits": 2
+        }
+      ]
+    },
+    "metabolic/endocrine": {
+      "r30": 0.17647058823529413,
+      "hits": 3,
+      "gt_drugs": 17,
+      "diseases": 2,
+      "disease_details": [
+        {
+          "name": "primary hypercholesterolemia",
+          "recall": 0.1875,
+          "gt_drugs": 16,
+          "hits": 3
+        },
+        {
+          "name": "acute intermittent porphyria",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        }
+      ]
+    },
+    "cardiovascular": {
+      "r30": 0.1016949152542373,
+      "hits": 6,
+      "gt_drugs": 59,
+      "diseases": 3,
+      "disease_details": [
+        {
+          "name": "angina pectoris due to coronary atherosclerosis",
+          "recall": 0.3333333333333333,
+          "gt_drugs": 3,
+          "hits": 1
+        },
+        {
+          "name": "significant cardiac arrhythmias",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "congestive heart failure",
+          "recall": 0.09090909090909091,
+          "gt_drugs": 55,
+          "hits": 5
+        }
+      ]
+    },
+    "gastrointestinal": {
+      "r30": 0.0,
+      "hits": 0,
+      "gt_drugs": 9,
+      "diseases": 4,
+      "disease_details": [
+        {
+          "name": "pancreatitis",
+          "recall": 0.0,
+          "gt_drugs": 3,
+          "hits": 0
+        },
+        {
+          "name": "pancreatic neuroendocrine tumors",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "small intestine cancer",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "eosinophilic esophagitis eoe",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        }
+      ]
+    },
+    "infectious": {
+      "r30": 0.0,
+      "hits": 0,
+      "gt_drugs": 14,
+      "diseases": 5,
+      "disease_details": [
+        {
+          "name": "idiopathic interstitial pneumonia",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "symptomatic congenital cytomegalovirus infection",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        },
+        {
+          "name": "diabetic foot infections",
+          "recall": 0.0,
+          "gt_drugs": 3,
+          "hits": 0
+        },
+        {
+          "name": "sepsis",
+          "recall": 0.0,
+          "gt_drugs": 7,
+          "hits": 0
+        },
+        {
+          "name": "fungal meningitis",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        }
+      ]
+    },
+    "rare/genetic": {
+      "r30": 0.0,
+      "hits": 0,
+      "gt_drugs": 3,
+      "diseases": 2,
+      "disease_details": [
+        {
+          "name": "congenital protein c deficiency",
+          "recall": 0.0,
+          "gt_drugs": 1,
+          "hits": 0
+        },
+        {
+          "name": "symptomatic congenital cytomegalovirus infection",
+          "recall": 0.0,
+          "gt_drugs": 2,
+          "hits": 0
+        }
+      ]
+    }
+  },
+  "per_disease": [
+    {
+      "disease_id": "drkg:Disease::MESH:D012899",
+      "disease_name": "smallpox",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000744",
+      "disease_name": "autoimmune hemolytic anemia",
+      "gt_drugs": 10,
+      "hits": 10,
+      "recall": 1.0,
+      "categories": [
+        "autoimmune/inflammatory",
+        "hematological"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000747",
+      "disease_name": "hypochromic anemia",
+      "gt_drugs": 1,
+      "hits": 1,
+      "recall": 1.0,
+      "categories": [
+        "hematological"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016135",
+      "disease_name": "spina bifida",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008654",
+      "disease_name": "pleural mesothelioma",
+      "gt_drugs": 1,
+      "hits": 1,
+      "recall": 1.0,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011051",
+      "disease_name": "poliomyelitis",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010195",
+      "disease_name": "pancreatitis",
+      "gt_drugs": 3,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "gastrointestinal"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010003",
+      "disease_name": "osteoarthritis",
+      "gt_drugs": 24,
+      "hits": 3,
+      "recall": 0.125,
+      "categories": [
+        "autoimmune/inflammatory"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012829",
+      "disease_name": "silicosis",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012532",
+      "disease_name": "scabies",
+      "gt_drugs": 5,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004381",
+      "disease_name": "duodenal ulcer",
+      "gt_drugs": 15,
+      "hits": 1,
+      "recall": 0.06666666666666667,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008224",
+      "disease_name": "giant follicular lymphoma",
+      "gt_drugs": 10,
+      "hits": 1,
+      "recall": 0.1,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009902",
+      "disease_name": "optic neuritis",
+      "gt_drugs": 9,
+      "hits": 9,
+      "recall": 1.0,
+      "categories": [
+        "ophthalmological"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005891",
+      "disease_name": "gingivitis",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D050197",
+      "disease_name": "angina pectoris due to coronary atherosclerosis",
+      "gt_drugs": 3,
+      "hits": 1,
+      "recall": 0.3333333333333333,
+      "categories": [
+        "cardiovascular"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010146",
+      "disease_name": "pain",
+      "gt_drugs": 30,
+      "hits": 1,
+      "recall": 0.03333333333333333,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016584",
+      "disease_name": "panic disorder with agoraphobia",
+      "gt_drugs": 5,
+      "hits": 1,
+      "recall": 0.2,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013625",
+      "disease_name": "takayasu arteritis",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020163",
+      "disease_name": "ornithine carbamoyltransferase deficiency",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D019578",
+      "disease_name": "multiple system atrophy",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015866",
+      "disease_name": "diffuse posterior uveitis",
+      "gt_drugs": 9,
+      "hits": 9,
+      "recall": 1.0,
+      "categories": [
+        "ophthalmological"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007984",
+      "disease_name": "processingdeficient progeroid laminopathy",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016649",
+      "disease_name": "hypoestrogenism due to primary ovarian failure",
+      "gt_drugs": 4,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002761",
+      "disease_name": "primary biliary cholangitis pbc",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015179",
+      "disease_name": "metastatic colorectal carcinoma",
+      "gt_drugs": 16,
+      "hits": 2,
+      "recall": 0.125,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001145",
+      "disease_name": "significant cardiac arrhythmias",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "cardiovascular"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018358",
+      "disease_name": "pancreatic neuroendocrine tumors",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "cancer/oncology",
+        "gastrointestinal"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054990",
+      "disease_name": "idiopathic pulmonary fibrosis",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "respiratory"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014277",
+      "disease_name": "trigeminal neuralgia",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054988",
+      "disease_name": "idiopathic interstitial pneumonia",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "infectious"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004915",
+      "disease_name": "acute erythroid leukemia",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D019851",
+      "disease_name": "thrombophilia",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009855",
+      "disease_name": "onchocerciasis",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D055953",
+      "disease_name": "microscopic polyangiitis",
+      "gt_drugs": 3,
+      "hits": 2,
+      "recall": 0.6666666666666666,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017511",
+      "disease_name": "pyoderma gangrenosum",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013717",
+      "disease_name": "acute nonspecific tenosynovitis",
+      "gt_drugs": 12,
+      "hits": 10,
+      "recall": 0.8333333333333334,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009959",
+      "disease_name": "oropharynx cancer",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014123",
+      "disease_name": "toxoplasmosis",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007020",
+      "disease_name": "anticoagulantinduced prothrombin deficiency",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007169",
+      "disease_name": "impetigo",
+      "gt_drugs": 5,
+      "hits": 1,
+      "recall": 0.2,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006646",
+      "disease_name": "langerhans cell histiocytosis",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010437",
+      "disease_name": "chronic peptic ulcer disease",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007414",
+      "disease_name": "small intestine cancer",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "cancer/oncology",
+        "gastrointestinal"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "congestive heart failure",
+      "gt_drugs": 55,
+      "hits": 5,
+      "recall": 0.09090909090909091,
+      "categories": [
+        "cardiovascular"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011014",
+      "disease_name": "aspiration pneumonitis",
+      "gt_drugs": 28,
+      "hits": 9,
+      "recall": 0.32142857142857145,
+      "categories": [
+        "respiratory"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008661",
+      "disease_name": "acute hyperammonemia due to methylmalonic acidemia mma",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014435",
+      "disease_name": "typhoid fever",
+      "gt_drugs": 2,
+      "hits": 2,
+      "recall": 1.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D065768",
+      "disease_name": "lennox gastaut syndrome",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006951",
+      "disease_name": "primary dysbetalipoproteinemia type iii hyperlipoproteinemia",
+      "gt_drugs": 5,
+      "hits": 1,
+      "recall": 0.2,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003555",
+      "disease_name": "cystinuria",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018856",
+      "disease_name": "interstitial cystitis",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000743",
+      "disease_name": "acquired hemolytic anemia",
+      "gt_drugs": 8,
+      "hits": 7,
+      "recall": 0.875,
+      "categories": [
+        "hematological"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D057765",
+      "disease_name": "eosinophilic esophagitis eoe",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "gastrointestinal"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002295",
+      "disease_name": "urothelial carcinoma",
+      "gt_drugs": 6,
+      "hits": 1,
+      "recall": 0.16666666666666666,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020151",
+      "disease_name": "congenital protein c deficiency",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "rare/genetic"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008286",
+      "disease_name": "chronic malabsorption syndromes",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006937",
+      "disease_name": "primary hypercholesterolemia",
+      "gt_drugs": 16,
+      "hits": 3,
+      "recall": 0.1875,
+      "categories": [
+        "metabolic/endocrine"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004716",
+      "disease_name": "endometritis",
+      "gt_drugs": 6,
+      "hits": 1,
+      "recall": 0.16666666666666666,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003586",
+      "disease_name": "symptomatic congenital cytomegalovirus infection",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "infectious",
+        "rare/genetic"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013921",
+      "disease_name": "secondary thrombocytopenia",
+      "gt_drugs": 21,
+      "hits": 10,
+      "recall": 0.47619047619047616,
+      "categories": [
+        "hematological"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006929",
+      "disease_name": "primary hyperaldosteronism",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012516",
+      "disease_name": "osteosarcoma",
+      "gt_drugs": 5,
+      "hits": 2,
+      "recall": 0.4,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007918",
+      "disease_name": "leprosy",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014406",
+      "disease_name": "tularemia",
+      "gt_drugs": 7,
+      "hits": 6,
+      "recall": 0.8571428571428571,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D065631",
+      "disease_name": "allergic rhinitis",
+      "gt_drugs": 14,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017719",
+      "disease_name": "diabetic foot infections",
+      "gt_drugs": 3,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "infectious"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003967",
+      "disease_name": "diarrhea",
+      "gt_drugs": 3,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000707",
+      "disease_name": "anaphylaxis",
+      "gt_drugs": 3,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012507",
+      "disease_name": "symptomatic sarcoidosis",
+      "gt_drugs": 11,
+      "hits": 11,
+      "recall": 1.0,
+      "categories": [
+        "autoimmune/inflammatory"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000152",
+      "disease_name": "acne vulgaris",
+      "gt_drugs": 11,
+      "hits": 2,
+      "recall": 0.18181818181818182,
+      "categories": [
+        "dermatological"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D052256",
+      "disease_name": "tendinitis",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008630",
+      "disease_name": "mercury poisoning",
+      "gt_drugs": 2,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015535",
+      "disease_name": "psoriatic arthritis",
+      "gt_drugs": 28,
+      "hits": 12,
+      "recall": 0.42857142857142855,
+      "categories": [
+        "autoimmune/inflammatory"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018805",
+      "disease_name": "sepsis",
+      "gt_drugs": 7,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "infectious"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D059350",
+      "disease_name": "chronic pain",
+      "gt_drugs": 4,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006689",
+      "disease_name": "relapsed nonhodgkin lymphoma",
+      "gt_drugs": 6,
+      "hits": 3,
+      "recall": 0.5,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006105",
+      "disease_name": "chronic granulomatous disease",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016921",
+      "disease_name": "fungal meningitis",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "infectious"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008303",
+      "disease_name": "carcinoid syndrome diarrhea",
+      "gt_drugs": 3,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003047",
+      "disease_name": "coccidioidomycosis",
+      "gt_drugs": 4,
+      "hits": 2,
+      "recall": 0.5,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013587",
+      "disease_name": "syphilis",
+      "gt_drugs": 6,
+      "hits": 6,
+      "recall": 1.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010505",
+      "disease_name": "familial mediterranean fever",
+      "gt_drugs": 3,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002280",
+      "disease_name": "superficial basal cell carcinomas",
+      "gt_drugs": 6,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017118",
+      "disease_name": "acute intermittent porphyria",
+      "gt_drugs": 1,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "metabolic/endocrine"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013167",
+      "disease_name": "ankylosing spondylitis",
+      "gt_drugs": 28,
+      "hits": 10,
+      "recall": 0.35714285714285715,
+      "categories": [
+        "autoimmune/inflammatory"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D034721",
+      "disease_name": "systemic mastocytosis",
+      "gt_drugs": 6,
+      "hits": 0,
+      "recall": 0.0,
+      "categories": [
+        "other"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016410",
+      "disease_name": "cutaneous t cell lymphoma",
+      "gt_drugs": 1,
+      "hits": 1,
+      "recall": 1.0,
+      "categories": [
+        "cancer/oncology"
+      ]
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003093",
+      "disease_name": "ulcerative colitis",
+      "gt_drugs": 30,
+      "hits": 11,
+      "recall": 0.36666666666666664,
+      "categories": [
+        "autoimmune/inflammatory"
+      ]
+    }
+  ]
+}
