@@ -1,0 +1,134 @@
+{
+  "hypothesis": "h38",
+  "title": "XGBoost Hyperparameter Tuning for Generalization",
+  "date": "2026-01-27",
+  "default_r30": 0.28,
+  "best_s1": {
+    "max_depth": 6,
+    "n_estimators": 500,
+    "lr": 0.1,
+    "r30": 0.3090909090909091,
+    "hits": 170,
+    "gt": 550
+  },
+  "best_s2": {
+    "mcw": 1,
+    "reg_alpha": 1.0,
+    "reg_lambda": 1,
+    "r30": 0.3109090909090909,
+    "hits": 171,
+    "gt": 550
+  },
+  "best_overall_r30": 0.3109090909090909,
+  "delta": 0.030909090909090886,
+  "top_10": [
+    {
+      "mcw": 1,
+      "reg_alpha": 1.0,
+      "reg_lambda": 1,
+      "r30": 0.3109090909090909,
+      "hits": 171,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    },
+    {
+      "mcw": 10,
+      "reg_alpha": 0.1,
+      "reg_lambda": 5,
+      "r30": 0.3109090909090909,
+      "hits": 171,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    },
+    {
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1,
+      "r30": 0.3090909090909091,
+      "hits": 170,
+      "gt": 550
+    },
+    {
+      "mcw": 1,
+      "reg_alpha": 0,
+      "reg_lambda": 1,
+      "r30": 0.3090909090909091,
+      "hits": 170,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    },
+    {
+      "mcw": 1,
+      "reg_alpha": 1.0,
+      "reg_lambda": 5,
+      "r30": 0.30727272727272725,
+      "hits": 169,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    },
+    {
+      "mcw": 5,
+      "reg_alpha": 1.0,
+      "reg_lambda": 10,
+      "r30": 0.30727272727272725,
+      "hits": 169,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    },
+    {
+      "mcw": 1,
+      "reg_alpha": 0,
+      "reg_lambda": 5,
+      "r30": 0.3054545454545455,
+      "hits": 168,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    },
+    {
+      "mcw": 1,
+      "reg_alpha": 0.1,
+      "reg_lambda": 10,
+      "r30": 0.30363636363636365,
+      "hits": 167,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    },
+    {
+      "mcw": 10,
+      "reg_alpha": 1.0,
+      "reg_lambda": 5,
+      "r30": 0.30363636363636365,
+      "hits": 167,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    },
+    {
+      "mcw": 1,
+      "reg_alpha": 0.1,
+      "reg_lambda": 1,
+      "r30": 0.3018181818181818,
+      "hits": 166,
+      "gt": 550,
+      "max_depth": 6,
+      "n_estimators": 500,
+      "lr": 0.1
+    }
+  ],
+  "elapsed_seconds": 556.3595180511475
+}

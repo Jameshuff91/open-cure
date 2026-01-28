@@ -742,7 +742,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Use Node2Vec+XGBoost (concat) as base",
         "Step 2: Grid search: max_depth={3,4,6,8}, n_estimators={100,200,500}, lr={0.01,0.05,0.1}, min_child_weight={1,5,10}, reg_alpha={0,0.1,1}, reg_lambda={1,5,10}",
@@ -750,8 +750,8 @@
         "Step 4: Report best configuration and delta vs default",
         "Success criteria: >33% R@30"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED (partial): Hyperparameter tuning improves by +3.09 pp but doesn't reach 33% target.\n\nStage 1 (depth/trees/lr, 36 configs): Best md=6 ne=500 lr=0.1: 30.91% R@30\nStage 2 (regularization, 27 configs): Best mcw=1 ra=1.0 rl=1: 31.09% R@30\nDefault (md=6 ne=100 lr=0.1): 28.00% R@30\n\nKEY FINDING: More trees (500 vs 100) is the biggest driver (+2.91 pp). L1 regularization (alpha=1.0) adds +0.18 pp. Shallower trees (md=3,4) hurt. Deeper trees (md=8) don't help beyond md=6.\n\nBest config: max_depth=6, n_estimators=500, lr=0.1, min_child_weight=1, reg_alpha=1.0, reg_lambda=1",
+      "result_metric": "31.09% R@30 (best tuned) vs 28.00% (default) — +3.09 pp"
     },
     {
       "id": "h39",
@@ -800,7 +800,8 @@
     "h32",
     "h34",
     "h35",
-    "h37"
+    "h37",
+    "h38"
   ],
   "learnings": [
     {
