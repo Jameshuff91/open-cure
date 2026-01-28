@@ -93,18 +93,19 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 
 | Model | Per-Drug R@30 | Evaluation | Notes |
 |-------|---------------|------------|-------|
-| **Node2Vec+XGBoost (disease holdout)** | **28.73%** | **HONEST** | Best generalizing model, 88 test diseases |
+| **Node2Vec+XGBoost cpd (disease holdout)** | **29.45%** | **HONEST** | Best generalizing model, 88 test diseases |
+| Node2Vec+XGBoost concat (disease holdout) | 26.18% | Honest | Concat-only features |
 | GB + Fuzzy Matcher (fixed) | 41.8% | Within-dist | 1,236 diseases, pair-level (inflated) |
 | GB + TransE (existing, on test) | 45.9% | Pair-trained | Trained on ALL diseases, tested on subset |
-| TransE+XGBoost (disease holdout) | 16.64% | Honest | TransE fails to generalize |
+| TransE+XGBoost (disease holdout) | 15.90% | Honest | TransE fails to generalize |
 | Node2Vec+XGBoost (pair-level) | ~21.6% | Within-dist | Pair-level trained, evaluated on test |
 | GB + Quad Boost (inflated) | 47.5%* | Circular | *Circular features - NOT real |
 | Node2Vec Cosine (no ML) | 1.27% | Honest | ML model IS required |
 | TxGNN | 6.7% | Unknown | Near-random for most diseases |
 
-**CRITICAL (2026-01-27):** The honest generalization baseline is **28.73% R@30** (Node2Vec+XGBoost on disease-level holdout). All higher numbers used pair-level splits or circular features.
+**CRITICAL (2026-01-27):** The honest generalization baseline is **29.45% R@30** (Node2Vec+XGBoost cpd on disease-level holdout). All higher numbers used pair-level splits or circular features.
 
-**Progression:** 37.4% → 41.8% (fuzzy fix, pair-level) → Generalization crisis → **28.73% (honest, Node2Vec)**
+**Progression:** 37.4% → 41.8% (fuzzy fix, pair-level) → Generalization crisis → **29.45% (honest, Node2Vec)**
 
 ## Key Learnings
 
@@ -115,12 +116,13 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 
 ### CRITICAL: Generalization Gap (2026-01-27)
 - **GB + TransE does NOT generalize**: Retrained 3-12% R@30 on disease holdout (h5)
-- **Node2Vec DOES partially generalize**: 28.73% R@30 on disease holdout (h29) — 1.73x better than TransE (16.64%)
+- **Node2Vec DOES partially generalize**: 29.45% R@30 on disease holdout (h29) — 1.85x better than TransE (15.90%)
 - The "41.9% on held-out diseases" was INCORRECT: original code used pair-level split
 - Node2Vec's random walk captures transferable neighborhood structure; TransE's translational model memorizes
-- Concat vs full features (concat+product+diff) makes NO difference for Node2Vec (both 28.73%)
+- Concat+product+diff features help Node2Vec: 26.18% (concat) → 29.45% (cpd) (+3.3 pp)
 - Cosine similarity alone is useless: 0-1.27% R@30
-- **Next priority**: Improve beyond 28.73% via graph features + Node2Vec hybrid (h34), or gene-based features (h35)
+- All 4 positive controls pass for Node2Vec concat model (Metformin rank 22, Rituximab rank 21, Imatinib rank 12, Lisinopril rank 27)
+- **Next priority**: Improve beyond 29.45% via graph features + Node2Vec hybrid (h34), or gene-based features (h35)
 
 ### What SEEMED to Work (but was data leakage)
 1. **Boost features** - Target overlap, chemical similarity, ATC were circular
