@@ -600,7 +600,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Load disease_genes.json and drug_targets.json",
         "Step 2: Create disease feature vector: binary/count of associated genes (or top-N PCA components)",
@@ -610,8 +610,8 @@
         "Step 6: Evaluate R@30 on held-out diseases",
         "Success criteria: >25% R@30 on held-out diseases"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "SUPERSEDED: h35 tested gene features (shared genes, Jaccard, overlap coefficient) and found +0.73 pp at best. h41 tested gene overlap as disease similarity for kNN and it HURT (23.2% vs 36.8%). Gene-based representations from DRKG data provide no improvement over Node2Vec. Not worth implementing a more complex version (PCA of gene profiles) when the basic version already failed.",
+      "result_metric": "Superseded by h35 (+0.73 pp) and h41 (gene similarity hurts kNN)"
     },
     {
       "id": "h32",
@@ -904,7 +904,8 @@
     "h43",
     "h41",
     "h44",
-    "h45"
+    "h45",
+    "h31"
   ],
   "learnings": [
     {
