@@ -93,19 +93,19 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 
 | Model | Per-Drug R@30 | Evaluation | Notes |
 |-------|---------------|------------|-------|
-| **Node2Vec+XGBoost cpd (disease holdout)** | **29.45%** | **HONEST** | Best generalizing model, 88 test diseases |
-| Node2Vec+XGBoost concat (disease holdout) | 26.18% | Honest | Concat-only features |
+| **Node2Vec+XGBoost TUNED (disease holdout)** | **31.09%** | **HONEST** | md=6,ne=500,lr=0.1,alpha=1.0 (h38) |
+| Node2Vec+XGBoost default (disease holdout) | 28.73% | Honest | md=6,ne=100,lr=0.1 (h29 baseline) |
 | GB + Fuzzy Matcher (fixed) | 41.8% | Within-dist | 1,236 diseases, pair-level (inflated) |
 | GB + TransE (existing, on test) | 45.9% | Pair-trained | Trained on ALL diseases, tested on subset |
-| TransE+XGBoost (disease holdout) | 15.90% | Honest | TransE fails to generalize |
+| TransE+XGBoost (disease holdout) | 16.64% | Honest | TransE fails to generalize |
 | Node2Vec+XGBoost (pair-level) | ~21.6% | Within-dist | Pair-level trained, evaluated on test |
 | GB + Quad Boost (inflated) | 47.5%* | Circular | *Circular features - NOT real |
 | Node2Vec Cosine (no ML) | 1.27% | Honest | ML model IS required |
 | TxGNN | 6.7% | Unknown | Near-random for most diseases |
 
-**CRITICAL (2026-01-27):** The honest generalization baseline is **29.45% R@30** (Node2Vec+XGBoost cpd on disease-level holdout). All higher numbers used pair-level splits or circular features.
+**CRITICAL (2026-01-27):** The honest generalization baseline is **31.09% R@30** (Node2Vec+XGBoost tuned on disease-level holdout). All higher numbers used pair-level splits or circular features.
 
-**Progression:** 37.4% → 41.8% (fuzzy fix, pair-level) → Generalization crisis → **29.45% (honest, Node2Vec)**
+**Progression:** 37.4% → 41.8% (fuzzy, pair-level) → Generalization crisis → 28.73% (honest Node2Vec) → **31.09% (tuned XGBoost)**
 
 ## Key Learnings
 
