@@ -110,6 +110,8 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 
 **Progression:** 37.4% → 41.8% (fuzzy, pair-level) → Generalization crisis → 25.85% (honest XGBoost, 5-seed) → **37.04% (kNN collab filtering, 5-seed)**
 
+**DRKG CEILING (2026-01-28):** 37% R@30 is the maximum achievable with DRKG-only approaches. Oracle ceiling is 60%. The 23 pp gap requires **external data** (phenotype ontology, PPI networks, clinical trials). All DRKG-internal hypotheses have been blocked.
+
 ## Key Learnings
 
 ### What Works

@@ -1,12 +1,15 @@
 {
   "project": "open-cure",
-  "baseline_metric": "41.8% R@30",
+  "baseline_metric": "37.04% R@30 (kNN k=20)",
   "evaluation_details": {
-    "diseases": 1236,
-    "pairs": 3618,
-    "model": "GB + Fuzzy Matcher"
+    "method": "kNN collaborative filtering",
+    "k": 20,
+    "similarity": "Node2Vec cosine",
+    "diseases": "5-seed disease holdout",
+    "ceiling": "60.4% (oracle)",
+    "gap": "23 pp requires external data"
   },
-  "last_updated": "2026-01-26",
+  "last_updated": "2026-01-28",
   "hypotheses": [
     {
       "id": "h1",
@@ -111,7 +114,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 6,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Extract mAb target antigens from DrugBank (e.g., TNF-alpha, CD20, IL-17)",
         "Step 2: Map diseases to immunology pathways (Th1, Th2, Th17)",
@@ -120,7 +123,7 @@
         "Step 5: Evaluate R@30 for biologics specifically",
         "Step 6: Success criteria: >35% R@30 for biologics"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): DRKG-internal feature engineering won't break 37% ceiling (h34, h35, h41, h45). The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
@@ -131,7 +134,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 7,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Load DRKG graph from data/drkg/drkg.tsv",
         "Step 2: Compute for each drug-disease pair: shortest path, #paths<=3, shared gene neighbors",
@@ -140,7 +143,7 @@
         "Step 5: Evaluate on held-out diseases",
         "Step 6: Success criteria: >43% R@30"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): Graph path features already tested and failed in h34. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
@@ -150,7 +153,7 @@
       "rationale": "Confidence calibrator achieves 0.962 AUROC. Using it to filter low-confidence predictions could improve precision without hurting recall. Filter threshold analysis needed. NOTE: h5 findings suggest this operates on within-distribution performance only. Still useful for the current (non-generalizing) model's predictions.",
       "expected_impact": "low",
       "effort": "low",
-      "priority": 15,
+      "priority": 10,
       "status": "pending",
       "steps": [
         "Step 1: Load confidence_calibrator.pkl model",
@@ -166,10 +169,10 @@
       "id": "h9",
       "title": "Disease Coverage Expansion via UMLS",
       "category": "data",
-      "rationale": "Currently 30.9% of EC diseases mapped via fuzzy matching. UMLS has comprehensive cross-references (MESH, MONDO, DOID, SNOMED). Could improve to 50%+ coverage.",
+      "rationale": "HIGH VALUE: More disease mappings. Currently 30.9% of EC diseases mapped via fuzzy matching. UMLS has comprehensive cross-references (MESH, MONDO, DOID, SNOMED). Could improve to 50%+ coverage.",
       "expected_impact": "medium",
       "effort": "medium",
-      "priority": 9,
+      "priority": 4,
       "status": "pending",
       "steps": [
         "Step 1: Download UMLS Metathesaurus (requires license)",
@@ -188,7 +191,7 @@
       "rationale": "Current evaluation uses random disease split. Temporal split (train on pre-2020 approvals, test on 2020-2025) would better simulate real-world drug discovery and reduce optimistic bias.",
       "expected_impact": "low",
       "effort": "medium",
-      "priority": 10,
+      "priority": 14,
       "status": "pending",
       "steps": [
         "Step 1: Download FDA approval dates from DrugBank or OpenFDA",
@@ -209,7 +212,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 11,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Extract MoA from DrugBank (action field)",
         "Step 2: Create MoA categories: agonist, antagonist, inhibitor, modulator",
@@ -218,7 +221,7 @@
         "Step 5: Evaluate impact on R@30",
         "Step 6: Success criteria: >42.5% R@30"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): MoA features are DRKG-internal, won't help. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
@@ -229,7 +232,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 12,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Augment DRKG with Every Cure treatment edges",
         "Step 2: Retrain Node2Vec embeddings (256-dim) on augmented graph",
@@ -238,7 +241,7 @@
         "Step 5: Evaluate on held-out diseases",
         "Step 6: Success criteria: >43% R@30"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): Retraining Node2Vec won't break ceiling - similarity measure is the bottleneck, not embedding quality. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
@@ -248,7 +251,7 @@
       "rationale": "Current confounding detector finds 9 patterns (1.6%). Expanding rules based on validation sessions (anti-IL-5, anti-IFN-gamma, TRAIL agonists) could filter more false positives.",
       "expected_impact": "low",
       "effort": "low",
-      "priority": 13,
+      "priority": 11,
       "status": "pending",
       "steps": [
         "Step 1: Review all false positive patterns from validation_sessions.md",
@@ -267,7 +270,7 @@
       "rationale": "Validation found intravitreal drugs (Brolucizumab) predicted for systemic diseases. Adding route-of-administration constraints could filter impractical predictions.",
       "expected_impact": "low",
       "effort": "low",
-      "priority": 14,
+      "priority": 12,
       "status": "pending",
       "steps": [
         "Step 1: Extract drug formulation from DrugBank (route field)",
@@ -287,7 +290,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 15,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Extract cancer disease subset from GT",
         "Step 2: Add tumor-specific features: driver mutations, tumor suppressor status",
@@ -296,17 +299,17 @@
         "Step 5: Evaluate R@30 for cancer diseases",
         "Step 6: Success criteria: >25% R@30 for oncology (up from ~11%)"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): Specialist models already failed (h3), and kNN doesn't need them. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
       "id": "h16",
       "title": "Clinical Trial Phase Features",
       "category": "feature",
-      "rationale": "External validation uses ClinicalTrials.gov data. Adding trial phase as a feature (Phase 1/2/3) for known pairs could help model learn which combinations advance.",
+      "rationale": "External trial data could help. External validation uses ClinicalTrials.gov data. Adding trial phase as a feature (Phase 1/2/3) for known pairs could help model learn which combinations advance.",
       "expected_impact": "low",
       "effort": "medium",
-      "priority": 16,
+      "priority": 5,
       "status": "pending",
       "steps": [
         "Step 1: Query ClinicalTrials.gov API for all drug-disease pairs",
@@ -322,10 +325,10 @@
       "id": "h17",
       "title": "PPI Network Distance Features",
       "category": "feature",
-      "rationale": "Drugs that target proteins close to disease genes in PPI network may be more effective. STRING database has PPI distances.",
+      "rationale": "HIGH VALUE: External PPI data, new similarity signal. Drugs that target proteins close to disease genes in PPI network may be more effective. STRING database has PPI distances.",
       "expected_impact": "medium",
       "effort": "medium",
-      "priority": 17,
+      "priority": 2,
       "status": "pending",
       "steps": [
         "Step 1: Download STRING PPI network for human",
@@ -345,7 +348,7 @@
       "rationale": "Validation found predictions for withdrawn drugs (Pergolide, Aducanumab). Comprehensive withdrawn drug list could improve practical value of predictions.",
       "expected_impact": "low",
       "effort": "low",
-      "priority": 18,
+      "priority": 13,
       "status": "pending",
       "steps": [
         "Step 1: Download FDA withdrawn drug list from openFDA",
@@ -361,10 +364,10 @@
       "id": "h19",
       "title": "Disease Phenotype Similarity",
       "category": "feature",
-      "rationale": "Drugs that work for similar diseases may work for the target disease. HPO (Human Phenotype Ontology) similarity could capture this.",
+      "rationale": "HIGH VALUE: External phenotype data could provide 23 pp improvement room. Drugs that work for similar diseases may work for the target disease. HPO (Human Phenotype Ontology) similarity could capture this.",
       "expected_impact": "medium",
       "effort": "high",
-      "priority": 19,
+      "priority": 1,
       "status": "pending",
       "steps": [
         "Step 1: Download HPO annotations for diseases",
@@ -385,7 +388,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 20,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Hold out 20% of training pairs for calibration",
         "Step 2: Apply Platt scaling to raw GB scores",
@@ -393,7 +396,7 @@
         "Step 4: Compare calibrated vs uncalibrated R@30",
         "Step 5: Success criteria: Brier score < 0.15, maintain R@30"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): Calibration improves scores but won't improve recall ceiling. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
@@ -404,7 +407,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 21,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Count known indications per drug from GT",
         "Step 2: Add indication_count as feature",
@@ -412,7 +415,7 @@
         "Step 4: If positive, include in boosting formula",
         "Step 5: Success criteria: Positive correlation + >41.8% R@30"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): DRKG-internal feature, won't help. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
@@ -422,7 +425,7 @@
       "rationale": "Every Cure prioritizes rare diseases. Separate evaluation on rare vs common diseases could identify where model performs best and where to focus improvements.",
       "expected_impact": "low",
       "effort": "low",
-      "priority": 22,
+      "priority": 15,
       "status": "pending",
       "steps": [
         "Step 1: Classify diseases as rare (prevalence < 1/2000) using Orphanet",
@@ -442,7 +445,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 23,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Provision GPU on Vast.ai",
         "Step 2: Load TxGNN model (txgnn_500epochs.pt)",
@@ -450,7 +453,7 @@
         "Step 4: Save as txgnn_full_rankings.csv (disease, drug, rank)",
         "Step 5: Re-test h1 and h2 with full rankings"
       ],
-      "findings": null,
+      "findings": "BLOCKED: Requires GPU resources",
       "result_metric": null
     },
     {
@@ -461,7 +464,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 24,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Classify all drugs by ATC code (1st level)",
         "Step 2: Calculate R@30 per drug class",
@@ -469,7 +472,7 @@
         "Step 4: Identify worst performers (e.g., biologics 27.3%)",
         "Step 5: Document patterns for targeted feature engineering"
       ],
-      "findings": null,
+      "findings": "SUPERSEDED: kNN is now best method, GB model analysis no longer relevant",
       "result_metric": null
     },
     {
@@ -480,7 +483,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 25,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Compute embedding distances for all GT pairs",
         "Step 2: Compute distances for random negatives",
@@ -488,7 +491,7 @@
         "Step 4: Calibrate model predictions using class-specific priors",
         "Step 5: Evaluate R@30 improvement"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): DRKG-internal calibration, won't help. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
@@ -498,7 +501,7 @@
       "rationale": "The 13.6% figure was about antibiotics ranking poorly for infectious diseases. But evaluation shows model actually achieves 52% R@30 on infectious diseases. Need to understand: (1) which antibiotics are causing spurious predictions, (2) which non-infectious diseases they're predicted for, (3) whether existing confidence_filter.py adequately addresses this.",
       "expected_impact": "low",
       "effort": "low",
-      "priority": 26,
+      "priority": 16,
       "status": "pending",
       "steps": [
         "Step 1: Identify all antibiotic predictions in top-100 for non-infectious diseases",
@@ -517,7 +520,7 @@
       "rationale": "The discrepancy between reported 13.6% and actual 52% R@30 for infectious diseases suggests other category metrics may also be inaccurate. Need comprehensive baseline by disease category.",
       "expected_impact": "low",
       "effort": "low",
-      "priority": 27,
+      "priority": 17,
       "status": "pending",
       "steps": [
         "Step 1: Evaluate GB model on all disease categories (cancer, autoimmune, cardiovascular, etc.)",
@@ -533,10 +536,10 @@
       "id": "h28",
       "title": "DrugBank XML Indication Extraction",
       "category": "data",
-      "rationale": "h4 showed 83% of identified missing FDA pairs hit@30, indicating value in GT expansion. Full DrugBank XML contains ~12K drug-indication pairs. Systematic extraction could add hundreds of missing pairs.",
+      "rationale": "HIGH VALUE: More GT data expands kNN coverage. h4 showed 83% of identified missing FDA pairs hit@30, indicating value in GT expansion. Full DrugBank XML contains ~12K drug-indication pairs. Systematic extraction could add hundreds of missing pairs.",
       "expected_impact": "medium",
       "effort": "medium",
-      "priority": 28,
+      "priority": 3,
       "status": "pending",
       "steps": [
         "Step 1: Download full DrugBank XML (requires academic license)",
@@ -590,7 +593,7 @@
         "Success criteria: >20% R@30 on held-out diseases (vs 3-12% for embedding-only)"
       ],
       "findings": "SUPERSEDED by h34: Graph topological features (degree, shared gene neighbors, Adamic-Adar, shortest path) were tested in h34 and provide NO improvement over Node2Vec once treatment-edge leakage is removed. Clean result: -0.18 pp. Graph features from DRKG are redundant with Node2Vec embeddings.",
-      "result_metric": "See h34: 26.55% hybrid vs 26.73% Node2Vec only — no improvement"
+      "result_metric": "See h34: 26.55% hybrid vs 26.73% Node2Vec only \u2014 no improvement"
     },
     {
       "id": "h31",
@@ -641,7 +644,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 20,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Run Node2Vec+XGBoost evaluation with 5 different random seeds for disease splits",
         "Step 2: Run TransE+XGBoost with same 5 seeds",
@@ -649,7 +652,7 @@
         "Step 4: Verify 28.73% vs 16.64% gap is consistent",
         "Success criteria: Quantify gap with confidence intervals"
       ],
-      "findings": null,
+      "findings": "SUPERSEDED: Superseded by h40 multi-seed evaluation",
       "result_metric": null
     },
     {
@@ -670,8 +673,8 @@
         "Step 6: Evaluate R@30 on same 88 held-out test diseases from h29",
         "Success criteria: >33% R@30 (>3.5 pp improvement over Node2Vec-only)"
       ],
-      "findings": "INVALIDATED: Graph topological features do NOT improve generalization once treatment-edge leakage is removed.\n\nINITIAL RESULT (WITH LEAKAGE):\n- Node2Vec only: 30.0%\n- Graph only (including treatment edges): 37.77%\n- Node2Vec + Graph hybrid: 45.82% (+15.8 pp!)\n\nBut the 'direct_connection' feature (importance 0.044) encoded treatment edges from DRKG — which IS the label. DRKG contains 4,968 DRUGBANK::treats and 54,020 GNBR::T treatment edges that overlap with GT.\n\nCLEAN RESULT (treatment edges EXCLUDED from graph):\n- Node2Vec only: 26.73%\n- Graph only (clean): 14.39%\n- Node2Vec + Clean Graph: 26.55% (-0.18 pp — NO improvement)\n\nFeature importance (clean): Node2Vec 89.4%, Graph 10.6%. Drug_degree (0.072) dominates, but it doesn't help generalization.\n\nKEY INSIGHT: The 45.82% 'breakthrough' was entirely data leakage. Without treatment edges, graph features (degree, shared gene neighbors, Adamic-Adar) are uninformative for drug repurposing prediction. The graph features capture proximity which is already encoded in Node2Vec embeddings.",
-      "result_metric": "26.55% R@30 (clean hybrid) vs 26.73% (Node2Vec only) — NO improvement after leakage removal"
+      "findings": "INVALIDATED: Graph topological features do NOT improve generalization once treatment-edge leakage is removed.\n\nINITIAL RESULT (WITH LEAKAGE):\n- Node2Vec only: 30.0%\n- Graph only (including treatment edges): 37.77%\n- Node2Vec + Graph hybrid: 45.82% (+15.8 pp!)\n\nBut the 'direct_connection' feature (importance 0.044) encoded treatment edges from DRKG \u2014 which IS the label. DRKG contains 4,968 DRUGBANK::treats and 54,020 GNBR::T treatment edges that overlap with GT.\n\nCLEAN RESULT (treatment edges EXCLUDED from graph):\n- Node2Vec only: 26.73%\n- Graph only (clean): 14.39%\n- Node2Vec + Clean Graph: 26.55% (-0.18 pp \u2014 NO improvement)\n\nFeature importance (clean): Node2Vec 89.4%, Graph 10.6%. Drug_degree (0.072) dominates, but it doesn't help generalization.\n\nKEY INSIGHT: The 45.82% 'breakthrough' was entirely data leakage. Without treatment edges, graph features (degree, shared gene neighbors, Adamic-Adar) are uninformative for drug repurposing prediction. The graph features capture proximity which is already encoded in Node2Vec embeddings.",
+      "result_metric": "26.55% R@30 (clean hybrid) vs 26.73% (Node2Vec only) \u2014 NO improvement after leakage removal"
     },
     {
       "id": "h35",
@@ -691,8 +694,8 @@
         "Step 6: Evaluate R@30 on held-out diseases",
         "Success criteria: >33% R@30"
       ],
-      "findings": "INVALIDATED: Gene features provide minimal additional value on top of Node2Vec embeddings.\n\nRESULTS (88 held-out test diseases, seed=42):\n- Node2Vec only (baseline): 25.82% R@30 (142/550 hits)\n- Gene features only: 7.91% R@30 (44/556 hits)\n- Node2Vec + Gene hybrid: 26.55% R@30 (146/550 hits)\n- Delta: +0.73 pp (marginal, NOT meeting >33% target)\n\nGene features tested (12 features): n_shared, jaccard, dice, overlap_coeff, n_drug_targets, n_disease_genes, has_drug_targets, has_disease_genes, has_both, log_drug/disease/shared.\n\nFEATURE IMPORTANCE (hybrid model):\n- Node2Vec: 87.7%\n- Genes: 12.3% (dominated by n_drug_targets at 0.096)\n- Most gene interaction features (shared, jaccard, dice) have near-zero importance\n\nDATA COVERAGE: 63.5% of GT diseases have gene data, 36.9% of drugs have target data. 6,353 shared genes between drug targets and disease genes.\n\nWHY IT FAILED:\n1. Gene features are too sparse — most drug-disease pairs have zero shared genes\n2. Drug target count is the only useful gene feature, but it's drug-level not pair-level\n3. Node2Vec already captures gene-mediated relationships implicitly through the knowledge graph structure\n4. The 12 gene features add noise relative to 512 Node2Vec features\n\nIMPLICATION: Simple gene overlap features don't add to Node2Vec. More sophisticated gene representations (pathway-level, PPI network distance, gene expression similarity) might help, but require additional data.",
-      "result_metric": "26.55% R@30 (hybrid) vs 25.82% (Node2Vec only) — +0.73 pp, below 33% target"
+      "findings": "INVALIDATED: Gene features provide minimal additional value on top of Node2Vec embeddings.\n\nRESULTS (88 held-out test diseases, seed=42):\n- Node2Vec only (baseline): 25.82% R@30 (142/550 hits)\n- Gene features only: 7.91% R@30 (44/556 hits)\n- Node2Vec + Gene hybrid: 26.55% R@30 (146/550 hits)\n- Delta: +0.73 pp (marginal, NOT meeting >33% target)\n\nGene features tested (12 features): n_shared, jaccard, dice, overlap_coeff, n_drug_targets, n_disease_genes, has_drug_targets, has_disease_genes, has_both, log_drug/disease/shared.\n\nFEATURE IMPORTANCE (hybrid model):\n- Node2Vec: 87.7%\n- Genes: 12.3% (dominated by n_drug_targets at 0.096)\n- Most gene interaction features (shared, jaccard, dice) have near-zero importance\n\nDATA COVERAGE: 63.5% of GT diseases have gene data, 36.9% of drugs have target data. 6,353 shared genes between drug targets and disease genes.\n\nWHY IT FAILED:\n1. Gene features are too sparse \u2014 most drug-disease pairs have zero shared genes\n2. Drug target count is the only useful gene feature, but it's drug-level not pair-level\n3. Node2Vec already captures gene-mediated relationships implicitly through the knowledge graph structure\n4. The 12 gene features add noise relative to 512 Node2Vec features\n\nIMPLICATION: Simple gene overlap features don't add to Node2Vec. More sophisticated gene representations (pathway-level, PPI network distance, gene expression similarity) might help, but require additional data.",
+      "result_metric": "26.55% R@30 (hybrid) vs 25.82% (Node2Vec only) \u2014 +0.73 pp, below 33% target"
     },
     {
       "id": "h36",
@@ -702,7 +705,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 6,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Identify current Node2Vec parameters (check if recorded in training logs)",
         "Step 2: Retrain Node2Vec with grid: p={0.5,1,2}, q={0.5,1,2} (9 combinations)",
@@ -711,7 +714,7 @@
         "Step 5: Requires DRKG graph re-training \u2014 significant compute",
         "Success criteria: >33% R@30 with optimized parameters"
       ],
-      "findings": null,
+      "findings": "BLOCKED (DRKG ceiling): Node2Vec hyperparameter tuning won't break ceiling - h43 showed params already optimal. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
       "result_metric": null
     },
     {
@@ -751,7 +754,7 @@
         "Success criteria: >33% R@30"
       ],
       "findings": "VALIDATED (partial): Hyperparameter tuning improves by +3.09 pp but doesn't reach 33% target.\n\nStage 1 (depth/trees/lr, 36 configs): Best md=6 ne=500 lr=0.1: 30.91% R@30\nStage 2 (regularization, 27 configs): Best mcw=1 ra=1.0 rl=1: 31.09% R@30\nDefault (md=6 ne=100 lr=0.1): 28.00% R@30\n\nKEY FINDING: More trees (500 vs 100) is the biggest driver (+2.91 pp). L1 regularization (alpha=1.0) adds +0.18 pp. Shallower trees (md=3,4) hurt. Deeper trees (md=8) don't help beyond md=6.\n\nBest config: max_depth=6, n_estimators=500, lr=0.1, min_child_weight=1, reg_alpha=1.0, reg_lambda=1",
-      "result_metric": "31.09% R@30 (best tuned) vs 28.00% (default) — +3.09 pp"
+      "result_metric": "31.09% R@30 (best tuned) vs 28.00% (default) \u2014 +3.09 pp"
     },
     {
       "id": "h39",
@@ -770,8 +773,8 @@
         "Step 5: Alternatively, use k-nearest training diseases only (k=5,10,20)",
         "Success criteria: >33% R@30"
       ],
-      "findings": "VALIDATED: Disease similarity transfer provides MAJOR improvement. Best method: kNN collaborative filtering (Approach B).\n\nMULTI-SEED RESULTS (5 seeds: 42, 123, 456, 789, 1024):\n\n| Method | Mean R@30 | Std | vs Baseline |\n|---|---|---|---|\n| XGBoost tuned (baseline) | 26.57% | ±3.98% | --- |\n| Approach A (global + sim features) | 30.55%* | --- | +3.98 pp |\n| Approach B (kNN k=20, no ML) | 37.04% | ±5.81% | +10.47 pp |\n| Approach C (local weighted models, k=10 t=2) | 31.22% | ±5.83% | +4.65 pp |\n| Approach D (XGBoost + kNN feature) | 34.08% | ±6.00% | +7.51 pp |\n| Rank fusion (alpha=0.1) | 37.16% | ±5.12% | +10.59 pp |\n\n*Approach A single-seed only (seed=42).\n\nAPPROACH B DETAILS:\n- For each test disease, find k=20 nearest training diseases by Node2Vec cosine similarity\n- Rank drugs by similarity-weighted frequency among those diseases\n- No ML model needed — purely collaborative filtering\n- Paired t-test vs baseline: t=7.11, p=0.002 (highly significant), Cohen's d=3.18\n\nDIAGNOSTICS:\n- Candidate pool: ~59 drugs per test disease (from 20 nearest training diseases)\n- GT coverage: 40.9% of GT drugs found in candidate pool on average\n- 44.3% of test diseases have 0% GT coverage (truly novel diseases)\n- kNN dominates hybrid: alpha=0.1 (90% kNN / 10% XGBoost) is optimal\n\nKEY INSIGHTS:\n1. Similar diseases share treatments — this is the dominant signal for drug repurposing\n2. XGBoost model adds negligible value on top of kNN collaborative filtering\n3. The method is limited: can only recommend drugs that appear in similar diseases' GT\n4. For truly novel diseases (no similar training neighbors), method falls back to zero\n5. The ~37% mean is driven by the 56% of diseases that HAVE similar training counterparts",
-      "result_metric": "kNN k=20: 37.04% ± 5.81% mean R@30 (5 seeds), +10.47 pp over baseline (p=0.002)"
+      "findings": "VALIDATED: Disease similarity transfer provides MAJOR improvement. Best method: kNN collaborative filtering (Approach B).\n\nMULTI-SEED RESULTS (5 seeds: 42, 123, 456, 789, 1024):\n\n| Method | Mean R@30 | Std | vs Baseline |\n|---|---|---|---|\n| XGBoost tuned (baseline) | 26.57% | \u00b13.98% | --- |\n| Approach A (global + sim features) | 30.55%* | --- | +3.98 pp |\n| Approach B (kNN k=20, no ML) | 37.04% | \u00b15.81% | +10.47 pp |\n| Approach C (local weighted models, k=10 t=2) | 31.22% | \u00b15.83% | +4.65 pp |\n| Approach D (XGBoost + kNN feature) | 34.08% | \u00b16.00% | +7.51 pp |\n| Rank fusion (alpha=0.1) | 37.16% | \u00b15.12% | +10.59 pp |\n\n*Approach A single-seed only (seed=42).\n\nAPPROACH B DETAILS:\n- For each test disease, find k=20 nearest training diseases by Node2Vec cosine similarity\n- Rank drugs by similarity-weighted frequency among those diseases\n- No ML model needed \u2014 purely collaborative filtering\n- Paired t-test vs baseline: t=7.11, p=0.002 (highly significant), Cohen's d=3.18\n\nDIAGNOSTICS:\n- Candidate pool: ~59 drugs per test disease (from 20 nearest training diseases)\n- GT coverage: 40.9% of GT drugs found in candidate pool on average\n- 44.3% of test diseases have 0% GT coverage (truly novel diseases)\n- kNN dominates hybrid: alpha=0.1 (90% kNN / 10% XGBoost) is optimal\n\nKEY INSIGHTS:\n1. Similar diseases share treatments \u2014 this is the dominant signal for drug repurposing\n2. XGBoost model adds negligible value on top of kNN collaborative filtering\n3. The method is limited: can only recommend drugs that appear in similar diseases' GT\n4. For truly novel diseases (no similar training neighbors), method falls back to zero\n5. The ~37% mean is driven by the 56% of diseases that HAVE similar training counterparts",
+      "result_metric": "kNN k=20: 37.04% \u00b1 5.81% mean R@30 (5 seeds), +10.47 pp over baseline (p=0.002)"
     },
     {
       "id": "h40",
@@ -788,14 +791,14 @@
         "Step 3: If variance is high (>5 pp), results from single-seed experiments are unreliable",
         "Success criteria: Establish confidence interval for 28.73%"
       ],
-      "findings": "VALIDATED: Multi-seed analysis reveals moderate variance and confirms tuning gain is real.\n\nDEFAULT XGBoost (md=6, ne=100, lr=0.1):\n- Seeds: 27.82%, 22.92%, 24.03%, 26.73%, 17.16%\n- Mean: 23.73% ± 3.73%\n- Range: [17.16%, 27.82%]\n\nTUNED XGBoost (h38: md=6, ne=500, lr=0.1, ra=1.0):\n- Seeds: 30.00%, 26.43%, 26.27%, 28.34%, 18.21%\n- Mean: 25.85% ± 4.06%\n- Range: [18.21%, 30.00%]\n\nKEY FINDINGS:\n1. Seed 42 was LUCKY — highest for default (27.82%), near-highest for tuned (30.00%). Previously reported 28.73%/31.09% were inflated.\n2. TRUE MEAN BASELINE: 23.73% (default) / 25.85% (tuned) — not 28.73%/31.09%.\n3. TUNING IS REAL: Tuned wins 5/5 seeds. Paired t-test: t=5.174, p=0.0066 (significant). Mean improvement: +2.12 pp.\n4. VARIANCE IS MODERATE: 3.7-4.1 pp std. Disease split matters significantly — seed 1024 gives ~10 pp lower than seed 42.\n5. All future experiments should use multi-seed evaluation to avoid misleading single-seed results.",
-      "result_metric": "Default mean: 23.73% ± 3.73%, Tuned mean: 25.85% ± 4.06%, Tuning improvement: +2.12 pp (p=0.0066)"
+      "findings": "VALIDATED: Multi-seed analysis reveals moderate variance and confirms tuning gain is real.\n\nDEFAULT XGBoost (md=6, ne=100, lr=0.1):\n- Seeds: 27.82%, 22.92%, 24.03%, 26.73%, 17.16%\n- Mean: 23.73% \u00b1 3.73%\n- Range: [17.16%, 27.82%]\n\nTUNED XGBoost (h38: md=6, ne=500, lr=0.1, ra=1.0):\n- Seeds: 30.00%, 26.43%, 26.27%, 28.34%, 18.21%\n- Mean: 25.85% \u00b1 4.06%\n- Range: [18.21%, 30.00%]\n\nKEY FINDINGS:\n1. Seed 42 was LUCKY \u2014 highest for default (27.82%), near-highest for tuned (30.00%). Previously reported 28.73%/31.09% were inflated.\n2. TRUE MEAN BASELINE: 23.73% (default) / 25.85% (tuned) \u2014 not 28.73%/31.09%.\n3. TUNING IS REAL: Tuned wins 5/5 seeds. Paired t-test: t=5.174, p=0.0066 (significant). Mean improvement: +2.12 pp.\n4. VARIANCE IS MODERATE: 3.7-4.1 pp std. Disease split matters significantly \u2014 seed 1024 gives ~10 pp lower than seed 42.\n5. All future experiments should use multi-seed evaluation to avoid misleading single-seed results.",
+      "result_metric": "Default mean: 23.73% \u00b1 3.73%, Tuned mean: 25.85% \u00b1 4.06%, Tuning improvement: +2.12 pp (p=0.0066)"
     },
     {
       "id": "h41",
       "title": "Improved Disease Similarity Measure",
       "category": "architecture",
-      "rationale": "h39 showed kNN collaborative filtering at 37% R@30 using Node2Vec cosine similarity for disease-disease comparison. But Node2Vec embeddings were not optimized for disease similarity — they capture general graph proximity. A disease similarity measure that accounts for shared gene associations, phenotype overlap, or treatment overlap (from training only) could improve kNN performance.",
+      "rationale": "h39 showed kNN collaborative filtering at 37% R@30 using Node2Vec cosine similarity for disease-disease comparison. But Node2Vec embeddings were not optimized for disease similarity \u2014 they capture general graph proximity. A disease similarity measure that accounts for shared gene associations, phenotype overlap, or treatment overlap (from training only) could improve kNN performance.",
       "expected_impact": "high",
       "effort": "medium",
       "priority": 1,
@@ -807,8 +810,8 @@
         "Step 4: Test hybrid similarity (weighted combination of measures)",
         "Success criteria: >40% mean R@30 (>3 pp over kNN baseline)"
       ],
-      "findings": "INVALIDATED: No fair (inductive) similarity measure beats Node2Vec for kNN.\n\nMULTI-SEED RESULTS (5 seeds):\n- Node2Vec cosine: 36.76% ± 5.86% (BASELINE)\n- Gene overlap (Jaccard): 23.20% ± 2.68% (-13.56 pp, MUCH WORSE)\n- Combined N2V + gene: 37.35% ± 5.77% (+0.59 pp, negligible)\n- Drug overlap (TRANSDUCTIVE): 59.11% ± 4.52% (+22.35 pp, UNFAIR)\n- Combined N2V + drug (TRANSDUCTIVE): 47.42% ± 5.11%\n- Combined all (TRANSDUCTIVE): 49.28% ± 5.56%\n\nKEY INSIGHTS:\n1. Gene overlap HURTS: worse alone and barely improves combined with Node2Vec\n2. Drug overlap = ORACLE: 59% R@30 shows collaborative filtering ceiling when you know a disease's drugs\n3. Node2Vec is the best FAIR similarity measure available\n4. The 37% kNN performance may be near the ceiling for inductive approaches using DRKG",
-      "result_metric": "Node2Vec cosine = best fair measure (36.76% ± 5.86%). Gene overlap = 23.20%. No improvement found."
+      "findings": "INVALIDATED: No fair (inductive) similarity measure beats Node2Vec for kNN.\n\nMULTI-SEED RESULTS (5 seeds):\n- Node2Vec cosine: 36.76% \u00b1 5.86% (BASELINE)\n- Gene overlap (Jaccard): 23.20% \u00b1 2.68% (-13.56 pp, MUCH WORSE)\n- Combined N2V + gene: 37.35% \u00b1 5.77% (+0.59 pp, negligible)\n- Drug overlap (TRANSDUCTIVE): 59.11% \u00b1 4.52% (+22.35 pp, UNFAIR)\n- Combined N2V + drug (TRANSDUCTIVE): 47.42% \u00b1 5.11%\n- Combined all (TRANSDUCTIVE): 49.28% \u00b1 5.56%\n\nKEY INSIGHTS:\n1. Gene overlap HURTS: worse alone and barely improves combined with Node2Vec\n2. Drug overlap = ORACLE: 59% R@30 shows collaborative filtering ceiling when you know a disease's drugs\n3. Node2Vec is the best FAIR similarity measure available\n4. The 37% kNN performance may be near the ceiling for inductive approaches using DRKG",
+      "result_metric": "Node2Vec cosine = best fair measure (36.76% \u00b1 5.86%). Gene overlap = 23.20%. No improvement found."
     },
     {
       "id": "h42",
@@ -826,7 +829,7 @@
         "Step 4: Multi-seed evaluation",
         "Success criteria: >38% mean R@30 (>1 pp over pure kNN)"
       ],
-      "findings": "INVALIDATED: XGBoost rescue provides no benefit. At threshold=0.3, ALL 88 test diseases have max_sim > 0.3, so 100% are routed to kNN (= pure kNN = 37.07%). As threshold increases, more diseases go to XGBoost, and performance DECREASES: threshold 0.5 = 34.15%, 0.7 = 31.60%, 0.8 = 29.43%. XGBoost is worse than kNN for ALL disease similarity ranges, not just dissimilar diseases. The hypothesis that XGBoost helps for 'orphan' diseases was wrong — kNN is superior even for diseases with low similarity to training neighbors.",
+      "findings": "INVALIDATED: XGBoost rescue provides no benefit. At threshold=0.3, ALL 88 test diseases have max_sim > 0.3, so 100% are routed to kNN (= pure kNN = 37.07%). As threshold increases, more diseases go to XGBoost, and performance DECREASES: threshold 0.5 = 34.15%, 0.7 = 31.60%, 0.8 = 29.43%. XGBoost is worse than kNN for ALL disease similarity ranges, not just dissimilar diseases. The hypothesis that XGBoost helps for 'orphan' diseases was wrong \u2014 kNN is superior even for diseases with low similarity to training neighbors.",
       "result_metric": "Best hybrid = pure kNN (37.07%). XGBoost rescue only hurts: threshold 0.5 = 34.15%, 0.7 = 31.60%"
     },
     {
@@ -845,7 +848,7 @@
         "Success criteria: >38% mean R@30"
       ],
       "findings": "INVALIDATED: The h39 default (k=20, raw scores, linear similarity weighting) is already optimal. Swept 72 configs (8 k-values x 3 normalizations x 3 weightings). Multi-seed on top 5: all equal or worse than default (37.00%). Normalization and smaller k both hurt. Exponential weighting = linear. No configuration beat baseline.",
-      "result_metric": "Best = h39 default (37.00% ± 5.75%). No improvement."
+      "result_metric": "Best = h39 default (37.00% \u00b1 5.75%). No improvement."
     },
     {
       "id": "h44",
@@ -863,14 +866,14 @@
         "Step 4: This is NOT generalizable but establishes collaborative filtering ceiling",
         "Success criteria: Establish upper bound for kNN approach"
       ],
-      "findings": "VALIDATED: Transductive kNN establishes clear ceiling.\n\nNode2Vec kNN (leave-one-out, 440 diseases):\n- k=5: 28.49%, k=10: 34.09%, k=15: 34.83%, k=20: 35.91%\n- k=25: 36.58%, k=30: 37.07% (BEST), k=50: 35.00%, k=100: 31.08%\n\nOracle (drug overlap similarity):\n- k=10: 59.99%, k=20: 60.34%, k=50: 60.41%\n\nKEY FINDINGS:\n1. Transductive k=30 (37.07%) ≈ Inductive k=20 (37.04%). More diseases in pool doesn't help — similarity quality is the bottleneck, not pool size.\n2. Optimal k=25-30 for transductive (same range as inductive).\n3. Oracle ceiling: 60.4% R@30 — the maximum achievable with perfect disease similarity.\n4. Gap: 37% (Node2Vec) vs 60% (Oracle) = 23 pp improvement possible through better similarity.\n5. Diminishing returns beyond k=30 — too many neighbors introduce noise.",
+      "findings": "VALIDATED: Transductive kNN establishes clear ceiling.\n\nNode2Vec kNN (leave-one-out, 440 diseases):\n- k=5: 28.49%, k=10: 34.09%, k=15: 34.83%, k=20: 35.91%\n- k=25: 36.58%, k=30: 37.07% (BEST), k=50: 35.00%, k=100: 31.08%\n\nOracle (drug overlap similarity):\n- k=10: 59.99%, k=20: 60.34%, k=50: 60.41%\n\nKEY FINDINGS:\n1. Transductive k=30 (37.07%) \u2248 Inductive k=20 (37.04%). More diseases in pool doesn't help \u2014 similarity quality is the bottleneck, not pool size.\n2. Optimal k=25-30 for transductive (same range as inductive).\n3. Oracle ceiling: 60.4% R@30 \u2014 the maximum achievable with perfect disease similarity.\n4. Gap: 37% (Node2Vec) vs 60% (Oracle) = 23 pp improvement possible through better similarity.\n5. Diminishing returns beyond k=30 \u2014 too many neighbors introduce noise.",
       "result_metric": "Transductive: 37.07% R@30 (k=30). Oracle: 60.4%. Gap: 23 pp improvement room."
     },
     {
       "id": "h45",
       "title": "Learned Disease Similarity Metric",
       "category": "architecture",
-      "rationale": "h44 showed 23 pp gap between Node2Vec kNN (37%) and oracle (60%). Node2Vec cosine is a GENERIC similarity — not optimized for drug overlap prediction. Training a model to predict disease-disease drug overlap FROM Node2Vec features could produce a SPECIALIZED similarity metric that closes this gap. This is metric learning applied to kNN.",
+      "rationale": "h44 showed 23 pp gap between Node2Vec kNN (37%) and oracle (60%). Node2Vec cosine is a GENERIC similarity \u2014 not optimized for drug overlap prediction. Training a model to predict disease-disease drug overlap FROM Node2Vec features could produce a SPECIALIZED similarity metric that closes this gap. This is metric learning applied to kNN.",
       "expected_impact": "high",
       "effort": "medium",
       "priority": 1,
@@ -883,8 +886,8 @@
         "Step 5: Multi-seed evaluation. Compare with Node2Vec cosine baseline.",
         "Success criteria: >40% mean R@30 (>3 pp over kNN baseline)"
       ],
-      "findings": "INVALIDATED: Learned similarity is WORSE than cosine (-3.98 pp, p=0.008).\n\nMULTI-SEED RESULTS:\n- Learned: 33.21% ± 5.55%\n- Cosine: 37.19% ± 5.79%\n- Delta: -3.98 pp (learned is WORSE)\n- Paired t-test: t=-4.898, p=0.0081 (significantly worse)\n\nThe XGBoost regressor overfits to training disease pairs. It learns patterns specific to SEEN diseases that don't transfer to unseen ones — the same generalization failure seen with XGBoost classification (h5). Cosine similarity is more robust because it's parameter-free and doesn't overfit.\n\nIMPLICATION: Learned metrics from DRKG data can't beat cosine. The 23 pp gap to oracle requires EXTERNAL information (phenotype, literature, clinical) not derivable from the knowledge graph alone.",
-      "result_metric": "Learned: 33.21% ± 5.55% (WORSE than cosine 37.19% by -3.98 pp, p=0.008)"
+      "findings": "INVALIDATED: Learned similarity is WORSE than cosine (-3.98 pp, p=0.008).\n\nMULTI-SEED RESULTS:\n- Learned: 33.21% \u00b1 5.55%\n- Cosine: 37.19% \u00b1 5.79%\n- Delta: -3.98 pp (learned is WORSE)\n- Paired t-test: t=-4.898, p=0.0081 (significantly worse)\n\nThe XGBoost regressor overfits to training disease pairs. It learns patterns specific to SEEN diseases that don't transfer to unseen ones \u2014 the same generalization failure seen with XGBoost classification (h5). Cosine similarity is more robust because it's parameter-free and doesn't overfit.\n\nIMPLICATION: Learned metrics from DRKG data can't beat cosine. The 23 pp gap to oracle requires EXTERNAL information (phenotype, literature, clinical) not derivable from the knowledge graph alone.",
+      "result_metric": "Learned: 33.21% \u00b1 5.55% (WORSE than cosine 37.19% by -3.98 pp, p=0.008)"
     }
   ],
   "completed": [
@@ -905,7 +908,19 @@
     "h41",
     "h44",
     "h45",
-    "h31"
+    "h31",
+    "h6",
+    "h7",
+    "h11",
+    "h12",
+    "h15",
+    "h20",
+    "h21",
+    "h25",
+    "h36",
+    "h33",
+    "h24",
+    "h23"
   ],
   "learnings": [
     {
@@ -978,7 +993,7 @@
       "date": "2026-01-27",
       "hypothesis_id": "h37",
       "finding": "Node2Vec generalization varies dramatically by disease category: ophthalmological 100%, hematological 70%, autoimmune 43.5%, cancer 19.3%, cardiovascular 10.2%, infectious 0%, GI 0%, rare/genetic 0%. Dense KG connectivity correlates with generalization success.",
-      "implication": "Improvement efforts should target: (1) cardiovascular diseases (10.2% with 59 GT drugs — high volume, moderate performance), (2) infectious diseases (0% with 14 GT drugs — complete failure), (3) GI diseases (0% with 9 GT drugs). Dense diseases (autoimmune, hematological) already work well. Graph topological features (h34) may help sparse-connectivity disease categories."
+      "implication": "Improvement efforts should target: (1) cardiovascular diseases (10.2% with 59 GT drugs \u2014 high volume, moderate performance), (2) infectious diseases (0% with 14 GT drugs \u2014 complete failure), (3) GI diseases (0% with 9 GT drugs). Dense diseases (autoimmune, hematological) already work well. Graph topological features (h34) may help sparse-connectivity disease categories."
     },
     {
       "date": "2026-01-27",
@@ -989,14 +1004,14 @@
     {
       "date": "2026-01-27",
       "hypothesis_id": "h40",
-      "finding": "Multi-seed evaluation (5 seeds) reveals: Default mean 23.73% ± 3.73%, Tuned mean 25.85% ± 4.06%. Seed 42 was lucky (highest). Tuning wins all 5 seeds (p=0.0066). Previously reported 28.73%/31.09% were from the best seed.",
-      "implication": "CRITICAL: (1) True generalization baseline is ~24-26%, not 29-31%. (2) XGBoost tuning is a REAL improvement (+2.12 pp, significant). (3) Future experiments MUST use multi-seed evaluation. (4) Single-seed experiments have ~±4 pp noise, making improvements <4 pp unreliable without multi-seed validation."
+      "finding": "Multi-seed evaluation (5 seeds) reveals: Default mean 23.73% \u00b1 3.73%, Tuned mean 25.85% \u00b1 4.06%. Seed 42 was lucky (highest). Tuning wins all 5 seeds (p=0.0066). Previously reported 28.73%/31.09% were from the best seed.",
+      "implication": "CRITICAL: (1) True generalization baseline is ~24-26%, not 29-31%. (2) XGBoost tuning is a REAL improvement (+2.12 pp, significant). (3) Future experiments MUST use multi-seed evaluation. (4) Single-seed experiments have ~\u00b14 pp noise, making improvements <4 pp unreliable without multi-seed validation."
     },
     {
       "date": "2026-01-27",
       "hypothesis_id": "h39",
-      "finding": "kNN collaborative filtering (k=20 nearest training diseases, similarity-weighted drug frequency) achieves 37.04% ± 5.81% mean R@30, a +10.47 pp improvement over XGBoost baseline (26.57%). Improvement is highly significant (p=0.002, d=3.18). XGBoost model adds negligible value on top of kNN. Hybrid rank fusion (alpha=0.1) matches pure kNN at 37.16%.",
-      "implication": "PARADIGM SHIFT: (1) 'Similar diseases share treatments' is the dominant signal, stronger than learned embeddings. (2) Drug repurposing may be better framed as collaborative filtering than as an ML classification task. (3) Pure kNN outperforms all ML models tested so far. (4) Key limitation: kNN can only recommend drugs already in GT for similar diseases — cannot discover truly novel drug-disease pairs. (5) Future work should focus on: improving disease similarity measures, expanding the training disease pool, and developing methods for diseases with no close training neighbors."
+      "finding": "kNN collaborative filtering (k=20 nearest training diseases, similarity-weighted drug frequency) achieves 37.04% \u00b1 5.81% mean R@30, a +10.47 pp improvement over XGBoost baseline (26.57%). Improvement is highly significant (p=0.002, d=3.18). XGBoost model adds negligible value on top of kNN. Hybrid rank fusion (alpha=0.1) matches pure kNN at 37.16%.",
+      "implication": "PARADIGM SHIFT: (1) 'Similar diseases share treatments' is the dominant signal, stronger than learned embeddings. (2) Drug repurposing may be better framed as collaborative filtering than as an ML classification task. (3) Pure kNN outperforms all ML models tested so far. (4) Key limitation: kNN can only recommend drugs already in GT for similar diseases \u2014 cannot discover truly novel drug-disease pairs. (5) Future work should focus on: improving disease similarity measures, expanding the training disease pool, and developing methods for diseases with no close training neighbors."
     },
     {
       "date": "2026-01-27",
@@ -1013,14 +1028,14 @@
     {
       "date": "2026-01-27",
       "hypothesis_id": "h43",
-      "finding": "Swept 72 kNN configurations (8 k-values × 3 normalizations × 3 weightings). Default config (k=20, raw, linear) is already optimal. All alternatives equal or worse.",
+      "finding": "Swept 72 kNN configurations (8 k-values \u00d7 3 normalizations \u00d7 3 weightings). Default config (k=20, raw, linear) is already optimal. All alternatives equal or worse.",
       "implication": "kNN parameters are already at their optimum. Further improvements must come from changing the similarity measure or the underlying data, not hyperparameter tuning."
     },
     {
       "date": "2026-01-27",
       "hypothesis_id": "h44",
       "finding": "Transductive kNN (leave-one-out, 440 diseases) achieves 37.07% at k=30, nearly identical to inductive (37.04%). Oracle ceiling (drug overlap similarity) is 60.4%. Gap: 23 pp between Node2Vec similarity and perfect similarity.",
-      "implication": "Pool size is NOT the bottleneck — similarity quality is. The 23 pp gap to oracle shows enormous room for improvement IF we can find better disease similarity measures. Since gene overlap fails (h41), the path forward is: (1) learned similarity metrics, (2) external phenotype/literature data, or (3) fundamentally different disease representation."
+      "implication": "Pool size is NOT the bottleneck \u2014 similarity quality is. The 23 pp gap to oracle shows enormous room for improvement IF we can find better disease similarity measures. Since gene overlap fails (h41), the path forward is: (1) learned similarity metrics, (2) external phenotype/literature data, or (3) fundamentally different disease representation."
     },
     {
       "date": "2026-01-27",

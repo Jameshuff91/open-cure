@@ -40,11 +40,20 @@
 | h43 | kNN Optimization | 3 | Tested, invalidated — default already optimal |
 | h44 | Transductive kNN (upper bound) | 4 | Test leave-one-out ceiling for collaborative filtering |
 
-### Recommended Next Steps
+### Recommended Next Steps (Updated 2026-01-28)
 
-1. **h44 (Transductive kNN)** — Establish the collaborative filtering ceiling using leave-one-out on full GT. Low effort, sets expectations.
-2. **External data integration** — PPI network distances (h17), clinical trial features (h16), or HPO phenotype similarity (h19) could provide signals beyond DRKG.
-3. **Production deployment of kNN** — The kNN method is simple, fast, and interpretable. Could be deployed as-is for drug repurposing screening.
+**ROADMAP CLEANUP COMPLETED:** 12 DRKG-internal hypotheses blocked, external data hypotheses prioritized.
+
+| Priority | Hypothesis | Data Source | Potential |
+|----------|------------|-------------|-----------|
+| 1 | h19: Disease Phenotype Similarity | HPO (external) | 23 pp gap to close |
+| 2 | h17: PPI Network Distance | STRING (external) | New similarity signal |
+| 3 | h28: DrugBank Indication Extraction | DrugBank XML | More GT = better kNN |
+| 4 | h9: Disease Coverage via UMLS | UMLS (external) | More disease mappings |
+| 5 | h16: Clinical Trial Features | ClinicalTrials.gov | External evidence |
+
+**Blocked (DRKG ceiling reached):** h6, h7, h11, h12, h15, h20, h21, h25, h36
+**Production-ready:** kNN method can be deployed as-is (simple, fast, interpretable)
 
 ---
 
