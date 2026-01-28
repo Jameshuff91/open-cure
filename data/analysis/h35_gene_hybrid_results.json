@@ -1,0 +1,53 @@
+{
+  "hypothesis": "h35",
+  "title": "Node2Vec + Gene-Disease Feature Hybrid",
+  "date": "2026-01-27",
+  "results": {
+    "A_n2v_only": {
+      "description": "Node2Vec only (baseline)",
+      "recall_at_30": 0.2581818181818182,
+      "diseases_evaluated": 88,
+      "total_hits": 142,
+      "total_gt_drugs": 550,
+      "importance": null
+    },
+    "B_gene_only": {
+      "description": "Gene features only",
+      "recall_at_30": 0.07913669064748201,
+      "diseases_evaluated": 88,
+      "total_hits": 44,
+      "total_gt_drugs": 556,
+      "importance": null
+    },
+    "C_n2v_gene_hybrid": {
+      "description": "Node2Vec + Gene features (HYBRID)",
+      "recall_at_30": 0.26545454545454544,
+      "diseases_evaluated": 88,
+      "total_hits": 146,
+      "total_gt_drugs": 550,
+      "importance": {
+        "n2v_pct": 87.66721936073534,
+        "gene_pct": 12.332784364555401,
+        "gene_breakdown": {
+          "n_shared": 0.0012184177758172154,
+          "jaccard": 0.0059285843744874,
+          "dice": 0.0,
+          "overlap_coeff": 0.002587899100035429,
+          "n_drug_targets": 0.09581383317708969,
+          "n_disease_genes": 0.002797500230371952,
+          "has_drug_targets": 0.0,
+          "has_disease_genes": 0.0,
+          "has_both": 0.014981597661972046,
+          "log_drug_targets": 0.0,
+          "log_disease_genes": 0.0,
+          "log_shared": 0.0
+        }
+      }
+    }
+  },
+  "elapsed_seconds": 231.2706060409546,
+  "gene_data_stats": {
+    "drugs_with_targets": 11656,
+    "diseases_with_genes": 3454
+  }
+}

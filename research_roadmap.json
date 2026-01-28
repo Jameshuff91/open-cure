@@ -677,11 +677,11 @@
       "id": "h35",
       "title": "Node2Vec + Gene-Disease Feature Hybrid",
       "category": "architecture",
-      "rationale": "h29 showed Node2Vec generalizes at 29.45%. Gene-based features (drug target genes, disease-associated genes, target-gene overlap) are fully inductive. Combining with Node2Vec could improve generalization.",
+      "rationale": "h29 showed Node2Vec generalizes at 28.73%. Gene-based features (drug target genes, disease-associated genes, target-gene overlap) are fully inductive. Combining with Node2Vec could improve generalization.",
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Load drug_targets.json and disease_genes.json from data/reference/",
         "Step 2: For each drug-disease pair, compute: # shared target-disease genes, Jaccard similarity of gene sets, PCA of drug target profile, PCA of disease gene profile",
@@ -691,8 +691,8 @@
         "Step 6: Evaluate R@30 on held-out diseases",
         "Success criteria: >33% R@30"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Gene features provide minimal additional value on top of Node2Vec embeddings.\n\nRESULTS (88 held-out test diseases, seed=42):\n- Node2Vec only (baseline): 25.82% R@30 (142/550 hits)\n- Gene features only: 7.91% R@30 (44/556 hits)\n- Node2Vec + Gene hybrid: 26.55% R@30 (146/550 hits)\n- Delta: +0.73 pp (marginal, NOT meeting >33% target)\n\nGene features tested (12 features): n_shared, jaccard, dice, overlap_coeff, n_drug_targets, n_disease_genes, has_drug_targets, has_disease_genes, has_both, log_drug/disease/shared.\n\nFEATURE IMPORTANCE (hybrid model):\n- Node2Vec: 87.7%\n- Genes: 12.3% (dominated by n_drug_targets at 0.096)\n- Most gene interaction features (shared, jaccard, dice) have near-zero importance\n\nDATA COVERAGE: 63.5% of GT diseases have gene data, 36.9% of drugs have target data. 6,353 shared genes between drug targets and disease genes.\n\nWHY IT FAILED:\n1. Gene features are too sparse — most drug-disease pairs have zero shared genes\n2. Drug target count is the only useful gene feature, but it's drug-level not pair-level\n3. Node2Vec already captures gene-mediated relationships implicitly through the knowledge graph structure\n4. The 12 gene features add noise relative to 512 Node2Vec features\n\nIMPLICATION: Simple gene overlap features don't add to Node2Vec. More sophisticated gene representations (pathway-level, PPI network distance, gene expression similarity) might help, but require additional data.",
+      "result_metric": "26.55% R@30 (hybrid) vs 25.82% (Node2Vec only) — +0.73 pp, below 33% target"
     },
     {
       "id": "h36",
@@ -741,6 +741,7 @@
     "h5",
     "h29",
     "h32",
+    "h35",
     "h37"
   ],
   "learnings": [
@@ -803,6 +804,18 @@
       "hypothesis_id": "h29",
       "finding": "Node2Vec+XGBoost achieves 28.73% R@30 on disease-level holdout (88 test diseases), vs 16.64% for TransE+XGBoost. The '41.9% on held-out diseases' claim was incorrect \u2014 original code used pair-level split. Node2Vec's random walk embeddings capture transferable patterns that TransE's translational model does not. Concat vs full features (concat+product+diff) make no difference for Node2Vec (both 28.73%). Cosine similarity alone is useless (0-1.27%).",
       "implication": "Node2Vec is the better embedding for generalization (1.73x TransE). The 28.73% establishes the honest generalization baseline. Future work should: (1) Use Node2Vec as the default embedding, (2) Investigate why Node2Vec generalizes better (neighborhood structure vs translational), (3) Improve beyond 28.73% through graph features, gene-based features, or better embeddings (e.g., augmented Node2Vec with more walk parameters), (4) Consider hybrid Node2Vec + graph feature approaches."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h35",
+      "finding": "Gene-based features (shared genes, Jaccard, Dice, overlap coefficient, target counts) provide minimal additional value on top of Node2Vec: +0.73 pp (25.82% -> 26.55%). Gene-only model: 7.91% R@30. Feature importance: Node2Vec 87.7%, genes 12.3%. Most gene interaction features have near-zero importance; only n_drug_targets matters (0.096).",
+      "implication": "Simple gene overlap features don't improve generalization because: (1) most drug-disease pairs have zero shared genes (sparsity), (2) Node2Vec already captures gene-mediated relationships implicitly through graph structure. More sophisticated representations needed: pathway-level features, PPI network distances, or gene expression similarity. Focus effort on graph topological features (h34) rather than gene-level features."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h37",
+      "finding": "Node2Vec generalization varies dramatically by disease category: ophthalmological 100%, hematological 70%, autoimmune 43.5%, cancer 19.3%, cardiovascular 10.2%, infectious 0%, GI 0%, rare/genetic 0%. Dense KG connectivity correlates with generalization success.",
+      "implication": "Improvement efforts should target: (1) cardiovascular diseases (10.2% with 59 GT drugs — high volume, moderate performance), (2) infectious diseases (0% with 14 GT drugs — complete failure), (3) GI diseases (0% with 9 GT drugs). Dense diseases (autoimmune, hematological) already work well. Graph topological features (h34) may help sparse-connectivity disease categories."
     }
   ]
 }
