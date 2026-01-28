@@ -93,36 +93,48 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 
 | Model | Per-Drug R@30 | Evaluation | Notes |
 |-------|---------------|------------|-------|
-| **Node2Vec+XGBoost TUNED (disease holdout)** | **31.09%** | **HONEST** | md=6,ne=500,lr=0.1,alpha=1.0 (h38) |
-| Node2Vec+XGBoost default (disease holdout) | 28.73% | Honest | md=6,ne=100,lr=0.1 (h29 baseline) |
+| **kNN Collaborative Filtering k=20 (disease holdout)** | **37.04% ± 5.81%** | **HONEST (5-seed)** | **BEST METHOD (h39)** |
+| Node2Vec+XGBoost TUNED (disease holdout) | 25.85% ± 4.06% | Honest (5-seed) | md=6,ne=500,lr=0.1,alpha=1.0 (h38/h40) |
+| Node2Vec+XGBoost default (disease holdout) | 23.73% ± 3.73% | Honest (5-seed) | md=6,ne=100,lr=0.1 (h40) |
 | GB + Fuzzy Matcher (fixed) | 41.8% | Within-dist | 1,236 diseases, pair-level (inflated) |
 | GB + TransE (existing, on test) | 45.9% | Pair-trained | Trained on ALL diseases, tested on subset |
-| TransE+XGBoost (disease holdout) | 16.64% | Honest | TransE fails to generalize |
-| Node2Vec+XGBoost (pair-level) | ~21.6% | Within-dist | Pair-level trained, evaluated on test |
-| GB + Quad Boost (inflated) | 47.5%* | Circular | *Circular features - NOT real |
+| TransE+XGBoost (disease holdout) | ~16% | Honest | TransE fails to generalize |
 | Node2Vec Cosine (no ML) | 1.27% | Honest | ML model IS required |
 | TxGNN | 6.7% | Unknown | Near-random for most diseases |
 
-**CRITICAL (2026-01-27):** The honest generalization baseline is **31.09% R@30** (Node2Vec+XGBoost tuned on disease-level holdout). All higher numbers used pair-level splits or circular features.
+**CRITICAL (2026-01-27):** Multi-seed evaluation (h40) revealed seed 42 was lucky. True means are lower than single-seed reports:
+- Previously reported 31.09% (XGBoost tuned) → actual mean **25.85% ± 4.06%**
+- Previously reported 28.73% (XGBoost default) → actual mean **23.73% ± 3.73%**
 
-**Progression:** 37.4% → 41.8% (fuzzy, pair-level) → Generalization crisis → 28.73% (honest Node2Vec) → **31.09% (tuned XGBoost)**
+**BREAKTHROUGH (h39):** kNN collaborative filtering (k=20 nearest diseases by Node2Vec similarity) achieves **37.04% ± 5.81%** — a **+10.47 pp** improvement over the best ML model (p=0.002). No ML model needed.
+
+**Progression:** 37.4% → 41.8% (fuzzy, pair-level) → Generalization crisis → 25.85% (honest XGBoost, 5-seed) → **37.04% (kNN collab filtering, 5-seed)**
 
 ## Key Learnings
 
 ### What Works
-1. **Fuzzy Disease Matching** - 41.8% R@30 (up from 37.4% exact-only)
-2. **Disease holdout splits** - Required for honest novel discovery evaluation
-3. **DRKG graph embeddings** - 256-dim Node2Vec captures treatment relationships
+1. **kNN Collaborative Filtering** (h39) - **37.04% ± 5.81% R@30** — BEST METHOD
+   - k=20 nearest diseases by Node2Vec cosine, rank drugs by weighted frequency
+   - No ML model needed — purely similarity-based
+   - +10.47 pp over XGBoost (p=0.002, highly significant)
+2. **Fuzzy Disease Matching** - 41.8% R@30 (pair-level, inflated but useful for within-dist)
+3. **Disease holdout splits** - Required for honest novel discovery evaluation
+4. **Multi-seed evaluation** (h40) - Single-seed has ±4 pp noise; must use 5+ seeds
+5. **Node2Vec embeddings** - Best disease similarity measure for kNN (vs gene overlap, etc.)
 
-### CRITICAL: Generalization Gap (2026-01-27)
-- **GB + TransE does NOT generalize**: Retrained 3-12% R@30 on disease holdout (h5)
-- **Node2Vec DOES partially generalize**: 29.45% R@30 on disease holdout (h29) — 1.85x better than TransE (15.90%)
-- The "41.9% on held-out diseases" was INCORRECT: original code used pair-level split
-- Node2Vec's random walk captures transferable neighborhood structure; TransE's translational model memorizes
-- Concat+product+diff features help Node2Vec: 26.18% (concat) → 29.45% (cpd) (+3.3 pp)
-- Cosine similarity alone is useless: 0-1.27% R@30
-- All 4 positive controls pass for Node2Vec concat model (Metformin rank 22, Rituximab rank 21, Imatinib rank 12, Lisinopril rank 27)
-- **Next priority**: Improve beyond 29.45% via graph features + Node2Vec hybrid (h34), or gene-based features (h35)
+### CRITICAL: Paradigm Shift (2026-01-27)
+- **kNN collaborative filtering outperforms ALL ML models** by >10 pp (h39)
+- "Similar diseases share treatments" is the dominant signal for drug repurposing
+- XGBoost model adds ZERO value on top of kNN (h42 hybrid = pure kNN)
+- kNN is limited: can only recommend drugs from similar training diseases' GT
+- 44% of test diseases have 0% GT drug coverage in kNN pool
+- Node2Vec cosine is the best fair disease similarity measure (h41; gene overlap hurts)
+- kNN parameters already optimal: k=20, raw scores, linear weighting (h43)
+
+### Generalization Gap
+- **GB + TransE does NOT generalize**: 3-12% R@30 on disease holdout (h5)
+- **Node2Vec XGBoost**: 25.85% ± 4.06% mean (5-seed honest, h40)
+- Previously reported 31.09%/28.73% were from lucky seed 42
 
 ### What SEEMED to Work (but was data leakage)
 1. **Boost features** - Target overlap, chemical similarity, ATC were circular

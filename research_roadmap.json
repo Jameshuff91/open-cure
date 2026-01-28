@@ -579,7 +579,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Load DRKG graph (data/drkg/drkg.tsv)",
         "Step 2: For each drug-disease pair, compute: shortest path, number of paths <=3 hops, shared gene neighbors, drug degree, disease degree",
@@ -589,8 +589,8 @@
         "Step 6: Compare generalization of graph-only vs embedding-only vs combined",
         "Success criteria: >20% R@30 on held-out diseases (vs 3-12% for embedding-only)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "SUPERSEDED by h34: Graph topological features (degree, shared gene neighbors, Adamic-Adar, shortest path) were tested in h34 and provide NO improvement over Node2Vec once treatment-edge leakage is removed. Clean result: -0.18 pp. Graph features from DRKG are redundant with Node2Vec embeddings.",
+      "result_metric": "See h34: 26.55% hybrid vs 26.73% Node2Vec only — no improvement"
     },
     {
       "id": "h31",
@@ -761,7 +761,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: For each test disease, compute Node2Vec cosine similarity to all training diseases",
         "Step 2: Weight training examples by similarity (closer diseases get higher weight)",
@@ -770,8 +770,8 @@
         "Step 5: Alternatively, use k-nearest training diseases only (k=5,10,20)",
         "Success criteria: >33% R@30"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Disease similarity transfer provides MAJOR improvement. Best method: kNN collaborative filtering (Approach B).\n\nMULTI-SEED RESULTS (5 seeds: 42, 123, 456, 789, 1024):\n\n| Method | Mean R@30 | Std | vs Baseline |\n|---|---|---|---|\n| XGBoost tuned (baseline) | 26.57% | ±3.98% | --- |\n| Approach A (global + sim features) | 30.55%* | --- | +3.98 pp |\n| Approach B (kNN k=20, no ML) | 37.04% | ±5.81% | +10.47 pp |\n| Approach C (local weighted models, k=10 t=2) | 31.22% | ±5.83% | +4.65 pp |\n| Approach D (XGBoost + kNN feature) | 34.08% | ±6.00% | +7.51 pp |\n| Rank fusion (alpha=0.1) | 37.16% | ±5.12% | +10.59 pp |\n\n*Approach A single-seed only (seed=42).\n\nAPPROACH B DETAILS:\n- For each test disease, find k=20 nearest training diseases by Node2Vec cosine similarity\n- Rank drugs by similarity-weighted frequency among those diseases\n- No ML model needed — purely collaborative filtering\n- Paired t-test vs baseline: t=7.11, p=0.002 (highly significant), Cohen's d=3.18\n\nDIAGNOSTICS:\n- Candidate pool: ~59 drugs per test disease (from 20 nearest training diseases)\n- GT coverage: 40.9% of GT drugs found in candidate pool on average\n- 44.3% of test diseases have 0% GT coverage (truly novel diseases)\n- kNN dominates hybrid: alpha=0.1 (90% kNN / 10% XGBoost) is optimal\n\nKEY INSIGHTS:\n1. Similar diseases share treatments — this is the dominant signal for drug repurposing\n2. XGBoost model adds negligible value on top of kNN collaborative filtering\n3. The method is limited: can only recommend drugs that appear in similar diseases' GT\n4. For truly novel diseases (no similar training neighbors), method falls back to zero\n5. The ~37% mean is driven by the 56% of diseases that HAVE similar training counterparts",
+      "result_metric": "kNN k=20: 37.04% ± 5.81% mean R@30 (5 seeds), +10.47 pp over baseline (p=0.002)"
     },
     {
       "id": "h40",
@@ -781,12 +781,87 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Run Node2Vec+XGBoost (concat) with seeds 42,123,456,789,1024",
         "Step 2: Report mean, std, min, max R@30",
         "Step 3: If variance is high (>5 pp), results from single-seed experiments are unreliable",
         "Success criteria: Establish confidence interval for 28.73%"
+      ],
+      "findings": "VALIDATED: Multi-seed analysis reveals moderate variance and confirms tuning gain is real.\n\nDEFAULT XGBoost (md=6, ne=100, lr=0.1):\n- Seeds: 27.82%, 22.92%, 24.03%, 26.73%, 17.16%\n- Mean: 23.73% ± 3.73%\n- Range: [17.16%, 27.82%]\n\nTUNED XGBoost (h38: md=6, ne=500, lr=0.1, ra=1.0):\n- Seeds: 30.00%, 26.43%, 26.27%, 28.34%, 18.21%\n- Mean: 25.85% ± 4.06%\n- Range: [18.21%, 30.00%]\n\nKEY FINDINGS:\n1. Seed 42 was LUCKY — highest for default (27.82%), near-highest for tuned (30.00%). Previously reported 28.73%/31.09% were inflated.\n2. TRUE MEAN BASELINE: 23.73% (default) / 25.85% (tuned) — not 28.73%/31.09%.\n3. TUNING IS REAL: Tuned wins 5/5 seeds. Paired t-test: t=5.174, p=0.0066 (significant). Mean improvement: +2.12 pp.\n4. VARIANCE IS MODERATE: 3.7-4.1 pp std. Disease split matters significantly — seed 1024 gives ~10 pp lower than seed 42.\n5. All future experiments should use multi-seed evaluation to avoid misleading single-seed results.",
+      "result_metric": "Default mean: 23.73% ± 3.73%, Tuned mean: 25.85% ± 4.06%, Tuning improvement: +2.12 pp (p=0.0066)"
+    },
+    {
+      "id": "h41",
+      "title": "Improved Disease Similarity Measure",
+      "category": "architecture",
+      "rationale": "h39 showed kNN collaborative filtering at 37% R@30 using Node2Vec cosine similarity for disease-disease comparison. But Node2Vec embeddings were not optimized for disease similarity — they capture general graph proximity. A disease similarity measure that accounts for shared gene associations, phenotype overlap, or treatment overlap (from training only) could improve kNN performance.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 1,
+      "status": "invalidated",
+      "steps": [
+        "Step 1: Compute disease-disease similarity using: (a) Node2Vec cosine, (b) shared gene overlap (from disease_genes.json), (c) shared drug overlap (training GT only), (d) combined similarity",
+        "Step 2: Run kNN k=20 approach B with each similarity measure",
+        "Step 3: Multi-seed evaluation (5 seeds)",
+        "Step 4: Test hybrid similarity (weighted combination of measures)",
+        "Success criteria: >40% mean R@30 (>3 pp over kNN baseline)"
+      ],
+      "findings": "INVALIDATED: No fair (inductive) similarity measure beats Node2Vec for kNN.\n\nMULTI-SEED RESULTS (5 seeds):\n- Node2Vec cosine: 36.76% ± 5.86% (BASELINE)\n- Gene overlap (Jaccard): 23.20% ± 2.68% (-13.56 pp, MUCH WORSE)\n- Combined N2V + gene: 37.35% ± 5.77% (+0.59 pp, negligible)\n- Drug overlap (TRANSDUCTIVE): 59.11% ± 4.52% (+22.35 pp, UNFAIR)\n- Combined N2V + drug (TRANSDUCTIVE): 47.42% ± 5.11%\n- Combined all (TRANSDUCTIVE): 49.28% ± 5.56%\n\nKEY INSIGHTS:\n1. Gene overlap HURTS: worse alone and barely improves combined with Node2Vec\n2. Drug overlap = ORACLE: 59% R@30 shows collaborative filtering ceiling when you know a disease's drugs\n3. Node2Vec is the best FAIR similarity measure available\n4. The 37% kNN performance may be near the ceiling for inductive approaches using DRKG",
+      "result_metric": "Node2Vec cosine = best fair measure (36.76% ± 5.86%). Gene overlap = 23.20%. No improvement found."
+    },
+    {
+      "id": "h42",
+      "title": "kNN + XGBoost Rescue for Novel Diseases",
+      "category": "architecture",
+      "rationale": "h39 showed 44% of test diseases have zero GT coverage from kNN (no similar training diseases). For these 'orphan' diseases, kNN returns zero hits. A hybrid could use kNN for diseases with close neighbors (max_sim > threshold) and XGBoost for diseases without. This targets the 44% failure cases without hurting the 56% where kNN excels.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "invalidated",
+      "steps": [
+        "Step 1: For each test disease, compute max similarity to any training disease",
+        "Step 2: If max_sim > threshold, use kNN approach. Else, use XGBoost",
+        "Step 3: Test thresholds: 0.5, 0.6, 0.7, 0.8",
+        "Step 4: Multi-seed evaluation",
+        "Success criteria: >38% mean R@30 (>1 pp over pure kNN)"
+      ],
+      "findings": "INVALIDATED: XGBoost rescue provides no benefit. At threshold=0.3, ALL 88 test diseases have max_sim > 0.3, so 100% are routed to kNN (= pure kNN = 37.07%). As threshold increases, more diseases go to XGBoost, and performance DECREASES: threshold 0.5 = 34.15%, 0.7 = 31.60%, 0.8 = 29.43%. XGBoost is worse than kNN for ALL disease similarity ranges, not just dissimilar diseases. The hypothesis that XGBoost helps for 'orphan' diseases was wrong — kNN is superior even for diseases with low similarity to training neighbors.",
+      "result_metric": "Best hybrid = pure kNN (37.07%). XGBoost rescue only hurts: threshold 0.5 = 34.15%, 0.7 = 31.60%"
+    },
+    {
+      "id": "h43",
+      "title": "kNN with Expanded k and Drug Count Normalization",
+      "category": "architecture",
+      "rationale": "h39 used k=20 but didn't systematically optimize k with multi-seed evaluation. Also, diseases with more GT drugs contribute more drug candidates, potentially biasing toward common diseases. Normalizing drug scores by disease drug count might improve.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "invalidated",
+      "steps": [
+        "Step 1: Test k = 10, 15, 20, 25, 30, 40, 50 with multi-seed evaluation",
+        "Step 2: Test normalization: (a) raw count, (b) divided by disease drug count, (c) divided by sqrt(count)",
+        "Step 3: Test similarity weighting: (a) linear, (b) exponential, (c) top-k equal weight",
+        "Success criteria: >38% mean R@30"
+      ],
+      "findings": "INVALIDATED: The h39 default (k=20, raw scores, linear similarity weighting) is already optimal. Swept 72 configs (8 k-values x 3 normalizations x 3 weightings). Multi-seed on top 5: all equal or worse than default (37.00%). Normalization and smaller k both hurt. Exponential weighting = linear. No configuration beat baseline.",
+      "result_metric": "Best = h39 default (37.00% ± 5.75%). No improvement."
+    },
+    {
+      "id": "h44",
+      "title": "Transductive kNN with All Diseases",
+      "category": "architecture",
+      "rationale": "Current kNN uses disease-level holdout for evaluation honesty. But in production, we'd use ALL known diseases as the kNN pool. Testing this 'transductive' setting (where test diseases also contribute to the pool through their known drugs) would give us the upper bound of what's achievable with collaborative filtering on the full dataset.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Use full GT (no holdout) as kNN pool",
+        "Step 2: For each disease, find k nearest OTHER diseases (exclude self)",
+        "Step 3: Rank drugs, evaluate R@30 (leave-one-out style)",
+        "Step 4: This is NOT generalizable but establishes collaborative filtering ceiling",
+        "Success criteria: Establish upper bound for kNN approach"
       ],
       "findings": null,
       "result_metric": null
@@ -801,7 +876,13 @@
     "h34",
     "h35",
     "h37",
-    "h38"
+    "h38",
+    "h40",
+    "h30",
+    "h39",
+    "h42",
+    "h43",
+    "h41"
   ],
   "learnings": [
     {
@@ -881,6 +962,36 @@
       "hypothesis_id": "h34",
       "finding": "Graph topological features (degree, shared gene neighbors, Adamic-Adar) do NOT improve over Node2Vec once treatment-edge leakage is removed. Initial result of 45.82% was entirely due to direct_connection feature encoding treatment edges from DRKG (4,968 DRUGBANK::treats + 54,020 GNBR::T edges). Clean result: 26.55% hybrid vs 26.73% Node2Vec-only (-0.18 pp).",
       "implication": "CRITICAL FINDING: Feature engineering from the SAME knowledge graph used for embeddings provides NO additional signal. Node2Vec already captures all relevant graph structure. Improvement must come from: (1) DIFFERENT data sources (clinical trials, literature, gene expression), (2) DIFFERENT embedding methods (GNN, attention-based), (3) DIFFERENT architectures (multi-task, meta-learning). The 28.73% Node2Vec baseline may be near the ceiling for DRKG-only approaches."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h40",
+      "finding": "Multi-seed evaluation (5 seeds) reveals: Default mean 23.73% ± 3.73%, Tuned mean 25.85% ± 4.06%. Seed 42 was lucky (highest). Tuning wins all 5 seeds (p=0.0066). Previously reported 28.73%/31.09% were from the best seed.",
+      "implication": "CRITICAL: (1) True generalization baseline is ~24-26%, not 29-31%. (2) XGBoost tuning is a REAL improvement (+2.12 pp, significant). (3) Future experiments MUST use multi-seed evaluation. (4) Single-seed experiments have ~±4 pp noise, making improvements <4 pp unreliable without multi-seed validation."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h39",
+      "finding": "kNN collaborative filtering (k=20 nearest training diseases, similarity-weighted drug frequency) achieves 37.04% ± 5.81% mean R@30, a +10.47 pp improvement over XGBoost baseline (26.57%). Improvement is highly significant (p=0.002, d=3.18). XGBoost model adds negligible value on top of kNN. Hybrid rank fusion (alpha=0.1) matches pure kNN at 37.16%.",
+      "implication": "PARADIGM SHIFT: (1) 'Similar diseases share treatments' is the dominant signal, stronger than learned embeddings. (2) Drug repurposing may be better framed as collaborative filtering than as an ML classification task. (3) Pure kNN outperforms all ML models tested so far. (4) Key limitation: kNN can only recommend drugs already in GT for similar diseases — cannot discover truly novel drug-disease pairs. (5) Future work should focus on: improving disease similarity measures, expanding the training disease pool, and developing methods for diseases with no close training neighbors."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h41",
+      "finding": "Gene overlap similarity is WORSE than Node2Vec for kNN (23.20% vs 36.76%). Combined N2V+gene gives negligible improvement (+0.59 pp). Drug overlap (transductive/oracle) reaches 59.11% showing the ceiling. No fair inductive similarity measure beats Node2Vec cosine.",
+      "implication": "Node2Vec cosine is the best available disease similarity for kNN. The 37% R@30 may be near the inductive ceiling for DRKG-based approaches. Breaking through requires: (1) External disease similarity data (phenotype ontology, literature co-occurrence), (2) Better disease embeddings trained specifically for similarity, (3) Expanding the GT disease pool so more diseases have close neighbors."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h42",
+      "finding": "XGBoost rescue for diseases without close kNN neighbors provides NO benefit. ALL test diseases have max_sim > 0.3 to some training disease. kNN outperforms XGBoost even for diseases with low similarity (0.3-0.5). XGBoost adds no value in any setting.",
+      "implication": "The XGBoost model is completely dominated by kNN collaborative filtering. This reinforces h39's finding that ML on embeddings is inferior to direct similarity-based drug transfer for this task."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h43",
+      "finding": "Swept 72 kNN configurations (8 k-values × 3 normalizations × 3 weightings). Default config (k=20, raw, linear) is already optimal. All alternatives equal or worse.",
+      "implication": "kNN parameters are already at their optimum. Further improvements must come from changing the similarity measure or the underlying data, not hyperparameter tuning."
     }
   ]
 }

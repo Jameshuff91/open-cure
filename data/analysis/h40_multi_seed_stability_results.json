@@ -1,0 +1,178 @@
+{
+  "hypothesis": "h40",
+  "title": "Multi-Seed Disease Holdout Stability Check",
+  "date": "2026-01-27",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    1024
+  ],
+  "configs": {
+    "default": {
+      "n_estimators": 100,
+      "max_depth": 6,
+      "learning_rate": 0.1
+    },
+    "tuned_h38": {
+      "n_estimators": 500,
+      "max_depth": 6,
+      "learning_rate": 0.1,
+      "min_child_weight": 1,
+      "reg_alpha": 1.0,
+      "reg_lambda": 1
+    }
+  },
+  "per_seed_results": [
+    {
+      "seed": 42,
+      "label": "default",
+      "recall_at_30": 0.2781818181818182,
+      "hits": 153,
+      "total_gt": 550,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 88,
+      "train_pairs": 2326,
+      "test_pairs": 556
+    },
+    {
+      "seed": 123,
+      "label": "default",
+      "recall_at_30": 0.22920517560073936,
+      "hits": 124,
+      "total_gt": 541,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 87,
+      "train_pairs": 2334,
+      "test_pairs": 548
+    },
+    {
+      "seed": 456,
+      "label": "default",
+      "recall_at_30": 0.24032586558044808,
+      "hits": 118,
+      "total_gt": 491,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 87,
+      "train_pairs": 2387,
+      "test_pairs": 495
+    },
+    {
+      "seed": 789,
+      "label": "default",
+      "recall_at_30": 0.2672811059907834,
+      "hits": 116,
+      "total_gt": 434,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 88,
+      "train_pairs": 2442,
+      "test_pairs": 440
+    },
+    {
+      "seed": 1024,
+      "label": "default",
+      "recall_at_30": 0.17162872154115585,
+      "hits": 98,
+      "total_gt": 571,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 88,
+      "train_pairs": 2300,
+      "test_pairs": 582
+    },
+    {
+      "seed": 42,
+      "label": "tuned_h38",
+      "recall_at_30": 0.3,
+      "hits": 165,
+      "total_gt": 550,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 88,
+      "train_pairs": 2326,
+      "test_pairs": 556
+    },
+    {
+      "seed": 123,
+      "label": "tuned_h38",
+      "recall_at_30": 0.2643253234750462,
+      "hits": 143,
+      "total_gt": 541,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 87,
+      "train_pairs": 2334,
+      "test_pairs": 548
+    },
+    {
+      "seed": 456,
+      "label": "tuned_h38",
+      "recall_at_30": 0.26272912423625255,
+      "hits": 129,
+      "total_gt": 491,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 87,
+      "train_pairs": 2387,
+      "test_pairs": 495
+    },
+    {
+      "seed": 789,
+      "label": "tuned_h38",
+      "recall_at_30": 0.2834101382488479,
+      "hits": 123,
+      "total_gt": 434,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 88,
+      "train_pairs": 2442,
+      "test_pairs": 440
+    },
+    {
+      "seed": 1024,
+      "label": "tuned_h38",
+      "recall_at_30": 0.18213660245183888,
+      "hits": 104,
+      "total_gt": 571,
+      "n_train_diseases": 353,
+      "n_test_diseases": 88,
+      "n_test_diseases_evaluated": 88,
+      "train_pairs": 2300,
+      "test_pairs": 582
+    }
+  ],
+  "summary": {
+    "default": {
+      "mean_recall_at_30": 0.237324537378989,
+      "std_recall_at_30": 0.037303044441042196,
+      "min_recall_at_30": 0.17162872154115585,
+      "max_recall_at_30": 0.2781818181818182,
+      "all_recalls": [
+        0.2781818181818182,
+        0.22920517560073936,
+        0.24032586558044808,
+        0.2672811059907834,
+        0.17162872154115585
+      ]
+    },
+    "tuned_h38": {
+      "mean_recall_at_30": 0.2585202376823971,
+      "std_recall_at_30": 0.040560945033987696,
+      "min_recall_at_30": 0.18213660245183888,
+      "max_recall_at_30": 0.3,
+      "all_recalls": [
+        0.3,
+        0.2643253234750462,
+        0.26272912423625255,
+        0.2834101382488479,
+        0.18213660245183888
+      ]
+    }
+  },
+  "elapsed_seconds": 265.5041389465332
+}

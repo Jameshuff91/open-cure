@@ -1,6 +1,52 @@
 # Research Loop Progress
 
-## Current Session: h29/h37/h35/h34 Multi-Hypothesis (2026-01-27)
+## Current Session: h40/h39/h42/h43/h41 Multi-Hypothesis (2026-01-27)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed (5 hypotheses tested)
+**Hypotheses Tested:** h40, h39, h42, h43, h41
+**Key Discovery:** kNN collaborative filtering achieves 37.04% R@30 — BEST method, outperforming all ML models
+
+### Results Summary
+
+| Hypothesis | Status | Key Finding |
+|---|---|---|
+| h40: Multi-Seed Stability | VALIDATED | Default mean 23.73% ± 3.73%, tuned 25.85% ± 4.06%. Seed 42 was lucky. |
+| h39: Disease Similarity Transfer | VALIDATED | **kNN k=20: 37.04% ± 5.81% R@30 (+10.47 pp, p=0.002)** |
+| h42: kNN + XGBoost Rescue | INVALIDATED | XGBoost rescue helps NO disease subset. kNN dominates everywhere. |
+| h43: kNN Optimization | INVALIDATED | Default config (k=20, raw, linear) already optimal. 72 configs tested. |
+| h41: Improved Similarity Measure | INVALIDATED | Gene overlap hurts (23.2%). Node2Vec cosine is best fair measure. |
+
+### Critical Findings
+
+1. **PARADIGM SHIFT**: kNN collaborative filtering (37.04%) >> XGBoost ML model (25.85%). Drug repurposing is fundamentally a similarity/recommendation problem, not a classification problem.
+
+2. **Multi-seed evaluation is essential**: Previously reported 31.09% was from lucky seed=42. True tuned XGBoost mean is 25.85% ± 4.06%. Always use 5-seed evaluation.
+
+3. **kNN is already optimized**: k=20, raw scores, linear similarity weighting is optimal. No normalization, weighting, or similarity measure improvements found.
+
+4. **Ceiling identified**: ~37% R@30 appears to be the inductive ceiling for DRKG-only kNN. Breaking through requires external data sources or fundamentally different approaches.
+
+### New Hypotheses Added
+
+| ID | Title | Priority | Rationale |
+|----|-------|----------|-----------|
+| h41 | Improved Disease Similarity Measure | 1 | Tested, invalidated — Node2Vec already optimal |
+| h42 | kNN + XGBoost Rescue | 2 | Tested, invalidated — XGBoost helps nowhere |
+| h43 | kNN Optimization | 3 | Tested, invalidated — default already optimal |
+| h44 | Transductive kNN (upper bound) | 4 | Test leave-one-out ceiling for collaborative filtering |
+
+### Recommended Next Steps
+
+1. **h44 (Transductive kNN)** — Establish the collaborative filtering ceiling using leave-one-out on full GT. Low effort, sets expectations.
+2. **External data integration** — PPI network distances (h17), clinical trial features (h16), or HPO phenotype similarity (h19) could provide signals beyond DRKG.
+3. **Production deployment of kNN** — The kNN method is simple, fast, and interpretable. Could be deployed as-is for drug repurposing screening.
+
+---
+
+## Previous Session: h29/h37/h35/h34 Multi-Hypothesis (2026-01-27)
 
 ### Session Summary
 
