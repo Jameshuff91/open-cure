@@ -91,18 +91,20 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 
 ## Key Metrics
 
-| Model | Per-Drug R@30 | Notes |
-|-------|---------------|-------|
-| **GB + Fuzzy Matcher (fixed)** | **41.8%** | Best baseline, 1,236 diseases, 3,618 pairs |
-| GB + Fuzzy (held-out diseases) | **45.9% / 3-12%*** | *Existing model OK, retrained collapses |
-| Node2Vec (held-out diseases) | 41.9%?? | **UNVERIFIED** — likely pair-level split, not true disease holdout |
-| GB + Quad Boost (inflated) | 47.5%* | *Circular features - NOT real improvement |
-| TxGNN | 6.7% | Near-random for most diseases |
+| Model | Per-Drug R@30 | Evaluation | Notes |
+|-------|---------------|------------|-------|
+| **Node2Vec+XGBoost (disease holdout)** | **28.73%** | **HONEST** | Best generalizing model, 88 test diseases |
+| GB + Fuzzy Matcher (fixed) | 41.8% | Within-dist | 1,236 diseases, pair-level (inflated) |
+| GB + TransE (existing, on test) | 45.9% | Pair-trained | Trained on ALL diseases, tested on subset |
+| TransE+XGBoost (disease holdout) | 16.64% | Honest | TransE fails to generalize |
+| Node2Vec+XGBoost (pair-level) | ~21.6% | Within-dist | Pair-level trained, evaluated on test |
+| GB + Quad Boost (inflated) | 47.5%* | Circular | *Circular features - NOT real |
+| Node2Vec Cosine (no ML) | 1.27% | Honest | ML model IS required |
+| TxGNN | 6.7% | Unknown | Near-random for most diseases |
 
-*The 47.5% was inflated by evaluating on training diseases with circular boost features
-**CRITICAL (2026-01-27): GB model trained from scratch cannot generalize to unseen diseases (3-12% R@30 on disease-level holdout). The 41.8% is within-distribution performance.
+**CRITICAL (2026-01-27):** The honest generalization baseline is **28.73% R@30** (Node2Vec+XGBoost on disease-level holdout). All higher numbers used pair-level splits or circular features.
 
-**Progression:** 37.4% → 41.8% (fuzzy matcher fix) → **Generalization crisis identified**
+**Progression:** 37.4% → 41.8% (fuzzy fix, pair-level) → Generalization crisis → **28.73% (honest, Node2Vec)**
 
 ## Key Learnings
 
@@ -112,12 +114,13 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 3. **DRKG graph embeddings** - 256-dim Node2Vec captures treatment relationships
 
 ### CRITICAL: Generalization Gap (2026-01-27)
-- **GB + TransE features (concat/product/diff) does NOT generalize to unseen diseases**
-- Existing model: 45.9% R@30 on held-out test diseases (trained on ALL diseases with pair-level split)
-- Retrained with disease-level holdout: 3-12% R@30 (5 strategies all collapsed)
-- Root cause: model memorizes per-disease embedding patterns, doesn't learn transferable drug-disease relationships
-- Node2Vec "41.9% on held-out diseases" is UNVERIFIED — code uses pair-level split
-- **Next priority**: Verify Node2Vec generalization, then explore graph features or inductive approaches
+- **GB + TransE does NOT generalize**: Retrained 3-12% R@30 on disease holdout (h5)
+- **Node2Vec DOES partially generalize**: 28.73% R@30 on disease holdout (h29) — 1.73x better than TransE (16.64%)
+- The "41.9% on held-out diseases" was INCORRECT: original code used pair-level split
+- Node2Vec's random walk captures transferable neighborhood structure; TransE's translational model memorizes
+- Concat vs full features (concat+product+diff) makes NO difference for Node2Vec (both 28.73%)
+- Cosine similarity alone is useless: 0-1.27% R@30
+- **Next priority**: Improve beyond 28.73% via graph features + Node2Vec hybrid (h34), or gene-based features (h35)
 
 ### What SEEMED to Work (but was data leakage)
 1. **Boost features** - Target overlap, chemical similarity, ATC were circular

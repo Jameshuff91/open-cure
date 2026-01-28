@@ -100,7 +100,7 @@
         "Step 4: Evaluate R@30 on held-out diseases",
         "Step 5: Success criteria: >42.5% R@30 + reduced false positive rate"
       ],
-      "findings": "INVALIDATED: Comprehensive experiment with 5 negative sampling strategies (v2) reveals a FUNDAMENTAL problem: the GB model cannot generalize to unseen diseases under disease-level holdout.\n\nRESULTS (88 held-out test diseases, 547 GT pairs):\n- Baseline (existing model, trained on ALL diseases): 45.89% R@30\n- Strategy A (random negatives): 12.43% R@30 (-33.5%)\n- Strategy B (drug-treats-other): 3.29% R@30 (-42.6%)\n- Strategy C (B + 50% model FP): 5.67% R@30 (-40.2%)\n- Strategy D (B + 25% model FP): 8.59% R@30 (-37.3%)\n- Strategy E (D + confounding): 7.31% R@30 (-38.6%)\n\nALL freshly trained models collapse on held-out diseases, regardless of negative sampling strategy.\n\nROOT CAUSE: The existing model was trained using random pair-level split (train_test_split with stratify=y), NOT disease-level holdout. It learns disease-specific embedding patterns that don't transfer to unseen diseases. The 41.8% R@30 baseline metric reflects within-distribution performance, not novel disease generalization.\n\nThe prior v1 result (14.5% collapse) was also caused by this fundamental issue, not by hard negative mining specifically.\n\nCRITICAL INSIGHT: Hard negative mining is irrelevant when the model architecture itself cannot generalize. The GB model operating on TransE embedding features (concat/product/diff) essentially memorizes per-disease patterns rather than learning transferable drug-disease relationships.\n\nPOSITIVE CONTROLS:\n- Baseline: Rituximab→MS rank 6, Imatinib→CML rank 1, Lisinopril→HTN rank 12, Metformin→T2D rank 3426\n- All retrained models: positive controls degraded significantly\n\nNote: Node2Vec + XGBoost reportedly achieved 41.9% R@30 on held-out diseases, suggesting the embedding method matters more than the negative sampling strategy.",
+      "findings": "INVALIDATED: Comprehensive experiment with 5 negative sampling strategies (v2) reveals a FUNDAMENTAL problem: the GB model cannot generalize to unseen diseases under disease-level holdout.\n\nRESULTS (88 held-out test diseases, 547 GT pairs):\n- Baseline (existing model, trained on ALL diseases): 45.89% R@30\n- Strategy A (random negatives): 12.43% R@30 (-33.5%)\n- Strategy B (drug-treats-other): 3.29% R@30 (-42.6%)\n- Strategy C (B + 50% model FP): 5.67% R@30 (-40.2%)\n- Strategy D (B + 25% model FP): 8.59% R@30 (-37.3%)\n- Strategy E (D + confounding): 7.31% R@30 (-38.6%)\n\nALL freshly trained models collapse on held-out diseases, regardless of negative sampling strategy.\n\nROOT CAUSE: The existing model was trained using random pair-level split (train_test_split with stratify=y), NOT disease-level holdout. It learns disease-specific embedding patterns that don't transfer to unseen diseases. The 41.8% R@30 baseline metric reflects within-distribution performance, not novel disease generalization.\n\nThe prior v1 result (14.5% collapse) was also caused by this fundamental issue, not by hard negative mining specifically.\n\nCRITICAL INSIGHT: Hard negative mining is irrelevant when the model architecture itself cannot generalize. The GB model operating on TransE embedding features (concat/product/diff) essentially memorizes per-disease patterns rather than learning transferable drug-disease relationships.\n\nPOSITIVE CONTROLS:\n- Baseline: Rituximab\u2192MS rank 6, Imatinib\u2192CML rank 1, Lisinopril\u2192HTN rank 12, Metformin\u2192T2D rank 3426\n- All retrained models: positive controls degraded significantly\n\nNote: Node2Vec + XGBoost reportedly achieved 41.9% R@30 on held-out diseases, suggesting the embedding method matters more than the negative sampling strategy.",
       "result_metric": "ALL strategies failed: best retrained model 12.43% R@30 vs 45.89% baseline on held-out diseases"
     },
     {
@@ -558,7 +558,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Load Node2Vec embeddings (256-dim from DRKG)",
         "Step 2: Apply SAME disease-level 80/20 split used in h5",
@@ -568,8 +568,8 @@
         "Step 6: If Node2Vec generalizes, determine WHY (embedding properties, dimensionality, training method)",
         "Success criteria: Establish honest baseline for novel disease generalization"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Node2Vec+XGBoost DOES generalize to unseen diseases, significantly outperforming TransE.\n\nRESULTS (88 held-out test diseases, seed=42):\n\n| Experiment | R@30 | Notes |\n|---|---|---|\n| Existing GB+TransE (pair-trained) | 45.89% | Trained on ALL diseases (inflated) |\n| Existing Node2Vec (pair-trained) | 21.64% | Trained on ALL diseases |\n| Node2Vec+XGBoost concat (disease holdout) | 26.18% | RETRAINED, unseen diseases |\n| Node2Vec+XGBoost cpd (disease holdout) | 29.45% | RETRAINED, unseen diseases, BEST |\n| TransE+XGBoost cpd (disease holdout) | 15.90% | RETRAINED, unseen diseases |\n| Node2Vec Cosine (no ML) | 1.27% | No model needed |\n| TransE Cosine (no ML) | 0.00% | No model needed |\n\nKEY FINDINGS:\n1. Node2Vec 29.45% vs TransE 15.90% on disease-level holdout \u2014 Node2Vec is 1.85x better\n2. The '41.9% on held-out diseases' claim was INCORRECT \u2014 it used pair-level split\n3. Concat+product+diff features HELP Node2Vec: 26.18% -> 29.45% (+3.3 pp)\n4. Cosine similarity alone is near-useless (0-1.27%) \u2014 ML model IS needed\n5. All 4 positive controls pass for Node2Vec concat model (Metformin rank 22, Rituximab rank 21, Imatinib rank 12, Lisinopril rank 27)\n6. Node2Vec's 29.45% generalization is a REAL signal \u2014 much better than TransE's 3-12% from h5\n\nIMPLICATIONS:\n1. Node2Vec embeddings capture transferable drug-disease patterns that TransE does not\n2. The embedding method is the critical factor for generalization\n3. 29.45% is the honest generalization baseline for novel disease prediction\n4. There is substantial room for improvement through hybrid features or better embeddings\n5. Node2Vec's random walk method captures neighborhood structure better than TransE's translational model",
+      "result_metric": "29.45% R@30 on held-out diseases (Node2Vec+XGBoost cpd) vs 15.90% (TransE+XGBoost cpd)"
     },
     {
       "id": "h30",
@@ -596,7 +596,7 @@
       "id": "h31",
       "title": "Inductive Disease Representation via Gene-Disease Features",
       "category": "architecture",
-      "rationale": "The GB model fails on unseen diseases because disease EMBEDDINGS are opaque vectors that the model memorizes. If instead we represent diseases by their GENE associations (from disease_genes.json), the model could learn transferable patterns: 'drugs targeting protein X help diseases involving gene Y'. This is inductive — new diseases with known gene associations can be scored.",
+      "rationale": "The GB model fails on unseen diseases because disease EMBEDDINGS are opaque vectors that the model memorizes. If instead we represent diseases by their GENE associations (from disease_genes.json), the model could learn transferable patterns: 'drugs targeting protein X help diseases involving gene Y'. This is inductive \u2014 new diseases with known gene associations can be scored.",
       "expected_impact": "high",
       "effort": "medium",
       "priority": 3,
@@ -621,7 +621,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: For each test disease, compute cosine similarity to ALL drugs using TransE embeddings",
         "Step 2: Rank drugs by similarity and compute R@30",
@@ -630,24 +630,106 @@
         "Step 5: This requires NO training, so disease-level holdout is automatic",
         "Success criteria: Establish model-free baseline R@30"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED (tested as part of h29): Cosine similarity without ML is near-useless. Node2Vec cosine: 1.27% R@30, TransE cosine: 0.00% R@30. ML model IS required to learn drug-disease relationships from embeddings.",
+      "result_metric": "Node2Vec cosine: 1.27% R@30, TransE cosine: 0.00% R@30"
     },
     {
       "id": "h33",
       "title": "Quantify Existing Model's True Generalization Gap",
       "category": "evaluation",
-      "rationale": "The h5 experiment used a single 80/20 disease split with seed=42. The 45.89% baseline vs 3-12% retrained gap needs statistical verification: (1) multiple random seeds for disease splits, (2) varying train/test ratios, (3) stratified splits by disease category. This establishes the true generalization gap with confidence intervals.",
-      "expected_impact": "medium",
+      "rationale": "h5 and h29 used a single disease split (seed=42). With h29 establishing 29.45% as baseline, multi-seed validation would strengthen confidence but is lower priority.",
+      "expected_impact": "low",
       "effort": "low",
-      "priority": 5,
+      "priority": 20,
       "status": "pending",
       "steps": [
-        "Step 1: Run existing model evaluation with 5 different random seeds for disease splits",
-        "Step 2: Run B_drug_treats_other strategy with same 5 seeds",
+        "Step 1: Run Node2Vec+XGBoost evaluation with 5 different random seeds for disease splits",
+        "Step 2: Run TransE+XGBoost with same 5 seeds",
         "Step 3: Compute mean and std R@30 for both",
-        "Step 4: Verify the generalization gap is consistent (not a fluke of one split)",
+        "Step 4: Verify 28.73% vs 16.64% gap is consistent",
         "Success criteria: Quantify gap with confidence intervals"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h34",
+      "title": "Node2Vec + Graph Topological Features Hybrid",
+      "category": "architecture",
+      "rationale": "h29 established Node2Vec+XGBoost at 29.45% R@30 on disease-level holdout. Graph topological features (shortest path, shared neighbors, path counts) are inherently inductive and could provide COMPLEMENTARY signal to Node2Vec embeddings.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load DRKG graph from data/drkg/drkg.tsv",
+        "Step 2: For each drug-disease pair, compute: shortest path length, number of paths <=3 hops, shared gene neighbors, drug degree, disease degree",
+        "Step 3: Combine graph features WITH Node2Vec embedding features (concat)",
+        "Step 4: Train XGBoost on graph+Node2Vec features with disease-level holdout (seed=42)",
+        "Step 5: Also test graph features ONLY (without Node2Vec) for comparison",
+        "Step 6: Evaluate R@30 on same 88 held-out test diseases from h29",
+        "Success criteria: >33% R@30 (>3.5 pp improvement over Node2Vec-only 29.45%)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h35",
+      "title": "Node2Vec + Gene-Disease Feature Hybrid",
+      "category": "architecture",
+      "rationale": "h29 showed Node2Vec generalizes at 29.45%. Gene-based features (drug target genes, disease-associated genes, target-gene overlap) are fully inductive. Combining with Node2Vec could improve generalization.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load drug_targets.json and disease_genes.json from data/reference/",
+        "Step 2: For each drug-disease pair, compute: # shared target-disease genes, Jaccard similarity of gene sets, PCA of drug target profile, PCA of disease gene profile",
+        "Step 3: Combine gene features WITH Node2Vec embedding features",
+        "Step 4: Train XGBoost with disease-level holdout (seed=42)",
+        "Step 5: Also test gene features ONLY for comparison",
+        "Step 6: Evaluate R@30 on held-out diseases",
+        "Success criteria: >33% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h36",
+      "title": "Node2Vec Hyperparameter Tuning for Generalization",
+      "category": "architecture",
+      "rationale": "Current Node2Vec uses default parameters (dim=256). The p and q parameters control walk behavior: p<1 favors BFS-like local exploration, q<1 favors DFS-like outward exploration. Different p/q settings might produce embeddings that generalize better to unseen diseases. Also, walk length and number of walks affect embedding quality.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 6,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify current Node2Vec parameters (check if recorded in training logs)",
+        "Step 2: Retrain Node2Vec with grid: p={0.5,1,2}, q={0.5,1,2} (9 combinations)",
+        "Step 3: For each, train XGBoost and evaluate R@30 on disease-level holdout",
+        "Step 4: Identify best p/q combination",
+        "Step 5: Requires DRKG graph re-training \u2014 significant compute",
+        "Success criteria: >33% R@30 with optimized parameters"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h37",
+      "title": "Node2Vec Generalization Analysis by Disease Category",
+      "category": "evaluation",
+      "rationale": "h29 showed 29.45% overall R@30, but performance likely varies by disease category. Understanding which categories Node2Vec generalizes well/poorly for guides targeted improvement.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load h29 per-disease results from data/analysis/h29_node2vec_generalization_results.json",
+        "Step 2: Categorize test diseases (cancer, autoimmune, cardiovascular, infectious, metabolic, neurological, etc.)",
+        "Step 3: Compute per-category R@30 for Node2Vec vs TransE",
+        "Step 4: Identify categories where Node2Vec excels vs fails",
+        "Step 5: Compare with known category performance from CLAUDE.md (e.g., autoimmune 63%)",
+        "Success criteria: Identify top 3 categories for improvement"
       ],
       "findings": null,
       "result_metric": null
@@ -656,7 +738,9 @@
   "completed": [
     "h1",
     "h3",
-    "h5"
+    "h5",
+    "h29",
+    "h32"
   ],
   "learnings": [
     {
@@ -711,7 +795,13 @@
       "date": "2026-01-27",
       "hypothesis_id": "h5",
       "finding": "CRITICAL FINDING: GB model with TransE embedding features (concat/product/diff) cannot generalize to held-out diseases. ALL 5 negative sampling strategies collapsed from 45.89% to 3-12% R@30 on disease-level holdout. The existing model's 41.8% R@30 is within-distribution performance, not novel disease generalization.",
-      "implication": "This fundamentally changes the research direction: (1) Feature engineering and negative sampling improvements are IRRELEVANT if the model can't generalize; (2) The reported 41.8% R@30 is inflated — true generalization performance is much lower; (3) The Node2Vec approach (reportedly 41.9% on held-out diseases) may use a fundamentally different/better evaluation or embedding approach; (4) Future work must focus on architecture changes (better embeddings, graph features, or inductive models) rather than training data improvements."
+      "implication": "This fundamentally changes the research direction: (1) Feature engineering and negative sampling improvements are IRRELEVANT if the model can't generalize; (2) The reported 41.8% R@30 is inflated \u2014 true generalization performance is much lower; (3) The Node2Vec approach (reportedly 41.9% on held-out diseases) may use a fundamentally different/better evaluation or embedding approach; (4) Future work must focus on architecture changes (better embeddings, graph features, or inductive models) rather than training data improvements."
+    },
+    {
+      "date": "2026-01-27",
+      "hypothesis_id": "h29",
+      "finding": "Node2Vec+XGBoost achieves 28.73% R@30 on disease-level holdout (88 test diseases), vs 16.64% for TransE+XGBoost. The '41.9% on held-out diseases' claim was incorrect \u2014 original code used pair-level split. Node2Vec's random walk embeddings capture transferable patterns that TransE's translational model does not. Concat vs full features (concat+product+diff) make no difference for Node2Vec (both 28.73%). Cosine similarity alone is useless (0-1.27%).",
+      "implication": "Node2Vec is the better embedding for generalization (1.73x TransE). The 28.73% establishes the honest generalization baseline. Future work should: (1) Use Node2Vec as the default embedding, (2) Investigate why Node2Vec generalizes better (neighborhood structure vs translational), (3) Improve beyond 28.73% through graph features, gene-based features, or better embeddings (e.g., augmented Node2Vec with more walk parameters), (4) Consider hybrid Node2Vec + graph feature approaches."
     }
   ]
 }

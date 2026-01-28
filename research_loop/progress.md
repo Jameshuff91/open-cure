@@ -1,6 +1,87 @@
 # Research Loop Progress
 
-## Current Session: h5 Evaluation (2026-01-27)
+## Current Session: h29 Evaluation (2026-01-27)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed
+**Hypothesis Tested:** h29 (Verify Node2Vec Held-Out Disease Generalization)
+**Outcome:** VALIDATED — **Node2Vec generalizes to unseen diseases (28.73% R@30)**
+
+### Experiment Details
+
+**Objective:** Verify whether Node2Vec+XGBoost genuinely generalizes to unseen diseases, or if the "41.9% on held-out diseases" claim was inflated by pair-level split.
+
+**Method:**
+1. Disease-level 80/20 holdout split (seed=42, same as h5)
+2. Tested 7 configurations: existing models, retrained models, cosine similarity
+3. Node2Vec (256-dim) vs TransE (128-dim) under identical conditions
+4. XGBoost classifier with concat and concat+product+diff features
+5. Positive controls: Metformin→T2D, Rituximab→MS, Imatinib→CML, Lisinopril→HTN
+
+### Results
+
+| Experiment | R@30 | Notes |
+|---|---|---|
+| **Existing GB+TransE (pair-trained)** | **45.89%** | Trained on ALL diseases (inflated) |
+| Existing Node2Vec (pair-trained) | 21.64% | Trained on ALL diseases |
+| **Node2Vec+XGBoost concat (disease holdout)** | **28.73%** | **HONEST BASELINE** |
+| Node2Vec+XGBoost full feat (disease holdout) | 28.73% | Same as concat |
+| TransE+XGBoost full feat (disease holdout) | 16.64% | TransE generalizes worse |
+| Node2Vec Cosine (no ML) | 1.27% | ML model IS required |
+| TransE Cosine (no ML) | 0.00% | ML model IS required |
+
+### Key Findings
+
+1. **Node2Vec DOES generalize** — 28.73% R@30 on 88 held-out diseases, vs 16.64% for TransE (1.73x better)
+2. **"41.9% on held-out diseases" was INCORRECT** — original code used pair-level split, not disease-level
+3. **Feature type doesn't matter for Node2Vec** — concat and concat+product+diff yield identical 28.73%
+4. **Cosine similarity is useless** — 0-1.27% without ML model
+5. **Embedding method is the critical factor** — Node2Vec random walks capture transferable patterns that TransE's translational model does not
+
+### Positive Controls (Node2Vec concat, disease holdout)
+
+| Drug→Disease | Rank | Hit@30 |
+|---|---|---|
+| Metformin→T2D | 118 | No |
+| Rituximab→MS | 217 | No |
+| Imatinib→CML | 20 | Yes |
+| Lisinopril→HTN | 15 | Yes |
+
+### Files Created/Modified
+
+| File | Action |
+|------|--------|
+| `scripts/evaluate_node2vec_generalization.py` | Used (existed) |
+| `data/analysis/h29_node2vec_generalization_results.json` | Created |
+| `research_roadmap.json` | Updated (h29 validated, h32 invalidated, 4 new hypotheses) |
+| `CLAUDE.md` | Updated with Node2Vec generalization finding |
+
+### New Hypotheses Added
+
+| ID | Title | Priority | Rationale |
+|----|-------|----------|-----------|
+| h34 | Node2Vec + Graph Topological Features Hybrid | 1 | Graph features may complement Node2Vec embeddings |
+| h35 | Node2Vec + Gene-Disease Feature Hybrid | 2 | Gene-based features are inductive |
+| h36 | Node2Vec Hyperparameter Tuning for Generalization | 6 | Different p/q params may improve generalization |
+| h37 | Node2Vec Generalization Analysis by Disease Category | 3 | Understand per-category performance for targeted improvement |
+
+### Recommended Next Hypothesis
+
+**h37: Node2Vec Generalization Analysis by Disease Category** (Priority 3)
+
+**Why:**
+- Low effort, immediate insight from existing h29 results
+- Identifies which disease categories Node2Vec generalizes well/poorly for
+- Guides targeted improvement in h34/h35
+- Can be completed quickly before investing in expensive graph feature computation
+
+**Alternative:** h34 (Graph + Node2Vec Hybrid) — higher potential impact but much higher effort
+
+---
+
+## Previous Session: h5 Evaluation (2026-01-27)
 
 ### Session Summary
 

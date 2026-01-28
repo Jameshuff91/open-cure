@@ -1,0 +1,111 @@
+{
+  "hypothesis": "h29",
+  "title": "Verify Node2Vec Held-Out Disease Generalization",
+  "date": "2026-01-27",
+  "design": {
+    "method": "Disease-level 80/20 holdout, seed=42",
+    "n2v_train_diseases": 353,
+    "n2v_test_diseases": 88,
+    "transe_train_diseases": 354,
+    "transe_test_diseases": 88,
+    "common_test_diseases": 51
+  },
+  "results": {
+    "existing_n2v_model": {
+      "description": "Existing Node2Vec XGBoost (pair-level trained, evaluated on held-out diseases)",
+      "recall_at_30": 0.21636363636363637,
+      "diseases_evaluated": 88
+    },
+    "n2v_concat_holdout": {
+      "description": "Node2Vec + XGBoost (concat only), disease-level holdout",
+      "recall_at_30": 0.26181818181818184,
+      "diseases_evaluated": 88,
+      "positive_controls": [
+        {
+          "drug": "metformin",
+          "disease_id": "drkg:Disease::MESH:D003924",
+          "rank": 22,
+          "score": 0.9491731524467468,
+          "hit_at_30": true
+        },
+        {
+          "drug": "rituximab",
+          "disease_id": "drkg:Disease::MESH:D009103",
+          "rank": 21,
+          "score": 0.9505342245101929,
+          "hit_at_30": true
+        },
+        {
+          "drug": "imatinib",
+          "disease_id": "drkg:Disease::MESH:D015464",
+          "rank": 12,
+          "score": 0.9823287129402161,
+          "hit_at_30": true
+        },
+        {
+          "drug": "lisinopril",
+          "disease_id": "drkg:Disease::MESH:D006973",
+          "rank": 27,
+          "score": 0.9572150707244873,
+          "hit_at_30": true
+        }
+      ]
+    },
+    "n2v_cpd_holdout": {
+      "description": "Node2Vec + XGBoost (concat+product+diff), disease-level holdout",
+      "recall_at_30": 0.29454545454545455,
+      "diseases_evaluated": 88,
+      "positive_controls": [
+        {
+          "drug": "metformin",
+          "disease_id": "drkg:Disease::MESH:D003924",
+          "rank": 45,
+          "score": 0.9338164925575256,
+          "hit_at_30": false
+        },
+        {
+          "drug": "rituximab",
+          "disease_id": "drkg:Disease::MESH:D009103",
+          "rank": 72,
+          "score": 0.861798882484436,
+          "hit_at_30": false
+        },
+        {
+          "drug": "imatinib",
+          "disease_id": "drkg:Disease::MESH:D015464",
+          "rank": 11,
+          "score": 0.950870931148529,
+          "hit_at_30": true
+        },
+        {
+          "drug": "lisinopril",
+          "disease_id": "drkg:Disease::MESH:D006973",
+          "rank": 13,
+          "score": 0.9763993620872498,
+          "hit_at_30": true
+        }
+      ]
+    },
+    "transe_cpd_holdout": {
+      "description": "TransE + XGBoost (concat+product+diff), disease-level holdout",
+      "recall_at_30": 0.1590493601462523,
+      "diseases_evaluated": 87
+    },
+    "n2v_cosine": {
+      "description": "Node2Vec cosine similarity ranking (no ML model)",
+      "recall_at_30": 0.012727272727272728,
+      "diseases_evaluated": 88
+    },
+    "transe_cosine": {
+      "description": "TransE cosine similarity ranking (no ML model)",
+      "recall_at_30": 0.0,
+      "diseases_evaluated": 87
+    },
+    "existing_gb_transe": {
+      "description": "Existing GB+TransE (pair-level trained, evaluated on held-out diseases)",
+      "recall_at_30": 0.45886654478976235,
+      "diseases_evaluated": 87
+    }
+  },
+  "elapsed_seconds": 242.37225794792175
+}
