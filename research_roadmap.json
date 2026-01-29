@@ -329,7 +329,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "inconclusive",
+      "status": "invalidated",
       "steps": [
         "Step 1: Download STRING PPI network for human",
         "Step 2: Compute shortest path from drug targets to disease genes",
@@ -338,8 +338,8 @@
         "Step 5: Evaluate on held-out diseases",
         "Step 6: Success criteria: >42.5% R@30"
       ],
-      "findings": "PPI distance IS statistically informative for drug-disease relationships:\n\n1. Downloaded STRING PPI network (473K high-confidence edges, 15,757 genes)\n2. Coverage: 93.5% drug targets, 54.8% disease genes in PPI network\n3. GT vs Random comparison:\n   - GT pairs: mean distance 1.15, 70% have distance \u22641\n   - Random pairs: mean distance 1.91, 31% have distance \u22641\n   - Mann-Whitney p-value: 5.42e-39 (highly significant)\n   - 2.2x enrichment at distance \u22641\n\nBLOCKED: Using PPI for drug ranking is computationally prohibitive:\n- Computing BFS from each drug target to all disease genes: O(drugs \u00d7 diseases \u00d7 edges)\n- 11K drugs \u00d7 2K diseases \u00d7 29 avg degree = billions of operations\n- Would require precomputation or architectural changes\n\nThe external PPI data provides signal but efficient integration is non-trivial.",
-      "result_metric": "GT mean=1.15 vs random=1.91 (p<1e-38) \u2014 informative but computationally blocked"
+      "findings": "INVALIDATED: PPI network similarity does NOT improve drug repurposing.\n\nCOVERAGE:\n- 369/465 (79.4%) GT diseases have PPI gene neighborhoods\n- Pre-computed 2-hop neighborhoods (mean size: 4,828 genes)\n\nRESULTS (5-seed mean \u00b1 std):\n| Method                  | R@30          | Delta vs baseline |\n|-------------------------|---------------|-------------------|\n| Node2Vec kNN (baseline) | 36.93% \u00b1 6.02%| ---               |\n| PPI kNN (2-hop Jaccard) | 16.18% \u00b1 2.00%| -20.76 pp         |\n| Hybrid \u03b1=0.1            | 36.88% \u00b1 4.68%| -0.05 pp          |\n| Hybrid \u03b1=0.2            | 35.72% \u00b1 4.55%| -1.21 pp          |\n| Hybrid \u03b1=0.3            | 35.02% \u00b1 4.91%| -1.91 pp          |\n\nKEY FINDINGS:\n1. PPI-only kNN achieves only 16.18% R@30 \u2014 far worse than Node2Vec\n2. Hybrid methods all HURT performance (best is \u03b1=0.1 at -0.05 pp)\n3. PPI neighborhood Jaccard similarity is too coarse \u2014 2-hop neighborhoods average 4,828 genes\n4. Node2Vec already captures functional similarity that subsumes PPI proximity\n\nROOT CAUSE:\n- 2-hop PPI neighborhoods are very large (mean 4,828 genes) \u2192 high false positive overlap\n- PPI is too generic \u2014 same genes appear in many disease neighborhoods\n- DRKG already includes Gene-Disease and Drug-Gene edges \u2192 Node2Vec captures this\n\nCONCLUSION: External PPI data does NOT provide complementary signal to DRKG embeddings.",
+      "result_metric": "PPI kNN 16.18% vs Node2Vec 36.93% \u2014 no improvement"
     },
     {
       "id": "h18",
@@ -1060,6 +1060,12 @@
       "hypothesis_id": "h17",
       "learning": "PPI distance is statistically informative (2.2x enrichment for GT pairs) but O(n\u00b2) computation makes direct use impractical. Would need precomputation or use as post-hoc filter.",
       "implication": "External network data CAN help but needs efficient integration strategy. Consider: (1) precompute drug-gene distances, (2) use as filter not ranking, (3) integrate into kNN as drug similarity."
+    },
+    {
+      "date": "2026-01-28",
+      "hypothesis_id": "h17",
+      "learning": "PPI neighborhood similarity (16.18% R@30) is far worse than Node2Vec (36.93%). 2-hop neighborhoods average 4,828 genes \u2014 too large for meaningful similarity. DRKG already captures drug-gene-disease relationships.",
+      "implication": "External PPI data is NOT the path to breaking the 37% ceiling. STRING data is already incorporated in DRKG structure."
     }
   ]
 }

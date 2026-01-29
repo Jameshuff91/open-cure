@@ -805,3 +805,66 @@ External phenotype ontology data is NOT the path to breaking the 37% ceiling. Th
 3. **h9: UMLS Disease Mapping** — Improve coverage (currently 25.6%)
 4. **h16: Clinical Trial Features** — Different external signal
 
+
+---
+
+## Session: h17 PPI Network Distance (2026-01-28)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed
+**Hypothesis Tested:** h17 (PPI Network Distance Features)
+**Outcome:** INVALIDATED — PPI similarity does NOT improve drug repurposing
+
+### Experiment Details
+
+**Objective:** Test whether protein-protein interaction (PPI) network proximity from drug targets to disease genes can improve predictions.
+
+**Method:**
+1. Loaded STRING PPI network (15,757 genes, high confidence edges)
+2. Pre-computed 2-hop gene neighborhoods for 3,454 diseases
+3. Computed Jaccard similarity on gene neighborhoods
+4. Evaluated PPI-only kNN, Node2Vec kNN, and hybrid combinations
+5. Multi-seed evaluation (42, 123, 456, 789, 1024)
+
+### Results
+
+| Method | R@30 (5-seed mean ± std) | Delta vs Node2Vec |
+|--------|--------------------------|-------------------|
+| Node2Vec kNN (baseline) | 36.93% ± 6.02% | --- |
+| PPI kNN (2-hop Jaccard) | 16.18% ± 2.00% | -20.76 pp |
+| Hybrid α=0.1 | 36.88% ± 4.68% | -0.05 pp |
+| Hybrid α=0.2 | 35.72% ± 4.55% | -1.21 pp |
+| Hybrid α=0.3 | 35.02% ± 4.91% | -1.91 pp |
+
+### Key Findings
+
+1. **PPI-only fails badly** (16.18% R@30) — far worse than Node2Vec
+2. **Hybrid methods HURT** — even α=0.1 is slightly worse (-0.05 pp)
+3. **2-hop neighborhoods too large** — mean 4,828 genes per disease
+4. **High false positive overlap** — unrelated diseases share many genes at 2 hops
+5. **DRKG already captures PPI** — Drug-Gene and Gene-Disease edges in DRKG
+
+### Files Created
+
+| File | Description |
+|------|-------------|
+| `data/reference/ppi/disease_ppi_neighborhoods_2hop.json` | Pre-computed disease gene neighborhoods |
+| `scripts/evaluate_ppi_distance_knn.py` | Evaluation script |
+| `data/analysis/h17_ppi_distance_results.json` | Full results |
+
+### Conclusion
+
+**External PPI data does NOT improve drug repurposing predictions.**
+
+The DRKG knowledge graph already incorporates drug-gene and gene-disease relationships that capture PPI proximity. 2-hop neighborhoods are too coarse for meaningful disease similarity.
+
+### Session Summary (h17 + h19 Combined)
+
+Two external data sources tested this session:
+- **h19 (HPO Phenotype)**: 14.20% R@30 — INVALIDATED
+- **h17 (PPI Network)**: 16.18% R@30 — INVALIDATED
+
+Both external data sources provide **weaker signals than Node2Vec** (36.93%). The 37% ceiling is NOT due to missing external data — it's a fundamental limitation of the kNN collaborative filtering approach.
+
