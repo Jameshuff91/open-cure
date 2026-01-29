@@ -173,7 +173,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Download UMLS Metathesaurus (requires license)",
         "Step 2: Extract MESH<->MONDO<->DOID cross-references",
@@ -181,7 +181,7 @@
         "Step 4: Re-evaluate with expanded disease coverage",
         "Step 5: Success criteria: >45% disease coverage, maintain R@30"
       ],
-      "findings": null,
+      "findings": "DEPRIORITIZED: h19 (HPO) and h17 (PPI) showed external ontology data provides WEAKER signal than Node2Vec. UMLS mappings would improve coverage but not address the fundamental ceiling. Focus should shift to better ground truth or different architectures.",
       "result_metric": null
     },
     {
@@ -309,7 +309,7 @@
       "rationale": "External trial data could help. External validation uses ClinicalTrials.gov data. Adding trial phase as a feature (Phase 1/2/3) for known pairs could help model learn which combinations advance.",
       "expected_impact": "low",
       "effort": "medium",
-      "priority": 5,
+      "priority": 20,
       "status": "pending",
       "steps": [
         "Step 1: Query ClinicalTrials.gov API for all drug-disease pairs",
@@ -318,7 +318,7 @@
         "Step 4: Evaluate impact on novel prediction quality",
         "Step 5: Success criteria: >25% validation precision (up from 22.5%)"
       ],
-      "findings": null,
+      "findings": "Low priority: h19/h17 showed external data provides weaker signal. Clinical trial phase data is orthogonal (not similarity-based) so may still be worth testing, but expected impact is low.",
       "result_metric": null
     },
     {
@@ -550,7 +550,7 @@
         "Step 6: Add validated pairs to GT",
         "Success criteria: Identify >100 missing pairs with >70% hit@30"
       ],
-      "findings": null,
+      "findings": "REQUIRES: DrugBank XML license/download. Would expand GT coverage which helps kNN (more drugs in similar diseases' treatment pools). Still potentially valuable but blocked by data access.",
       "result_metric": null
     },
     {
@@ -1066,6 +1066,12 @@
       "hypothesis_id": "h17",
       "learning": "PPI neighborhood similarity (16.18% R@30) is far worse than Node2Vec (36.93%). 2-hop neighborhoods average 4,828 genes \u2014 too large for meaningful similarity. DRKG already captures drug-gene-disease relationships.",
       "implication": "External PPI data is NOT the path to breaking the 37% ceiling. STRING data is already incorporated in DRKG structure."
+    },
+    {
+      "date": "2026-01-28",
+      "hypothesis_id": "h19,h17",
+      "learning": "External data (HPO phenotype, PPI network) provides WEAKER signal than Node2Vec cosine (14-16% vs 37% R@30). The 37% ceiling is NOT due to missing external data \u2014 it's a fundamental limitation of similarity-based collaborative filtering.",
+      "implication": "Breaking the ceiling requires (1) better GT coverage for kNN, (2) fundamentally different architectures (GNN, attention), or (3) hybrid approaches that don't rely on disease similarity."
     }
   ]
 }

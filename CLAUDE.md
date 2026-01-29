@@ -110,7 +110,13 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 
 **Progression:** 37.4% → 41.8% (fuzzy, pair-level) → Generalization crisis → 25.85% (honest XGBoost, 5-seed) → **37.04% (kNN collab filtering, 5-seed)**
 
-**DRKG CEILING (2026-01-28):** 37% R@30 is the maximum achievable with DRKG-only approaches. Oracle ceiling is 60%. The 23 pp gap requires **external data** (phenotype ontology, PPI networks, clinical trials). All DRKG-internal hypotheses have been blocked.
+**DRKG CEILING (2026-01-28):** 37% R@30 is the maximum achievable with DRKG-only approaches. Oracle ceiling is 60%.
+
+**EXTERNAL DATA TESTED & FAILED (2026-01-28):**
+- h19 (HPO Phenotype): 14.20% R@30 — WORSE than Node2Vec (36.93%)
+- h17 (PPI Network): 16.18% R@30 — WORSE than Node2Vec (36.93%)
+
+The 23 pp gap is NOT simply missing external data. Node2Vec already captures functional similarity. Breaking the ceiling requires **fundamentally different approaches** (GNN, meta-learning, attention) or **better ground truth coverage**.
 
 ## Key Learnings
 
@@ -162,6 +168,8 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 16. **XGBoost Rescue for kNN** (h42) - XGBoost helps no disease subset, kNN dominates everywhere
 17. **Learned Disease Similarity** (h45) - XGBoost regressor predicting drug overlap WORSE than cosine (-4 pp, overfits)
 18. **37% R@30 = DRKG ceiling** - kNN at 37%, oracle ceiling 60%; 23 pp gap requires external data
+19. **HPO Phenotype Similarity** (h19) - 14.20% R@30, -22.71 pp vs Node2Vec; phenotype ontology provides weaker signal
+20. **PPI Network Distance** (h17) - 16.18% R@30, -20.76 pp vs Node2Vec; 2-hop neighborhoods too coarse, DRKG already captures PPI
 
 ## Biologic Gap Analysis (2026-01-25)
 
