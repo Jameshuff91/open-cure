@@ -368,7 +368,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 1,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Download HPO annotations for diseases",
         "Step 2: Compute disease-disease similarity using HPO semantic similarity",
@@ -377,8 +377,8 @@
         "Step 5: Evaluate R@30 on held-out diseases",
         "Step 6: Success criteria: >42.5% R@30"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "HPO phenotype similarity does NOT improve drug repurposing:\n\n1. Coverage: Only 464 (13.3%) of GT diseases have HPO annotations via OMIM\u2192MESH\n2. On HPO-covered diseases:\n   - HPO-only kNN: 36.13% \u00b1 1.46% R@30\n   - Node2Vec kNN: 67.96% \u00b1 4.63% R@30 (on SAME diseases)\n   - Combined (50/50): 64.73% \u00b1 2.49% (WORSE than Node2Vec alone)\n3. Per-disease analysis:\n   - Only 1 disease (1.1%) rescued by HPO when Node2Vec failed\n   - 39 diseases (41.9%) rescued by Node2Vec when HPO failed\n4. Root causes:\n   - Node2Vec already captures disease similarity from DRKG\n   - HPO phenotype overlap is sparse (mean Jaccard = 0.06)\n   - HPO is focused on rare Mendelian diseases, not common diseases\n5. Statistical: Node2Vec beats HPO by 31.83 pp (p=0.0001, paired t-test)\n\nConclusion: External phenotype data provides no complementary signal to Node2Vec.",
+      "result_metric": "HPO kNN: 36.13% vs Node2Vec: 67.96% (same diseases) \u2014 no improvement"
     },
     {
       "id": "h20",
@@ -1042,6 +1042,12 @@
       "hypothesis_id": "h45",
       "finding": "Learned disease similarity (XGBoost regressor predicting drug overlap from Node2Vec features) is WORSE than cosine by -3.98 pp (33.21% vs 37.19%, p=0.008). The model overfits to training disease pairs and doesn't generalize.",
       "implication": "DEFINITIVE: No function of Node2Vec features can improve on cosine similarity for kNN. Both XGBoost classification (h5), XGBoost with kNN feature (h39 approach D), and now XGBoost regression on disease pairs ALL suffer from the same generalization failure. The DRKG-derived information is fully captured by cosine similarity. The 37% R@30 kNN baseline is the ceiling for DRKG-only approaches. Improvement requires EXTERNAL data sources."
+    },
+    {
+      "date": "2026-01-28",
+      "hypothesis_id": "h19",
+      "learning": "HPO phenotype similarity adds NO value over Node2Vec for drug repurposing. Coverage limited to 13.3% of diseases, and Node2Vec outperforms HPO 2:1 on that subset.",
+      "implication": "External phenotype data unlikely to help; Node2Vec already captures disease relationships. Future external data efforts should focus on drug/target-side enrichment, not disease phenotypes."
     }
   ]
 }

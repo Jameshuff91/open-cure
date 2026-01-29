@@ -1,6 +1,82 @@
 # Research Loop Progress
 
-## Current Session: h40/h39/h42/h43/h41/h44/h45 Multi-Hypothesis (2026-01-27)
+## Current Session: h19 (Disease Phenotype Similarity) (2026-01-28)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed
+**Hypothesis Tested:** h19 (Disease Phenotype Similarity using HPO)
+**Outcome:** INVALIDATED — HPO phenotype similarity provides NO value over Node2Vec
+
+### Experiment Details
+
+**Objective:** Test whether HPO (Human Phenotype Ontology) disease-disease similarity can improve kNN drug repurposing predictions.
+
+**Method:**
+1. Downloaded HPO phenotype annotations (280K annotations for 12,958 diseases)
+2. Built OMIM→MESH mappings via MONDO ontology (4,576 mappings)
+3. Identified 464 GT diseases (13.3%) with HPO annotations
+4. Computed Jaccard similarity on HPO phenotype sets
+5. Compared HPO-based kNN vs Node2Vec-based kNN on same disease subset
+
+### Results
+
+| Method | R@30 (5-seed) | Notes |
+|--------|---------------|-------|
+| HPO-only kNN | **36.13% ± 1.46%** | Jaccard similarity on phenotype sets |
+| Node2Vec kNN | **67.96% ± 4.63%** | Cosine similarity on embeddings |
+| Combined (50/50) | **64.73% ± 2.49%** | WORSE than Node2Vec alone |
+
+### Per-Disease Analysis (seed=42)
+
+| Category | Count | % |
+|----------|-------|---|
+| Both hit | 31 | 33.3% |
+| Node2Vec only wins | 39 | **41.9%** |
+| HPO only wins | 1 | **1.1%** |
+| Neither hits | 22 | 23.7% |
+
+### Key Findings
+
+1. **Node2Vec is far superior**: 67.96% vs 36.13% (31.83 pp difference, p=0.0001)
+2. **HPO provides no complementary signal**: Only 1 disease (1.1%) rescued by HPO when Node2Vec failed
+3. **Combining hurts**: 64.73% combined vs 67.96% Node2Vec alone (-3.23 pp)
+4. **Coverage limited**: Only 13.3% of GT diseases have HPO annotations via OMIM→MESH
+5. **Phenotype overlap sparse**: Mean Jaccard = 0.06 (very little overlap between diseases)
+
+### Root Cause Analysis
+
+1. **Node2Vec already captures disease relationships** from DRKG structure
+2. **HPO is focused on rare Mendelian diseases**, not common diseases in GT
+3. **Phenotype sets are sparse** - diseases share few phenotypes
+4. **13.3% coverage** is too limited for significant impact
+
+### Files Created/Modified
+
+| File | Action |
+|------|--------|
+| `data/reference/hpo/phenotype.hpoa` | Downloaded (HPO annotations) |
+| `data/reference/hpo/mondo.json` | Downloaded (MONDO ontology) |
+| `data/reference/hpo/omim_to_mesh.json` | Created (4,576 mappings) |
+| `data/reference/hpo/drkg_mesh_to_omim.json` | Created (555 mappings) |
+| `data/reference/hpo/disease_phenotypes.json` | Created (8,576 diseases) |
+| `data/reference/hpo/gt_diseases_with_hpo.json` | Created (464 diseases) |
+| `data/analysis/h19_hpo_similarity_results.json` | Created |
+| `data/analysis/h19_hpo_vs_node2vec_results.json` | Created |
+| `research_roadmap.json` | Updated (h19 invalidated) |
+
+### Recommended Next Steps
+
+**External phenotype data unlikely to help.** Node2Vec already captures disease relationships. Future external data efforts should focus on:
+
+1. **Drug/target-side enrichment** (PPI networks, drug mechanisms) - h17
+2. **More GT data** (DrugBank XML indications) - h28
+3. **Production deployment** - kNN method is ready (simple, fast, interpretable)
+
+---
+
+## Previous Session: h40/h39/h42/h43/h41/h44/h45 Multi-Hypothesis (2026-01-27)
 
 ### Session Summary
 
@@ -46,7 +122,7 @@
 
 | Priority | Hypothesis | Data Source | Potential |
 |----------|------------|-------------|-----------|
-| 1 | h19: Disease Phenotype Similarity | HPO (external) | 23 pp gap to close |
+| 1 | h19: Disease Phenotype Similarity | HPO (external) | **TESTED - INVALIDATED** |
 | 2 | h17: PPI Network Distance | STRING (external) | New similarity signal |
 | 3 | h28: DrugBank Indication Extraction | DrugBank XML | More GT = better kNN |
 | 4 | h9: Disease Coverage via UMLS | UMLS (external) | More disease mappings |
@@ -572,6 +648,6 @@ The 13.6% figure in CLAUDE.md was based on **antibiotic CLASS performance** (e.g
 
 ---
 
-*Last updated: 2026-01-26*
+*Last updated: 2026-01-28*
 *Agent: Research Executor*
-*Hypothesis tested: h4 (inconclusive)*
+*Hypothesis tested: h19 (INVALIDATED)*

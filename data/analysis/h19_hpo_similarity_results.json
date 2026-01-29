@@ -1,0 +1,20 @@
+{
+  "hypothesis": "h19",
+  "method": "kNN with HPO Jaccard similarity",
+  "diseases_evaluated": 464,
+  "results": {
+    "mean_recall_at_30": 35.913978494623656,
+    "std_recall_at_30": 1.4585655877688757,
+    "per_seed_results": {
+      "42": 35.483870967741936,
+      "123": 35.483870967741936,
+      "456": 34.40860215053763,
+      "789": 38.70967741935484,
+      "1024": 35.483870967741936
+    }
+  },
+  "baseline_comparison": {
+    "node2vec_knn": "37.04% \u00b1 5.81%",
+    "xgboost": "25.85% \u00b1 4.06%"
+  }
+}
