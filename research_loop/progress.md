@@ -1,6 +1,71 @@
 # Research Loop Progress
 
-## Current Session: h19 (Disease Phenotype Similarity) (2026-01-28)
+## Current Session: h19 + h17 (External Data Hypotheses) (2026-01-28)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed (2 hypotheses tested)
+**Hypotheses Tested:** h19 (HPO Phenotype Similarity), h17 (PPI Network Distance)
+**Key Discovery:** External data sources tested - HPO INVALIDATED, PPI INCONCLUSIVE (informative but blocked by O(n²) computation)
+
+### Results Summary
+
+| Hypothesis | Status | Key Finding |
+|---|---|---|
+| h19: HPO Phenotype Similarity | **INVALIDATED** | Node2Vec 67.96% >> HPO 36.13% on same diseases. HPO adds no complementary signal. |
+| h17: PPI Network Distance | **INCONCLUSIVE** | PPI is statistically informative (2.2x enrichment, p<1e-38) but O(n²) computation blocks practical use. |
+
+### h17: PPI Network Distance Details
+
+**Objective:** Test whether PPI network distance (drug targets → disease genes) can improve predictions.
+
+**Method:**
+1. Downloaded STRING PPI network (473K high-confidence edges, 15,757 genes)
+2. Built NCBI Gene ID mappings from Ensembl protein IDs
+3. Computed coverage: 93.5% drug targets, 54.8% disease genes in PPI
+4. Compared PPI distances for GT pairs vs random pairs
+
+**Results:**
+
+| Metric | GT Pairs | Random Pairs |
+|--------|----------|--------------|
+| Mean distance | 1.15 | 1.91 |
+| % with dist≤1 | 70% | 31% |
+| % with dist=0 | 19.4% | 2.6% |
+
+Mann-Whitney p-value: **5.42e-39** (highly significant)
+
+**Blocking Issue:** Using PPI for drug ranking requires:
+- Computing BFS from each drug's targets to all disease genes
+- O(drugs × diseases × graph edges) = billions of operations
+- Would require precomputation or architectural changes
+
+### Files Created/Modified (h17)
+
+| File | Action |
+|------|--------|
+| `data/reference/ppi/9606.protein.links.v12.0.txt.gz` | Downloaded (STRING PPI) |
+| `data/reference/ppi/ppi_network_high_conf.json` | Created (458K mapped edges) |
+| `data/analysis/h17_ppi_gt_vs_random.json` | Created |
+| `data/analysis/h17_ppi_distance_sample.json` | Created |
+| `research_roadmap.json` | Updated (h17 inconclusive) |
+
+### Recommended Next Steps
+
+Both top external data hypotheses tested. Results:
+1. **Disease-side enrichment (HPO)** → No improvement, Node2Vec already captures
+2. **Drug-side enrichment (PPI)** → Informative but computationally blocked
+
+**Remaining options:**
+1. **h28 (DrugBank XML)** - More GT data could help kNN
+2. **h8 (Confidence Filtering)** - Low effort, improve precision
+3. **Precompute PPI distances** - Would unlock h17's potential
+4. **Production deployment** - kNN is ready (37% R@30, simple, interpretable)
+
+---
+
+## Previous Session: h19 (Disease Phenotype Similarity) (2026-01-28)
 
 ### Session Summary
 
