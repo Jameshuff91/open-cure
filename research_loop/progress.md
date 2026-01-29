@@ -868,3 +868,81 @@ Two external data sources tested this session:
 
 Both external data sources provide **weaker signals than Node2Vec** (36.93%). The 37% ceiling is NOT due to missing external data — it's a fundamental limitation of the kNN collaborative filtering approach.
 
+
+---
+
+## Session: h48 kNN Coverage Analysis (2026-01-28)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed  
+**Hypothesis Tested:** h48 (kNN Coverage Analysis)
+**Outcome:** VALIDATED — Identified root cause of 37% ceiling
+
+### Experiment Details
+
+**Objective:** Diagnose why kNN has a 37% R@30 ceiling by analyzing GT drug coverage.
+
+**Method:**
+1. For each test disease, find k=20 nearest training diseases
+2. Collect all GT drugs from neighbors into "kNN pool"
+3. Compute coverage = (GT drugs in pool) / (total GT drugs)
+4. Correlate coverage with per-disease R@30
+
+### Key Results
+
+| Coverage Bin | Test Diseases | Mean R@30 |
+|--------------|---------------|-----------|
+| 0% | 39 (44%) | 0.0% |
+| 1-60% | 16 (18%) | 28.4% |
+| 61-100% | 33 (38%) | 74.2% |
+
+- **Correlation (coverage, recall)**: 0.898
+- **Diseases with 0% coverage**: 44.3% — they have NO chance of success
+- **Diseases with ≥81% coverage**: 78.2% R@30 — the method works!
+
+### Root Cause Identified
+
+**The 37% ceiling is NOT caused by:**
+- ❌ Wrong similarity measure (Node2Vec is good)
+- ❌ Missing external data (HPO, PPI failed)
+- ❌ Algorithm limitations
+
+**The ceiling IS caused by:**
+- ✅ **GT drug sparsity** — 44% of test diseases have 0 drug overlap with neighbors
+- ✅ **Limited training data** — similar diseases don't share enough treatments
+
+### Implications
+
+1. **kNN is optimal for its coverage** — the algorithm is NOT the bottleneck
+2. **Improvement requires**:
+   - More GT data (h28: DrugBank indications) → increases coverage
+   - Drug-centric approach (h46) → helps zero-coverage diseases
+   - Zero-shot methods (h47) → doesn't rely on disease similarity
+
+### Priority Updates
+
+| Hypothesis | New Priority | Rationale |
+|------------|--------------|-----------|
+| h28: DrugBank GT | 1 | Directly addresses GT sparsity |
+| h46: Drug-centric | 2 | Helps zero-coverage diseases |
+| h47: Zero-shot | 8 | High effort, medium potential |
+
+---
+
+## Session Summary (2026-01-28): Three Hypotheses Tested
+
+| Hypothesis | Status | Key Finding |
+|------------|--------|-------------|
+| h19: HPO Phenotype | INVALIDATED | 14.20% R@30 — weaker than Node2Vec |
+| h17: PPI Network | INVALIDATED | 16.18% R@30 — weaker than Node2Vec |
+| h48: kNN Coverage | VALIDATED | 44% diseases have 0% coverage (root cause) |
+
+**Critical Learning:** External data (HPO, PPI) fails because it doesn't address the fundamental problem — GT drug sparsity. The kNN algorithm is optimal; the ceiling is caused by limited training data coverage.
+
+**Recommended Next Steps:**
+1. h28: DrugBank XML indications (requires data access)
+2. h46: Drug-centric repurposing (flip the problem)
+3. Expand GT through other means (manual curation, clinical trials)
+

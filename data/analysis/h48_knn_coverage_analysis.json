@@ -1,0 +1,41 @@
+{
+  "hypothesis": "h48",
+  "title": "kNN Coverage Analysis",
+  "seed": 42,
+  "k": 20,
+  "test_diseases": 88,
+  "summary": {
+    "mean_coverage": 0.4086502197297651,
+    "median_coverage": 0.2833333333333333,
+    "zero_coverage_count": 39,
+    "zero_coverage_pct": 0.4431818181818182,
+    "correlation_coverage_recall": 0.8983838047881104
+  },
+  "coverage_bins": {
+    "0%": {
+      "count": 0,
+      "mean_recall": 0
+    },
+    "1-20%": {
+      "count": 4,
+      "mean_recall": 0.125
+    },
+    "21-40%": {
+      "count": 3,
+      "mean_recall": 0.30000000000000004
+    },
+    "41-60%": {
+      "count": 9,
+      "mean_recall": 0.3475348725348726
+    },
+    "61-80%": {
+      "count": 9,
+      "mean_recall": 0.6811287477954144
+    },
+    "81-100%": {
+      "count": 24,
+      "mean_recall": 0.7823660714285713
+    }
+  },
+  "status": "validated"
+}

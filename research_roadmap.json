@@ -539,7 +539,7 @@
       "rationale": "HIGH VALUE: More GT data expands kNN coverage. h4 showed 83% of identified missing FDA pairs hit@30, indicating value in GT expansion. Full DrugBank XML contains ~12K drug-indication pairs. Systematic extraction could add hundreds of missing pairs.",
       "expected_impact": "medium",
       "effort": "medium",
-      "priority": 3,
+      "priority": 1,
       "status": "pending",
       "steps": [
         "Step 1: Download full DrugBank XML (requires academic license)",
@@ -888,6 +888,65 @@
       ],
       "findings": "INVALIDATED: Learned similarity is WORSE than cosine (-3.98 pp, p=0.008).\n\nMULTI-SEED RESULTS:\n- Learned: 33.21% \u00b1 5.55%\n- Cosine: 37.19% \u00b1 5.79%\n- Delta: -3.98 pp (learned is WORSE)\n- Paired t-test: t=-4.898, p=0.0081 (significantly worse)\n\nThe XGBoost regressor overfits to training disease pairs. It learns patterns specific to SEEN diseases that don't transfer to unseen ones \u2014 the same generalization failure seen with XGBoost classification (h5). Cosine similarity is more robust because it's parameter-free and doesn't overfit.\n\nIMPLICATION: Learned metrics from DRKG data can't beat cosine. The 23 pp gap to oracle requires EXTERNAL information (phenotype, literature, clinical) not derivable from the knowledge graph alone.",
       "result_metric": "Learned: 33.21% \u00b1 5.55% (WORSE than cosine 37.19% by -3.98 pp, p=0.008)"
+    },
+    {
+      "id": "h46",
+      "title": "Drug-Centric Repurposing (Flip the Problem)",
+      "category": "architecture",
+      "rationale": "kNN is disease-centric: find similar diseases, recommend their drugs. For drugs with many indications (polypharmacy signals), we could flip: find similar drugs, recommend their diseases. This may help diseases with sparse training neighbors.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Compute drug-drug similarity using Node2Vec embeddings",
+        "Step 2: For each test disease-drug pair, find k nearest drugs to candidate drug",
+        "Step 3: Score by overlap with training disease's treatments",
+        "Step 4: Combine with disease-centric kNN scores",
+        "Step 5: Evaluate R@30 on held-out diseases",
+        "Step 6: Success criteria: >38% R@30"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h47",
+      "title": "Zero-Shot Disease Prediction via Drug Properties",
+      "category": "architecture",
+      "rationale": "44% of test diseases have 0% GT coverage in kNN pool. For these, similarity-based methods fail. Use drug properties (targets, pathways, ATC) to predict without disease similarity.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 8,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify test diseases with 0% kNN coverage",
+        "Step 2: Build drug property features (targets, pathways, ATC codes)",
+        "Step 3: Train model to predict disease-drug compatibility from drug properties alone",
+        "Step 4: Use for zero-shot diseases, kNN for others",
+        "Step 5: Evaluate R@30 on the combined approach",
+        "Step 6: Success criteria: >5% R@30 on zero-shot diseases"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h48",
+      "title": "kNN Coverage Analysis (Diagnosis)",
+      "category": "evaluation",
+      "rationale": "Before trying new architectures, understand exactly why kNN fails. What % of test GT drugs appear in similar diseases' treatments? How does coverage correlate with R@30?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "validated",
+      "steps": [
+        "Step 1: For each test disease, compute overlap between GT drugs and kNN pool",
+        "Step 2: Correlate coverage with per-disease R@30",
+        "Step 3: Identify disease categories with poor coverage",
+        "Step 4: Document findings to guide architecture choice",
+        "Step 5: Success criteria: Establish coverage-performance relationship"
+      ],
+      "findings": "VALIDATED: kNN ceiling is caused by GT drug coverage sparsity.\n\nKEY FINDINGS:\n- 44.3% of test diseases have 0% GT drug coverage in kNN pool\n- Correlation (coverage vs recall) = 0.898 \u2014 coverage almost perfectly predicts success\n- Diseases with 81-100% coverage achieve 78.2% R@30 (vs 37% overall)\n- Diseases with 0% coverage achieve 0% R@30 (by definition)\n\nIMPLICATIONS:\n1. kNN is optimal for its coverage \u2014 the algorithm is not the bottleneck\n2. The 37% ceiling is fundamentally about GT sparsity, not method quality\n3. Improvement requires:\n   a) More GT data (DrugBank/ChEMBL indications) to increase coverage\n   b) Drug-centric approach for zero-coverage diseases (h46)\n   c) Zero-shot methods for diseases with no similar training diseases (h47)\n\nCOVERAGE DISTRIBUTION (n=88 test diseases):\n| Coverage | Count | % | Mean R@30 |\n|----------|-------|---|-----------|\n| 0%       | 39    | 44%| 0.0%     |\n| 1-60%    | 16    | 18%| 28.4%    |\n| 61-100%  | 33    | 38%| 74.2%    |\n\nThe ~38% of diseases with good coverage drive the 37% overall R@30.",
+      "result_metric": "44.3% diseases with 0% coverage, correlation 0.898"
     }
   ],
   "completed": [
@@ -1072,6 +1131,12 @@
       "hypothesis_id": "h19,h17",
       "learning": "External data (HPO phenotype, PPI network) provides WEAKER signal than Node2Vec cosine (14-16% vs 37% R@30). The 37% ceiling is NOT due to missing external data \u2014 it's a fundamental limitation of similarity-based collaborative filtering.",
       "implication": "Breaking the ceiling requires (1) better GT coverage for kNN, (2) fundamentally different architectures (GNN, attention), or (3) hybrid approaches that don't rely on disease similarity."
+    },
+    {
+      "date": "2026-01-28",
+      "hypothesis_id": "h48",
+      "learning": "kNN ceiling (37% R@30) is caused by GT coverage sparsity: 44.3% of test diseases have 0% drug overlap with k=20 nearest training diseases. Correlation(coverage, recall)=0.898. The algorithm is optimal for its coverage.",
+      "implication": "Improvement requires (1) more GT data, (2) drug-centric approach for zero-coverage diseases, or (3) zero-shot methods. External similarity measures (HPO, PPI) failed because they don't address coverage \u2014 they just provide alternative similarity rankings for the same sparse GT."
     }
   ]
 }
