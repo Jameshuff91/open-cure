@@ -154,7 +154,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 10,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Load confidence_calibrator.pkl model",
         "Step 2: Score all predictions in evaluation set",
@@ -162,8 +162,8 @@
         "Step 4: Find optimal threshold for precision-recall tradeoff",
         "Step 5: Success criteria: Maintain >40% R@30 with >30% precision improvement"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "BLOCKED by paradigm shift to kNN.\n\nThe confidence calibrator was trained for the GB model (base_score, boosted_score features).\nSince h39 showed kNN (37.04%) >> GB (25.85%), the calibrator is no longer applicable.\n\nThe kNN approach outputs drug frequency scores, not the same features the calibrator expects.\nWould need to retrain a new calibrator on kNN outputs, but kNN already provides interpretable scores.\n\nAlternative: The existing confidence_filter.py rules (antibiotic patterns, withdrawn drugs, etc.)\nare still applicable to any prediction method as post-hoc filtering.",
+      "result_metric": "BLOCKED - calibrator trained on obsolete GB model features"
     },
     {
       "id": "h9",
