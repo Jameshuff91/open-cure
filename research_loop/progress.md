@@ -946,3 +946,62 @@ Both external data sources provide **weaker signals than Node2Vec** (36.93%). Th
 2. h46: Drug-centric repurposing (flip the problem)
 3. Expand GT through other means (manual curation, clinical trials)
 
+
+---
+
+## Session Summary: 2026-01-28
+
+### Hypotheses Tested
+
+| Hypothesis | Status | Key Finding | Impact |
+|------------|--------|-------------|--------|
+| h19: HPO Phenotype | INVALIDATED | 14.20% R@30 (weaker than Node2Vec 36.93%) | External phenotype data fails |
+| h17: PPI Network | INVALIDATED | 16.18% R@30 (weaker than Node2Vec 36.93%) | External PPI data fails |
+| h48: kNN Coverage | VALIDATED | 44.3% diseases have 0% drug coverage (r=0.898) | ROOT CAUSE identified |
+| h46: Drug-Centric | IN PROGRESS | Script needs optimization | Potential for zero-coverage diseases |
+
+### Key Discovery: Root Cause of 37% Ceiling
+
+**The kNN ceiling is NOT caused by:**
+- ❌ Wrong similarity measure (Node2Vec is already optimal)
+- ❌ Missing external data (HPO 14%, PPI 16% — both fail)
+- ❌ Algorithm limitations (coverage r=0.898)
+
+**The ceiling IS caused by:**
+- ✅ **GT drug sparsity**: 44% of test diseases have 0 drug overlap with k=20 neighbors
+- ✅ **Limited training data**: Similar diseases don't share enough treatments
+
+### Critical Learning: External Data Doesn't Help
+
+Both HPO (phenotype ontology) and PPI (protein-protein interaction) data provide WEAKER signals than Node2Vec cosine similarity. The fundamental issue is not missing external information — it's that:
+1. Node2Vec already captures functional similarity from DRKG
+2. External data doesn't increase GT drug coverage
+3. The 23 pp gap to oracle ceiling requires more GT data, not better similarity
+
+### Files Created
+
+| File | Description |
+|------|-------------|
+| `data/reference/phenotype.hpoa` | HPO disease-phenotype annotations |
+| `data/reference/mondo.obo` | MONDO ontology with xrefs |
+| `data/reference/drkg_disease_phenotypes.json` | Disease phenotype profiles |
+| `data/reference/ppi/disease_ppi_neighborhoods_2hop.json` | Pre-computed PPI neighborhoods |
+| `scripts/evaluate_hpo_phenotype_knn.py` | HPO evaluation script |
+| `scripts/evaluate_ppi_distance_knn.py` | PPI evaluation script |
+| `data/analysis/h19_hpo_phenotype_results.json` | h19 results |
+| `data/analysis/h17_ppi_distance_results.json` | h17 results |
+| `data/analysis/h48_knn_coverage_analysis.json` | h48 results |
+
+### Next Steps (Priority Order)
+
+1. **h28: DrugBank GT Expansion** (Priority 1) — Directly addresses GT sparsity root cause
+2. **h46: Drug-Centric Repurposing** (Priority 2) — Needs optimization, could help zero-coverage diseases
+3. **h47: Zero-Shot Methods** (Priority 8) — High effort, for diseases with no similar training
+
+### Commits
+
+1. `6ca88a5` - Research: h19 (HPO Phenotype) - INVALIDATED
+2. `9cd6a74` - Research: h17 (PPI Network) - INVALIDATED
+3. `39e85e6` - Research: Update learnings from h19/h17
+4. `187830e` - Research: h48 (kNN Coverage) - VALIDATED
+
