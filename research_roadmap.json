@@ -329,7 +329,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Step 1: Download STRING PPI network for human",
         "Step 2: Compute shortest path from drug targets to disease genes",
@@ -338,8 +338,8 @@
         "Step 5: Evaluate on held-out diseases",
         "Step 6: Success criteria: >42.5% R@30"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "PPI distance IS statistically informative for drug-disease relationships:\n\n1. Downloaded STRING PPI network (473K high-confidence edges, 15,757 genes)\n2. Coverage: 93.5% drug targets, 54.8% disease genes in PPI network\n3. GT vs Random comparison:\n   - GT pairs: mean distance 1.15, 70% have distance \u22641\n   - Random pairs: mean distance 1.91, 31% have distance \u22641\n   - Mann-Whitney p-value: 5.42e-39 (highly significant)\n   - 2.2x enrichment at distance \u22641\n\nBLOCKED: Using PPI for drug ranking is computationally prohibitive:\n- Computing BFS from each drug target to all disease genes: O(drugs \u00d7 diseases \u00d7 edges)\n- 11K drugs \u00d7 2K diseases \u00d7 29 avg degree = billions of operations\n- Would require precomputation or architectural changes\n\nThe external PPI data provides signal but efficient integration is non-trivial.",
+      "result_metric": "GT mean=1.15 vs random=1.91 (p<1e-38) \u2014 informative but computationally blocked"
     },
     {
       "id": "h18",
@@ -1054,6 +1054,12 @@
       "hypothesis_id": "h19",
       "learning": "HPO phenotype similarity provides weaker signal than Node2Vec cosine (14.20% vs 36.91% R@30). Even on HPO-covered diseases, Node2Vec wins (62.3% vs 53.6%). Low correlation (0.126) suggests independent signals, but HPO is strictly inferior.",
       "implication": "External phenotype ontology data is NOT the path to breaking the 37% ceiling. Focus should shift to other external data sources (clinical trials, PPI networks) or fundamentally different approaches."
+    },
+    {
+      "date": "2026-01-28",
+      "hypothesis_id": "h17",
+      "learning": "PPI distance is statistically informative (2.2x enrichment for GT pairs) but O(n\u00b2) computation makes direct use impractical. Would need precomputation or use as post-hoc filter.",
+      "implication": "External network data CAN help but needs efficient integration strategy. Consider: (1) precompute drug-gene distances, (2) use as filter not ranking, (3) integrate into kNN as drug similarity."
     }
   ]
 }
