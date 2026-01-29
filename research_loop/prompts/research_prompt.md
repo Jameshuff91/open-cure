@@ -144,12 +144,17 @@ Before context fills:
 
 ## COMPLETION CRITERIA
 
-The research loop should pause (output `<promise>RESEARCH PAUSED</promise>`) when:
-- All pending hypotheses exhausted AND no new high-priority ones generated
-- Major breakthrough requiring human review
-- Blocked on external resources (GPU, data, etc.)
+**DEFAULT BEHAVIOR: CONTINUE.** After completing a hypothesis, move on to the next pending one.
 
-Otherwise, continue to next hypothesis.
+Only pause (output `<promise>RESEARCH PAUSED</promise>`) when ALL of these are true:
+- All pending hypotheses are exhausted or blocked
+- You cannot generate any new actionable hypotheses
+
+**DO NOT PAUSE for:**
+- Major discoveries or pivots — record the finding, generate new hypotheses, and keep going
+- Invalidated hypotheses — that's normal science, move to the next one
+- Shifts in research direction — if you generated new hypotheses from a finding, pursue them
+- A single blocked hypothesis — skip it and work on the next pending one
 
 ---
 

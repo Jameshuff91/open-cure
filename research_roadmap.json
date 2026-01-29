@@ -377,8 +377,8 @@
         "Step 5: Evaluate R@30 on held-out diseases",
         "Step 6: Success criteria: >42.5% R@30"
       ],
-      "findings": "HPO phenotype similarity does NOT improve drug repurposing:\n\n1. Coverage: Only 464 (13.3%) of GT diseases have HPO annotations via OMIM\u2192MESH\n2. On HPO-covered diseases:\n   - HPO-only kNN: 36.13% \u00b1 1.46% R@30\n   - Node2Vec kNN: 67.96% \u00b1 4.63% R@30 (on SAME diseases)\n   - Combined (50/50): 64.73% \u00b1 2.49% (WORSE than Node2Vec alone)\n3. Per-disease analysis:\n   - Only 1 disease (1.1%) rescued by HPO when Node2Vec failed\n   - 39 diseases (41.9%) rescued by Node2Vec when HPO failed\n4. Root causes:\n   - Node2Vec already captures disease similarity from DRKG\n   - HPO phenotype overlap is sparse (mean Jaccard = 0.06)\n   - HPO is focused on rare Mendelian diseases, not common diseases\n5. Statistical: Node2Vec beats HPO by 31.83 pp (p=0.0001, paired t-test)\n\nConclusion: External phenotype data provides no complementary signal to Node2Vec.",
-      "result_metric": "HPO kNN: 36.13% vs Node2Vec: 67.96% (same diseases) \u2014 no improvement"
+      "findings": "INVALIDATED after comprehensive re-evaluation with 5-seed testing:\n\nCOVERAGE:\n- 799 DRKG diseases have HPO phenotype data (via MONDO\u2192OMIM/ORPHA mapping)\n- Only 119 (25.6%) of GT diseases have HPO + embeddings + GT\n- HPO-mapped diseases are 1.53x easier to predict (62.3% vs 40.7% for non-HPO)\n\nRESULTS (5-seed mean \u00b1 std):\n| Method                  | R@30          | Delta vs baseline |\n|-------------------------|---------------|-------------------|\n| Node2Vec kNN (baseline) | 36.91% \u00b1 5.59%| ---               |\n| HPO kNN (all diseases)  | 14.20% \u00b1 5.20%| -22.71 pp         |\n| HPO kNN (HPO subset)    | 34.84% \u00b115.99%| -2.07 pp          |\n| Hybrid \u03b1=0.5 (best)     | 37.19% \u00b1 5.63%| +0.28 pp          |\n\nKEY FINDINGS:\n1. HPO-only kNN achieves only 14.20% R@30 \u2014 far worse than Node2Vec\n2. On HPO-covered diseases specifically, Node2Vec (62.3%) > HPO (53.6%)\n3. Hybrid provides marginal +0.28 pp \u2014 within noise, not significant\n4. Correlation between HPO and Node2Vec similarity is low (0.126) \u2014 different signals, but HPO's is weaker\n5. Node2Vec already captures disease similarity well; HPO provides no complementary value\n\nROOT CAUSES:\n- HPO is focused on rare Mendelian diseases (OMIM/Orphanet sources)\n- HPO phenotype annotations are sparse for common diseases\n- Node2Vec random walks through DRKG already capture functional similarity\n- HPO Jaccard similarity is very sparse (mean 0.036)\n\nCONCLUSION: External phenotype data from HPO does NOT improve drug repurposing predictions.\nThe 23 pp gap to the oracle ceiling will NOT be closed by phenotype similarity.",
+      "result_metric": "HPO kNN 14.20% vs Node2Vec 36.91% \u2014 no improvement; hybrid +0.28 pp (within noise)"
     },
     {
       "id": "h20",
@@ -1048,6 +1048,12 @@
       "hypothesis_id": "h19",
       "learning": "HPO phenotype similarity adds NO value over Node2Vec for drug repurposing. Coverage limited to 13.3% of diseases, and Node2Vec outperforms HPO 2:1 on that subset.",
       "implication": "External phenotype data unlikely to help; Node2Vec already captures disease relationships. Future external data efforts should focus on drug/target-side enrichment, not disease phenotypes."
+    },
+    {
+      "date": "2026-01-28",
+      "hypothesis_id": "h19",
+      "learning": "HPO phenotype similarity provides weaker signal than Node2Vec cosine (14.20% vs 36.91% R@30). Even on HPO-covered diseases, Node2Vec wins (62.3% vs 53.6%). Low correlation (0.126) suggests independent signals, but HPO is strictly inferior.",
+      "implication": "External phenotype ontology data is NOT the path to breaking the 37% ceiling. Focus should shift to other external data sources (clinical trials, PPI networks) or fundamentally different approaches."
     }
   ]
 }

@@ -651,3 +651,92 @@ The 13.6% figure in CLAUDE.md was based on **antibiotic CLASS performance** (e.g
 *Last updated: 2026-01-28*
 *Agent: Research Executor*
 *Hypothesis tested: h19 (INVALIDATED)*
+
+---
+
+## Session: h19 Disease Phenotype Similarity (2026-01-28)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed
+**Hypothesis Tested:** h19 (Disease Phenotype Similarity using HPO)
+**Outcome:** INVALIDATED — HPO phenotype similarity does NOT improve drug repurposing
+
+### Experiment Details
+
+**Objective:** Test whether Human Phenotype Ontology (HPO) phenotype similarity can provide external (non-DRKG) information to break the 37% R@30 ceiling.
+
+**Method:**
+1. Downloaded HPO phenotype annotations (phenotype.hpoa - 280K annotations)
+2. Created MESH→OMIM/ORPHA mapping via MONDO ontology
+3. Built disease phenotype profiles (799 DRKG diseases mapped)
+4. Computed Jaccard similarity on HPO term sets
+5. Evaluated HPO-only kNN, hybrid kNN (α=0.3-0.7), and subset analysis
+6. Multi-seed evaluation (42, 123, 456, 789, 1024) per h40 standard
+
+### Results
+
+| Method | R@30 (5-seed mean ± std) | Delta vs Node2Vec |
+|--------|--------------------------|-------------------|
+| Node2Vec kNN (baseline) | 36.91% ± 5.59% | --- |
+| HPO kNN (all diseases) | 14.20% ± 5.20% | -22.71 pp |
+| HPO kNN (HPO subset only) | 34.84% ± 15.99% | -2.07 pp |
+| Hybrid α=0.5 (best) | 37.19% ± 5.63% | +0.28 pp |
+
+### Per-Disease Analysis (seed=42)
+
+| Subset | Node2Vec R@30 | HPO R@30 |
+|--------|---------------|----------|
+| Diseases WITH HPO (25) | 62.3% | 53.6% |
+| Diseases WITHOUT HPO (63) | 40.7% | N/A |
+
+**Insight:** HPO-covered diseases are 1.53x easier to predict — they're well-characterized rare/Mendelian diseases. But even on these, Node2Vec beats HPO.
+
+### Key Findings
+
+1. **HPO-only fails badly** (14.20% R@30) — coverage is too sparse (25.6% of GT diseases)
+2. **On HPO-covered diseases, Node2Vec still wins** (62.3% vs 53.6%)
+3. **Hybrid provides only +0.28 pp** — within noise, not significant
+4. **Low correlation (0.126)** between HPO and Node2Vec similarity — different signals, but HPO's is weaker
+5. **HPO is Mendelian-focused** — OMIM/Orphanet sources cover rare diseases, not common indications
+
+### Coverage Analysis
+
+| Mapping Step | Count | % of Previous |
+|--------------|-------|---------------|
+| Total DRKG diseases in GT | 3,492 | 100% |
+| Mapped to HPO disease IDs | 1,130 | 32.4% |
+| With actual HPO annotations | 799 | 22.9% |
+| GT diseases with HPO + embeddings | 119 | 25.6% of GT |
+
+### Files Created
+
+| File | Description |
+|------|-------------|
+| `data/reference/phenotype.hpoa` | HPO disease-phenotype annotations |
+| `data/reference/mondo.obo` | MONDO ontology with xrefs |
+| `data/reference/mondo_to_omim_from_obo.json` | MONDO→OMIM mapping |
+| `data/reference/mondo_to_orpha_from_obo.json` | MONDO→Orphanet mapping |
+| `data/reference/mesh_to_hpo_disease_ids.json` | MESH→HPO disease ID mapping |
+| `data/reference/drkg_disease_phenotypes.json` | DRKG disease phenotype profiles |
+| `data/reference/hpo_similarity_matrix.npz` | Pre-computed phenotype similarity |
+| `scripts/evaluate_hpo_phenotype_knn.py` | Evaluation script |
+| `data/analysis/h19_hpo_phenotype_results.json` | Full results |
+
+### Conclusion
+
+**HPO phenotype similarity does NOT improve drug repurposing predictions.**
+
+External phenotype ontology data is NOT the path to breaking the 37% ceiling. The 23 pp gap to oracle ceiling will not be closed by phenotype similarity. Focus should shift to:
+1. Other external data (clinical trials, PPI networks, gene expression)
+2. Fundamentally different approaches (GNN, attention, meta-learning)
+3. Better disease mapping (more GT diseases with DRKG embeddings)
+
+### Recommended Next Steps
+
+1. **h17: PPI Network Distance** — STRING protein-protein interactions (different external source)
+2. **h28: DrugBank XML Indication Extraction** — More GT data for better kNN coverage
+3. **h9: UMLS Disease Mapping** — Improve coverage (currently 25.6%)
+4. **h16: Clinical Trial Features** — Different external signal
+

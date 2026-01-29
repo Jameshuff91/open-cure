@@ -14,6 +14,7 @@ Example Usage:
 import argparse
 import fcntl
 import json
+import logging
 import os
 import re
 import select
@@ -38,10 +39,36 @@ DEFAULT_MODEL = "opus"  # Uses Opus 4.5 for best research quality
 AUTO_CONTINUE_DELAY_SECONDS = 3
 DEFAULT_COOLDOWN_HOURS = 5  # Fallback if we can't parse the reset time
 STATE_FILE_NAME = ".research_agent_state.json"
+LOG_DIR_NAME = "research_loop/logs"
 MAX_SLEEP_SECONDS = 300  # Max 5 min sleep at a time to survive system sleep/wake
 STUCK_THRESHOLD_SESSIONS = 3  # Sessions without progress before considered stuck
 SLACK_WEBHOOK_ENV_VAR = "SLACK_WEBHOOK_URL"
-MAX_CONSECUTIVE_ERRORS = 3  # Stop after this many consecutive errors
+MAX_CONSECUTIVE_ERRORS = 5  # Stop after this many consecutive errors
+RETRY_BACKOFF_BASE = 5  # Base seconds for exponential backoff on errors
+
+
+def setup_session_logger(project_dir: Path, session_num: int) -> logging.Logger:
+    """Create a file logger for the current session."""
+    log_dir = project_dir / LOG_DIR_NAME
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    log_file = log_dir / f"session_{session_num}_{timestamp}.log"
+
+    logger = logging.getLogger(f"research_session_{session_num}")
+    logger.setLevel(logging.DEBUG)
+    # Clear any existing handlers from prior sessions
+    logger.handlers.clear()
+
+    fh = logging.FileHandler(log_file)
+    fh.setLevel(logging.DEBUG)
+    fh.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
+    logger.addHandler(fh)
+
+    logger.info("Session %d started", session_num)
+    logger.info("Log file: %s", log_file)
+    print(f"  Session log: {log_file}")
+    return logger
 
 
 def parse_cooldown_time(response_text: str) -> Optional[int]:
@@ -298,10 +325,26 @@ def wait_for_cooldown(seconds: int, project_dir: Optional[Path] = None) -> None:
     print("=" * 70 + "\n")
 
 
+def _cleanup_process(process: "subprocess.Popen[str] | None") -> None:
+    """Terminate and clean up a subprocess."""
+    if process is None:
+        return
+    try:
+        process.terminate()
+        process.wait(timeout=5)
+    except (subprocess.TimeoutExpired, OSError):
+        try:
+            process.kill()
+            process.wait(timeout=5)
+        except (subprocess.TimeoutExpired, OSError):
+            pass
+
+
 def run_claude_session(
     prompt: str,
     project_dir: Path,
     model: str = DEFAULT_MODEL,
+    logger: Optional[logging.Logger] = None,
 ) -> tuple[str, str]:
     """Run a single Claude CLI session."""
     print("Sending prompt to Claude CLI...\n")
@@ -316,93 +359,151 @@ def run_claude_session(
 
     cwd = project_dir.resolve()
 
+    if logger:
+        logger.info("CLI command: %s", " ".join(cmd))
+        logger.info("Working directory: %s", cwd)
+        logger.info("Prompt length: %d chars", len(prompt))
+
     process: subprocess.Popen[str] | None = None
     try:
         process = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
+            stderr=subprocess.PIPE,
             text=True,
             cwd=str(cwd),
         )
 
         assert process.stdin is not None
         assert process.stdout is not None
+        assert process.stderr is not None
+
+        if logger:
+            logger.info("Process started (PID: %d)", process.pid)
 
         process.stdin.write(prompt)
         process.stdin.close()
 
         response_text = ""
+        stderr_text = ""
 
+        # Set stdout to non-blocking
         fd = process.stdout.fileno()
         fl = fcntl.fcntl(fd, fcntl.F_GETFL)
         fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
 
+        # Set stderr to non-blocking
+        err_fd = process.stderr.fileno()
+        err_fl = fcntl.fcntl(err_fd, fcntl.F_GETFL)
+        fcntl.fcntl(err_fd, fcntl.F_SETFL, err_fl | os.O_NONBLOCK)
+
         while True:
             ret = process.poll()
-            readable, _, _ = select.select([process.stdout], [], [], 0.5)
+            readable, _, _ = select.select(
+                [process.stdout, process.stderr], [], [], 0.5
+            )
 
-            if readable:
+            for stream in readable:
                 try:
-                    chunk = process.stdout.read(4096)
+                    chunk = stream.read(4096)
                     if chunk:
-                        sys.stdout.write(chunk)
-                        sys.stdout.flush()
-                        response_text += chunk
+                        if stream is process.stdout:
+                            sys.stdout.write(chunk)
+                            sys.stdout.flush()
+                            response_text += chunk
+                        else:
+                            stderr_text += chunk
                 except (IOError, BlockingIOError):
                     pass
 
             if ret is not None:
-                try:
-                    remaining = process.stdout.read()
-                    if remaining:
-                        sys.stdout.write(remaining)
-                        sys.stdout.flush()
-                        response_text += remaining
-                except Exception:
-                    pass
+                # Drain remaining output from both streams
+                for stream, accumulator_name in [
+                    (process.stdout, "stdout"),
+                    (process.stderr, "stderr"),
+                ]:
+                    try:
+                        remaining = stream.read()
+                        if remaining:
+                            if accumulator_name == "stdout":
+                                sys.stdout.write(remaining)
+                                sys.stdout.flush()
+                                response_text += remaining
+                            else:
+                                stderr_text += remaining
+                    except Exception:
+                        pass
                 break
 
         process.wait(timeout=1800)
 
+        if logger:
+            logger.info("Process exited with code: %d", process.returncode)
+            logger.info("Response length: %d chars", len(response_text))
+            if stderr_text:
+                logger.warning("STDERR output:\n%s", stderr_text.strip())
+
+        # Log stderr if present
+        if stderr_text.strip():
+            print(f"\n--- stderr ---\n{stderr_text.strip()}\n--- end stderr ---\n")
+
         print("\n" + "-" * 70 + "\n")
+
+        # Combine stdout and stderr for pattern matching
+        combined_text = response_text + "\n" + stderr_text
 
         # Check for research pause signal
         if "<promise>RESEARCH PAUSED</promise>" in response_text:
             return "paused", response_text
 
-        cooldown_seconds = parse_cooldown_time(response_text)
+        cooldown_seconds = parse_cooldown_time(combined_text)
         if cooldown_seconds is not None:
+            if logger:
+                logger.info("Cooldown detected: %d seconds", cooldown_seconds)
             return "cooldown", str(cooldown_seconds)
 
         if process.returncode == 0:
             return "continue", response_text
         else:
             error_msg = f"Exit code: {process.returncode}"
-            cooldown_seconds = parse_cooldown_time(error_msg + " " + response_text)
+            if logger:
+                logger.error("Non-zero exit: %s", error_msg)
+
+            cooldown_seconds = parse_cooldown_time(combined_text)
             if cooldown_seconds is not None:
                 return "cooldown", str(cooldown_seconds)
 
-            # Check for "No messages returned" error - likely nested session conflict
-            if "No messages returned" in response_text:
-                print("\n⚠️  'No messages returned' error detected.")
-                print("    This often happens when running from within another Claude session.")
-                print("    Try running from a fresh terminal instead.")
-                return "error", "No messages returned - try running from fresh terminal"
+            # Check for "No messages returned" error
+            if "No messages returned" in combined_text:
+                msg = "No messages returned from CLI"
+                if logger:
+                    logger.error("%s (stderr: %s)", msg, stderr_text.strip())
+                print(f"\n  Warning: {msg}")
+                print("    Will retry with a fresh session...")
+                return "error", msg
 
             if len(response_text.strip()) < 100 and process.returncode != 0:
-                print(f"WARNING: Short/empty response with exit code {process.returncode}")
-                return "cooldown", str(DEFAULT_COOLDOWN_HOURS * 3600)
+                msg = f"Short/empty response with exit code {process.returncode}"
+                if stderr_text.strip():
+                    msg += f" | stderr: {stderr_text.strip()[:200]}"
+                if logger:
+                    logger.error(msg)
+                print(f"WARNING: {msg}")
+                return "error", msg
 
             return "error", error_msg
 
     except subprocess.TimeoutExpired:
-        if process is not None:
-            process.kill()
+        if logger:
+            logger.error("Session timed out after 30 minutes")
+        _cleanup_process(process)
         return "error", "Session timed out after 30 minutes"
     except Exception as e:
         error_str = str(e)
+        if logger:
+            logger.error("Exception in run_claude_session: %s", error_str, exc_info=True)
+        _cleanup_process(process)
         cooldown_seconds = parse_cooldown_time(error_str)
         if cooldown_seconds is not None:
             return "cooldown", str(cooldown_seconds)
@@ -467,13 +568,21 @@ def run_research_agent(
 
         print_session_header(iteration, is_first_run)
 
+        # Set up per-session file logging
+        session_logger = setup_session_logger(project_dir, iteration)
+
         if is_first_run:
             prompt = get_initializer_prompt()
+            session_logger.info("Using initializer prompt (first run)")
             is_first_run = False
         else:
             prompt = get_research_prompt()
+            session_logger.info("Using research prompt")
 
-        status, response = run_claude_session(prompt, project_dir, model)
+        status, response = run_claude_session(
+            prompt, project_dir, model, logger=session_logger
+        )
+        session_logger.info("Session result: status=%s", status)
 
         if status == "continue":
             consecutive_errors = 0  # Reset error counter on success
@@ -483,9 +592,10 @@ def run_research_agent(
 
         elif status == "paused":
             print("\n" + "=" * 70)
-            print("  🔬 RESEARCH PAUSED BY AGENT")
+            print("  RESEARCH PAUSED BY AGENT")
             print("=" * 70)
             print("\nThe agent has requested a pause. Check progress.md for details.")
+            session_logger.info("Agent requested pause")
             break
 
         elif status == "cooldown":
@@ -494,27 +604,36 @@ def run_research_agent(
             except ValueError:
                 cooldown_seconds = DEFAULT_COOLDOWN_HOURS * 3600
             cooldown_seconds += 300
+            session_logger.info("Cooldown: %d seconds", cooldown_seconds)
             wait_for_cooldown(cooldown_seconds, project_dir)
 
         elif status == "error":
             consecutive_errors += 1
-            print(f"\nSession encountered an error ({consecutive_errors}/{MAX_CONSECUTIVE_ERRORS}): {response}")
+            backoff = min(RETRY_BACKOFF_BASE * (2 ** (consecutive_errors - 1)), 120)
+            session_logger.error(
+                "Error %d/%d: %s (backoff: %ds)",
+                consecutive_errors, MAX_CONSECUTIVE_ERRORS, response, backoff,
+            )
+            print(f"\nSession error ({consecutive_errors}/{MAX_CONSECUTIVE_ERRORS}): {response}")
 
             if consecutive_errors >= MAX_CONSECUTIVE_ERRORS:
                 print("\n" + "=" * 70)
-                print("  ❌ TOO MANY CONSECUTIVE ERRORS - STOPPING")
+                print("  TOO MANY CONSECUTIVE ERRORS - STOPPING")
                 print("=" * 70)
-                print("\nTry running from a fresh terminal (not from within Claude Code):")
+                print(f"\nCheck logs: {project_dir / LOG_DIR_NAME}/")
+                print(f"\nTo restart:")
                 print(f"  cd {project_dir}")
-                print("  python3 research_loop/research_agent_cli.py")
+                print("  nohup python3 -u research_loop/research_agent_cli.py > research_loop/logs/agent.out 2>&1 &")
+                session_logger.error("Max consecutive errors reached, stopping")
                 break
 
-            print("Will retry with a fresh session...")
-            time.sleep(AUTO_CONTINUE_DELAY_SECONDS)
+            print(f"Will retry in {backoff}s...")
+            time.sleep(backoff)
 
         # Check for completion
         counts = count_hypothesis_status(project_dir)
         if counts["total"] > 0 and counts["pending"] == 0 and counts["in_progress"] == 0:
+            session_logger.info("All hypotheses complete")
             notify_completion(project_dir)
             break
 
@@ -522,6 +641,7 @@ def run_research_agent(
         if status == "continue":
             is_stuck, stuck_reason = check_if_stuck(project_dir)
             if is_stuck:
+                session_logger.warning("Agent stuck: %s", stuck_reason)
                 notify_stuck(project_dir, stuck_reason)
                 state = load_agent_state(project_dir)
                 state["sessions_without_progress"] = 0
@@ -590,13 +710,30 @@ def main() -> None:
             print("Error: Claude CLI not found or not working")
             print("Install it with: npm install -g @anthropic-ai/claude-code")
             return
-        print(f"Using Claude CLI: {result.stdout.strip()}")
+        cli_version = result.stdout.strip()
+        print(f"Using Claude CLI: {cli_version}")
     except FileNotFoundError:
         print("Error: Claude CLI not found")
         return
 
     # Project directory is the open-cure root
     project_dir = Path(__file__).parent.parent.resolve()
+
+    # Ensure log directory exists
+    log_dir = project_dir / LOG_DIR_NAME
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    # Set up root logger for agent-level events
+    root_log = log_dir / "agent.log"
+    logging.basicConfig(
+        filename=str(root_log),
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+    )
+    logging.info("Agent starting - CLI version: %s", cli_version)
+    logging.info("Python: %s", sys.version)
+    logging.info("PID: %d", os.getpid())
+    print(f"Agent log: {root_log}")
 
     try:
         run_research_agent(
@@ -605,10 +742,13 @@ def main() -> None:
             max_iterations=args.max_iterations,
         )
     except KeyboardInterrupt:
+        logging.info("Interrupted by user")
         print("\n\nInterrupted by user")
         print("To resume, run the same command again")
     except Exception as e:
+        logging.error("Fatal error: %s", e, exc_info=True)
         print(f"\nFatal error: {e}")
+        print(f"See logs: {log_dir}/")
         raise
 
 
