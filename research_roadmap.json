@@ -502,7 +502,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 16,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Identify all antibiotic predictions in top-100 for non-infectious diseases",
         "Step 2: Categorize by antibiotic class and disease type",
@@ -510,8 +510,8 @@
         "Step 4: Propose additional filtering rules if needed",
         "Step 5: Document patterns for future reference"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Analysis revealed significant antibiotic filtering issues.\n\nKEY FINDINGS:\n\n1. ANTIBIOTIC PREDICTION BREAKDOWN (1,845 total):\n   - True antibiotics for infectious diseases: 454 (24.6%) - VALID\n   - True antibiotics for NON-infectious diseases: 1,241 (67.3%) - SPURIOUS\n   - Misclassified drugs (PPIs, chemo): 150 (8.1%) - BUG\n\n2. CLASSIFICATION BUG DISCOVERED:\n   - confidence_filter.py checks ANTIBIOTIC_PATTERNS before PPI_PATTERNS and CHEMOTHERAPY_PATTERNS\n   - Result: Bleomycin (chemo) classified as \"antibiotic\" (124 predictions)\n   - Result: PPIs (omeprazole, pantoprazole) classified as \"antibiotic\" (23 predictions)\n   - Fix: Reorder checks so PPIs and chemo are matched before broad antibiotic patterns\n\n3. MISSING FILTER RULE:\n   - Existing filter only excludes antibiotics for METABOLIC diseases\n   - 1,241 antibiotics for non-infectious, non-metabolic diseases are NOT filtered\n   - Examples: Gentamicin\u2192coronary artery disease, Azithromycin\u2192stroke\n   - Fix: Add rule for \"antibiotics for clearly non-infectious diseases\"\n\n4. TOP SPURIOUS PREDICTIONS TO FILTER:\n   - Coronary artery disease: 17 antibiotic predictions\n   - Parkinson disease: 12 antibiotic predictions\n   - Hyperlipidemia: 10 antibiotic predictions\n   - Epilepsy, heart failure: 6+ each\n\nIMPLICATIONS:\n1. Current filter allows ~67% of antibiotic predictions that should be excluded\n2. Fixing classification order would prevent 150 false positives\n3. Adding non-infectious disease filter would prevent ~1,200 false positives\n4. Combined: Could improve precision significantly for antibiotic predictions",
+      "result_metric": "67.3% of antibiotic predictions are spurious (for non-infectious diseases); 8.1% are misclassified drugs"
     },
     {
       "id": "h27",
@@ -1161,6 +1161,12 @@
       "hypothesis_id": "h22",
       "learning": "Rare diseases (Orphanet-linked) achieve 46% R@30 vs 32% for common diseases. kNN method is particularly effective for Every Cure's rare disease focus.",
       "implication": "Production deployment should prioritize rare disease predictions where model performs best."
+    },
+    {
+      "date": "2026-01-30",
+      "hypothesis_id": "h26",
+      "learning": "Antibiotic filtering has two issues: (1) classification bug where PPIs/chemo are matched before their patterns, (2) missing rule for non-infectious diseases. 67% of antibiotic predictions are spurious.",
+      "implication": "Fix classification order (PPIs before antibiotics) and add filter for antibiotics\u2192non-infectious diseases."
     }
   ]
 }

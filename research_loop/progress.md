@@ -1,19 +1,22 @@
 # Research Loop Progress
 
-## Current Session: h22 Rare Disease Focus (2026-01-30)
+## Current Session: h22 + h26 (2026-01-30)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed
-**Hypothesis Tested:** h22 (Rare Disease Focus Evaluation)
-**Key Discovery:** Rare diseases achieve 46% R@30 vs 32% for common diseases — kNN method is particularly well-suited for Every Cure's rare disease focus.
+**Status:** Completed (2 hypotheses)
+**Hypotheses Tested:** h22 (Rare Disease Focus), h26 (Antibiotic Prediction Filtering)
+**Key Discoveries:**
+1. Rare diseases achieve 46% R@30 vs 32% for common diseases
+2. 67% of antibiotic predictions are spurious (for non-infectious diseases)
 
 ### Results Summary
 
 | Hypothesis | Status | Key Finding |
 |---|---|---|
 | h22: Rare Disease Focus | **VALIDATED** | Rare diseases 46.06% ± 13.72% R@30 vs Common 31.54% ± 4.12% R@30 (+14.53 pp difference) |
+| h26: Antibiotic Filtering | **VALIDATED** | 67.3% of antibiotic predictions are spurious; classification bug + missing filter rule |
 
 ### h22: Rare Disease Focus Evaluation
 
@@ -64,18 +67,46 @@
 | `data/analysis/h22_rare_disease_results.json` | Full multi-seed evaluation results |
 | `research_roadmap.json` | Updated with h22 findings and learning |
 
+### h26: Antibiotic Prediction Filtering Analysis
+
+**Objective:** Analyze antibiotic predictions for non-infectious diseases.
+
+**Method:**
+1. Identified all predictions matching antibiotic patterns
+2. Classified by infectious vs non-infectious disease
+3. Identified misclassified drugs (PPIs, chemo matching antibiotic patterns)
+4. Analyzed confidence_filter.py coverage
+
+**Results:**
+
+| Category | Count | % | Status |
+|----------|-------|---|--------|
+| True antibiotics for infectious diseases | 454 | 24.6% | VALID |
+| True antibiotics for non-infectious diseases | 1,241 | 67.3% | SPURIOUS |
+| Misclassified drugs (PPIs, chemo) | 150 | 8.1% | BUG |
+
+**Classification Bug Discovered:**
+- `confidence_filter.py` checks ANTIBIOTIC_PATTERNS before PPI_PATTERNS and CHEMOTHERAPY_PATTERNS
+- `.*mycin$` pattern matches Bleomycin (chemo drug) → 124 misclassified predictions
+- `.*azole$` pattern matches Pantoprazole, Omeprazole (PPIs) → 23 misclassified predictions
+- Fix: Reorder checks so PPIs and chemo are matched before broad antibiotic patterns
+
+**Missing Filter Rule:**
+- Existing filter only excludes antibiotics for METABOLIC diseases
+- No filter for antibiotics → cardiovascular, neurological, autoimmune diseases
+- Examples: Gentamicin→coronary artery disease (17), Azithromycin→stroke (6)
+
 ### Recommended Next Steps
 
-1. **h26 (Antibiotic Filtering)** - Low effort, may improve precision
+1. **Fix confidence_filter.py** - Reorder classification and add non-infectious disease filter
 2. **h27 (Per-Category Baseline)** - Documentation for comprehensive understanding
 3. **Production deployment with rare disease focus** - kNN is particularly effective
 
-### Remaining Pending Hypotheses (4)
+### Remaining Pending Hypotheses (3)
 
 | Priority | Hypothesis | Status |
 |----------|------------|--------|
 | 14 | h10: Temporal Validation Split | pending |
-| 16 | h26: Antibiotic Prediction Filtering | pending |
 | 17 | h27: Per-Category Baseline Documentation | pending |
 | 20 | h16: Clinical Trial Phase Features | pending |
 
