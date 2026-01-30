@@ -5,8 +5,8 @@
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (4 hypotheses processed)
-**Hypotheses Tested:** h28 (blocked), h47 (INVALIDATED), h46 (INVALIDATED), h13 (INCONCLUSIVE)
+**Status:** Completed (6 hypotheses processed)
+**Hypotheses Tested:** h28 (blocked), h47 (INVALIDATED), h46 (INVALIDATED), h13 (INCONCLUSIVE), h14 (DEPRIORITIZED), h18 (VALIDATED)
 **Key Discovery:** Zero-shot approaches have limited impact (15% of GT pairs). Drug-centric is conceptually flawed. Confounding patterns expanded but detection unchanged.
 
 ### Results Summary
@@ -17,6 +17,8 @@
 | h47: Zero-Shot | **INVALIDATED** | Zero-coverage diseases have only 15% of GT pairs. Impact ceiling: +1.5 pp for 10% zero-shot recall |
 | h46: Drug-Centric | **INVALIDATED** | Conceptually flawed for disease-holdout. Two-hop similarity already in Node2Vec |
 | h13: Confounding Patterns | **INCONCLUSIVE** | 60+ patterns added, but validation cache doesn't contain target biologics. Detection unchanged (1.43%) |
+| h14: Drug Formulation | **DEPRIORITIZED** | No intravitreal drugs in validation cache; 0% impact |
+| h18: Withdrawn Drug Filter | **VALIDATED** | Already implemented in confidence_filter.py (18 patterns, 100% exclusion) |
 
 ### h47: Zero-Shot Disease Prediction
 
@@ -52,9 +54,11 @@
 
 ### Recommended Next Steps
 
-1. **h14 (Drug Formulation Filter)** - Low effort, filter intravitreal drugs for systemic diseases
-2. **h18 (Withdrawn Drug Filter)** - Low effort, comprehensive withdrawn drug list
-3. **Accept 37% R@30 ceiling** - kNN is at DRKG ceiling; improvements need external data/architectures
+1. **Accept 37% R@30 ceiling** - kNN is at DRKG ceiling; improvements need external data or different architectures
+2. **h22 (Rare Disease Focus)** - Low effort evaluation of rare vs common disease performance
+3. **Production deployment** - kNN is ready (37% R@30, simple, interpretable)
+
+**Remaining pending hypotheses are all low-impact:** h10 (Temporal Split), h22 (Rare Disease), h26 (Antibiotic Filtering), h27 (Per-Category Baseline), h16 (Clinical Trial Features)
 
 ---
 
