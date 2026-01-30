@@ -540,7 +540,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 1,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Download full DrugBank XML (requires academic license)",
         "Step 2: Parse indication data for all drugs",
@@ -550,7 +550,7 @@
         "Step 6: Add validated pairs to GT",
         "Success criteria: Identify >100 missing pairs with >70% hit@30"
       ],
-      "findings": "REQUIRES: DrugBank XML license/download. Would expand GT coverage which helps kNN (more drugs in similar diseases' treatment pools). Still potentially valuable but blocked by data access.",
+      "findings": "BLOCKED: DrugBank XML requires academic license which we don't have access to. The vocabulary CSV only contains drug names/identifiers, not indication data. Would need to either: (1) Obtain DrugBank academic license, or (2) Find alternative indication data source.",
       "result_metric": null
     },
     {
@@ -917,7 +917,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 8,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Identify test diseases with 0% kNN coverage",
         "Step 2: Build drug property features (targets, pathways, ATC codes)",
@@ -926,8 +926,8 @@
         "Step 5: Evaluate R@30 on the combined approach",
         "Step 6: Success criteria: >5% R@30 on zero-shot diseases"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h47 INVALIDATED - Limited impact ceiling makes zero-shot low ROI.\n\nANALYSIS RESULTS:\n- Zero-coverage diseases: ~42% of test diseases (consistent across 5 seeds)\n- BUT only ~15% of test GT pairs (most zero-coverage diseases have few GT drugs)\n- Impact ceiling: Even 10% zero-shot recall only adds +1.5 pp to overall R@30\n- kNN achieves 37% R@30 on 85% of GT pairs; zero-shot cannot meaningfully improve this\n\nKEY INSIGHT: Zero-coverage diseases are edge cases with small GT counts.\nThe 39 diseases with 0% coverage only contribute 63 GT pairs total (avg 1.6 drugs/disease).\nCompare to non-zero diseases: 49 diseases with 487 GT pairs (avg 9.9 drugs/disease).\n\nCATEGORY BREAKDOWN:\n1. K-nearest selection failures (29 diseases): GT drugs exist in training pool but k=20 neighbors don't include right diseases. These could potentially be addressed by better similarity measures.\n2. Truly novel drugs (10 diseases): 9 drugs not in any training disease GT. These are fundamentally hard.\n\nRECOMMENDATION: Deprioritize zero-shot approaches. Focus on improving kNN coverage for the majority of GT pairs.\n",
+      "result_metric": "CEILING: +1.5 pp max impact from zero-shot"
     },
     {
       "id": "h48",
@@ -1137,6 +1137,12 @@
       "hypothesis_id": "h48",
       "learning": "kNN ceiling (37% R@30) is caused by GT coverage sparsity: 44.3% of test diseases have 0% drug overlap with k=20 nearest training diseases. Correlation(coverage, recall)=0.898. The algorithm is optimal for its coverage.",
       "implication": "Improvement requires (1) more GT data, (2) drug-centric approach for zero-coverage diseases, or (3) zero-shot methods. External similarity measures (HPO, PPI) failed because they don't address coverage \u2014 they just provide alternative similarity rankings for the same sparse GT."
+    },
+    {
+      "date": "2026-01-29",
+      "hypothesis_id": "h47",
+      "learning": "Zero-coverage diseases (42% of test diseases) only contain 15% of test GT pairs. Zero-shot approaches have limited impact ceiling (+1.5 pp max for 10% recall).",
+      "implication": "Focus on improving kNN for the 85% of GT pairs with coverage rather than zero-shot approaches"
     }
   ]
 }

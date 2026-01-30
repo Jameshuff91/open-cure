@@ -1,0 +1,38 @@
+{
+  "hypothesis": "h47",
+  "title": "Zero-Shot Disease Prediction via Drug Properties",
+  "status": "invalidated",
+  "date": "2026-01-29",
+  "summary": "Limited impact ceiling makes zero-shot low ROI",
+  "multi_seed_analysis": {
+    "seeds": [
+      42,
+      123,
+      456,
+      789,
+      1024
+    ],
+    "avg_zero_coverage_disease_pct": 0.416,
+    "avg_zero_coverage_gt_pct": 0.148,
+    "avg_knn_recall": 0.37,
+    "impact_10pct_zeroshot": 0.015
+  },
+  "key_findings": [
+    "~42% of test diseases have 0% kNN coverage (consistent across seeds)",
+    "BUT these diseases only contain ~15% of GT pairs (avg 1.6 drugs/disease)",
+    "Non-zero diseases: avg 9.9 drugs/disease (6x more GT pairs)",
+    "Impact ceiling: 10% zero-shot recall adds only +1.5 pp to overall R@30"
+  ],
+  "category_breakdown": {
+    "k_nearest_selection_failures": {
+      "count": 29,
+      "description": "GT drugs exist in training but k=20 fails to find right neighbors"
+    },
+    "truly_novel_drugs": {
+      "count": 10,
+      "unique_drugs": 9,
+      "description": "GT drugs not in any training disease GT"
+    }
+  },
+  "recommendation": "Deprioritize zero-shot approaches; focus on improving kNN for the 85% of GT pairs with coverage"
+}
