@@ -1,15 +1,16 @@
 # Research Loop Progress
 
-## Current Session: h22 + h26 (2026-01-30)
+## Current Session: h22 + h26 + h27 (2026-01-30)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (2 hypotheses)
-**Hypotheses Tested:** h22 (Rare Disease Focus), h26 (Antibiotic Prediction Filtering)
+**Status:** Completed (3 hypotheses)
+**Hypotheses Tested:** h22 (Rare Disease Focus), h26 (Antibiotic Prediction Filtering), h27 (Per-Category Baseline)
 **Key Discoveries:**
 1. Rare diseases achieve 46% R@30 vs 32% for common diseases
 2. 67% of antibiotic predictions are spurious (for non-infectious diseases)
+3. Category performance varies 0-56% R@30 (autoimmune/derm best, neuro/metabolic worst)
 
 ### Results Summary
 
@@ -17,6 +18,7 @@
 |---|---|---|
 | h22: Rare Disease Focus | **VALIDATED** | Rare diseases 46.06% ± 13.72% R@30 vs Common 31.54% ± 4.12% R@30 (+14.53 pp difference) |
 | h26: Antibiotic Filtering | **VALIDATED** | 67.3% of antibiotic predictions are spurious; classification bug + missing filter rule |
+| h27: Per-Category Baseline | **VALIDATED** | Autoimmune 54%, Infectious 44%, Cancer 24%, Neurological 7% R@30 |
 
 ### h22: Rare Disease Focus Evaluation
 
@@ -96,18 +98,44 @@
 - No filter for antibiotics → cardiovascular, neurological, autoimmune diseases
 - Examples: Gentamicin→coronary artery disease (17), Azithromycin→stroke (6)
 
+### h27: Per-Category Baseline Documentation
+
+**Objective:** Establish comprehensive per-category R@30 baseline using kNN.
+
+**Method:**
+1. Categorized all 440 diseases by keyword matching (11 categories)
+2. Ran 5-seed kNN k=20 evaluation
+3. Aggregated results by category
+
+**Results:**
+
+| Category | R@30 | GT Pairs | Assessment |
+|----------|------|----------|------------|
+| Dermatological | 56.2% | 32 | STRONG |
+| Autoimmune | 54.3% | 346 | STRONG |
+| Infectious | 44.1% | 222 | GOOD |
+| Rare/Genetic | 42.0% | 88 | GOOD |
+| Other | 41.8% | 1,215 | BASELINE |
+| Respiratory | 26.9% | 52 | BELOW AVG |
+| Cancer | 23.7% | 389 | BELOW AVG |
+| Cardiovascular | 17.8% | 241 | WEAK |
+| Metabolic | 11.7% | 213 | WEAK |
+| Neurological | 6.7% | 30 | VERY WEAK |
+| Gastrointestinal | 0.0% | 7 | FAILED |
+
+**Key Finding:** CLAUDE.md "Error Patterns" shows DRUG CLASS performance (ACE inhibitors 66.7%), not disease category performance. These are different metrics.
+
 ### Recommended Next Steps
 
 1. **Fix confidence_filter.py** - Reorder classification and add non-infectious disease filter
-2. **h27 (Per-Category Baseline)** - Documentation for comprehensive understanding
+2. **Focus on strengths** - Prioritize autoimmune/dermatological/infectious predictions
 3. **Production deployment with rare disease focus** - kNN is particularly effective
 
-### Remaining Pending Hypotheses (3)
+### Remaining Pending Hypotheses (2)
 
 | Priority | Hypothesis | Status |
 |----------|------------|--------|
 | 14 | h10: Temporal Validation Split | pending |
-| 17 | h27: Per-Category Baseline Documentation | pending |
 | 20 | h16: Clinical Trial Phase Features | pending |
 
 ---

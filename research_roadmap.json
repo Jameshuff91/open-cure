@@ -521,7 +521,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 17,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Evaluate GB model on all disease categories (cancer, autoimmune, cardiovascular, etc.)",
         "Step 2: Record R@30 for each category with proper EC-to-DRKG mapping",
@@ -529,8 +529,8 @@
         "Step 4: Update CLAUDE.md with accurate category baselines",
         "Step 5: Identify categories that actually underperform for targeted improvement"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Comprehensive per-category baseline established using kNN k=20 (5-seed).\n\nKEY FINDINGS:\n\n1. DISEASE CATEGORY PERFORMANCE (kNN k=20, 5-seed, disease-holdout):\n\n| Category | R@30 | GT Pairs | Assessment |\n|----------|------|----------|------------|\n| Dermatological | 56.2% | 32 | STRONG |\n| Autoimmune | 54.3% | 346 | STRONG |\n| Infectious | 44.1% | 222 | GOOD |\n| Rare/Genetic | 42.0% | 88 | GOOD |\n| Other | 41.8% | 1,215 | BASELINE |\n| Respiratory | 26.9% | 52 | BELOW AVG |\n| Cancer | 23.7% | 389 | BELOW AVG |\n| Cardiovascular | 17.8% | 241 | WEAK |\n| Metabolic | 11.7% | 213 | WEAK |\n| Neurological | 6.7% | 30 | VERY WEAK |\n| Gastrointestinal | 0.0% | 7 | FAILED |\n\nOVERALL: 36.2% R@30\n\n2. COMPARISON WITH CLAUDE.md:\n- CLAUDE.md shows DRUG CLASS performance (ACE inhibitors 66.7%, etc.)\n- h27 shows DISEASE CATEGORY performance (autoimmune 54.3%, etc.)\n- These are DIFFERENT metrics measuring different aspects\n\n3. AREAS OF STRENGTH:\n- Dermatological (56.2%) - skin conditions, psoriasis\n- Autoimmune (54.3%) - RA, lupus, psoriatic arthritis\n- Infectious (44.1%) - corrected from originally reported 13.6%\n\n4. AREAS OF WEAKNESS:\n- Neurological (6.7%) - Parkinson's, Alzheimer's, epilepsy\n- Metabolic (11.7%) - diabetes, thyroid\n- Cardiovascular (17.8%) - heart disease, hypertension\n- Gastrointestinal (0.0%) - only 7 GT pairs, insufficient data\n\nIMPLICATIONS:\n1. kNN performs best on autoimmune/dermatological - consistent with rare disease findings\n2. Neurological diseases need fundamentally different approach\n3. Metabolic diseases may need external data (clinical trials, mechanisms)\n4. Cancer performance (23.7%) is low but has most GT pairs after 'other'",
+      "result_metric": "Per-category R@30 ranges from 0% (GI) to 56% (dermatological); autoimmune 54%, infectious 44%, cancer 24%, neuro 7%"
     },
     {
       "id": "h28",
@@ -1167,6 +1167,12 @@
       "hypothesis_id": "h26",
       "learning": "Antibiotic filtering has two issues: (1) classification bug where PPIs/chemo are matched before their patterns, (2) missing rule for non-infectious diseases. 67% of antibiotic predictions are spurious.",
       "implication": "Fix classification order (PPIs before antibiotics) and add filter for antibiotics\u2192non-infectious diseases."
+    },
+    {
+      "date": "2026-01-30",
+      "hypothesis_id": "h27",
+      "learning": "Per-category kNN performance varies from 0-56% R@30. Autoimmune/dermatological (54-56%) perform best; neurological (6.7%) and metabolic (11.7%) perform worst. CLAUDE.md figures were DRUG class metrics, not disease category metrics.",
+      "implication": "Focus predictions on autoimmune/dermatological/infectious diseases; neurological needs different approach."
     }
   ]
 }

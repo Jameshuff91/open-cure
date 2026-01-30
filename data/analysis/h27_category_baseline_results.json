@@ -1,0 +1,81 @@
+{
+  "hypothesis": "h27",
+  "title": "Per-Category Baseline Documentation",
+  "method": "kNN k=20 with Node2Vec cosine similarity",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    1024
+  ],
+  "overall_recall": 0.36155202821869487,
+  "per_category": {
+    "other": {
+      "recall": 0.4181069958847737,
+      "n_diseases": 52,
+      "total_hits": 508,
+      "total_gt": 1215
+    },
+    "cancer": {
+      "recall": 0.2365038560411311,
+      "n_diseases": 11,
+      "total_hits": 92,
+      "total_gt": 389
+    },
+    "autoimmune": {
+      "recall": 0.5433526011560693,
+      "n_diseases": 3,
+      "total_hits": 188,
+      "total_gt": 346
+    },
+    "cardiovascular": {
+      "recall": 0.17842323651452283,
+      "n_diseases": 3,
+      "total_hits": 43,
+      "total_gt": 241
+    },
+    "infectious": {
+      "recall": 0.44144144144144143,
+      "n_diseases": 5,
+      "total_hits": 98,
+      "total_gt": 222
+    },
+    "metabolic": {
+      "recall": 0.11737089201877934,
+      "n_diseases": 3,
+      "total_hits": 25,
+      "total_gt": 213
+    },
+    "rare_genetic": {
+      "recall": 0.42045454545454547,
+      "n_diseases": 3,
+      "total_hits": 37,
+      "total_gt": 88
+    },
+    "respiratory": {
+      "recall": 0.2692307692307692,
+      "n_diseases": 1,
+      "total_hits": 14,
+      "total_gt": 52
+    },
+    "dermatological": {
+      "recall": 0.5625,
+      "n_diseases": 0,
+      "total_hits": 18,
+      "total_gt": 32
+    },
+    "neurological": {
+      "recall": 0.06666666666666667,
+      "n_diseases": 1,
+      "total_hits": 2,
+      "total_gt": 30
+    },
+    "gastrointestinal": {
+      "recall": 0.0,
+      "n_diseases": 1,
+      "total_hits": 0,
+      "total_gt": 7
+    }
+  }
+}
