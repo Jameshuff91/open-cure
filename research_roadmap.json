@@ -192,7 +192,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 14,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Download FDA approval dates from DrugBank or OpenFDA",
         "Step 2: Split GT: train on approvals pre-2020, test on 2020-2025",
@@ -201,7 +201,7 @@
         "Step 5: Report both temporal and random-split metrics",
         "Step 6: Success criteria: Establish temporal baseline, identify gap"
       ],
-      "findings": null,
+      "findings": "BLOCKED: Requires FDA approval date data that we don't have.\n\nCurrent data: Only 16 FDA approval dates in fda_approved_pairs.json\nRequired: FDA approval dates for thousands of drug-disease pairs in GT\n\nTo implement:\n1. Download FDA Orange Book or OpenFDA drug approvals API\n2. Match drug names to DrugBank IDs\n3. Extract approval dates for all GT drugs\n4. Split GT: train pre-2020, test 2020-2025\n5. Evaluate temporal generalization\n\nEstimated effort: 4-6 hours for data download and matching\nValue: Low - would mainly document temporal gap, not improve performance",
       "result_metric": null
     },
     {

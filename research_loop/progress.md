@@ -131,12 +131,30 @@
 2. **Focus on strengths** - Prioritize autoimmune/dermatological/infectious predictions
 3. **Production deployment with rare disease focus** - kNN is particularly effective
 
-### Remaining Pending Hypotheses (2)
+### Remaining Hypotheses (2)
 
-| Priority | Hypothesis | Status |
-|----------|------------|--------|
-| 14 | h10: Temporal Validation Split | pending |
-| 20 | h16: Clinical Trial Phase Features | pending |
+| Priority | Hypothesis | Status | Notes |
+|----------|------------|--------|-------|
+| 14 | h10: Temporal Validation Split | **BLOCKED** | Requires FDA approval date data (only 16 pairs available) |
+| 20 | h16: Clinical Trial Phase Features | pending | Requires ClinicalTrials.gov API access |
+
+### Session Complete
+
+This session completed 3 hypotheses:
+- h22 (Rare Disease Focus) - VALIDATED
+- h26 (Antibiotic Filtering) - VALIDATED
+- h27 (Per-Category Baseline) - VALIDATED
+
+**Key Learnings:**
+1. Rare diseases (Orphanet-linked) achieve 46% R@30 vs 32% for common diseases
+2. Antibiotic classification has bugs (PPIs/chemo misclassified) + missing filter rules
+3. Per-category performance ranges 0-56% R@30 (autoimmune/derm best, neuro/metabolic worst)
+
+**Recommended Actions:**
+1. Fix confidence_filter.py: Reorder classification, add non-infectious disease filter
+2. Focus predictions on autoimmune/dermatological/infectious/rare diseases
+3. Consider neurological diseases as requiring different approach
+4. Production deployment ready for rare disease focus (kNN effective)
 
 ---
 
