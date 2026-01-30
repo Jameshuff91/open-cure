@@ -1,0 +1,136 @@
+{
+  "before_expansion": {
+    "patterns": 9,
+    "detection_rate_pct": 1.6
+  },
+  "after_expansion": {
+    "total_patterns_defined": 3,
+    "total_detected": 15,
+    "detection_rate_pct": 1.4258555133079849,
+    "by_type": {
+      "cardiac_metabolic": 3,
+      "inverse_indication": 3,
+      "mechanism_mismatch": 9
+    }
+  },
+  "success_criterion": ">5% detection rate",
+  "result": "NOT MET",
+  "detected_pairs": {
+    "none": [],
+    "cardiac_metabolic": [
+      {
+        "drug": "felodipine",
+        "disease": "type 2 diabetes mellitus",
+        "type": "cardiac_metabolic",
+        "reason": "Cardiac drug predicted for metabolic disease - comorbidity confounding possible",
+        "confidence": 0.5
+      },
+      {
+        "drug": "amiloride",
+        "disease": "type 2 diabetes mellitus",
+        "type": "cardiac_metabolic",
+        "reason": "Cardiac drug predicted for metabolic disease - comorbidity confounding possible",
+        "confidence": 0.5
+      },
+      {
+        "drug": "dobutamine",
+        "disease": "type 2 diabetes mellitus",
+        "type": "cardiac_metabolic",
+        "reason": "Cardiac drug predicted for metabolic disease - comorbidity confounding possible",
+        "confidence": 0.5
+      }
+    ],
+    "inverse_indication": [
+      {
+        "drug": "simvastatin",
+        "disease": "type 2 diabetes",
+        "type": "inverse_indication",
+        "reason": "Statins INCREASE T2D risk (HR 1.12-1.44) but prescribed for CV protection",
+        "confidence": 0.9
+      },
+      {
+        "drug": "hydrochlorothiazide",
+        "disease": "type 2 diabetes mellitus",
+        "type": "inverse_indication",
+        "reason": "Thiazides cause hyperglycemia but prescribed for hypertension",
+        "confidence": 0.9
+      },
+      {
+        "drug": "quetiapine",
+        "disease": "type 2 diabetes mellitus",
+        "type": "inverse_indication",
+        "reason": "Atypical antipsychotics CAUSE metabolic syndrome and T2D",
+        "confidence": 0.9
+      }
+    ],
+    "polypharmacy": [],
+    "comorbidity": [],
+    "mechanism_mismatch": [
+      {
+        "drug": "digitoxin",
+        "disease": "type 2 diabetes",
+        "type": "mechanism_mismatch",
+        "reason": "Na+/K+-ATPase inhibition reduces GLUT4 translocation, worsening glucose",
+        "confidence": 0.85
+      },
+      {
+        "drug": "digoxin",
+        "disease": "type 2 diabetes",
+        "type": "mechanism_mismatch",
+        "reason": "Na+/K+-ATPase inhibition reduces GLUT4 translocation, worsening glucose",
+        "confidence": 0.85
+      },
+      {
+        "drug": "pembrolizumab",
+        "disease": "ulcerative colitis",
+        "type": "mechanism_mismatch",
+        "reason": "Checkpoint inhibitors CAUSE immune-related colitis",
+        "confidence": 0.85
+      },
+      {
+        "drug": "quetiapine",
+        "disease": "parkinson disease",
+        "type": "mechanism_mismatch",
+        "reason": "Antipsychotics cause drug-induced parkinsonism via D2 blockade",
+        "confidence": 0.85
+      },
+      {
+        "drug": "pantoprazole",
+        "disease": "hypertension",
+        "type": "mechanism_mismatch",
+        "reason": "PPIs associated with 17% increased hypertension risk",
+        "confidence": 0.85
+      },
+      {
+        "drug": "gentamicin",
+        "disease": "type 2 diabetes mellitus",
+        "type": "mechanism_mismatch",
+        "reason": "Aminoglycosides inhibit insulin release from beta cells",
+        "confidence": 0.85
+      },
+      {
+        "drug": "imipramine",
+        "disease": "hypertension",
+        "type": "mechanism_mismatch",
+        "reason": "TCAs cause hypertension via norepinephrine reuptake inhibition",
+        "confidence": 0.85
+      },
+      {
+        "drug": "protriptyline",
+        "disease": "hypertension",
+        "type": "mechanism_mismatch",
+        "reason": "TCAs cause hypertension via norepinephrine reuptake inhibition",
+        "confidence": 0.85
+      },
+      {
+        "drug": "amitriptyline",
+        "disease": "hypertension",
+        "type": "mechanism_mismatch",
+        "reason": "TCAs cause hypertension via norepinephrine reuptake inhibition",
+        "confidence": 0.85
+      }
+    ],
+    "wrong_pathway": [],
+    "cancer_target": []
+  }
+}

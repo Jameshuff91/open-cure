@@ -24,6 +24,8 @@ class ConfoundingType(Enum):
     POLYPHARMACY = "polypharmacy"  # DDI studies, not treatment
     COMORBIDITY = "comorbidity"  # General comorbidity confounding
     MECHANISM_MISMATCH = "mechanism_mismatch"  # Drug mechanism worsens disease
+    WRONG_PATHWAY = "wrong_pathway"  # Drug targets wrong biological pathway
+    CANCER_TARGET = "cancer_target"  # Cancer-specific target for autoimmune disease
 
 
 @dataclass
@@ -176,6 +178,83 @@ MECHANISM_MISMATCH_PAIRS = [
     ("risperidone", "parkinson", "Antipsychotics cause drug-induced parkinsonism via D2 blockade"),
     ("olanzapine", "parkinson", "Antipsychotics cause drug-induced parkinsonism via D2 blockade"),
     ("quetiapine", "parkinson", "Antipsychotics cause drug-induced parkinsonism via D2 blockade"),
+
+    # TCAs cause hypertension via NET inhibition
+    ("protriptyline", "hypertension", "TCAs cause hypertension via norepinephrine reuptake inhibition"),
+    ("amitriptyline", "hypertension", "TCAs cause hypertension via norepinephrine reuptake inhibition"),
+    ("nortriptyline", "hypertension", "TCAs cause hypertension via norepinephrine reuptake inhibition"),
+    ("imipramine", "hypertension", "TCAs cause hypertension via norepinephrine reuptake inhibition"),
+    ("desipramine", "hypertension", "TCAs cause hypertension via norepinephrine reuptake inhibition"),
+
+    # PPIs increase hypertension risk (17% increased risk)
+    ("pantoprazole", "hypertension", "PPIs associated with 17% increased hypertension risk"),
+    ("omeprazole", "hypertension", "PPIs associated with 17% increased hypertension risk"),
+    ("esomeprazole", "hypertension", "PPIs associated with 17% increased hypertension risk"),
+    ("lansoprazole", "hypertension", "PPIs associated with 17% increased hypertension risk"),
+    ("rabeprazole", "hypertension", "PPIs associated with 17% increased hypertension risk"),
+
+    # Aminoglycoside antibiotics inhibit insulin release
+    ("gentamicin", "type 2 diabetes", "Aminoglycosides inhibit insulin release from beta cells"),
+    ("tobramycin", "type 2 diabetes", "Aminoglycosides inhibit insulin release from beta cells"),
+    ("amikacin", "type 2 diabetes", "Aminoglycosides inhibit insulin release from beta cells"),
+
+    # Anti-EGFR for UC (EGFR is PROTECTIVE in colitis)
+    ("cetuximab", "ulcerative colitis", "EGFR activation is PROTECTIVE in colitis; anti-EGFR worsens disease"),
+    ("panitumumab", "ulcerative colitis", "EGFR activation is PROTECTIVE in colitis; anti-EGFR worsens disease"),
+
+    # B-cell depletion INDUCES psoriasis (paradoxical reaction)
+    ("rituximab", "psoriasis", "Rituximab paradoxically INDUCES psoriasis; regulatory B cells are protective"),
+    ("ocrelizumab", "psoriasis", "B-cell depletion paradoxically INDUCES psoriasis"),
+    ("ofatumumab", "psoriasis", "B-cell depletion paradoxically INDUCES psoriasis"),
+]
+
+# =============================================================================
+# WRONG PATHWAY PATTERNS - Drug targets wrong mechanism for disease
+# =============================================================================
+WRONG_PATHWAY_PAIRS = [
+    # Anti-IL-5 for non-eosinophilic diseases (eosinophils are markers, not drivers)
+    ("reslizumab", "ulcerative colitis", "Anti-IL-5 fails in UC: eosinophils are markers, not disease drivers"),
+    ("mepolizumab", "ulcerative colitis", "Anti-IL-5 fails in UC: eosinophils are markers, not disease drivers"),
+    ("benralizumab", "ulcerative colitis", "Anti-IL-5 fails in UC: eosinophils are markers, not disease drivers"),
+    ("reslizumab", "psoriasis", "Anti-IL-5 fails in psoriasis: need IL-17/IL-23 pathway"),
+    ("mepolizumab", "psoriasis", "Anti-IL-5 fails in psoriasis: need IL-17/IL-23 pathway"),
+    ("benralizumab", "psoriasis", "Anti-IL-5 fails in psoriasis: need IL-17/IL-23 pathway"),
+    ("reslizumab", "multiple sclerosis", "Anti-IL-5 has no efficacy in MS"),
+    ("mepolizumab", "multiple sclerosis", "Anti-IL-5 has no efficacy in MS"),
+    ("benralizumab", "multiple sclerosis", "Anti-IL-5 has no efficacy in MS"),
+
+    # Anti-IFN-γ for UC (UC is Th2-like, not Th1)
+    ("fontolizumab", "ulcerative colitis", "UC is Th2-like; anti-IFN-γ targets wrong pathway (Th1)"),
+    ("emapalumab", "ulcerative colitis", "UC is Th2-like; anti-IFN-γ targets wrong pathway (Th1)"),
+
+    # TRAIL agonists WORSEN epithelial damage in inflammatory diseases
+    ("lexatumumab", "ulcerative colitis", "TRAIL agonists worsen epithelial damage in IBD"),
+    ("lexatumumab", "psoriasis", "TRAIL agonists worsen epithelial damage in psoriasis"),
+    ("lexatumumab", "crohn", "TRAIL agonists worsen epithelial damage in IBD"),
+
+    # IL-6 inhibitors for psoriasis (wrong pathway, need IL-17/IL-23)
+    ("tocilizumab", "psoriasis", "IL-6 is wrong pathway for psoriasis; need IL-17/IL-23"),
+    ("sarilumab", "psoriasis", "IL-6 is wrong pathway for psoriasis; need IL-17/IL-23"),
+    ("sirukumab", "psoriasis", "IL-6 is wrong pathway for psoriasis; need IL-17/IL-23"),
+    ("vobarilizumab", "psoriasis", "IL-6 is wrong pathway for psoriasis; need IL-17/IL-23"),
+
+    # Bone drugs for neurological diseases (sclerostin has no CNS role)
+    ("romosozumab", "multiple sclerosis", "Sclerostin has no role in MS pathophysiology"),
+    ("romosozumab", "parkinson", "Sclerostin has no role in Parkinson's pathophysiology"),
+    ("romosozumab", "alzheimer", "Sclerostin has no role in Alzheimer's pathophysiology"),
+]
+
+# =============================================================================
+# CANCER-SPECIFIC TARGETS - Tumor markers, not autoimmune targets
+# =============================================================================
+CANCER_TARGET_PAIRS = [
+    # Cancer antibodies targeting tumor markers (FRα, EpCAM, etc.)
+    ("farletuzumab", "rheumatoid arthritis", "FRα is a tumor marker, not an autoimmune target"),
+    ("farletuzumab", "multiple sclerosis", "FRα is a tumor marker, not an autoimmune target"),
+    ("farletuzumab", "psoriasis", "FRα is a tumor marker, not an autoimmune target"),
+    ("adecatumumab", "rheumatoid arthritis", "EpCAM is a tumor marker, not an autoimmune target"),
+    ("adecatumumab", "multiple sclerosis", "EpCAM is a tumor marker, not an autoimmune target"),
+    ("adecatumumab", "psoriasis", "EpCAM is a tumor marker, not an autoimmune target"),
 ]
 
 
@@ -216,6 +295,28 @@ def check_mechanism_mismatch(drug: str, disease: str) -> Optional[Tuple[str, flo
     return None
 
 
+def check_wrong_pathway(drug: str, disease: str) -> Optional[Tuple[str, float]]:
+    """Check if drug targets the wrong biological pathway for this disease."""
+    drug_lower = drug.lower()
+    disease_lower = disease.lower()
+
+    for wp_drug, wp_disease, reason in WRONG_PATHWAY_PAIRS:
+        if wp_drug in drug_lower and wp_disease in disease_lower:
+            return (reason, 0.80)
+    return None
+
+
+def check_cancer_target(drug: str, disease: str) -> Optional[Tuple[str, float]]:
+    """Check if drug targets cancer-specific markers for autoimmune diseases."""
+    drug_lower = drug.lower()
+    disease_lower = disease.lower()
+
+    for ct_drug, ct_disease, reason in CANCER_TARGET_PAIRS:
+        if ct_drug in drug_lower and ct_disease in disease_lower:
+            return (reason, 0.75)
+    return None
+
+
 def detect_confounding(drug: str, disease: str, trial_count: int = 0) -> ConfoundingResult:
     """
     Detect confounding patterns in a drug-disease prediction.
@@ -253,6 +354,32 @@ def detect_confounding(drug: str, disease: str, trial_count: int = 0) -> Confoun
             confidence=conf,
             reason=reason,
             evidence=f"Drug mechanism worsens disease pathophysiology"
+        )
+
+    # Check wrong pathway patterns
+    wp_result = check_wrong_pathway(drug, disease)
+    if wp_result:
+        reason, conf = wp_result
+        return ConfoundingResult(
+            drug=drug,
+            disease=disease,
+            confounding_type=ConfoundingType.WRONG_PATHWAY,
+            confidence=conf,
+            reason=reason,
+            evidence="Drug targets wrong biological pathway for this disease"
+        )
+
+    # Check cancer target patterns
+    ct_result = check_cancer_target(drug, disease)
+    if ct_result:
+        reason, conf = ct_result
+        return ConfoundingResult(
+            drug=drug,
+            disease=disease,
+            confounding_type=ConfoundingType.CANCER_TARGET,
+            confidence=conf,
+            reason=reason,
+            evidence="Drug targets cancer-specific markers, not autoimmune pathway"
         )
 
     # Check cardiac-metabolic comorbidity pattern
