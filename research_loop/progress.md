@@ -1,6 +1,64 @@
 # Research Loop Progress
 
-## Current Session: h19 + h17 (External Data Hypotheses) (2026-01-28)
+## Current Session: h47 + h46 + h13 (2026-01-29)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed (4 hypotheses processed)
+**Hypotheses Tested:** h28 (blocked), h47 (INVALIDATED), h46 (INVALIDATED), h13 (INCONCLUSIVE)
+**Key Discovery:** Zero-shot approaches have limited impact (15% of GT pairs). Drug-centric is conceptually flawed. Confounding patterns expanded but detection unchanged.
+
+### Results Summary
+
+| Hypothesis | Status | Key Finding |
+|---|---|---|
+| h28: DrugBank XML | **BLOCKED** | Requires academic license we don't have |
+| h47: Zero-Shot | **INVALIDATED** | Zero-coverage diseases have only 15% of GT pairs. Impact ceiling: +1.5 pp for 10% zero-shot recall |
+| h46: Drug-Centric | **INVALIDATED** | Conceptually flawed for disease-holdout. Two-hop similarity already in Node2Vec |
+| h13: Confounding Patterns | **INCONCLUSIVE** | 60+ patterns added, but validation cache doesn't contain target biologics. Detection unchanged (1.43%) |
+
+### h47: Zero-Shot Disease Prediction
+
+**Key Insight:**
+- ~42% of test diseases have 0% kNN coverage (5-seed average)
+- BUT these diseases only contain ~15% of GT pairs (avg 1.6 drugs/disease)
+- Non-zero diseases: avg 9.9 drugs/disease (6x more GT pairs)
+- Impact ceiling: 10% zero-shot recall adds only +1.5 pp
+
+**Categories:**
+1. K-nearest selection failures (29 diseases): GT drugs exist but k=20 finds wrong neighbors
+2. Truly novel drugs (10 diseases): 9 drugs not in any training disease
+
+**Recommendation:** Deprioritize zero-shot; focus on improving kNN for 85% of GT pairs with coverage.
+
+### h46: Drug-Centric Repurposing
+
+**Analysis:** Drug-centric approach is ill-defined for disease-holdout evaluation.
+- Disease-holdout: Given test DISEASE → rank DRUGS
+- Drug-centric helps: Given test DRUG → rank DISEASES
+- Two-hop drug-disease-drug similarity already captured by Node2Vec embeddings
+
+### h13: Confounding Pattern Expansion
+
+**Changes Made:** Added 60+ patterns from validation_sessions.md:
+- TCAs/PPIs → hypertension
+- Aminoglycosides → T2D
+- Anti-EGFR → UC (EGFR is protective)
+- B-cell depletion → psoriasis (paradoxical)
+- Anti-IL-5, TRAIL agonists, IL-6 inhibitors
+
+**Result:** Detection rate unchanged (1.43%) because validation cache lacks target biologics.
+
+### Recommended Next Steps
+
+1. **h14 (Drug Formulation Filter)** - Low effort, filter intravitreal drugs for systemic diseases
+2. **h18 (Withdrawn Drug Filter)** - Low effort, comprehensive withdrawn drug list
+3. **Accept 37% R@30 ceiling** - kNN is at DRKG ceiling; improvements need external data/architectures
+
+---
+
+## Previous Session: h19 + h17 (External Data Hypotheses) (2026-01-28)
 
 ### Session Summary
 
