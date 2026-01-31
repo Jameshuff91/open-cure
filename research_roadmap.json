@@ -1121,7 +1121,7 @@
     {
       "id": "h59",
       "title": "Gastrointestinal Disease Failure Analysis",
-      "status": "pending",
+      "status": "validated",
       "priority": 1,
       "expected_impact": "high",
       "effort": "low",
@@ -1131,7 +1131,9 @@
         "3. Check drug specificity (are GI drugs specialized?)",
         "4. Determine if GI is systematically different from other categories"
       ],
-      "rationale": "GI has CRITICAL 5% hit rate. Understanding the root cause could reveal a fixable issue."
+      "rationale": "GI has CRITICAL 5% hit rate. Understanding the root cause could reveal a fixable issue.",
+      "findings": "Root cause of GI 5% hit rate identified: kNN neighbors are NOT other GI diseases.\n\n**GI Disease Statistics:**\n- 25 GI diseases in GT\n- 105 total GI drugs\n- 29 GI-only drugs (28%)\n- 76 shared drugs (72%)\n\n**kNN Neighbor Analysis (5 test GI diseases):**\n- Only 1/5 achieved any drug overlap (autoimmune hepatitis)\n- 4/5 had 0% drug overlap with kNN pool\n- Nearest neighbors are typically NOT GI diseases\n- GI diseases don't cluster together in Node2Vec embedding space\n\n**Example: short bowel syndrome**\n- GT drug: Teduglutide (GI-specific)\n- Nearest neighbor: chronic malabsorption syndromes (sim=0.754)\n- Drug pool has 7 drugs, 0 overlap\n\n**ROOT CAUSE:**\n1. Node2Vec embeddings don't capture GI organ/function similarity\n2. GI treatments are specialized (PPIs, hepatitis antivirals, etc.)\n3. kNN method fundamentally assumes \"similar diseases share treatments\"\n4. GI diseases are similar by organ, not by treatment sharing\n\n**POTENTIAL FIXES:**\n1. Category-aware kNN: Only use GI neighbors for GI queries\n2. Drug class boosting for PPI/H2/hepatitis drug classes\n3. Accept GI is a blind spot and flag predictions accordingly\n",
+      "result_metric": "4/5 test GI diseases had 0% kNN drug overlap"
     },
     {
       "id": "h60",
@@ -1421,6 +1423,12 @@
       "hypothesis_id": "h58",
       "learning": "Extended categorization revealed gastrointestinal as a CRITICAL blind spot (5% hit rate). Endocrine, autoimmune, dermatological, and psychiatric all achieve >80% hit rate. Hematological (22%) and musculoskeletal (33%) also underperform.",
       "implication": "Update production meta-confidence model with extended categories. Surface GI predictions with strong caveats or exclude entirely. Focus on high-confidence categories."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h59",
+      "learning": "GI failures are due to kNN neighbors NOT being GI diseases (embedding similarity != organ/function similarity). 28% of GI drugs are GI-specific and don't appear in non-GI neighbor pools. kNN method fundamentally fails for GI.",
+      "implication": "GI predictions should be flagged or excluded from production. Category-aware kNN (restricting to same-category neighbors) could help but reduces sample size. Consider GI as fundamentally different problem."
     }
   ],
   "collaborations": [
