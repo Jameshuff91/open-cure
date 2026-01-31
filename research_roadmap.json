@@ -1104,7 +1104,7 @@
     {
       "id": "h58",
       "title": "'Other' Category Subcategorization",
-      "status": "pending",
+      "status": "validated",
       "priority": 1,
       "expected_impact": "high",
       "effort": "medium",
@@ -1114,7 +1114,9 @@
         "3. Identify high/low performing subcategories",
         "4. Update meta-confidence model with better categories"
       ],
-      "rationale": "'Other' is the largest category (304 diseases) with 54.7% hit rate. Better categorization could improve meta-confidence model and targeting."
+      "rationale": "'Other' is the largest category (304 diseases) with 54.7% hit rate. Better categorization could improve meta-confidence model and targeting.",
+      "findings": "Extended categorization reveals hidden performance patterns.\n\n**'Other' Category Reduction:** 304 \u2192 222 (27% reduction)\n\n**NEW Category Performance (5-seed hit rate):**\n| Category | Hit Rate | n |\n|----------|----------|---|\n| Endocrine | 100.0% | 4 |\n| Autoimmune | 92.9% | 14 |\n| Dermatological | 88.2% | 17 |\n| Psychiatric | 83.3% | 6 |\n| Infectious | 75.0% | 32 |\n| Respiratory | 71.4% | 14 |\n| Cancer | 70.8% | 65 |\n| Ophthalmic | 66.7% | 6 |\n| Cardiovascular | 62.5% | 16 |\n| Neurological | 60.0% | 5 |\n| Other | 57.8% | 223 |\n| Metabolic | 54.5% | 11 |\n| Renal | 40.0% | 5 |\n| Musculoskeletal | 33.3% | 3 |\n| Hematological | 22.2% | 9 |\n| **Gastrointestinal** | **5.0%** | **20** |\n\n**CRITICAL FINDING:** Gastrointestinal diseases have only 5.0% hit rate (20 diseases).\nThis is a SEVERE blind spot not previously identified.\n\n**Implications:**\n1. Don't surface GI predictions without caveats\n2. Prioritize autoimmune/dermatological/psychiatric predictions\n3. Hematological and musculoskeletal also need special handling\n",
+      "result_metric": "GI: 5% hit rate (critical); Endocrine/Autoimmune/Derm: 88-100%"
     }
   ],
   "completed": [
@@ -1383,6 +1385,12 @@
       "hypothesis_id": "h56",
       "learning": "Cancer is NOT the failure driver - 71.4% hit rate is above average. True weak categories are metabolic (37.5%) and uncategorized \"other\" (54.7%). Autoimmune and dermatological achieve 100% hit rate.",
       "implication": "Prioritize autoimmune/dermatological predictions with highest confidence. Metabolic diseases need different approach. Consider re-categorizing \"other\" diseases for better targeting."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h58",
+      "learning": "Extended categorization revealed gastrointestinal as a CRITICAL blind spot (5% hit rate). Endocrine, autoimmune, dermatological, and psychiatric all achieve >80% hit rate. Hematological (22%) and musculoskeletal (33%) also underperform.",
+      "implication": "Update production meta-confidence model with extended categories. Surface GI predictions with strong caveats or exclude entirely. Focus on high-confidence categories."
     }
   ],
   "collaborations": [
