@@ -1,11 +1,11 @@
 # Research Loop Progress
 
-## Current Session: h49, h50, h51, h52, h53, h54 (2026-01-31)
+## Current Session: h49-h56 (2026-01-31)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (6 hypotheses tested)
+**Status:** Completed (7 hypotheses tested)
 **Hypotheses Tested:**
 - h49: Gene Expression → Drug Mapping Pipeline - **VALIDATED**
 - h50: Rare Skin Disease Baseline Evaluation - **VALIDATED**
@@ -13,51 +13,48 @@
 - h52: Meta-Confidence Model for Prediction Reliability - **VALIDATED**
 - h53: Skin Disease Name Mapping Expansion - **VALIDATED**
 - h54: Production Meta-Confidence Pipeline - **VALIDATED**
+- h56: Cancer Category Analysis Deep Dive - **VALIDATED**
 
-### Results Summary
+### Key Discoveries
 
-| Hypothesis | Status | Key Finding |
-|---|---|---|
-| h49 | **VALIDATED** | Gene→Drug pipeline: known drugs rank 88.1 percentile |
-| h50 | **VALIDATED** | Skin diseases: 54.87% R@30 (+22 pp vs baseline) |
-| h51 | **INVALIDATED** | Gene Jaccard -14.71 pp vs Node2Vec |
-| h52 | **VALIDATED** | Meta-confidence AUC 0.733, HIGH tier 89.7% hit rate |
-| h53 | **VALIDATED** | +17.9% skin disease coverage (39 → 46 diseases) |
-| h54 | **VALIDATED** | Production model: HIGH tier 100%, LOW tier 7.5% |
+1. **Skin diseases perform exceptionally well** (54-55% R@30 vs 33% baseline)
+2. **Autoimmune/dermatological achieve 100% hit rate** in kNN
+3. **Cancer is NOT the problem** (71.4% hit rate, above average)
+4. **Metabolic diseases are worst** (37.5% hit rate)
+5. **'Other' category drives most failures** (54.7% hit rate, largest category)
+6. **Gene Jaccard is worse than Node2Vec** (-14.71 pp)
+7. **Meta-confidence tiering works** (HIGH tier: 100% hit rate)
 
-### Key Deliverables Created
+### Deliverables Created
 
-1. **Gene Expression → Drug Mapping Pipeline**
-   - Script: `scripts/gene_expression_drug_mapping.py`
-   - Data: `data/reference/drug_to_genes_drkg.json`, `gene_to_drugs_drkg.json`
-   - 19,089 drugs, 19,565 genes, 155,765 edges
+1. **Gene Expression → Drug Pipeline**: `scripts/gene_expression_drug_mapping.py`
+2. **Meta-Confidence Model**: `models/meta_confidence_model.pkl`, `meta_confidence_helper.py`
+3. **Expanded Skin Mappings**: 26 manual MESH mappings added
 
-2. **Meta-Confidence Pipeline**
-   - Model: `models/meta_confidence_model.pkl`
-   - Helper: `models/meta_confidence_helper.py`
-   - HIGH tier: 100% hit rate, LOW tier: 7.5%
+### Category Performance Summary
 
-3. **Expanded Skin Disease Mappings**
-   - 26 manual MESH mappings added
-   - Coverage: 39 → 46 skin diseases (+17.9%)
-
-### Current Metrics
-
-| Model | R@30 | Notes |
-|-------|------|-------|
-| kNN Collaborative Filtering k=20 | 37.04% ± 5.81% | Best overall |
-| kNN on Skin Diseases | 54.05% ± 9.40% | +22 pp vs baseline |
-| kNN on Rare Skin Diseases | 62.18% ± 37.70% | High variance |
+| Category | Hit Rate | Notes |
+|----------|----------|-------|
+| Autoimmune | 100.0% | Best performer |
+| Dermatological | 100.0% | Best performer |
+| Respiratory | 73.7% | Good |
+| Cancer | 71.4% | Good (contrary to expectation) |
+| Infectious | 63.2% | Moderate |
+| Neurological | 60.0% | Moderate |
+| Cardiovascular | 57.1% | Below average |
+| Other | 54.7% | Large category, drives failures |
+| Metabolic | 37.5% | Worst performer |
 
 ### Remaining Pending Hypotheses
 
-1. h55: GEO Gene Expression Data Integration (Priority 3, high effort)
-2. h56: Cancer Category Analysis Deep Dive (Priority 4, low effort)
-3. h16: Clinical Trial Phase Features (Priority 20, low impact)
+1. h58: 'Other' Category Subcategorization (Priority 1)
+2. h57: Metabolic Disease Deep Dive (Priority 2)
+3. h55: GEO Gene Expression Data Integration (Priority 3)
+4. h16: Clinical Trial Phase Features (Priority 20)
 
 ### Recommended Next Steps
 
-1. **h56: Cancer Category Analysis** - Low effort, explains meta-confidence finding
-2. **Deploy Meta-Confidence Tiering** - HIGH tier predictions ready for production
-3. **Expand Ground Truth for Skin Diseases** - Query additional sources
-4. **h55: GEO Integration** - High effort but could bypass DRKG limitations
+1. **h58: Subcategorize 'Other'** - 304 diseases, 54.7% hit rate, largest improvement opportunity
+2. **h57: Metabolic deep dive** - Understand why only 37.5% hit rate
+3. **Deploy meta-confidence tiering** - HIGH tier ready for production
+4. **Focus predictions on autoimmune/dermatological** - 100% hit rate categories

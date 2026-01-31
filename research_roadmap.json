@@ -1085,6 +1085,36 @@
       "rationale": "h52 meta-confidence model found cancer category predicts failure. Need to understand why.",
       "findings": "Cancer is NOT the primary driver of kNN failure - initial interpretation was incorrect.\n\n**Corrected Category Performance (5-seed hit rate):**\n| Category | Hit Rate | n |\n|----------|----------|---|\n| Autoimmune | 100.0% | 13 |\n| Dermatological | 100.0% | 9 |\n| Respiratory | 73.7% | 19 |\n| **Cancer** | **71.4%** | 56 |\n| Infectious | 63.2% | 19 |\n| Neurological | 60.0% | 5 |\n| Cardiovascular | 57.1% | 14 |\n| Other | 54.7% | 307 |\n| **Metabolic** | **37.5%** | 8 |\n\n**Key Findings:**\n1. Cancer performs WELL (71.4% hit rate), NOT poorly\n2. 'Other' category (54.7%) and 'metabolic' (37.5%) are true weak points\n3. Meta-confidence model's cat_cancer importance was low (0.035)\n4. Cancer has 33.6% biologics vs 7.1% for non-cancer (potential future issue)\n\n**Root Cause of Initial Confusion:**\n- Meta-confidence feature importance showed cat_cancer at 0.035\n- But cat_other (0.146) and cat_metabolic (0.070) are the real predictors\n- 'Other' category is largest (304 diseases) and drives most failures\n",
       "result_metric": "Cancer 71.4% hit rate (actually good); Metabolic 37.5% (worst)"
+    },
+    {
+      "id": "h57",
+      "title": "Metabolic Disease Deep Dive",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "1. Identify all 8 metabolic diseases in GT",
+        "2. Analyze why they fail (37.5% hit rate)",
+        "3. Check drug specificity and kNN pool coverage",
+        "4. Propose targeted improvements"
+      ],
+      "rationale": "Metabolic diseases have worst category performance (37.5% hit rate). Understanding failure mode could help."
+    },
+    {
+      "id": "h58",
+      "title": "'Other' Category Subcategorization",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "1. Analyze 304 'other' category diseases",
+        "2. Create finer-grained categories (GI, renal, ophthalmic, etc.)",
+        "3. Identify high/low performing subcategories",
+        "4. Update meta-confidence model with better categories"
+      ],
+      "rationale": "'Other' is the largest category (304 diseases) with 54.7% hit rate. Better categorization could improve meta-confidence model and targeting."
     }
   ],
   "completed": [
