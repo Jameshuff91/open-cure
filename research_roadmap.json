@@ -1006,7 +1006,7 @@
       "id": "h52",
       "title": "Meta-Confidence Model for Prediction Reliability",
       "description": "Train a classifier to predict which disease predictions will succeed (hit@30). Features: kNN coverage, embedding density, disease category, neighbor similarity. This helps Ryland know which predictions to trust.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "high",
       "effort": "low",
@@ -1016,7 +1016,9 @@
         "2. Features: kNN coverage, mean neighbor similarity, category, GT size of neighbors",
         "3. Train XGBoost classifier",
         "4. Evaluate: does confidence correlate with actual success?"
-      ]
+      ],
+      "findings": "Meta-confidence model can predict whether kNN will achieve hit@30 for a disease.\n\n**With gt_coverage (oracle - requires knowing GT at test time):**\n- AUC: 0.965 \u00b1 0.027\n- AP: 0.969 \u00b1 0.028\n- Top feature: gt_coverage (0.493 importance) - essentially cheating\n\n**Without gt_coverage (practical - only uses training info):**\n- AUC: 0.733 \u00b1 0.072\n- AP: 0.792 \u00b1 0.063\n- Top features: disease category (cancer/other), neighbor GT sizes, similarity metrics\n\n**Calibration (without gt_coverage):**\n| Predicted | Actual | n |\n|-----------|--------|---|\n| 0-20% | 43.8% | 16 |\n| 20-40% | 53.8% | 13 |\n| 40-60% | 54.5% | 11 |\n| 60-80% | 78.9% | 19 |\n| 80-100% | 89.7% | 29 |\n\n**Practical Utility:**\n- High-confidence predictions (>80%) are reliable (89.7% actual hit rate)\n- Low-confidence predictions (<40%) are still unreliable (43-54% actual)\n- Can use to tier predictions into \"high/medium/low confidence\" buckets\n- Cancer category is informative: cancer diseases tend to miss more often\n\n**Limitations:**\n- Moderate discrimination (AUC 0.73 without oracle features)\n- Calibration is imperfect in middle range\n",
+      "result_metric": "AUC 0.733 (without oracle), 0.965 (with oracle)"
     }
   ],
   "completed": [
@@ -1261,6 +1263,12 @@
       "hypothesis_id": "h51",
       "learning": "Gene Jaccard similarity for disease matching is significantly worse than Node2Vec (-14.71 pp). Node2Vec captures transitive relationships that raw gene overlap misses. Confirms h41 finding.",
       "implication": "Gene overlap is already encoded in Node2Vec embeddings. Adding explicit gene features provides no benefit. For Ryland collaboration, use Node2Vec-based kNN, not gene-based."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h52",
+      "learning": "Meta-confidence model achieves AUC 0.733 for predicting kNN hit@30 using only training info. High-confidence (>80% predicted) achieves 90% actual hit rate. gt_coverage is the true driver (AUC 0.965 when included) but requires oracle knowledge.",
+      "implication": "Can tier predictions into confidence buckets for production. High-confidence predictions should be prioritized. Cancer category tends to fail more often."
     }
   ],
   "collaborations": [
