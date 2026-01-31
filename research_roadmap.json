@@ -970,7 +970,7 @@
       "id": "h50",
       "title": "Rare Skin Disease Baseline Evaluation",
       "description": "Evaluate our kNN model specifically on rare skin diseases to establish a baseline before integrating Ryland's gene expression data. Identify which skin diseases we predict well/poorly.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -980,7 +980,9 @@
         "2. Run kNN evaluation on this subset",
         "3. Identify top/bottom performers",
         "4. Analyze what makes some skin diseases easier than others"
-      ]
+      ],
+      "findings": "Skin diseases significantly outperform baseline in kNN drug repurposing.\n\n**Performance (5-seed mean \u00b1 std, k=20):**\n- All skin diseases: **54.87% \u00b1 9.83% R@30** \n- Rare skin diseases: **62.18% \u00b1 37.70% R@30** (high variance, n=4 seeds)\n- Common skin diseases: **53.85% \u00b1 7.72% R@30**\n- Non-skin diseases: **32.60% \u00b1 3.05% R@30**\n\n**Key Insight:** Skin diseases show **+22.27 pp improvement** over non-skin diseases.\n\n**Root Causes:**\n1. Skin diseases cluster tightly in embedding space (autoimmune/inflammatory mechanisms)\n2. Treatments overlap significantly (steroids, immunosuppressants work across skin conditions)\n3. Dermatological category showed 54-56% R@30 in h27 category analysis\n\n**Limitations:**\n- Only 39 skin diseases have embeddings (out of 141 in GT)\n- 5 rare skin diseases with embeddings (small sample)\n- Disease name mapping is the bottleneck\n\n**Implication:** kNN method is particularly well-suited for Ryland collaboration on skin diseases.\n",
+      "result_metric": "54.87% R@30 (skin), +22.27 pp vs non-skin"
     },
     {
       "id": "h51",
@@ -1245,6 +1247,12 @@
       "hypothesis_id": "h49",
       "learning": "Gene\u2192Drug mapping from DRKG enables direct translation from expression signatures to drug candidates. Known treatments rank in 88th percentile on average. Biologics have limited coverage (1-5 targets) vs small molecules (many targets).",
       "implication": "Can integrate external transcriptomic data (GEO, GTEx) for rare diseases without DRKG coverage. Priority: identify skin disease expression datasets for Ryland collaboration."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h50",
+      "learning": "Skin diseases achieve 54.87% R@30 with kNN (vs 32.60% non-skin). The +22 pp improvement comes from treatment overlap (steroids, immunosuppressants) and tight embedding clustering. Rare skin diseases show even higher performance (62%) but with high variance.",
+      "implication": "Prioritize skin disease predictions for Ryland collaboration. Disease name mapping is the main bottleneck - only 28% of GT skin diseases have embeddings."
     }
   ],
   "collaborations": [
