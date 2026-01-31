@@ -1019,6 +1019,66 @@
       ],
       "findings": "Meta-confidence model can predict whether kNN will achieve hit@30 for a disease.\n\n**With gt_coverage (oracle - requires knowing GT at test time):**\n- AUC: 0.965 \u00b1 0.027\n- AP: 0.969 \u00b1 0.028\n- Top feature: gt_coverage (0.493 importance) - essentially cheating\n\n**Without gt_coverage (practical - only uses training info):**\n- AUC: 0.733 \u00b1 0.072\n- AP: 0.792 \u00b1 0.063\n- Top features: disease category (cancer/other), neighbor GT sizes, similarity metrics\n\n**Calibration (without gt_coverage):**\n| Predicted | Actual | n |\n|-----------|--------|---|\n| 0-20% | 43.8% | 16 |\n| 20-40% | 53.8% | 13 |\n| 40-60% | 54.5% | 11 |\n| 60-80% | 78.9% | 19 |\n| 80-100% | 89.7% | 29 |\n\n**Practical Utility:**\n- High-confidence predictions (>80%) are reliable (89.7% actual hit rate)\n- Low-confidence predictions (<40%) are still unreliable (43-54% actual)\n- Can use to tier predictions into \"high/medium/low confidence\" buckets\n- Cancer category is informative: cancer diseases tend to miss more often\n\n**Limitations:**\n- Moderate discrimination (AUC 0.73 without oracle features)\n- Calibration is imperfect in middle range\n",
       "result_metric": "AUC 0.733 (without oracle), 0.965 (with oracle)"
+    },
+    {
+      "id": "h53",
+      "title": "Skin Disease Name Mapping Expansion",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "1. Analyze 102 unmapped skin diseases from GT",
+        "2. Create manual MESH mappings for high-GT-pair diseases",
+        "3. Use fuzzy matching with relaxed thresholds",
+        "4. Re-evaluate kNN on expanded skin disease set"
+      ],
+      "rationale": "Only 39/141 (28%) skin diseases have embeddings. Mapping is the bottleneck, not the model."
+    },
+    {
+      "id": "h54",
+      "title": "Production Meta-Confidence Pipeline",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "1. Train final meta-confidence model on full dataset",
+        "2. Save model to models/ directory",
+        "3. Create confidence tiering system (high/medium/low)",
+        "4. Integrate with prediction output"
+      ],
+      "rationale": "h52 showed AUC 0.733. High-confidence (>80%) achieves 89.7% actual hit rate. Ready for production."
+    },
+    {
+      "id": "h55",
+      "title": "GEO Gene Expression Data Integration",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "steps": [
+        "1. Search GEO for rare skin disease expression datasets",
+        "2. Extract differentially expressed genes",
+        "3. Apply gene\u2192drug mapping pipeline (h49)",
+        "4. Compare predictions vs kNN baseline"
+      ],
+      "rationale": "h49 pipeline enables going from expression signatures to drug candidates. Could bypass DRKG coverage limits for rare diseases."
+    },
+    {
+      "id": "h56",
+      "title": "Cancer Category Analysis Deep Dive",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "1. Analyze why cancer diseases fail more often (h52 finding)",
+        "2. Identify specific cancer subtypes that succeed/fail",
+        "3. Check if oncology mAb issue (h26) is the root cause",
+        "4. Propose targeted improvements"
+      ],
+      "rationale": "h52 meta-confidence model found cancer category predicts failure. Need to understand why."
     }
   ],
   "completed": [
