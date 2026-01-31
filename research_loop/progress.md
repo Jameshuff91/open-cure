@@ -1,11 +1,11 @@
 # Research Loop Progress
 
-## Current Session: h49-h58 (2026-01-31)
+## Current Session: h49-h59 (2026-01-31)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (8 hypotheses tested)
+**Status:** Completed (9 hypotheses tested)
 **Hypotheses Tested:**
 - h49: Gene Expression → Drug Mapping Pipeline - **VALIDATED**
 - h50: Rare Skin Disease Baseline Evaluation - **VALIDATED**
@@ -15,49 +15,51 @@
 - h54: Production Meta-Confidence Pipeline - **VALIDATED**
 - h56: Cancer Category Analysis Deep Dive - **VALIDATED**
 - h58: 'Other' Category Subcategorization - **VALIDATED**
+- h59: Gastrointestinal Disease Failure Analysis - **VALIDATED**
 
-### CRITICAL DISCOVERY: Gastrointestinal Diseases
+### MAJOR DISCOVERIES
 
-**h58 revealed GI diseases have only 5% hit rate** - a severe blind spot.
+1. **Gastrointestinal is a CRITICAL blind spot** (5% hit rate)
+   - Root cause: kNN neighbors are NOT other GI diseases
+   - Node2Vec doesn't capture organ/function similarity
+   - 28% of GI drugs are GI-specific (PPIs, hepatitis antivirals)
 
-### Extended Category Performance (16 categories, 5-seed):
+2. **Extended categories reveal clear performance tiers:**
+   - ★★★ (>80%): Endocrine, Autoimmune, Dermatological, Psychiatric
+   - ★★ (60-80%): Infectious, Respiratory, Cancer, Ophthalmic
+   - ⚠ (<40%): Hematological, Musculoskeletal, Renal
+   - ❌ (5%): Gastrointestinal
 
-| Category | Hit Rate | Priority |
-|----------|----------|----------|
-| Endocrine | 100.0% | ★★★ High confidence |
-| Autoimmune | 92.9% | ★★★ High confidence |
-| Dermatological | 88.2% | ★★★ High confidence |
-| Psychiatric | 83.3% | ★★★ High confidence |
-| Infectious | 75.0% | ★★ Good |
-| Respiratory | 71.4% | ★★ Good |
-| Cancer | 70.8% | ★★ Good |
-| Ophthalmic | 66.7% | ★★ Good |
-| Cardiovascular | 62.5% | ★ Average |
-| Neurological | 60.0% | ★ Average |
-| Other | 57.8% | ★ Average |
-| Metabolic | 54.5% | ★ Average |
-| Renal | 40.0% | ⚠ Below average |
-| Musculoskeletal | 33.3% | ⚠ Below average |
-| Hematological | 22.2% | ⚠ Below average |
-| **Gastrointestinal** | **5.0%** | ❌ **CRITICAL FAILURE** |
+3. **Gene Jaccard is worse than Node2Vec** (-14.71 pp)
 
-### Key Deliverables Created
+4. **Meta-confidence tiering works** (HIGH tier: 100% hit rate)
+
+### Deliverables Created
 
 1. **Gene Expression → Drug Pipeline**: `scripts/gene_expression_drug_mapping.py`
-2. **Meta-Confidence Model**: `models/meta_confidence_model.pkl`
-3. **Extended Categories**: 16-category system (vs 8 original)
+2. **Meta-Confidence Model**: `models/meta_confidence_model.pkl`, `meta_confidence_helper.py`
+3. **26 Manual Skin Disease MESH Mappings**
+4. **16-Category Classification System**
 
 ### Remaining Hypotheses
 
-1. h59: Gastrointestinal Disease Failure Analysis (Priority 1) - URGENT
-2. h60: Update Meta-Confidence Model with Extended Categories (Priority 2)
-3. h57: Metabolic Disease Deep Dive (Priority 2)
-4. h55: GEO Gene Expression Data Integration (Priority 3)
-5. h16: Clinical Trial Phase Features (Priority 20)
+1. h60: Update Meta-Confidence Model with Extended Categories (Priority 2)
+2. h57: Metabolic Disease Deep Dive (Priority 2)
+3. h55: GEO Gene Expression Data Integration (Priority 3)
+4. h16: Clinical Trial Phase Features (Priority 20)
 
 ### Production Recommendations
 
-1. **IMMEDIATELY flag or exclude GI predictions** - 5% success rate is worse than random
+1. **EXCLUDE or FLAG GI predictions** - 5% success is worse than random
 2. **Prioritize endocrine/autoimmune/dermatological/psychiatric** - >80% hit rate
-3. **Use HIGH confidence tier** - 100% hit rate demonstrated
-4. **Investigate GI root cause** - may reveal fixable architectural issue
+3. **Use HIGH confidence tier** - 100% hit rate
+4. **Deploy extended categories** in meta-confidence model
+5. **Accept kNN limitation** for organ-specific disease categories
+
+### Session Statistics
+
+- Hypotheses tested: 9
+- Validated: 8
+- Invalidated: 1
+- New hypotheses generated: 7 (h53-h60)
+- Critical finding: GI blind spot identified and explained
