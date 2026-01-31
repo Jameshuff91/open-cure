@@ -126,6 +126,29 @@ STOP. A ceiling on ONE metric is NOT a reason to stop research. Pivot to:
 
 **Science never ends. There is ALWAYS another question to ask.**
 
+### MANDATORY: Generate AT LEAST 2 new hypotheses every session.
+
+Even if your experiment was a complete success or failure, you MUST add at least 2 new hypotheses. Ideas:
+- What follow-up question does this result raise?
+- What's the inverse of what you just tested?
+- What would a skeptic ask about your finding?
+- How could you improve precision/calibration/interpretability?
+- What error pattern did you notice that could be investigated?
+- What would help a collaborator (like Ryland with transcriptomics)?
+
+```bash
+# Verify you added hypotheses before committing
+python3 -c "
+import json
+with open('research_roadmap.json') as f:
+    data = json.load(f)
+pending = len([h for h in data['hypotheses'] if h['status'] == 'pending'])
+print(f'Pending hypotheses: {pending}')
+if pending < 3:
+    print('WARNING: Only {pending} pending. Generate more before stopping!')
+"
+```
+
 Add new hypotheses to the roadmap with appropriate priority.
 
 ### STEP 7: COMMIT PROGRESS
@@ -189,6 +212,23 @@ Only pause (output `<promise>RESEARCH PAUSED</promise>`) when ALL of these are t
 - Running out of "obvious" hypotheses — generate creative new ones from error analysis
 
 **REMEMBER: Science never ends. If you think there's nothing left to do, you're not thinking creatively enough. Read the "Research Directions" section in research_spec.md for pivot strategies.**
+
+### HYPOTHESIS GENERATION BRAINSTORM (Use when running low)
+
+If pending hypotheses < 5, run this brainstorm:
+
+```
+1. DEPTH: What's one level deeper on the last finding?
+2. BREADTH: What's a completely different angle on the same problem?
+3. INVERSION: What's the opposite of what we just tested?
+4. PRECISION: How can we make predictions more trustworthy?
+5. COLLABORATION: What would help Ryland/external collaborators?
+6. ERROR ANALYSIS: What specific failure pattern could we investigate?
+7. META: What would make future research more efficient?
+8. PRODUCTION: What would make this useful in the real world?
+```
+
+Generate 1 hypothesis from each category that applies. Science is infinite.
 
 ---
 
