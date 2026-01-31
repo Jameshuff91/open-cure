@@ -1072,7 +1072,7 @@
     {
       "id": "h56",
       "title": "Cancer Category Analysis Deep Dive",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -1082,7 +1082,9 @@
         "3. Check if oncology mAb issue (h26) is the root cause",
         "4. Propose targeted improvements"
       ],
-      "rationale": "h52 meta-confidence model found cancer category predicts failure. Need to understand why."
+      "rationale": "h52 meta-confidence model found cancer category predicts failure. Need to understand why.",
+      "findings": "Cancer is NOT the primary driver of kNN failure - initial interpretation was incorrect.\n\n**Corrected Category Performance (5-seed hit rate):**\n| Category | Hit Rate | n |\n|----------|----------|---|\n| Autoimmune | 100.0% | 13 |\n| Dermatological | 100.0% | 9 |\n| Respiratory | 73.7% | 19 |\n| **Cancer** | **71.4%** | 56 |\n| Infectious | 63.2% | 19 |\n| Neurological | 60.0% | 5 |\n| Cardiovascular | 57.1% | 14 |\n| Other | 54.7% | 307 |\n| **Metabolic** | **37.5%** | 8 |\n\n**Key Findings:**\n1. Cancer performs WELL (71.4% hit rate), NOT poorly\n2. 'Other' category (54.7%) and 'metabolic' (37.5%) are true weak points\n3. Meta-confidence model's cat_cancer importance was low (0.035)\n4. Cancer has 33.6% biologics vs 7.1% for non-cancer (potential future issue)\n\n**Root Cause of Initial Confusion:**\n- Meta-confidence feature importance showed cat_cancer at 0.035\n- But cat_other (0.146) and cat_metabolic (0.070) are the real predictors\n- 'Other' category is largest (304 diseases) and drives most failures\n",
+      "result_metric": "Cancer 71.4% hit rate (actually good); Metabolic 37.5% (worst)"
     }
   ],
   "completed": [
@@ -1345,6 +1347,12 @@
       "hypothesis_id": "h54",
       "learning": "Production meta-confidence model achieves 100% hit rate for HIGH tier predictions and 7.5% for LOW tier. This enables effective prediction tiering in production.",
       "implication": "Can confidently surface HIGH-confidence predictions. Consider combining with disease category for further filtering."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h56",
+      "learning": "Cancer is NOT the failure driver - 71.4% hit rate is above average. True weak categories are metabolic (37.5%) and uncategorized \"other\" (54.7%). Autoimmune and dermatological achieve 100% hit rate.",
+      "implication": "Prioritize autoimmune/dermatological predictions with highest confidence. Metabolic diseases need different approach. Consider re-categorizing \"other\" diseases for better targeting."
     }
   ],
   "collaborations": [
