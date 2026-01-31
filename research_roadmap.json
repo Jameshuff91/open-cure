@@ -952,7 +952,7 @@
       "id": "h49",
       "title": "Gene Expression \u2192 Drug Mapping Pipeline",
       "description": "Build a pipeline that takes dysregulated gene modules (like Ryland's spatial transcriptomics output) and maps them to candidate therapeutics using DRKG drug-target relationships. Input: list of upregulated/downregulated genes. Output: ranked drugs that target those genes.",
-      "status": "in_progress",
+      "status": "validated",
       "priority": 1,
       "expected_impact": "high",
       "effort": "medium",
@@ -962,7 +962,9 @@
         "2. Build scoring function: drugs targeting MORE dysregulated genes rank higher",
         "3. Test on known skin disease gene signatures",
         "4. Package as reusable tool for Ryland"
-      ]
+      ],
+      "findings": "Gene Expression \u2192 Drug Mapping Pipeline successfully built and validated.\n\n**Pipeline Created:**\n- Script: `scripts/gene_expression_drug_mapping.py`\n- Data: `data/reference/drug_to_genes_drkg.json` (19,089 drugs), `data/reference/gene_to_drugs_drkg.json` (19,565 genes)\n- Total drug-gene edges: 155,765 from 30 edge types (DRUGBANK, DGIDB, Hetionet, GNBR, IntAct, bioarx)\n\n**Validation Results (14 known drug-disease pairs across 5 diseases):**\n- 100% of known drugs have \u22652 gene overlap\n- Average percentile rank: 88.1% (known drugs rank in top 12% on average)\n- Top performers: Cyclosporine\u2192Psoriasis (100th %ile), Metformin\u2192T2D (100th %ile), Doxorubicin\u2192Breast Cancer (100th %ile)\n\n**Limitations:**\n- Biologics (mAbs) have few targets in DRKG (1-5 genes) so rank poorly despite clinical efficacy\n- Generic metabolic drugs (dextrose, calcium) rank high due to many promiscuous targets\n\n**Usage:**\n```bash\npython scripts/gene_expression_drug_mapping.py --disease \"MESH:D011565\"  # psoriasis\npython scripts/gene_expression_drug_mapping.py --genes \"7124,7157,3458\"  # custom genes\npython scripts/gene_expression_drug_mapping.py --gene-file my_genes.txt\n```",
+      "result_metric": "88.1% avg percentile for known drugs"
     },
     {
       "id": "h50",
@@ -1237,6 +1239,12 @@
       "hypothesis_id": "h27",
       "learning": "Per-category kNN performance varies from 0-56% R@30. Autoimmune/dermatological (54-56%) perform best; neurological (6.7%) and metabolic (11.7%) perform worst. CLAUDE.md figures were DRUG class metrics, not disease category metrics.",
       "implication": "Focus predictions on autoimmune/dermatological/infectious diseases; neurological needs different approach."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h49",
+      "learning": "Gene\u2192Drug mapping from DRKG enables direct translation from expression signatures to drug candidates. Known treatments rank in 88th percentile on average. Biologics have limited coverage (1-5 targets) vs small molecules (many targets).",
+      "implication": "Can integrate external transcriptomic data (GEO, GTEx) for rare diseases without DRKG coverage. Priority: identify skin disease expression datasets for Ryland collaboration."
     }
   ],
   "collaborations": [
