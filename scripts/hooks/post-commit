@@ -1,0 +1,225 @@
+#!/bin/bash
+
+# Post-Commit Rule Verification Hook
+# Verifies CLAUDE.md rules are followed in committed changes
+
+set -e
+
+echo ""
+echo "╔══════════════════════════════════════════════════════════════════╗"
+echo "║  🔍 POST-COMMIT RULE VERIFICATION                                ║"
+echo "╚══════════════════════════════════════════════════════════════════╝"
+
+ERRORS=0
+WARNINGS=0
+
+# Get list of files changed in this commit
+CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD 2>/dev/null || echo "")
+
+if [ -z "$CHANGED_FILES" ]; then
+    echo "No files to check."
+    exit 0
+fi
+
+echo ""
+echo "Checking $(echo "$CHANGED_FILES" | wc -l | tr -d ' ') changed files..."
+echo ""
+
+# =============================================================================
+# RULE 1: No Playwright images committed
+# From: ~/.claude/CLAUDE.md - "don't commit images from playwright"
+# =============================================================================
+echo "📷 Rule 1: No Playwright images..."
+PLAYWRIGHT_IMAGES=$(echo "$CHANGED_FILES" | grep -E '\.(png|jpg|jpeg)$' | grep -iE '(playwright|screenshot|test-results)' || true)
+if [ -n "$PLAYWRIGHT_IMAGES" ]; then
+    echo "   ❌ FAIL: Playwright images detected:"
+    echo "$PLAYWRIGHT_IMAGES" | sed 's/^/      /'
+    echo "   Fix: Add to .gitignore or remove with 'git rm --cached <file>'"
+    ((ERRORS++))
+else
+    echo "   ✓ Pass"
+fi
+
+# =============================================================================
+# RULE 2: No destructive rm commands in scripts
+# From: ~/.claude/CLAUDE.md - "NEVER use rm -rf, rm -r"
+# =============================================================================
+echo "🗑️  Rule 2: No destructive rm commands..."
+SHELL_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(sh|bash|zsh)$' || true)
+if [ -n "$SHELL_FILES" ]; then
+    DANGEROUS_RM=""
+    for file in $SHELL_FILES; do
+        if [ -f "$file" ]; then
+            MATCHES=$(grep -n 'rm -rf\|rm -r ' "$file" 2>/dev/null || true)
+            if [ -n "$MATCHES" ]; then
+                DANGEROUS_RM="$DANGEROUS_RM\n$file:\n$MATCHES"
+            fi
+        fi
+    done
+    if [ -n "$DANGEROUS_RM" ]; then
+        echo "   ⚠️  WARNING: Destructive rm commands found:"
+        echo -e "$DANGEROUS_RM" | sed 's/^/      /'
+        echo "   Recommendation: Use 'trash' command instead"
+        ((WARNINGS++))
+    else
+        echo "   ✓ Pass"
+    fi
+else
+    echo "   ✓ Pass (no shell files)"
+fi
+
+# =============================================================================
+# RULE 3: No @ts-ignore without @ts-expect-error
+# From: ~/.claude/CLAUDE.md - "Avoid @ts-ignore; prefer @ts-expect-error"
+# =============================================================================
+echo "📝 Rule 3: No @ts-ignore (use @ts-expect-error)..."
+TS_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(ts|tsx)$' || true)
+if [ -n "$TS_FILES" ]; then
+    TS_IGNORE_FOUND=""
+    for file in $TS_FILES; do
+        if [ -f "$file" ]; then
+            MATCHES=$(grep -n '@ts-ignore' "$file" 2>/dev/null | grep -v '@ts-expect-error' || true)
+            if [ -n "$MATCHES" ]; then
+                TS_IGNORE_FOUND="$TS_IGNORE_FOUND\n$file:\n$MATCHES"
+            fi
+        fi
+    done
+    if [ -n "$TS_IGNORE_FOUND" ]; then
+        echo "   ⚠️  WARNING: @ts-ignore found (prefer @ts-expect-error with note):"
+        echo -e "$TS_IGNORE_FOUND" | sed 's/^/      /'
+        ((WARNINGS++))
+    else
+        echo "   ✓ Pass"
+    fi
+else
+    echo "   ✓ Pass (no TypeScript files)"
+fi
+
+# =============================================================================
+# RULE 4: No secrets/credentials committed
+# =============================================================================
+echo "🔐 Rule 4: No secrets or credentials..."
+SECRET_PATTERNS='(api[_-]?key|secret[_-]?key|password|credential|private[_-]?key|auth[_-]?token)'
+SECRETS_FOUND=""
+for file in $CHANGED_FILES; do
+    if [ -f "$file" ]; then
+        # Skip binary files and common false positives
+        if [[ "$file" =~ \.(md|txt|json|py|ts|js|sh)$ ]]; then
+            # Look for hardcoded secrets (not variable references)
+            MATCHES=$(grep -inE "${SECRET_PATTERNS}[\"'\`]?\s*[:=]\s*[\"'\`][^\"'\`]{8,}" "$file" 2>/dev/null | grep -v 'process\.env\|os\.environ\|getenv\|SECRET_KEY.*=.*None\|# example\|# TODO' || true)
+            if [ -n "$MATCHES" ]; then
+                SECRETS_FOUND="$SECRETS_FOUND\n$file:\n$MATCHES"
+            fi
+        fi
+    fi
+done
+if [ -n "$SECRETS_FOUND" ]; then
+    echo "   ⚠️  WARNING: Potential secrets detected (review these):"
+    echo -e "$SECRETS_FOUND" | sed 's/^/      /'
+    ((WARNINGS++))
+else
+    echo "   ✓ Pass"
+fi
+
+# =============================================================================
+# RULE 5: .env files should not be committed
+# =============================================================================
+echo "📄 Rule 5: No .env files..."
+ENV_FILES=$(echo "$CHANGED_FILES" | grep -E '\.env($|\.)' | grep -v '\.env\.example\|\.env\.template\|\.env\.sample' || true)
+if [ -n "$ENV_FILES" ]; then
+    echo "   ❌ FAIL: .env files committed:"
+    echo "$ENV_FILES" | sed 's/^/      /'
+    echo "   Fix: Remove with 'git rm --cached <file>' and add to .gitignore"
+    ((ERRORS++))
+else
+    echo "   ✓ Pass"
+fi
+
+# =============================================================================
+# RULE 6: CLAUDE.md should be updated after research (reminder)
+# =============================================================================
+echo "📚 Rule 6: Memory management..."
+if echo "$CHANGED_FILES" | grep -qE '\.(py|ipynb)$'; then
+    if ! echo "$CHANGED_FILES" | grep -q 'CLAUDE.md'; then
+        echo "   ℹ️  INFO: Python/notebook files changed but CLAUDE.md not updated"
+        echo "      Remember: Update CLAUDE.md with key learnings after research sessions"
+    else
+        echo "   ✓ Pass (CLAUDE.md updated)"
+    fi
+else
+    echo "   ✓ Pass"
+fi
+
+# =============================================================================
+# RULE 7: Check for large files that shouldn't be committed
+# =============================================================================
+echo "📦 Rule 7: No large binary files..."
+LARGE_FILES=""
+for file in $CHANGED_FILES; do
+    if [ -f "$file" ]; then
+        SIZE=$(wc -c < "$file" 2>/dev/null | tr -d ' ')
+        # 10MB threshold
+        if [ "$SIZE" -gt 10485760 ]; then
+            SIZE_MB=$((SIZE / 1048576))
+            LARGE_FILES="$LARGE_FILES\n   $file (${SIZE_MB}MB)"
+        fi
+    fi
+done
+if [ -n "$LARGE_FILES" ]; then
+    echo "   ⚠️  WARNING: Large files committed (>10MB):"
+    echo -e "$LARGE_FILES"
+    echo "      Consider using Git LFS or .gitignore"
+    ((WARNINGS++))
+else
+    echo "   ✓ Pass"
+fi
+
+# =============================================================================
+# RULE 8: Python type hints (reminder for new Python files)
+# =============================================================================
+echo "🐍 Rule 8: Python type safety..."
+NEW_PY_FILES=$(git diff-tree --no-commit-id --name-only --diff-filter=A -r HEAD 2>/dev/null | grep -E '\.py$' || true)
+if [ -n "$NEW_PY_FILES" ]; then
+    MISSING_HINTS=""
+    for file in $NEW_PY_FILES; do
+        if [ -f "$file" ]; then
+            # Check if file has any type hints (basic check)
+            if ! grep -qE '(def .+\(.+:.+\)|-> |: (str|int|float|bool|list|dict|None|Optional|List|Dict|Any))' "$file" 2>/dev/null; then
+                MISSING_HINTS="$MISSING_HINTS $file"
+            fi
+        fi
+    done
+    if [ -n "$MISSING_HINTS" ]; then
+        echo "   ℹ️  INFO: New Python files may need type hints:"
+        echo "$MISSING_HINTS" | tr ' ' '\n' | grep -v '^$' | sed 's/^/      /'
+    else
+        echo "   ✓ Pass"
+    fi
+else
+    echo "   ✓ Pass (no new Python files)"
+fi
+
+# =============================================================================
+# SUMMARY
+# =============================================================================
+echo ""
+echo "════════════════════════════════════════════════════════════════════"
+if [ $ERRORS -gt 0 ]; then
+    echo "❌ $ERRORS error(s), $WARNINGS warning(s)"
+    echo ""
+    echo "To fix errors in the last commit:"
+    echo "  git reset --soft HEAD~1  # Undo commit, keep changes staged"
+    echo "  # Fix the issues"
+    echo "  git commit -m 'your message'"
+else
+    if [ $WARNINGS -gt 0 ]; then
+        echo "⚠️  $WARNINGS warning(s) - review recommended"
+    else
+        echo "✅ All rules passed!"
+    fi
+fi
+echo "════════════════════════════════════════════════════════════════════"
+echo ""
+
+# Post-commit hooks can't block, but we report status
+exit 0

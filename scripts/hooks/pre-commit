@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Memory Management Pre-Commit Hook
+# BLOCKS commits if CLAUDE.md exceeds threshold
+# This ensures working memory stays lean for efficient context loading
+
+CLAUDE_MD="CLAUDE.md"
+LINE_THRESHOLD=300
+
+if [ -f "$CLAUDE_MD" ]; then
+    LINE_COUNT=$(wc -l < "$CLAUDE_MD" | tr -d ' ')
+
+    if [ "$LINE_COUNT" -gt "$LINE_THRESHOLD" ]; then
+        echo ""
+        echo "╔══════════════════════════════════════════════════════════════════╗"
+        echo "║  🛑 COMMIT BLOCKED: CLAUDE.md EXCEEDS THRESHOLD                  ║"
+        echo "╠══════════════════════════════════════════════════════════════════╣"
+        echo "║  CLAUDE.md has $LINE_COUNT lines (max: $LINE_THRESHOLD)                          ║"
+        echo "║                                                                    ║"
+        echo "║  REQUIRED ACTION:                                                  ║"
+        echo "║  1. Prune detailed findings to docs/archive/                       ║"
+        echo "║  2. Keep only essential info in CLAUDE.md                          ║"
+        echo "║  3. Update archive index                                           ║"
+        echo "║  4. Retry commit                                                   ║"
+        echo "║                                                                    ║"
+        echo "║  Goal: Keep working memory < $LINE_THRESHOLD lines                           ║"
+        echo "╚══════════════════════════════════════════════════════════════════╝"
+        echo ""
+        echo "To bypass (emergency only): git commit --no-verify"
+        echo ""
+        exit 1
+    fi
+fi
+
+exit 0
