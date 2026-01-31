@@ -1138,7 +1138,7 @@
     {
       "id": "h60",
       "title": "Update Meta-Confidence Model with Extended Categories",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -1148,7 +1148,9 @@
         "3. Evaluate improvement in AUC and calibration",
         "4. Update production model"
       ],
-      "rationale": "h58 found extended categories reveal better patterns. Model should use this."
+      "rationale": "h58 found extended categories reveal better patterns. Model should use this.",
+      "findings": "Extended category meta-confidence model improves discrimination and reduces variance.\n\n**Performance Comparison:**\n| Model | AUC | Variance |\n|-------|-----|----------|\n| Original (8 cat) | 0.733 | \u00b10.072 |\n| Extended (16 cat) | 0.757 | \u00b10.027 |\n| Improvement | +0.024 | -62% variance |\n\n**Top Feature Importance (Extended Model):**\n| Feature | Importance |\n|---------|------------|\n| cat_cancer | 0.114 |\n| cat_gastrointestinal | 0.113 |\n| cat_other | 0.101 |\n| mean_neighbor_gt | 0.097 |\n| min_sim | 0.069 |\n\n**Key Finding:** cat_gastrointestinal has second-highest importance (0.113), validating h59 finding that GI is a strong predictor of failure.\n\n**Saved:** models/meta_confidence_model_extended.pkl\n",
+      "result_metric": "AUC 0.757 (+0.024), variance -62%"
     }
   ],
   "completed": [
@@ -1429,6 +1431,12 @@
       "hypothesis_id": "h59",
       "learning": "GI failures are due to kNN neighbors NOT being GI diseases (embedding similarity != organ/function similarity). 28% of GI drugs are GI-specific and don't appear in non-GI neighbor pools. kNN method fundamentally fails for GI.",
       "implication": "GI predictions should be flagged or excluded from production. Category-aware kNN (restricting to same-category neighbors) could help but reduces sample size. Consider GI as fundamentally different problem."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h60",
+      "learning": "Extended 16-category meta-confidence model improves AUC from 0.733 to 0.757 and reduces variance by 62%. GI category has second-highest importance (0.113), confirming it as strong failure predictor.",
+      "implication": "Use extended model in production. Category information is highly predictive. GI flag should be prominently surfaced."
     }
   ],
   "collaborations": [
