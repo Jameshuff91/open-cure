@@ -1023,7 +1023,7 @@
     {
       "id": "h53",
       "title": "Skin Disease Name Mapping Expansion",
-      "status": "pending",
+      "status": "validated",
       "priority": 1,
       "expected_impact": "high",
       "effort": "medium",
@@ -1033,7 +1033,9 @@
         "3. Use fuzzy matching with relaxed thresholds",
         "4. Re-evaluate kNN on expanded skin disease set"
       ],
-      "rationale": "Only 39/141 (28%) skin diseases have embeddings. Mapping is the bottleneck, not the model."
+      "rationale": "Only 39/141 (28%) skin diseases have embeddings. Mapping is the bottleneck, not the model.",
+      "findings": "Manual MESH mapping expansion increased skin disease coverage by 17.9% while maintaining performance.\n\n**Coverage Improvement:**\n- Before: 39 skin diseases with embeddings\n- After: 46 skin diseases (+7, +17.9%)\n- Added 26 manual MESH mappings for unmapped skin diseases\n\n**Performance (5-seed mean \u00b1 std, k=20):**\n| Metric | Before | After | Change |\n|--------|--------|-------|--------|\n| Skin diseases | 54.87% \u00b1 9.83% | 54.05% \u00b1 9.40% | -0.82 pp |\n| Non-skin | 32.60% \u00b1 3.05% | 33.90% \u00b1 5.04% | +1.30 pp |\n| All | - | 35.79% \u00b1 5.28% | - |\n\n**Key Mappings Added:**\n- acne \u2192 D000152 (Acne Vulgaris) - 30 pairs\n- pruritus \u2192 D011537 (Pruritus) - 15 pairs\n- pustular/erythrodermic psoriasis \u2192 D011565 (Psoriasis) - 22 pairs\n- erythema multiforme \u2192 D004892 - 8 pairs\n\n**Limitations:**\n- 73 skin diseases still unmapped (mostly specific subtypes)\n- \"skin infection\" (58 pairs) not in embeddings despite having MESH ID\n",
+      "result_metric": "+17.9% coverage, -0.82 pp R@30"
     },
     {
       "id": "h54",
@@ -1329,6 +1331,12 @@
       "hypothesis_id": "h52",
       "learning": "Meta-confidence model achieves AUC 0.733 for predicting kNN hit@30 using only training info. High-confidence (>80% predicted) achieves 90% actual hit rate. gt_coverage is the true driver (AUC 0.965 when included) but requires oracle knowledge.",
       "implication": "Can tier predictions into confidence buckets for production. High-confidence predictions should be prioritized. Cancer category tends to fail more often."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h53",
+      "learning": "Manual MESH mapping expansion added 7 skin diseases (+17.9% coverage) while maintaining 54% R@30 performance. Many subtypes can be mapped to parent MESH terms (e.g., pustular psoriasis \u2192 psoriasis).",
+      "implication": "Mapping is a quick win for coverage. Remaining unmapped diseases need either: (1) parent term mapping, (2) synonym expansion, or (3) DRKG missing the MESH ID entirely."
     }
   ],
   "collaborations": [
