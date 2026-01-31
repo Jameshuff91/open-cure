@@ -988,7 +988,7 @@
       "id": "h51",
       "title": "Gene Module Similarity for Disease Matching",
       "description": "Test whether gene expression similarity (from disease gene associations) can improve kNN neighbor selection for skin diseases. This simulates what Ryland's spatial transcriptomics data could provide.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -998,7 +998,9 @@
         "2. Compute gene overlap Jaccard between skin diseases",
         "3. Compare gene-based kNN vs Node2Vec kNN on skin disease subset",
         "4. Identify diseases where gene similarity helps (proxy for transcriptomics value)"
-      ]
+      ],
+      "findings": "Gene module (Jaccard) similarity performs significantly worse than Node2Vec for disease matching.\n\n**Results (5-seed mean \u00b1 std, k=20):**\n| Method | All with Genes | Skin with Genes |\n|--------|---------------|-----------------|\n| Node2Vec | 31.80% \u00b1 4.16% | 57.20% \u00b1 10.53% |\n| Gene Jaccard | 17.09% \u00b1 2.93% | 30.18% \u00b1 8.19% |\n\n**Key Finding:** Gene Jaccard is **-14.71 pp worse** than Node2Vec on same disease subset.\n\n**Coverage:**\n- 367/440 (83.4%) GT diseases have gene associations\n- 34/39 (87%) skin diseases have gene associations\n\n**Why Gene Jaccard Fails:**\n1. Gene overlap is binary/sparse - diseases share 0-5 genes typically\n2. Node2Vec captures transitive relationships through graph structure\n3. Diseases with similar treatments may not share direct gene associations\n4. DRKG gene associations are incomplete/noisy\n\n**Implication:** Node2Vec embeddings already capture biological similarity better than raw gene overlap. Don't add gene Jaccard as a feature.\n",
+      "result_metric": "-14.71 pp vs Node2Vec"
     },
     {
       "id": "h52",
@@ -1253,6 +1255,12 @@
       "hypothesis_id": "h50",
       "learning": "Skin diseases achieve 54.87% R@30 with kNN (vs 32.60% non-skin). The +22 pp improvement comes from treatment overlap (steroids, immunosuppressants) and tight embedding clustering. Rare skin diseases show even higher performance (62%) but with high variance.",
       "implication": "Prioritize skin disease predictions for Ryland collaboration. Disease name mapping is the main bottleneck - only 28% of GT skin diseases have embeddings."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h51",
+      "learning": "Gene Jaccard similarity for disease matching is significantly worse than Node2Vec (-14.71 pp). Node2Vec captures transitive relationships that raw gene overlap misses. Confirms h41 finding.",
+      "implication": "Gene overlap is already encoded in Node2Vec embeddings. Adding explicit gene features provides no benefit. For Ryland collaboration, use Node2Vec-based kNN, not gene-based."
     }
   ],
   "collaborations": [
