@@ -947,6 +947,70 @@
       ],
       "findings": "VALIDATED: kNN ceiling is caused by GT drug coverage sparsity.\n\nKEY FINDINGS:\n- 44.3% of test diseases have 0% GT drug coverage in kNN pool\n- Correlation (coverage vs recall) = 0.898 \u2014 coverage almost perfectly predicts success\n- Diseases with 81-100% coverage achieve 78.2% R@30 (vs 37% overall)\n- Diseases with 0% coverage achieve 0% R@30 (by definition)\n\nIMPLICATIONS:\n1. kNN is optimal for its coverage \u2014 the algorithm is not the bottleneck\n2. The 37% ceiling is fundamentally about GT sparsity, not method quality\n3. Improvement requires:\n   a) More GT data (DrugBank/ChEMBL indications) to increase coverage\n   b) Drug-centric approach for zero-coverage diseases (h46)\n   c) Zero-shot methods for diseases with no similar training diseases (h47)\n\nCOVERAGE DISTRIBUTION (n=88 test diseases):\n| Coverage | Count | % | Mean R@30 |\n|----------|-------|---|-----------|\n| 0%       | 39    | 44%| 0.0%     |\n| 1-60%    | 16    | 18%| 28.4%    |\n| 61-100%  | 33    | 38%| 74.2%    |\n\nThe ~38% of diseases with good coverage drive the 37% overall R@30.",
       "result_metric": "44.3% diseases with 0% coverage, correlation 0.898"
+    },
+    {
+      "id": "h49",
+      "title": "Gene Expression \u2192 Drug Mapping Pipeline",
+      "description": "Build a pipeline that takes dysregulated gene modules (like Ryland's spatial transcriptomics output) and maps them to candidate therapeutics using DRKG drug-target relationships. Input: list of upregulated/downregulated genes. Output: ranked drugs that target those genes.",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "medium",
+      "collaboration": "ryland_mortlock",
+      "steps": [
+        "1. Create gene-to-drug mapping from DRKG (Gene-Drug edges)",
+        "2. Build scoring function: drugs targeting MORE dysregulated genes rank higher",
+        "3. Test on known skin disease gene signatures",
+        "4. Package as reusable tool for Ryland"
+      ]
+    },
+    {
+      "id": "h50",
+      "title": "Rare Skin Disease Baseline Evaluation",
+      "description": "Evaluate our kNN model specifically on rare skin diseases to establish a baseline before integrating Ryland's gene expression data. Identify which skin diseases we predict well/poorly.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "collaboration": "ryland_mortlock",
+      "steps": [
+        "1. Filter GT to rare skin diseases (dermatological + Orphanet-linked)",
+        "2. Run kNN evaluation on this subset",
+        "3. Identify top/bottom performers",
+        "4. Analyze what makes some skin diseases easier than others"
+      ]
+    },
+    {
+      "id": "h51",
+      "title": "Gene Module Similarity for Disease Matching",
+      "description": "Test whether gene expression similarity (from disease gene associations) can improve kNN neighbor selection for skin diseases. This simulates what Ryland's spatial transcriptomics data could provide.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "collaboration": "ryland_mortlock",
+      "steps": [
+        "1. Extract disease-gene associations from DRKG for skin diseases",
+        "2. Compute gene overlap Jaccard between skin diseases",
+        "3. Compare gene-based kNN vs Node2Vec kNN on skin disease subset",
+        "4. Identify diseases where gene similarity helps (proxy for transcriptomics value)"
+      ]
+    },
+    {
+      "id": "h52",
+      "title": "Meta-Confidence Model for Prediction Reliability",
+      "description": "Train a classifier to predict which disease predictions will succeed (hit@30). Features: kNN coverage, embedding density, disease category, neighbor similarity. This helps Ryland know which predictions to trust.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "high",
+      "effort": "low",
+      "collaboration": "ryland_mortlock",
+      "steps": [
+        "1. Create training data: (disease features) -> (did it hit@30?)",
+        "2. Features: kNN coverage, mean neighbor similarity, category, GT size of neighbors",
+        "3. Train XGBoost classifier",
+        "4. Evaluate: does confidence correlate with actual success?"
+      ]
     }
   ],
   "completed": [
@@ -1173,6 +1237,17 @@
       "hypothesis_id": "h27",
       "learning": "Per-category kNN performance varies from 0-56% R@30. Autoimmune/dermatological (54-56%) perform best; neurological (6.7%) and metabolic (11.7%) perform worst. CLAUDE.md figures were DRUG class metrics, not disease category metrics.",
       "implication": "Focus predictions on autoimmune/dermatological/infectious diseases; neurological needs different approach."
+    }
+  ],
+  "collaborations": [
+    {
+      "name": "ryland_mortlock",
+      "organization": "Unknown",
+      "focus": "Spatial transcriptomics for rare skin diseases",
+      "meeting_date": "2026-02-09",
+      "data_type": "Gene expression (spatial transcriptomics from skin biopsies)",
+      "goal": "Connect dysregulated gene modules with therapeutics using kNN embeddings",
+      "added": "2026-01-31T09:14:42.415919"
     }
   ]
 }

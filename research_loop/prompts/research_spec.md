@@ -60,4 +60,35 @@ Improve drug repurposing predictions using the DRKG knowledge graph and machine 
 ## Success Metrics
 - Primary: Per-drug Recall@30 on held-out diseases
 - Secondary: Precision of top-100 predictions (via external validation)
+- Tertiary: Calibration quality (does confidence predict success?)
 - Avoid: Circular features, data leakage, evaluation on training set
+
+## Research Directions (When Primary Metrics Plateau)
+
+If you hit a fundamental ceiling on R@30, pivot to these directions:
+
+### 1. Precision & Calibration
+- Meta-confidence models: predict "will this disease hit@30?"
+- Prediction tiering by confidence
+- Per-category confidence thresholds
+
+### 2. Error Analysis
+- Which drugs are systematically missed?
+- Which disease categories fail and why?
+- What patterns predict failure?
+
+### 3. Production Optimization
+- Prediction prioritization for maximum value
+- Category-specific strategies
+- Negative prediction value (what to exclude)
+
+### 4. Meta-Science
+- What predicts whether a hypothesis will succeed?
+- Which research directions have highest ROI?
+- How to allocate effort across disease categories?
+
+### 5. Inverse Problems
+- What drug-disease pairs can we confidently EXCLUDE?
+- Where is the model most reliable for "no effect" predictions?
+
+**Key principle: Science never ends. If recall is capped, improve precision. If precision is capped, improve calibration. If calibration is capped, improve interpretability. There is always more to explore.**

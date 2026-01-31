@@ -98,6 +98,34 @@ Based on your findings, propose 2-5 NEW hypotheses:
 **If experiment succeeded:** What follow-up experiments could amplify the gain?
 **If experiment failed:** What does the failure tell us? What alternative approaches?
 
+**If you've hit a ceiling (e.g., "DRKG ceiling", "can't improve R@30"):**
+
+STOP. A ceiling on ONE metric is NOT a reason to stop research. Pivot to:
+
+1. **Precision/Calibration**: Can't improve recall? Improve which predictions to trust.
+   - Meta-confidence model: predict per-disease success probability
+   - Prediction tiering by kNN coverage
+   - Category-specific confidence thresholds
+
+2. **Error Analysis**: Why do failures happen?
+   - Which drugs are systematically missed?
+   - Which disease categories fail and why?
+   - What features predict failure?
+
+3. **Inverse Problems**: What can we confidently EXCLUDE?
+   - High-confidence negative predictions
+   - Contraindication detection
+
+4. **Production Optimization**: Maximize value of existing capability
+   - Prioritize predictions for rare diseases (higher kNN success)
+   - Category-specific recommendation strategies
+
+5. **Meta-Science**: Improve the research process itself
+   - What predicts hypothesis success?
+   - Which research directions have highest ROI?
+
+**Science never ends. There is ALWAYS another question to ask.**
+
 Add new hypotheses to the roadmap with appropriate priority.
 
 ### STEP 7: COMMIT PROGRESS
@@ -144,17 +172,23 @@ Before context fills:
 
 ## COMPLETION CRITERIA
 
-**DEFAULT BEHAVIOR: CONTINUE.** After completing a hypothesis, move on to the next pending one.
+**DEFAULT BEHAVIOR: CONTINUE INDEFINITELY.** After completing a hypothesis, move on to the next pending one.
 
 Only pause (output `<promise>RESEARCH PAUSED</promise>`) when ALL of these are true:
 - All pending hypotheses are exhausted or blocked
 - You cannot generate any new actionable hypotheses
+- You have explicitly tried ALL pivot directions in research_spec.md
+- You have documented why each pivot direction is blocked
 
 **DO NOT PAUSE for:**
 - Major discoveries or pivots — record the finding, generate new hypotheses, and keep going
 - Invalidated hypotheses — that's normal science, move to the next one
 - Shifts in research direction — if you generated new hypotheses from a finding, pursue them
 - A single blocked hypothesis — skip it and work on the next pending one
+- Hitting a ceiling on one metric — pivot to other metrics (precision, calibration, etc.)
+- Running out of "obvious" hypotheses — generate creative new ones from error analysis
+
+**REMEMBER: Science never ends. If you think there's nothing left to do, you're not thinking creatively enough. Read the "Research Directions" section in research_spec.md for pivot strategies.**
 
 ---
 
