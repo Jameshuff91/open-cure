@@ -1,11 +1,11 @@
 # Research Loop Progress
 
-## Current Session: h49-h56 (2026-01-31)
+## Current Session: h49-h58 (2026-01-31)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (7 hypotheses tested)
+**Status:** Completed (8 hypotheses tested)
 **Hypotheses Tested:**
 - h49: Gene Expression → Drug Mapping Pipeline - **VALIDATED**
 - h50: Rare Skin Disease Baseline Evaluation - **VALIDATED**
@@ -14,47 +14,50 @@
 - h53: Skin Disease Name Mapping Expansion - **VALIDATED**
 - h54: Production Meta-Confidence Pipeline - **VALIDATED**
 - h56: Cancer Category Analysis Deep Dive - **VALIDATED**
+- h58: 'Other' Category Subcategorization - **VALIDATED**
 
-### Key Discoveries
+### CRITICAL DISCOVERY: Gastrointestinal Diseases
 
-1. **Skin diseases perform exceptionally well** (54-55% R@30 vs 33% baseline)
-2. **Autoimmune/dermatological achieve 100% hit rate** in kNN
-3. **Cancer is NOT the problem** (71.4% hit rate, above average)
-4. **Metabolic diseases are worst** (37.5% hit rate)
-5. **'Other' category drives most failures** (54.7% hit rate, largest category)
-6. **Gene Jaccard is worse than Node2Vec** (-14.71 pp)
-7. **Meta-confidence tiering works** (HIGH tier: 100% hit rate)
+**h58 revealed GI diseases have only 5% hit rate** - a severe blind spot.
 
-### Deliverables Created
+### Extended Category Performance (16 categories, 5-seed):
+
+| Category | Hit Rate | Priority |
+|----------|----------|----------|
+| Endocrine | 100.0% | ★★★ High confidence |
+| Autoimmune | 92.9% | ★★★ High confidence |
+| Dermatological | 88.2% | ★★★ High confidence |
+| Psychiatric | 83.3% | ★★★ High confidence |
+| Infectious | 75.0% | ★★ Good |
+| Respiratory | 71.4% | ★★ Good |
+| Cancer | 70.8% | ★★ Good |
+| Ophthalmic | 66.7% | ★★ Good |
+| Cardiovascular | 62.5% | ★ Average |
+| Neurological | 60.0% | ★ Average |
+| Other | 57.8% | ★ Average |
+| Metabolic | 54.5% | ★ Average |
+| Renal | 40.0% | ⚠ Below average |
+| Musculoskeletal | 33.3% | ⚠ Below average |
+| Hematological | 22.2% | ⚠ Below average |
+| **Gastrointestinal** | **5.0%** | ❌ **CRITICAL FAILURE** |
+
+### Key Deliverables Created
 
 1. **Gene Expression → Drug Pipeline**: `scripts/gene_expression_drug_mapping.py`
-2. **Meta-Confidence Model**: `models/meta_confidence_model.pkl`, `meta_confidence_helper.py`
-3. **Expanded Skin Mappings**: 26 manual MESH mappings added
+2. **Meta-Confidence Model**: `models/meta_confidence_model.pkl`
+3. **Extended Categories**: 16-category system (vs 8 original)
 
-### Category Performance Summary
+### Remaining Hypotheses
 
-| Category | Hit Rate | Notes |
-|----------|----------|-------|
-| Autoimmune | 100.0% | Best performer |
-| Dermatological | 100.0% | Best performer |
-| Respiratory | 73.7% | Good |
-| Cancer | 71.4% | Good (contrary to expectation) |
-| Infectious | 63.2% | Moderate |
-| Neurological | 60.0% | Moderate |
-| Cardiovascular | 57.1% | Below average |
-| Other | 54.7% | Large category, drives failures |
-| Metabolic | 37.5% | Worst performer |
+1. h59: Gastrointestinal Disease Failure Analysis (Priority 1) - URGENT
+2. h60: Update Meta-Confidence Model with Extended Categories (Priority 2)
+3. h57: Metabolic Disease Deep Dive (Priority 2)
+4. h55: GEO Gene Expression Data Integration (Priority 3)
+5. h16: Clinical Trial Phase Features (Priority 20)
 
-### Remaining Pending Hypotheses
+### Production Recommendations
 
-1. h58: 'Other' Category Subcategorization (Priority 1)
-2. h57: Metabolic Disease Deep Dive (Priority 2)
-3. h55: GEO Gene Expression Data Integration (Priority 3)
-4. h16: Clinical Trial Phase Features (Priority 20)
-
-### Recommended Next Steps
-
-1. **h58: Subcategorize 'Other'** - 304 diseases, 54.7% hit rate, largest improvement opportunity
-2. **h57: Metabolic deep dive** - Understand why only 37.5% hit rate
-3. **Deploy meta-confidence tiering** - HIGH tier ready for production
-4. **Focus predictions on autoimmune/dermatological** - 100% hit rate categories
+1. **IMMEDIATELY flag or exclude GI predictions** - 5% success rate is worse than random
+2. **Prioritize endocrine/autoimmune/dermatological/psychiatric** - >80% hit rate
+3. **Use HIGH confidence tier** - 100% hit rate demonstrated
+4. **Investigate GI root cause** - may reveal fixable architectural issue

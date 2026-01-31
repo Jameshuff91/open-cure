@@ -1117,6 +1117,36 @@
       "rationale": "'Other' is the largest category (304 diseases) with 54.7% hit rate. Better categorization could improve meta-confidence model and targeting.",
       "findings": "Extended categorization reveals hidden performance patterns.\n\n**'Other' Category Reduction:** 304 \u2192 222 (27% reduction)\n\n**NEW Category Performance (5-seed hit rate):**\n| Category | Hit Rate | n |\n|----------|----------|---|\n| Endocrine | 100.0% | 4 |\n| Autoimmune | 92.9% | 14 |\n| Dermatological | 88.2% | 17 |\n| Psychiatric | 83.3% | 6 |\n| Infectious | 75.0% | 32 |\n| Respiratory | 71.4% | 14 |\n| Cancer | 70.8% | 65 |\n| Ophthalmic | 66.7% | 6 |\n| Cardiovascular | 62.5% | 16 |\n| Neurological | 60.0% | 5 |\n| Other | 57.8% | 223 |\n| Metabolic | 54.5% | 11 |\n| Renal | 40.0% | 5 |\n| Musculoskeletal | 33.3% | 3 |\n| Hematological | 22.2% | 9 |\n| **Gastrointestinal** | **5.0%** | **20** |\n\n**CRITICAL FINDING:** Gastrointestinal diseases have only 5.0% hit rate (20 diseases).\nThis is a SEVERE blind spot not previously identified.\n\n**Implications:**\n1. Don't surface GI predictions without caveats\n2. Prioritize autoimmune/dermatological/psychiatric predictions\n3. Hematological and musculoskeletal also need special handling\n",
       "result_metric": "GI: 5% hit rate (critical); Endocrine/Autoimmune/Derm: 88-100%"
+    },
+    {
+      "id": "h59",
+      "title": "Gastrointestinal Disease Failure Analysis",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "low",
+      "steps": [
+        "1. Identify all 15-20 GI diseases in GT",
+        "2. Analyze kNN neighbor composition (are neighbors also GI?)",
+        "3. Check drug specificity (are GI drugs specialized?)",
+        "4. Determine if GI is systematically different from other categories"
+      ],
+      "rationale": "GI has CRITICAL 5% hit rate. Understanding the root cause could reveal a fixable issue."
+    },
+    {
+      "id": "h60",
+      "title": "Update Meta-Confidence Model with Extended Categories",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "1. Retrain meta-confidence model with 16 extended categories",
+        "2. Add GI flag as high-weight negative predictor",
+        "3. Evaluate improvement in AUC and calibration",
+        "4. Update production model"
+      ],
+      "rationale": "h58 found extended categories reveal better patterns. Model should use this."
     }
   ],
   "completed": [
