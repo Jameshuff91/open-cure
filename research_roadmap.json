@@ -1151,6 +1151,36 @@
       "rationale": "h58 found extended categories reveal better patterns. Model should use this.",
       "findings": "Extended category meta-confidence model improves discrimination and reduces variance.\n\n**Performance Comparison:**\n| Model | AUC | Variance |\n|-------|-----|----------|\n| Original (8 cat) | 0.733 | \u00b10.072 |\n| Extended (16 cat) | 0.757 | \u00b10.027 |\n| Improvement | +0.024 | -62% variance |\n\n**Top Feature Importance (Extended Model):**\n| Feature | Importance |\n|---------|------------|\n| cat_cancer | 0.114 |\n| cat_gastrointestinal | 0.113 |\n| cat_other | 0.101 |\n| mean_neighbor_gt | 0.097 |\n| min_sim | 0.069 |\n\n**Key Finding:** cat_gastrointestinal has second-highest importance (0.113), validating h59 finding that GI is a strong predictor of failure.\n\n**Saved:** models/meta_confidence_model_extended.pkl\n",
       "result_metric": "AUC 0.757 (+0.024), variance -62%"
+    },
+    {
+      "id": "h61",
+      "title": "Bio Foundation Model Disease Embeddings (helicalAI Integration)",
+      "description": "Use helicalAI's pre-trained Bio Foundation Models (scGPT, Geneformer, TranscriptFormer) to generate disease embeddings from gene expression profiles. These dense embeddings could provide better disease similarity measures than Node2Vec for kNN neighbor selection.",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "medium",
+      "collaboration": "ryland_mortlock",
+      "rationale": "h51 showed raw gene Jaccard fails (-14.71 pp vs Node2Vec) because it's binary/sparse. But helicalAI's foundation models, pre-trained on millions of single-cell samples, generate dense embeddings that capture nuanced biological relationships. This addresses the '23 pp gap requires external data' finding from h44. Could potentially break the 37% R@30 ceiling.",
+      "steps": [
+        "1. Install helical package (requires Python 3.11 venv)",
+        "2. Identify skin disease gene expression datasets (GEO/GTEx)",
+        "3. Generate disease embeddings using scGPT or Geneformer",
+        "4. Compare helical-based kNN vs Node2Vec kNN on skin diseases",
+        "5. If promising, integrate with Ryland's spatial transcriptomics output",
+        "6. Success criteria: >40% R@30 on skin diseases using helical embeddings (vs 54.87% Node2Vec baseline to establish if it's additive)"
+      ],
+      "external_resources": [
+        {
+          "name": "helicalAI/helical",
+          "url": "https://github.com/helicalAI/helical",
+          "description": "Framework for Bio Foundation Models (Geneformer, scGPT, TranscriptFormer, etc.)",
+          "stars": 188,
+          "license": "AGPL-3.0"
+        }
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -1447,7 +1477,22 @@
       "meeting_date": "2026-02-09",
       "data_type": "Gene expression (spatial transcriptomics from skin biopsies)",
       "goal": "Connect dysregulated gene modules with therapeutics using kNN embeddings",
-      "added": "2026-01-31T09:14:42.415919"
+      "added": "2026-01-31T09:14:42.415919",
+      "tools": ["helicalAI/helical (h61)"],
+      "notes": "helicalAI Bio Foundation Models could generate disease embeddings from Ryland's spatial transcriptomics output"
+    }
+  ],
+  "external_resources": [
+    {
+      "name": "helicalAI/helical",
+      "url": "https://github.com/helicalAI/helical",
+      "type": "Bio Foundation Models",
+      "models": ["Geneformer", "scGPT", "UCE", "TranscriptFormer", "HyenaDNA", "Evo2"],
+      "use_case": "Generate dense disease embeddings from gene expression to break 37% R@30 ceiling",
+      "hypothesis": "h61",
+      "installed": true,
+      "venv": ".venv-helical (Python 3.11)",
+      "added": "2026-01-31"
     }
   ]
 }

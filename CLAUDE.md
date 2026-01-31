@@ -250,6 +250,24 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 - DrugBank: `data/reference/drugbank_lookup.json`
 - Disease mapping: `data/reference/disease_ontology_mapping.json`
 
+## External Resources for Breaking the 37% Ceiling
+
+The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These external resources may help:
+
+| Resource | Type | Potential Use | Hypothesis |
+|----------|------|---------------|------------|
+| **helicalAI/helical** | Bio Foundation Models | Dense disease embeddings from gene expression | h61 |
+| GEO/GTEx | Gene expression DB | Skin disease expression profiles for Ryland | h61 |
+| DrugBank indications | Drug-disease GT | Expand ground truth coverage | h4 |
+| UMLS Metathesaurus | Ontology cross-refs | Improve disease name mapping | h9 |
+
+**helicalAI/helical** (https://github.com/helicalAI/helical):
+- Pre-trained models: Geneformer, scGPT, TranscriptFormer, HyenaDNA, Evo2
+- Input: Gene expression counts, DNA/RNA sequences
+- Output: Dense embeddings capturing biological relationships
+- **Why it matters**: h51 showed raw gene Jaccard fails (-14.71 pp), but foundation model embeddings capture nuanced relationships from millions of single-cell samples
+- **Install**: Requires Python 3.11 (`source .venv-helical/bin/activate`)
+
 ## Critical Finding: Disease Name Matching (2026-01-25)
 
 **FIXED:** Fuzzy matching now improves R@30 from 37.4% → 41.8%
