@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h71, h82, h83, h86, h80, h81 (2026-01-31, continued)
+## Current Session: h71, h82, h83, h86, h80, h81, h88 (2026-01-31, continued)
 
 ### Session Summary
 
@@ -13,6 +13,7 @@
 - h86: Same-Category Neighbor Ratio as Confidence Feature - **INVALIDATED**
 - h80: Autoimmune-Only Production Model - **VALIDATED**
 - h81: GI Disease Alternative Strategy - **VALIDATED**
+- h88: Confidence Explanation Generation - **VALIDATED**
 
 ### Key Findings
 
@@ -51,13 +52,19 @@
 - Low confidence (0.41) correctly signals unreliability
 - h71's exclusion is the right approach
 
+**h88: Confidence Explanation Framework Created**
+- 3 tier-based explanation templates for user-facing output
+- TIER 1: "93-100% precision, strong mechanistic overlap"
+- TIER 2: "~80% precision at 0.6+, recommend literature validation"
+- TIER 3: "Exploratory only, consider specialized databases"
+
 ### Session Statistics
 
-- Hypotheses tested: 6
-- Validated: 4 (h71, h83, h80, h81)
+- Hypotheses tested: 7
+- Validated: 5 (h71, h83, h80, h81, h88)
 - Inconclusive: 1 (h82)
 - Invalidated: 1 (h86)
-- New hypotheses added: h82-h86 (generated during session)
+- New hypotheses added: h82-h89
 
 ### Pending Hypotheses
 
@@ -66,8 +73,10 @@
 | 1 | h69 | Production Pipeline Integration | high |
 | 2 | h74 | Use Case-Aware Production API | medium |
 | 2 | h84 | Tier-Based User Interface Design | medium |
+| 2 | h89 | Validation Priority Scoring | medium |
 | 3 | h55 | GEO Gene Expression Data Integration | high |
 | 3 | h85 | Metabolic Disease Rescue via Alternative Similarity | medium |
+| 3 | h87 | Drug Mechanism Clustering | medium |
 | 4 | h64 | ARCHS4 Gene Expression | high |
 | 20 | h16 | Clinical Trial Phase Features | medium |
 
@@ -75,7 +84,8 @@
 
 1. **h84**: Tier-based UI design based on h71's calibration findings
 2. **h74**: Use case-aware API leveraging h70's threshold recommendations
-3. **h69**: Full production pipeline integration (high effort but high value)
+3. **h89**: Validation priority scoring for clinical partners
+4. **h69**: Full production pipeline integration (high effort but high value)
 
 ### Key Learnings
 
@@ -84,6 +94,7 @@
 3. **Derived metrics don't help:** Same-category neighbor ratio doesn't add value over direct category tiering
 4. **Node2Vec limitations:** Respiratory/GI diseases aren't well-captured by graph embeddings
 5. **Autoimmune excellence:** Shared mechanisms make autoimmune the "safe" category for predictions
+6. **Tier-based explanations:** Users understand category tiers better than numeric scores
 
 ---
 
@@ -119,9 +130,9 @@
 
 | Status | Count |
 |--------|-------|
-| Validated | 33 |
+| Validated | 35 |
 | Invalidated | 25 |
 | Inconclusive | 4 |
 | Blocked | 14 |
-| Pending | 7 |
-| **Total Tested** | **62** |
+| Pending | 9 |
+| **Total Tested** | **64** |
