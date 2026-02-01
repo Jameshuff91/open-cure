@@ -1291,7 +1291,7 @@
       "id": "h67",
       "title": "Drug Class Boosting for kNN",
       "description": "When kNN pool drugs are in the same drug class as GT drugs (e.g., statins, SGLT2i), boost their rank. This uses drug-level signal without gene features.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
@@ -1303,8 +1303,8 @@
         "4. Evaluate if ATC-boosted kNN improves over vanilla",
         "5. Success criteria: >1 pp improvement over kNN baseline"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h67 INVALIDATED: ATC boosting HURTS kNN performance.\n\nResults (5-seed mean):\n- Vanilla kNN: 57.57% R@30\n- Boost=0.25: 57.11% (-0.46 pp)\n- Boost=0.5: 57.11% (-0.46 pp)\n- Boost=1.0: 56.66% (-0.91 pp)\n\nWhy it failed:\n1. Low ATC coverage: only 29.1% of drugs have ATC mappings\n2. ATC level 1 is too coarse (14 categories for all drugs)\n3. Node2Vec embeddings already capture drug similarity\n4. Boosting by coarse category overrides fine-grained embedding signal\n5. kNN pool already contains drugs with shared therapeutic relevance\n\nThis confirms that DRKG embeddings are sufficient; external ontology boosting adds noise.",
+      "result_metric": "INVALIDATED: Vanilla 57.57% vs Boost 57.11% (-0.46 pp)"
     },
     {
       "id": "h68",
@@ -1872,6 +1872,12 @@
       "hypothesis_id": "h78",
       "learning": "Correlation between known indication count and confidence is effect, not cause. Can't use as feature: test disease GT is leakage, neighbor GT already in model.",
       "implication": "Be careful distinguishing descriptive findings (X correlates with Y) from actionable features (adding X as feature improves Y)."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h67",
+      "learning": "ATC class boosting hurts kNN performance. Node2Vec embeddings already capture drug similarity; coarse ontology categories add noise.",
+      "implication": "Don't layer ontology-based features on top of learned embeddings for drug ranking."
     }
   ],
   "collaborations": [
