@@ -1,0 +1,72 @@
+{
+  "hypothesis": "h74",
+  "title": "Use Case-Aware Production API",
+  "date": "2026-01-31",
+  "status": "validated",
+  "use_cases": {
+    "discovery": {
+      "description": "Broad exploration of potential drug candidates",
+      "threshold": 0.3,
+      "method": "combined_avg",
+      "expected_precision": 0.57,
+      "expected_coverage": "high",
+      "tier_filter": null,
+      "action": "Generate hypotheses for further investigation"
+    },
+    "validation": {
+      "description": "Literature-backed candidates for experimental validation",
+      "threshold": 0.5,
+      "method": "prob_h52",
+      "expected_precision": 0.75,
+      "expected_coverage": "medium",
+      "tier_filter": [
+        1,
+        2
+      ],
+      "action": "Review literature before proceeding to experiments"
+    },
+    "clinical": {
+      "description": "High-confidence candidates for clinical investigation",
+      "threshold": 0.8,
+      "method": "combined_avg",
+      "expected_precision": 1.0,
+      "expected_coverage": "low",
+      "tier_filter": [
+        1
+      ],
+      "action": "Ready for clinical validation partnership"
+    }
+  },
+  "tier_mapping": {
+    "autoimmune": 1,
+    "dermatological": 1,
+    "psychiatric": 1,
+    "ophthalmic": 1,
+    "cardiovascular": 2,
+    "other": 2,
+    "endocrine": 2,
+    "cancer": 2,
+    "musculoskeletal": 2,
+    "infectious": 2,
+    "metabolic": 3,
+    "respiratory": 3,
+    "gastrointestinal": 3,
+    "hematological": 3,
+    "neurological": 3,
+    "renal": 3
+  },
+  "example_queries": [
+    {
+      "query": "get_predictions('multiple sclerosis', 'discovery')",
+      "result_count": 5
+    },
+    {
+      "query": "get_predictions('rheumatoid arthritis', 'clinical')",
+      "result_count": 5
+    },
+    {
+      "query": "get_predictions('lupus', 'validation')",
+      "result_count": 5
+    }
+  ]
+}

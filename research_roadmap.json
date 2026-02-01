@@ -1423,7 +1423,7 @@
       "id": "h74",
       "title": "Use Case-Aware Production API",
       "description": "Implement production API with use_case parameter (discovery/validation/clinical) that automatically selects optimal method and threshold from h70 findings.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
@@ -1435,8 +1435,8 @@
         "4. Add documentation for each use case",
         "5. Test on example queries"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Use Case-Aware Production API designed:\n\nAPI: get_predictions(disease_name, use_case, limit)\n\nUSE CASES:\n1. DISCOVERY (threshold 0.3, all tiers):\n   - 13,416 predictions, 12,370 novel, 448 diseases\n   - 57% precision, broad exploration\n\n2. VALIDATION (threshold 0.5, Tier 1-2):\n   - 9,468 predictions, 8,600 novel, 316 diseases\n   - 75% precision, literature review recommended\n\n3. CLINICAL (threshold 0.8, Tier 1 only):\n   - 450 predictions, 309 novel, 15 diseases\n   - 100% precision, ready for clinical partnership\n\nEXAMPLES:\n- get_predictions('multiple sclerosis', 'discovery') \u2192 5+ drugs at Tier 1\n- get_predictions('rheumatoid arthritis', 'clinical') \u2192 Hydrocortisone, Baricitinib\n- get_predictions('lupus', 'validation') \u2192 Methylprednisolone, Canakinumab\n\nVALUE: Users select appropriate mode for their research stage.",
+      "result_metric": "Discovery: 448 diseases, Validation: 316, Clinical: 15"
     },
     {
       "id": "h75",
@@ -2130,6 +2130,12 @@
       "hypothesis_id": "h89",
       "learning": "Priority scoring should weight novelty (1.5x), tier reliability (1.0/0.7/0.3), and disease rarity. This creates actionable rankings for clinical validation partners.",
       "implication": "Production system should expose priority scores and allow sorting/filtering by priority for validation workflow."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h74",
+      "learning": "Use case-aware API with discovery/validation/clinical modes allows users to select precision-coverage tradeoff appropriate for their research stage.",
+      "implication": "Production API should require use_case parameter to ensure users understand precision expectations."
     }
   ],
   "collaborations": [
