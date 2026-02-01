@@ -1,0 +1,664 @@
+{
+  "hypothesis": "h77",
+  "title": "Category-Specific Confidence Thresholds",
+  "date": "2026-01-31",
+  "category_curves": {
+    "cardiovascular": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.07111111111111111,
+        "n_predictions": 450,
+        "n_known": 32,
+        "n_novel": 418
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.07111111111111111,
+        "n_predictions": 450,
+        "n_known": 32,
+        "n_novel": 418
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.10333333333333333,
+        "n_predictions": 300,
+        "n_known": 31,
+        "n_novel": 269
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.16111111111111112,
+        "n_predictions": 180,
+        "n_known": 29,
+        "n_novel": 151
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.35,
+        "n_predictions": 60,
+        "n_known": 21,
+        "n_novel": 39
+      }
+    ],
+    "renal": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.10952380952380952,
+        "n_predictions": 210,
+        "n_known": 23,
+        "n_novel": 187
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.10952380952380952,
+        "n_predictions": 210,
+        "n_known": 23,
+        "n_novel": 187
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.15333333333333332,
+        "n_predictions": 150,
+        "n_known": 23,
+        "n_novel": 127
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.36666666666666664,
+        "n_predictions": 60,
+        "n_known": 22,
+        "n_novel": 38
+      }
+    ],
+    "metabolic": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.15185185185185185,
+        "n_predictions": 270,
+        "n_known": 41,
+        "n_novel": 229
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.15185185185185185,
+        "n_predictions": 270,
+        "n_known": 41,
+        "n_novel": 229
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.22777777777777777,
+        "n_predictions": 180,
+        "n_known": 41,
+        "n_novel": 139
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.2733333333333333,
+        "n_predictions": 150,
+        "n_known": 41,
+        "n_novel": 109
+      }
+    ],
+    "other": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.06166118004558116,
+        "n_predictions": 7898,
+        "n_known": 487,
+        "n_novel": 7411
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.06166118004558116,
+        "n_predictions": 7898,
+        "n_known": 487,
+        "n_novel": 7411
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.07867073584265853,
+        "n_predictions": 5898,
+        "n_known": 464,
+        "n_novel": 5434
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.10002653223666755,
+        "n_predictions": 3769,
+        "n_known": 377,
+        "n_novel": 3392
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.12073170731707317,
+        "n_predictions": 1640,
+        "n_known": 198,
+        "n_novel": 1442
+      }
+    ],
+    "cancer": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.06666666666666667,
+        "n_predictions": 1650,
+        "n_known": 110,
+        "n_novel": 1540
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.06666666666666667,
+        "n_predictions": 1650,
+        "n_known": 110,
+        "n_novel": 1540
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.07482993197278912,
+        "n_predictions": 1470,
+        "n_known": 110,
+        "n_novel": 1360
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.0775,
+        "n_predictions": 1200,
+        "n_known": 93,
+        "n_novel": 1107
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.12,
+        "n_predictions": 150,
+        "n_known": 18,
+        "n_novel": 132
+      }
+    ],
+    "autoimmune": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.23541666666666666,
+        "n_predictions": 480,
+        "n_known": 113,
+        "n_novel": 367
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.23541666666666666,
+        "n_predictions": 480,
+        "n_known": 113,
+        "n_novel": 367
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.23541666666666666,
+        "n_predictions": 480,
+        "n_known": 113,
+        "n_novel": 367
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.23541666666666666,
+        "n_predictions": 480,
+        "n_known": 113,
+        "n_novel": 367
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.23541666666666666,
+        "n_predictions": 480,
+        "n_known": 113,
+        "n_novel": 367
+      },
+      {
+        "threshold": 0.8,
+        "precision_lb": 0.3055555555555556,
+        "n_predictions": 360,
+        "n_known": 110,
+        "n_novel": 250
+      }
+    ],
+    "infectious": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.0962962962962963,
+        "n_predictions": 540,
+        "n_known": 52,
+        "n_novel": 488
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.0962962962962963,
+        "n_predictions": 540,
+        "n_known": 52,
+        "n_novel": 488
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.0962962962962963,
+        "n_predictions": 540,
+        "n_known": 52,
+        "n_novel": 488
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.08125,
+        "n_predictions": 480,
+        "n_known": 39,
+        "n_novel": 441
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.11851851851851852,
+        "n_predictions": 270,
+        "n_known": 32,
+        "n_novel": 238
+      },
+      {
+        "threshold": 0.8,
+        "precision_lb": 0.03333333333333333,
+        "n_predictions": 30,
+        "n_known": 1,
+        "n_novel": 29
+      }
+    ],
+    "dermatological": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.19696969696969696,
+        "n_predictions": 330,
+        "n_known": 65,
+        "n_novel": 265
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.19696969696969696,
+        "n_predictions": 330,
+        "n_known": 65,
+        "n_novel": 265
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.19696969696969696,
+        "n_predictions": 330,
+        "n_known": 65,
+        "n_novel": 265
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.19696969696969696,
+        "n_predictions": 330,
+        "n_known": 65,
+        "n_novel": 265
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.19696969696969696,
+        "n_predictions": 330,
+        "n_known": 65,
+        "n_novel": 265
+      },
+      {
+        "threshold": 0.8,
+        "precision_lb": 0.34444444444444444,
+        "n_predictions": 90,
+        "n_known": 31,
+        "n_novel": 59
+      }
+    ],
+    "respiratory": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.16463414634146342,
+        "n_predictions": 328,
+        "n_known": 54,
+        "n_novel": 274
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.16463414634146342,
+        "n_predictions": 328,
+        "n_known": 54,
+        "n_novel": 274
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.16463414634146342,
+        "n_predictions": 328,
+        "n_known": 54,
+        "n_novel": 274
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.18120805369127516,
+        "n_predictions": 298,
+        "n_known": 54,
+        "n_novel": 244
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.17415730337078653,
+        "n_predictions": 178,
+        "n_known": 31,
+        "n_novel": 147
+      }
+    ],
+    "gastrointestinal": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.02857142857142857,
+        "n_predictions": 210,
+        "n_known": 6,
+        "n_novel": 204
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.06666666666666667,
+        "n_predictions": 90,
+        "n_known": 6,
+        "n_novel": 84
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.0,
+        "n_predictions": 30,
+        "n_known": 0,
+        "n_novel": 30
+      }
+    ],
+    "endocrine": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.06666666666666667,
+        "n_predictions": 150,
+        "n_known": 10,
+        "n_novel": 140
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.06666666666666667,
+        "n_predictions": 150,
+        "n_known": 10,
+        "n_novel": 140
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.06666666666666667,
+        "n_predictions": 150,
+        "n_known": 10,
+        "n_novel": 140
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.06666666666666667,
+        "n_predictions": 150,
+        "n_known": 10,
+        "n_novel": 140
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.058333333333333334,
+        "n_predictions": 120,
+        "n_known": 7,
+        "n_novel": 113
+      },
+      {
+        "threshold": 0.8,
+        "precision_lb": 0.06666666666666667,
+        "n_predictions": 90,
+        "n_known": 6,
+        "n_novel": 84
+      }
+    ],
+    "ophthalmic": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.1,
+        "n_predictions": 120,
+        "n_known": 12,
+        "n_novel": 108
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.1,
+        "n_predictions": 120,
+        "n_known": 12,
+        "n_novel": 108
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.1,
+        "n_predictions": 120,
+        "n_known": 12,
+        "n_novel": 108
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.1,
+        "n_predictions": 120,
+        "n_known": 12,
+        "n_novel": 108
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.03333333333333333,
+        "n_predictions": 30,
+        "n_known": 1,
+        "n_novel": 29
+      }
+    ],
+    "hematological": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.09583333333333334,
+        "n_predictions": 240,
+        "n_known": 23,
+        "n_novel": 217
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.15333333333333332,
+        "n_predictions": 150,
+        "n_known": 23,
+        "n_novel": 127
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.1111111111111111,
+        "n_predictions": 90,
+        "n_known": 10,
+        "n_novel": 80
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.3333333333333333,
+        "n_predictions": 30,
+        "n_known": 10,
+        "n_novel": 20
+      }
+    ],
+    "musculoskeletal": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.0125,
+        "n_predictions": 240,
+        "n_known": 3,
+        "n_novel": 237
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.016666666666666666,
+        "n_predictions": 180,
+        "n_known": 3,
+        "n_novel": 177
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.0,
+        "n_predictions": 90,
+        "n_known": 0,
+        "n_novel": 90
+      }
+    ],
+    "neurological": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.01904761904761905,
+        "n_predictions": 210,
+        "n_known": 4,
+        "n_novel": 206
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.01904761904761905,
+        "n_predictions": 210,
+        "n_known": 4,
+        "n_novel": 206
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.02666666666666667,
+        "n_predictions": 150,
+        "n_known": 4,
+        "n_novel": 146
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.0,
+        "n_predictions": 30,
+        "n_known": 0,
+        "n_novel": 30
+      }
+    ],
+    "psychiatric": [
+      {
+        "threshold": 0.3,
+        "precision_lb": 0.12222222222222222,
+        "n_predictions": 90,
+        "n_known": 11,
+        "n_novel": 79
+      },
+      {
+        "threshold": 0.4,
+        "precision_lb": 0.12222222222222222,
+        "n_predictions": 90,
+        "n_known": 11,
+        "n_novel": 79
+      },
+      {
+        "threshold": 0.5,
+        "precision_lb": 0.12222222222222222,
+        "n_predictions": 90,
+        "n_known": 11,
+        "n_novel": 79
+      },
+      {
+        "threshold": 0.6,
+        "precision_lb": 0.1,
+        "n_predictions": 60,
+        "n_known": 6,
+        "n_novel": 54
+      },
+      {
+        "threshold": 0.7,
+        "precision_lb": 0.1,
+        "n_predictions": 60,
+        "n_known": 6,
+        "n_novel": 54
+      }
+    ]
+  },
+  "thresholds_for_90_pct": {
+    "cardiovascular": {
+      "threshold": null,
+      "max_precision": 0.35,
+      "achieves_target": false
+    },
+    "renal": {
+      "threshold": null,
+      "max_precision": 0.36666666666666664,
+      "achieves_target": false
+    },
+    "metabolic": {
+      "threshold": null,
+      "max_precision": 0.2733333333333333,
+      "achieves_target": false
+    },
+    "other": {
+      "threshold": null,
+      "max_precision": 0.12073170731707317,
+      "achieves_target": false
+    },
+    "cancer": {
+      "threshold": null,
+      "max_precision": 0.12,
+      "achieves_target": false
+    },
+    "autoimmune": {
+      "threshold": null,
+      "max_precision": 0.3055555555555556,
+      "achieves_target": false
+    },
+    "infectious": {
+      "threshold": null,
+      "max_precision": 0.11851851851851852,
+      "achieves_target": false
+    },
+    "dermatological": {
+      "threshold": null,
+      "max_precision": 0.34444444444444444,
+      "achieves_target": false
+    },
+    "respiratory": {
+      "threshold": null,
+      "max_precision": 0.18120805369127516,
+      "achieves_target": false
+    },
+    "gastrointestinal": {
+      "threshold": null,
+      "max_precision": 0.06666666666666667,
+      "achieves_target": false
+    },
+    "endocrine": {
+      "threshold": null,
+      "max_precision": 0.06666666666666667,
+      "achieves_target": false
+    },
+    "ophthalmic": {
+      "threshold": null,
+      "max_precision": 0.1,
+      "achieves_target": false
+    },
+    "hematological": {
+      "threshold": null,
+      "max_precision": 0.3333333333333333,
+      "achieves_target": false
+    },
+    "musculoskeletal": {
+      "threshold": null,
+      "max_precision": 0.016666666666666666,
+      "achieves_target": false
+    },
+    "neurological": {
+      "threshold": null,
+      "max_precision": 0.02666666666666667,
+      "achieves_target": false
+    },
+    "psychiatric": {
+      "threshold": null,
+      "max_precision": 0.12222222222222222,
+      "achieves_target": false
+    }
+  },
+  "comparison": {
+    "global_approach": {
+      "method": "combined_avg @ 0.8",
+      "coverage_predictions": 150,
+      "precision": 1.0
+    },
+    "category_specific": {
+      "coverage_predictions": 0,
+      "target_precision": 0.9
+    }
+  }
+}

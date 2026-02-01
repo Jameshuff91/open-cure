@@ -1368,9 +1368,9 @@
     {
       "id": "h71",
       "title": "Per-Category Calibration",
-      "description": "Train category-specific calibration models since some categories (GI, hematological) have fundamental kNN blind spots.",
+      "description": "Train category-specific calibration models since some categories (GI, hematological) have fundamental kNN blind spots.\n\n[Updated after h77]: This is the methodologically correct approach. Must use held-out GT per category, not known indications.",
       "status": "pending",
-      "priority": 3,
+      "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
       "rationale": "h59 showed GI has 5% hit rate. Combining GI category prior (0.05) with model predictions should flag GI diseases as LOW confidence automatically.",
@@ -1478,7 +1478,7 @@
       "id": "h77",
       "title": "Category-Specific Confidence Thresholds",
       "description": "Since autoimmune achieves clinical precision at current thresholds but cancer/metabolic don't, test if category-specific thresholds can expand coverage while maintaining precision.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -1489,8 +1489,8 @@
         "3. Calculate coverage gain vs global threshold",
         "4. Recommend category-specific thresholds"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Category-specific thresholds analysis was inconclusive due to methodology limitation:\n\nPROBLEM: Used 'known indications' as ground truth for precision calculation.\n- Known indications are a LOWER BOUND \u2014 novel predictions may also be correct\n- Max precision achievable with this metric: ~35% (renal, cardiovascular)\n- NO category achieves even 75% precision using this metric\n\nThis contrasts with h68 which used held-out ground truth and found:\n- combined_avg @ 0.8: 100% precision\n- This is because h68 evaluated on diseases WHERE we know the GT drugs\n\nThe issue: production predictions include diseases for which we have NO GT evaluation.\nWithout proper held-out evaluation, we cannot determine per-category precision.\n\nIMPLICATION: Category-specific thresholds require per-category calibration using\nheld-out data (similar to h68 but stratified by category). This is captured in h71.",
+      "result_metric": "INCONCLUSIVE - methodology issue (known indications != true precision)"
     },
     {
       "id": "h78",
@@ -1854,6 +1854,12 @@
       "hypothesis_id": "h75",
       "learning": "CATEGORY is the dominant predictor of high-confidence diseases: autoimmune (68x enriched), endocrine (34x), dermatological (8.5x). Cancer and metabolic have 0% clinical tier representation.",
       "implication": "Clinical-tier predictions are only reliable for autoimmune/endocrine/dermatological. Other categories should use discovery or validation thresholds."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h77",
+      "learning": "Cannot evaluate per-category precision using 'known indications' as ground truth \u2014 this is only a lower bound. Proper calibration requires held-out GT data stratified by category.",
+      "implication": "h71 (Per-Category Calibration) is the correct approach; it should use held-out disease split per category."
     }
   ],
   "collaborations": [
