@@ -1685,13 +1685,15 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "1. Define \"novelty\" metric (how different from known indications)",
         "2. Get unmet medical need scores (e.g., from orphan drug lists)",
         "3. Combine confidence + novelty + need into priority score",
         "4. Generate ranked list for validation partners"
-      ]
+      ],
+      "findings": "Validation Priority Scoring formula created:\n\nFORMULA: priority = confidence \u00d7 novelty_bonus \u00d7 tier_weight \u00d7 rarity_weight\n\nCOMPONENTS:\n- novelty_bonus: 1.5 for novel, 1.0 for known indications\n- tier_weight: 1.0 (Tier 1), 0.7 (Tier 2), 0.3 (Tier 3)\n- rarity_weight: Higher for diseases with fewer known drugs\n\nDISTRIBUTION:\n- Tier 1 (HIGH): 819 novel predictions, mean priority 85.4\n- Tier 2 (MEDIUM): 10,234 novel predictions, mean priority 50.4\n- Tier 3 (LOW): 1,317 novel predictions, mean priority 19.0\n\nTOP ACTIONABLE PRIORITIES:\n- Polyarticular JIA: Methylprednisolone (priority 125.8)\n- Rheumatoid arthritis: Dapsone (priority 124.4)\n- Crohn's disease: Methylprednisolone (priority 124.2)\n- Psoriatic arthritis: Cyclosporine (priority 124.2)\n- Atherosclerosis: Lovastatin (priority 122.2)\n\nVALUE: Enables clinical partners to focus on highest-impact opportunities.",
+      "result_metric": "Top priority: 125.8, 819 Tier 1 novel predictions"
     }
   ],
   "completed": [
@@ -2122,6 +2124,12 @@
       "hypothesis_id": "h84",
       "learning": "Tier-based UI is more actionable than numeric confidence scores. 7.6% of predictions are HIGH confidence (ready for validation), 81.5% MEDIUM (literature review), 10.9% LOW (exploratory).",
       "implication": "Production UI should default to showing Tier 1 predictions and require explicit action to view lower tiers."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h89",
+      "learning": "Priority scoring should weight novelty (1.5x), tier reliability (1.0/0.7/0.3), and disease rarity. This creates actionable rankings for clinical validation partners.",
+      "implication": "Production system should expose priority scores and allow sorting/filtering by priority for validation workflow."
     }
   ],
   "collaborations": [

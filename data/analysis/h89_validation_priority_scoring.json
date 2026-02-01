@@ -1,0 +1,163 @@
+{
+  "hypothesis": "h89",
+  "title": "Validation Priority Scoring",
+  "date": "2026-01-31",
+  "formula": "priority = confidence * novelty_bonus * tier_weight * rarity_weight",
+  "components": {
+    "novelty_bonus": "1.5 for novel, 1.0 for known",
+    "tier_weight": {
+      "1": 1.0,
+      "2": 0.7,
+      "3": 0.3
+    },
+    "rarity_weight": "1 + 0.1 * (30 - num_known_drugs)"
+  },
+  "top_20_priorities": [
+    {
+      "drug_name": "Sirolimus",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Azithromycin",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Lanreotide",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Interferon gamma-1b",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Modafinil",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Sodium oxybate",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Amphotericin B",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Posaconazole",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Thiotepa",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Lonafarnib",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Sunitinib",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Gatifloxacin",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Vancomycin",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Levofloxacin",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Moxifloxacin",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Gentamicin",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Phylloquinone",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Ketoconazole",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Carbamazepine",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    },
+    {
+      "drug_name": "Ketotifen",
+      "disease_name": "tuberous sclerosis complex",
+      "priority_score": 100.0,
+      "tier": 1,
+      "confidence_prob": 0.81
+    }
+  ],
+  "statistics": {
+    "total_predictions": 13416,
+    "novel_predictions": 12370,
+    "mean_priority": 48.00931723315444,
+    "rare_disease_predictions": 11093
+  }
+}
