@@ -1,0 +1,182 @@
+{
+  "hypothesis": "h75",
+  "title": "Coverage Gap Analysis Between Use Cases",
+  "date": "2026-01-31",
+  "summary": {
+    "CLINICAL": {
+      "count": 19,
+      "avg_pool_size": 62.78947368421053,
+      "avg_neighbors_with_gt": 20.0,
+      "avg_confidence": 0.8219473684210526
+    },
+    "VALIDATION": {
+      "count": 328,
+      "avg_pool_size": 57.0640243902439,
+      "avg_neighbors_with_gt": 20.0,
+      "avg_confidence": 0.6428201219512195
+    },
+    "DISCOVERY": {
+      "count": 101,
+      "avg_pool_size": 53.02970297029703,
+      "avg_neighbors_with_gt": 20.0,
+      "avg_confidence": 0.44428712871287124
+    }
+  },
+  "predictors": {
+    "pool_size": {
+      "clinical_mean": 62.78947368421053,
+      "other_mean": 56.11421911421911,
+      "pct_difference": 11.895834380950932
+    },
+    "neighbors_with_gt": {
+      "clinical_mean": 20.0,
+      "other_mean": 20.0,
+      "pct_difference": 0.0
+    },
+    "num_predictions": {
+      "clinical_mean": 30.0,
+      "other_mean": 29.944055944055943,
+      "pct_difference": 0.18682858477347292
+    },
+    "num_known": {
+      "clinical_mean": 7.7894736842105265,
+      "other_mean": 2.093240093240093,
+      "pct_difference": 272.12519048177234
+    }
+  },
+  "clinical_diseases": [
+    {
+      "disease": "hypothyroidism",
+      "category": "endocrine",
+      "max_confidence": 0.843,
+      "pool_size": 48,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "primary hyperparathyroidism",
+      "category": "endocrine",
+      "max_confidence": 0.841,
+      "pool_size": 69,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "polyarticularcourse juvenile idiopathic arthritis",
+      "category": "autoimmune",
+      "max_confidence": 0.839,
+      "pool_size": 39,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "rheumatoid arthritis",
+      "category": "autoimmune",
+      "max_confidence": 0.829,
+      "pool_size": 131,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "psoriatic arthritis",
+      "category": "autoimmune",
+      "max_confidence": 0.828,
+      "pool_size": 42,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "ulcerative colitis",
+      "category": "autoimmune",
+      "max_confidence": 0.828,
+      "pool_size": 56,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "crohns disease",
+      "category": "autoimmune",
+      "max_confidence": 0.828,
+      "pool_size": 41,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "rheumatic fever",
+      "category": "autoimmune",
+      "max_confidence": 0.827,
+      "pool_size": 52,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "osteoarthritis",
+      "category": "autoimmune",
+      "max_confidence": 0.825,
+      "pool_size": 102,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "systemic lupus erythematosus",
+      "category": "autoimmune",
+      "max_confidence": 0.824,
+      "pool_size": 99,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "multiple sclerosis",
+      "category": "autoimmune",
+      "max_confidence": 0.822,
+      "pool_size": 99,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "streptococcal infections",
+      "category": "infectious",
+      "max_confidence": 0.821,
+      "pool_size": 61,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "congenital hypothyroidism",
+      "category": "endocrine",
+      "max_confidence": 0.818,
+      "pool_size": 55,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "atherosclerosis",
+      "category": "autoimmune",
+      "max_confidence": 0.815,
+      "pool_size": 68,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "atopic dermatitis",
+      "category": "dermatological",
+      "max_confidence": 0.811,
+      "pool_size": 52,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "tuberous sclerosis complex",
+      "category": "autoimmune",
+      "max_confidence": 0.81,
+      "pool_size": 47,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "severe seborrheic dermatitis",
+      "category": "dermatological",
+      "max_confidence": 0.806,
+      "pool_size": 41,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "psoriasis vulgaris",
+      "category": "autoimmune",
+      "max_confidence": 0.802,
+      "pool_size": 49,
+      "neighbors_with_gt": 20
+    },
+    {
+      "disease": "contact dermatitis",
+      "category": "dermatological",
+      "max_confidence": 0.8,
+      "pool_size": 42,
+      "neighbors_with_gt": 20
+    }
+  ]
+}

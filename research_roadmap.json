@@ -1442,7 +1442,7 @@
       "id": "h75",
       "title": "Coverage Gap Analysis Between Use Cases",
       "description": "Analyze which diseases are only reachable in Discovery mode (57% precision) vs Clinical mode (100% precision). Identify characteristics of 'high confidence' vs 'coverage-only' diseases.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -1453,8 +1453,8 @@
         "3. Identify predictors of 'high confidence' diseases",
         "4. Document patterns for future precision improvement"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Coverage gap analysis reveals strong predictors of high-confidence diseases:\n\n1. CATEGORY is the DOMINANT predictor:\n   - Autoimmune: 68x enriched in CLINICAL tier (63% of clinical diseases)\n   - Endocrine: 34x enriched  \n   - Dermatological: 8.5x enriched\n   - Cancer, metabolic, respiratory: ZERO in CLINICAL tier\n\n2. Known Indications: Clinical diseases have 3.7x more known indications (7.8 vs 2.1)\n   - Model confidence correlates with training signal density\n\n3. Pool Size: Minor predictor (+12% larger in clinical)\n\n4. Tier distribution: 19 CLINICAL (4%), 328 VALIDATION (73%), 101 DISCOVERY (23%)\n\n5. Clinical diseases are dominated by autoimmune conditions with well-characterized treatments:\n   - RA, UC, Crohn's, MS, lupus, psoriatic arthritis\n\nImplication: To expand clinical tier coverage, focus on categories with established treatment patterns (autoimmune, dermatological). Categories like cancer require fundamentally different approaches.",
+      "result_metric": "19 CLINICAL diseases, 63% autoimmune; category 68x enrichment vs 0% for cancer"
     },
     {
       "id": "h76",
@@ -1470,6 +1470,41 @@
         "2. Identify categories with >90% precision at lower thresholds",
         "3. Test if category filtering provides better coverage than global thresholding",
         "4. Compare: clinical (5 diseases) vs category-subsetting approach"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h77",
+      "title": "Category-Specific Confidence Thresholds",
+      "description": "Since autoimmune achieves clinical precision at current thresholds but cancer/metabolic don't, test if category-specific thresholds can expand coverage while maintaining precision.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h75 showed autoimmune is 68x enriched in CLINICAL tier while cancer has 0%. Different categories may need different thresholds to reach same precision target.",
+      "steps": [
+        "1. Calculate per-category precision at each threshold",
+        "2. Find minimum threshold for 90% precision per category",
+        "3. Calculate coverage gain vs global threshold",
+        "4. Recommend category-specific thresholds"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h78",
+      "title": "Known Indication Density as Confidence Proxy",
+      "description": "h75 showed clinical diseases have 3.7x more known indications. Test if 'known indication count for disease' can improve confidence predictions.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "If known indication count is a strong predictor, it could be added to the meta-confidence model to improve calibration.",
+      "steps": [
+        "1. Add 'known indication count' feature to confidence model",
+        "2. Evaluate if it improves precision/calibration",
+        "3. Check for leakage (circular if GT is used)"
       ],
       "findings": null,
       "result_metric": null
@@ -1813,6 +1848,12 @@
       "hypothesis_id": "h70",
       "learning": "Different confidence methods are optimal for different use cases: combined_avg for extremes (discovery/clinical), prob_h52 for balanced validation",
       "implication": "Production API should offer use-case parameter to select appropriate method/threshold"
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h75",
+      "learning": "CATEGORY is the dominant predictor of high-confidence diseases: autoimmune (68x enriched), endocrine (34x), dermatological (8.5x). Cancer and metabolic have 0% clinical tier representation.",
+      "implication": "Clinical-tier predictions are only reliable for autoimmune/endocrine/dermatological. Other categories should use discovery or validation thresholds."
     }
   ],
   "collaborations": [
