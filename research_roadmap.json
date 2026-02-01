@@ -1188,7 +1188,7 @@
       "id": "h62",
       "title": "Weighted Gene Association for Disease Similarity",
       "description": "Instead of binary gene associations (from disease_genes.json), use weighted associations based on: (1) Edge count in DRKG between disease and gene, (2) Evidence type (experimental vs computational), (3) Gene centrality in disease subgraph. Create weighted Jaccard similarity between diseases.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
@@ -1200,8 +1200,8 @@
         "4. Compare kNN with weighted similarity vs Node2Vec cosine",
         "5. Success criteria: Close gap with Node2Vec (>25% R@30 vs current 23.2% for raw Jaccard)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "WEIGHTED GENE JACCARD DOES NOT SIGNIFICANTLY IMPROVE OVER BINARY\n\nEvaluation: 5-seed holdout on 719 diseases\n\nResults:\n- Binary Jaccard: 14.34% \u00b1 1.14% R@30\n- IDF-Weighted Jaccard: 15.56% \u00b1 1.27% R@30\n- Improvement: +1.22 pp (not significant)\n- Node2Vec baseline: 37.04% \u00b1 5.81%\n- Gap to Node2Vec: -21.48 pp\n\nWeighting Approach:\n- Used IDF (Inverse Disease Frequency) weights: log(N / count)\n- Genes appearing in many diseases get lower weight\n- This should emphasize disease-specific genes\n\nWhy It Fails:\n1. Gene associations in DRKG are too sparse (avg ~25 genes/disease)\n2. Jaccard similarity is fundamentally limited by set overlap\n3. Node2Vec captures multi-hop paths (gene\u2192drug\u2192disease) that Jaccard misses\n4. Even perfect gene weighting can't add information that isn't there\n\nConclusion:\n- Gene-based similarity consistently underperforms graph-based (h19, h51, h61, h62)\n- The graph STRUCTURE provides more signal than node attributes\n- Weighting adds marginal value but doesn't address fundamental limitation",
+      "result_metric": "15.56% R@30 (+1.22 pp vs binary, -21.48 pp vs Node2Vec)"
     },
     {
       "id": "h63",
@@ -1572,6 +1572,12 @@
       "hypothesis_id": "h65",
       "learning": "Meta-learning can predict disease kNN success with 70-96% precision depending on coverage/recall tradeoff. Key features: neighbors_with_gt and pool_size dominate. Diseases with many neighbors that have GT and large drug pools succeed; rare diseases with few GT neighbors fail.",
       "implication": "Production system can use probability threshold 0.59 to identify HIGH-confidence predictions (70% precision on 27% of diseases). This complements category-based tiering."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h62",
+      "learning": "IDF-weighted gene Jaccard improves only +1.22 pp over binary Jaccard (15.56% vs 14.34%). Both are ~21 pp behind Node2Vec. Gene-based approaches cannot compete because they lack multi-hop path information that Node2Vec captures.",
+      "implication": "All gene-based similarity experiments (h19, h51, h61, h62) confirm: graph structure > node features. Future improvements should focus on architecture changes (GNN, attention) or external data, not gene feature engineering."
     }
   ],
   "collaborations": [
