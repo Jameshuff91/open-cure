@@ -1,0 +1,56 @@
+{
+  "hypothesis": "h84",
+  "title": "Tier-Based User Interface Design",
+  "date": "2026-01-31",
+  "tier_mapping": {
+    "autoimmune": 1,
+    "dermatological": 1,
+    "psychiatric": 1,
+    "ophthalmic": 1,
+    "cardiovascular": 2,
+    "other": 2,
+    "endocrine": 2,
+    "cancer": 2,
+    "musculoskeletal": 2,
+    "infectious": 2,
+    "metabolic": 3,
+    "respiratory": 3,
+    "gastrointestinal": 3,
+    "hematological": 3,
+    "neurological": 3,
+    "renal": 3
+  },
+  "tier_display": {
+    "1": {
+      "name": "HIGH CONFIDENCE",
+      "color": "green",
+      "icon": "\ud83d\udfe2",
+      "action": "Ready for validation"
+    },
+    "2": {
+      "name": "MEDIUM CONFIDENCE",
+      "color": "yellow",
+      "icon": "\ud83d\udfe1",
+      "action": "Literature review recommended"
+    },
+    "3": {
+      "name": "LOW CONFIDENCE",
+      "color": "red",
+      "icon": "\ud83d\udd34",
+      "action": "Exploratory only"
+    }
+  },
+  "tier_distribution": {
+    "1": 1020,
+    "2": 10928,
+    "3": 1468
+  },
+  "ui_components": [
+    "Color-coded tier indicator (green/yellow/red)",
+    "Plain-language confidence explanation",
+    "Action guidance based on tier",
+    "Novel vs Known indication badge",
+    "Filtering by tier and category"
+  ],
+  "status": "validated"
+}

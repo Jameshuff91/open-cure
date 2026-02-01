@@ -1603,13 +1603,15 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "1. Design tier-based output format",
         "2. Implement category-to-tier mapping",
         "3. Add confidence score and reasoning for each prediction",
         "4. Create sample output for user review"
-      ]
+      ],
+      "findings": "Tier-based UI design successfully created:\n\nTIER DISTRIBUTION (13,416 total predictions):\n- \ud83d\udfe2 Tier 1 (HIGH): 1,020 predictions (7.6%)\n- \ud83d\udfe1 Tier 2 (MEDIUM): 10,928 predictions (81.5%)\n- \ud83d\udd34 Tier 3 (LOW): 1,468 predictions (10.9%)\n\nTIER MAPPING:\n- Tier 1: autoimmune, dermatological, psychiatric, ophthalmic\n- Tier 2: cardiovascular, other, endocrine, cancer, musculoskeletal, infectious\n- Tier 3: metabolic, respiratory, GI, hematological, neurological, renal\n\nUI COMPONENTS:\n1. Color-coded tier indicator (\ud83d\udfe2\ud83d\udfe1\ud83d\udd34)\n2. Plain-language confidence explanation (from h88)\n3. Action guidance: \"Ready for validation\" / \"Literature review recommended\" / \"Exploratory only\"\n4. Novel vs Known indication badge\n5. Filtering by tier and category\n\nVALUE: Users can quickly identify which predictions to prioritize based on model reliability.",
+      "result_metric": "1,020 HIGH confidence predictions (7.6% of total)"
     },
     {
       "id": "h85",
@@ -2114,6 +2116,12 @@
       "hypothesis_id": "h88",
       "learning": "Confidence explanations should be tier-based (not score-based) because disease category is the dominant factor. Template approach allows consistent, understandable explanations.",
       "implication": "For production UI, display tier-based explanation alongside predictions. Users can trust category over numeric score."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h84",
+      "learning": "Tier-based UI is more actionable than numeric confidence scores. 7.6% of predictions are HIGH confidence (ready for validation), 81.5% MEDIUM (literature review), 10.9% LOW (exploratory).",
+      "implication": "Production UI should default to showing Tier 1 predictions and require explicit action to view lower tiers."
     }
   ],
   "collaborations": [
