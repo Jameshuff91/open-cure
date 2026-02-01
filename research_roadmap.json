@@ -1569,13 +1569,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "1. Apply h66 category-specific k values to kNN",
         "2. Apply h71 category-specific thresholds",
         "3. Measure combined precision vs each alone",
         "4. Check if gains are additive or redundant"
-      ]
+      ],
+      "findings": "h66 (category-specific k) and h71 (category-specific thresholds) are ORTHOGONAL:\n\n1. h66 improves hit rate for CHALLENGING categories:\n   - Cancer: +3.9 pp (68.6% \u2192 72.5%)\n   - Metabolic: +9.1 pp (45.5% \u2192 54.5%)\n   - Respiratory: +8.3 pp (41.7% \u2192 50.0%)\n\n2. But h71 EXCLUDES those same categories or applies strict thresholds:\n   - Metabolic, Respiratory: EXCLUDED (poorly calibrated)\n   - Cancer: Threshold 0.7 (still ~75% precision)\n\n3. For HIGH-TIER categories (autoimmune, derm, psychiatric):\n   - Already at 93-100% hit rate\n   - Category-specific k provides NO improvement\n\nVERDICT: h66's k optimization helps categories that h71 excludes anyway.\nFor production, h71's category-specific thresholds alone are sufficient.\nThe added complexity of h66's category-specific k is not justified.",
+      "result_metric": "Marginal benefit for cancer only (+3.9pp hit rate before thresholding)"
     },
     {
       "id": "h83",
@@ -2009,6 +2011,12 @@
       "hypothesis_id": "h71",
       "learning": "Category is the strongest predictor of model reliability. Autoimmune/dermatological achieve 93-100% precision at any threshold; metabolic/respiratory/GI are poorly calibrated and should be excluded or flagged.",
       "implication": "Production system should tier predictions by category confidence level and exclude poorly-calibrated categories from high-confidence recommendations."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h82",
+      "learning": "h66 (category-specific k) and h71 (category-specific thresholds) optimize different things: h66 improves raw hit rate for challenging categories, while h71 excludes those same categories. For precision-focused production, h71 alone is sufficient.",
+      "implication": "Avoid unnecessary complexity: use h71 thresholds without h66 k-optimization for production."
     }
   ],
   "collaborations": [

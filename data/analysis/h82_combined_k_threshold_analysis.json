@@ -1,0 +1,10 @@
+{
+  "hypothesis": "h82",
+  "title": "Category-Specific k Values Combined with Calibration",
+  "date": "2026-01-31",
+  "verdict": "inconclusive",
+  "findings": "\nThe gains from h66 (category-specific k) and h71 (category-specific thresholds) are largely ORTHOGONAL:\n\n1. h66 improves hit rate for CHALLENGING categories (cancer +3.9pp, metabolic +9.1pp, respiratory +8.3pp)\n2. h71 EXCLUDES those same challenging categories or applies high thresholds\n\nFor HIGH-TIER categories (autoimmune, dermatological, psychiatric):\n- Already at 93-100% hit rate with k=20\n- Category-specific k provides no improvement\n\nFor PRODUCTION:\n- h71's category-specific thresholds are sufficient\n- h66's category-specific k provides marginal additional benefit only for cancer/other\n- The added complexity of category-specific k is not justified by the gain\n\nRECOMMENDATION: Use h71 alone for simplicity. If maximum hit rate is needed regardless of precision, then apply h66's k values first.\n",
+  "h66_k_benefit": "Helps cancer (+3.9pp), metabolic (+9.1pp), respiratory (+8.3pp) - but these are excluded by h71",
+  "h71_threshold_benefit": "Filters to high-precision categories: autoimmune, derm, psychiatric",
+  "combined_benefit": "Marginal for cancer category only (~+3-4% hit rate improvement before thresholding)"
+}
