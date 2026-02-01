@@ -1508,6 +1508,59 @@
       ],
       "findings": "h78 INVALIDATED due to conceptual issue.\n\nANALYSIS:\n1. \"Known indication count in predictions\" correlates with confidence (r=0.558)\n2. BUT this is EFFECT not CAUSE - we can't use it as a feature\n\nThe problem:\n- h52 model predicts confidence BEFORE seeing predictions\n- \"# of known drugs in top-30\" is computed AFTER predictions\n- Using test disease's GT is leakage (we're predicting hit on those)\n- Using neighbor GT is already captured by `mean_neighbor_gt` feature\n\nThe h75 finding (clinical diseases have 3.7x known indications) is a CONSEQUENCE:\n- Well-studied diseases have more GT drugs\n- More GT drugs \u2192 higher hit probability\n- This relationship is ALREADY captured by h52 via:\n  - drug_pool_size: more available drugs\n  - mean_neighbor_gt: neighbors have more drugs\n\nVERDICT: No new feature can be derived. The relationship is descriptive, not predictive.",
       "result_metric": "INVALIDATED - conceptual issue (effect not cause, already captured by h52)"
+    },
+    {
+      "id": "h79",
+      "title": "Expand h68 to Save Per-Disease Results",
+      "description": "Modify h68 evaluation to save per-disease results (disease_id, category, probs, hit) to enable stratified calibration analysis (h71) and category-specific thresholds.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h71, h76, h77 are all blocked because h68 only saved aggregates. A small modification to h68 would unblock 3 hypotheses.",
+      "steps": [
+        "1. Modify evaluate_unified_confidence.py to output per-disease results",
+        "2. Re-run evaluation (5 seeds)",
+        "3. Unblock h71, h76 with per-category data"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h80",
+      "title": "Autoimmune-Only Production Model",
+      "description": "Since autoimmune diseases dominate the CLINICAL tier (63%) and show 68x enrichment, create a specialized high-precision autoimmune prediction system.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h75 showed autoimmune is the strongest category. A specialized model could provide clinical-grade predictions for this category.",
+      "steps": [
+        "1. Filter production predictions to autoimmune category",
+        "2. Evaluate precision at various thresholds",
+        "3. Identify top autoimmune drug repurposing candidates",
+        "4. Validate against recent clinical trials"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h81",
+      "title": "GI Disease Alternative Strategy",
+      "description": "GI diseases have only 5% hit rate (h59). Instead of prediction, focus on identifying why they fail and whether negative predictions are reliable.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "If we can't predict positives for GI diseases, maybe we can confidently predict what WON'T work. This inverts the problem.",
+      "steps": [
+        "1. Analyze GI disease characteristics in DRKG",
+        "2. Check if GI diseases have low GT coverage or sparse embeddings",
+        "3. Test if negative predictions (drugs NOT in top-30) are reliable",
+        "4. Document when to NOT use the model"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
