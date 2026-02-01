@@ -1310,7 +1310,7 @@
       "id": "h68",
       "title": "Confidence-Weighted Predictions for Production",
       "description": "Combine h65 success predictor, h52 meta-confidence, and category-based tiering into a unified confidence score for production deployment.",
-      "status": "pending",
+      "status": "validated",
       "priority": 1,
       "expected_impact": "high",
       "effort": "medium",
@@ -1323,8 +1323,8 @@
         "5. Validate combined confidence vs individual models",
         "6. Success criteria: >75% precision on HIGH tier"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "UNIFIED CONFIDENCE SCORING ACHIEVES 88% PRECISION\n\nCombined three confidence signals into production-ready scoring:\n1. h65 disease success predictor (RF)\n2. h52 meta-confidence model (XGBoost)\n3. Category-based priors (h58/h59)\n\nMULTI-SEED RESULTS (5 seeds):\n\n| Signal | AUC | AP | Precision@0.7 | Coverage |\n|--------|-----|-----|---------------|----------|\n| h65 (success predictor) | 0.698 \u00b1 0.017 | 0.771 \u00b1 0.042 | 81.5% \u00b1 6.5% | 19.8 |\n| h52 (meta-confidence) | 0.816 \u00b1 0.037 | 0.823 \u00b1 0.056 | 82.6% \u00b1 4.7% | 41.0 |\n| Category prior | 0.593 \u00b1 0.040 | 0.661 \u00b1 0.050 | 70.0% \u00b1 10.2% | 23.4 |\n| **Combined avg** | **0.826 \u00b1 0.048** | **0.856 \u00b1 0.051** | **88.4% \u00b1 5.1%** | 26.0 |\n| Combined harmonic | 0.824 \u00b1 0.053 | 0.854 \u00b1 0.057 | 88.9% \u00b1 6.2% | 20.4 |\n| Combined max | 0.797 \u00b1 0.045 | 0.806 \u00b1 0.055 | 73.4% \u00b1 5.0% | 53.0 |\n| Combined min | 0.790 \u00b1 0.051 | 0.817 \u00b1 0.052 | 100.0% \u00b1 0.0% | 2.2 |\n\nBEST METHOD: Simple average (combined_avg)\n- AP: 0.856 (best overall)\n- Precision at 0.7: 88.4% (exceeds 75% target)\n- Covers 26 diseases per seed (~30% of test set)\n\nPRODUCTION TIERS:\n- HIGH (prob >= 0.7): 88% precision, surface prominently\n- MEDIUM (0.5-0.7): ~70% precision, include with caveats\n- LOW (< 0.5): flag as exploratory\n\nKEY INSIGHT: h52 alone has 82.6% precision with 41 diseases coverage - already production-viable. The ensemble adds +6 pp precision at cost of coverage.",
+      "result_metric": "88.4% precision at threshold 0.7 (combined_avg), AP=0.856"
     },
     {
       "id": "h69",
@@ -1343,6 +1343,78 @@
         "5. Add confidence tiering (HIGH/MEDIUM/LOW)",
         "6. Create CLI/API interface",
         "7. Validation on held-out diseases"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h70",
+      "title": "Threshold Optimization by Use Case",
+      "description": "Optimize confidence thresholds for different production use cases: drug discovery (maximize recall) vs clinical decision support (maximize precision).",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h68 found combined_min achieves 100% precision but only 2.2 coverage. Different use cases may prefer different precision/recall tradeoffs.",
+      "steps": [
+        "1. Define 3 use cases: discovery (high recall), validation (balanced), clinical (high precision)",
+        "2. Find optimal thresholds for each using h68 calibration data",
+        "3. Create production API with use-case parameter",
+        "4. Document recommended thresholds"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h71",
+      "title": "Per-Category Calibration",
+      "description": "Train category-specific calibration models since some categories (GI, hematological) have fundamental kNN blind spots.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h59 showed GI has 5% hit rate. Combining GI category prior (0.05) with model predictions should flag GI diseases as LOW confidence automatically.",
+      "steps": [
+        "1. Analyze per-category calibration from h68 results",
+        "2. Check if combined_avg correctly flags GI diseases as LOW",
+        "3. If not, add category-specific adjustments",
+        "4. Validate on held-out categories"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h72",
+      "title": "Production Deliverable with Confidence Tiers",
+      "description": "Generate final drug repurposing predictions deliverable with confidence tiers for Every Cure team.",
+      "status": "validated",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "medium",
+      "rationale": "h68 validated confidence scoring. Now create production-ready output with HIGH/MEDIUM/LOW tiers for all diseases.",
+      "steps": [
+        "1. Run kNN on all GT diseases",
+        "2. Compute combined_avg confidence for each disease",
+        "3. Generate deliverable with columns: disease, drug, score, confidence_tier",
+        "4. Validate top predictions against literature",
+        "5. Export to Excel format for Every Cure"
+      ],
+      "findings": "PRODUCTION DELIVERABLE GENERATED WITH CONFIDENCE TIERS\n\nOutput: data/deliverables/drug_repurposing_predictions_with_confidence.xlsx\n\nDELIVERABLE SUMMARY:\n- Total predictions: 13,416 (30 drugs per disease)\n- Diseases: 448\n- Unique drugs: 763\n\nDISEASE TIER DISTRIBUTION:\n| Tier | Diseases | Percentage | Predictions | Known Indications |\n|------|----------|------------|-------------|-------------------|\n| HIGH | 110 | 24.6% | 3,288 | 491 |\n| MEDIUM | 236 | 52.7% | 7,078 | 509 |\n| LOW | 102 | 22.8% | 3,050 | 46 |\n\nNovel predictions (not in GT): 12,370\n\nTOP CATEGORY DISTRIBUTION (HIGH confidence):\n- Other: 1,413\n- Autoimmune: 367\n- Dermatological: 265\n- Infectious: 238\n- Respiratory: 147\n\nVALIDATION OF TOP PREDICTIONS:\n1. Sirolimus \u2192 Tuberous Sclerosis Complex: \u2705 FDA-APPROVED (2022)\n2. Lovastatin \u2192 Atherosclerosis: \u2705 MARS & AFCAPS trials validated\n3. Adalimumab \u2192 SLE: \u26a0\ufe0f Complex (TNF inhibitors can induce lupus, but some efficacy in lupus nephritis)\n\nPRODUCTION FILES:\n- Excel: drug_repurposing_predictions_with_confidence.xlsx (4 sheets)\n- JSON: drug_repurposing_predictions_with_confidence.json\n\nSHEETS INCLUDED:\n1. All Predictions - Full 13,416 drug-disease pairs\n2. HIGH Confidence Novel - 2,797 novel predictions with HIGH confidence\n3. Disease Summary - Per-disease confidence and category\n4. Tier Summary - Aggregate statistics",
+      "result_metric": "13,416 predictions generated; 2,797 HIGH confidence novel; 2/3 validated"
+    },
+    {
+      "id": "h73",
+      "title": "h52 Model Simplification",
+      "description": "h52 alone achieves 82.6% precision with 2x coverage of combined model. Investigate whether simpler h52-only deployment is sufficient.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h68 found h52 meta-confidence model covers 41 diseases at 82.6% precision vs combined_avg covering 26 at 88.4%. Simpler model may be preferred.",
+      "steps": [
+        "1. Compare h52 vs combined on different precision/recall curves",
+        "2. Identify diseases where ensemble helps vs hurts",
+        "3. Recommend whether to use h52-only or ensemble"
       ],
       "findings": null,
       "result_metric": null
@@ -1656,6 +1728,18 @@
       "hypothesis_id": "h62",
       "learning": "IDF-weighted gene Jaccard improves only +1.22 pp over binary Jaccard (15.56% vs 14.34%). Both are ~21 pp behind Node2Vec. Gene-based approaches cannot compete because they lack multi-hop path information that Node2Vec captures.",
       "implication": "All gene-based similarity experiments (h19, h51, h61, h62) confirm: graph structure > node features. Future improvements should focus on architecture changes (GNN, attention) or external data, not gene feature engineering."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h68",
+      "learning": "Simple averaging of 3 confidence signals (h65, h52, category prior) achieves 88% precision at 0.7 threshold. h52 alone achieves 82.6% with 2x coverage - may be simpler choice.",
+      "implication": "Production deployment is viable. Choose between high-precision ensemble (88%) or high-coverage single model (82.6%)."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h72",
+      "learning": "Production deliverable with confidence tiers generated. 24.6% of diseases are HIGH confidence (88% precision). Validated predictions include FDA-approved Sirolimus\u2192TSC and clinically proven Lovastatin\u2192atherosclerosis.",
+      "implication": "Deliverable ready for Every Cure team review. HIGH tier predictions should be prioritized for follow-up."
     }
   ],
   "collaborations": [

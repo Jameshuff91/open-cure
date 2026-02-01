@@ -1,87 +1,93 @@
 # Research Loop Progress
 
-## Current Session: h61, h57, h65, h62, h63 (2026-01-31)
+## Current Session: h68, h72 (2026-01-31)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (5 hypotheses tested)
+**Status:** Completed (2 hypotheses tested)
 **Hypotheses Tested:**
-- h61: Bio Foundation Model (Geneformer) Pseudo-Expression - **INVALIDATED**
-- h57: Metabolic Disease Deep Dive - **VALIDATED**
-- h65: Meta-Learning Disease Success Predictor - **VALIDATED**
-- h62: Weighted Gene Jaccard - **INVALIDATED**
-- h63: Ensemble kNN (Node2Vec + Gene) - **INVALIDATED** (theoretical)
+- h68: Unified Confidence-Weighted Predictions - **VALIDATED**
+- h72: Production Deliverable with Confidence Tiers - **VALIDATED**
 
 ### Key Findings
 
-**h61: Geneformer Pseudo-Expression FAILS (-21 pp vs Node2Vec)**
-- 8.03% ± 1.06% R@30 vs 29.31% Node2Vec
-- Foundation models require REAL expression data, not binary associations
+**h68: Unified Confidence Scoring EXCEEDS TARGET (88% precision at 0.7)**
 
-**h57: Metabolic Disease Bifurcated Failure**
-- Common metabolic (T2D, gout): 20.3% coverage
-- Rare storage diseases (Gaucher, Fabry): 0.0% coverage
+Combined three confidence signals:
+1. h65 disease success predictor (RF)
+2. h52 meta-confidence model (XGBoost)
+3. Category-based priors (h58/h59)
 
-**h65: Meta-Learning Success Predictor Achieves 70% Precision**
-- Threshold 0.59: 70.7% precision, 54.5% recall
-- Model saved: `models/disease_success_predictor.pkl`
+Multi-seed Results (5 seeds):
+| Signal | AUC | AP | Precision@0.7 | Coverage |
+|--------|-----|-----|---------------|----------|
+| h65 (success predictor) | 0.698 | 0.771 | 81.5% | 19.8 |
+| h52 (meta-confidence) | 0.816 | 0.823 | 82.6% | 41.0 |
+| Category prior | 0.593 | 0.661 | 70.0% | 23.4 |
+| **Combined avg** | **0.826** | **0.856** | **88.4%** | 26.0 |
 
-**h62 & h63: Gene-based similarity confirmed useless**
-- Weighted Jaccard: +1.22 pp (not significant)
-- Ensemble: Would dilute Node2Vec signal (theoretical)
+**Key Insight:** Simple average achieves 88% precision (exceeds 75% target). h52 alone achieves 82.6% with 2x coverage - may be simpler for production.
 
-### Key Session Learning
+**h72: Production Deliverable Generated**
 
-**Gene-based approaches consistently fail vs Node2Vec:**
-| Approach | R@30 | Gap to N2V |
-|----------|------|------------|
-| Node2Vec | 37.04% | - |
-| HPO Phenotype (h19) | 14.20% | -22.84 pp |
-| Gene Jaccard (h51) | 22.21% | -14.83 pp |
-| Geneformer pseudo (h61) | 8.03% | -29.01 pp |
-| Weighted Jaccard (h62) | 15.56% | -21.48 pp |
+Output: `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
 
-**Root cause:** Graph STRUCTURE provides more signal than node attributes. Multi-hop paths in Node2Vec are more informative than gene set overlaps.
+| Tier | Diseases | Predictions | Novel Predictions |
+|------|----------|-------------|-------------------|
+| HIGH | 110 (24.6%) | 3,288 | 2,797 |
+| MEDIUM | 236 (52.7%) | 7,078 | 6,569 |
+| LOW | 102 (22.8%) | 3,050 | 3,004 |
+
+**Validation of Top Predictions:**
+- Sirolimus → Tuberous Sclerosis Complex: FDA-APPROVED (2022)
+- Lovastatin → Atherosclerosis: MARS & AFCAPS trials validated
+- Adalimumab → SLE: Complex (needs careful review)
 
 ### New Hypotheses Generated
 
 | Priority | ID | Title |
 |----------|-----|-------|
-| 1 | h68 | Unified Confidence Scoring for Production |
-| 1 | h69 | End-to-End Production Pipeline |
-| 2 | h66 | Category-Specific k Values |
-| 2 | h67 | Drug Class (ATC) Boosting |
+| 1 | h72 | Production Deliverable (completed) |
+| 2 | h70 | Threshold Optimization by Use Case |
+| 2 | h73 | h52 Model Simplification |
+| 3 | h71 | Per-Category Calibration |
 
 ### Updated Pending Hypotheses
 
 | Priority | ID | Title | Effort |
 |----------|-----|-------|--------|
-| 1 | h68 | Unified Confidence Scoring | medium |
 | 1 | h69 | Production Pipeline Integration | high |
 | 2 | h66 | Category-Specific k Values | low |
 | 2 | h67 | Drug Class Boosting | medium |
+| 2 | h70 | Threshold Optimization | low |
+| 2 | h73 | h52 Simplification Analysis | low |
 | 3 | h55 | GEO Gene Expression | high |
+| 3 | h71 | Per-Category Calibration | medium |
 | 4 | h64 | ARCHS4 Real Expression | high |
-| 20 | h16 | Clinical Trial Phase Features | medium |
 
 ### Session Statistics
 
-- Hypotheses tested: 5
-- Validated: 2 (h57, h65)
-- Invalidated: 3 (h61, h62, h63)
-- New hypotheses: 4 (h66-h69)
-- Models saved: 1 (disease_success_predictor.pkl)
+- Hypotheses tested: 2
+- Validated: 2 (h68, h72)
+- Invalidated: 0
+- New hypotheses: 4 (h70-h73)
+- Deliverables: 1 (Excel + JSON)
 
 ### Recommended Next Steps
 
-1. **h68**: Unify confidence signals into production-ready scoring
-2. **h66**: Quick test of category-specific k values (low effort)
-3. **h69**: Build production pipeline if h68 succeeds
+1. **h73**: Analyze whether h52-only is sufficient (simpler deployment)
+2. **h70**: Optimize thresholds for different use cases
+3. **h69**: Full production pipeline integration
 
 ---
 
 ## Previous Sessions
+
+### h61, h57, h65, h62, h63 (2026-01-31)
+- 5 hypotheses tested, 2 validated
+- Gene-based approaches consistently fail vs Node2Vec
+- h65 success predictor achieves 70% precision
 
 ### h49-h59 (2026-01-31)
 - 9 hypotheses tested, 8 validated
