@@ -1,56 +1,47 @@
 # Research Loop Progress
 
-## Current Session: h68, h72 (2026-01-31)
+## Current Session: h68, h72, h73, h66 (2026-01-31)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (2 hypotheses tested)
+**Status:** Completed (4 hypotheses tested)
 **Hypotheses Tested:**
 - h68: Unified Confidence-Weighted Predictions - **VALIDATED**
 - h72: Production Deliverable with Confidence Tiers - **VALIDATED**
+- h73: h52 Model Simplification - **VALIDATED**
+- h66: Disease Category-Specific k Values - **VALIDATED**
 
 ### Key Findings
 
-**h68: Unified Confidence Scoring EXCEEDS TARGET (88% precision at 0.7)**
-
-Combined three confidence signals:
-1. h65 disease success predictor (RF)
-2. h52 meta-confidence model (XGBoost)
-3. Category-based priors (h58/h59)
-
-Multi-seed Results (5 seeds):
-| Signal | AUC | AP | Precision@0.7 | Coverage |
-|--------|-----|-----|---------------|----------|
-| h65 (success predictor) | 0.698 | 0.771 | 81.5% | 19.8 |
-| h52 (meta-confidence) | 0.816 | 0.823 | 82.6% | 41.0 |
-| Category prior | 0.593 | 0.661 | 70.0% | 23.4 |
-| **Combined avg** | **0.826** | **0.856** | **88.4%** | 26.0 |
-
-**Key Insight:** Simple average achieves 88% precision (exceeds 75% target). h52 alone achieves 82.6% with 2x coverage - may be simpler for production.
+**h68: Unified Confidence Scoring EXCEEDS TARGET (88% precision)**
+- Combined h65, h52, category priors via simple average
+- 88.4% precision at threshold 0.7 (exceeds 75% target)
+- AP: 0.856, AUC: 0.826
 
 **h72: Production Deliverable Generated**
+- 13,416 predictions across 448 diseases
+- 2,797 HIGH confidence novel predictions
+- Validated: Sirolimus→TSC (FDA-approved), Lovastatin→atherosclerosis
+- Output: `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
 
-Output: `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
+**h73: h52-only Recommended for Production**
+- Combined adds +5.9 pp precision but -37% coverage
+- h52 at 0.8: 84% precision, 30 diseases (simpler, similar perf)
+- Recommendation: Use h52-only for deployment
 
-| Tier | Diseases | Predictions | Novel Predictions |
-|------|----------|-------------|-------------------|
-| HIGH | 110 (24.6%) | 3,288 | 2,797 |
-| MEDIUM | 236 (52.7%) | 7,078 | 6,569 |
-| LOW | 102 (22.8%) | 3,050 | 3,004 |
+**h66: Category-Specific k Values Validated**
+- 3 categories show >2 pp improvement with optimized k:
+  - Metabolic: k=30 (+9.1 pp)
+  - Respiratory: k=5 (+8.3 pp)
+  - Cancer: k=30 (+3.9 pp)
 
-**Validation of Top Predictions:**
-- Sirolimus → Tuberous Sclerosis Complex: FDA-APPROVED (2022)
-- Lovastatin → Atherosclerosis: MARS & AFCAPS trials validated
-- Adalimumab → SLE: Complex (needs careful review)
-
-### New Hypotheses Generated
+### New Hypotheses Generated (this session)
 
 | Priority | ID | Title |
 |----------|-----|-------|
-| 1 | h72 | Production Deliverable (completed) |
 | 2 | h70 | Threshold Optimization by Use Case |
-| 2 | h73 | h52 Model Simplification |
+| 2 | h73 | h52 Model Simplification (completed) |
 | 3 | h71 | Per-Category Calibration |
 
 ### Updated Pending Hypotheses
@@ -58,27 +49,43 @@ Output: `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
 | Priority | ID | Title | Effort |
 |----------|-----|-------|--------|
 | 1 | h69 | Production Pipeline Integration | high |
-| 2 | h66 | Category-Specific k Values | low |
 | 2 | h67 | Drug Class Boosting | medium |
 | 2 | h70 | Threshold Optimization | low |
-| 2 | h73 | h52 Simplification Analysis | low |
 | 3 | h55 | GEO Gene Expression | high |
 | 3 | h71 | Per-Category Calibration | medium |
 | 4 | h64 | ARCHS4 Real Expression | high |
+| 20 | h16 | Clinical Trial Phase Features | medium |
 
 ### Session Statistics
 
-- Hypotheses tested: 2
-- Validated: 2 (h68, h72)
+- Hypotheses tested: 4
+- Validated: 4 (h68, h72, h73, h66)
 - Invalidated: 0
 - New hypotheses: 4 (h70-h73)
-- Deliverables: 1 (Excel + JSON)
+- Deliverables: 1 (Excel + JSON with 13K predictions)
+- Models analyzed: 2 (h52, combined ensemble)
 
 ### Recommended Next Steps
 
-1. **h73**: Analyze whether h52-only is sufficient (simpler deployment)
+1. **h69**: Production pipeline integration (deploy h52+category-k)
 2. **h70**: Optimize thresholds for different use cases
-3. **h69**: Full production pipeline integration
+3. **h67**: Test drug class boosting for additional gains
+
+### Production Deployment Summary
+
+Based on this session's findings, recommended production configuration:
+
+```
+Model: models/meta_confidence_model.pkl (h52)
+Threshold: 0.8 for HIGH tier, 0.5 for MEDIUM tier
+Category-specific k values:
+  - k=5: dermatological, cardiovascular, psychiatric, respiratory
+  - k=10: autoimmune, gastrointestinal
+  - k=20: infectious, neurological (default)
+  - k=30: cancer, metabolic, other
+Expected precision: ~84% HIGH tier
+Expected coverage: ~34% diseases in HIGH tier
+```
 
 ---
 
