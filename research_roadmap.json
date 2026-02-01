@@ -1496,7 +1496,7 @@
       "id": "h78",
       "title": "Known Indication Density as Confidence Proxy",
       "description": "h75 showed clinical diseases have 3.7x more known indications. Test if 'known indication count for disease' can improve confidence predictions.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -1506,8 +1506,8 @@
         "2. Evaluate if it improves precision/calibration",
         "3. Check for leakage (circular if GT is used)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h78 INVALIDATED due to conceptual issue.\n\nANALYSIS:\n1. \"Known indication count in predictions\" correlates with confidence (r=0.558)\n2. BUT this is EFFECT not CAUSE - we can't use it as a feature\n\nThe problem:\n- h52 model predicts confidence BEFORE seeing predictions\n- \"# of known drugs in top-30\" is computed AFTER predictions\n- Using test disease's GT is leakage (we're predicting hit on those)\n- Using neighbor GT is already captured by `mean_neighbor_gt` feature\n\nThe h75 finding (clinical diseases have 3.7x known indications) is a CONSEQUENCE:\n- Well-studied diseases have more GT drugs\n- More GT drugs \u2192 higher hit probability\n- This relationship is ALREADY captured by h52 via:\n  - drug_pool_size: more available drugs\n  - mean_neighbor_gt: neighbors have more drugs\n\nVERDICT: No new feature can be derived. The relationship is descriptive, not predictive.",
+      "result_metric": "INVALIDATED - conceptual issue (effect not cause, already captured by h52)"
     }
   ],
   "completed": [
@@ -1866,6 +1866,12 @@
       "hypothesis_id": "h71",
       "learning": "Per-category calibration requires saving per-disease results from held-out evaluation. h68 only saved aggregates.",
       "implication": "Future evaluations should save disease-level results to enable stratified analysis."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h78",
+      "learning": "Correlation between known indication count and confidence is effect, not cause. Can't use as feature: test disease GT is leakage, neighbor GT already in model.",
+      "implication": "Be careful distinguishing descriptive findings (X correlates with Y) from actionable features (adding X as feature improves Y)."
     }
   ],
   "collaborations": [
