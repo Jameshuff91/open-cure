@@ -1548,7 +1548,7 @@
       "id": "h81",
       "title": "GI Disease Alternative Strategy",
       "description": "GI diseases have only 5% hit rate (h59). Instead of prediction, focus on identifying why they fail and whether negative predictions are reliable.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -1559,8 +1559,8 @@
         "3. Test if negative predictions (drugs NOT in top-30) are reliable",
         "4. Document when to NOT use the model"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "GI diseases are correctly handled by exclusion in h71.\n\nANALYSIS:\n- Only 3 unique GI diseases in test set (limited sample)\n- 40% hit rate (lowest among major categories)\n- 0% same-category neighbor ratio (from h83)\n- Low confidence (0.41) matches low hit rate = correctly calibrated\n\nROOT CAUSE:\n- GI disease neighbors are from other categories\n- kNN recommends drugs for those other diseases\n\nALTERNATIVE STRATEGIES EVALUATED:\n1. EXCLUDE from production: Already done in h71 \u2713\n2. Negative prediction value: Cannot reliably use (40% baseline too low)\n3. Comorbidity leverage: Crohn's is in autoimmune, not GI\n\nCONCLUSION:\n- h71's exclusion of GI is the correct approach\n- For GI-specific research, use specialized databases (not kNN)\n- The model correctly signals \"don't trust these predictions\" via low confidence",
+      "result_metric": "40% hit rate, 0.41 avg confidence, correctly excluded in h71"
     },
     {
       "id": "h82",
@@ -2054,6 +2054,12 @@
       "hypothesis_id": "h80",
       "learning": "Autoimmune diseases share common drug mechanisms (immunomodulation, anti-inflammation), making cross-disease predictions highly reliable. Corticosteroids and immunomodulators appear in 5-7 autoimmune diseases each.",
       "implication": "For production, autoimmune predictions can be shown with high confidence. Prioritize autoimmune category for clinical validation partnerships."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h81",
+      "learning": "GI diseases have 0% same-category neighbors and 40% hit rate. The low confidence correctly reflects unreliability. Exclusion (h71) is the right strategy; no alternative within DRKG-based approach works.",
+      "implication": "For poorly-performing categories, exclusion is better than attempting rescue. The model correctly signals unreliability."
     }
   ],
   "collaborations": [
