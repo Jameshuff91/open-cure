@@ -1,0 +1,19 @@
+{
+  "hypothesis": "h83",
+  "title": "Why Is Respiratory So Poorly Calibrated",
+  "date": "2026-01-31",
+  "status": "validated",
+  "findings": {
+    "root_cause": "Respiratory diseases have lowest same-category neighbor ratio (8.8% vs 45.3% for cancer)",
+    "mechanism": "Node2Vec places respiratory diseases among dissimilar \"other\" diseases, causing kNN to recommend wrong drugs",
+    "same_category_ratios": {
+      "cancer": 45.3,
+      "infectious": 17.9,
+      "metabolic": 12.9,
+      "autoimmune": 11.5,
+      "dermatological": 9.0,
+      "respiratory": 8.8
+    },
+    "recommendation": "Exclude respiratory from high-confidence tier (already done in h71)"
+  }
+}

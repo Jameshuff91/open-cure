@@ -1586,13 +1586,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "1. Analyze respiratory diseases in test set",
         "2. Check kNN neighbor overlap with other categories",
         "3. Check if respiratory diseases have high comorbidity signals",
         "4. Determine if exclusion or special handling is needed"
-      ]
+      ],
+      "findings": "ROOT CAUSE: Respiratory diseases have lowest same-category neighbor ratio (8.8% vs 45.3% for cancer).\n\nMECHANISM:\n- Node2Vec places respiratory diseases among dissimilar \"other\" diseases (65% of neighbors)\n- kNN recommends drugs from those \"other\" diseases, not respiratory treatments\n- Confidence model sees good features (many neighbors with GT) \u2192 high confidence\n- But recommended drugs don't match \u2192 low hit rate\n- Result: HIGH confidence + LOW hit rate = 30.8pp calibration error\n\nSPECIFIC PATTERNS:\n- Idiopathic pulmonary fibrosis: 0 hits, neighbors mostly \"other\"\n- Bronchiectasis: 0 hits, neighbors mostly \"other\" + \"infectious\"\n- Bronchial asthma: 1 hit, has 3 respiratory neighbors (the good case)\n\nRECOMMENDATION:\n- Respiratory is correctly excluded from high-confidence tier in h71\n- A new feature \"same_category_neighbor_ratio\" could flag unreliable predictions",
+      "result_metric": "Respiratory same-category neighbor ratio: 8.8% (lowest)"
     },
     {
       "id": "h84",
@@ -1622,6 +1624,21 @@
         "2. Extract KEGG pathway annotations for metabolic diseases",
         "3. Test pathway-based kNN for metabolic-only",
         "4. Compare to Node2Vec baseline for metabolic category"
+      ]
+    },
+    {
+      "id": "h86",
+      "title": "Same-Category Neighbor Ratio as Confidence Feature",
+      "hypothesis": "Adding same-category neighbor ratio as a confidence feature will improve calibration for categories with mixed neighbors.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "1. Compute same-category neighbor ratio for each test disease",
+        "2. Add as feature to confidence model",
+        "3. Re-evaluate calibration by category",
+        "4. Check if it helps flag poorly-calibrated predictions"
       ]
     }
   ],
@@ -2017,6 +2034,12 @@
       "hypothesis_id": "h82",
       "learning": "h66 (category-specific k) and h71 (category-specific thresholds) optimize different things: h66 improves raw hit rate for challenging categories, while h71 excludes those same categories. For precision-focused production, h71 alone is sufficient.",
       "implication": "Avoid unnecessary complexity: use h71 thresholds without h66 k-optimization for production."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h83",
+      "learning": "Categories with low same-category neighbor ratio in Node2Vec are poorly calibrated. Respiratory has 8.8% (lowest), cancer has 45.3% (highest). This explains why some categories achieve 90%+ precision (autoimmune neighbors autoimmune) while others fail (respiratory neighbors \"other\").",
+      "implication": "Same-category neighbor ratio could be used as an additional confidence feature to flag unreliable predictions."
     }
   ],
   "collaborations": [
