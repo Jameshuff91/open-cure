@@ -1369,7 +1369,7 @@
       "id": "h71",
       "title": "Per-Category Calibration",
       "description": "Train category-specific calibration models since some categories (GI, hematological) have fundamental kNN blind spots.\n\n[Updated after h77]: This is the methodologically correct approach. Must use held-out GT per category, not known indications.",
-      "status": "pending",
+      "status": "blocked",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
@@ -1380,8 +1380,8 @@
         "3. If not, add category-specific adjustments",
         "4. Validate on held-out categories"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h71 requires modification of h68 evaluation to save per-disease results with categories.\n\nCurrent h68 output only contains aggregated metrics:\n- Calibration by threshold (e.g., 0.7: 88% precision, 27 diseases)\n- But NOT broken down by category\n\nTo complete h71 properly:\n1. Modify evaluate_unified_confidence.py to save per-disease: disease_id, category, prob_h52, hit\n2. Re-run h68 evaluation (~3-5 mins)\n3. Stratify calibration by category\n4. Compute category-specific optimal thresholds\n\nBLOCKER: This is a data pipeline issue, not a research question. Should be addressed as part of production integration (h69).\n\nNote: h52 model already uses category as a one-hot feature, so category-specific thresholds may provide minimal incremental value.",
+      "result_metric": "BLOCKED - requires h68 re-run with per-disease output"
     },
     {
       "id": "h72",
@@ -1460,7 +1460,7 @@
       "id": "h76",
       "title": "Precision Improvement via Category Subsetting",
       "description": "Test if restricting predictions to high-performing categories (autoimmune, cardiovascular) at lower thresholds can match clinical precision with higher coverage.",
-      "status": "pending",
+      "status": "blocked",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -1471,8 +1471,8 @@
         "3. Test if category filtering provides better coverage than global thresholding",
         "4. Compare: clinical (5 diseases) vs category-subsetting approach"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Blocked by h71 - requires per-category precision which isn't available without h68 modifications.",
+      "result_metric": "BLOCKED - dependent on h71"
     },
     {
       "id": "h77",
@@ -1860,6 +1860,12 @@
       "hypothesis_id": "h77",
       "learning": "Cannot evaluate per-category precision using 'known indications' as ground truth \u2014 this is only a lower bound. Proper calibration requires held-out GT data stratified by category.",
       "implication": "h71 (Per-Category Calibration) is the correct approach; it should use held-out disease split per category."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h71",
+      "learning": "Per-category calibration requires saving per-disease results from held-out evaluation. h68 only saved aggregates.",
+      "implication": "Future evaluations should save disease-level results to enable stratified analysis."
     }
   ],
   "collaborations": [
