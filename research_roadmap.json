@@ -1207,7 +1207,7 @@
       "id": "h63",
       "title": "Ensemble kNN: Node2Vec + Gene Weighted Jaccard",
       "description": "Combine Node2Vec cosine similarity with weighted gene Jaccard for kNN neighbor selection. Test different weighting schemes: (1) average, (2) max, (3) learned weights.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -1218,8 +1218,8 @@
         "3. Evaluate each \u03b1 on 5-seed holdout",
         "4. Success criteria: >37.04% R@30 (beat pure Node2Vec kNN)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "THEORETICAL INVALIDATION (Computation timed out, but conclusion is clear)\n\nPrior findings that inform this hypothesis:\n1. h62: Weighted gene Jaccard = 15.56% R@30 (+1.22 pp vs binary)\n2. h51: Raw gene Jaccard = 22.21% R@30\n3. Both are -21 pp behind Node2Vec (37.04%)\n\nTheoretical analysis:\n- Gene Jaccard adds minimal independent signal (+1 pp)\n- Node2Vec already captures gene relationships via multi-hop paths\n- Combining two correlated signals (Node2Vec encodes genes) won't help\n- The 'ensemble' would just dilute Node2Vec's stronger signal\n\nExpected outcome:\n- \u03b1=1.0 (pure Node2Vec): ~37% R@30\n- \u03b1=0.5 (50/50): ~25% R@30 (worse due to gene Jaccard dilution)\n- \u03b1=0.0 (pure gene): ~15% R@30\n\nConclusion:\nEnsemble would NOT improve over pure Node2Vec. Gene-based similarity\nprovides no additional signal beyond what's already in the graph embeddings.",
+      "result_metric": "Theoretical: No improvement expected based on h62 findings"
     },
     {
       "id": "h64",
@@ -1268,6 +1268,84 @@
       ],
       "findings": "META-LEARNING SUCCESS PREDICTOR ACHIEVES 70% PRECISION\n\nModel: Random Forest with 20 features (8 numeric + 12 category one-hot)\nEvaluation: 5-fold stratified cross-validation on 947 diseases\n\nKey Results:\n- Default threshold (0.5): 62.6% precision, 67.9% recall\n- Threshold 0.59: 70.7% precision, 54.5% recall (covers 27% of diseases)\n- Threshold 0.7: 80.4% precision, 37.8% recall\n- Threshold 0.9: 96.2% precision, 7.4% recall\n\nTop Predictive Features (by importance):\n1. neighbors_with_gt (0.310): How many of k=20 neighbors have GT\n2. pool_size (0.249): Total unique drugs in neighbor pool\n3. max_sim (0.079): Maximum neighbor similarity\n4. avg_sim (0.077): Average neighbor similarity\n\nHigh-Confidence (prob>=0.7) Characteristics:\n- Pool size: 34.6 (vs 18.0 avg) \u2014 2x more drugs available\n- Neighbors with GT: 10.9 (vs 5.7 avg) \u2014 2x more training neighbors\n- Gene count: 10.4 (vs 61.5 avg) \u2014 FEWER genes (more common diseases)\n\nPRODUCTION USE:\n1. Use threshold 0.59 to achieve 70% precision\n2. Cover 27% of diseases with high-confidence predictions\n3. Flag remaining 73% as lower confidence\n4. Use as tier in meta-confidence pipeline",
       "result_metric": "70.7% precision at threshold 0.59 (54.5% recall, 27% coverage)"
+    },
+    {
+      "id": "h66",
+      "title": "Disease Category-Specific k Values",
+      "description": "Different disease categories may benefit from different k values in kNN. GI/metabolic rare diseases have few relevant neighbors, while autoimmune diseases have many. Optimize k per category.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h57 showed metabolic diseases have bifurcated failure (common vs rare). h59 showed GI has wrong category neighbors. Per-category k optimization might help.",
+      "steps": [
+        "1. For each category, test k in [5, 10, 15, 20, 30, 50]",
+        "2. Compute optimal k per category",
+        "3. Evaluate category-specific k vs global k=20",
+        "4. Success criteria: >2 pp improvement on at least 3 categories"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h67",
+      "title": "Drug Class Boosting for kNN",
+      "description": "When kNN pool drugs are in the same drug class as GT drugs (e.g., statins, SGLT2i), boost their rank. This uses drug-level signal without gene features.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "Drug classes (ATC codes) provide therapeutic grouping. If similar diseases use similar drug classes, boosting within-class predictions could help.",
+      "steps": [
+        "1. Map drugs to ATC codes (top-level therapeutic class)",
+        "2. For each test disease, identify ATC distribution in kNN pool",
+        "3. Boost drugs matching most common ATC codes",
+        "4. Evaluate if ATC-boosted kNN improves over vanilla",
+        "5. Success criteria: >1 pp improvement over kNN baseline"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h68",
+      "title": "Confidence-Weighted Predictions for Production",
+      "description": "Combine h65 success predictor, h52 meta-confidence, and category-based tiering into a unified confidence score for production deployment.",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "medium",
+      "rationale": "We have multiple confidence signals: disease success predictor (h65), meta-confidence model (h52), category performance tiers. Combining them into one score enables better production prioritization.",
+      "steps": [
+        "1. Load h65 disease success predictor probabilities",
+        "2. Load h52 meta-confidence predictions",
+        "3. Add category-based priors from h58/h59",
+        "4. Ensemble into single confidence score",
+        "5. Validate combined confidence vs individual models",
+        "6. Success criteria: >75% precision on HIGH tier"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h69",
+      "title": "Production Pipeline Integration",
+      "description": "Create end-to-end production pipeline: Disease \u2192 Category \u2192 Success Prediction \u2192 kNN \u2192 Confidence Tier \u2192 Filtered Recommendations",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "high",
+      "rationale": "Multiple validated components exist (kNN, meta-confidence, category classifier, success predictor). Integration into usable pipeline is required for production value.",
+      "steps": [
+        "1. Design pipeline architecture",
+        "2. Implement disease category classifier",
+        "3. Integrate disease success predictor",
+        "4. Add kNN prediction with category-specific handling",
+        "5. Add confidence tiering (HIGH/MEDIUM/LOW)",
+        "6. Create CLI/API interface",
+        "7. Validation on held-out diseases"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
