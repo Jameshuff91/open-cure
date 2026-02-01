@@ -1,0 +1,14 @@
+{
+  "hypothesis": "h86",
+  "title": "Same-Category Neighbor Ratio as Confidence Feature",
+  "date": "2026-01-31",
+  "status": "inconclusive",
+  "metrics": {
+    "correlation_with_hit": -0.018954178168598988,
+    "correlation_with_confidence": -0.1857849808916578,
+    "baseline_precision": 0.8312883435582822,
+    "filtered_precision": 0.828125,
+    "improvement": -0.0031633435582821834
+  },
+  "findings": "\nSame-category neighbor ratio (SCNR) measures what fraction of a disease's k=20 nearest neighbors\nare from the same disease category.\n\nFINDINGS:\n- Correlation with hit rate: -0.019 (weak positive)\n- Correlation with existing confidence: -0.186 (weak positive)\n\nIMPACT:\n- Baseline (combined_avg >= 0.6): n=163, precision=83.1%\n- With SCNR >= 0.1 filter: n=128, precision=82.8%\n- Improvement: -0.3%\n\nVERDICT: SCNR provides marginal additional signal\n\nNote: The low same-category ratios (often <10%) suggest that disease embeddings\nare organized more by functional similarity than by disease category.\nThis explains why category-based confidence (h71) is more predictive than\nadding SCNR as a feature.\n"
+}

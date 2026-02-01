@@ -1633,13 +1633,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "1. Compute same-category neighbor ratio for each test disease",
         "2. Add as feature to confidence model",
         "3. Re-evaluate calibration by category",
         "4. Check if it helps flag poorly-calibrated predictions"
-      ]
+      ],
+      "findings": "Same-category neighbor ratio (SCNR) does NOT improve confidence predictions.\n\nRESULTS:\n- Correlation with hit rate: -0.019 (effectively zero)\n- Correlation with existing confidence: -0.186 (weak negative!)\n- Baseline (combined_avg >= 0.6): 163 diseases, 83.1% precision\n- With SCNR >= 0.1 filter: 128 diseases, 82.8% precision\n- Net effect: -0.3% precision, -35 diseases\n\nWHY IT FAILED:\n- Disease embeddings are organized by FUNCTIONAL similarity, not category\n- High same-category ratio doesn't mean better predictions\n- The category-based calibration (h71) already captures this effect more directly\n- SCNR is redundant with category-level confidence\n\nIMPLICATION:\nh71's approach (use category as confidence tier directly) is better than\ntrying to compute SCNR as a numeric feature.",
+      "result_metric": "-0.3% precision, -0.019 correlation with hit rate"
     }
   ],
   "completed": [
@@ -2040,6 +2042,12 @@
       "hypothesis_id": "h83",
       "learning": "Categories with low same-category neighbor ratio in Node2Vec are poorly calibrated. Respiratory has 8.8% (lowest), cancer has 45.3% (highest). This explains why some categories achieve 90%+ precision (autoimmune neighbors autoimmune) while others fail (respiratory neighbors \"other\").",
       "implication": "Same-category neighbor ratio could be used as an additional confidence feature to flag unreliable predictions."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h86",
+      "learning": "Same-category neighbor ratio does not predict success. Node2Vec organizes diseases by functional similarity, not category. The category-based calibration (h71) captures this effect more directly and effectively.",
+      "implication": "Use category as a direct confidence tier rather than computing derived metrics."
     }
   ],
   "collaborations": [
