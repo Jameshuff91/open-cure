@@ -1,6 +1,39 @@
 # Research Loop Progress
 
-## Current Session: h70, h75, h77, h78, h67 (2026-01-31)
+## Current Session: h79, h76 (2026-01-31, continued)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Completed (2 additional hypotheses tested)
+**Hypotheses Tested:**
+- h79: Expand h68 for Per-Disease Results - **VALIDATED**
+- h76: Precision Improvement via Category Subsetting - **VALIDATED**
+
+### Key Findings
+
+**h79: Per-Category Calibration Now Available**
+- Modified h68 to save per-disease results
+- Categories achieving 90%+ precision at 0.5: autoimmune (94%), dermatological (100%)
+- Categories achieving 90%+ at 0.7: cardiovascular (100%), other (92%)
+- Overconfident categories: respiratory (+27pp), hematological (+28pp)
+- Unblocked h71 and h76
+
+**h76: Category Subsetting Provides 3.8x Coverage Gain**
+- Global 0.8: 5 diseases, 100% precision
+- Extended subsetting: 19 diseases, 93.5% precision
+- Strategy: autoimmune+derm@0.5, cardio+other@0.7
+- Trade 6.5 pp precision for 3.8x coverage
+
+### Session Statistics (this continuation)
+
+- Hypotheses tested: 2
+- Validated: 2 (h79, h76)
+- Total for day: 7 hypotheses
+
+---
+
+## Previous Session: h70, h75, h77, h78, h67 (2026-01-31)
 
 ### Session Summary
 
