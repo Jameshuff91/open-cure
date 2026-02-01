@@ -592,6 +592,40 @@ def main():
         'elapsed_seconds': elapsed,
     }
 
+    # Save per-disease results for stratified analysis (h79)
+    per_disease_output = {
+        'hypothesis': 'h79',
+        'title': 'Per-Disease Confidence Results for Stratified Analysis',
+        'date': '2026-01-31',
+        'description': 'Per-disease results from h68 to enable h71/h76 per-category calibration',
+        'seed_results': [
+            {
+                'seed': sr['seed'],
+                'diseases': [
+                    {
+                        'disease_id': r['disease_id'],
+                        'disease_name': r['disease_name'],
+                        'category': r['category'],
+                        'hit': r['hit'],
+                        'prob_h52': r['prob_h52'],
+                        'prob_h65': r['prob_h65'],
+                        'prob_category': r['prob_category'],
+                        'combined_avg': r['combined_avg'],
+                        'pool_size': r['pool_size'],
+                        'neighbors_w_gt': r['neighbors_w_gt'],
+                    }
+                    for r in sr['results']
+                ]
+            }
+            for sr in all_seed_results
+        ],
+    }
+
+    per_disease_path = ANALYSIS_DIR / "h79_per_disease_confidence.json"
+    with open(per_disease_path, 'w') as f:
+        json.dump(per_disease_output, f, indent=2)
+    print(f"\nPer-disease results saved to {per_disease_path}")
+
     output_path = ANALYSIS_DIR / "h68_unified_confidence_results.json"
     with open(output_path, 'w') as f:
         json.dump(output, f, indent=2, default=str)

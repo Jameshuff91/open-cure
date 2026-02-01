@@ -1369,7 +1369,7 @@
       "id": "h71",
       "title": "Per-Category Calibration",
       "description": "Train category-specific calibration models since some categories (GI, hematological) have fundamental kNN blind spots.\n\n[Updated after h77]: This is the methodologically correct approach. Must use held-out GT per category, not known indications.",
-      "status": "blocked",
+      "status": "pending",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
@@ -1380,8 +1380,8 @@
         "3. If not, add category-specific adjustments",
         "4. Validate on held-out categories"
       ],
-      "findings": "h71 requires modification of h68 evaluation to save per-disease results with categories.\n\nCurrent h68 output only contains aggregated metrics:\n- Calibration by threshold (e.g., 0.7: 88% precision, 27 diseases)\n- But NOT broken down by category\n\nTo complete h71 properly:\n1. Modify evaluate_unified_confidence.py to save per-disease: disease_id, category, prob_h52, hit\n2. Re-run h68 evaluation (~3-5 mins)\n3. Stratify calibration by category\n4. Compute category-specific optimal thresholds\n\nBLOCKER: This is a data pipeline issue, not a research question. Should be addressed as part of production integration (h69).\n\nNote: h52 model already uses category as a one-hot feature, so category-specific thresholds may provide minimal incremental value.",
-      "result_metric": "BLOCKED - requires h68 re-run with per-disease output"
+      "findings": null,
+      "result_metric": null
     },
     {
       "id": "h72",
@@ -1460,8 +1460,8 @@
       "id": "h76",
       "title": "Precision Improvement via Category Subsetting",
       "description": "Test if restricting predictions to high-performing categories (autoimmune, cardiovascular) at lower thresholds can match clinical precision with higher coverage.",
-      "status": "blocked",
-      "priority": 3,
+      "status": "pending",
+      "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
       "rationale": "h66 showed category-specific performance varies. If some categories are inherently more predictable, we could achieve clinical-level precision by subsetting rather than threshold filtering.",
@@ -1471,8 +1471,8 @@
         "3. Test if category filtering provides better coverage than global thresholding",
         "4. Compare: clinical (5 diseases) vs category-subsetting approach"
       ],
-      "findings": "Blocked by h71 - requires per-category precision which isn't available without h68 modifications.",
-      "result_metric": "BLOCKED - dependent on h71"
+      "findings": null,
+      "result_metric": null
     },
     {
       "id": "h77",
@@ -1513,7 +1513,7 @@
       "id": "h79",
       "title": "Expand h68 to Save Per-Disease Results",
       "description": "Modify h68 evaluation to save per-disease results (disease_id, category, probs, hit) to enable stratified calibration analysis (h71) and category-specific thresholds.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -1523,8 +1523,8 @@
         "2. Re-run evaluation (5 seeds)",
         "3. Unblock h71, h76 with per-category data"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h79 VALIDATED: Per-disease results saved, per-category calibration now available.\n\nKEY FINDINGS:\n\n1. Categories achieving 90% precision (with held-out evaluation):\n   - AUTOIMMUNE: 93.8% precision at threshold 0.5 (n=16) \u2190 BEST\n   - DERMATOLOGICAL: 100% precision at threshold 0.5 (n=10)\n   - CARDIOVASCULAR: 100% precision at threshold 0.7 (n=5)\n   - OTHER: 91.9% precision at threshold 0.7 (n=62)\n\n2. Categories with calibration issues (overconfident):\n   - RESPIRATORY: +26.8% (predicts 68.5%, achieves 41.7%)\n   - HEMATOLOGICAL: +28.5% (predicts 45.2%, achieves 16.7%)\n   - METABOLIC: +13.9% (predicts 59.4%, achieves 45.5%)\n   - INFECTIOUS: +12.1% (predicts 69.2%, achieves 57.1%)\n\n3. Categories with underconfidence (conservative):\n   - OPHTHALMIC: -25.2% (predicts 74.8%, achieves 100%)\n   - DERMATOLOGICAL: -21.0% (predicts 79.0%, achieves 100%)\n   - AUTOIMMUNE: -12.4% (predicts 81.4%, achieves 93.8%)\n\n4. This unblocks h71 and h76 for category-specific threshold optimization.\n\nSaved to: data/analysis/h79_per_disease_confidence.json",
+      "result_metric": "Per-category calibration available; autoimmune/dermatological achieve 90%+ precision at 0.5 threshold"
     },
     {
       "id": "h80",
@@ -1931,6 +1931,12 @@
       "hypothesis_id": "h67",
       "learning": "ATC class boosting hurts kNN performance. Node2Vec embeddings already capture drug similarity; coarse ontology categories add noise.",
       "implication": "Don't layer ontology-based features on top of learned embeddings for drug ranking."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h79",
+      "learning": "Per-category calibration reveals autoimmune/dermatological achieve 90%+ precision at 0.5 threshold. Respiratory/hematological are overconfident (+27-28 pp).",
+      "implication": "Category-specific thresholds can expand coverage: autoimmune at 0.5 vs 0.7 global threshold."
     }
   ],
   "collaborations": [
