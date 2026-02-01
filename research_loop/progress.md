@@ -1,65 +1,87 @@
 # Research Loop Progress
 
-## Current Session: h49-h59 (2026-01-31)
+## Current Session: h61 (2026-01-31)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (9 hypotheses tested)
-**Hypotheses Tested:**
-- h49: Gene Expression → Drug Mapping Pipeline - **VALIDATED**
-- h50: Rare Skin Disease Baseline Evaluation - **VALIDATED**
-- h51: Gene Module Similarity for Disease Matching - **INVALIDATED**
-- h52: Meta-Confidence Model for Prediction Reliability - **VALIDATED**
-- h53: Skin Disease Name Mapping Expansion - **VALIDATED**
-- h54: Production Meta-Confidence Pipeline - **VALIDATED**
-- h56: Cancer Category Analysis Deep Dive - **VALIDATED**
-- h58: 'Other' Category Subcategorization - **VALIDATED**
-- h59: Gastrointestinal Disease Failure Analysis - **VALIDATED**
+**Status:** Completed (1 hypothesis tested)
+**Hypothesis Tested:**
+- h61: Bio Foundation Model Disease Embeddings (helicalAI Integration) - **INVALIDATED**
 
-### MAJOR DISCOVERIES
+### Key Findings
 
-1. **Gastrointestinal is a CRITICAL blind spot** (5% hit rate)
-   - Root cause: kNN neighbors are NOT other GI diseases
-   - Node2Vec doesn't capture organ/function similarity
-   - 28% of GI drugs are GI-specific (PPIs, hepatitis antivirals)
+**h61: Geneformer Pseudo-Expression Approach FAILS Dramatically**
 
-2. **Extended categories reveal clear performance tiers:**
-   - ★★★ (>80%): Endocrine, Autoimmune, Dermatological, Psychiatric
-   - ★★ (60-80%): Infectious, Respiratory, Cancer, Ophthalmic
-   - ⚠ (<40%): Hematological, Musculoskeletal, Renal
-   - ❌ (5%): Gastrointestinal
+- **Geneformer kNN: 8.03% ± 1.06% R@30**
+- **Node2Vec kNN: 29.31% ± 1.92% R@30**
+- **Difference: -21.28 pp (p=0.0001)**
 
-3. **Gene Jaccard is worse than Node2Vec** (-14.71 pp)
-
-4. **Meta-confidence tiering works** (HIGH tier: 100% hit rate)
+Root Cause Analysis:
+1. Geneformer expects REAL gene expression counts (varying values 0-1000s)
+2. Our pseudo-expression (binary 0/100 from disease-gene associations) lacks variation
+3. 14,080 NaN values in embeddings (4% of total)
+4. 190 near-identical disease pairs (similarity > 0.99) = embedding collapse
+5. Foundation models cannot work with fabricated input
 
 ### Deliverables Created
 
-1. **Gene Expression → Drug Pipeline**: `scripts/gene_expression_drug_mapping.py`
-2. **Meta-Confidence Model**: `models/meta_confidence_model.pkl`, `meta_confidence_helper.py`
-3. **26 Manual Skin Disease MESH Mappings**
-4. **16-Category Classification System**
+1. **Geneformer disease embeddings** (invalidated): `data/analysis/h61/geneformer_disease_embeddings.npy`
+2. **Comparison results**: `data/analysis/h61/knn_comparison_results.json`
+3. **Analysis documentation** in research_roadmap.json
 
-### Remaining Hypotheses
+### New Hypotheses Generated (4)
 
-1. h60: Update Meta-Confidence Model with Extended Categories (Priority 2)
-2. h57: Metabolic Disease Deep Dive (Priority 2)
-3. h55: GEO Gene Expression Data Integration (Priority 3)
-4. h16: Clinical Trial Phase Features (Priority 20)
+1. **h62** (Priority 2): Weighted Gene Association for Disease Similarity
+   - Use edge weights from DRKG instead of binary associations
 
-### Production Recommendations
+2. **h63** (Priority 3): Ensemble kNN - Node2Vec + Weighted Gene Jaccard
+   - Combine similarity measures at the similarity level
 
-1. **EXCLUDE or FLAG GI predictions** - 5% success is worse than random
-2. **Prioritize endocrine/autoimmune/dermatological/psychiatric** - >80% hit rate
-3. **Use HIGH confidence tier** - 100% hit rate
-4. **Deploy extended categories** in meta-confidence model
-5. **Accept kNN limitation** for organ-specific disease categories
+3. **h64** (Priority 4): Real Gene Expression via ARCHS4
+   - Download actual expression profiles from ARCHS4/GEO
+   - HIGH effort but could properly test h61's premise
+
+4. **h65** (Priority 2): Meta-Learning - Predict Which Diseases Will Succeed
+   - Train classifier to predict >30% hit rate per disease
+
+### Updated Remaining Hypotheses
+
+| Priority | ID | Title | Expected Impact |
+|----------|-----|-------|-----------------|
+| 2 | h57 | Metabolic Disease Deep Dive | medium |
+| 2 | h62 | Weighted Gene Association | medium |
+| 2 | h65 | Meta-Learning Disease Success | medium |
+| 3 | h63 | Ensemble kNN | medium |
+| 3 | h55 | GEO Gene Expression Integration | high |
+| 4 | h64 | Real Gene Expression via ARCHS4 | high |
+| 20 | h16 | Clinical Trial Phase Features | low |
+
+### Key Learning
+
+Gene-based approaches consistently underperform graph-based similarity:
+- h19 (HPO Phenotype): 14.20% R@30 (-22.71 pp vs Node2Vec)
+- h51 (Gene Jaccard): 22.21% R@30 (-14.71 pp vs Node2Vec)
+- h61 (Geneformer pseudo): 8.03% R@30 (-21.28 pp vs Node2Vec)
+
+The graph structure captured by Node2Vec provides more signal than gene associations alone. Breaking the 37% ceiling requires either:
+1. REAL gene expression data (not pseudo-expression)
+2. Different architectures (not similarity-based kNN)
+3. Better ground truth coverage
 
 ### Session Statistics
 
-- Hypotheses tested: 9
-- Validated: 8
+- Hypotheses tested: 1
+- Validated: 0
 - Invalidated: 1
-- New hypotheses generated: 7 (h53-h60)
-- Critical finding: GI blind spot identified and explained
+- New hypotheses generated: 4 (h62-h65)
+- Critical finding: Foundation models require proper input format
+
+---
+
+## Previous Session: h49-h59 (2026-01-31)
+
+- Hypotheses tested: 9
+- Validated: 8, Invalidated: 1
+- Major finding: GI diseases are a critical blind spot (5% hit rate)
+- Extended categories identified clear performance tiers

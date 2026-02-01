@@ -1156,7 +1156,7 @@
       "id": "h61",
       "title": "Bio Foundation Model Disease Embeddings (helicalAI Integration)",
       "description": "Use helicalAI's pre-trained Bio Foundation Models (scGPT, Geneformer, TranscriptFormer) to generate disease embeddings from gene expression profiles. These dense embeddings could provide better disease similarity measures than Node2Vec for kNN neighbor selection.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 1,
       "expected_impact": "high",
       "effort": "medium",
@@ -1178,6 +1178,91 @@
           "stars": 188,
           "license": "AGPL-3.0"
         }
+      ],
+      "findings": "PSEUDO-EXPRESSION APPROACH FAILS DRAMATICALLY (-21.28 pp vs Node2Vec)\n\nResults:\n- Geneformer kNN: 8.03% \u00b1 1.06% R@30\n- Node2Vec kNN: 29.31% \u00b1 1.92% R@30  \n- Difference: -21.28 pp (p=0.0001)\n\nRoot Cause Analysis:\n1. Geneformer expects REAL gene expression counts (varying values 0-1000s)\n2. Our pseudo-expression (binary 0/100) lacks the variation needed\n3. 14,080 NaN values in embeddings (4% of all values)\n4. 190 near-identical disease pairs (similarity > 0.99) = embedding collapse\n5. Mean pairwise similarity = 0.51 (should be lower if discriminating well)\n\nWhy Node2Vec Wins:\n- Captures graph STRUCTURE, not just gene set overlap\n- Path-based similarity includes multi-hop relationships\n- Not dependent on expression values\n\nKey Learning:\n- Foundation models like Geneformer require properly formatted input\n- Binary associations \u2260 gene expression profiles\n- This approach cannot work without REAL expression data (from GEO/GTEx)\n- Confirms h19: gene-based similarity < graph-based similarity for kNN\n\nReal Expression Data Path:\n- Would need GEO datasets per disease (e.g., GSExxxx for psoriasis)\n- Could extract expression profiles for Ryland's spatial transcriptomics work\n- Estimated effort: HIGH (1000s of GEO downloads + processing)",
+      "result_metric": "8.03% R@30 (-21.28 pp vs Node2Vec baseline of 29.31%)"
+    },
+    {
+      "id": "h62",
+      "title": "Weighted Gene Association for Disease Similarity",
+      "description": "Instead of binary gene associations (from disease_genes.json), use weighted associations based on: (1) Edge count in DRKG between disease and gene, (2) Evidence type (experimental vs computational), (3) Gene centrality in disease subgraph. Create weighted Jaccard similarity between diseases.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h61 showed binary gene associations are too coarse for foundation models. h51 showed raw Jaccard fails (-14.71 pp). But WEIGHTED associations might capture more nuance than binary while being computationally cheaper than full expression data.",
+      "steps": [
+        "1. Extract all disease-gene edges from DRKG with edge types",
+        "2. Weight genes by: number of supporting edges, edge type importance, gene degree",
+        "3. Compute weighted Jaccard similarity between all disease pairs",
+        "4. Compare kNN with weighted similarity vs Node2Vec cosine",
+        "5. Success criteria: Close gap with Node2Vec (>25% R@30 vs current 23.2% for raw Jaccard)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h63",
+      "title": "Ensemble kNN: Node2Vec + Gene Weighted Jaccard",
+      "description": "Combine Node2Vec cosine similarity with weighted gene Jaccard for kNN neighbor selection. Test different weighting schemes: (1) average, (2) max, (3) learned weights.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "If h62 shows weighted gene similarity has independent signal, combining it with Node2Vec might capture complementary information. Previous attempts at combining features failed (h42), but similarity-level fusion might work differently than feature-level.",
+      "steps": [
+        "1. Compute weighted gene Jaccard (from h62 if available)",
+        "2. Test ensemble: sim = \u03b1*Node2Vec + (1-\u03b1)*Jaccard for \u03b1 in [0.1, 0.3, 0.5, 0.7, 0.9]",
+        "3. Evaluate each \u03b1 on 5-seed holdout",
+        "4. Success criteria: >37.04% R@30 (beat pure Node2Vec kNN)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h64",
+      "title": "Real Gene Expression Integration via ARCHS4",
+      "description": "ARCHS4 provides pre-computed gene expression signatures for diseases from GEO. Download disease-level expression profiles and generate TRUE Geneformer embeddings.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "high",
+      "effort": "high",
+      "collaboration": "ryland_mortlock",
+      "rationale": "h61 failed because we used pseudo-expression (binary 0/100). REAL expression data from ARCHS4/GEO would provide the continuous values Geneformer needs. This is the 'proper' way to do h61.",
+      "steps": [
+        "1. Access ARCHS4 API (maayanlab.cloud/archs4)",
+        "2. Query disease-associated expression signatures",
+        "3. Generate AnnData with real counts",
+        "4. Run Geneformer on real expression data",
+        "5. Compare Geneformer (real) kNN vs Node2Vec kNN",
+        "6. Success criteria: >30% R@30 (demonstrate value of real expression)"
+      ],
+      "external_resources": [
+        {
+          "name": "ARCHS4",
+          "url": "https://maayanlab.cloud/archs4",
+          "description": "Pre-computed gene expression signatures from GEO"
+        }
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h65",
+      "title": "Meta-Learning: Predict Which Diseases Will Succeed",
+      "description": "Train a classifier to predict whether a disease will achieve >30% hit rate in kNN. Features: disease category, gene count, neighbor diversity, kNN coverage. This enables selective deployment.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "We know GI diseases fail (5%) while endocrine succeeds (>80%). Instead of trying to fix failures, predict them and allocate effort accordingly. The meta-confidence model (h52) showed promise; this extends it.",
+      "steps": [
+        "1. Compute per-disease hit rates from 5-seed evaluation",
+        "2. Create binary labels: success = >30% hit rate",
+        "3. Feature engineering: category, gene count, avg neighbor sim, coverage",
+        "4. Train logistic regression classifier",
+        "5. Evaluate precision/recall for success prediction",
+        "6. Success criteria: >70% precision for 'success' class"
       ],
       "findings": null,
       "result_metric": null
@@ -1467,6 +1552,12 @@
       "hypothesis_id": "h60",
       "learning": "Extended 16-category meta-confidence model improves AUC from 0.733 to 0.757 and reduces variance by 62%. GI category has second-highest importance (0.113), confirming it as strong failure predictor.",
       "implication": "Use extended model in production. Category information is highly predictive. GI flag should be prominently surfaced."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h61",
+      "learning": "Geneformer pseudo-expression (binary disease-gene associations as fake counts) fails catastrophically at 8% vs 29% Node2Vec. Foundation models require REAL gene expression data with continuous variation. Binary associations collapse to near-identical embeddings.",
+      "implication": "Gene-based approaches consistently underperform graph-based (h19, h51, h61). Breaking the 37% ceiling likely requires: (1) Real expression data from GEO/ARCHS4, (2) Different architectures (not similarity-based), or (3) Better ground truth coverage."
     }
   ],
   "collaborations": [
@@ -1478,7 +1569,9 @@
       "data_type": "Gene expression (spatial transcriptomics from skin biopsies)",
       "goal": "Connect dysregulated gene modules with therapeutics using kNN embeddings",
       "added": "2026-01-31T09:14:42.415919",
-      "tools": ["helicalAI/helical (h61)"],
+      "tools": [
+        "helicalAI/helical (h61)"
+      ],
       "notes": "helicalAI Bio Foundation Models could generate disease embeddings from Ryland's spatial transcriptomics output"
     }
   ],
@@ -1487,7 +1580,14 @@
       "name": "helicalAI/helical",
       "url": "https://github.com/helicalAI/helical",
       "type": "Bio Foundation Models",
-      "models": ["Geneformer", "scGPT", "UCE", "TranscriptFormer", "HyenaDNA", "Evo2"],
+      "models": [
+        "Geneformer",
+        "scGPT",
+        "UCE",
+        "TranscriptFormer",
+        "HyenaDNA",
+        "Evo2"
+      ],
       "use_case": "Generate dense disease embeddings from gene expression to break 37% R@30 ceiling",
       "hypothesis": "h61",
       "installed": true,
