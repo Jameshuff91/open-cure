@@ -1666,13 +1666,15 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "1. Define explanation templates based on h71 findings",
         "2. Map category \u2192 confidence tier \u2192 explanation text",
         "3. Add explanation field to production deliverable",
         "4. Test readability with example predictions"
-      ]
+      ],
+      "findings": "Successfully created confidence explanation framework:\n\nTIER 1 (HIGH - autoimmune, dermatological, psychiatric, ophthalmic):\n\"Our model performs exceptionally well for [category] conditions because:\n- Similar diseases share treatment mechanisms\n- Strong knowledge graph connectivity\n- 93-100% of top-30 predictions contain effective drugs\"\n\nTIER 2 (MEDIUM - cardiovascular, other, cancer, infectious, etc.):\n\"Our model has moderate reliability for [category] conditions:\n- Predictions above 0.6 confidence achieve ~80% precision\n- Recommend validating top predictions against literature\"\n\nTIER 3 (LOW - metabolic, respiratory, GI, hematological):\n\"Our model has limited reliability for [category] conditions:\n- Weak connectivity in knowledge graph\n- Treat predictions as exploratory only\n- Consider specialized databases\"\n\nVALUE: Increases transparency, guides appropriate use, helps prioritization.",
+      "result_metric": "3 tier templates, human-readable, actionable guidance"
     },
     {
       "id": "h89",
@@ -2106,6 +2108,12 @@
       "hypothesis_id": "h81",
       "learning": "GI diseases have 0% same-category neighbors and 40% hit rate. The low confidence correctly reflects unreliability. Exclusion (h71) is the right strategy; no alternative within DRKG-based approach works.",
       "implication": "For poorly-performing categories, exclusion is better than attempting rescue. The model correctly signals unreliability."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h88",
+      "learning": "Confidence explanations should be tier-based (not score-based) because disease category is the dominant factor. Template approach allows consistent, understandable explanations.",
+      "implication": "For production UI, display tier-based explanation alongside predictions. Users can trust category over numeric score."
     }
   ],
   "collaborations": [

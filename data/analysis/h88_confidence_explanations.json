@@ -1,0 +1,43 @@
+{
+  "hypothesis": "h88",
+  "title": "Confidence Explanation Generation",
+  "date": "2026-01-31",
+  "status": "validated",
+  "tier_definitions": {
+    "TIER1": {
+      "categories": [
+        "autoimmune",
+        "dermatological",
+        "psychiatric",
+        "ophthalmic"
+      ],
+      "confidence_range": "HIGH (93-100% precision)",
+      "template": "HIGH CONFIDENCE: {disease_name} is an {category} disease. \nOur model performs exceptionally well for {category} conditions because:\n- Similar {category} diseases share treatment mechanisms\n- Strong knowledge graph connectivity between {category} diseases and their treatments\n- Historical validation shows 93-100% of top-30 predictions contain effective drugs"
+    },
+    "TIER2": {
+      "categories": [
+        "cardiovascular",
+        "other",
+        "endocrine",
+        "cancer",
+        "musculoskeletal",
+        "infectious"
+      ],
+      "confidence_range": "MEDIUM (75-92% precision at 0.6+ threshold)",
+      "template": "MEDIUM CONFIDENCE: {disease_name} is a {category} disease.\nOur model has moderate reliability for {category} conditions:\n- Predictions above 0.6 confidence achieve ~80% precision\n- {category} diseases have some treatment mechanism overlap\n- Recommend validating top predictions against literature before prioritizing"
+    },
+    "TIER3": {
+      "categories": [
+        "metabolic",
+        "respiratory",
+        "gastrointestinal",
+        "hematological",
+        "neurological",
+        "renal"
+      ],
+      "confidence_range": "LOW (<50% precision)",
+      "template": "LOW CONFIDENCE: {disease_name} is a {category} disease.\nOur model has limited reliability for {category} conditions because:\n- {category} diseases have weak connectivity in our knowledge graph\n- Similar diseases in embedding space are often from different categories\n- These predictions should be treated as exploratory only\n- Consider specialized databases for {category} drug repurposing"
+    }
+  },
+  "findings": "\nSuccessfully generated human-readable explanation templates for each confidence tier.\n\nIMPLEMENTATION:\n1. Map disease category \u2192 tier (TIER1/2/3)\n2. Select explanation template based on tier\n3. Fill in disease name, category, and metrics\n4. Output includes both qualitative explanation and quantitative metrics\n\nVALUE:\n- Helps users understand WHY a prediction is trusted\n- Provides actionable guidance (validate/explore/avoid)\n- Increases transparency and appropriate use of predictions\n"
+}
