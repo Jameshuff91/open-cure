@@ -1,0 +1,64 @@
+{
+  "hypothesis": "h71",
+  "title": "Per-Category Calibration Analysis",
+  "date": "2026-01-31",
+  "findings": {
+    "tier1_categories": [
+      "autoimmune",
+      "dermatological",
+      "ophthalmic",
+      "psychiatric"
+    ],
+    "tier2_categories": [
+      "cardiovascular",
+      "other",
+      "endocrine",
+      "cancer"
+    ],
+    "tier3_categories": [
+      "infectious",
+      "metabolic",
+      "respiratory",
+      "gastrointestinal",
+      "hematological"
+    ],
+    "recommended_thresholds": {
+      "autoimmune": 0.3,
+      "dermatological": 0.3,
+      "psychiatric": 0.3,
+      "ophthalmic": 0.3,
+      "cardiovascular": 0.6,
+      "other": 0.6,
+      "endocrine": 0.6,
+      "cancer": 0.7,
+      "infectious": 0.7,
+      "musculoskeletal": 0.6
+    },
+    "exclude_categories": [
+      "metabolic",
+      "respiratory",
+      "gastrointestinal",
+      "hematological",
+      "neurological",
+      "renal"
+    ],
+    "global_vs_calibrated": {
+      "global_0.7": {
+        "n": 130,
+        "precision": 89.2
+      },
+      "calibrated": {
+        "n": 107,
+        "precision": 93.5
+      }
+    },
+    "calibration_errors": {
+      "other": 4.5,
+      "cancer": 8.6,
+      "autoimmune": 8.8,
+      "dermatological": 13.5,
+      "infectious": 14.8,
+      "respiratory": 30.8
+    }
+  }
+}

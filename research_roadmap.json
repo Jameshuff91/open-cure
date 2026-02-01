@@ -1369,7 +1369,7 @@
       "id": "h71",
       "title": "Per-Category Calibration",
       "description": "Train category-specific calibration models since some categories (GI, hematological) have fundamental kNN blind spots.\n\n[Updated after h77]: This is the methodologically correct approach. Must use held-out GT per category, not known indications.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
@@ -1380,8 +1380,8 @@
         "3. If not, add category-specific adjustments",
         "4. Validate on held-out categories"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Per-category calibration reveals dramatic differences in model reliability:\n\nTIER 1 (High Confidence, any threshold): autoimmune, dermatological, ophthalmic, psychiatric (93-100% precision)\nTIER 2 (Medium Confidence, threshold 0.6+): cardiovascular, other, endocrine, cancer (75-92% precision)  \nTIER 3 (Low Confidence, exclude or flag): metabolic, respiratory, GI, hematological, infectious (<50% precision)\n\nCalibration errors by category:\n- Well-calibrated: other (4.5pp), cancer (8.6pp), autoimmune (8.8pp)\n- Poorly calibrated: respiratory (30.8pp!), infectious (14.8pp)\n\nCategory-specific thresholds achieve +4.2pp precision (93.5% vs 89.2%) but with -18% coverage.\nFor production: tier predictions by category + threshold, exclude poorly-calibrated categories entirely.",
+      "result_metric": "93.5% precision (category-specific) vs 89.2% (global 0.7)"
     },
     {
       "id": "h72",
@@ -1561,6 +1561,66 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h82",
+      "title": "Category-Specific k Values Combined with Calibration",
+      "hypothesis": "Combining h66 (category-specific k) with h71 (category-specific thresholds) will further improve precision without sacrificing coverage.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "1. Apply h66 category-specific k values to kNN",
+        "2. Apply h71 category-specific thresholds",
+        "3. Measure combined precision vs each alone",
+        "4. Check if gains are additive or redundant"
+      ]
+    },
+    {
+      "id": "h83",
+      "title": "Why Is Respiratory So Poorly Calibrated?",
+      "hypothesis": "Respiratory diseases have unique characteristics (e.g., high comorbidity, overlap with infections) that cause calibration failure.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "1. Analyze respiratory diseases in test set",
+        "2. Check kNN neighbor overlap with other categories",
+        "3. Check if respiratory diseases have high comorbidity signals",
+        "4. Determine if exclusion or special handling is needed"
+      ]
+    },
+    {
+      "id": "h84",
+      "title": "Tier-Based User Interface Design",
+      "hypothesis": "A production UI that displays predictions by confidence tier (HIGH/MEDIUM/LOW) will help users prioritize which predictions to investigate.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "1. Design tier-based output format",
+        "2. Implement category-to-tier mapping",
+        "3. Add confidence score and reasoning for each prediction",
+        "4. Create sample output for user review"
+      ]
+    },
+    {
+      "id": "h85",
+      "title": "Metabolic Disease Rescue via Alternative Similarity",
+      "hypothesis": "Metabolic diseases fail because Node2Vec similarity is poor for metabolic pathways. Testing metabolic-specific similarity (e.g., KEGG pathway overlap) may improve predictions.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "1. Check if metabolic diseases have weak Node2Vec neighbors",
+        "2. Extract KEGG pathway annotations for metabolic diseases",
+        "3. Test pathway-based kNN for metabolic-only",
+        "4. Compare to Node2Vec baseline for metabolic category"
+      ]
     }
   ],
   "completed": [
@@ -1943,6 +2003,12 @@
       "hypothesis_id": "h76",
       "learning": "Category subsetting (auto+derm@0.5, cardio+other@0.7) provides 3.8x coverage gain (19 vs 5 diseases) at 93.5% precision.",
       "implication": "For clinical use, can trade 6.5 pp precision for 3.8x coverage via category-specific thresholds."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h71",
+      "learning": "Category is the strongest predictor of model reliability. Autoimmune/dermatological achieve 93-100% precision at any threshold; metabolic/respiratory/GI are poorly calibrated and should be excluded or flagged.",
+      "implication": "Production system should tier predictions by category confidence level and exclude poorly-calibrated categories from high-confidence recommendations."
     }
   ],
   "collaborations": [
