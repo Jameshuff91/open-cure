@@ -1,0 +1,30 @@
+{
+  "hypothesis": "h76",
+  "title": "Precision Improvement via Category Subsetting",
+  "strategies": {
+    "global_0.8": {
+      "coverage": 5.0,
+      "precision": 1.0
+    },
+    "autoimmune_dermatological_0.5": {
+      "coverage": 5.2,
+      "precision": 0.9615384615384616,
+      "categories": [
+        "autoimmune",
+        "dermatological"
+      ]
+    },
+    "extended": {
+      "coverage": 18.6,
+      "precision": 0.9354838709677419,
+      "high_precision_categories": [
+        "autoimmune",
+        "dermatological"
+      ],
+      "medium_precision_categories": [
+        "cardiovascular",
+        "other"
+      ]
+    }
+  }
+}

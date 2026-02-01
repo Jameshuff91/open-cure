@@ -1460,7 +1460,7 @@
       "id": "h76",
       "title": "Precision Improvement via Category Subsetting",
       "description": "Test if restricting predictions to high-performing categories (autoimmune, cardiovascular) at lower thresholds can match clinical precision with higher coverage.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -1471,8 +1471,8 @@
         "3. Test if category filtering provides better coverage than global thresholding",
         "4. Compare: clinical (5 diseases) vs category-subsetting approach"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h76 VALIDATED: Category subsetting provides 3.8x coverage gain while maintaining >90% precision.\n\nSTRATEGY COMPARISON:\n1. Global threshold 0.8: 5 diseases, 100% precision\n2. Autoimmune + Dermatological @ 0.5: 5 diseases, 96.2% precision (no gain)\n3. Extended subsetting: 19 diseases, 93.5% precision \u2190 BEST\n\nEXTENDED SUBSETTING STRATEGY:\n- Autoimmune + Dermatological: threshold 0.5\n- Cardiovascular + Other: threshold 0.7\n\nRESULT:\n- 3.8x more coverage (19 vs 5 diseases)\n- 93.5% precision (vs 100% for global)\n- Trade 6.5 pp precision for 3.8x coverage\n\nRECOMMENDATION:\nUse extended subsetting for production when coverage matters more than perfect precision.",
+      "result_metric": "Extended subsetting: 19 diseases, 93.5% precision (vs 5 diseases, 100% global)"
     },
     {
       "id": "h77",
@@ -1937,6 +1937,12 @@
       "hypothesis_id": "h79",
       "learning": "Per-category calibration reveals autoimmune/dermatological achieve 90%+ precision at 0.5 threshold. Respiratory/hematological are overconfident (+27-28 pp).",
       "implication": "Category-specific thresholds can expand coverage: autoimmune at 0.5 vs 0.7 global threshold."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h76",
+      "learning": "Category subsetting (auto+derm@0.5, cardio+other@0.7) provides 3.8x coverage gain (19 vs 5 diseases) at 93.5% precision.",
+      "implication": "For clinical use, can trade 6.5 pp precision for 3.8x coverage via category-specific thresholds."
     }
   ],
   "collaborations": [
