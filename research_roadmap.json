@@ -1642,6 +1642,52 @@
       ],
       "findings": "Same-category neighbor ratio (SCNR) does NOT improve confidence predictions.\n\nRESULTS:\n- Correlation with hit rate: -0.019 (effectively zero)\n- Correlation with existing confidence: -0.186 (weak negative!)\n- Baseline (combined_avg >= 0.6): 163 diseases, 83.1% precision\n- With SCNR >= 0.1 filter: 128 diseases, 82.8% precision\n- Net effect: -0.3% precision, -35 diseases\n\nWHY IT FAILED:\n- Disease embeddings are organized by FUNCTIONAL similarity, not category\n- High same-category ratio doesn't mean better predictions\n- The category-based calibration (h71) already captures this effect more directly\n- SCNR is redundant with category-level confidence\n\nIMPLICATION:\nh71's approach (use category as confidence tier directly) is better than\ntrying to compute SCNR as a numeric feature.",
       "result_metric": "-0.3% precision, -0.019 correlation with hit rate"
+    },
+    {
+      "id": "h87",
+      "title": "Drug Mechanism Clustering for Cross-Disease Transfer",
+      "hypothesis": "Drugs with similar mechanisms (e.g., TNF inhibitors) should transfer well between autoimmune diseases. Clustering drugs by mechanism may reveal high-confidence cross-disease candidates.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "1. Extract drug mechanism information from DrugBank/ATC",
+        "2. Cluster drugs by mechanism class",
+        "3. For each mechanism cluster, identify which diseases they treat",
+        "4. Find diseases with mechanism-matched drugs not in GT (novel candidates)",
+        "5. Validate against clinical trials"
+      ]
+    },
+    {
+      "id": "h88",
+      "title": "Confidence Explanation Generation",
+      "hypothesis": "Generating human-readable explanations for why a prediction is high/low confidence will help users prioritize which predictions to investigate.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "1. Define explanation templates based on h71 findings",
+        "2. Map category \u2192 confidence tier \u2192 explanation text",
+        "3. Add explanation field to production deliverable",
+        "4. Test readability with example predictions"
+      ]
+    },
+    {
+      "id": "h89",
+      "title": "Validation Priority Scoring",
+      "hypothesis": "Combining confidence score with novelty (distance from known indications) and unmet medical need will create a better priority ranking for clinical validation.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "1. Define \"novelty\" metric (how different from known indications)",
+        "2. Get unmet medical need scores (e.g., from orphan drug lists)",
+        "3. Combine confidence + novelty + need into priority score",
+        "4. Generate ranked list for validation partners"
+      ]
     }
   ],
   "completed": [

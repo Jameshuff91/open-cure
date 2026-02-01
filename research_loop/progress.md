@@ -1,126 +1,103 @@
 # Research Loop Progress
 
-## Current Session: h79, h76 (2026-01-31, continued)
+## Current Session: h71, h82, h83, h86, h80, h81 (2026-01-31, continued)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Completed (2 additional hypotheses tested)
-**Hypotheses Tested:**
-- h79: Expand h68 for Per-Disease Results - **VALIDATED**
-- h76: Precision Improvement via Category Subsetting - **VALIDATED**
+**Status:** In Progress
+**Hypotheses Tested This Session:**
+- h71: Per-Category Calibration - **VALIDATED**
+- h82: Category-Specific k + Thresholds Combined - **INCONCLUSIVE**
+- h83: Why Is Respiratory So Poorly Calibrated - **VALIDATED**
+- h86: Same-Category Neighbor Ratio as Confidence Feature - **INVALIDATED**
+- h80: Autoimmune-Only Production Model - **VALIDATED**
+- h81: GI Disease Alternative Strategy - **VALIDATED**
 
 ### Key Findings
 
-**h79: Per-Category Calibration Now Available**
-- Modified h68 to save per-disease results
-- Categories achieving 90%+ precision at 0.5: autoimmune (94%), dermatological (100%)
-- Categories achieving 90%+ at 0.7: cardiovascular (100%), other (92%)
-- Overconfident categories: respiratory (+27pp), hematological (+28pp)
-- Unblocked h71 and h76
+**h71: Per-Category Calibration Reveals Reliability Tiers**
+- Tier 1 (HIGH): autoimmune, dermatological, psychiatric, ophthalmic (93-100% precision at any threshold)
+- Tier 2 (MEDIUM): cardiovascular, other, cancer (75-92% precision at 0.6+ threshold)
+- Tier 3 (LOW/EXCLUDE): metabolic, respiratory, GI, hematological (<50% precision)
+- Calibration errors: other (4.5pp), cancer (8.6pp), autoimmune (8.8pp), respiratory (30.8pp!)
+- Category-specific thresholds: +4.2pp precision (93.5% vs 89.2%)
 
-**h76: Category Subsetting Provides 3.8x Coverage Gain**
-- Global 0.8: 5 diseases, 100% precision
-- Extended subsetting: 19 diseases, 93.5% precision
-- Strategy: autoimmune+derm@0.5, cardio+other@0.7
-- Trade 6.5 pp precision for 3.8x coverage
+**h82: Combined k + Thresholds Are Orthogonal**
+- h66's category-specific k improves hit rate for challenging categories (cancer +3.9pp, metabolic +9.1pp)
+- But h71 EXCLUDES those same categories
+- For high-tier categories, k optimization provides no benefit
+- Verdict: h71 alone is sufficient for production
 
-### Session Statistics (this continuation)
+**h83: Respiratory Root Cause Identified**
+- Respiratory has lowest same-category neighbor ratio (8.8% vs 45.3% for cancer)
+- 65% of neighbors are from "other" category
+- kNN recommends drugs for those other diseases → high confidence + low hit rate = 30.8pp overconfidence
+- Node2Vec fundamentally doesn't capture respiratory disease similarity
 
-- Hypotheses tested: 2
-- Validated: 2 (h79, h76)
-- Total for day: 7 hypotheses
+**h86: Same-Category Neighbor Ratio Doesn't Help**
+- Correlation with hit rate: -0.019 (effectively zero)
+- Filtering by ratio >= 0.1: -0.3% precision, -35 diseases
+- h71's direct category tiering is more effective than derived metrics
 
----
+**h80: Autoimmune Is Highest-Confidence Category**
+- 480 predictions, 100% HIGH confidence
+- 76% novel (367/480)
+- Top drug classes: corticosteroids (5-7 diseases), immunomodulators (5 diseases)
+- Notable: Baricitinib→SLE, Adalimumab→MS/SLE, Hydroxychloroquine→MS
 
-## Previous Session: h70, h75, h77, h78, h67 (2026-01-31)
+**h81: GI Correctly Handled by Exclusion**
+- Only 3 GI diseases, 40% hit rate, 0% same-category neighbors
+- Low confidence (0.41) correctly signals unreliability
+- h71's exclusion is the right approach
 
-### Session Summary
+### Session Statistics
 
-**Agent Role:** Research Executor
-**Status:** Completed (5 hypotheses tested)
-**Hypotheses Tested:**
-- h70: Threshold Optimization by Use Case - **VALIDATED**
-- h75: Coverage Gap Analysis - **VALIDATED**
-- h77: Category-Specific Confidence Thresholds - **INCONCLUSIVE** (methodology issue)
-- h78: Known Indication Density as Confidence Proxy - **INVALIDATED**
-- h67: Drug Class (ATC) Boosting for kNN - **INVALIDATED**
+- Hypotheses tested: 6
+- Validated: 4 (h71, h83, h80, h81)
+- Inconclusive: 1 (h82)
+- Invalidated: 1 (h86)
+- New hypotheses added: h82-h86 (generated during session)
 
-### Key Findings
-
-**h70: Use Case Thresholds Defined**
-- Discovery: combined_avg @ 0.3 (57% precision, 88 diseases)
-- Validation: prob_h52 @ 0.5 (75% precision, 56 diseases)
-- Clinical: combined_avg @ 0.8 (100% precision, 5 diseases)
-- Key insight: Different methods optimal for different use cases
-
-**h75: Category Dominates Confidence**
-- Autoimmune: 68x enriched in CLINICAL tier (63% of clinical diseases)
-- Endocrine: 34x enriched, Dermatological: 8.5x enriched
-- Cancer, metabolic, respiratory: ZERO in CLINICAL tier
-- Known indications 3.7x higher in clinical diseases
-
-**h77: Methodology Gap Identified**
-- Cannot calculate per-category precision without held-out evaluation
-- h68 only saved aggregates, not per-disease results
-- Need to modify h68 to unblock per-category analysis
-
-**h78: Conceptual Issue Found**
-- Known indication count correlates with confidence (r=0.558)
-- But this is EFFECT not CAUSE - can't use as feature
-- Training GT is already captured by h52 model features
-
-**h67: Embedding Superiority Confirmed**
-- ATC boosting HURTS kNN: 57.57% → 57.11% (-0.46 pp)
-- Only 29.1% drugs have ATC mappings
-- Node2Vec embeddings already capture drug similarity
-- Don't layer ontology on learned embeddings
-
-### New Hypotheses Generated (this session)
-
-| Priority | ID | Title |
-|----------|-----|-------|
-| 2 | h79 | Expand h68 to Save Per-Disease Results |
-| 3 | h80 | Autoimmune-Only Production Model |
-| 3 | h81 | GI Disease Alternative Strategy |
-
-### Updated Pending Hypotheses
+### Pending Hypotheses
 
 | Priority | ID | Title | Effort |
 |----------|-----|-------|--------|
 | 1 | h69 | Production Pipeline Integration | high |
 | 2 | h74 | Use Case-Aware Production API | medium |
-| 2 | h79 | Expand h68 for Per-Disease Results | low |
-| 3 | h55 | GEO Gene Expression Integration | high |
-| 3 | h80 | Autoimmune-Only Production Model | low |
-| 3 | h81 | GI Disease Alternative Strategy | low |
+| 2 | h84 | Tier-Based User Interface Design | medium |
+| 3 | h55 | GEO Gene Expression Data Integration | high |
+| 3 | h85 | Metabolic Disease Rescue via Alternative Similarity | medium |
 | 4 | h64 | ARCHS4 Gene Expression | high |
 | 20 | h16 | Clinical Trial Phase Features | medium |
 
-### Session Statistics
-
-- Hypotheses tested: 5
-- Validated: 2 (h70, h75)
-- Inconclusive: 1 (h77 - blocked by data format)
-- Invalidated: 2 (h78, h67)
-- New hypotheses: 3 (h79-h81)
-
 ### Recommended Next Steps
 
-1. **h79**: Quick win - expand h68 to save per-disease results, unblocks h71/h76
-2. **h80**: Autoimmune-focused analysis - strongest category for precision
-3. **h74**: Use case-aware API based on h70 findings
+1. **h84**: Tier-based UI design based on h71's calibration findings
+2. **h74**: Use case-aware API leveraging h70's threshold recommendations
+3. **h69**: Full production pipeline integration (high effort but high value)
 
-### Key Learnings to Archive
+### Key Learnings
 
-1. **Methodology matters:** Can't use known indications as GT proxy - need held-out evaluation
-2. **Embeddings are sufficient:** ATC/ontology boosting adds noise on top of learned embeddings
-3. **Category predicts confidence:** Autoimmune dominates, cancer/metabolic fail
-4. **Use case differentiation:** Different methods optimal for different precision/coverage tradeoffs
+1. **Category is king:** Disease category is the strongest predictor of model reliability
+2. **Orthogonal optimizations:** k-optimization and threshold-optimization address different problems
+3. **Derived metrics don't help:** Same-category neighbor ratio doesn't add value over direct category tiering
+4. **Node2Vec limitations:** Respiratory/GI diseases aren't well-captured by graph embeddings
+5. **Autoimmune excellence:** Shared mechanisms make autoimmune the "safe" category for predictions
 
 ---
 
 ## Previous Sessions
+
+### h79, h76 (2026-01-31)
+- 2 hypotheses tested, 2 validated
+- Per-disease results enabled category calibration
+- Category subsetting: 3.8x coverage gain at 93.5% precision
+
+### h70, h75, h77, h78, h67 (2026-01-31)
+- 5 hypotheses tested, 2 validated, 1 inconclusive, 2 invalidated
+- Use case thresholds defined: discovery (0.3), validation (0.5), clinical (0.8)
+- Category dominates confidence: autoimmune 68x enriched in clinical tier
 
 ### h68, h72, h73, h66 (2026-01-31)
 - 4 hypotheses tested, 4 validated
@@ -135,3 +112,16 @@
 ### h49-h59 (2026-01-31)
 - 9 hypotheses tested, 8 validated
 - GI diseases: 5% hit rate (blind spot)
+
+---
+
+## Cumulative Statistics (2026-01-31)
+
+| Status | Count |
+|--------|-------|
+| Validated | 33 |
+| Invalidated | 25 |
+| Inconclusive | 4 |
+| Blocked | 14 |
+| Pending | 7 |
+| **Total Tested** | **62** |
