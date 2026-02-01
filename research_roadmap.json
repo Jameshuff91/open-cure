@@ -1089,7 +1089,7 @@
     {
       "id": "h57",
       "title": "Metabolic Disease Deep Dive",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -1099,7 +1099,9 @@
         "3. Check drug specificity and kNN pool coverage",
         "4. Propose targeted improvements"
       ],
-      "rationale": "Metabolic diseases have worst category performance (37.5% hit rate). Understanding failure mode could help."
+      "rationale": "Metabolic diseases have worst category performance (37.5% hit rate). Understanding failure mode could help.",
+      "findings": "METABOLIC DISEASES HAVE BIFURCATED FAILURE MODE\n\nScope: 28 metabolic diseases analyzed\n\nKey Findings:\n1. Average kNN pool coverage: 5.1%\n2. Median coverage: 0.0%\n3. Zero coverage count: 21/28 (75%)\n\nROOT CAUSE: Two distinct failure modes:\na) COMMON metabolic (T2D, hyperlipidemia, gout): 20.3% avg coverage\n   - Share drugs with cardiovascular diseases\n   - Statins, SGLT2i, GLP-1 agonists appear in multiple diseases\n   \nb) RARE metabolic (Gaucher, Fabry, Niemann-Pick): 0.0% coverage\n   - Enzyme replacement therapies are disease-specific\n   - No similar diseases in training set with shared drugs\n   - 43% of metabolic drugs are disease-specific\n\nDIFFERENCE FROM GI:\n- GI: Neighbors are WRONG category (not GI diseases)\n- Metabolic: Neighbors ARE metabolic, but rare ones have no GT in neighbors\n\nRECOMMENDATIONS:\n1. Split \"metabolic\" into \"common metabolic\" and \"rare storage diseases\"\n2. Flag rare metabolic as LOW confidence in production\n3. Use enzyme-class grouping for lysosomal storage diseases\n4. Accept that kNN fundamentally cannot work for rare diseases with unique drugs",
+      "result_metric": "Common metabolic: 20.3% coverage, Rare metabolic: 0.0% coverage"
     },
     {
       "id": "h58",
@@ -1558,6 +1560,12 @@
       "hypothesis_id": "h61",
       "learning": "Geneformer pseudo-expression (binary disease-gene associations as fake counts) fails catastrophically at 8% vs 29% Node2Vec. Foundation models require REAL gene expression data with continuous variation. Binary associations collapse to near-identical embeddings.",
       "implication": "Gene-based approaches consistently underperform graph-based (h19, h51, h61). Breaking the 37% ceiling likely requires: (1) Real expression data from GEO/ARCHS4, (2) Different architectures (not similarity-based), or (3) Better ground truth coverage."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h57",
+      "learning": "Metabolic diseases have bifurcated failure: common (20% coverage) vs rare/storage (0% coverage). Rare metabolic diseases use disease-specific enzyme replacements that don't appear in any neighbor's GT. This is fundamentally different from GI (wrong organ neighbors) - metabolic neighbors ARE metabolic but have no shared drugs.",
+      "implication": "Production system should split 'metabolic' category. Common metabolic can use kNN; rare storage diseases need alternative approaches (drug class grouping, enzyme type similarity)."
     }
   ],
   "collaborations": [
