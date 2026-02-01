@@ -1351,7 +1351,7 @@
       "id": "h70",
       "title": "Threshold Optimization by Use Case",
       "description": "Optimize confidence thresholds for different production use cases: drug discovery (maximize recall) vs clinical decision support (maximize precision).",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -1362,8 +1362,8 @@
         "3. Create production API with use-case parameter",
         "4. Document recommended thresholds"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Threshold optimization complete. Key findings:\n\n1. DISCOVERY MODE (max coverage, \u226550% precision):\n   - Method: combined_avg, Threshold: 0.3\n   - 57.2% precision, 88.4 diseases coverage\n   - Best for hypothesis generation, drug screening\n\n2. VALIDATION MODE (balanced, \u226575% precision):\n   - Method: prob_h52 alone, Threshold: 0.5\n   - 75.5% precision, 56.0 diseases coverage\n   - Best for research prioritization, grant proposals\n\n3. CLINICAL MODE (max precision, \u226590%):\n   - Method: combined_avg, Threshold: 0.8\n   - 100% precision, 5.0 diseases coverage\n   - Best for clinical decision support, rare disease recommendations\n\nKey insight: Different confidence methods are optimal for different use cases.\ncombined_avg excels at extremes (discovery/clinical), prob_h52 excels at balance.",
+      "result_metric": "3 use case profiles defined: Discovery (88 diseases, 57% prec), Validation (56, 75%), Clinical (5, 100%)"
     },
     {
       "id": "h71",
@@ -1418,6 +1418,61 @@
       ],
       "findings": "h52 MODEL SIMPLIFICATION ANALYSIS COMPLETE\n\nCOMPARISON AT KEY THRESHOLDS:\n| Threshold | h52 Precision | h52 Coverage | Combined Precision | Comb Coverage |\n|-----------|---------------|--------------|---------------------|---------------|\n| 0.5 | 75.5% \u00b1 4.0% | 56 | 68.0% \u00b1 4.5% | 69 |\n| 0.6 | 79.4% \u00b1 4.0% | 49 | 79.5% \u00b1 6.2% | 49 |\n| 0.7 | 82.6% \u00b1 4.7% | 41 | 88.4% \u00b1 5.1% | 26 |\n| 0.8 | 84.2% \u00b1 4.2% | 30 | 100.0% \u00b1 0.0% | 5 |\n\nTRADEOFF AT 0.7 THRESHOLD:\n- Combined adds +5.9 pp precision\n- But loses 15 diseases (37% reduction in coverage)\n\nKEY FINDING: At 0.8 threshold, h52 achieves 84.2% precision with 30 diseases - only 4 pp below combined but covering 4 MORE diseases.\n\nRECOMMENDATION: Use h52-only for production\n- Simpler: single model deployment\n- 84% precision at 0.8 threshold\n- 30 diseases coverage (vs 26 combined)\n- Category prior adds minimal value (AUC 0.593)\n- h65 features redundant with h52 features\n\nPRODUCTION CONFIG:\n- Model: models/meta_confidence_model.pkl\n- HIGH tier: prob >= 0.8 (~84% precision, ~34% coverage)\n- MEDIUM tier: 0.5 <= prob < 0.8 (~75% precision)\n- LOW tier: prob < 0.5 (exploratory)",
       "result_metric": "h52-only at 0.8 threshold: 84.2% precision, 30 diseases (simpler, similar performance)"
+    },
+    {
+      "id": "h74",
+      "title": "Use Case-Aware Production API",
+      "description": "Implement production API with use_case parameter (discovery/validation/clinical) that automatically selects optimal method and threshold from h70 findings.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h70 showed different methods are optimal for different use cases. A single API with use_case parameter would be more user-friendly than exposing raw confidence scores.",
+      "steps": [
+        "1. Create API function with use_case parameter",
+        "2. Map use_case to optimal method/threshold from h70",
+        "3. Return predictions with appropriate confidence tier",
+        "4. Add documentation for each use case",
+        "5. Test on example queries"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h75",
+      "title": "Coverage Gap Analysis Between Use Cases",
+      "description": "Analyze which diseases are only reachable in Discovery mode (57% precision) vs Clinical mode (100% precision). Identify characteristics of 'high confidence' vs 'coverage-only' diseases.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h70 showed 5 diseases at clinical threshold vs 88 at discovery. Understanding what makes the 5 special could inform confidence improvement strategies.",
+      "steps": [
+        "1. Extract diseases at each tier threshold",
+        "2. Analyze characteristics: kNN coverage, category, known drug count",
+        "3. Identify predictors of 'high confidence' diseases",
+        "4. Document patterns for future precision improvement"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h76",
+      "title": "Precision Improvement via Category Subsetting",
+      "description": "Test if restricting predictions to high-performing categories (autoimmune, cardiovascular) at lower thresholds can match clinical precision with higher coverage.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h66 showed category-specific performance varies. If some categories are inherently more predictable, we could achieve clinical-level precision by subsetting rather than threshold filtering.",
+      "steps": [
+        "1. Calculate per-category precision at each threshold",
+        "2. Identify categories with >90% precision at lower thresholds",
+        "3. Test if category filtering provides better coverage than global thresholding",
+        "4. Compare: clinical (5 diseases) vs category-subsetting approach"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -1752,6 +1807,12 @@
       "hypothesis_id": "h66",
       "learning": "Category-specific k values provide significant benefits for metabolic (+9.1 pp at k=30), respiratory (+8.3 pp at k=5), and cancer (+3.9 pp at k=30). Other categories see little change.",
       "implication": "Implement category-aware k routing in production for 3-9 pp gains on specific categories."
+    },
+    {
+      "date": "2026-01-31",
+      "hypothesis_id": "h70",
+      "learning": "Different confidence methods are optimal for different use cases: combined_avg for extremes (discovery/clinical), prob_h52 for balanced validation",
+      "implication": "Production API should offer use-case parameter to select appropriate method/threshold"
     }
   ],
   "collaborations": [
