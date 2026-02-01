@@ -246,6 +246,24 @@ The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These exter
 **Key confounding patterns:** Inverse indication (drug causes disease), cardiac-metabolic comorbidity, polypharmacy
 **Details:** `docs/archive/detailed_analysis_findings.md`
 
+## Production Deployment (h68, h72, h73, h66)
+
+**Confidence Scoring (h68):**
+- Combined avg of h52+h65+category = 88% precision at 0.7 threshold
+- h52-only at 0.8 threshold = 84% precision (simpler, recommended)
+- Model: `models/meta_confidence_model.pkl`
+
+**Production Deliverable (h72):**
+- `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
+- 13,416 predictions, 2,797 HIGH confidence novel
+- Validated: Sirolimus→TSC (FDA-approved), Lovastatin→atherosclerosis
+
+**Category-Specific k (h66):**
+- k=5: dermatological, cardiovascular, psychiatric, respiratory
+- k=10: autoimmune, gastrointestinal
+- k=30: cancer (+3.9 pp), metabolic (+9.1 pp), other
+- k=20: infectious, neurological (default)
+
 ## TxGNN Summary
 
 14.5% R@30, excels at storage diseases (83.3%). Details: `docs/archive/txgnn_learnings.md`
