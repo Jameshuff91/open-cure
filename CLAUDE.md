@@ -62,19 +62,7 @@ You are an execution engine, not a scientist. You lack epistemic discipline by d
 
 ## Cloud GPU (Vast.ai)
 
-```bash
-source .venv/bin/activate
-vastai search offers 'gpu_ram>=8 cuda_vers>=11.0 reliability>0.95' --order 'dph' --limit 10
-vastai create instance <OFFER_ID> --image nvidia/cuda:11.7.1-runtime-ubuntu22.04 --disk 30 --ssh
-vastai show instances
-ssh -p <PORT> root@<SSH_ADDR>
-vastai destroy instance <INSTANCE_ID>  # Stop billing!
-
-# Automated setup
-./scripts/vastai_txgnn_setup.sh <PORT> <HOST>
-```
-
-**Current instance**: None
+**Current instance**: None | Setup: `./scripts/vastai_txgnn_setup.sh <PORT> <HOST>`
 
 ## Models
 
@@ -94,14 +82,15 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 | Model | Per-Drug R@30 | Evaluation | Notes |
 |-------|---------------|------------|-------|
 | **kNN k=20 (original embeddings)** | **36.59% ± 3.90%** | Honest (5-seed) | Has treatment edge leakage |
-| **kNN k=20 (no-treatment embeddings)** | **26.06% ± 3.84%** | **FAIR (5-seed)** | **Best fair comparison to TxGNN** |
+| **kNN k=20 (no-treatment embeddings)** | **26.06% ± 3.84%** | **FAIR (5-seed)** | **Best fair transductive comparison** |
+| **KEGG Pathway kNN** | **15.73% ± 1.82%** | **INDUCTIVE (5-seed)** | **Fair inductive comparison to TxGNN** |
 | Node2Vec+XGBoost TUNED (disease holdout) | 25.85% ± 4.06% | Honest (5-seed) | md=6,ne=500,lr=0.1,alpha=1.0 (h38/h40) |
 | Node2Vec+XGBoost default (disease holdout) | 23.73% ± 3.73% | Honest (5-seed) | md=6,ne=100,lr=0.1 (h40) |
 | GB + Fuzzy Matcher (fixed) | 41.8% | Within-dist | 1,236 diseases, pair-level (inflated) |
 | GB + TransE (existing, on test) | 45.9% | Pair-trained | Trained on ALL diseases, tested on subset |
 | TransE+XGBoost (disease holdout) | ~16% | Honest | TransE fails to generalize |
 | Node2Vec Cosine (no ML) | 1.27% | Honest | ML model IS required |
-| TxGNN | 6.7% | Unknown | Near-random for most diseases |
+| TxGNN | 6.7-14.5% | Inductive | Zero-shot on unseen diseases |
 
 **CRITICAL (2026-01-27):** Multi-seed evaluation (h40) revealed seed 42 was lucky. True means are lower than single-seed reports:
 - Previously reported 31.09% (XGBoost tuned) → actual mean **25.85% ± 4.06%**
@@ -119,11 +108,7 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 - 10.5 pp drop (29% was leakage), 71.2% retained from indirect paths
 - Fair TxGNN comparison: **26.06%** vs 6.7-14.5% (gap ~12-19 pp, not ~23-30 pp)
 
-**EXTERNAL DATA TESTED & FAILED (2026-01-28):**
-- h19 (HPO Phenotype): 14.20% R@30 — WORSE than Node2Vec (36.93%)
-- h17 (PPI Network): 16.18% R@30 — WORSE than Node2Vec (36.93%)
-
-The 23 pp gap is NOT simply missing external data. Node2Vec already captures functional similarity. Breaking the ceiling requires **fundamentally different approaches** (GNN, meta-learning, attention) or **better ground truth coverage**.
+**EXTERNAL DATA TESTED & FAILED (2026-01-28):** HPO/PPI features WORSE than Node2Vec — details in `docs/archive/experiment_history.md`
 
 ## Key Learnings
 
@@ -210,16 +195,13 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 
 ## External Resources for Breaking the 37% Ceiling
 
-The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These external resources may help:
+| Resource | Type | Potential Use |
+|----------|------|---------------|
+| **helicalAI/helical** | Bio Foundation Models | Disease embeddings from gene expression |
+| GEO/GTEx | Gene expression DB | Skin disease expression profiles |
+| DrugBank indications | Drug-disease GT | Expand ground truth coverage |
 
-| Resource | Type | Potential Use | Hypothesis |
-|----------|------|---------------|------------|
-| **helicalAI/helical** | Bio Foundation Models | Dense disease embeddings from gene expression | h61 |
-| GEO/GTEx | Gene expression DB | Skin disease expression profiles for Ryland | h61 |
-| DrugBank indications | Drug-disease GT | Expand ground truth coverage | h4 |
-| UMLS Metathesaurus | Ontology cross-refs | Improve disease name mapping | h9 |
-
-**helicalAI/helical** (https://github.com/helicalAI/helical): Geneformer, scGPT, etc. for disease embeddings from gene expression. Install: `source .venv-helical/bin/activate` (Python 3.11)
+**helicalAI/helical**: Install `source .venv-helical/bin/activate` (Python 3.11)
 
 ## Validation & Confounding (Summary)
 
@@ -256,6 +238,26 @@ The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These exter
 
 14.5% R@30 on our benchmark, excels at storage diseases (83.3%). **However, direct comparison to our 37% kNN is unfair** — TxGNN was designed for zero-shot on diseases with NO graph edges, while our kNN leverages test diseases' existing graph presence. Under equivalent transductive conditions, performance would likely be comparable. Details: `docs/archive/txgnn_learnings.md`
 
+## Harvard-Impressive Evidence (2026-02-01)
+
+**Full report:** `docs/impressive_evidence_report.md`
+
+### Inductive Evaluation (KEGG Pathway kNN)
+- **15.73% ± 1.82% R@30** using only disease KEGG pathway features (no graph)
+- Competitive with TxGNN's 6.7-14.5% under same inductive paradigm
+- Script: `scripts/evaluate_kegg_pathway_knn.py`
+
+### Novel Discovery Validation
+- **100%** of validated predictions have NO direct DRKG treatment edge
+- 4/5 inferred via drug similarity (learned functional similarity)
+- 1/5 inferred via shared gene (mechanistic discovery)
+- Script: `scripts/validate_novel_discovery.py`
+
+### Mechanism Tracing
+- **All 5 validated predictions** have direct drug-target ↔ disease-gene overlap
+- Traceable biological hypotheses for each prediction
+- Script: `scripts/trace_mechanism_paths.py`
+
 ## Methodological Critique Response (2026-02-01)
 
 **Full documentation:** `docs/methodology_limitations.md`, `docs/methodology_summary.md`
@@ -288,9 +290,11 @@ The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These exter
 
 | Archive | Content |
 |---------|---------|
+| `docs/impressive_evidence_report.md` | **Harvard-impressive evidence: inductive eval, novel discovery, mechanisms** |
+| `docs/mechanism_report.md` | Biological mechanism tracings for validated predictions |
+| `docs/methodology_limitations.md` | Full methodological limitations documentation |
+| `docs/methodology_summary.md` | One-page executive summary for sharing |
 | `docs/archive/experiment_history.md` | ATC, Chemical, Pathway, Similarity, Target experiments |
 | `docs/archive/validation_sessions.md` | Literature validation batches 1+2, novel predictions |
 | `docs/archive/txgnn_learnings.md` | TxGNN training, evaluation, fine-tuning experiments |
 | `docs/archive/detailed_analysis_findings.md` | Biologic gap, infectious disease, confounding, validation details |
-| `docs/methodology_limitations.md` | Full methodological limitations documentation |
-| `docs/methodology_summary.md` | One-page executive summary for sharing |

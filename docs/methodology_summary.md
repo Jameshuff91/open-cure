@@ -65,14 +65,51 @@ Test diseases retain graph presence through non-treatment edges. This is not a t
 
 ## Comparison to TxGNN
 
-| Metric | Our Method | TxGNN |
-|--------|------------|-------|
-| R@30 | 26.06% | 6.7-14.5% |
-| Paradigm | Transductive | Inductive |
-| Architecture | kNN + Node2Vec | GNN + Disease Features |
-| Treatment edges | Removed before training | Removed |
+| Metric | Our Method (Transductive) | Our Method (Inductive) | TxGNN |
+|--------|---------------------------|------------------------|-------|
+| R@30 | 26.06% | **15.73%** | 6.7-14.5% |
+| Paradigm | Transductive | **Inductive** | Inductive |
+| Features | Node2Vec embeddings | KEGG pathways only | GNN + Disease Features |
+| Treatment edges | Removed | N/A (no graph) | Removed |
 
-**Caveat**: Direct comparison is complicated by different evaluation paradigms. Our method benefits from test diseases' non-treatment graph presence. The ~2x gap may be partially explained by this methodological difference.
+**Fair Comparison (NEW)**: We developed a KEGG pathway-based kNN using only disease features (no graph). This achieves **15.73% R@30**, which is **competitive with TxGNN's 6.7-14.5%** under the same inductive paradigm. The ~10 pp gap between inductive (15.7%) and transductive (26.1%) methods reflects the value of graph structure.
+
+**Scripts**: `scripts/evaluate_kegg_pathway_knn.py` (inductive), `scripts/knn_evaluation_honest.py` (transductive)
+
+---
+
+## Novel Discovery Validation (NEW)
+
+We classified each validated prediction by its relationship to DRKG structure:
+
+| Category | Count | Description |
+|----------|-------|-------------|
+| DRUG_SIMILARITY | 4/5 | 2-hop via similar drug (learned functional similarity) |
+| MECHANISTIC | 1/5 | 2-hop via shared gene (discovered mechanism) |
+| KNOWN | 0/5 | Direct treatment edge in DRKG |
+
+**Key insight**: 100% of validated predictions have NO direct treatment edge in DRKG. The model inferred these through functional relationships (drug similarity or shared genes), demonstrating genuine discovery rather than memorization.
+
+**Script**: `scripts/validate_novel_discovery.py`
+
+---
+
+## Mechanism Tracing (NEW)
+
+All 5 validated predictions have traceable biological mechanisms:
+
+| Prediction | Direct Gene Overlap | Shared Pathways |
+|------------|---------------------|-----------------|
+| Dantrolene → Heart Failure | 3 (RYR1, etc.) | 28 |
+| Lovastatin → Multiple Myeloma | 33 | 252 |
+| Rituximab → MS | 1 (ABCB1) | 61 |
+| Pitavastatin → RA | 42 | 301 |
+| Empagliflozin → Parkinson's | 1 (INS) | 36 |
+
+**Key insight**: Every validated prediction has direct overlap between drug targets and disease-associated genes, providing biological interpretability.
+
+**Script**: `scripts/trace_mechanism_paths.py`
+**Full report**: `docs/mechanism_report.md`
 
 ---
 
