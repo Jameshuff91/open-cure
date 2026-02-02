@@ -1,0 +1,102 @@
+{
+  "analysis": "precision_cost",
+  "parameters": {
+    "k_values": [
+      10,
+      20,
+      30,
+      50,
+      100
+    ],
+    "seeds": [
+      42,
+      123,
+      456,
+      789,
+      1024
+    ],
+    "k_nn": 20,
+    "validation_cost_per_prediction": 100000
+  },
+  "data_stats": {
+    "n_diseases_in_gt": 472,
+    "n_gt_pairs": 2965,
+    "n_drugs_in_pool": 22267,
+    "n_embeddings": 94247
+  },
+  "metrics_per_k": {
+    "10": {
+      "precision_mean": 0.09053229470950991,
+      "precision_std": 0.026932918065093056,
+      "recall_mean": 0.10969325767549201,
+      "recall_std": 0.02502441027419931
+    },
+    "20": {
+      "precision_mean": 0.07074651087309315,
+      "precision_std": 0.014724828757145482,
+      "recall_mean": 0.16953523668523077,
+      "recall_std": 0.020983537846363413
+    },
+    "30": {
+      "precision_mean": 0.05856431894406579,
+      "precision_std": 0.009866539820578833,
+      "recall_mean": 0.20339857027524832,
+      "recall_std": 0.021899341711551057
+    },
+    "50": {
+      "precision_mean": 0.04523141837065889,
+      "precision_std": 0.008575884936534087,
+      "recall_mean": 0.24738862414584978,
+      "recall_std": 0.02819610991766453
+    },
+    "100": {
+      "precision_mean": 0.028235313209996747,
+      "precision_std": 0.0043835687384579805,
+      "recall_mean": 0.2881638528900087,
+      "recall_std": 0.025872841090426587
+    }
+  },
+  "cost_analysis": {
+    "10": {
+      "precision": 0.09053229470950991,
+      "expected_tp_per_disease_at_k": 0.9053229470950991,
+      "cost_per_tp": 1104578.2095866345,
+      "random_precision": 0.1331566892711187,
+      "random_cost_per_tp": 750994.9409780775,
+      "cost_reduction_vs_random": 0.679892953219783
+    },
+    "20": {
+      "precision": 0.07074651087309315,
+      "expected_tp_per_disease_at_k": 1.414930217461863,
+      "cost_per_tp": 1413497.2702665506,
+      "random_precision": 0.1331566892711187,
+      "random_cost_per_tp": 750994.9409780775,
+      "cost_reduction_vs_random": 0.531302717575435
+    },
+    "30": {
+      "precision": 0.05856431894406579,
+      "expected_tp_per_disease_at_k": 1.7569295683219737,
+      "cost_per_tp": 1707524.3391032862,
+      "random_precision": 0.1331566892711187,
+      "random_cost_per_tp": 750994.9409780775,
+      "cost_reduction_vs_random": 0.43981507248819995
+    },
+    "50": {
+      "precision": 0.04523141837065889,
+      "expected_tp_per_disease_at_k": 2.2615709185329442,
+      "cost_per_tp": 2210852.624176581,
+      "random_precision": 0.1331566892711187,
+      "random_cost_per_tp": 750994.9409780775,
+      "cost_reduction_vs_random": 0.33968566369627695
+    },
+    "100": {
+      "precision": 0.028235313209996747,
+      "expected_tp_per_disease_at_k": 2.823531320999675,
+      "cost_per_tp": 3541664.2718379647,
+      "random_precision": 0.1331566892711187,
+      "random_cost_per_tp": 750994.9409780775,
+      "cost_reduction_vs_random": 0.2120457737763904
+    }
+  },
+  "elapsed_seconds": 222.42487025260925
+}

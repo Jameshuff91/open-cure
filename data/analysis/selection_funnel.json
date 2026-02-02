@@ -1,0 +1,78 @@
+{
+  "analysis": "selection_funnel",
+  "description": "Documents filtering from Every Cure GT to final evaluation set",
+  "funnel": {
+    "step_1_raw_diseases": 3996,
+    "step_2_after_empty_removal": 3996,
+    "step_3_with_mesh_id": 454,
+    "step_4_in_original_embeddings": 435,
+    "step_5_in_honest_embeddings": 385,
+    "step_6_final_with_gt_drugs": 368
+  },
+  "drug_funnel": {
+    "step_1_raw_drugs": 2367,
+    "step_2_after_empty_removal": 2367,
+    "step_3_with_drugbank_id": 1508,
+    "step_4_in_original_embeddings": 1480,
+    "step_5_in_honest_embeddings": 1485
+  },
+  "gt_pairs": {
+    "raw_rows": 10224,
+    "valid_rows": 10224,
+    "evaluable_pairs": 1960
+  },
+  "dropped_diseases": {
+    "no_mesh_mapping": [
+      "ventricular arrhythmias",
+      "gastroenteropancreatic neuroendocrine tumors",
+      "enterobacter species infections",
+      "nonsupportive thyroiditis",
+      "locally or regionally advanced squamous cell carcinoma of the head and neck",
+      "attentiondeficit hyperactivity disorder adhd",
+      "uncomplicated malaria due to susceptible strains of p vivax",
+      "infected stasis ulcers",
+      "ocular pain",
+      "systemic candidiasis",
+      "gestational trophoblastic neoplasia",
+      "primary hyperkalemic periodic paralysis",
+      "neonatalonset multisystem inflammatory disease",
+      "unresectable melanoma with braf v600e mutation",
+      "soft tissue tumors",
+      "premalignant genital lesions",
+      "distributive shock",
+      "secondary progressive multiple sclerosis",
+      "thrombohaemorrhagic events",
+      "juvenile myelomonocytic leukemia"
+    ],
+    "disconnected_after_treatment_removal": [
+      "actinomycosis",
+      "carcinoid syndrome",
+      "pruritus ani",
+      "proctitis",
+      "hyperopia",
+      "idiopathic hypersomnia",
+      "cutaneous candidiasis",
+      "yaws",
+      "aspergillosis",
+      "empyema",
+      "trichomoniasis",
+      "chromomycosis",
+      "seborrheic dermatitis",
+      "scurvy",
+      "atrial tachycardia",
+      "impetigo",
+      "fusariosis",
+      "chylous ascites",
+      "oropharynx cancer",
+      "multinodular goiter"
+    ],
+    "total_without_mesh": 3542,
+    "total_disconnected": 50
+  },
+  "retention_rates": {
+    "mesh_mapping_rate": 0.11361361361361362,
+    "embedding_coverage_original": 0.9581497797356828,
+    "embedding_coverage_honest": 0.8850574712643678,
+    "final_retention": 0.0920920920920921
+  }
+}

@@ -156,28 +156,13 @@ The 23 pp gap is NOT simply missing external data. Node2Vec already captures fun
 2. **Evaluating on training diseases** - Inflated recall from 41.9% to 47.5%
 3. **All negative sampling strategies** - Hard negatives, random, drug-treats-other ALL fail under disease holdout
 
-### What Fails
-1. **Embedding Similarity** - TransE cosine similarity causes data leakage
-2. **Retraining with Features** - Adding features and retraining: 37%→6%
-3. **Correlated Features** - Pathway adds only +0.36% (correlates with target)
-4. **Biologics** - mAbs achieve only 16.7% recall vs 32.1% small molecules
-5. **Circular Boost Features** - Target overlap, chemical similarity, ATC codes are circular
-6. **Biologic Naming Penalty** - WHO INN naming convention unreliable for filtering
-7. **Specialist Models** - Infectious disease specialist (36%) underperforms general model (52%)
-8. **GB Disease Generalization** - Model cannot generalize to unseen diseases (45.9% → 3-12% R@30)
-9. **Hard Negative Mining** - All 5 strategies fail under disease holdout (not a sampling issue, architectural)
-10. **Gene Feature Hybrid** (h35) - Gene overlap/Jaccard adds +0.73 pp (sparsity, already in embeddings)
-11. **Graph Feature Hybrid** (h34) - Graph topo features add NOTHING once treatment edges removed (initial 45.82% was leakage via direct_connection feature)
-12. **Cosine Similarity** (h32) - 0-1.27% R@30 without ML; ML model IS required
-13. **DRKG Feature Ceiling** - Gene, graph, and embedding features from SAME KG are redundant; improvement needs EXTERNAL data or DIFFERENT architectures
-14. **kNN Parameter Optimization** (h43) - 72 configs tested, default (k=20, raw, linear) is already optimal
-15. **Gene Similarity for kNN** (h41) - Gene overlap Jaccard HURTS kNN (23.2% vs 36.8%)
-16. **XGBoost Rescue for kNN** (h42) - XGBoost helps no disease subset, kNN dominates everywhere
-17. **Learned Disease Similarity** (h45) - XGBoost regressor predicting drug overlap WORSE than cosine (-4 pp, overfits)
-18. **37% R@30 = DRKG ceiling** - kNN at 37%, oracle ceiling 60%; 23 pp gap requires external data
-19. **HPO Phenotype Similarity** (h19) - 14.20% R@30, -22.71 pp vs Node2Vec; phenotype ontology provides weaker signal
-20. **PPI Network Distance** (h17) - 16.18% R@30, -20.76 pp vs Node2Vec; 2-hop neighborhoods too coarse, DRKG already captures PPI
-21. **Treatment Edge Leakage** (fair comparison) - Original 36.59% → honest 26.06% (10.5 pp, 29% was leakage); still beats TxGNN but gap smaller
+### What Fails (Key Patterns)
+- **External data** (h17, h19) - HPO/PPI features WORSE than Node2Vec; already captured
+- **Additional features** (h34, h35) - Gene/graph features add nothing (sparsity, leakage)
+- **ML improvements** (h41-h45) - Gene similarity hurts, XGBoost doesn't help, learned similarity overfits
+- **37% = DRKG ceiling** - kNN at 37%, oracle 60%; 23 pp gap needs external data or new architectures
+- **Treatment edge leakage** - Original 36.59% → honest 26.06% (29% was leakage)
+- Details: `docs/archive/experiment_history.md`
 
 ## Performance Gaps (Summary)
 
@@ -234,12 +219,7 @@ The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These exter
 | DrugBank indications | Drug-disease GT | Expand ground truth coverage | h4 |
 | UMLS Metathesaurus | Ontology cross-refs | Improve disease name mapping | h9 |
 
-**helicalAI/helical** (https://github.com/helicalAI/helical):
-- Pre-trained models: Geneformer, scGPT, TranscriptFormer, HyenaDNA, Evo2
-- Input: Gene expression counts, DNA/RNA sequences
-- Output: Dense embeddings capturing biological relationships
-- **Why it matters**: h51 showed raw gene Jaccard fails (-14.71 pp), but foundation model embeddings capture nuanced relationships from millions of single-cell samples
-- **Install**: Requires Python 3.11 (`source .venv-helical/bin/activate`)
+**helicalAI/helical** (https://github.com/helicalAI/helical): Geneformer, scGPT, etc. for disease embeddings from gene expression. Install: `source .venv-helical/bin/activate` (Python 3.11)
 
 ## Validation & Confounding (Summary)
 
@@ -276,6 +256,34 @@ The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These exter
 
 14.5% R@30 on our benchmark, excels at storage diseases (83.3%). **However, direct comparison to our 37% kNN is unfair** — TxGNN was designed for zero-shot on diseases with NO graph edges, while our kNN leverages test diseases' existing graph presence. Under equivalent transductive conditions, performance would likely be comparable. Details: `docs/archive/txgnn_learnings.md`
 
+## Methodological Critique Response (2026-02-01)
+
+**Full documentation:** `docs/methodology_limitations.md`, `docs/methodology_summary.md`
+
+### Key Findings
+
+| Analysis | Result | Implication |
+|----------|--------|-------------|
+| **Statistical significance** | p=0.025, Cohen's d=2.44 | 10.5 pp difference is significant |
+| **GT circularity** | 32% overlap with DRKG | Low - evaluation tests prediction, not recall |
+| **Coverage dependence** | 85% with coverage: 24.2% R@30 / 15% without: 0% | Bimodal performance |
+| **Rare disease gap** | 1 GT drug: 13.5% vs 6+ drugs: 30% | kNN fails for rare diseases |
+| **Selection funnel** | 90.8% attrition (3996 → 368) | MESH mapping is bottleneck |
+| **Disconnected diseases** | 51 GT diseases lost | Includes Parkinson's (19 drugs) |
+| **Embedding quality** | No NaN/Inf/zero-norm | Clean embeddings |
+| **Precision@30** | 5.9% | Low due to large drug pool |
+
+### Known Limitations (Cannot Fix)
+
+1. **Transductive evaluation** - Test diseases retain non-treatment graph presence
+2. **Bimodal performance** - 15% of diseases have zero kNN coverage
+3. **Rare disease failure** - No similar diseases → no treatment transfer
+4. **Selection bias** - Only 9% of Every Cure diseases evaluable
+
+### Fair Comparison Statement
+
+> Our 26.06% R@30 (honest embeddings) vs TxGNN 6.7-14.5% represents ~2x improvement, but paradigms differ. Our evaluation is transductive (test diseases in graph); TxGNN is inductive (test diseases removed). The gap is real but smaller than naive comparison suggests.
+
 ## Archive Index
 
 | Archive | Content |
@@ -284,3 +292,5 @@ The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These exter
 | `docs/archive/validation_sessions.md` | Literature validation batches 1+2, novel predictions |
 | `docs/archive/txgnn_learnings.md` | TxGNN training, evaluation, fine-tuning experiments |
 | `docs/archive/detailed_analysis_findings.md` | Biologic gap, infectious disease, confounding, validation details |
+| `docs/methodology_limitations.md` | Full methodological limitations documentation |
+| `docs/methodology_summary.md` | One-page executive summary for sharing |

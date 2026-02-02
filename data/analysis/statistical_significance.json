@@ -1,0 +1,61 @@
+{
+  "analysis": "statistical_significance",
+  "description": "Statistical tests comparing original vs honest (no-treatment) embeddings",
+  "data": {
+    "original_per_seed": [
+      0.4131534569983137,
+      0.3143350604490501,
+      0.37566137566137564,
+      0.39920948616600793,
+      0.3272394881170018
+    ],
+    "honest_per_seed": [
+      0.23709677419354838,
+      0.3212121212121212,
+      0.2668759811616955,
+      0.2718204488778055,
+      0.20603907637655416
+    ],
+    "original_mean": 0.3659197734783498,
+    "honest_mean": 0.26060888036434493,
+    "difference_pp": 10.531089311400487
+  },
+  "tests": {
+    "paired_t_test": {
+      "t_statistic": 3.477378466568404,
+      "p_value": 0.02541246865659078,
+      "significant_at_0.05": true
+    },
+    "wilcoxon_signed_rank": {
+      "valid": true,
+      "w_statistic": 1.0,
+      "p_value": 0.125,
+      "significant_at_0.05": false
+    },
+    "mann_whitney_u": {
+      "u_statistic": 24.0,
+      "p_value": 0.015873015873015872,
+      "significant_at_0.05": true
+    }
+  },
+  "effect_size": {
+    "cohens_d": 2.435325935960102,
+    "interpretation": "large"
+  },
+  "confidence_intervals_95": {
+    "original": [
+      0.3317620945586959,
+      0.4000774523980037
+    ],
+    "honest": [
+      0.2254068904402033,
+      0.2945107173415435
+    ],
+    "difference": [
+      0.045591653347887326,
+      0.15163117093088474
+    ],
+    "ci_excludes_zero": true
+  },
+  "conclusion": "The 10.5 pp difference between original (36.59%) and honest (26.06%) embeddings is STATISTICALLY SIGNIFICANT (paired t-test p=0.0254, Cohen's d=2.44 [large])."
+}

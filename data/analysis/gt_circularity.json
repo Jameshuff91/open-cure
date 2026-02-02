@@ -1,0 +1,187 @@
+{
+  "analysis": "gt_circularity",
+  "description": "Checks overlap between Every Cure GT and DRKG treatment edges",
+  "counts": {
+    "drkg_treatment_edges": 4968,
+    "gt_pairs_mapped": 3695,
+    "gt_in_drkg": 1184,
+    "gt_not_in_drkg": 2511
+  },
+  "percentages": {
+    "overlap_pct": 32.04330175913396,
+    "novel_pct": 67.95669824086605
+  },
+  "disease_level": {
+    "total_diseases": 472,
+    "fully_circular": 66,
+    "fully_novel": 222,
+    "mixed": 184
+  },
+  "interpretation": "LOW CIRCULARITY (32%): Most GT pairs are NOT in DRKG treatment edges. Our evaluation tests genuine prediction ability, though some recall of training data is present.",
+  "samples": {
+    "in_drkg": [
+      {
+        "drug": "Polythiazide",
+        "disease": "hypertension"
+      },
+      {
+        "drug": "Dantrolene",
+        "disease": "malignant hyperthermia"
+      },
+      {
+        "drug": "Atenolol",
+        "disease": "hypertension"
+      },
+      {
+        "drug": "Atenolol",
+        "disease": "acute myocardial infarction"
+      },
+      {
+        "drug": "Meclizine",
+        "disease": "motion sickness"
+      },
+      {
+        "drug": "Metoprolol",
+        "disease": "myocardial infarction"
+      },
+      {
+        "drug": "Metoprolol",
+        "disease": "acute myocardial infarction"
+      },
+      {
+        "drug": "Promethazine",
+        "disease": "motion sickness"
+      },
+      {
+        "drug": "Promethazine",
+        "disease": "anaphylaxis"
+      },
+      {
+        "drug": "Metformin",
+        "disease": "type 2 diabetes"
+      },
+      {
+        "drug": "Hydroflumethiazide",
+        "disease": "hypertension"
+      },
+      {
+        "drug": "Sulfacetamide",
+        "disease": "conjunctivitis"
+      },
+      {
+        "drug": "Hydroxyzine",
+        "disease": "pruritus"
+      },
+      {
+        "drug": "ranitidine",
+        "disease": "duodenal ulcer"
+      },
+      {
+        "drug": "Famotidine",
+        "disease": "duodenal ulcer"
+      },
+      {
+        "drug": "Sotalol",
+        "disease": "atrial fibrillation"
+      },
+      {
+        "drug": "Edrophonium",
+        "disease": "myasthenia gravis"
+      },
+      {
+        "drug": "Meloxicam",
+        "disease": "osteoarthritis"
+      },
+      {
+        "drug": "Labetalol",
+        "disease": "hypertension"
+      },
+      {
+        "drug": "Torasemide",
+        "disease": "hypertension"
+      }
+    ],
+    "not_in_drkg": [
+      {
+        "drug": "Polythiazide",
+        "disease": "congestive heart failure"
+      },
+      {
+        "drug": "Polythiazide",
+        "disease": "nephrotic syndrome"
+      },
+      {
+        "drug": "Metolazone",
+        "disease": "hypertension"
+      },
+      {
+        "drug": "Tolazamide",
+        "disease": "noninsulin dependent diabetes mellitus type ii"
+      },
+      {
+        "drug": "Tolazamide",
+        "disease": "hyperglycemia"
+      },
+      {
+        "drug": "Fluoxymesterone",
+        "disease": "mammary cancer"
+      },
+      {
+        "drug": "Dantrolene",
+        "disease": "stroke"
+      },
+      {
+        "drug": "Dantrolene",
+        "disease": "cerebral palsy"
+      },
+      {
+        "drug": "Dantrolene",
+        "disease": "multiple sclerosis"
+      },
+      {
+        "drug": "Trovafloxacin",
+        "disease": "diabetic foot infections"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "q fever"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "granuloma inguinale"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "relapsing fever"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "plague"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "tularemia"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "bartonellosis"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "escherichia coli infections"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "gonorrhea"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "syphilis"
+      },
+      {
+        "drug": "Oxytetracycline",
+        "disease": "yaws"
+      }
+    ]
+  }
+}

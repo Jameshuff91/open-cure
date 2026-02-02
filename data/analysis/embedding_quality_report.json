@@ -1,0 +1,92 @@
+{
+  "analysis": "embedding_quality",
+  "embeddings": {
+    "original": {
+      "path": "/Users/jimhuff/github/open-cure/data/embeddings/node2vec_256_named.csv",
+      "n_entities": 49616,
+      "n_dimensions": 256,
+      "issues": {
+        "nan_count": 0,
+        "nan_entities": [],
+        "inf_count": 0,
+        "inf_entities": [],
+        "zero_norm_count": 0,
+        "zero_norm_entities": [],
+        "near_zero_norm_count": 0,
+        "near_zero_entities": [],
+        "extreme_value_count": 0,
+        "extreme_entities": []
+      },
+      "statistics": {
+        "norms": {
+          "min": 0.7467841190941326,
+          "max": 8.74292637484774,
+          "mean": 2.3869087687118675,
+          "std": 0.9790183637788009
+        },
+        "values": {
+          "min": -1.972283959388733,
+          "max": 1.9660048484802248,
+          "mean": -0.00462150011702737,
+          "std": 0.1611766149794614
+        },
+        "max_absolute_value": 1.972283959388733
+      },
+      "entity_type_counts": {
+        "Compound": 20342,
+        "Disease": 4067,
+        "Gene": 25207
+      },
+      "has_quality_issues": false
+    },
+    "honest": {
+      "path": "/Users/jimhuff/github/open-cure/data/embeddings/node2vec_256_no_treatment.csv",
+      "n_entities": 94247,
+      "n_dimensions": 256,
+      "issues": {
+        "nan_count": 0,
+        "nan_entities": [],
+        "inf_count": 0,
+        "inf_entities": [],
+        "zero_norm_count": 0,
+        "zero_norm_entities": [],
+        "near_zero_norm_count": 0,
+        "near_zero_entities": [],
+        "extreme_value_count": 0,
+        "extreme_entities": []
+      },
+      "statistics": {
+        "norms": {
+          "min": 0.815531435528548,
+          "max": 9.315172163839886,
+          "mean": 2.3063138266737213,
+          "std": 0.7415914585618005
+        },
+        "values": {
+          "min": -1.942423701286316,
+          "max": 1.547229290008545,
+          "mean": -0.0017542407350505014,
+          "std": 0.15140299021536954
+        },
+        "max_absolute_value": 1.942423701286316
+      },
+      "entity_type_counts": {
+        "Gene": 39220,
+        "Compound": 22267,
+        "Disease": 4158,
+        "Atc": 4048,
+        "Tax": 215,
+        "Biological Process": 11381,
+        "Symptom": 415,
+        "Anatomy": 400,
+        "Molecular Function": 2884,
+        "Pharmacologic Class": 345,
+        "Cellular Component": 1391,
+        "Pathway": 1822,
+        "Side Effect": 5701
+      },
+      "has_quality_issues": false
+    }
+  },
+  "recommendation": "No numerical issues detected. Embeddings are suitable for evaluation."
+}

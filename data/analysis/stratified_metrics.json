@@ -1,0 +1,97 @@
+{
+  "analysis": "stratified_coverage",
+  "parameters": {
+    "k": 20,
+    "seeds": [
+      42,
+      123,
+      456,
+      789,
+      1024
+    ]
+  },
+  "overall": {
+    "n_evaluations": 392,
+    "recall_mean": 0.20480883589249035,
+    "recall_std": 0.313910710535256
+  },
+  "by_coverage": {
+    "with_coverage": {
+      "n": 332,
+      "pct": 84.6938775510204,
+      "recall_mean": 0.24182248093330186,
+      "recall_std": 0.3277157679421847
+    },
+    "no_coverage": {
+      "n": 60,
+      "pct": 15.306122448979592,
+      "recall_mean": 0.0,
+      "recall_std": 0.0
+    }
+  },
+  "by_gt_size": {
+    "1_drug": {
+      "n": 141,
+      "recall_mean": 0.11347517730496454
+    },
+    "2_to_5_drugs": {
+      "n": 110,
+      "recall_mean": 0.19984848484848486
+    },
+    "6_plus_drugs": {
+      "n": 141,
+      "recall_mean": 0.3000122718902332
+    }
+  },
+  "by_category": {
+    "autoimmune": {
+      "n": 18,
+      "recall_mean": 0.24234537249243127,
+      "recall_std": 0.19866291939522246,
+      "coverage_rate": 88.88888888888889
+    },
+    "cancer": {
+      "n": 65,
+      "recall_mean": 0.27526116644103915,
+      "recall_std": 0.2898289048592838,
+      "coverage_rate": 90.76923076923077
+    },
+    "cardiovascular": {
+      "n": 11,
+      "recall_mean": 0.11053366506410983,
+      "recall_std": 0.1570143971787805,
+      "coverage_rate": 72.72727272727273
+    },
+    "dermatological": {
+      "n": 5,
+      "recall_mean": 0.3178451178451179,
+      "recall_std": 0.3725348445877809,
+      "coverage_rate": 100.0
+    },
+    "infectious": {
+      "n": 18,
+      "recall_mean": 0.17367202041115087,
+      "recall_std": 0.23033140965475438,
+      "coverage_rate": 94.44444444444444
+    },
+    "metabolic": {
+      "n": 11,
+      "recall_mean": 0.08264235764235763,
+      "recall_std": 0.08480935269629268,
+      "coverage_rate": 63.63636363636363
+    },
+    "other": {
+      "n": 251,
+      "recall_mean": 0.1982970056725037,
+      "recall_std": 0.3381428320804072,
+      "coverage_rate": 82.47011952191235
+    },
+    "respiratory": {
+      "n": 6,
+      "recall_mean": 0.04301075268817204,
+      "recall_std": 0.0961749667741845,
+      "coverage_rate": 100.0
+    }
+  },
+  "elapsed_seconds": 230.76469802856445
+}

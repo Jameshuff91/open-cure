@@ -1,0 +1,98 @@
+{
+  "analysis": "rare_disease_performance",
+  "parameters": {
+    "k": 20,
+    "seeds": [
+      42,
+      123,
+      456,
+      789,
+      1024
+    ]
+  },
+  "overall": {
+    "n_evaluations": 392,
+    "recall_mean": 0.21269114876863274
+  },
+  "by_gt_count": {
+    "1 treatment (ultra-rare)": {
+      "n": 141,
+      "recall_mean": 0.1347517730496454,
+      "recall_std": 0.34145824445987866,
+      "avg_max_similarity": 0.7644383146407756
+    },
+    "2 treatments": {
+      "n": 40,
+      "recall_mean": 0.2125,
+      "recall_std": 0.36890886408434265,
+      "avg_max_similarity": 0.7648962870240211
+    },
+    "3-5 treatments": {
+      "n": 70,
+      "recall_mean": 0.19261904761904763,
+      "recall_std": 0.26951802534597674,
+      "avg_max_similarity": 0.7514954635075161
+    },
+    "6-10 treatments": {
+      "n": 73,
+      "recall_mean": 0.32202652750597954,
+      "recall_std": 0.31834549295953896,
+      "avg_max_similarity": 0.708809200215013
+    },
+    "11+ treatments (well-studied)": {
+      "n": 68,
+      "recall_mean": 0.27770088935344406,
+      "recall_std": 0.2414044645561393,
+      "avg_max_similarity": 0.6668572333805701
+    }
+  },
+  "by_similarity": {
+    "Low sim (<0.5)": {
+      "n": 13,
+      "recall_mean": 0.26359537897999435,
+      "recall_std": 0.2731508010798699
+    },
+    "Medium sim (0.5-0.7)": {
+      "n": 146,
+      "recall_mean": 0.22199952044043633,
+      "recall_std": 0.299947030878948
+    },
+    "High sim (0.7-0.9)": {
+      "n": 200,
+      "recall_mean": 0.19618469030969032,
+      "recall_std": 0.3319377453963578
+    },
+    "Very high sim (\u22650.9)": {
+      "n": 33,
+      "recall_mean": 0.25149461649461646,
+      "recall_std": 0.35168604780756296
+    }
+  },
+  "worst_performing": {
+    "zero_recall_count": 227,
+    "unique_diseases": 157,
+    "sample_diseases": [
+      "small intestine cancer",
+      "cerebral palsy",
+      "takayasu arteritis",
+      "autoimmune pulmonary alveolar proteinosis",
+      "uremia",
+      "ependymoma",
+      "glossopharyngeal neuralgia",
+      "myocardial ischemia",
+      "chronic obstructive pulmonary disease",
+      "central diabetes insipidus",
+      "methemoglobinemia",
+      "spina bifida",
+      "silicosis",
+      "tinea corporis",
+      "significant cardiac arrhythmias",
+      "leprosy",
+      "biliary tract cancer btc",
+      "idiopathic interstitial pneumonia",
+      "influenza",
+      "metastatic bronchogenic carcinoma"
+    ]
+  },
+  "elapsed_seconds": 226.29202508926392
+}

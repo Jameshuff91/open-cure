@@ -1,0 +1,667 @@
+{
+  "analysis": "disconnected_diseases",
+  "description": "Analysis of diseases that lost embeddings after removing treatment edges",
+  "summary": {
+    "total_disconnected": 945,
+    "disconnected_in_gt": 51,
+    "total_gt_drugs_lost": 192,
+    "only_treatment_edges": 7,
+    "had_other_edges": 44
+  },
+  "by_category": {
+    "neurological": 1,
+    "dermatological": 1,
+    "other": 43,
+    "cancer": 2,
+    "rare/genetic": 2,
+    "cardiovascular": 1,
+    "infectious": 1
+  },
+  "diseases": [
+    {
+      "disease_id": "Disease::MESH:D010301",
+      "disease_name": "parkinsons disease",
+      "n_gt_drugs": 19,
+      "category": "neurological",
+      "total_edges": 4,
+      "treatment_edges": 4,
+      "other_edges": 0,
+      "edge_types": {
+        "DRUGBANK": 4
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D012628",
+      "disease_name": "severe seborrheic dermatitis",
+      "n_gt_drugs": 13,
+      "category": "dermatological",
+      "total_edges": 23,
+      "treatment_edges": 6,
+      "other_edges": 17,
+      "edge_types": {
+        "DRUGBANK": 6,
+        "GNBR": 17
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D013717",
+      "disease_name": "acute nonspecific tenosynovitis",
+      "n_gt_drugs": 12,
+      "category": "other",
+      "total_edges": 8,
+      "treatment_edges": 5,
+      "other_edges": 3,
+      "edge_types": {
+        "DRUGBANK": 5,
+        "GNBR": 3
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D008224",
+      "disease_name": "giant follicular lymphoma",
+      "n_gt_drugs": 10,
+      "category": "cancer",
+      "total_edges": 6,
+      "treatment_edges": 3,
+      "other_edges": 3,
+      "edge_types": {
+        "DRUGBANK": 3,
+        "GNBR": 3
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D015866",
+      "disease_name": "diffuse posterior uveitis",
+      "n_gt_drugs": 9,
+      "category": "other",
+      "total_edges": 5,
+      "treatment_edges": 0,
+      "other_edges": 5,
+      "edge_types": {
+        "GNBR": 5
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D001228",
+      "disease_name": "invasive aspergillosis",
+      "n_gt_drugs": 8,
+      "category": "other",
+      "total_edges": 27,
+      "treatment_edges": 3,
+      "other_edges": 24,
+      "edge_types": {
+        "DRUGBANK": 3,
+        "GNBR": 24
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D002833",
+      "disease_name": "choroiditis",
+      "n_gt_drugs": 8,
+      "category": "other",
+      "total_edges": 7,
+      "treatment_edges": 7,
+      "other_edges": 0,
+      "edge_types": {
+        "DRUGBANK": 7
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D003607",
+      "disease_name": "dacryocystitis",
+      "n_gt_drugs": 6,
+      "category": "other",
+      "total_edges": 1,
+      "treatment_edges": 0,
+      "other_edges": 1,
+      "edge_types": {
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D013587",
+      "disease_name": "syphilis",
+      "n_gt_drugs": 6,
+      "category": "other",
+      "total_edges": 16,
+      "treatment_edges": 4,
+      "other_edges": 12,
+      "edge_types": {
+        "DRUGBANK": 4,
+        "GNBR": 12
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D000881",
+      "disease_name": "inhalational anthrax",
+      "n_gt_drugs": 5,
+      "category": "other",
+      "total_edges": 5,
+      "treatment_edges": 5,
+      "other_edges": 0,
+      "edge_types": {
+        "DRUGBANK": 5
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D001474",
+      "disease_name": "bartonellosis",
+      "n_gt_drugs": 5,
+      "category": "other",
+      "total_edges": 6,
+      "treatment_edges": 5,
+      "other_edges": 1,
+      "edge_types": {
+        "DRUGBANK": 5,
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D007169",
+      "disease_name": "impetigo",
+      "n_gt_drugs": 5,
+      "category": "other",
+      "total_edges": 13,
+      "treatment_edges": 5,
+      "other_edges": 8,
+      "edge_types": {
+        "DRUGBANK": 5,
+        "GNBR": 8
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D009450",
+      "disease_name": "lichen simplex chronicus",
+      "n_gt_drugs": 5,
+      "category": "other",
+      "total_edges": 9,
+      "treatment_edges": 8,
+      "other_edges": 1,
+      "edge_types": {
+        "DRUGBANK": 8,
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D012532",
+      "disease_name": "scabies",
+      "n_gt_drugs": 5,
+      "category": "other",
+      "total_edges": 10,
+      "treatment_edges": 3,
+      "other_edges": 7,
+      "edge_types": {
+        "DRUGBANK": 3,
+        "GNBR": 7
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D015001",
+      "disease_name": "yaws",
+      "n_gt_drugs": 5,
+      "category": "other",
+      "total_edges": 6,
+      "treatment_edges": 4,
+      "other_edges": 2,
+      "edge_types": {
+        "DRUGBANK": 4,
+        "GNBR": 2
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D000196",
+      "disease_name": "actinomycosis",
+      "n_gt_drugs": 4,
+      "category": "other",
+      "total_edges": 14,
+      "treatment_edges": 5,
+      "other_edges": 9,
+      "edge_types": {
+        "DRUGBANK": 5,
+        "GNBR": 9
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D006044",
+      "disease_name": "multinodular goiter",
+      "n_gt_drugs": 4,
+      "category": "other",
+      "total_edges": 4,
+      "treatment_edges": 0,
+      "other_edges": 4,
+      "edge_types": {
+        "GNBR": 4
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D006100",
+      "disease_name": "granuloma inguinale",
+      "n_gt_drugs": 4,
+      "category": "other",
+      "total_edges": 8,
+      "treatment_edges": 5,
+      "other_edges": 3,
+      "edge_types": {
+        "DRUGBANK": 5,
+        "GNBR": 3
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D006726",
+      "disease_name": "hordeolum",
+      "n_gt_drugs": 4,
+      "category": "other",
+      "total_edges": 1,
+      "treatment_edges": 1,
+      "other_edges": 0,
+      "edge_types": {
+        "DRUGBANK": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D013742",
+      "disease_name": "tetanus",
+      "n_gt_drugs": 4,
+      "category": "other",
+      "total_edges": 6,
+      "treatment_edges": 6,
+      "other_edges": 0,
+      "edge_types": {
+        "DRUGBANK": 6
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D002179",
+      "disease_name": "cutaneous candidiasis",
+      "n_gt_drugs": 3,
+      "category": "other",
+      "total_edges": 17,
+      "treatment_edges": 13,
+      "other_edges": 4,
+      "edge_types": {
+        "DRUGBANK": 13,
+        "GNBR": 4
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D008303",
+      "disease_name": "carcinoid syndrome diarrhea",
+      "n_gt_drugs": 3,
+      "category": "rare/genetic",
+      "total_edges": 1,
+      "treatment_edges": 0,
+      "other_edges": 1,
+      "edge_types": {
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D009134",
+      "disease_name": "spinal muscular atrophy sma",
+      "n_gt_drugs": 3,
+      "category": "other",
+      "total_edges": 3,
+      "treatment_edges": 2,
+      "other_edges": 1,
+      "edge_types": {
+        "DRUGBANK": 2,
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D010032",
+      "disease_name": "allergic otitis externa",
+      "n_gt_drugs": 3,
+      "category": "other",
+      "total_edges": 16,
+      "treatment_edges": 7,
+      "other_edges": 9,
+      "edge_types": {
+        "DRUGBANK": 7,
+        "GNBR": 9
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D014247",
+      "disease_name": "trichomoniasis",
+      "n_gt_drugs": 3,
+      "category": "other",
+      "total_edges": 5,
+      "treatment_edges": 0,
+      "other_edges": 5,
+      "edge_types": {
+        "GNBR": 5
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D000430",
+      "disease_name": "alcohol withdrawal",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 18,
+      "treatment_edges": 2,
+      "other_edges": 16,
+      "edge_types": {
+        "DRUGBANK": 2,
+        "GNBR": 16
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D000562",
+      "disease_name": "amebiasis",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 17,
+      "treatment_edges": 5,
+      "other_edges": 12,
+      "edge_types": {
+        "DRUGBANK": 5,
+        "GNBR": 12
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D006561",
+      "disease_name": "recurrent herpes simplex",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 6,
+      "treatment_edges": 4,
+      "other_edges": 2,
+      "edge_types": {
+        "DRUGBANK": 4,
+        "GNBR": 2
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D008630",
+      "disease_name": "mercury poisoning",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 2,
+      "treatment_edges": 1,
+      "other_edges": 1,
+      "edge_types": {
+        "DRUGBANK": 1,
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D011538",
+      "disease_name": "pruritus ani",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 4,
+      "treatment_edges": 4,
+      "other_edges": 0,
+      "edge_types": {
+        "DRUGBANK": 4
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D011552",
+      "disease_name": "pseudomonas aeruginosa",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 22,
+      "treatment_edges": 1,
+      "other_edges": 21,
+      "edge_types": {
+        "DRUGBANK": 1,
+        "GNBR": 21
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D016724",
+      "disease_name": "empyema",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 3,
+      "treatment_edges": 0,
+      "other_edges": 3,
+      "edge_types": {
+        "GNBR": 3
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D020177",
+      "disease_name": "idiopathic hypersomnia",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 1,
+      "treatment_edges": 0,
+      "other_edges": 1,
+      "edge_types": {
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D060585",
+      "disease_name": "fusariosis",
+      "n_gt_drugs": 2,
+      "category": "other",
+      "total_edges": 2,
+      "treatment_edges": 0,
+      "other_edges": 2,
+      "edge_types": {
+        "GNBR": 2
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D065766",
+      "disease_name": "atypical hemolytic uremic syndrome",
+      "n_gt_drugs": 2,
+      "category": "rare/genetic",
+      "total_edges": 2,
+      "treatment_edges": 1,
+      "other_edges": 1,
+      "edge_types": {
+        "DRUGBANK": 1,
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D001282",
+      "disease_name": "atrial tachycardia",
+      "n_gt_drugs": 1,
+      "category": "cardiovascular",
+      "total_edges": 20,
+      "treatment_edges": 4,
+      "other_edges": 16,
+      "edge_types": {
+        "DRUGBANK": 4,
+        "GNBR": 16
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D002178",
+      "disease_name": "chronic mucocutaneous candidiasis",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 10,
+      "treatment_edges": 1,
+      "other_edges": 9,
+      "edge_types": {
+        "DRUGBANK": 1,
+        "GNBR": 9
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D002862",
+      "disease_name": "chromomycosis",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 9,
+      "treatment_edges": 2,
+      "other_edges": 7,
+      "edge_types": {
+        "DRUGBANK": 2,
+        "GNBR": 7
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D002915",
+      "disease_name": "chylous ascites",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 5,
+      "treatment_edges": 1,
+      "other_edges": 4,
+      "edge_types": {
+        "DRUGBANK": 1,
+        "GNBR": 4
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D003139",
+      "disease_name": "common cold",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 13,
+      "treatment_edges": 12,
+      "other_edges": 1,
+      "edge_types": {
+        "DRUGBANK": 12,
+        "GNBR": 1
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D004165",
+      "disease_name": "diphtheria",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 6,
+      "treatment_edges": 4,
+      "other_edges": 2,
+      "edge_types": {
+        "DRUGBANK": 4,
+        "GNBR": 2
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D004403",
+      "disease_name": "dysentery",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 13,
+      "treatment_edges": 8,
+      "other_edges": 5,
+      "edge_types": {
+        "DRUGBANK": 8,
+        "GNBR": 5
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D006392",
+      "disease_name": "hemangioendothelioma",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 2,
+      "treatment_edges": 0,
+      "other_edges": 2,
+      "edge_types": {
+        "GNBR": 2
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D006956",
+      "disease_name": "hyperopia",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 2,
+      "treatment_edges": 0,
+      "other_edges": 2,
+      "edge_types": {
+        "GNBR": 2
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D008585",
+      "disease_name": "meningococcal infection",
+      "n_gt_drugs": 1,
+      "category": "infectious",
+      "total_edges": 10,
+      "treatment_edges": 3,
+      "other_edges": 7,
+      "edge_types": {
+        "DRUGBANK": 3,
+        "GNBR": 7
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D009959",
+      "disease_name": "oropharynx cancer",
+      "n_gt_drugs": 1,
+      "category": "cancer",
+      "total_edges": 10,
+      "treatment_edges": 0,
+      "other_edges": 10,
+      "edge_types": {
+        "GNBR": 10
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D010916",
+      "disease_name": "pityriasis rubra pilaris",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 9,
+      "treatment_edges": 0,
+      "other_edges": 9,
+      "edge_types": {
+        "GNBR": 9
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D011349",
+      "disease_name": "proctitis",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 10,
+      "treatment_edges": 2,
+      "other_edges": 8,
+      "edge_types": {
+        "DRUGBANK": 2,
+        "GNBR": 8
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D011711",
+      "disease_name": "pyoderma",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 18,
+      "treatment_edges": 2,
+      "other_edges": 16,
+      "edge_types": {
+        "DRUGBANK": 2,
+        "GNBR": 16
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D012899",
+      "disease_name": "smallpox",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 3,
+      "treatment_edges": 3,
+      "other_edges": 0,
+      "edge_types": {
+        "DRUGBANK": 3
+      }
+    },
+    {
+      "disease_id": "Disease::MESH:D013174",
+      "disease_name": "sporotrichosis",
+      "n_gt_drugs": 1,
+      "category": "other",
+      "total_edges": 11,
+      "treatment_edges": 2,
+      "other_edges": 9,
+      "edge_types": {
+        "DRUGBANK": 2,
+        "GNBR": 9
+      }
+    }
+  ],
+  "insight": "Many disconnected diseases had other edge types but still became disconnected. This suggests they were only weakly connected to the main graph through treatment edges. These may be rare or poorly-characterized diseases."
+}
