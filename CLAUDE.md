@@ -93,7 +93,8 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 
 | Model | Per-Drug R@30 | Evaluation | Notes |
 |-------|---------------|------------|-------|
-| **kNN Collaborative Filtering k=20 (disease holdout)** | **37.04% ± 5.81%** | **HONEST (5-seed)** | **BEST METHOD (h39)** |
+| **kNN k=20 (original embeddings)** | **36.59% ± 3.90%** | Honest (5-seed) | Has treatment edge leakage |
+| **kNN k=20 (no-treatment embeddings)** | **26.06% ± 3.84%** | **FAIR (5-seed)** | **Best fair comparison to TxGNN** |
 | Node2Vec+XGBoost TUNED (disease holdout) | 25.85% ± 4.06% | Honest (5-seed) | md=6,ne=500,lr=0.1,alpha=1.0 (h38/h40) |
 | Node2Vec+XGBoost default (disease holdout) | 23.73% ± 3.73% | Honest (5-seed) | md=6,ne=100,lr=0.1 (h40) |
 | GB + Fuzzy Matcher (fixed) | 41.8% | Within-dist | 1,236 diseases, pair-level (inflated) |
@@ -111,6 +112,12 @@ vastai destroy instance <INSTANCE_ID>  # Stop billing!
 **Progression:** 37.4% → 41.8% (fuzzy, pair-level) → Generalization crisis → 25.85% (honest XGBoost, 5-seed) → **37.04% (kNN collab filtering, 5-seed)**
 
 **DRKG CEILING (2026-01-28):** 37% R@30 is the maximum achievable with DRKG-only approaches. Oracle ceiling is 60%.
+
+**LEAKAGE QUANTIFIED (2026-02-01):** Retrained Node2Vec WITHOUT 64K treatment edges:
+- Original embeddings: 36.59% ± 3.90% R@30 (includes leakage)
+- **Honest embeddings: 26.06% ± 3.84% R@30** (fair comparison)
+- 10.5 pp drop (29% was leakage), 71.2% retained from indirect paths
+- Fair TxGNN comparison: **26.06%** vs 6.7-14.5% (gap ~12-19 pp, not ~23-30 pp)
 
 **EXTERNAL DATA TESTED & FAILED (2026-01-28):**
 - h19 (HPO Phenotype): 14.20% R@30 — WORSE than Node2Vec (36.93%)
@@ -170,6 +177,7 @@ The 23 pp gap is NOT simply missing external data. Node2Vec already captures fun
 18. **37% R@30 = DRKG ceiling** - kNN at 37%, oracle ceiling 60%; 23 pp gap requires external data
 19. **HPO Phenotype Similarity** (h19) - 14.20% R@30, -22.71 pp vs Node2Vec; phenotype ontology provides weaker signal
 20. **PPI Network Distance** (h17) - 16.18% R@30, -20.76 pp vs Node2Vec; 2-hop neighborhoods too coarse, DRKG already captures PPI
+21. **Treatment Edge Leakage** (fair comparison) - Original 36.59% → honest 26.06% (10.5 pp, 29% was leakage); still beats TxGNN but gap smaller
 
 ## Performance Gaps (Summary)
 
@@ -266,7 +274,7 @@ The kNN method has hit a 37% R@30 ceiling with DRKG-only approaches. These exter
 
 ## TxGNN Summary
 
-14.5% R@30, excels at storage diseases (83.3%). Details: `docs/archive/txgnn_learnings.md`
+14.5% R@30 on our benchmark, excels at storage diseases (83.3%). **However, direct comparison to our 37% kNN is unfair** — TxGNN was designed for zero-shot on diseases with NO graph edges, while our kNN leverages test diseases' existing graph presence. Under equivalent transductive conditions, performance would likely be comparable. Details: `docs/archive/txgnn_learnings.md`
 
 ## Archive Index
 

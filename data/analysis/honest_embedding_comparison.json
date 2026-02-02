@@ -1,0 +1,47 @@
+{
+  "experiment": "honest_embedding_comparison",
+  "date": "2026-02-01 19:10:37",
+  "parameters": {
+    "k": 20,
+    "seeds": [
+      42,
+      123,
+      456,
+      789,
+      1024
+    ],
+    "test_fraction": 0.2
+  },
+  "original": {
+    "path": "/Users/jimhuff/github/open-cure/data/embeddings/node2vec_256_named.csv",
+    "mean_r30": 0.3659197734783498,
+    "std_r30": 0.038964783424866575,
+    "per_seed": [
+      0.4131534569983137,
+      0.3143350604490501,
+      0.37566137566137564,
+      0.39920948616600793,
+      0.3272394881170018
+    ],
+    "n_entities": 49616
+  },
+  "honest": {
+    "path": "/Users/jimhuff/github/open-cure/data/embeddings/node2vec_256_no_treatment.csv",
+    "mean_r30": 0.26060888036434493,
+    "std_r30": 0.03838856930400628,
+    "per_seed": [
+      0.23709677419354838,
+      0.3212121212121212,
+      0.2668759811616955,
+      0.2718204488778055,
+      0.20603907637655416
+    ],
+    "n_entities": 94247
+  },
+  "comparison": {
+    "difference_pp": -10.531089311400487,
+    "retention_pct": 71.22022346238805,
+    "interpretation": "MODERATE LEAKAGE - Treatment edges contributed, but indirect similarity still substantial"
+  },
+  "elapsed_seconds": 229.78499674797058
+}

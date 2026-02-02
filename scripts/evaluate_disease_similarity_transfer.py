@@ -19,12 +19,13 @@ EVALUATION:
     Baseline: Tuned XGBoost mean 25.85% ± 4.06% R@30.
 """
 
+import argparse
 import json
 import sys
 import time
 from pathlib import Path
 from collections import defaultdict
-from typing import Dict, Set, Tuple, List
+from typing import Dict, Set, Tuple, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -45,8 +46,17 @@ SEEDS = [42, 123, 456, 789, 1024]
 
 # ─── Data Loading (same as h40) ─────────────────────────────────────────────
 
-def load_node2vec_embeddings() -> Dict[str, np.ndarray]:
-    df = pd.read_csv(EMBEDDINGS_DIR / "node2vec_256_named.csv")
+def load_node2vec_embeddings(embeddings_path: Optional[Path] = None) -> Dict[str, np.ndarray]:
+    """Load Node2Vec embeddings from CSV file.
+
+    Args:
+        embeddings_path: Path to embeddings CSV. If None, uses default node2vec_256_named.csv
+    """
+    if embeddings_path is None:
+        embeddings_path = EMBEDDINGS_DIR / "node2vec_256_named.csv"
+
+    print(f"  Loading embeddings from: {embeddings_path}")
+    df = pd.read_csv(embeddings_path)
     dim_cols = [c for c in df.columns if c.startswith("dim_")]
     embeddings: Dict[str, np.ndarray] = {}
     for _, row in df.iterrows():
@@ -477,7 +487,24 @@ def evaluate_baseline(
 
 # ─── Main ────────────────────────────────────────────────────────────────────
 
-def main():
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Evaluate disease similarity transfer learning")
+    parser.add_argument(
+        "--embeddings",
+        type=Path,
+        default=None,
+        help="Path to custom embeddings CSV (default: node2vec_256_named.csv)"
+    )
+    parser.add_argument(
+        "--knn-only",
+        action="store_true",
+        help="Only run kNN (approach B) evaluation, skip other approaches"
+    )
+    return parser.parse_args()
+
+
+def main() -> None:
+    args = parse_args()
     start_time = time.time()
 
     print("=" * 70)
@@ -487,7 +514,7 @@ def main():
 
     # Load data
     print("Loading data...")
-    emb_dict = load_node2vec_embeddings()
+    emb_dict = load_node2vec_embeddings(args.embeddings)
     name_to_drug_id, _ = load_drugbank_lookup()
     mesh_mappings = load_mesh_mappings_from_file()
     gt_pairs = load_ground_truth(mesh_mappings, name_to_drug_id)
