@@ -1,0 +1,53 @@
+{
+  "analysis": "kegg_pathway_knn",
+  "description": "Inductive kNN using KEGG pathway Jaccard similarity",
+  "purpose": "Fair comparison to TxGNN (both inductive)",
+  "params": {
+    "k": 20,
+    "seeds": [
+      42,
+      123,
+      456,
+      789,
+      1024
+    ]
+  },
+  "data": {
+    "kegg_diseases": 3454,
+    "gt_diseases": 472,
+    "overlap": 374,
+    "coverage_pct": 79.23728813559322,
+    "mean_pathways_per_disease": 47.42472495657209
+  },
+  "results": {
+    "kegg_knn_all": {
+      "mean": 0.13932711601868714,
+      "std": 0.030941526242062915,
+      "values": [
+        0.19765494137353434,
+        0.11185308848080133,
+        0.13562091503267973,
+        0.11462450592885376,
+        0.13688212927756654
+      ]
+    },
+    "kegg_knn_subset": {
+      "mean": 0.1573452680405614,
+      "std": 0.018243624237648727,
+      "values": [
+        0.13221884498480244,
+        0.18266978922716628,
+        0.17333333333333334,
+        0.15081206496519722,
+        0.1476923076923077
+      ]
+    }
+  },
+  "comparisons": {
+    "vs_node2vec_honest": -0.1032547319594386,
+    "vs_txgnn": 0.012345268040561408,
+    "vs_hpo_h19": 0.01534526804056141
+  },
+  "interpretation": "COMPETITIVE: 15.7% R@30 is on par with TxGNN's 14.5% inductive performance. KEGG pathways provide meaningful disease similarity for drug repurposing.",
+  "status": "competitive"
+}
