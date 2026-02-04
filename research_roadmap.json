@@ -1694,6 +1694,144 @@
       ],
       "findings": "Validation Priority Scoring formula created:\n\nFORMULA: priority = confidence \u00d7 novelty_bonus \u00d7 tier_weight \u00d7 rarity_weight\n\nCOMPONENTS:\n- novelty_bonus: 1.5 for novel, 1.0 for known indications\n- tier_weight: 1.0 (Tier 1), 0.7 (Tier 2), 0.3 (Tier 3)\n- rarity_weight: Higher for diseases with fewer known drugs\n\nDISTRIBUTION:\n- Tier 1 (HIGH): 819 novel predictions, mean priority 85.4\n- Tier 2 (MEDIUM): 10,234 novel predictions, mean priority 50.4\n- Tier 3 (LOW): 1,317 novel predictions, mean priority 19.0\n\nTOP ACTIONABLE PRIORITIES:\n- Polyarticular JIA: Methylprednisolone (priority 125.8)\n- Rheumatoid arthritis: Dapsone (priority 124.4)\n- Crohn's disease: Methylprednisolone (priority 124.2)\n- Psoriatic arthritis: Cyclosporine (priority 124.2)\n- Atherosclerosis: Lovastatin (priority 122.2)\n\nVALUE: Enables clinical partners to focus on highest-impact opportunities.",
       "result_metric": "Top priority: 125.8, 819 Tier 1 novel predictions"
+    },
+    {
+      "id": "h90",
+      "title": "Zero-Shot Benchmark: Diseases with No Known Treatments",
+      "category": "evaluation",
+      "rationale": "Every Cure's core mission is finding treatments for diseases with NO existing treatments. Our current evaluation uses diseases with existing treatments (transductive). We need a proper benchmark to measure progress on the real problem.",
+      "expected_impact": "critical",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load Every Cure disease list from indicationList.xlsx",
+        "Step 2: Filter to diseases with 0 known drug indications",
+        "Step 3: Check which of these diseases exist in DRKG (have any edges at all)",
+        "Step 4: Create test set of diseases with: (a) present in DRKG, (b) zero known treatments",
+        "Step 5: Document disease characteristics (genes, pathways available)",
+        "Success criteria: Defined benchmark of 50+ zero-treatment diseases"
+      ],
+      "dependencies": [],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h91",
+      "title": "Literature Mining: PubMed Drug-Disease Hypothesis Extraction",
+      "category": "external_data",
+      "rationale": "Novel drug-disease hypotheses exist in published literature but aren't in DRKG. LLMs can extract these relationships at scale. This is fundamentally different from graph-based methods and could work for truly untreated diseases.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each zero-treatment disease (from h90), query PubMed for recent papers",
+        "Step 2: Use Claude to extract: disease mechanisms, affected genes/pathways, proposed treatments",
+        "Step 3: For proposed treatments, search for supporting evidence (other papers, trials)",
+        "Step 4: Score hypotheses by: mechanism plausibility, evidence strength, safety profile",
+        "Step 5: Validate top predictions against clinical trials database",
+        "Success criteria: Generate predictions for 50%+ of zero-treatment diseases"
+      ],
+      "dependencies": [
+        "h90"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h92",
+      "title": "LINCS Drug Signature Matching for Zero-Shot",
+      "category": "external_data",
+      "rationale": "LINCS L1000 contains gene expression signatures for 20,000+ drug perturbations. If we can get disease expression signatures, we can find drugs that 'reverse' the disease state. This is mechanistically grounded and doesn't require similar diseases.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Download LINCS L1000 drug perturbation signatures",
+        "Step 2: Get disease expression signatures from GEO (or derive from DRKG gene associations)",
+        "Step 3: For each disease, compute anti-correlation with drug signatures",
+        "Step 4: Rank drugs by signature reversal score",
+        "Step 5: Evaluate on h90 benchmark diseases",
+        "Success criteria: >10% Recall@30 on zero-treatment diseases"
+      ],
+      "dependencies": [
+        "h90"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h93",
+      "title": "Direct Mechanism Traversal (No ML)",
+      "category": "architecture",
+      "rationale": "Pure graph reasoning: Disease -> Gene -> Drug paths. No ML training, no embedding learning. If a drug targets genes associated with a disease, it's a candidate. Simple but could work for diseases with gene annotations.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each disease in DRKG, get associated genes",
+        "Step 2: For each gene, get drugs that target it (directly or via protein)",
+        "Step 3: Rank drugs by: number of disease genes targeted, evidence type, druggability",
+        "Step 4: Apply safety filters (exclude withdrawn, contraindicated)",
+        "Step 5: Evaluate on h90 benchmark",
+        "Success criteria: Generate predictions for 80%+ of diseases with gene annotations"
+      ],
+      "dependencies": [
+        "h90"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h94",
+      "title": "TxGNN Enhancement: Add Mechanism Features",
+      "category": "architecture",
+      "rationale": "TxGNN achieves 14.5% on zero-shot. Can we improve it by adding mechanism-based node features (pathway membership, gene expression profiles)? The GNN architecture might benefit from richer input features.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Set up TxGNN on Vast.ai GPU instance",
+        "Step 2: Add pathway membership features to disease nodes",
+        "Step 3: Add drug target features to drug nodes",
+        "Step 4: Retrain with enhanced features",
+        "Step 5: Evaluate on original TxGNN benchmark AND h90 benchmark",
+        "Success criteria: >20% Recall@30 on zero-shot (vs 14.5% baseline)"
+      ],
+      "dependencies": [
+        "h90"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h95",
+      "title": "Ensemble: Literature + Mechanism + TxGNN",
+      "category": "ensemble",
+      "rationale": "Each approach (literature mining, mechanism traversal, TxGNN) captures different signals. An ensemble might achieve better coverage and precision than any single method for zero-shot prediction.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 5,
+      "status": "blocked",
+      "steps": [
+        "Step 1: Run h91, h93, h94 on the h90 benchmark",
+        "Step 2: Analyze complementarity: which diseases does each method succeed on?",
+        "Step 3: Design ensemble scoring: weighted combination or voting",
+        "Step 4: Evaluate ensemble on held-out diseases",
+        "Step 5: Compare to individual methods",
+        "Success criteria: Ensemble beats best individual method by >5 pp"
+      ],
+      "dependencies": [
+        "h91",
+        "h93",
+        "h94"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
