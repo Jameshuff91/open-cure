@@ -1703,7 +1703,7 @@
       "expected_impact": "critical",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Load Every Cure disease list from indicationList.xlsx",
         "Step 2: Filter to diseases with 0 known drug indications",
@@ -1713,8 +1713,8 @@
         "Success criteria: Defined benchmark of 50+ zero-treatment diseases"
       ],
       "dependencies": [],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Zero-shot benchmark created successfully.\n\nBENCHMARK SUMMARY:\n- Total Every Cure diseases: 2,688\n- Diseases WITH FDA treatments: 2,218\n- Diseases WITHOUT FDA treatments: 470 <- BENCHMARK\n  - Present in DRKG: 31 (can use graph methods)\n  - Not in DRKG: 439 (require literature mining)\n\nKEY INSIGHT: 93.4% (439/470) of zero-treatment diseases are NOT in DRKG at all.\nThis means graph-based methods can only address 6.6% of Every Cure's core mission.\nLiterature mining (h91) is CRITICAL for the remaining 93.4%.\n\nOutput: data/analysis/zero_shot_benchmark.json",
+      "result_metric": "470 benchmark diseases; 31 in DRKG, 439 not in DRKG"
     },
     {
       "id": "h91",
