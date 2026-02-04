@@ -62,7 +62,28 @@ You are an execution engine, not a scientist. You lack epistemic discipline by d
 
 ## Cloud GPU (Vast.ai)
 
-**Current instance**: None | Setup: `./scripts/vastai_txgnn_setup.sh <PORT> <HOST>`
+**Current instance**: None | Balance: $4.41
+
+### Quick Commands
+```bash
+# Search for GPU instances (RTX 3090/4090)
+vastai search offers 'gpu_name in [RTX_3090, RTX_4090] disk_space >= 50 reliability > 0.95' -o 'dph_total' --limit 10
+
+# Create instance from offer ID
+vastai create instance <OFFER_ID> --image pytorch/pytorch:2.0.1-cuda11.7-cudnn8-devel --disk 50
+
+# Get SSH connection details
+vastai show instances
+vastai ssh-url <INSTANCE_ID>
+
+# Setup TxGNN (after getting PORT and HOST)
+./scripts/vastai_txgnn_setup.sh <PORT> <HOST>
+
+# IMPORTANT: Destroy when done
+vastai destroy instance <INSTANCE_ID>
+```
+
+**Skill**: Use `/vastai-gpu` for detailed GPU provisioning instructions
 
 ## Models
 
@@ -238,53 +259,18 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 
 14.5% R@30 on our benchmark, excels at storage diseases (83.3%). **However, direct comparison to our 37% kNN is unfair** — TxGNN was designed for zero-shot on diseases with NO graph edges, while our kNN leverages test diseases' existing graph presence. Under equivalent transductive conditions, performance would likely be comparable. Details: `docs/archive/txgnn_learnings.md`
 
-## Harvard-Impressive Evidence (2026-02-01)
+## Zero-Shot Benchmark (2026-02-03)
 
-**Full report:** `docs/impressive_evidence_report.md`
+**470 diseases with NO FDA-approved treatments** — Every Cure's core mission
+- 31 in DRKG (6.6%) — can use graph methods
+- 439 NOT in DRKG (93.4%) — require literature mining (h91)
+- Benchmark: `data/analysis/zero_shot_benchmark.json`
 
-### Inductive Evaluation (KEGG Pathway kNN)
-- **15.73% ± 1.82% R@30** using only disease KEGG pathway features (no graph)
-- Competitive with TxGNN's 6.7-14.5% under same inductive paradigm
-- Script: `scripts/evaluate_kegg_pathway_knn.py`
+## Methodology & Evidence
 
-### Novel Discovery Validation
-- **100%** of validated predictions have NO direct DRKG treatment edge
-- 4/5 inferred via drug similarity (learned functional similarity)
-- 1/5 inferred via shared gene (mechanistic discovery)
-- Script: `scripts/validate_novel_discovery.py`
+**Full docs:** `docs/impressive_evidence_report.md`, `docs/methodology_limitations.md`
 
-### Mechanism Tracing
-- **All 5 validated predictions** have direct drug-target ↔ disease-gene overlap
-- Traceable biological hypotheses for each prediction
-- Script: `scripts/trace_mechanism_paths.py`
-
-## Methodological Critique Response (2026-02-01)
-
-**Full documentation:** `docs/methodology_limitations.md`, `docs/methodology_summary.md`
-
-### Key Findings
-
-| Analysis | Result | Implication |
-|----------|--------|-------------|
-| **Statistical significance** | p=0.025, Cohen's d=2.44 | 10.5 pp difference is significant |
-| **GT circularity** | 32% overlap with DRKG | Low - evaluation tests prediction, not recall |
-| **Coverage dependence** | 85% with coverage: 24.2% R@30 / 15% without: 0% | Bimodal performance |
-| **Rare disease gap** | 1 GT drug: 13.5% vs 6+ drugs: 30% | kNN fails for rare diseases |
-| **Selection funnel** | 90.8% attrition (3996 → 368) | MESH mapping is bottleneck |
-| **Disconnected diseases** | 51 GT diseases lost | Includes Parkinson's (19 drugs) |
-| **Embedding quality** | No NaN/Inf/zero-norm | Clean embeddings |
-| **Precision@30** | 5.9% | Low due to large drug pool |
-
-### Known Limitations (Cannot Fix)
-
-1. **Transductive evaluation** - Test diseases retain non-treatment graph presence
-2. **Bimodal performance** - 15% of diseases have zero kNN coverage
-3. **Rare disease failure** - No similar diseases → no treatment transfer
-4. **Selection bias** - Only 9% of Every Cure diseases evaluable
-
-### Fair Comparison Statement
-
-> Our 26.06% R@30 (honest embeddings) vs TxGNN 6.7-14.5% represents ~2x improvement, but paradigms differ. Our evaluation is transductive (test diseases in graph); TxGNN is inductive (test diseases removed). The gap is real but smaller than naive comparison suggests.
+**Key limitations:** Transductive evaluation (test diseases in graph), bimodal performance (15% have zero coverage), selection bias (only 9% of Every Cure evaluable)
 
 ## Archive Index
 
