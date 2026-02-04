@@ -1,20 +1,31 @@
 # Open Cure
 
-**AI-powered drug repurposing using knowledge graph embeddings. 47.5% Recall@30 on 602 diseases.**
+**AI-powered drug repurposing using knowledge graph embeddings.**
 
 Inspired by [Dr. David Fajgenbaum's TED talk](https://www.youtube.com/watch?v=sb34MfJjurc) and [Every Cure](https://everycure.org/).
 
+## Important Limitation
+
+**This project solves a different problem than Every Cure's core mission.**
+
+| Problem | Description | Our Performance |
+|---------|-------------|-----------------|
+| **Transductive** (what we solve) | Find *additional* drugs for diseases that already have treatments | 37% Recall@30 |
+| **Inductive/Zero-shot** (what Every Cure needs) | Find *first* drugs for diseases with NO known treatments | ~15% Recall@30 |
+
+Our kNN method works by transferring treatments from similar diseases. For diseases with no similar treated diseases, this fundamentally cannot work. See [Limitations](#limitations--honest-assessment) for details.
+
 ## Results
 
-| Metric | Value |
-|--------|-------|
-| **Per-Drug Recall@30** | **47.5%** |
-| Diseases evaluated | 602 |
-| vs Harvard's TxGNN | **7x better** |
-| Novel predictions validated | 40 (22.5% precision) |
-| Clinical validation | Dantrolene → Heart Failure (RCT P=0.034) |
+| Metric | Value | Context |
+|--------|-------|---------|
+| **kNN Recall@30** | **37.04% ± 5.81%** | Diseases with existing treatments (transductive) |
+| **KEGG Pathway kNN** | **15.73% ± 1.82%** | Inductive (no graph embeddings) |
+| Diseases evaluated | 368 | After MESH mapping filter |
+| Confidence precision | 88% at high threshold | For production use |
+| Clinical validation | Dantrolene → Heart Failure | RCT P=0.034 |
 
-**What this means**: For 47.5% of known drug-disease treatments, our model ranks the correct drug in the top 30 out of 24,000+ candidates.
+**Comparison to TxGNN**: Harvard's TxGNN achieves 6.7-14.5% on true zero-shot (diseases removed from graph). Our 37% is on transductive evaluation (diseases remain in graph). **These are not directly comparable.** Under fair inductive conditions, our KEGG method (15.7%) is comparable to TxGNN.
 
 ## Contributions to Every Cure
 
@@ -41,50 +52,93 @@ python scripts/query.py --drug "metformin"
 
 ## How It Works
 
-1. **Knowledge Graph**: We use [DRKG](https://github.com/gnn4dr/DRKG) (5.8M edges connecting drugs, diseases, genes, proteins, pathways)
+### Current Approach: kNN Collaborative Filtering
 
-2. **Embeddings**: TransE learns 128-dimensional representations capturing biological relationships
-
-3. **Classifier**: Gradient boosting predicts treatment probability from embedding features
-
-4. **Quad Boost**: Predictions are boosted using domain knowledge:
-   - Target overlap (drug targets ∩ disease genes)
-   - ATC classification matching
-   - Chemical similarity to known treatments
-   - Pathway enrichment overlap
-
-5. **Confidence Filter**: Rule-based exclusion of harmful patterns (withdrawn drugs, mechanism mismatches)
+Our best method doesn't use ML at all. It's based on a simple insight: **similar diseases share treatments**.
 
 ```
-Drug Embedding ──┐
-                 ├── [concat, product, diff] ── GB Classifier ── Base Score
-Disease Embedding┘                                                    │
-                                                                      ▼
-Target Overlap ──┬── Quad Boost ── Boosted Score ── Confidence Filter ── Final Prediction
-ATC Match ───────┤
-Chemical Sim ────┤
-Pathway Overlap ─┘
+1. Embed diseases using Node2Vec on DRKG
+2. For a test disease, find k=20 nearest training diseases
+3. Rank drugs by weighted frequency in neighbors' treatments
+4. Apply confidence scoring and safety filters
 ```
 
-## Model Evolution
+This achieves 37% Recall@30 on diseases with existing treatments — but fails completely for diseases with no similar treated neighbors.
 
-| Version | Recall@30 | Key Change |
-|---------|-----------|------------|
-| Baseline GB | 37.4% | Expanded MESH mappings |
-| + Target Boost | 39.0% | Drug-disease gene overlap |
-| + ATC Boost | 39.7% | Mechanism category matching |
-| + Chemical Sim | 47.1% | Tanimoto fingerprint similarity |
-| **+ Pathway Boost** | **47.5%** | KEGG pathway overlap |
+### Architecture
+
+```
+Disease ──[Node2Vec]──> Embedding ──[Cosine Similarity]──> k Nearest Diseases
+                                                                    │
+                                                                    ▼
+                                                    Neighbor Treatment Drugs
+                                                                    │
+                                                                    ▼
+                                        Confidence Scoring ──> Safety Filter ──> Predictions
+```
+
+## Limitations & Honest Assessment
+
+### What We Learned (81 Hypotheses Tested)
+
+Our autonomous research agent tested 81 hypotheses. Key findings:
+
+**What Works:**
+- kNN collaborative filtering (37% R@30) — best method, no ML needed
+- Confidence scoring (88% precision at high threshold)
+- Per-category calibration (autoimmune/dermatological achieve 93%+ precision)
+
+**What Failed:**
+| Approach | Why It Failed |
+|----------|---------------|
+| PPI network features | Already captured in Node2Vec embeddings |
+| HPO phenotype similarity | Too sparse (25% coverage), no improvement |
+| Gene overlap similarity | 13.56 pp WORSE than Node2Vec cosine |
+| Learned similarity metrics | Overfits to training pairs |
+| Bio foundation models (Geneformer) | Domain mismatch (needs real expression data) |
+| XGBoost hybrid | Adds nothing to kNN; can't rescue failed cases |
+
+**The Fundamental Limitation:**
+- 44% of test diseases have zero GT drug coverage in kNN neighbors
+- For these diseases, performance is 0%
+- No algorithm can conjure knowledge that isn't in the graph
+
+### The 37% Ceiling
+
+This isn't a model limitation — it's a **data limitation**. The DRKG knowledge graph simply doesn't contain treatment information for many disease neighborhoods. Breaking this ceiling requires external data sources.
+
+## What Actually Helps Every Cure
+
+For diseases with **no known treatments** (Every Cure's core mission), we need fundamentally different approaches:
+
+### Planned Next Steps
+
+1. **Literature Mining with LLMs**
+   - Extract drug-disease hypotheses from PubMed
+   - Use Claude to identify mechanism-based connections
+   - Not dependent on DRKG graph structure
+
+2. **Connectivity Map / LINCS**
+   - Find drugs that reverse disease gene expression signatures
+   - Mechanistically grounded, doesn't require similar diseases
+
+3. **Direct Mechanism Traversal**
+   - Disease → Gene → Drug paths in DRKG
+   - Pure logical inference, no ML training needed
+
+4. **Zero-Shot Benchmark**
+   - Define test set of Every Cure diseases with ZERO known treatments
+   - Evaluate approaches on this true benchmark
 
 ## Key Findings
 
 ### Clinical Validation
-Our model predicted **Dantrolene for heart failure** with score 0.969 (rank #7). An independent RCT confirmed:
+Our model predicted **Dantrolene for heart failure** with high confidence. An independent RCT confirmed:
 - 66% reduction in ventricular tachycardia
 - P-value: 0.034
 - No drug-related serious adverse events
 
-### Novel Predictions Validated (4 actionable)
+### Novel Predictions Validated
 | Drug | Disease | Evidence |
 |------|---------|----------|
 | Ravulizumab | Asthma | Eculizumab proof-of-concept trial |
@@ -92,26 +146,15 @@ Our model predicted **Dantrolene for heart failure** with score 0.969 (rank #7).
 | Alirocumab | Psoriasis | Mendelian Randomization p<0.003 |
 | Leronlimab | Ulcerative Colitis | CCR5 blockade effective in mouse models |
 
-### Ground Truth Gaps Found (FDA-approved, missing from training)
-| Drug | Disease | FDA Year |
-|------|---------|----------|
-| Ustekinumab | Ulcerative Colitis | 2019 |
-| Guselkumab | Ulcerative Colitis | 2024 |
-| Pembrolizumab | Breast Cancer | 2020 |
-| Natalizumab | Multiple Sclerosis | 2004 |
+### Performance by Category
+| Category | Performance | Notes |
+|----------|-------------|-------|
+| Autoimmune | 63% R@30 | Best category |
+| Storage diseases | 83% R@30 | Small sample |
+| Infectious | 14% R@30 | Poor — antibiotics confound |
+| Biologics (-mab) | 27% R@30 | Worse than small molecules |
 
-### What Works Well
-- Small molecules: **74% precision**
-- ACE inhibitors: **67% Recall@30**
-- Autoimmune diseases: **63% Recall@30**
-- Storage diseases: **83% Recall@30**
-
-### Known Limitations
-- Biologics (-mab drugs): Only 27% Recall@30
-- Infectious diseases: Only 14% Recall@30
-- ~22% of top predictions validate (78% false positive rate)
-
-## False Positive Patterns Identified
+## False Positive Patterns
 
 We documented 28+ exclusion patterns:
 - **Anti-IL-5 for psoriasis/UC**: Reduces eosinophils but fails clinically
@@ -126,62 +169,58 @@ See `src/confidence_filter.py` for the full rule set.
 ```
 open-cure/
 ├── models/
-│   ├── drug_repurposing_gb_enhanced.pkl  # Trained model
-│   └── confidence_calibrator.pkl          # ML confidence predictor
+│   ├── drug_repurposing_gb_enhanced.pkl  # Legacy GB model
+│   └── meta_confidence_model.pkl         # Confidence predictor
 ├── data/
-│   ├── analysis/                          # Validation results
-│   ├── deliverables/                      # Predictions for Every Cure
-│   └── reference/                         # Ground truth, mappings
+│   ├── analysis/                         # Validation results
+│   ├── deliverables/                     # Predictions with confidence
+│   └── reference/                        # Ground truth, mappings
 ├── scripts/
-│   ├── query.py                           # Query predictions CLI
-│   ├── evaluate_pathway_boost.py          # Current best evaluation
-│   └── filter_novel_predictions.py        # Apply confidence filter
+│   ├── query.py                          # Query predictions CLI
+│   ├── evaluate_knn_collab.py            # kNN evaluation
+│   └── evaluate_kegg_pathway_knn.py      # Inductive evaluation
 ├── src/
-│   ├── confidence_filter.py               # Filter harmful predictions
-│   ├── chemical_features.py               # Tanimoto similarity
-│   ├── pathway_features.py                # KEGG pathway enrichment
-│   └── atc_features.py                    # ATC classification
-└── CLAUDE.md                              # Full technical details
+│   ├── confidence_filter.py              # Safety filter
+│   └── knn_repurposing.py                # Core kNN method
+├── research_loop/                        # Autonomous research agent
+│   └── research_roadmap.json             # 81 hypotheses tested
+└── CLAUDE.md                             # Full technical details
 ```
 
 ## Reproduce Our Results
 
 ```bash
-# Verify the 47.5% Recall@30
-python scripts/evaluate_pathway_boost.py
+# Verify kNN performance (transductive)
+python scripts/evaluate_knn_collab.py
 
-# Generate filtered novel predictions
-python scripts/filter_novel_predictions.py
+# Verify inductive performance
+python scripts/evaluate_kegg_pathway_knn.py
 
-# Check validation results
-cat data/analysis/validation_results_batch2.json
+# Generate predictions with confidence tiers
+python scripts/generate_production_predictions.py
 ```
 
 ## Contributing
 
-We need help!
+We need help — especially with **zero-shot approaches**!
+
+### High-Impact Contributions
+- [ ] Build literature mining pipeline for untreated diseases
+- [ ] Integrate LINCS drug expression signatures
+- [ ] Define benchmark of diseases with zero known treatments
+- [ ] Validate predictions for rare diseases you know about
 
 ### Good First Issues
-- [ ] Validate predictions for a disease you know about
 - [ ] Add MESH mappings for unmapped diseases
 - [ ] Identify new false positive patterns
-- [ ] Add unit tests for the confidence filter
-
-### If You Have Domain Expertise
-- Review predictions in your specialty
-- Identify mechanism mismatches we've missed
-- Suggest new exclusion rules
-
-### If You Have Compute
-- Improve chemical similarity coverage
-- Add more pathway databases (Reactome, WikiPathways)
-- Train disease-specific models
+- [ ] Review predictions in your medical specialty
 
 ## Links
 
 - **Every Cure**: https://everycure.org
 - **Our Contributions**: [Issue #24](https://github.com/everycure-org/matrix-indication-list/issues/24), [Issue #25](https://github.com/everycure-org/matrix-indication-list/issues/25)
 - **Dr. Fajgenbaum's TED Talk**: https://www.youtube.com/watch?v=sb34MfJjurc
+- **Research Roadmap**: See `research_loop/research_roadmap.json` for all 81 hypotheses
 
 ## Citation
 
@@ -192,6 +231,8 @@ If you use this work, please cite Every Cure's foundational research:
 ## Disclaimer
 
 This is research software. Predictions require clinical validation before any medical use. This is not medical advice.
+
+**Honest assessment**: Our current methods are best suited for finding *additional* treatments for diseases that already have *some* treatments. For truly untreated diseases, we're still working on it.
 
 ---
 
