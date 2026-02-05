@@ -163,59 +163,40 @@ vastai destroy instance <INSTANCE_ID>
 - **Explicit traversal** - Gene/Pathway: 3.5% R@30 (h93, h95). Embeddings >> symbolic
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence Features (h111 validated)
+### Confidence System Summary (h135, h111, h106)
 
-**VALIDATED:** Drug frequency (+9.4pp), Chemical similarity (+8.8pp), Mechanism support (+6.5pp), Category tier
-**Multi-Signal Ensemble (h106):** 22% precision @ top 10%. Best combo: Mechanism+Frequency = 20% precision (orthogonal, r=0.07)
+**Tier System:** GOLDEN (57.7%) → HIGH (20.9%) → MEDIUM (14.3%) → LOW (6.4%) → FILTER (3.2%)
+**Key signals:** Drug frequency (+9.4pp), Mechanism support (+6.5pp), Category tier
 
-### Production Tiered Confidence System (h135 validated)
+### Mechanism & ATC Integration (h96, h259, h152, h189)
 
-| Tier   | Criteria | Precision | Separation |
-|--------|----------|-----------|------------|
-| GOLDEN | Tier1 + freq>=10 + mechanism | 57.7% | 9.1x vs LOW |
-| HIGH | freq>=15+mech OR rank<=5+freq>=10+mech | 20.9% | 3.3x |
-| MEDIUM | freq>=5+mech OR freq>=10 | 14.3% | 2.2x |
-| LOW | All else passing filter | 6.4% | baseline |
-| FILTER | rank>20 OR no_targets OR (freq<=2 AND no_mech) | 3.2% | excluded |
+**Mechanism = PRECISION signal** (2.62x lift), NOT recall signal
+**CV/Neuro:** REQUIRE mechanism (>10x lift, 236 excluded, 2 GT lost)
+**ATC rescue:** L04AX (82%), H02AB (77%); EXCLUDE biologics L04AB/L04AC (<17%)
+**Details:** `docs/archive/experiment_history.md`
 
-**Key findings (2026-02-05):**
-- h126: XGBoost +2.07pp from interactions (freq dominant at 35%)
-- h130: Linear better for infectious/autoimmune/ophthalmic; ALL hits had Linear>XGBoost
-- h132: Tier1+freq>=15+mech = 57.9% precision (8x baseline)
+### Disease Hierarchy Matching (h273/h276/h278 validated 2026-02-05)
 
-### PPI Mechanism Integration (h96, h259, h262, h263 validated 2026-02-05)
+**Subtype refinements** (e.g., psoriasis → plaque psoriasis) have high precision:
+| Category | Hierarchy Precision | Tier |
+|----------|---------------------|------|
+| Metabolic | 65.2% | GOLDEN |
+| Neurological | 63.3% | GOLDEN |
+| Autoimmune | 44.7% | HIGH |
+| Respiratory | 40.4% | HIGH |
+| Cardiovascular | 22.6% | HIGH |
+| Infectious | 22.1% | HIGH |
 
-**CRITICAL: Mechanism = PRECISION signal, NOT RECALL signal**
-- h259: 2.62x overall precision lift (18.9% vs 7.2%, p<0.000001)
-- h260: Mechanism boost does NOT improve kNN R@30 (+0pp)
-- h264: Mechanism-only R@30 = 9.5% (below 15% threshold)
+**Implementation:** `DISEASE_HIERARCHY_GROUPS` + `_check_disease_hierarchy_match()`
 
-**Category-Specific Lifts (h262):**
-| Category | Lift | Prec w/Mech | Prec w/o |
-|----------|------|-------------|----------|
-| Cardiovascular | 33.7x | 22.6% | 0.7% |
-| Neurological | 13.3x | 15.3% | 1.1% |
-| Autoimmune | 8.9x | 37.6% | 4.2% |
-| Infectious | 1.8x | 25.2% | 14.4% |
+### Domain-Isolated Drug Filter (h271 validated 2026-02-05)
 
-**Production Rules (h263):**
-- REQUIRE mechanism for CV/Neuro (>10x lift): 236 excluded, only 2 GT lost
-- CV precision: 15.3% → 22.6% (+47% improvement)
-- Neuro precision: 9.5% → 15.3% (+62% improvement)
+828 drugs only treat ONE disease category. Cross-domain predictions = **0% precision**.
+- Same-domain precision: 17.2%
+- Cross-domain precision: 0.7%
+- Filter: 273 predictions (2.1%), 99.3% accuracy
 
-### ATC Integration (h152, h189, h190, h87 validated 2026-02-05)
-
-**ATC L1 matching: +11.1pp mean precision** with revised mapping (include H for autoimmune corticosteroids)
-**ATC L4 rescue criteria:**
-| Code | Class | Precision | Notes |
-|------|-------|-----------|-------|
-| L04AX | Traditional immunosuppressants (MTX, AZA) | 82.4% | GOLDEN rescue |
-| H02AB | Glucocorticoids | 77.0% | GOLDEN rescue |
-| L04AB | TNF inhibitors | 7.2% | EXCLUDE from rescue |
-| L04AC | IL inhibitors | 1.9% | EXCLUDE from rescue |
-
-**Biologic gap root cause (h190):** Sparse GT coverage - glucocorticoids have 1832 GT entries vs TNF inhibitors 23
-**Mechanism transfer (h87):** Corticosteroids transfer to 10 categories (45% avg); biologics don't transfer (<20%)
+**Implementation:** `_is_cross_domain_isolated()` → FILTER tier
 
 ## Performance Gaps & Error Patterns
 

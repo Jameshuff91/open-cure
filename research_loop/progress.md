@@ -1,67 +1,83 @@
 # Research Loop Progress
 
-## Current Session: h273 (2026-02-05)
+## Current Session: h273, h276, h278, h271 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 1**
+**Hypotheses Tested: 4**
 - h273: Disease Hierarchy Matching for All Categories - **VALIDATED**
+- h276: Extend Hierarchy to GOLDEN Tier - **VALIDATED (then corrected)**
+- h278: Infectious Disease Hierarchy Gap Analysis - **VALIDATED**
+- h271: Domain-Isolated Drug Detection - **VALIDATED**
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 155 |
+| Validated | 158 |
 | Invalidated | 52 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 46 |
+| Pending | 43 |
 | **Total** | **282** |
 
 ### KEY SESSION FINDINGS
 
-#### h273: Disease Hierarchy Matching for All Categories - VALIDATED
+#### h273: Disease Hierarchy Matching - VALIDATED
+When a drug treats "psoriasis" and we predict for "plaque psoriasis", this is a subtype refinement with high precision.
 
-**MAJOR DISCOVERY: Hierarchy matching improves precision by 4.5x average**
+**Implementation:**
+- `DISEASE_HIERARCHY_GROUPS` dictionary for 6 categories
+- `_check_disease_hierarchy_match()` method
+- Hierarchy matches get boosted tier
 
-When a drug's ground truth disease matches the predicted disease at the hierarchy level (e.g., drug treats "psoriasis" and we predict for "plaque psoriasis"), precision is dramatically higher.
+**Full evaluation precision:**
+| Category | Hierarchy Precision |
+|----------|---------------------|
+| Metabolic | 65.2% |
+| Neurological | 63.3% |
+| Autoimmune | 44.7% |
+| Respiratory | 40.4% |
+| Cardiovascular | 22.6% |
+| Infectious | 22.1% |
 
-**Implementation added to production_predictor.py:**
-- `DISEASE_HIERARCHY_GROUPS` dictionary with 6 categories
-- `_build_disease_hierarchy_mapping()` builds drug→disease_groups mapping
-- `_check_disease_hierarchy_match()` checks for group match
-- Hierarchy match → HIGH tier confidence
+#### h276/h278: GOLDEN Tier Threshold Correction
+Initial sample-based analysis was biased. Full evaluation corrected:
+- **GOLDEN** (>50%): Metabolic, Neurological only
+- **HIGH** (<50%): Autoimmune, Respiratory, Cardiovascular, Infectious
 
-**Precision by category with hierarchy matching:**
-| Category | Hierarchy Precision | Non-hierarchy Precision | Lift |
-|----------|---------------------|-------------------------|------|
-| Autoimmune | **75.9%** | 16.7% | 4.5x |
-| Metabolic | **72.1%** | 36.4% | 2.0x |
-| Neurological | **81.8%** | 0% | ∞ |
-| Cardiovascular | **38.3%** | 22.2% | 1.7x |
-| Respiratory | **28.6%** | 5.0% | 5.7x |
+#### h271: Cross-Domain Isolated Drug Filter - VALIDATED
+**Key finding:** Domain-isolated drugs (only treat 1 category) have 0% precision when predicting cross-domain.
 
-**Key insight:** Hierarchy matching identifies "subtype refinement" predictions where the drug treats the broader condition and we're predicting for a specific subtype. These are almost always correct.
+**Implementation:**
+- `_build_domain_isolation_mapping()`: 828 domain-isolated drugs identified
+- `_is_cross_domain_isolated()`: Checks for cross-domain prediction
+- FILTER tier for cross-domain isolated predictions
 
-### New Hypotheses Generated (h276-h279)
-- h276: Extend Hierarchy to GOLDEN Tier for High-Precision Categories (priority 2)
-- h277: Cross-Category Hierarchy Matching (priority 3)
-- h278: Infectious Disease Hierarchy Gap Analysis (priority 2)
-- h279: Disease Specificity Scoring (priority 3)
+**Results:**
+- 273 predictions filtered (2.1% of total)
+- 99.3% filter accuracy (only 2 false negatives)
+- 0.7% precision in filtered set (vs 17.2% same-domain)
 
 ### Production Changes
 Modified `src/production_predictor.py`:
-- Added `DISEASE_HIERARCHY_GROUPS` constant with 6 category definitions
-- Added `_build_disease_hierarchy_mapping()` method (called in __init__)
-- Added `_check_disease_hierarchy_match()` method
-- Modified `_assign_confidence_tier()` to apply hierarchy boost → HIGH tier
+1. Added `DISEASE_HIERARCHY_GROUPS` constant
+2. Added `_build_disease_hierarchy_mapping()` method
+3. Added `_check_disease_hierarchy_match()` method
+4. Added `HIERARCHY_GOLDEN_CATEGORIES` for tier selection
+5. Added `_build_domain_isolation_mapping()` method
+6. Added `_is_cross_domain_isolated()` method
+7. Added cross-domain isolated FILTER rule
+
+### New Hypotheses Generated
+- h276-h279 from h273 analysis
 
 ### Recommended Next Steps
-1. **h276**: Promote autoimmune/metabolic/neurological hierarchy matches to GOLDEN tier (>70% precision)
-2. **h278**: Investigate why infectious diseases have 0 hierarchy matches
-3. **h271**: Domain-isolated drug detection (priority 3)
+1. **h277**: Cross-category hierarchy matching (medium effort, medium impact)
+2. **h279**: Disease specificity scoring (medium effort, medium impact)
+3. **h91/h269**: Literature mining or cancer target scoring (high effort, high impact)
 
 ---
 
