@@ -1,28 +1,29 @@
 # Research Loop Progress
 
-## Current Session: h284, h288, h292, h159, h177, h295 (2026-02-05)
+## Current Session: h284, h288, h292, h159, h177, h295, h296 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 6**
+**Hypotheses Tested: 7**
 - h284: Complication Specialization Score - **VALIDATED**
 - h288: ATC Class-Supported GOLDEN Tier - **INVALIDATED**
 - h292: Cardiovascular Event Transferability - **VALIDATED**
 - h159: Category Boundary Refinement - **INCONCLUSIVE**
 - h177: Epilepsy-Specific Analysis - **VALIDATED**
 - h295: Drug Pool Size as Confidence Signal - **VALIDATED**
+- h296: Statin-Only CV Predictions - **VALIDATED** (100% vs 0% precision!)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 169 |
+| Validated | 170 |
 | Invalidated | 55 |
 | Inconclusive | 10 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 42 |
+| Pending | 41 |
 | **Total** | **297** (7 new hypotheses added this session)
 
 ### KEY SESSION FINDINGS
@@ -74,13 +75,22 @@ ITP/TTP are autoimmune-hematological but GT is tiny (2-4 drugs). Expansion would
 
 **Key Finding:** 95% of diseases have SPARSE pools (<10 drugs). Pool size + breadth predicts kNN success (epilepsy 8.1 breadth vs Alzheimer's 3.6).
 
+#### h296: Statin-Only CV Predictions - VALIDATED
+
+| Drug Class | Correct | Total | Precision |
+|------------|---------|-------|-----------|
+| Statins | 5 | 5 | **100%** |
+| Non-statins | 0 | 7 | **0%** |
+
+**Key Finding:** Statins treat BOTH symptom (dyslipidemia) AND underlying cause (atherosclerosis). Non-statins (PCSK9i, antiplatelets, GLP-1) don't have atherosclerosis indication.
+
 ### New Hypotheses Generated
 - **h291-h297**: Transferability implementation, CV event expansion, drug pool confidence signals, statin-only CV predictions, mechanism-specific categories
 
 ### Recommended Next Steps
-1. h295 (Drug Pool Size as Confidence Signal) - builds on h177
-2. h296 (Statin-Only CV Predictions) - builds on h292
-3. h291 (Implement Comp→Base Boost) - builds on h284
+1. h291 (Implement Comp→Base Boost) - implement h284 transferability findings
+2. h297 (Mechanism-Specific Disease Categories) - identify diseases where kNN won't help
+3. Consider implementing statin boost rule from h296
 
 ---
 
