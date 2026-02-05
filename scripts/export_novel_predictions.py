@@ -42,6 +42,23 @@ from confidence_filter import (
 import re
 
 
+# Broad-spectrum drugs that are likely already used for many conditions
+# even if not in our specific ground truth. Mark these for user awareness.
+BROAD_SPECTRUM_DRUGS = {
+    # Corticosteroids - broadly used for inflammatory conditions
+    'methylprednisolone', 'dexamethasone', 'prednisone', 'prednisolone',
+    'hydrocortisone', 'betamethasone', 'triamcinolone', 'cortisone',
+    'budesonide', 'fluticasone', 'beclomethasone',
+    # Local anesthetics - broadly used for pain management
+    'lidocaine', 'bupivacaine', 'ropivacaine', 'mepivacaine',
+    # NSAIDs - broadly used for inflammation/pain
+    'ibuprofen', 'naproxen', 'aspirin', 'indomethacin', 'diclofenac',
+    'ketorolac', 'meloxicam', 'celecoxib',
+    # Proton pump inhibitors - broadly used
+    'omeprazole', 'pantoprazole', 'lansoprazole', 'esomeprazole',
+}
+
+
 @dataclass
 class NovelPrediction:
     """A novel (non-FDA-approved) drug prediction."""
@@ -61,6 +78,7 @@ class NovelPrediction:
     has_targets: bool
     category_rescue_applied: bool
     is_fda_approved: bool  # From ground truth
+    is_broad_spectrum: bool  # Drug likely already used broadly
     filter_exclusion: Optional[str]  # If excluded by confidence_filter
 
     def to_dict(self) -> Dict:
@@ -185,6 +203,8 @@ class NovelPredictionExporter:
             "diseases_with_predictions": 0,
             "total_predictions": 0,
             "novel_predictions": 0,
+            "truly_novel_predictions": 0,  # Excludes broad-spectrum drugs
+            "broad_spectrum_predictions": 0,
             "fda_approved_filtered": 0,
             "excluded_by_filter": 0,
             "withdrawn_filtered": 0,
@@ -240,6 +260,7 @@ class NovelPredictionExporter:
 
                 # This is a valid novel prediction
                 drug_type = classify_drug_type(pred.drug_name)
+                is_broad_spectrum = pred.drug_name.lower() in BROAD_SPECTRUM_DRUGS
 
                 novel_pred = NovelPrediction(
                     disease_name=disease_name,
@@ -258,12 +279,17 @@ class NovelPredictionExporter:
                     has_targets=pred.has_targets,
                     category_rescue_applied=pred.category_rescue_applied,
                     is_fda_approved=is_approved,
+                    is_broad_spectrum=is_broad_spectrum,
                     filter_exclusion=None,
                 )
 
                 all_predictions.append(novel_pred)
                 disease_has_predictions = True
                 stats["novel_predictions"] += 1
+                if is_broad_spectrum:
+                    stats["broad_spectrum_predictions"] += 1
+                else:
+                    stats["truly_novel_predictions"] += 1
                 stats["by_tier"][pred.confidence_tier.value] += 1
                 stats["by_category"][result.category] += 1
 
@@ -315,8 +341,8 @@ class NovelPredictionExporter:
         col_order = [
             "confidence_tier", "disease_name", "drug_name", "rank", "norm_score",
             "train_frequency", "mechanism_support", "drug_type", "disease_category",
-            "disease_tier", "category_rescue_applied", "knn_score", "has_targets",
-            "disease_id", "drug_id", "is_fda_approved", "filter_exclusion",
+            "disease_tier", "category_rescue_applied", "is_broad_spectrum", "knn_score",
+            "has_targets", "disease_id", "drug_id", "is_fda_approved", "filter_exclusion",
         ]
         df = df[[c for c in col_order if c in df.columns]]
 
@@ -324,6 +350,11 @@ class NovelPredictionExporter:
         with pd.ExcelWriter(xlsx_path, engine='openpyxl') as writer:
             # All predictions
             df.to_excel(writer, sheet_name="All Predictions", index=False)
+
+            # Truly novel (excluding broad-spectrum drugs)
+            truly_novel_df = df[df["is_broad_spectrum"] == False]
+            if len(truly_novel_df) > 0:
+                truly_novel_df.to_excel(writer, sheet_name="Truly Novel", index=False)
 
             # By tier
             for tier in ["GOLDEN", "HIGH", "MEDIUM"]:
@@ -336,6 +367,8 @@ class NovelPredictionExporter:
                 {"Metric": "Total Diseases Evaluated", "Value": stats["total_diseases"]},
                 {"Metric": "Diseases with Predictions", "Value": stats["diseases_with_predictions"]},
                 {"Metric": "Total Novel Predictions", "Value": stats["novel_predictions"]},
+                {"Metric": "  - Truly Novel (specific drugs)", "Value": stats["truly_novel_predictions"]},
+                {"Metric": "  - Broad-Spectrum (corticosteroids, etc.)", "Value": stats["broad_spectrum_predictions"]},
                 {"Metric": "FDA-Approved Filtered", "Value": stats["fda_approved_filtered"]},
                 {"Metric": "Excluded by Safety Filter", "Value": stats["excluded_by_filter"]},
                 {"Metric": "Withdrawn Drugs Filtered", "Value": stats["withdrawn_filtered"]},
@@ -391,6 +424,8 @@ def main():
     print(f"Diseases with predictions: {stats['diseases_with_predictions']}")
     print(f"Total predictions before filtering: {stats['total_predictions']}")
     print(f"Novel predictions exported: {stats['novel_predictions']}")
+    print(f"  - Truly novel (specific drugs): {stats['truly_novel_predictions']}")
+    print(f"  - Broad-spectrum (corticosteroids, NSAIDs, etc.): {stats['broad_spectrum_predictions']}")
     print(f"\nFiltered out:")
     print(f"  - FDA-approved pairs: {stats['fda_approved_filtered']}")
     print(f"  - Withdrawn drugs: {stats['withdrawn_filtered']}")
@@ -415,17 +450,30 @@ def main():
     print(f"  - JSON: {json_path}")
     print(f"  - Excel: {xlsx_path}")
 
-    # Show top GOLDEN predictions
+    # Show top GOLDEN predictions (truly novel first, then broad-spectrum)
     golden = [p for p in predictions if p.confidence_tier == "GOLDEN"]
     if golden:
+        truly_novel_golden = [p for p in golden if not p.is_broad_spectrum]
+        broad_spectrum_golden = [p for p in golden if p.is_broad_spectrum]
+
         print(f"\n{'='*60}")
-        print(f"TOP 10 GOLDEN TIER PREDICTIONS (highest confidence)")
+        print(f"TOP GOLDEN TIER - TRULY NOVEL (specific drugs)")
         print(f"{'='*60}")
-        for p in sorted(golden, key=lambda x: -x.norm_score)[:10]:
+        for p in sorted(truly_novel_golden, key=lambda x: -x.norm_score)[:10]:
             mech = "+" if p.mechanism_support else "-"
             rescued = " [rescued]" if p.category_rescue_applied else ""
             print(f"  {p.drug_name} -> {p.disease_name}")
             print(f"     Score: {p.norm_score:.3f} | Freq: {p.train_frequency} | Mech: {mech}{rescued}")
+
+        if broad_spectrum_golden:
+            print(f"\n{'='*60}")
+            print(f"TOP GOLDEN TIER - BROAD-SPECTRUM (corticosteroids, etc.)")
+            print(f"{'='*60}")
+            for p in sorted(broad_spectrum_golden, key=lambda x: -x.norm_score)[:5]:
+                mech = "+" if p.mechanism_support else "-"
+                rescued = " [rescued]" if p.category_rescue_applied else ""
+                print(f"  {p.drug_name} -> {p.disease_name}")
+                print(f"     Score: {p.norm_score:.3f} | Freq: {p.train_frequency} | Mech: {mech}{rescued}")
 
 
 if __name__ == "__main__":

@@ -2873,7 +2873,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Analyze metabolic disease predictions in detail",
         "Step 2: Check if ATC class A10 (diabetes) drugs have higher precision",
@@ -2905,8 +2905,65 @@
       "dependencies": [
         "h69"
       ],
-      "findings": "VALIDATED: Novel prediction export successfully generates prioritized deliverables.\n\nEXPORT RESULTS (2026-02-05):\n- Total diseases evaluated: 448\n- Diseases with predictions: 392\n- Novel predictions exported: 2,384\n\nBY CONFIDENCE TIER:\n- GOLDEN: 72 predictions (~58% expected precision)\n- HIGH: 266 predictions (~21% expected precision)\n- MEDIUM: 2,046 predictions (~14% expected precision)\n\nFILTERING SUMMARY:\n- FDA-approved pairs filtered: 964 (from ground truth)\n- Safety filter exclusions: 44 (diagnostics, harmful combos)\n- Withdrawn drugs: 0\n\nBY DISEASE CATEGORY:\n- other: 1,480 (largest - many rare/misc diseases)\n- cancer: 213\n- infectious: 176 (includes rescued predictions)\n- autoimmune: 91\n- cardiovascular: 73\n- dermatological: 57\n\nOUTPUT FILES:\n- data/deliverables/novel_predictions_20260205.json (1.4 MB)\n- data/deliverables/novel_predictions_20260205.xlsx (470 KB, multi-sheet)\n\nTOP GOLDEN PREDICTIONS:\n1. Methylprednisolone -> systemic myasthenia gravis (freq=40, mech+)\n2. Methylprednisolone -> Crohn's disease (freq=40, mech+)\n3. Methylprednisolone -> hepatitis B [rescued] (freq=40, mech+)\n4. Dexamethasone -> urticaria (freq=42, mech+)\n5. Minocycline -> bacterial meningitis [rescued] (freq=19, mech+)\n\nScript: scripts/export_novel_predictions.py\n",
-      "result_metric": "2,384 novel predictions: 72 GOLDEN, 266 HIGH, 2,046 MEDIUM"
+      "findings": "Implemented and validated novel prediction export pipeline:\n\nOUTPUT: data/deliverables/novel_predictions_20260205.json/.xlsx\n\nSTATISTICS:\n- 448 diseases evaluated\n- 389 diseases with predictions  \n- 2,391 novel predictions exported\n  - 1,457 truly novel (specific drugs)\n  - 934 broad-spectrum (corticosteroids, NSAIDs, etc.)\n- 958 FDA-approved pairs filtered out\n- 45 safety filter exclusions (diagnostics, antibiotics for metabolic)\n\nBY TIER:\n- GOLDEN: 72 (16 truly novel, 56 broad-spectrum)\n- HIGH: 265 (85 truly novel, 180 broad-spectrum)\n- MEDIUM: 2,054 (1,356 truly novel, 698 broad-spectrum)\n\nTOP TRULY NOVEL GOLDEN PREDICTIONS:\n1. Minocycline -> bacterial meningitis (0.99 score, freq=19, mech+)\n2. Minocycline -> malaria (0.82 score, freq=19, mech+)\n3. Doxycycline/Minocycline -> CF Pseudomonas (0.70 score)\n4. Adalimumab -> SLE (0.44 score, freq=11, mech+)\n5. Corticotropin -> autoimmune hepatitis (0.43 score, freq=15, mech+)\n\nKEY INSIGHT: 39% of predictions are broad-spectrum drugs (corticosteroids, etc.) which are likely already in clinical use even if not in our GT. The is_broad_spectrum flag helps collaborators prioritize truly novel predictions.",
+      "result_metric": "2,391 novel predictions (1,457 truly novel)"
+    },
+    {
+      "id": "h146",
+      "title": "Minocycline Repurposing Validation",
+      "category": "validation",
+      "rationale": "Minocycline appears in 6 GOLDEN truly novel predictions (bacterial meningitis, malaria, CF Pseudomonas, pneumonia, AIDS). Need to validate these predictions against clinical evidence to assess prediction quality.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Search ClinicalTrials.gov for minocycline trials in each predicted indication",
+        "Search PubMed for clinical evidence supporting these predictions",
+        "Calculate validation rate for top truly novel GOLDEN predictions",
+        "Document validated and invalidated predictions"
+      ],
+      "dependencies": [
+        "h145"
+      ]
+    },
+    {
+      "id": "h147",
+      "title": "Biologic Drug Prioritization",
+      "category": "production",
+      "rationale": "Biologics (mAbs, fusion proteins) represent high-value repurposing targets. Only 5 GOLDEN predictions are biologics (Adalimumab -> SLE was one). Need to analyze biologic predictions separately.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Filter predictions for biologic drug types",
+        "Analyze which biologics have highest confidence scores",
+        "Check mechanism plausibility (target overlap with disease genes)",
+        "Create biologic-specific deliverable for collaborator review"
+      ],
+      "dependencies": [
+        "h145"
+      ]
+    },
+    {
+      "id": "h148",
+      "title": "Disease Category Gap Analysis",
+      "category": "error_analysis",
+      "rationale": "The \"other\" category has 1,482 predictions (62% of total) indicating many diseases are not properly categorized. Improving disease categorization could improve tier assignment and precision.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Analyze which diseases fall into \"other\" category",
+        "Identify common disease types that should have their own category",
+        "Expand CATEGORY_KEYWORDS to improve classification",
+        "Re-run export to see impact on tier distribution"
+      ],
+      "dependencies": [
+        "h145"
+      ]
     }
   ],
   "completed": [
@@ -3505,6 +3562,12 @@
       "hypothesis_id": "h145",
       "learning": "Novel prediction export successfully batches 448 diseases. 28% of predictions (964/3392) are FDA-approved and filtered. Category rescue rescues 5/72 GOLDEN predictions for infectious diseases.",
       "implication": "Production pipeline delivers actionable predictions. GOLDEN tier should be prioritized for expert review."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h145",
+      "learning": "Novel prediction export reveals 39% of predictions are broad-spectrum drugs (corticosteroids, NSAIDs) likely already in clinical use. The is_broad_spectrum flag is critical for prioritizing truly novel predictions.",
+      "implication": "Collaborators should focus on truly_novel predictions in the Truly Novel sheet rather than all predictions"
     }
   ],
   "collaborations": [
