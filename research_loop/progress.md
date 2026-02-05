@@ -1,26 +1,27 @@
 # Research Loop Progress
 
-## Current Session: h281, h193, h280 (2026-02-05)
+## Current Session: h281, h193, h280, h290 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 3**
+**Status:** Complete
+**Hypotheses Tested: 4**
 - h281: Bidirectional Treatment Analysis - **VALIDATED**
 - h193: Combined ATC Coherence Signals - **INVALIDATED**
 - h280: Complication vs Subtype Classification - **VALIDATED**
+- h290: Implement Relationship Type Filter - **VALIDATED**
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 163 |
+| Validated | 165 |
 | Invalidated | 54 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 43 |
-| **Total** | **293** (9 new hypotheses added this session)
+| Pending | 41 |
+| **Total** | **290** (6 new hypotheses added this session)
 
 ### KEY SESSION FINDINGS
 
@@ -32,55 +33,54 @@
 | Complication → Base | 47 | 17 | **36.2%** |
 
 **Key Finding:** Treating a complication is **4x more predictive** of treating the base disease than vice versa.
-- Diabetes → diabetic nephropathy: 0% precision
-- DKA → diabetes: 62.5% precision
 
 #### h193: Combined ATC Coherence Signals - INVALIDATED
 
 | Quadrant | N | Precision |
 |----------|---|-----------|
 | Coherent + Not Unique | 2,632 | **9.0%** (BEST) |
-| Coherent + Unique | 129 | 7.8% |
-| Incoherent + Not Unique | 1,373 | 5.0% |
 | Incoherent + Unique | 291 | **4.5%** (WORST) |
 
-**Key Finding:** Opposite of hypothesis! Category-incoherent + class-unique does NOT identify true repurposing. Following ATC conventions + classmate support = highest precision.
+**Key Finding:** Opposite of hypothesis! Incoherent+unique is WORST, not best.
 
 #### h280: Complication vs Subtype Classification - VALIDATED ⭐
 
 | Relationship Type | N | Precision |
 |-------------------|---|-----------|
-| Exact match | 756 | 100.0% |
 | Subtype relationships | 54 | **42.6%** |
 | Complication relationships | 36 | **13.9%** |
 | Base → Complication | 18 | **0.0%** |
 
 **Major Finding:** Subtype relationships have **28.7 pp higher precision** than complication relationships!
-- Base→complication predictions should be FILTERED (0% precision)
-- Subtype predictions should be BOOSTED (42.6% precision)
+
+#### h290: Implement Relationship Type Filter - VALIDATED ✅
+
+**Implementation complete:**
+- Added BASE_TO_COMPLICATIONS mapping (32 complications)
+- Added _is_base_to_complication() filter
+- Integrated into production_predictor.py
+
+**Test Results:**
+- Diabetic nephropathy: 10 predictions filtered
+- Type 2 diabetes: 0 filtered (correct)
+- Chronic kidney disease: 0 filtered (correct)
 
 ### New Hypotheses Generated
-- **h284**: Complication Specialization Score for Confidence
-- **h285**: Disease Relationship Type Classification
-- **h286**: Mechanistic Pathway Overlap for Complication Predictions
-- **h287**: ATC Coherence as Positive Confidence Tier Signal
-- **h288**: ATC Class-Supported Predictions as GOLDEN Tier Candidate
-- **h289**: Why Does Class Uniqueness Hurt Precision?
-- **h290**: Implement Relationship Type Filter in Production Predictor
+- **h284-h290**: Complication scoring, relationship classification, pathway overlap, ATC coherence tiering, etc.
 
 ### Recommended Next Steps
-1. **h290**: Implement relationship type filter (priority 2, low effort)
-2. **h284**: Complication transferability scoring (priority 3, medium effort)
-3. Continue testing pending hypotheses
+1. Continue testing pending hypotheses
+2. Consider h284 (Complication Specialization Score) for follow-up
+3. Run full evaluation to measure precision improvement
 
 ---
 
 ## Previous Session: h279, h277, h282 (2026-02-05)
 
 **Hypotheses Tested: 3**
-- h279: Disease Specificity Scoring - **VALIDATED** (specific→generic = 4.1% precision)
-- h277: Cross-Category Hierarchy Matching - **INVALIDATED** (0% cross-category precision)
-- h282: Hierarchy Depth Delta - **VALIDATED** (51.6% same-level vs 12% off-by-1)
+- h279: Disease Specificity Scoring - **VALIDATED**
+- h277: Cross-Category Hierarchy Matching - **INVALIDATED**
+- h282: Hierarchy Depth Delta - **VALIDATED**
 
 ---
 
@@ -90,7 +90,7 @@
 - h273: Disease Hierarchy Matching - 4.5x precision lift
 - h276: GOLDEN tier for metabolic/neurological hierarchy
 - h278: Infectious hierarchy gap analysis
-- h271: Domain-isolated drug filter (0% cross-domain precision)
+- h271: Domain-isolated drug filter
 - h275: Subtype refinements have 99.2% fuzzy precision
 
 ---
