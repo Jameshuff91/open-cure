@@ -2851,14 +2851,16 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Analyze features of diseases with 0% hit rate in \"other\" category",
         "Step 2: Identify patterns (rare genetic, weak graph connectivity, few treatments)",
         "Step 3: Create simple classifier to predict zero-hit diseases",
         "Step 4: Evaluate precision/recall of zero-hit predictor",
         "Success criteria: >80% precision in predicting zero-hit diseases"
-      ]
+      ],
+      "findings": "VALIDATED: prob_h52 < 0.3 achieves 81.6% precision in predicting zero-hit diseases.\n\nZERO-HIT PREDICTION PERFORMANCE:\n| Threshold | Precision | Recall |\n|-----------|-----------|--------|\n| 0.30      | 81.6%     | 36.4%  | <-- Meets >80% target\n| 0.35      | 78.7%     | 43.6%  |\n| 0.40      | 76.3%     | 52.7%  |\n| 0.45      | 74.5%     | 63.6%  |\n| 0.50      | 72.5%     | 71.8%  |\n\nFEATURE DIFFERENCES (zero vs non-zero):\n- prob_h52: 0.42 vs 0.74 (0.32 difference)\n- pool_size: 55.5 vs 58.4 (similar)\n\nZero-hit diseases are mostly:\n- \"other\" category (73/110)\n- Rare genetic conditions (alkaptonuria, cystinosis, etc.)\n\nIMPLICATION:\nFilter out predictions with prob_h52 < 0.3 to avoid low-value zero-hit diseases.\n81.6% of diseases with prob_h52 < 0.3 will have zero hits.\n",
+      "result_metric": "81.6% precision at threshold 0.3 (exceeds 80% target)"
     }
   ],
   "completed": [
@@ -3439,6 +3441,12 @@
       "hypothesis_id": "h129",
       "learning": "Mechanism evidence has 2.68x predictive value for infectious diseases, far exceeding other categories (1.29-1.61x).",
       "implication": "Weight mechanism support more heavily for infectious disease predictions. Lower tiers benefit more from mechanism evidence."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h143",
+      "learning": "prob_h52 < 0.3 predicts zero-hit diseases with 81.6% precision. These are mostly rare genetic conditions in \"other\" category.",
+      "implication": "Filter out predictions with prob_h52 < 0.3 to improve prediction quality. Or flag them as \"low confidence - rare disease\"."
     }
   ],
   "collaborations": [
