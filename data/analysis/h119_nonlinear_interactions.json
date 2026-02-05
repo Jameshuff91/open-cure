@@ -1,0 +1,46 @@
+{
+  "baseline_logistic": {
+    "top_10_precision": 21.671597633136095,
+    "top_20_precision": 17.52958579881657,
+    "top_33_precision": 13.423563345906366,
+    "model_name": "Logistic Regression (baseline)"
+  },
+  "best_nonlinear": {
+    "name": "XGBoost (shallow)",
+    "precision": 23.742603550295858
+  },
+  "improvement": 2.071005917159763,
+  "all_results": {
+    "Logistic Regression (baseline)": {
+      "top_10_precision": 21.671597633136095,
+      "top_20_precision": 17.52958579881657,
+      "top_33_precision": 13.423563345906366,
+      "model_name": "Logistic Regression (baseline)"
+    },
+    "Random Forest (100 trees)": {
+      "top_10_precision": 22.928994082840237,
+      "top_20_precision": 18.41715976331361,
+      "top_33_precision": 14.31107166629687,
+      "model_name": "Random Forest (100 trees)"
+    },
+    "Random Forest (50 trees, deeper)": {
+      "top_10_precision": 21.819526627218934,
+      "top_20_precision": 16.235207100591715,
+      "top_33_precision": 12.66918127357444,
+      "model_name": "Random Forest (50 trees, deeper)"
+    },
+    "XGBoost (100 trees)": {
+      "top_10_precision": 23.5207100591716,
+      "top_20_precision": 19.1198224852071,
+      "top_33_precision": 14.13357000221877,
+      "model_name": "XGBoost (100 trees)"
+    },
+    "XGBoost (shallow)": {
+      "top_10_precision": 23.742603550295858,
+      "top_20_precision": 19.00887573964497,
+      "top_33_precision": 13.800754382072334,
+      "model_name": "XGBoost (shallow)"
+    }
+  },
+  "success": false
+}

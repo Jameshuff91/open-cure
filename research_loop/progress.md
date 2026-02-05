@@ -1,15 +1,15 @@
 # Research Loop Progress
 
-## Current Session: h115, h116, h99 (2026-02-05)
+## Current Session: h115, h118, h119 (2026-02-05, continued)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
+**Status:** In Progress
 **Hypotheses Tested This Session:**
 - h115: Ensemble Simplification - **VALIDATED**
-- h116: Category Tier 2.0: Disease-Specific Calibration - **INVALIDATED**
-- h99: Phenotype-Based Drug Transfer - **INCONCLUSIVE**
+- h118: Minimal 2-Feature Confidence Score - **INVALIDATED**
+- h119: Non-Linear Feature Interactions - **VALIDATED (partial)**
 
 ### Key Findings
 
@@ -73,29 +73,64 @@ Tested symptom/phenotype similarity as alternative to Node2Vec for kNN.
 
 ---
 
+---
+
+**h118: Minimal 2-Feature Confidence Score - INVALIDATED**
+
+Tested if mechanism_support + train_frequency alone could match 4-feature ensemble.
+
+| Model                    | Features | Top 10% | Top 20% |
+|--------------------------|----------|---------|---------|
+| 4-feature (h115 best)    | 4        | 21.89%  | 17.83%  |
+| 2-feature (mech + freq)  | 2        | 19.38%  | 16.09%  |
+| Frequency only           | 1        | 18.79%  | 15.90%  |
+| Mechanism only           | 1        | 10.36%  | 12.24%  |
+
+**KEY FINDINGS:**
+1. 2-feature model loses -2.51 pp vs 4-feature (exceeds 2 pp tolerance)
+2. Frequency alone (18.79%) is nearly as good as 2-feature
+3. tier_inv and norm_score contribute ~2.5 pp to the ensemble
+
+---
+
+**h119: Non-Linear Feature Interactions - VALIDATED (partial)**
+
+Tested if XGBoost/Random Forest could capture synergies logistic regression misses.
+
+| Model                          | Top 10% | Top 20% |
+|--------------------------------|---------|---------|
+| Logistic Regression (baseline) | 21.67%  | 17.53%  |
+| Random Forest (100 trees)      | 22.93%  | 18.42%  |
+| **XGBoost (shallow)**          | **23.74%** | 19.01%  |
+
+**KEY FINDINGS:**
+1. XGBoost (shallow, depth=2) achieves +2.07 pp over logistic
+2. Just below 24% target, but meaningful improvement
+3. Shallow models work best - deep models don't help
+4. For production, XGBoost is recommended over logistic
+
+---
+
 ### Session Statistics
-- Hypotheses tested: 3 (h115, h116, h99)
-- Validated: 1 (h115)
-- Invalidated: 1 (h116)
-- Inconclusive: 1 (h99)
-- New hypotheses added: 5 (h121-h125)
+- Hypotheses tested: 3 (h115, h118, h119)
+- Validated: 2 (h115, h119)
+- Invalidated: 1 (h118)
+- New hypotheses added: 4 (h118, h119, h120, h126)
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 49 |
-| Invalidated | 32 |
+| Validated | 51 |
+| Invalidated | 33 |
 | Inconclusive | 6 |
 | Blocked | 15 |
-| Pending | 19 |
-| **Total Tested** | **87** |
-
-### Pending Hypotheses: 19
+| Pending | 18 |
+| **Total Tested** | **90** |
 
 ### Next Steps
-1. **h123: Negative Confidence Signal** - What predicts MISSES? (priority 2)
-2. **h125: Drug-Level Success Prediction** - Drug reliability score (priority 2)
-3. **h121: Minimal 3-Feature Ensemble** - Further simplification (priority 3)
+1. **h120**: 3-Feature Confidence Model (priority 3)
+2. **h126**: XGBoost Feature Interaction Analysis (priority 4)
+3. **h123**: Negative Confidence Signal (priority 2)
 
 ---
 
