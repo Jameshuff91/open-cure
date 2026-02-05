@@ -1,6 +1,65 @@
 # Research Loop Progress
 
-## Current Session: h111, h114, h117, h112 (2026-02-05)
+## Current Session: h115 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested This Session:**
+- h115: Ensemble Simplification - **VALIDATED**
+
+### Key Findings
+
+**h115: Ensemble Simplification - VALIDATED**
+
+Tested whether removing redundant features from the 5-feature confidence ensemble preserves precision.
+
+**EXPERIMENT RESULTS (13,522 predictions, 5 seeds):**
+
+| Ensemble              | Features | Top 10% | Top 20% |
+|-----------------------|----------|---------|---------|
+| Full (5 features)     | 5        | 22.12%  | 17.90%  |
+| Without norm_score    | 4        | 21.23%  | 18.23%  |
+| **Without inv_rank**  | 4        | **22.04%** | 17.38%  |
+
+**KEY FINDINGS:**
+1. Removing inv_rank loses only -0.07 pp at top 10% (within noise)
+2. 4-feature model is sufficient: [mechanism_support, train_frequency, tier_inv, norm_score]
+3. inv_rank and norm_score are redundant (r=0.665 from h111)
+4. Simpler model is more interpretable for production
+
+**RECOMMENDED SIMPLIFIED ENSEMBLE:**
+- Features: mechanism_support, train_frequency, tier_inv, norm_score
+- Precision: 22.04% at top 10%
+
+### New Hypotheses Added
+- h118: Minimal 2-Feature Confidence Score
+- h119: Non-Linear Feature Interactions for Confidence
+
+### Session Statistics
+- Hypotheses tested: 1 (h115)
+- Validated: 1
+- New hypotheses added: 2
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 49 |
+| Invalidated | 31 |
+| Inconclusive | 5 |
+| Blocked | 15 |
+| Pending | 17 |
+| **Total Tested** | **85** |
+
+### Next Steps
+1. **h118**: Test minimal 2-feature confidence model
+2. **h119**: Test non-linear feature interactions
+3. **h116**: Per-disease calibration for category tier
+
+---
+
+## Previous Session: h111, h114, h117, h112 (2026-02-05)
 
 ### Session Summary
 

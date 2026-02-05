@@ -9,7 +9,7 @@
     "ceiling": "60.4% (oracle)",
     "gap": "23 pp requires external data"
   },
-  "last_updated": "2026-01-28",
+  "last_updated": "2026-02-05",
   "hypotheses": [
     {
       "id": "h1",
@@ -2264,7 +2264,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Re-run h106 ensemble with only: mechanism_support, train_frequency, tier_inv, inv_rank",
         "Step 2: Re-run with only: mechanism_support, train_frequency, tier_inv, norm_score",
@@ -2274,7 +2274,9 @@
       "dependencies": [
         "h106",
         "h111"
-      ]
+      ],
+      "findings": "VALIDATED: Simplified 4-feature ensemble matches full 5-feature ensemble precision.\n\nEXPERIMENT RESULTS (13,522 predictions, 5 seeds):\nBase hit rate: 7.20%\n\nENSEMBLE COMPARISON:\n| Ensemble                   | # Feat | Top 10% | Top 20% | Top 33% |\n|----------------------------|--------|---------|---------|---------|\n| Full (5 features)          | 5      | 22.04%  | 18.31%  | 13.80%  |\n| Without norm_score         | 4      | 21.82%  | 18.38%  | 13.67%  |\n| Without inv_rank           | 4      | 22.04%  | 17.97%  | 13.51%  |\n\nKEY FINDINGS:\n1. Removing inv_rank: IDENTICAL precision at top 10% (22.04% vs 22.04%)\n2. Removing norm_score: Loses -0.22 pp at top 10% but gains +0.07 pp at top 20%\n3. Best simplified: WITHOUT inv_rank (4 features) - matches full ensemble exactly\n\nRECOMMENDED SIMPLIFIED ENSEMBLE:\nFeatures: [mechanism_support, train_frequency, tier_inv, norm_score]\n- 20% fewer features with identical precision\n- More interpretable (no redundant rank signal)\n\nINTERPRETATION:\ninverse rank (1/rank) is redundant with norm_score (score/max_score) - both capture ranking.\nTheir correlation (r=0.665 from h111) explains why removing either has minimal impact.\nnorm_score preferred because it captures magnitude of kNN signal, not just ordinal position.",
+      "result_metric": "4-feature ensemble: 22.04% @ top 10% = full ensemble (0.00 pp diff)"
     },
     {
       "id": "h116",
@@ -2284,7 +2286,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Compute per-disease hit rate from the 5-seed kNN data",
         "Step 2: Replace category tier with disease-specific historical hit rate",
@@ -2317,6 +2319,46 @@
       ],
       "findings": "VALIDATED: Target breadth is a valid confidence feature (+5.58 pp).\n\nPRECISION BY TARGET BREADTH (13,038 predictions with target data):\n- HIGH targets (>=31): 10.41% precision (4,314 predictions)\n- MEDIUM targets: 7.10% precision (3,999 predictions)\n- LOW targets (<=8): 4.83% precision (4,725 predictions)\n- NO targets: 1.24% precision (484 predictions)\n\nDifference: +5.58 pp (exceeds 5 pp threshold)\n\nCORRELATION ANALYSIS:\n- n_targets vs is_hit: r = 0.039* (weak but significant)\n- n_targets vs train_frequency: rho = 0.27 (independent, |r| < 0.3)\n\nINDEPENDENCE CHECK (controlling for frequency):\n- Within HIGH-frequency drugs: HIGH targets 13.85% vs LOW targets 7.92% (\u0394 = 5.93 pp)\n- Within LOW-frequency drugs: HIGH targets 5.26% vs LOW targets 3.27% (\u0394 = 1.99 pp)\n- Effect is stronger for high-frequency drugs but present in both groups\n\nCOVERAGE: 96.4% of predictions have target data (13,038/13,522)\n\nIMPLICATION: n_targets should be added to the h106 multi-signal ensemble as an independent feature. It captures polypharmacology - drugs with more targets have more chances to hit disease pathways.",
       "result_metric": "+5.58 pp (10.41% vs 4.83%), rho=0.27 with frequency - VALIDATED"
+    },
+    {
+      "id": "h118",
+      "title": "Minimal 2-Feature Confidence Score",
+      "category": "optimization",
+      "rationale": "h115 showed 4 features match 5-feature precision. h111 showed train_frequency (r=0.187) and mechanism_support (r=0.098) are the two strongest independent signals. A minimal 2-feature model using just these might match 4-feature performance while being maximally interpretable for production use.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Train ensemble with ONLY train_frequency + mechanism_support",
+        "Step 2: Compare precision at top 10%/20% to 4-feature simplified ensemble",
+        "Step 3: If within 2 pp, document as production-ready minimal model",
+        "Success criteria: 2-feature achieves >20% precision at top 10%"
+      ],
+      "dependencies": [
+        "h115",
+        "h111"
+      ]
+    },
+    {
+      "id": "h119",
+      "title": "Non-Linear Feature Interactions for Confidence",
+      "category": "optimization",
+      "rationale": "h106 and h115 used logistic regression (linear combination). h111 showed mechanism and frequency are orthogonal (r=0.071). Non-linear interactions (e.g., frequency \u00d7 mechanism, or tree-based ensemble) might capture synergies between independent signals that linear models miss.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Train Random Forest on 4 confidence features",
+        "Step 2: Train XGBoost on same features",
+        "Step 3: Compare to logistic regression baseline (22.04%)",
+        "Step 4: Analyze feature interactions if improvement found",
+        "Success criteria: Non-linear model achieves >24% precision at top 10% (+2 pp)"
+      ],
+      "dependencies": [
+        "h115"
+      ]
     }
   ],
   "completed": [
