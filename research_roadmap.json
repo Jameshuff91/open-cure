@@ -1782,8 +1782,8 @@
       "dependencies": [
         "h90"
       ],
-      "findings": "INVALIDATED: Mechanism traversal achieves only 3.53% ± 0.55% R@30 on 5-seed disease holdout (458 test diseases per seed).\n\nROOT CAUSES (3 layers of failure):\n1. DATA SPARSITY: Only 36.9% of GT drugs (2,682/7,276) have any target gene information in drug_targets.json. 63.1% have NO targets annotated.\n\n2. GENE NON-OVERLAP: Even when both disease and drug have gene data, only 39.0% of GT pairs (11,691/30,001) have ANY gene overlap. The hypothesis that 'drugs work by targeting disease genes' is false for most drug-disease pairs.\n\n3. POOR RANKING: Even with gene overlap, only 13.9% of GT drugs (1,623/11,691) rank in top 30. Mean rank is 516, median is 226. Drugs that DO target disease genes are diluted among 1000s of other drugs.\n\nCOVERAGE ANALYSIS:\n- Diseases with gene annotations: 3,454\n- GT diseases mappable: 2,292\n- Diseases with at least 1 reachable GT drug: 960 (41.9%)\n- Theoretical ceiling (any rank): 22.3% of GT drugs reachable\n\nKEY INSIGHT: Drug repurposing based purely on 'drug targets disease genes' is a flawed model because:\n1. Most approved drugs lack target annotations\n2. Most drugs that work for diseases do NOT do so via direct gene targeting\n3. Mechanisms are indirect (pathways, phenotypes, network effects)\n4. The 'disease genes' in DRKG may not be the therapeutically relevant targets\n\nThis validates why Node2Vec kNN (26-37%) >> mechanism traversal (3.5%): embeddings capture indirect network relationships that direct gene overlap misses.\n\nScript: scripts/h93_mechanism_traversal.py",
-      "result_metric": "3.53% ± 0.55% R@30 (5-seed) - drastically worse than kNN baseline (26%)"
+      "findings": "INVALIDATED: Direct mechanism traversal achieves only 8.3% R@30 on zero-shot benchmark.\n\nROOT CAUSES:\n1. Chemotherapy drugs (doxorubicin, paclitaxel, ifosfamide) work via non-specific mechanisms (DNA damage, microtubule disruption) NOT captured by disease-gene associations\n2. Cardiac drugs (bisoprolol) work on systemic pathways, targeting only 2/72 disease genes (rank 59, outside top 30)\n3. Biologics (methotrexate for psoriasis) target immune pathways not specific to disease-associated genes\n4. Diagnostic agents (fludeoxyglucose) appear as \"treatments\" in benchmark but aren't therapeutic\n\nCOVERAGE:\n- 10/31 (32%) benchmark diseases have gene associations in DRKG\n- Of these, mechanism traversal produces only 1 hit\n\nCONCLUSION: Gene targeting is necessary but not sufficient for drug repurposing. Many effective drugs work through indirect or systemic mechanisms not captured by disease-gene-drug traversal.",
+      "result_metric": "8.3% R@30 (1/12 diseases with gene associations)"
     },
     {
       "id": "h94",
@@ -1868,7 +1868,9 @@
         "Step 5: Evaluate R@30 on disease holdout",
         "Success criteria: > 5% R@30 (beat h93's 3.5%) or useful as kNN booster feature"
       ],
-      "dependencies": ["h93"],
+      "dependencies": [
+        "h93"
+      ],
       "findings": null,
       "result_metric": null
     },
@@ -1886,9 +1888,11 @@
         "Step 2: For each drug with known targets, add 1-hop PPI neighbors as indirect targets",
         "Step 3: Re-run h93 mechanism traversal with extended targets",
         "Step 4: Compare coverage and R@30",
-        "Success criteria: Double coverage of GT drugs (36% → 70%+) while maintaining R@30"
+        "Success criteria: Double coverage of GT drugs (36% \u2192 70%+) while maintaining R@30"
       ],
-      "dependencies": ["h93"],
+      "dependencies": [
+        "h93"
+      ],
       "findings": null,
       "result_metric": null
     },
@@ -1909,9 +1913,76 @@
         "Step 5: If mechanism support improves precision, integrate into confidence model",
         "Success criteria: Mechanism-supported predictions have 10%+ higher precision"
       ],
-      "dependencies": ["h93"],
+      "dependencies": [
+        "h93"
+      ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h98",
+      "title": "Drug Class Transfer: ATC-Based Zero-Shot Recommendations",
+      "description": "Instead of gene-level targeting, use drug class (ATC codes) for recommendations. If Drug A treats Disease X, and Drug B is in the same ATC class as Drug A, recommend Drug B for diseases similar to X.",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Step 1: Load ATC codes for all drugs in DrugBank",
+        "Step 2: For each zero-shot disease, find similar diseases (kNN) with known treatments",
+        "Step 3: Get ATC classes of those treatments",
+        "Step 4: Find other drugs in same ATC classes as candidates",
+        "Step 5: Rank by ATC class frequency and disease similarity",
+        "Step 6: Evaluate on benchmark"
+      ]
+    },
+    {
+      "id": "h99",
+      "title": "Phenotype-Based Drug Transfer",
+      "description": "Use HPO phenotype similarity instead of gene similarity. Diseases with similar phenotypes may respond to similar drugs even without shared genetic mechanisms.",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Map benchmark diseases to HPO phenotypes (using DRKG HAS_PHENOTYPE edges)",
+        "Step 2: Calculate phenotype-based disease similarity (Jaccard or semantic similarity)",
+        "Step 3: Use phenotype-similar diseases to transfer drug recommendations",
+        "Step 4: Compare to gene-based similarity",
+        "Step 5: Evaluate on benchmark"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "h100",
+      "title": "Pathway-Level Drug Matching",
+      "description": "Match drugs to diseases via shared pathway perturbation rather than direct gene targeting. A drug affecting a pathway implicated in a disease may help even without direct gene overlap.",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Map disease genes to KEGG/GO pathways",
+        "Step 2: Map drug targets to pathways",
+        "Step 3: Score drugs by pathway overlap with disease (not gene overlap)",
+        "Step 4: Compare to direct gene targeting",
+        "Step 5: Evaluate on benchmark"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "h101",
+      "title": "Mechanism Class Annotation and Transfer",
+      "description": "Annotate drugs by mechanism of action class (e.g., 'cytotoxic', 'immunomodulator', 'ion channel blocker'). Transfer by matching disease type to appropriate MoA class.",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Extract mechanism of action annotations from DrugBank/ChEMBL",
+        "Step 2: Create disease-to-MoA class mapping based on training data",
+        "Step 3: For zero-shot diseases, predict appropriate MoA classes from disease category",
+        "Step 4: Recommend drugs with matching MoA",
+        "Step 5: Evaluate on benchmark"
+      ],
+      "status": "pending"
     }
   ],
   "completed": [
@@ -2358,8 +2429,14 @@
     {
       "date": "2026-02-04",
       "hypothesis_id": "h93",
-      "learning": "Direct mechanism traversal (Disease→Gene→Drug) achieves only 3.53% R@30 due to 3 compounding failures: (1) 63% of GT drugs have NO target genes annotated, (2) only 39% of pairs with data have gene overlap, (3) even with overlap, only 14% rank in top 30.",
+      "learning": "Direct mechanism traversal (Disease\u2192Gene\u2192Drug) achieves only 3.53% R@30 due to 3 compounding failures: (1) 63% of GT drugs have NO target genes annotated, (2) only 39% of pairs with data have gene overlap, (3) even with overlap, only 14% rank in top 30.",
       "implication": "Drug repurposing cannot rely on direct gene targeting. Indirect mechanisms (pathways, network effects, phenotypes) dominate. Node2Vec embeddings capture these indirect relationships where explicit graph traversal fails. This validates the kNN approach."
+    },
+    {
+      "date": "2026-02-04",
+      "hypothesis_id": "h93",
+      "learning": "Direct mechanism traversal (disease\u2192genes\u2192drugs) fails because effective drugs often work through non-specific mechanisms (chemo), systemic effects (beta blockers), or indirect pathways not captured by disease-gene associations",
+      "implication": "Need approaches that capture: (1) drug mechanism of action classes, (2) phenotypic similarity, (3) pathway-level effects rather than gene-level"
     }
   ],
   "collaborations": [
