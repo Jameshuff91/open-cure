@@ -167,6 +167,29 @@
 
 ---
 
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 116 |
+| Invalidated | 44 |
+| Inconclusive | 8 |
+| Blocked | 17 |
+| Deprioritized | 3 |
+| Pending | 31 |
+| **Total** | **219** |
+
+### Session Learnings
+
+1. **h209:** 88.1% of GT pairs ARE predicted. 86.3% of blocked pairs have ZERO neighbor coverage.
+2. **h212:** Generic CV drug rescue (3.5%) fails, but HF+diuretics (75%) and HTN+ARBs (20%) work.
+3. **h217:** Specific drug class rules (HF+diuretics=GOLDEN) achieve high precision.
+4. **h213:** Zero-coverage injection FAILS - even mech+ATC only achieves 5.5% precision.
+5. **h215:** CDK inhibitors for breast cancer = 100% precision. Design limits rescue to rank <= 20.
+
+**Key Insight:** Targeted drug class + disease subtype rules work (75-100% precision). General mechanism/ATC matching fails (<6% precision). The kNN collaborative filtering approach is fundamentally limited by GT coverage.
+
+---
+
 ## Previous Session: h205, h207, h206, h202, h208, h211 (2026-02-05)
 
 **Hypotheses Tested:**
