@@ -16,6 +16,9 @@ Unified pipeline integrating validated research findings:
 - h170: Selective category boosting - +2.40pp R@30 (p=0.009) for isolated categories
   - Boosts same-category neighbors 1.5x for: neurological, respiratory, metabolic, renal, hematological, immunological
 - h187: Neurological anticonvulsant rescue - anticonvulsant + rank<=10 + mech = 58.8% precision
+- h189: ATC L4-based rescue criteria (more systematic drug class identification)
+  - Autoimmune: H02AB (glucocorticoids) 77%, L04AX (methotrexate/azathioprine) 82%
+  - Excludes biologics (L04AB, L04AC, L04AF) which have low precision (8-17%)
 
 USAGE:
     # Get predictions for a disease
@@ -48,6 +51,18 @@ from typing import Dict, List, Optional, Set, Tuple
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+
+# h189: ATC-based drug classification (lazy import to avoid circular dependency)
+_atc_mapper: Optional["ATCMapper"] = None  # type: ignore[name-defined]
+
+
+def _get_atc_mapper() -> "ATCMapper":  # type: ignore[name-defined]
+    """Lazy load ATCMapper to avoid import overhead when not needed."""
+    global _atc_mapper
+    if _atc_mapper is None:
+        from src.atc_features import ATCMapper
+        _atc_mapper = ATCMapper()
+    return _atc_mapper
 
 
 class ConfidenceTier(Enum):
@@ -267,6 +282,15 @@ BETA_BLOCKERS = {'metoprolol', 'atenolol', 'carvedilol', 'bisoprolol', 'proprano
 # h157: DMARDs achieve 75.4% precision for autoimmune diseases
 DMARD_DRUGS = {'methotrexate', 'sulfasalazine', 'hydroxychloroquine', 'leflunomide',
                'azathioprine', 'mycophenolate', 'cyclosporine', 'tacrolimus'}  # 75.4% rank<=10
+
+# h189: ATC L4 codes for rescue criteria (from h152 analysis)
+# High-precision drug subclasses (use for GOLDEN rescue)
+ATC_HIGH_PRECISION_AUTOIMMUNE = {'H02AB', 'L04AX'}  # Glucocorticoids (77%), Traditional immunosuppressants (82%)
+ATC_HIGH_PRECISION_DERMATOLOGICAL = {'D07AA', 'D07XA', 'D07AB', 'D07AC', 'D07XB', 'D07XC', 'H02AB'}  # Topical + systemic steroids (66-79%)
+
+# Low-precision drug subclasses (use for FILTER/demotion)
+# h152 finding: Biologics have 8-17% precision vs 77-82% for traditional drugs
+ATC_BIOLOGIC_CODES = {'L04AB', 'L04AC', 'L04AF'}  # TNF (17%), IL (8.7%), JAK (18.8%) inhibitors
 
 # h171: Neurological drug class mappings (60.4% coverage vs 18% kNN baseline)
 # Maps disease subtypes to appropriate drug classes
@@ -849,6 +873,21 @@ class DrugRepurposingPredictor:
             if rank <= 10 and any(dmard in drug_lower for dmard in DMARD_DRUGS):
                 return ConfidenceTier.GOLDEN  # 75.4% precision
 
+            # h189: ATC L4-based rescue for autoimmune
+            # H02AB (glucocorticoids) = 77%, L04AX (traditional immunosuppressants) = 82%
+            atc_l4 = self._get_atc_level4(drug_name)
+            if atc_l4:
+                # Check for high-precision autoimmune ATC codes
+                if atc_l4 & ATC_HIGH_PRECISION_AUTOIMMUNE:
+                    # Exclude biologics even if they have other codes
+                    if not (atc_l4 & ATC_BIOLOGIC_CODES):
+                        if rank <= 10:
+                            return ConfidenceTier.GOLDEN  # 77-82% precision
+                # Demote biologics (TNF, IL, JAK inhibitors) - only 8-17% precision
+                if atc_l4 & ATC_BIOLOGIC_CODES:
+                    # Don't rescue biologics to GOLDEN, let them get normal tier
+                    pass  # Explicit no-op to document this is intentional
+
         elif category == 'neurological':
             # h187: Anticonvulsant + rank<=10 + mechanism = 58.8% precision (GOLDEN)
             # BUT only for seizure/epilepsy diseases, not all neurological
@@ -869,6 +908,19 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.HIGH  # ~60% coverage
 
         return None
+
+    def _get_atc_level4(self, drug_name: str) -> Set[str]:
+        """Get ATC level 4 codes (5 characters) for a drug name.
+
+        h189: Used for systematic drug class identification.
+        Returns set of ATC L4 codes like {'H02AB', 'L04AX'}.
+        """
+        try:
+            mapper = _get_atc_mapper()
+            full_codes = mapper.get_atc_codes(drug_name)
+            return set(code[:5] for code in full_codes if len(code) >= 5)
+        except Exception:
+            return set()
 
     def _get_neurological_drug_classes(self, disease_name: str) -> List[str]:
         """Get appropriate drug classes for a neurological disease subtype."""

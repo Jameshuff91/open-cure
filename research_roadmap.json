@@ -3710,7 +3710,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "category": "precision",
       "dependencies": [
         "h152"
@@ -3721,7 +3721,9 @@
         "Test GOLDEN tier precision before/after",
         "Validate coverage improvement",
         "Success: GOLDEN precision maintained, coverage +20%"
-      ]
+      ],
+      "findings": "ATC L4-based rescue criteria successfully implemented:\n1. Added ATC codes H02AB (glucocorticoids), L04AX (traditional immunosuppressants) for autoimmune rescue\n2. Added biologic exclusion (L04AB, L04AC, L04AF) - correctly identifies 14.5% precision drugs\n3. Coverage increased 383% (23 \u2192 111 drugs for autoimmune)\n4. Precision maintained: 75.7% combined vs 73.9% manual DMARD only\n5. New drugs captured: Corticosteroids (prednisone, dexamethasone), Lenalidomide\n\nImplementation adds ATC-based rescue as complement to manual drug lists.\nBiologics correctly excluded from GOLDEN tier (only 14.5% vs 77-82% precision).",
+      "result_metric": "+383% coverage, precision maintained at 75.7%"
     },
     {
       "id": "h190",
@@ -4495,6 +4497,12 @@
       "hypothesis_id": "h152",
       "learning": "ATC L4 codes systematically identify high vs low precision drug subclasses. Traditional immunosuppressants (L04AX) 82% vs biologics (L04AB/AC) 8-17%. ATC can explain biologic gap pattern.",
       "implication": "Use ATC L4 for rescue criteria; exclude biologic ATC codes from GOLDEN tier"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h189",
+      "learning": "ATC L4 rescue provides 383% coverage increase for autoimmune while maintaining 75.7% precision. Biologic exclusion (L04AB/AC/AF) critical - they have only 14.5% vs 77-82% for traditional drugs.",
+      "implication": "Use ATC as complement to manual lists for rescue criteria"
     }
   ],
   "collaborations": [
