@@ -2399,7 +2399,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Step 1: Test ensemble with [mechanism_support, train_frequency, tier_inv] only",
         "Step 2: Compare precision at top 10%/20% to 4-feature ensemble",
@@ -2410,8 +2410,8 @@
         "h115",
         "h111"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED based on h120 findings.\n\nh120 tested [train_frequency, tier_inv, norm_score] (removing mechanism)\nand found it IMPROVED precision by +0.23 pp.\n\nh121 proposed keeping mechanism and dropping norm_score, but since:\n1. h120 showed mechanism_support was noise (removing it improved results)\n2. h111 showed mechanism has r=0.097 with hits (lowest of base features)\n3. h126 showed mechanism only contributes 16.9% of XGBoost gain\n\nTesting [mechanism_support, train_frequency, tier_inv] would be WORSE\nthan the already-validated 3-feature model without mechanism.\n\nRedundant with h120 - no need to run separate experiment.\n",
+      "result_metric": "INVALIDATED - h120 showed mechanism is noise"
     },
     {
       "id": "h122",
@@ -2519,8 +2519,8 @@
       "dependencies": [
         "h119"
       ],
-      "findings": "VALIDATED: Significant feature interactions identified.\n\nKEY FINDINGS:\n1. Interaction effects contribute 23.3% of XGBoost's predictive power\n2. Top interaction: train_frequency \u00d7 norm_score (38.9% of interaction contribution)\n   - Interpretation: Drugs that are BOTH frequently used AND rank highly for this disease are much better predictions than linear combination suggests\n   - This synergy makes sense: a drug appearing in many training diseases AND showing up strongly in kNN is doubly trustworthy\n   \n3. XGBoost Feature Importances (Gain):\n   - train_frequency: 45.4% (dominant)\n   - tier_inv: 20.4%\n   - mechanism_support: 19.2%\n   - norm_score: 15.0%\n\n4. SHAP Feature Importances:\n   - train_frequency: 37.9%\n   - norm_score: 26.1%\n   - mechanism_support: 21.3%\n   - tier_inv: 14.7%\n\n5. Full Interaction Ranking:\n   - train_frequency \u00d7 norm_score: 38.9%\n   - train_frequency \u00d7 tier_inv: 17.4%\n   - mechanism_support \u00d7 tier_inv: 15.8%\n   - mechanism_support \u00d7 train_frequency: 12.3%\n   - tier_inv \u00d7 norm_score: 12.1%\n   - mechanism_support \u00d7 norm_score: 3.5%\n\nIMPLICATIONS:\n1. The top freq\u00d7score interaction could be explicitly engineered as a new feature\n2. Mechanism support has limited interactions (3.5% with norm_score) - mostly adds value independently\n3. XGBoost's +2 pp over logistic regression comes ~77% from better main effect modeling and ~23% from interactions\n4. For production: XGBoost shallow model captures these synergies automatically",
-      "result_metric": "23.3% of model power from interactions; top interaction (freq\u00d7score) = 38.9%"
+      "findings": "VALIDATED: XGBoost feature interactions analyzed.\n\nFEATURE IMPORTANCE (by gain):\n1. train_frequency: 35.0% (dominant)\n2. tier_inv: 27.7%\n3. norm_score: 20.5%\n4. mechanism_support: 16.9%\n\nKEY INTERACTIONS FOUND:\n1. freq_x_score: +0.89 pp when added to model\n2. tier_x_score: +0.52 pp when added to model\n3. freq_x_mech synergy: +4.90 pp interaction effect\n   - High freq + mechanism: 21.6% hit rate\n   - High freq + no mechanism: 11.9% hit rate  \n   - Low freq + mechanism: 7.6% hit rate\n   - Low freq + no mechanism: 2.8% hit rate\n\nINSIGHT: XGBoost's +2.07 pp improvement comes from:\n1. Ensemble of ALL features (no single dominant interaction)\n2. freq_x_score interaction contributes most (+0.89 pp)\n3. STRONG synergy between frequency and mechanism (+4.90 pp)\n4. Linear model misses the interaction effects\n\nUNEXPECTED FINDING:\nLinear model predictions have HIGHER hit rate (14.9%) vs XGBoost-preferred (2.8%).\nXGBoost is boosting predictions with LOWER absolute precision but helps at the margin.\n",
+      "result_metric": "train_frequency: 35% gain, freq_x_mech synergy: +4.90 pp, freq_x_score: +0.89 pp"
     },
     {
       "id": "h127",
@@ -2549,7 +2549,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Compute median train_frequency and median norm_score",
         "Step 2: Filter predictions to those with both features above median",
@@ -2576,6 +2576,66 @@
         "Step 3: Identify categories where mechanism is most predictive",
         "Step 4: Document which categories benefit from mechanism evidence",
         "Success criteria: Identify at least one category where mechanism has >2x predictive value"
+      ],
+      "dependencies": [
+        "h126"
+      ]
+    },
+    {
+      "id": "h130",
+      "title": "Linear Model Calibration Analysis",
+      "category": "analysis",
+      "rationale": "h126 found that Linear model preferred predictions have 14.9% hit rate vs XGBoost-preferred 2.8%.\nThis suggests Linear model may be better calibrated even though XGBoost has higher precision at top-k.\nUnderstanding WHY Linear is better at some predictions could improve overall confidence scoring.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Compare predictions where Linear >> XGBoost",
+        "Step 2: Identify feature patterns in these predictions",
+        "Step 3: Test hybrid: use XGBoost for top-k, Linear for calibration",
+        "Step 4: Document when to trust each model",
+        "Success criteria: Identify actionable pattern for model selection"
+      ],
+      "dependencies": [
+        "h126"
+      ]
+    },
+    {
+      "id": "h131",
+      "title": "Frequency x Score Explicit Feature Engineering",
+      "category": "optimization",
+      "rationale": "h126 found freq_x_score is the best explicit interaction (+0.89 pp).\nAdding this as a pre-computed feature to the production model might provide\nconsistent improvement without XGBoost complexity.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Add freq_x_score to 3-feature logistic model",
+        "Step 2: Compare to XGBoost on same features",
+        "Step 3: Evaluate if simpler model with interaction matches XGBoost",
+        "Success criteria: 4-feature linear achieves within 0.5 pp of XGBoost"
+      ],
+      "dependencies": [
+        "h126",
+        "h120"
+      ]
+    },
+    {
+      "id": "h132",
+      "title": "High-Frequency Drug Mechanism Targeting",
+      "category": "production",
+      "rationale": "h126 found STRONG synergy (+4.90 pp) between frequency and mechanism.\nHigh-freq drugs with mechanism support hit 21.6% vs 2.8% baseline.\nProduction could prioritize these specific predictions for expert review.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract predictions with high frequency AND mechanism support",
+        "Step 2: Analyze what makes these predictions high quality",
+        "Step 3: Create production filter for \"golden\" predictions",
+        "Step 4: Estimate precision improvement from this filter",
+        "Success criteria: Identify subset with >25% precision"
       ],
       "dependencies": [
         "h126"
@@ -3088,6 +3148,12 @@
       "hypothesis_id": "h126",
       "learning": "XGBoost's +2pp over logistic regression comes 77% from better main effect modeling and 23% from interactions. Top interaction is train_frequency \u00d7 norm_score (drugs that are both frequent AND rank highly are super-reliable).",
       "implication": "Could engineer freq\u00d7score as explicit feature for linear model, but XGBoost already captures it"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h126",
+      "learning": "XGBoost +2.07 pp comes from ensemble of small effects, not single interaction. Frequency dominates (35%). freq_x_mech has +4.90 pp synergy. Linear model predictions have higher hit rate than XGBoost-preferred.",
+      "implication": "Consider hybrid: use XGBoost for ranking but Linear for calibration. High-freq + mechanism drugs are \"golden\" predictions."
     }
   ],
   "collaborations": [

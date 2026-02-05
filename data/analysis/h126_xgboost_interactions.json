@@ -1,61 +1,126 @@
 {
-  "xgboost_feature_importances": {
-    "mechanism_support": 0.19212688505649567,
-    "train_frequency": 0.45367127656936646,
-    "tier_inv": 0.20410823822021484,
-    "norm_score": 0.15009362995624542
-  },
-  "shap_importance": {
-    "train_frequency": 0.5677536129951477,
-    "norm_score": 0.390546053647995,
-    "mechanism_support": 0.31938397884368896,
-    "tier_inv": 0.2205566018819809
-  },
-  "interactions": [
-    {
-      "feature_1": "train_frequency",
-      "feature_2": "norm_score",
-      "interaction": 0.09171856939792633
+  "feature_importance": {
+    "sklearn": {
+      "mechanism_support": 0.16869492828845978,
+      "train_frequency": 0.3499676287174225,
+      "tier_inv": 0.2766141891479492,
+      "norm_score": 0.2047232687473297
     },
-    {
-      "feature_1": "train_frequency",
-      "feature_2": "tier_inv",
-      "interaction": 0.04099567234516144
+    "xgboost_gain": {
+      "mechanism_support": 21.39517593383789,
+      "train_frequency": 44.385562896728516,
+      "tier_inv": 35.08232116699219,
+      "norm_score": 25.96456527709961
     },
-    {
-      "feature_1": "mechanism_support",
-      "feature_2": "tier_inv",
-      "interaction": 0.03718859329819679
+    "xgboost_weight": {
+      "mechanism_support": 20.0,
+      "train_frequency": 37.0,
+      "tier_inv": 31.0,
+      "norm_score": 62.0
     },
-    {
-      "feature_1": "mechanism_support",
-      "feature_2": "train_frequency",
-      "interaction": 0.029036708176136017
-    },
-    {
-      "feature_1": "tier_inv",
-      "feature_2": "norm_score",
-      "interaction": 0.028492730110883713
-    },
-    {
-      "feature_1": "mechanism_support",
-      "feature_2": "norm_score",
-      "interaction": 0.008231574669480324
+    "xgboost_cover": {
+      "mechanism_support": 711.3778686523438,
+      "train_frequency": 549.3883056640625,
+      "tier_inv": 436.4584045410156,
+      "norm_score": 614.9813842773438
     }
-  ],
-  "main_effects": 1.5526678562164307,
-  "total_effects": 2.0239953994750977,
-  "interaction_contribution_pct": 23.2869873046875,
-  "top_interaction": {
-    "feature_1": "train_frequency",
-    "feature_2": "norm_score",
-    "interaction": 0.09171856939792633
   },
-  "success": "True",
-  "interpretation": {
-    "train_frequency": "Drugs that treat many diseases in training are better predictions (polypharmacology)",
-    "norm_score": "Higher kNN similarity score = drug is common among similar diseases",
-    "tier_inv": "Some disease categories are more predictable than others",
-    "mechanism_support": "Target-gene overlap provides weak but independent signal"
-  }
+  "correlations_with_hits": {
+    "mechanism_support": 0.09708896145433607,
+    "train_frequency": 0.18691921083845311,
+    "tier_inv": 0.0847573582631604,
+    "norm_score": 0.1546950281608403,
+    "freq_x_mech": 0.15470703154607923,
+    "freq_x_tier": 0.21807027264414902,
+    "freq_x_score": 0.2138935750032547,
+    "mech_x_tier": 0.12868193541177442,
+    "mech_x_score": 0.1278291124174206,
+    "tier_x_score": 0.17016034072152444,
+    "log_freq": 0.18350511095421423,
+    "freq_squared": 0.16734247343291317
+  },
+  "interaction_tests": {
+    "freq_x_mech": {
+      "top_10": 23.816568047337277,
+      "top_20": 19.04585798816568,
+      "diff": -0.665680473372781
+    },
+    "freq_x_tier": {
+      "top_10": 24.40828402366864,
+      "top_20": 18.639053254437872,
+      "diff": -0.07396449704141972
+    },
+    "freq_x_score": {
+      "top_10": 25.3698224852071,
+      "top_20": 19.00887573964497,
+      "diff": 0.8875739644970402
+    },
+    "mech_x_tier": {
+      "top_10": 24.556213017751478,
+      "top_20": 19.230769230769234,
+      "diff": 0.07396449704141972
+    },
+    "mech_x_score": {
+      "top_10": 24.48224852071006,
+      "top_20": 19.1198224852071,
+      "diff": 0.0
+    },
+    "tier_x_score": {
+      "top_10": 25.0,
+      "top_20": 18.971893491124263,
+      "diff": 0.5177514792899416
+    },
+    "log_freq": {
+      "top_10": 24.48224852071006,
+      "top_20": 19.15680473372781,
+      "diff": 0.0
+    },
+    "freq_squared": {
+      "top_10": 24.48224852071006,
+      "top_20": 19.15680473372781,
+      "diff": 0.0
+    }
+  },
+  "baseline_precision": {
+    "top_10": 24.48224852071006,
+    "top_20": 19.15680473372781
+  },
+  "frequency_mechanism_combos": {
+    "High freq, with mechanism": {
+      "hit_rate": 21.571072319201996,
+      "n": 802
+    },
+    "High freq, no mechanism": {
+      "hit_rate": 11.880199667221298,
+      "n": 3005
+    },
+    "Low freq, with mechanism": {
+      "hit_rate": 7.565337001375516,
+      "n": 727
+    },
+    "Low freq, no mechanism": {
+      "hit_rate": 2.7770140225460547,
+      "n": 3637
+    }
+  },
+  "interaction_effect_freq_mech": 4.902549673151237,
+  "xgb_vs_linear": {
+    "xgb_prefers_hit_rate": 2.8000000000000003,
+    "linear_prefers_hit_rate": 14.899999999999999
+  },
+  "significant_interactions": [
+    "mechanism_support: 16.9%",
+    "train_frequency: 35.0%",
+    "tier_inv: 27.7%",
+    "norm_score: 20.5%",
+    "freq_x_score: +0.89 pp",
+    "tier_x_score: +0.52 pp"
+  ],
+  "success": true,
+  "conclusions": [
+    "XGBoost +2.07 pp comes from ensemble of interactions, not single dominant one",
+    "Frequency is the dominant feature (~35% of gain)",
+    "Best explicit interaction: freq_x_score (+0.89 pp)",
+    "Freq x Mech interaction effect: +4.90 pp"
+  ]
 }
