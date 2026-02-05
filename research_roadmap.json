@@ -5165,7 +5165,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Load kNN similarity-based predictions",
         "Step 2: For each kNN prediction, compute PPI mechanism support score",
@@ -5178,8 +5178,8 @@
         "h96",
         "h39"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Hybrid kNN + Mechanism Gating - INVALIDATED. Mechanism boost does not improve kNN R@30.\n\nRESULTS:\n\n1. CONTINUOUS WEIGHTING (knn_score \u00d7 (1 + \u03b1 \u00d7 mech)):\n   | Alpha | R@30   | Delta |\n   |-------|--------|-------|\n   | 0.0   | 19.53% | baseline |\n   | 0.1   | 19.60% | +0.07pp |\n   | 0.2   | 19.76% | +0.23pp (best, p=0.78) |\n   | 0.5   | 18.95% | -0.57pp |\n   | 1.0   | 18.76% | -0.77pp |\n   | 2.0   | 17.88% | -1.64pp |\n   | 5.0   | 17.20% | -2.33pp |\n   | 10.0  | 16.54% | -2.98pp |\n   \n   Higher alpha = WORSE performance (mechanism adds noise)\n\n2. BINARY APPROACHES:\n   - Binary 1.2x boost: 18.88% (-0.65pp)\n   - Tiebreaker priority: 19.54% (+0.01pp)\n   - Mechanism filter: 15.43% (-4.10pp, p<0.05, SIGNIFICANT HARM)\n\nROOT CAUSE ANALYSIS:\n1. kNN already captures drug-disease relationships through graph embeddings\n2. Drugs from similar diseases naturally have mechanism support (correlation)\n3. Adding mechanism doesn't provide orthogonal signal for ranking\n4. PPI extension creates false positive noise that dilutes rankings\n\nKEY INSIGHT:\nMechanism support is valuable for PRECISION (h259: 2.62x lift) but NOT for RECALL.\n- h259: Split HIGH into HIGH+MECH (30.4%) vs HIGH (13.5%) = precision improvement\n- h260: Boost kNN with mechanism = no R@30 improvement\n\nThese serve different purposes:\n- Precision optimization: Use mechanism as tier stratification\n- Recall optimization: Pure kNN is already optimal\n\nCONCLUSION: Do not use mechanism for re-ranking. Continue using for confidence tiers only.",
+      "result_metric": "Best: +0.23pp (p=0.78, not significant). Higher alpha hurts performance."
     },
     {
       "id": "h261",
@@ -6237,6 +6237,12 @@
       "hypothesis_id": "h259",
       "learning": "PPI mechanism support provides 2.62x precision lift (p<0.000001). MEDIUM+MECH (17.7%) > HIGH without mechanism (13.5%). Tier system should combine model confidence with mechanism validation.",
       "implication": "Reorganize confidence tiers: HIGH+MECH > MEDIUM+MECH > HIGH > LOW+MECH > MEDIUM > LOW"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h260",
+      "learning": "Mechanism boost doesn't improve kNN R@30 because kNN already captures drug-disease relationships. Mechanism useful for PRECISION (2.62x tier lift) not RECALL. Higher mechanism weight = worse performance (noise).",
+      "implication": "Keep mechanism for confidence tiers, not for re-ranking predictions"
     }
   ],
   "collaborations": [
