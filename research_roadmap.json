@@ -3185,7 +3185,7 @@
       "rationale": "autoimmune hemolytic anemia is categorized as autoimmune (Tier 1) but could benefit from hematological rescue. Keyword order affects classification.",
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 4,
       "category": "precision",
       "dependencies": [
@@ -3196,7 +3196,11 @@
         "Test precision under different categorizations",
         "If beneficial, consider multi-category rescue or hierarchy",
         "Success: Improve precision by >=5pp for overlapping diseases"
-      ]
+      ],
+      "started_date": "2026-02-05",
+      "completed_date": "2026-02-05",
+      "findings": "INCONCLUSIVE: Category boundary refinement is theoretically valid but has minimal practical impact.\n\nANALYSIS:\n1. Dual-identity diseases (ITP, TTP, AIHA) exist at autoimmune-hematological boundary\n2. TTP/ITP miscategorized as \"other\" - could benefit from autoimmune drug pool\n3. AIHA correctly categorized as autoimmune (14% precision)\n\nDRUG OVERLAP:\n- 53% of ITP drugs also treat autoimmune diseases (classic steroids)\n- TTP GT includes Rituximab (autoimmune drug)\n- Modern ITP drugs (TPO agonists) have 0% overlap - specialized\n\nQUANTITATIVE IMPACT:\n- TTP: 16 predictions, 0 correct. Expansion might add Rituximab (+1)\n- Best case precision: 6.3% (still poor)\n- GT is tiny (2-4 drugs per disease) \u2192 minimal improvement possible\n\nVERDICT: Valid insight but <5pp impact expected. Not worth implementation effort.",
+      "result_metric": "Minimal impact: TTP/ITP have tiny GT (2-4 drugs), expansion adds ~1 correct"
     },
     {
       "id": "h160",
@@ -7055,6 +7059,12 @@
       "hypothesis_id": "h284",
       "learning": "Transferability score (% of comp drugs that treat base) predicts DIRECTION. HIGH transferability = 62.5% comp\u2192base precision, but base\u2192comp is ALWAYS 0% regardless of transferability.",
       "implication": "Use transferability as asymmetric signal: boost comp\u2192base, filter base\u2192comp."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h159",
+      "learning": "Category boundary issues exist (ITP/TTP are autoimmune-hematological) but GT for rare diseases is too small to benefit from category expansion. Focus optimization on diseases with larger GT.",
+      "implication": "Deprioritize category refinement for rare diseases."
     }
   ],
   "collaborations": [
