@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h104, h107, h108, h106, h110 (2026-02-04, continued)
+## Current Session: h104, h110, h106, h113 (2026-02-04, continued)
 
 ### Session Summary
 
@@ -8,10 +8,9 @@
 **Status:** Complete
 **Hypotheses Tested This Session:**
 - h104: Confidence Feature - Drug Class Coherence - **INVALIDATED** (+1.3 pp < 5 pp threshold)
-- h107: Rank Stability Across Seeds - **INVALIDATED** (-0.06 pp, no correlation)
-- h108: Drug Training Frequency - **VALIDATED** (+9.4 pp, strongest signal!)
-- h106: Multi-Signal Confidence Ensemble - **VALIDATED** (22.04% precision @ top 10%)
 - h110: ATC Incoherence as Negative Signal - **INVALIDATED** (counter-intuitive!)
+- h106: Multi-Signal Confidence Ensemble - **VALIDATED** (22.56% precision @ top 10%)
+- h113: Fix Mechanism Support Data Loading - **VALIDATED** (+0.52 pp ensemble improvement)
 
 ### Key Findings
 
@@ -60,13 +59,30 @@
 - **Incoherent predictions perform BETTER** (opposite of hypothesis)
 - Interpretation: Drugs from "irrelevant" ATC classes that rank highly must have strong kNN signal from independent sources
 
-### Session Statistics
-- Hypotheses tested: 5 (h104, h107, h108, h106, h110)
-- Validated: 2 (h108, h106)
-- Invalidated: 3 (h104, h107, h110)
-- New hypotheses added: 4 (h107, h108, h109, h110, h111, h112)
+**h113: Fix Mechanism Support Data Loading - VALIDATED**
+- Fixed disease ID format mismatch in h106_multi_signal_ensemble.py
+- Mechanism support now working: 2,718 predictions (20.1%) have support
+- WITH support: 12.10% precision vs WITHOUT: 5.96% (+6.14 pp)
+- Top 10% ensemble: 22.04% → 22.56% (+0.52 pp)
+- Top 20% ensemble: 17.42% → 18.23% (+0.81 pp)
 
-### Pending Hypotheses: 17
+### Session Statistics
+- Hypotheses tested: 4 (h104, h110, h106, h113)
+- Validated: 2 (h106, h113)
+- Invalidated: 2 (h104, h110)
+- New hypotheses added: 4 (h110, h111, h112, h113)
+
+### Cumulative Statistics (2026-02-04)
+| Status | Count |
+|--------|-------|
+| Validated | 44 |
+| Invalidated | 31 |
+| Inconclusive | 4 |
+| Blocked | 15 |
+| Pending | 16 |
+| **Total Tested** | **79** |
+
+### Pending Hypotheses: 16
 
 ---
 

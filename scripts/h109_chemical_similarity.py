@@ -106,11 +106,12 @@ def load_ground_truth(
 
 
 def load_fingerprints() -> Dict[str, np.ndarray]:
-    """Load drug fingerprints."""
+    """Load drug fingerprints with lowercase keys for matching."""
     fp_path = CHEMICAL_DIR / "drug_fingerprints.pkl"
     with open(fp_path, 'rb') as f:
         fps = pickle.load(f)
-    return fps
+    # Convert all keys to lowercase for consistent matching
+    return {k.lower(): v for k, v in fps.items()}
 
 
 def tanimoto_similarity(fp1: np.ndarray, fp2: np.ndarray) -> float:
