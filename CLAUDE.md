@@ -191,6 +191,20 @@ vastai destroy instance <INSTANCE_ID>
 - h130: Linear better for infectious/autoimmune/ophthalmic; ALL hits had Linear>XGBoost
 - h132: Tier1+freq>=15+mech = 57.9% precision (8x baseline)
 
+### ATC Integration (h152, h189, h190, h87 validated 2026-02-05)
+
+**ATC L1 matching: +11.1pp mean precision** with revised mapping (include H for autoimmune corticosteroids)
+**ATC L4 rescue criteria:**
+| Code | Class | Precision | Notes |
+|------|-------|-----------|-------|
+| L04AX | Traditional immunosuppressants (MTX, AZA) | 82.4% | GOLDEN rescue |
+| H02AB | Glucocorticoids | 77.0% | GOLDEN rescue |
+| L04AB | TNF inhibitors | 7.2% | EXCLUDE from rescue |
+| L04AC | IL inhibitors | 1.9% | EXCLUDE from rescue |
+
+**Biologic gap root cause (h190):** Sparse GT coverage - glucocorticoids have 1832 GT entries vs TNF inhibitors 23
+**Mechanism transfer (h87):** Corticosteroids transfer to 10 categories (45% avg); biologics don't transfer (<20%)
+
 ## Performance Gaps & Error Patterns
 
 **Gaps:** Biologics (mAbs 17% vs small mol 32%), Antibiotics (wrong diseases), GI (5% kNN blind spot)
@@ -234,36 +248,16 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 
 **helicalAI/helical**: Install `source .venv-helical/bin/activate` (Python 3.11)
 
-## Validation & Confounding (Summary)
+## Validation & Confounding
 
 **Scripts:** `src/external_validation.py`, `src/confounding_detector.py`
+**Key patterns:** Inverse indication, cardiac-metabolic comorbidity, polypharmacy. Details: `docs/archive/detailed_analysis_findings.md`
 
-| Check | Finding | Action |
-|-------|---------|--------|
-| Validation pipeline | 57% strong evidence, 10% moderate (best candidates) | Auto-queries ClinicalTrials + PubMed |
-| Confounding detection | 7 high-confidence false positives (statins→T2D, etc.) | Filter inverse indications |
-| Disease name matching | Fuzzy improved 37.4%→41.8% R@30 | MONDO→MESH bridge |
+## Production Deployment
 
-**Key confounding patterns:** Inverse indication (drug causes disease), cardiac-metabolic comorbidity, polypharmacy
-**Details:** `docs/archive/detailed_analysis_findings.md`
-
-## Production Deployment (h68, h72, h73, h66)
-
-**Confidence Scoring (h68):**
-- Combined avg of h52+h65+category = 88% precision at 0.7 threshold
-- h52-only at 0.8 threshold = 84% precision (simpler, recommended)
-- Model: `models/meta_confidence_model.pkl`
-
-**Production Deliverable (h72):**
-- `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
-- 13,416 predictions, 2,797 HIGH confidence novel
-- Validated: Sirolimus→TSC (FDA-approved), Lovastatin→atherosclerosis
-
-**Category-Specific k (h66):**
-- k=5: dermatological, cardiovascular, psychiatric, respiratory
-- k=10: autoimmune, gastrointestinal
-- k=30: cancer (+3.9 pp), metabolic (+9.1 pp), other
-- k=20: infectious, neurological (default)
+**Deliverable:** `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx` - 13,416 predictions
+**Confidence model:** `models/meta_confidence_model.pkl` (h52-only at 0.8 = 84% precision)
+**Category k:** k=5 (dermatological, cardiovascular), k=10 (autoimmune, GI), k=30 (cancer, metabolic), k=20 (default)
 
 ## TxGNN Summary
 
@@ -276,21 +270,7 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 - 439 NOT in DRKG (93.4%) — require literature mining (h91)
 - Benchmark: `data/analysis/zero_shot_benchmark.json`
 
-## Methodology & Evidence
+## Archives & Methodology
 
 **Full docs:** `docs/impressive_evidence_report.md`, `docs/methodology_limitations.md`
-
-**Key limitations:** Transductive evaluation (test diseases in graph), bimodal performance (15% have zero coverage), selection bias (only 9% of Every Cure evaluable)
-
-## Archive Index
-
-| Archive | Content |
-|---------|---------|
-| `docs/impressive_evidence_report.md` | **Harvard-impressive evidence: inductive eval, novel discovery, mechanisms** |
-| `docs/mechanism_report.md` | Biological mechanism tracings for validated predictions |
-| `docs/methodology_limitations.md` | Full methodological limitations documentation |
-| `docs/methodology_summary.md` | One-page executive summary for sharing |
-| `docs/archive/experiment_history.md` | ATC, Chemical, Pathway, Similarity, Target experiments |
-| `docs/archive/validation_sessions.md` | Literature validation batches 1+2, novel predictions |
-| `docs/archive/txgnn_learnings.md` | TxGNN training, evaluation, fine-tuning experiments |
-| `docs/archive/detailed_analysis_findings.md` | Biologic gap, infectious disease, confounding, validation details |
+**Archives:** `docs/archive/experiment_history.md`, `docs/archive/validation_sessions.md`, `docs/archive/txgnn_learnings.md`
