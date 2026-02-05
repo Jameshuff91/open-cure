@@ -6,21 +6,23 @@
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 3**
+**Hypotheses Tested: 4**
 - h309: Refine ATC-Category Coherence Map - **VALIDATED** (already committed)
 - h310: Implement Coherence Boost with Refined ATC Map - **VALIDATED**
 - h261: Pathway-Weighted PPI Scoring - **INVALIDATED**
+- h181: Drug-Level Cross-Category Transfer - **INVALIDATED**
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 180 |
-| Invalidated | 59 |
+| Validated | 181 |
+| Invalidated | 61 |
 | Inconclusive | 10 |
 | Blocked | 21 |
 | Deprioritized | 3 |
 | Pending | 37 |
-| **Total** | **310**
+| Pending | 35 |
+| **Total** | **311**
 
 ### KEY SESSION FINDINGS
 
@@ -45,6 +47,15 @@
 - Improvement: +0.25 pp (below 1pp threshold)
 
 **Root cause:** Only 50% of PPI genes have pathway annotations, and the signal is redundant with PPI connectivity.
+
+#### h181: Drug-Level Cross-Category Transfer - INVALIDATED
+
+**Results:**
+- Baseline kNN R@30: 38.06% ± 3.21%
+- Cross-category boost R@30: 37.32% ± 3.63%
+- Improvement: -0.74 pp (NEGATIVE)
+
+**Root cause:** Boosting drugs from related categories dilutes kNN signal - the collaborative filtering already captures cross-category patterns through disease similarity.
 
 ### Recommended Next Steps
 1. h181 (Drug-Level Cross-Category Transfer) builds on ATC coherence work

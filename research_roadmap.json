@@ -6270,6 +6270,36 @@
         "Success criteria: >2 pp improvement in overall precision"
       ],
       "findings": "h310 VALIDATED: ATC coherence boost implemented in production predictor.\n\nIMPLEMENTATION:\n1. Added DISEASE_CATEGORY_ATC_MAP constant with refined mapping from h309\n   - Includes H/A (corticosteroids) for inflammatory categories\n   - Maps 16 disease categories to expected ATC L1 codes\n\n2. Added _is_atc_coherent() method\n   - Checks if drug's ATC L1 code matches expected codes for disease category\n   - Returns False safely if no ATC mapping found\n\n3. Integrated into tier assignment (_assign_confidence_tier)\n   - LOW tier predictions boosted to MEDIUM if:\n     - ATC is coherent with disease category\n     - rank <= 10\n     - Has mechanism support OR train_frequency >= 3\n   - Boost marked with rescue_reason 'atc_coherent_{category}'\n\nVALIDATION:\n- All 10 coherence method tests pass\n- Method correctly identifies coherent pairs (methotrexate+autoimmune=True)\n- Method correctly rejects incoherent pairs (metformin+infectious=False)\n- Edge cases handled (unknown drugs, 'other' category)\n\nEXPECTED IMPACT:\n- h309 showed coherent GOLDEN precision 35.5% vs incoherent 18.7%\n- +16.8 pp precision advantage for coherent predictions\n- Boost is conservative (requires rank<=10 + evidence) to avoid false positives"
+    },
+    {
+      "id": "h311",
+      "title": "ATC Coherence as Negative Signal for Incoherent Predictions",
+      "hypothesis": "Given h309 found incoherent GOLDEN has only 18.7% precision (vs 35.5% coherent), explicitly demote incoherent predictions",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "For GOLDEN/HIGH tier predictions, check ATC coherence",
+        "If incoherent (drug ATC L1 not in expected for category), demote tier",
+        "GOLDEN incoherent \u2192 HIGH, HIGH incoherent \u2192 MEDIUM",
+        "Measure precision improvement on high-confidence tiers"
+      ]
+    },
+    {
+      "id": "h312",
+      "title": "Drug Mechanism Breadth vs Category Breadth",
+      "hypothesis": "Single-mechanism drugs (1 target) may be better repurposing candidates than multi-target drugs, especially for mechanism-specific diseases",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Compute target count per drug from drug_targets.json",
+        "Analyze: do single-target drugs have higher precision than multi-target?",
+        "Test: does target count correlate with kNN prediction success?",
+        "If yes, add target count as confidence signal"
+      ]
     }
   ],
   "completed": [
