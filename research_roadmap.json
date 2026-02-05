@@ -2835,14 +2835,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Step 1: Extract the components of prob_h52 calculation (kNN pool, distances, etc.)",
         "Step 2: Correlate each component with actual hit rate",
         "Step 3: Identify which factors drive prob_h52 effectiveness",
         "Step 4: Document interpretable explanation for confidence predictions",
         "Success criteria: Explain >50% of prob_h52 variance with interpretable features"
-      ]
+      ],
+      "findings": "INCONCLUSIVE: prob_h52 explains 33.7% variance (below 50% target), but reveals important insights.\n\nCORRELATIONS:\n- prob_h52 vs hit_rate: r=0.581 (strong)\n- pool_size vs hit_rate: r=0.035 (weak)\n- prob_h52 vs pool_size: r=0.105 (weak)\n- prob_h52 vs within-category residual: r=0.511 (strong!)\n\nKEY INSIGHTS:\n1. prob_h52 does NOT primarily predict via pool size (only 0.1% explained)\n2. prob_h52 captures WITHIN-CATEGORY variation (r=0.511 with residuals)\n3. ~66% of variance remains unexplained - likely from:\n   - Neighbor quality (not just quantity)\n   - Embedding distance distributions\n   - Unknown biological factors\n\nINTERPRETABLE EXPLANATION:\nprob_h52 predicts success by learning which diseases have \"good\" kNN neighborhoods,\nwhere goodness comes from similarity to training diseases, not just drug pool size.\n",
+      "result_metric": "33.7% variance explained (below 50% target)"
     },
     {
       "id": "h143",
