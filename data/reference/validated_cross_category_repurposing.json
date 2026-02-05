@@ -1,0 +1,196 @@
+{
+  "description": "Validated cross-category drug repurposing patterns from h191 analysis and literature validation",
+  "created": "2026-02-05",
+  "hypothesis_source": "h194",
+  "validation_method": "Literature search via PubMed, FDA approvals, clinical guidelines",
+  "patterns": [
+    {
+      "id": "crp_001",
+      "atc_category": "C:cardiovascular",
+      "disease_category": "metabolic",
+      "drug_classes": ["Statins (HMG-CoA reductase inhibitors)", "Fibrates"],
+      "example_drugs": ["Lovastatin", "Gemfibrozil", "Atorvastatin", "Rosuvastatin"],
+      "mechanism": "Statins lower LDL cholesterol and reduce cardiovascular risk in metabolic syndrome patients",
+      "validation_status": "FDA_APPROVED",
+      "evidence": [
+        "Statins are standard of care for cardiovascular risk reduction in diabetes (ADA Standards 2024)",
+        "SGLT2 inhibitors + statins are first-line for cardiometabolic disease",
+        "Fibrates reduce triglycerides in metabolic syndrome"
+      ],
+      "hits_in_model": 20,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_002",
+      "atc_category": "J:antiinfectives_systemic",
+      "disease_category": "respiratory",
+      "drug_classes": ["Macrolide antibiotics", "Fluoroquinolones"],
+      "example_drugs": ["Azithromycin", "Levofloxacin"],
+      "mechanism": "Anti-inflammatory effects independent of antimicrobial activity; modulates cytokines, reduces neutrophil infiltration",
+      "validation_status": "VALIDATED_TRIALS",
+      "evidence": [
+        "NEJM 2011: Azithromycin reduces COPD exacerbations by 27%",
+        "Azithromycin inhibits MUC5AC via ERK1/2 pathway",
+        "Subantibiotic doses have anti-inflammatory effects"
+      ],
+      "hits_in_model": 19,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_003",
+      "atc_category": "H:systemic_hormonal",
+      "disease_category": "respiratory",
+      "drug_classes": ["Corticosteroids"],
+      "example_drugs": ["Methylprednisolone", "Prednisone", "Hydrocortisone"],
+      "mechanism": "Anti-inflammatory effects on airway inflammation; standard treatment for asthma and COPD exacerbations",
+      "validation_status": "FDA_APPROVED",
+      "evidence": [
+        "Corticosteroids are guideline-recommended for asthma and COPD",
+        "Multiple ATC codes (H, D, S) due to different formulations"
+      ],
+      "hits_in_model": 17,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_004",
+      "atc_category": "A:alimentary_tract_metabolism",
+      "disease_category": "cardiovascular",
+      "drug_classes": ["SGLT2 inhibitors", "GLP-1 receptor agonists"],
+      "example_drugs": ["Empagliflozin", "Canagliflozin", "Semaglutide"],
+      "mechanism": "Originally for diabetes, now first-line for heart failure due to cardiorenal benefits",
+      "validation_status": "FDA_APPROVED",
+      "evidence": [
+        "EMPA-REG OUTCOME: 35% reduction in HF hospitalization",
+        "Empagliflozin (Jardiance) FDA approved for HFrEF and HFpEF",
+        "CREDENCE, DAPA-CKD trials showed cardiorenal benefits",
+        "Wegovy (semaglutide) FDA approved for CV risk reduction (March 2024)"
+      ],
+      "hits_in_model": 7,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_005",
+      "atc_category": "A:alimentary_tract_metabolism",
+      "disease_category": "dermatological",
+      "drug_classes": ["Tetracyclines"],
+      "example_drugs": ["Doxycycline"],
+      "mechanism": "Anti-inflammatory effects via MMP inhibition, cytokine modulation; treats acne and rosacea",
+      "validation_status": "FDA_APPROVED",
+      "evidence": [
+        "Doxycycline 40mg FDA approved for rosacea",
+        "Inhibits cathelicidin pathway, MMPs, neutrophil chemotaxis",
+        "Reduces IL-1beta, IL-6, TNF-alpha via NF-KB pathway"
+      ],
+      "hits_in_model": 9,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_006",
+      "atc_category": "R:respiratory",
+      "disease_category": "dermatological",
+      "drug_classes": ["H1 antihistamines"],
+      "example_drugs": ["Levocetirizine", "Fexofenadine", "Cetirizine"],
+      "mechanism": "H1 receptor blockade reduces pruritus in urticaria and atopic dermatitis",
+      "validation_status": "VALIDATED_TRIALS",
+      "evidence": [
+        "Cetirizine effective for urticaria and atopic eczema pruritus",
+        "Fexofenadine 120mg shows moderate benefit in atopic dermatitis",
+        "Standard treatment for chronic spontaneous urticaria"
+      ],
+      "hits_in_model": 8,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_007",
+      "atc_category": "H:systemic_hormonal",
+      "disease_category": "dermatological",
+      "drug_classes": ["Corticosteroids"],
+      "example_drugs": ["Prednisone", "Cortisone"],
+      "mechanism": "Anti-inflammatory effects on skin inflammation; used for severe dermatological conditions",
+      "validation_status": "FDA_APPROVED",
+      "evidence": [
+        "Systemic corticosteroids used for severe eczema, psoriasis flares",
+        "Bridge therapy while disease-modifying agents take effect"
+      ],
+      "hits_in_model": 12,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_008",
+      "atc_category": "N:nervous_system",
+      "disease_category": "autoimmune",
+      "drug_classes": ["Local anesthetics"],
+      "example_drugs": ["Lidocaine", "Bupivacaine"],
+      "mechanism": "Nerve block for pain management in autoimmune conditions; NOT disease-modifying",
+      "validation_status": "SYMPTOMATIC_ONLY",
+      "evidence": [
+        "Lidocaine patch used for localized pain in arthritis",
+        "Intra-articular lidocaine abolishes peripheral nociceptive input",
+        "Not indicated as disease-modifying therapy"
+      ],
+      "hits_in_model": 10,
+      "confidence": "medium"
+    },
+    {
+      "id": "crp_009",
+      "atc_category": "D:dermatologicals",
+      "disease_category": "autoimmune",
+      "drug_classes": ["Topical agents", "Salicylates"],
+      "example_drugs": ["Salicylic acid", "Topical steroids"],
+      "mechanism": "Keratolytic and anti-inflammatory effects; used in psoriasis (autoimmune skin disease)",
+      "validation_status": "FDA_APPROVED",
+      "evidence": [
+        "Salicylic acid is first-line for psoriasis scales",
+        "Topical corticosteroids are mainstay of psoriasis treatment",
+        "Psoriasis is classified as autoimmune"
+      ],
+      "hits_in_model": 9,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_010",
+      "atc_category": "D:dermatologicals",
+      "disease_category": "infectious",
+      "drug_classes": ["Corticosteroids"],
+      "example_drugs": ["Dexamethasone", "Prednisolone"],
+      "mechanism": "Reduces inflammation in severe infections; used adjunctively with antimicrobials",
+      "validation_status": "VALIDATED_TRIALS",
+      "evidence": [
+        "Dexamethasone reduces mortality in severe COVID-19 (RECOVERY trial)",
+        "Corticosteroids used in bacterial meningitis to reduce inflammation",
+        "Must be combined with appropriate antimicrobial therapy"
+      ],
+      "hits_in_model": 5,
+      "confidence": "high"
+    },
+    {
+      "id": "crp_011",
+      "atc_category": "V:various",
+      "disease_category": "cancer",
+      "drug_classes": ["Diagnostic radiopharmaceuticals"],
+      "example_drugs": ["Fludeoxyglucose (18F)"],
+      "mechanism": "PET imaging agent for cancer staging; detects metabolically active tumors",
+      "validation_status": "FDA_APPROVED",
+      "evidence": [
+        "FDG-PET is standard for cancer staging and monitoring",
+        "Detects increased glucose metabolism in malignancies"
+      ],
+      "hits_in_model": 6,
+      "confidence": "high",
+      "note": "Diagnostic, not therapeutic"
+    }
+  ],
+  "usage_instructions": {
+    "confidence_scoring": "Predictions matching high-confidence patterns can receive precision boost",
+    "filters": "Patterns marked SYMPTOMATIC_ONLY should not boost disease-modifying predictions",
+    "updates": "Add new patterns as validated through research"
+  },
+  "statistics": {
+    "total_patterns": 11,
+    "high_confidence": 10,
+    "medium_confidence": 1,
+    "fda_approved": 7,
+    "validated_trials": 3,
+    "symptomatic_only": 1
+  }
+}

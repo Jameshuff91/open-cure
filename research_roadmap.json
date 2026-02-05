@@ -3822,7 +3822,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Document the 15+ cross-category patterns from h191 analysis",
         "Validate each pattern against literature (PubMed search)",
@@ -3832,7 +3832,9 @@
       ],
       "dependencies": [
         "h191"
-      ]
+      ],
+      "findings": "h194 VALIDATED: Created validated cross-category repurposing database.\n\nPATTERNS VALIDATED (11 total):\n\nHIGH CONFIDENCE (10):\n1. C\u2192metabolic (statins): FDA approved, ADA guidelines standard of care\n2. J\u2192respiratory (azithromycin): NEJM 2011, 27% reduction in COPD exacerbations\n3. H\u2192respiratory (corticosteroids): FDA approved, guideline-recommended\n4. A\u2192cardiovascular (SGLT2i): FDA approved, EMPA-REG 35% HF reduction\n5. A\u2192dermatological (doxycycline): FDA approved for rosacea\n6. R\u2192dermatological (antihistamines): Validated for urticaria, atopic dermatitis\n7. H\u2192dermatological (corticosteroids): FDA approved for severe skin conditions\n8. D\u2192autoimmune (salicylates): FDA approved for psoriasis\n9. D\u2192infectious (corticosteroids): RECOVERY trial (COVID-19 mortality)\n10. V\u2192cancer (FDG-PET): FDA approved diagnostic\n\nMEDIUM CONFIDENCE (1):\n- N\u2192autoimmune (lidocaine): Symptomatic only, not disease-modifying\n\nDATABASE CREATED: data/reference/validated_cross_category_repurposing.json\n\nUSAGE: Can boost confidence for predictions matching validated patterns.\n",
+      "result_metric": "11 validated patterns, 10 high confidence"
     },
     {
       "id": "h195",
@@ -4588,6 +4590,12 @@
       "hypothesis_id": "h191",
       "learning": "ATC L1 coherence (drug category matches disease category) is a DIFFERENT signal from h110's within-class uniqueness. Coherent predictions are +4.7pp better. h110's finding that 'unique = better' and h191's finding that 'coherent = better' are complementary, not contradictory.",
       "implication": "Can combine both signals: category-incoherent + class-unique may indicate true repurposing discoveries"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h194",
+      "learning": "11 cross-category repurposing patterns validated through literature: SGLT2i for heart failure, azithromycin for respiratory inflammation, statins for metabolic disease. These represent true drug repurposing that can inform confidence scoring.",
+      "implication": "Cross-category predictions matching validated patterns may deserve higher confidence scores"
     }
   ],
   "collaborations": [
