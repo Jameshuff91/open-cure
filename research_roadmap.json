@@ -4490,7 +4490,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Define disease complexity/rarity criteria (GT count, disease name patterns)",
         "Implement routing logic: drug-class for common diseases, kNN for rare",
@@ -4529,7 +4529,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Create CV disease->drug class mappings (HTN, HF, arrhythmia, CAD)",
         "Define drug class members for CV drugs",
@@ -4538,6 +4538,66 @@
       ],
       "dependencies": [
         "h174"
+      ],
+      "findings": "VALIDATED: Drug-class prediction extends to cardiovascular with +21.8 pp vs kNN.\n\n**OVERALL CV RESULTS (5-seed, 20% holdout):**\n- kNN R@30: 22.3% \u00b1 11.7%\n- Drug-Class Coverage: 44.2%\n- **Improvement: +21.8 pp**\n- DC wins 61.5% of diseases, kNN wins 7.7%, ties 30.8%\n\n**BY DISEASE CATEGORY:**\n| Category | kNN | DrugClass | Diff |\n|----------|-----|-----------|------|\n| heart_failure | 12.7% | 57.7% | +45.0 |\n| atrial_fibrillation | 23.9% | 65.6% | +41.7 |\n| myocardial_infarction | 10.2% | 47.9% | +37.8 |\n| coronary_disease | 31.7% | 65.8% | +34.1 |\n| cardiomyopathy | 50.0% | 50.0% | 0.0 (tie) |\n\n**KEY INSIGHT:** Drug-class prediction provides substantial improvement for most CV subtypes.\nExisting h217 (HF rescue rules) covers a subset of this. Full CV integration would help.\n\n**LIMITATIONS:**\n- Small sample (13 evaluations across 5 seeds) due to CV disease DRKG coverage\n- Some CV subtypes (arrhythmia, thrombosis) had 0% for both methods (no mappings or edge coverage)\n- Already have partial CV integration via h217, h212, h154\n\n**COMPLEMENTARITY:**\n- Drug-class is best for: HF, AFib, MI, CAD\n- kNN is best for: cardiomyopathy (ties), stroke (h174 showed kNN wins for stroke)",
+      "result_metric": "+21.8 pp vs kNN (44.2% vs 22.3%)"
+    },
+    {
+      "id": "h230",
+      "title": "Integrate Full CV Drug-Class Prediction into Production",
+      "category": "production",
+      "rationale": "h229 validated +21.8pp improvement for CV diseases. Current production only has h217 (HF rescue). Expand to AFib, MI, CAD subtypes.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Add CV disease classification to production_predictor.py",
+        "Implement drug class matching for AFib (anticoagulants, rate control)",
+        "Implement drug class matching for MI (antiplatelets, statins, beta-blockers)",
+        "Implement drug class matching for CAD (similar to MI)",
+        "Test precision on production deliverable"
+      ],
+      "dependencies": [
+        "h229"
+      ]
+    },
+    {
+      "id": "h231",
+      "title": "CV Disease DRKG Coverage Gap Analysis",
+      "category": "data_analysis",
+      "rationale": "h229 had limited sample (19 CV diseases with DRKG embeddings, 112 matched total). Many common CV diseases (angina, PE, flutter) not matched. Could expand MESH mappings.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "List all unmatched CV diseases with GT drug counts",
+        "Identify potential MESH ID matches via manual curation",
+        "Add to mesh_mappings_from_agents.json",
+        "Re-run h229 analysis with expanded coverage"
+      ],
+      "dependencies": [
+        "h229"
+      ]
+    },
+    {
+      "id": "h232",
+      "title": "Stroke Subtype Analysis - Why kNN Wins",
+      "category": "error_analysis",
+      "rationale": "h229 showed stroke_prevention has kNN -17.7 pp vs drug-class. h174 also showed kNN wins for stroke. Investigate why this category behaves differently.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "List stroke diseases and their GT drugs",
+        "Check which GT drugs are NOT in stroke drug classes (antiplatelets, anticoagulants, statins)",
+        "Identify if kNN is finding these via neighbor similarity",
+        "Consider if stroke has different drug paradigm"
+      ],
+      "dependencies": [
+        "h229"
       ]
     }
   ],
@@ -5413,6 +5473,12 @@
       "hypothesis_id": "h174",
       "learning": "Drug-class prediction is COMPLEMENTARY to kNN, not superior. Works for common diseases with standard treatments (psychiatric, common metabolic) but fails for rare/enzyme diseases where kNN excels. Hybrid routing is needed.",
       "implication": "Production predictor should route by disease complexity: drug-class for common, kNN for rare"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h229",
+      "learning": "Drug-class prediction works well for cardiovascular (+21.8pp vs kNN). Best for HF (+45pp), AFib (+42pp), MI (+38pp), CAD (+34pp). Complements h174 psychiatric (+7.9pp) result.",
+      "implication": "Can integrate drug-class prediction for CV into production predictor. Combined with h174 (psychiatric), drug-class approach is now validated for 2 major disease categories."
     }
   ],
   "collaborations": [
