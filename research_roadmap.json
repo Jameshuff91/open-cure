@@ -1993,7 +1993,7 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Run mechanism traversal for zero-shot diseases",
         "Step 2: Run ATC-based recommendations in parallel",
@@ -2017,6 +2017,72 @@
         "Step 4: Track which level produced hits",
         "Step 5: Report coverage improvement"
       ]
+    },
+    {
+      "id": "h104",
+      "title": "Confidence Feature: Drug Class Coherence",
+      "category": "confidence",
+      "rationale": "h97 showed mechanism support improves precision by 2.1x. Another signal: if a drug belongs to a class (ATC) where multiple members treat the same disease category, that drug is more likely a true positive. 'Drug class coherence' = fraction of similar drugs that treat similar diseases.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each kNN top-30 prediction, get drug's ATC class",
+        "Step 2: Count how many OTHER drugs in same ATC class treat diseases similar to target",
+        "Step 3: Compute 'class coherence' score = count / total drugs in class",
+        "Step 4: Compare precision: high-coherence vs low-coherence predictions",
+        "Success criteria: High-coherence predictions have 5%+ better precision"
+      ],
+      "dependencies": [
+        "h97"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h105",
+      "title": "Confidence Feature: Disease Coverage Strength",
+      "category": "confidence",
+      "rationale": "kNN works by finding similar diseases. If a test disease has MANY similar training diseases (high coverage), predictions are more reliable. If only 1-2 similar diseases exist, predictions are noisy. Quantify this as confidence signal.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "invalidated",
+      "steps": [
+        "Step 1: For each test disease, compute cosine similarity to all training diseases",
+        "Step 2: Define 'coverage strength' = mean(top-k similarities) or count(sim > threshold)",
+        "Step 3: Stratify predictions by coverage strength",
+        "Step 4: Compare precision across strata",
+        "Success criteria: High-coverage diseases have 10%+ better precision"
+      ],
+      "dependencies": [],
+      "findings": "INVALIDATED but INSIGHTFUL: Coverage strength predicts RECALL, not precision.\n\nRESULTS (5-seed, 452 test diseases across seeds):\n- HIGH coverage (mean 0.783): 8.59% precision, 60.08% recall\n- LOW coverage (mean 0.521): 9.04% precision, 26.50% recall\n- Precision DECREASES slightly with coverage (-0.45 pp)\n- But recall DOUBLES with coverage (+33.6 pp)\n- Correlation(coverage, recall) = 0.260\n\nWHY COVERAGE DOESN'T PREDICT PRECISION:\nHigh coverage = more similar training diseases = more drug candidates in pool\nThis increases TRUE positives (recall) but also FALSE positives\nNet effect: recall improves, precision stays flat\n\nCOVERAGE PREDICTS RECALL, NOT CONFIDENCE:\n- Use coverage to estimate EXPECTED recall for a disease\n- Don't use as a precision/confidence filter\n- High-coverage diseases will have better kNN predictions, but not more trustworthy ones\n\nIMPLICATION: For production, coverage strength tells you 'how well can kNN rank drugs for this disease?' (recall proxy), not 'how much should I trust these rankings?' (precision proxy).\n\nScript: scripts/h105_coverage_strength_confidence.py",
+      "result_metric": "No precision improvement (high: 8.59%, low: 9.04%), but recall +33.6 pp"
+    },
+    {
+      "id": "h106",
+      "title": "Multi-Signal Confidence Ensemble",
+      "category": "confidence",
+      "rationale": "Combine multiple confidence signals: (1) mechanism support (h97 +6.5pp), (2) category tier (h71), (3) drug class coherence, (4) disease coverage strength. Ensemble might capture complementary reliability patterns.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract all confidence features for top-30 predictions",
+        "Step 2: Train logistic regression: features -> is_hit",
+        "Step 3: Calibrate probabilities using isotonic regression",
+        "Step 4: Compare to individual signals and existing confidence models",
+        "Success criteria: Ensemble achieves 15%+ precision on high-confidence tier"
+      ],
+      "dependencies": [
+        "h97",
+        "h104",
+        "h105"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -2489,6 +2555,12 @@
       "hypothesis_id": "h98",
       "learning": "ATC drug class transfer (16.7% R@30) outperforms direct gene targeting (8.3%) for zero-shot diseases. Drug classes capture therapeutic relationships missed by mechanism-level analysis.",
       "implication": "For zero-shot diseases, prioritize similar-disease drug class transfer over mechanism traversal. Consider hybrid approaches combining both signals."
+    },
+    {
+      "date": "2026-02-04",
+      "hypothesis_id": "h105",
+      "learning": "Disease coverage strength predicts RECALL (r=0.26, +33.6 pp for high vs low coverage) but NOT precision (-0.45 pp). More similar diseases = more candidates = higher recall but proportionally more false positives too.",
+      "implication": "Coverage strength is a recall proxy, not a confidence proxy. Use it to estimate 'how well can kNN rank drugs?' not 'how much should I trust these rankings?'"
     }
   ],
   "collaborations": [

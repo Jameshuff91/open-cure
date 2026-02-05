@@ -9,6 +9,8 @@
 **Hypotheses Tested This Session:**
 - h93: Direct Mechanism Traversal (No ML) - **INVALIDATED**
 - h97: Mechanism-kNN Hybrid Confidence - **VALIDATED**
+- h95: Pathway-Level Mechanism Traversal - **INVALIDATED**
+- h105: Disease Coverage Strength as Confidence - **INVALIDATED** (but insightful)
 
 ### Key Findings
 
@@ -28,16 +30,36 @@
 - Only 20% of predictions have mechanism support
 - **IMPLICATION:** Use as confidence feature, not hard filter
 
+**h95: Pathway-Level Traversal Fails (3.57% R@30)**
+- Despite 2x better coverage (51% vs 22% of GT drugs reachable)
+- Pathway dilution: more shared pathways = more false positives
+- **CRITICAL INSIGHT:** Explicit symbolic reasoning (genes OR pathways) fails
+- Node2Vec embeddings learn implicit patterns that explicit traversal cannot
+
+### Key Takeaway from h93/h95/h97
+
+**Learned representations >> explicit graph traversal for drug repurposing**
+
+The 26% kNN vs 3.5% traversal gap quantifies the value of embeddings. Symbolic rules (gene overlap, pathway membership) have too many false positives or false negatives. The embeddings capture something more complex.
+
+However, mechanism support is STILL useful as a confidence signal (+6.5 pp precision boost for kNN predictions with gene overlap).
+
 ### New Hypotheses Added
-- h95: Pathway-Level Mechanism Traversal
+- h95: Pathway-Level Mechanism Traversal (tested - invalidated)
 - h96: PPI-Extended Drug Targets
-- h97: Mechanism-kNN Hybrid Confidence (tested)
+- h97: Mechanism-kNN Hybrid Confidence (tested - validated)
+
+**h105: Coverage Strength Predicts Recall, Not Precision**
+- HIGH coverage: 8.59% precision, 60.08% recall
+- LOW coverage: 9.04% precision, 26.50% recall
+- Coverage predicts recall (+33.6 pp) but NOT precision (-0.45 pp)
+- **INSIGHT:** More similar diseases = more candidates = higher recall AND more false positives
 
 ### Session Statistics
-- Hypotheses tested: 2
+- Hypotheses tested: 4
 - Validated: 1 (h97)
-- Invalidated: 1 (h93)
-- New hypotheses added: 3 (h95, h96, h97)
+- Invalidated: 3 (h93, h95, h105)
+- New hypotheses added: 6 (h95, h96, h97, h104, h105, h106)
 
 ---
 
