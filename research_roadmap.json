@@ -5700,7 +5700,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: For each complication in GT, calculate % of drugs that also treat base disease",
         "Step 2: Rank complications by 'transferability score'",
@@ -5711,8 +5711,10 @@
       "dependencies": [
         "h281"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Transferability score predicts comp\u2192base precision (62.5% vs 41.7%).\n\nKEY FINDINGS:\n1. Base\u2192Complication: 0% precision regardless of transferability tier\n   - Confirms h290 filter is CORRECT (keep blocking base\u2192comp)\n   \n2. Comp\u2192Base with HIGH transferability (\u226550%): 62.5% precision (N=8)\n   - Examples: diabetic ketoacidosis \u2192 diabetes, chronic heart failure \u2192 heart failure\n   - Tier recommendation: HIGH confidence\n   \n3. Comp\u2192Base with UNKNOWN (MI/TIA): 41.7% precision (N=12)\n   - Examples: myocardial infarction \u2192 atherosclerosis\n   - Tier recommendation: MEDIUM-HIGH confidence\n\nACTIONABLE: Use transferability score to boost comp\u2192base predictions:\n- HIGH transferability complications: HIGH tier (62.5%)\n- Unknown/Medium: MEDIUM tier (41.7%)\n- Base\u2192Complication: FILTER (0%)\n\nCOMPLICATION TIERS:\nHIGH (\u226550%): DKA (87%), chronic HF (95%), acute HF (100%), diabetic nephropathy (80%)\nLOW (<20%): diabetic neuropathy (0%), diabetic macular edema (6%), obstructive sleep apnea (17%)",
+      "result_metric": "62.5% precision for HIGH transferability comp\u2192base (21 pp > baseline)",
+      "started_date": "2026-02-05",
+      "completed_date": "2026-02-05"
     },
     {
       "id": "h285",
@@ -5847,6 +5849,75 @@
       ],
       "findings": "VALIDATED: Implemented base\u2192complication filter in production_predictor.py.\n\nIMPLEMENTATION:\n1. Added BASE_TO_COMPLICATIONS mapping (diabetes\u2192diabetic nephropathy, etc.)\n2. Added drug_to_diseases reverse mapping (drug_id \u2192 set of disease names)\n3. Added _is_base_to_complication() method with strict string matching\n4. Integrated filter into _assign_confidence_tier() (returns FILTER tier with 'base_to_complication' reason)\n\nTEST RESULTS:\n- Complication diseases correctly filtered:\n  - diabetic nephropathy: 10 predictions filtered (statins, ARBs treating diabetes)\n  - diabetic retinopathy: 6 predictions filtered\n- Base diseases NOT filtered:\n  - type 2 diabetes: 0 filtered (correct)\n  - chronic kidney disease: 0 filtered (correct - fixed substring matching bug)\n\nh280 validated 0% precision for these predictions, so filtering them improves overall precision.",
       "result_metric": "Implementation complete, filtering 6-10 predictions per complication disease"
+    },
+    {
+      "id": "h291",
+      "title": "Implement Comp\u2192Base Confidence Boost Using Transferability",
+      "description": "Add transferability score to production_predictor.py to boost comp\u2192base predictions",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Add COMPLICATION_TRANSFERABILITY dict to production_predictor.py",
+        "Step 2: Implement _is_comp_to_base() detection using complication keywords",
+        "Step 3: Lookup transferability score and assign confidence tier",
+        "Step 4: HIGH transferability \u2192 HIGH confidence, MEDIUM \u2192 MEDIUM-HIGH",
+        "Step 5: Run full evaluation to measure precision improvement",
+        "Success criteria: 10+ predictions boosted with >50% precision"
+      ]
+    },
+    {
+      "id": "h292",
+      "title": "Cardiovascular Event Transferability Analysis",
+      "description": "MI, TIA, stroke showed 41.7% comp\u2192base but not in current mapping. Expand analysis.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Identify all cardiovascular events (MI, stroke, TIA, angina, etc.)",
+        "Step 2: Map events to base conditions (atherosclerosis, hypertension, arrhythmia)",
+        "Step 3: Calculate transferability for each CV event",
+        "Step 4: Test precision of event\u2192condition predictions",
+        "Success criteria: >40% precision for CV event\u2192condition predictions"
+      ]
+    },
+    {
+      "id": "h293",
+      "title": "Inverse Complication Filter: Predict WHICH Base Diseases Won't Transfer",
+      "description": "Some base diseases (diabetes) have 0% comp transfer. Others (CHF\u2192acute HF) have 100%.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: For each base disease, calculate average transferability of its complications",
+        "Step 2: Identify base diseases with >50% vs <20% average transferability",
+        "Step 3: Test if base disease transferability predicts base\u2192comp precision",
+        "Step 4: Use as negative filter for low-transferability base diseases",
+        "Success criteria: Identify base diseases where filter saves most FPs"
+      ]
+    },
+    {
+      "id": "h294",
+      "title": "Organ-Specific Complication Patterns",
+      "description": "Complications may cluster by organ (renal: nephropathy, CKD anemia; ocular: retinopathy, macular edema)",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Categorize complications by organ system",
+        "Step 2: Calculate average transferability by organ",
+        "Step 3: Test if organ-specific drugs have higher precision for that organ's complications",
+        "Step 4: Use organ matching as confidence signal",
+        "Success criteria: Organ-matched predictions >30% vs <10% precision"
+      ]
     }
   ],
   "completed": [
@@ -6973,6 +7044,12 @@
       "hypothesis_id": "h290",
       "learning": "Base\u2192complication filter implemented. Key fix: strict string matching to avoid false positives (CKD != anemia of CKD)",
       "implication": "Filtered predictions now exclude 0% precision base\u2192complication patterns"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h284",
+      "learning": "Transferability score (% of comp drugs that treat base) predicts DIRECTION. HIGH transferability = 62.5% comp\u2192base precision, but base\u2192comp is ALWAYS 0% regardless of transferability.",
+      "implication": "Use transferability as asymmetric signal: boost comp\u2192base, filter base\u2192comp."
     }
   ],
   "collaborations": [

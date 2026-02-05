@@ -1,0 +1,70 @@
+{
+  "hypothesis": "h284",
+  "title": "Complication Specialization Score for Confidence",
+  "summary": {
+    "base_to_complication": {
+      "high_transferability_precision": 0.0,
+      "n": 9,
+      "conclusion": "Even HIGH transferability doesn't help base\u2192complication predictions"
+    },
+    "complication_to_base": {
+      "high_transferability_precision": 62.5,
+      "unknown_transferability_precision": 41.7,
+      "n_high": 8,
+      "n_unknown": 12,
+      "conclusion": "HIGH transferability (62.5%) > UNKNOWN (41.7%), 21 pp difference"
+    }
+  },
+  "key_findings": [
+    "Transferability score measures 'drugs treating complication also treat base' - directional!",
+    "HIGH transferability (\u226550%) = 62.5% comp\u2192base precision",
+    "UNKNOWN (MI, TIA, stroke) = 41.7% comp\u2192base precision",
+    "Base\u2192complication = 0% precision regardless of transferability",
+    "Confirms h290 filter is correct (keep blocking base\u2192complication)",
+    "NEW: Can use transferability as POSITIVE signal for comp\u2192base predictions"
+  ],
+  "actionable_tiers": {
+    "HIGH_TRANSFERABILITY_COMP_TO_BASE": {
+      "precision": 62.5,
+      "tier_recommendation": "HIGH",
+      "examples": [
+        "diabetic ketoacidosis \u2192 diabetes"
+      ]
+    },
+    "UNKNOWN_COMP_TO_BASE": {
+      "precision": 41.7,
+      "tier_recommendation": "MEDIUM-HIGH",
+      "examples": [
+        "myocardial infarction \u2192 atherosclerosis"
+      ]
+    },
+    "BASE_TO_COMPLICATION": {
+      "precision": 0.0,
+      "tier_recommendation": "FILTER",
+      "conclusion": "Keep h290 filter in place"
+    }
+  },
+  "complications_by_transferability": {
+    "high_ge50": [
+      "acute heart failure (100%)",
+      "chronic heart failure (94.8%)",
+      "diabetic ketoacidosis (86.7%)",
+      "diabetic nephropathy (80%)",
+      "pulmonary edema (75%)",
+      "diabetic kidney disease (68.8%)",
+      "anemia of chronic kidney disease (62.1%)"
+    ],
+    "medium_20_50": [
+      "pulmonary embolism (46.2%)",
+      "alcoholic cirrhosis (33.3%)",
+      "secondary hyperparathyroidism (25%)"
+    ],
+    "low_lt20": [
+      "diabetic neuropathy (0%)",
+      "diabetic retinopathy (0%)",
+      "diabetic macular edema (5.6%)",
+      "obstructive sleep apnea (16.7%)",
+      "uremic pruritus (10%)"
+    ]
+  }
+}
