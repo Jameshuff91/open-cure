@@ -1,88 +1,94 @@
 # Research Loop Progress
 
-## Current Session: h250 (2026-02-05)
+## Current Session: h250, h255, h258 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 1**
+**Hypotheses Tested: 3**
 - h250: Systematic Drug Class Safety Review for Cardiovascular - **VALIDATED**
+- h255: Antiarrhythmic Safety Review Beyond Class Ic - **VALIDATED**
+- h258: Inverse Indication Pattern Detection - **VALIDATED**
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 143 |
+| Validated | 145 |
 | Invalidated | 50 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 35 |
-| **Total** | **257** |
+| Pending | 34 |
+| **Total** | **258** |
 
-### h250 Findings: CV Drug Class Safety Review
+### Session Theme: Safety Filter Enhancement
 
-**EVIDENCE-BASED CONTRAINDICATIONS IDENTIFIED:**
+**h250: CV Drug Class Safety Review**
+- Added 4 contraindication categories (non-DHP CCBs, Class Ic antiarrhythmics, ganglionic blockers, surgical dyes)
+- 91 predictions excluded (9 HIGH tier)
+- Evidence: ACC/AHA guidelines, CAST trial, PROMISE trial
 
-1. **Non-DHP CCBs (Verapamil, Diltiazem) + Heart Failure**
-   - Source: ACC/AHA 2022 Guidelines
-   - Mechanism: Negative inotropes cause acute decompensation
-   - Predictions excluded: 3 (1 HIGH tier)
+**h255: Antiarrhythmic Safety Review**
+- Added 4 more rules (dronedarone+HF, sotalol+MI, Class Ia+MI, procainamide iatrogenic)
+- 5 predictions excluded
+- Evidence: ANDROMEDA trial, SWORD trial, TdP literature
+- Key finding: Procainamide→agranulocytosis is "inverse indication" (drug CAUSES condition)
 
-2. **Class Ic Antiarrhythmics (Flecainide, Propafenone) + Structural Heart Disease**
-   - Source: CAST trial (NEJM 1991)
-   - Finding: 2.5x mortality increase in post-MI patients
-   - Predictions excluded: 4
+**h258: Inverse Indication Pattern Detection**
+- Systematic search for drugs predicted to treat conditions they cause
+- Added: Amiodarone→thyroid, NSAIDs→peptic ulcer
+- 2 additional predictions excluded
+- **Total inverse indication exclusions: 5**
 
-3. **Ganglionic Blockers (Mecamylamine)**
-   - Status: Obsolete drug class
-   - Issues: Severe orthostatic hypotension, multiple side effects
-   - Predictions excluded: 37 (2 HIGH tier)
+### Safety Filters Added This Session
 
-4. **Surgical/Diagnostic Dyes (Isosulfan blue, Methylene blue, etc.)**
-   - Not therapeutic agents
-   - Predictions excluded: 47 (6 HIGH tier)
+| Rule | Drug Class | Condition | Evidence |
+|------|------------|-----------|----------|
+| h250 | Non-DHP CCBs | Heart Failure | ACC/AHA 2022 |
+| h250 | Class Ic antiarrhythmics | Structural heart | CAST trial |
+| h250 | Ganglionic blockers | Any | Obsolete |
+| h250 | Surgical dyes | Any | Not therapeutic |
+| h255 | Dronedarone | Heart failure | ANDROMEDA trial |
+| h255 | Sotalol | Post-MI | SWORD trial |
+| h255 | Class Ia | Post-MI | TdP literature |
+| h255 | Procainamide | Agranulocytosis/lupus | Iatrogenic |
+| h258 | Amiodarone | Thyroid dysfunction | 14-18% incidence |
+| h258 | NSAIDs | Peptic ulcer | COX-1 inhibition |
 
-**DRUGS REVIEWED BUT NOT CONTRAINDICATED:**
+### Session Impact Summary
 
-| Drug Class | Evidence | Conclusion |
-|------------|----------|------------|
-| Nitrates (isosorbide + hydralazine) | AAHEFT trial | BENEFICIAL for HF |
-| PDE5 inhibitors (sildenafil) | RELAX trial (HFpEF failed) | Mixed - OK for HFrEF |
-| Digoxin | DIG trial | Neutral on mortality, reduces hospitalizations |
-| Aliskiren | ASTRONAUT trial | Only harmful in diabetics with HF |
+**New predictions excluded: 98**
+- h250: 91 (9 HIGH tier)
+- h255: 5 (0 HIGH tier)
+- h258: 2 (0 HIGH tier)
 
-**FILTER IMPACT:**
-- New rules added: 4 (non-DHP CCB, Class Ic, ganglionic blockers, surgical dyes)
-- Total predictions now excluded: 302 (2.2%)
-- HIGH tier predictions excluded: 40
-- Newly excluded from h250 rules: 91 (9 HIGH tier)
+**Total filter coverage: 307 predictions (2.3%)**
 
-**NEW HYPOTHESES GENERATED (4):**
-- h254: Aliskiren-Diabetes HF Subgroup Filter
-- h255: Antiarrhythmic Safety Review Beyond Class Ic
-- h256: Methylene Blue Therapeutic vs Diagnostic Distinction
-- h257: IV vs Oral Formulation Safety Distinction
+### Key Learning: Inverse Indication Pattern
 
-### Key Learning
+Drugs can be predicted to treat conditions they actually CAUSE when:
+1. Both "causes" and "treats" create similar graph patterns
+2. Drug-disease associations in knowledge graphs don't distinguish direction
+3. Examples: Procainamide→agranulocytosis, Amiodarone→thyroid, NSAIDs→ulcers
 
-CV drug contraindications require evidence-based trial data (CAST, PROMISE, ASTRONAUT). Drugs that SEEM mechanistically plausible (vasodilators for HF) can still be harmful. Non-DHP CCBs and Class Ic antiarrhythmics are commonly predicted for HF/arrhythmias but are HARMFUL based on clinical trial evidence.
+**Solution:** Maintain adverse effect database, cross-reference all predictions.
 
 ### Recommended Next Steps (Priority Order)
-1. **h255**: Antiarrhythmic Safety Review Beyond Class Ic
-2. **h96**: PPI-Extended Drug Targets
-3. **h91**: Literature Mining (high effort but critical for zero-treatment diseases)
+1. **h96**: PPI-Extended Drug Targets (medium effort)
+2. **h91**: Literature Mining for zero-treatment diseases (high effort, high impact)
+3. **h159**: Category Boundary Refinement (low effort)
 
 ---
 
-## Previous Session: h244, h248, h251, h249, h253, h252 (2026-02-05)
+## Previous Sessions
 
-See git history for detailed session notes.
-
-### Key findings:
+### 2026-02-05 (Earlier): h244, h248, h251, h249, h253, h252
 - SGLT2 inhibitors: 63.9% precision (BEST drug class)
 - PAH drug safety filters: 23.3% of HF predictions were HARMFUL
 - sGC stimulators: Teratogenic - pregnancy filter added
+
+See git history for detailed session notes.
 
 ---
 

@@ -370,6 +370,30 @@ PROCAINAMIDE_IATROGENIC_CONDITIONS = [
     "sle",  # Same
 ]
 
+# h258: Amiodarone CAUSES thyroid dysfunction (14-18% incidence)
+# Both hypo and hyperthyroidism via iodine content and direct toxicity
+AMIODARONE_IATROGENIC_CONDITIONS = [
+    "thyrotoxicosis",  # Amiodarone CAUSES this
+    "hyperthyroidism",  # Amiodarone CAUSES this
+    "hypothyroidism",  # Amiodarone CAUSES this
+    "thyroiditis",  # Amiodarone CAUSES this
+]
+
+# h258: NSAIDs CAUSE peptic ulcers and GI bleeding
+# Well-documented GI toxicity from COX inhibition
+NSAID_PATTERNS = [
+    r"ibuprofen", r"naproxen", r"diclofenac", r"indomethacin",
+    r"piroxicam", r"ketorolac", r"meloxicam", r"celecoxib",
+]
+
+NSAID_IATROGENIC_CONDITIONS = [
+    "peptic ulcer",  # NSAIDs CAUSE this via COX-1 inhibition
+    "gastric ulcer",  # NSAIDs CAUSE this
+    "duodenal ulcer",  # NSAIDs CAUSE this
+    "gi bleeding",  # NSAIDs CAUSE this
+    "gastrointestinal bleeding",  # NSAIDs CAUSE this
+]
+
 # h164: Immunosuppressants - contraindicated for infectious diseases
 # Immunosuppressants weaken the immune system, making infections WORSE
 # Exception: Autoimmune conditions (e.g., autoimmune hepatitis) are NOT infections
@@ -862,6 +886,35 @@ def filter_prediction(
                 drug_type=drug_type,
                 adjusted_score=0.0,
             )
+
+    # Rule 0f16 (h258): Amiodarone for thyroid conditions it CAUSES
+    # Amiodarone causes thyroid dysfunction in 14-18% of patients
+    if re.search(r"amiodarone", drug_lower):
+        if any(cond in disease_lower for cond in AMIODARONE_IATROGENIC_CONDITIONS):
+            return FilteredPrediction(
+                drug=drug,
+                disease=disease,
+                original_score=score,
+                confidence=ConfidenceLevel.EXCLUDED,
+                reason="Amiodarone CAUSES thyroid dysfunction (14-18% incidence) - inverse indication",
+                drug_type=drug_type,
+                adjusted_score=0.0,
+            )
+
+    # Rule 0f17 (h258): NSAIDs for GI conditions they CAUSE
+    # NSAIDs cause peptic ulcers via COX-1 inhibition
+    for pattern in NSAID_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(cond in disease_lower for cond in NSAID_IATROGENIC_CONDITIONS):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="NSAIDs CAUSE peptic ulcers and GI bleeding via COX inhibition - inverse indication",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
 
     # Rule 0g: TRAIL agonists for inflammatory diseases
     for pattern in TRAIL_AGONIST_PATTERNS:
