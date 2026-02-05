@@ -171,26 +171,15 @@ vastai destroy instance <INSTANCE_ID>
 - **Explicit graph traversal** (h93, h95) - Gene: 3.53% R@30, Pathway: 3.57% R@30. Embeddings >> symbolic reasoning
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence Features (2026-02-04)
-- **Mechanism support** (h97): +6.5 pp precision for predictions where drug targets disease genes (2.1x improvement)
-- **Coverage strength** (h105): Predicts RECALL (+33.6 pp) but NOT precision (-0.45 pp); recall proxy, not confidence proxy
-- Category tier (h71) remains the strongest confidence predictor
+### Confidence Features (h111 validated)
 
-## Performance Gaps (Summary)
+**VALIDATED:** Drug frequency (+9.4pp), Chemical similarity (+8.8pp), Mechanism support (+6.5pp), Category tier
+**Multi-Signal Ensemble (h106):** 22% precision @ top 10%. Best combo: Mechanism+Frequency = 20% precision (orthogonal, r=0.07)
 
-| Gap | Issue | Fix | Details |
-|-----|-------|-----|---------|
-| Biologics | mAbs 16.7% vs small mol 32.1% | Filter oncology mAbs | `docs/archive/detailed_analysis_findings.md` |
-| Antibiotics | Predicted for non-infectious | Filter spurious predictions | `docs/archive/detailed_analysis_findings.md` |
-| GI diseases | 5% hit rate (kNN blind spot) | Flag/exclude in production | h59 findings |
+## Performance Gaps & Error Patterns
 
-## Error Patterns
-
-| Best Performance | Worst Performance |
-|------------------|-------------------|
-| ACE inhibitors: 66.7% | Monoclonal antibodies: 27.3% |
-| Autoimmune: 63.0% | Antibiotics (class perf): 6-20% |
-| Infectious: 52.0% | PPIs: 16.7% |
+**Gaps:** Biologics (mAbs 17% vs small mol 32%), Antibiotics (wrong diseases), GI (5% kNN blind spot)
+**Best:** ACE inhibitors 67%, Autoimmune 63%, Infectious 52% | **Worst:** mAbs 27%, Antibiotics 6-20%, PPIs 17%
 
 ## Confidence Filter
 

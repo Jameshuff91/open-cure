@@ -2132,7 +2132,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Step 1: Load drug SMILES and compute Morgan fingerprints",
         "Step 2: For each prediction, find drugs known to treat similar diseases",
@@ -2142,8 +2142,8 @@
         "Success criteria: Chemically-similar predictions have 5%+ better precision"
       ],
       "dependencies": [],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Chemical similarity to known treatments is a strong confidence signal (+8.81 pp).\n\nRESULTS:\n- HIGH similarity (mean 0.745): 12.54% precision\n- MEDIUM similarity (mean 0.370): 6.85% precision\n- LOW similarity (mean 0.168): 3.73% precision\n- Difference: +8.81 pp (3.4x improvement!)\n- Correlation(chemical_similarity, is_hit): 0.140\n\nCOVERAGE: 86.9% of predictions have fingerprint data (11,745/13,522)\n\nKEY INSIGHT:\nDrugs chemically similar to known treatments for similar diseases are more likely to be true positives.\nThis captures polypharmacology patterns - drugs with similar structures often have similar mechanisms.\n\nCOMPARISON TO OTHER CONFIDENCE SIGNALS:\n- h108 Drug frequency: +9.40 pp (strongest)\n- h109 Chemical similarity: +8.81 pp (2nd strongest)\n- h97 Mechanism support: +6.48 pp\n- h71 Category tier: varies\n\nIMPLICATION:\nAdd chemical similarity as a feature in the multi-signal ensemble (h106).\nCombined with drug frequency and category tier, this could further improve precision.",
+      "result_metric": "+8.81 pp (12.54% vs 3.73%), correlation 0.140 - VALIDATED"
     },
     {
       "id": "h110",
@@ -2174,7 +2174,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: For all kNN predictions, compute: (a) mechanism support binary, (b) category tier, (c) kNN score",
         "Step 2: Compute correlation matrix between signals",
@@ -2186,8 +2186,8 @@
         "h71",
         "h104"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Confidence signals are largely INDEPENDENT and can be combined additively.\n\nCORRELATION ANALYSIS (13,522 predictions, 5 seeds):\n\nINDEPENDENT PAIRS (|r| < 0.3) - 7 of 10 pairs:\n- Mechanism support (h97) is independent of ALL other signals:\n  - vs Drug Frequency: r = 0.071\n  - vs Category Tier: r = -0.005\n  - vs kNN Score: r = 0.118\n  - vs Inverse Rank: r = 0.072\n- Category tier (h71) is independent of ALL other signals\n\nCORRELATED PAIRS (|r| >= 0.3) - only 3 pairs:\n- kNN Score \u2194 Inverse Rank: r = 0.665 (expected - both measure rank position)\n- Drug Freq \u2194 kNN Score: r = 0.404 (popular drugs naturally rank higher)\n- Drug Freq \u2194 Inverse Rank: r = 0.319\n\nHIT CORRELATION RANKING (which signals predict hits best):\n1. Drug Frequency (h108): r = 0.187 (strongest predictor)\n2. Inverse Rank: r = 0.160\n3. kNN Score: r = 0.156\n4. Mechanism Support (h97): r = 0.098\n5. Category Tier (h71): r = 0.082\n\nADDITIVE GAIN ANALYSIS:\nBest combination: Mechanism Support + Drug Frequency\n- Both HIGH: 20.04% precision (1,013 predictions)\n- Correlation: r = 0.071 (truly independent)\n- Nearly matches h106 ensemble top 10% (22%)\n\nKEY INSIGHT: Mechanism support captures mechanistic plausibility (targets disease genes) while drug frequency captures empirical reliability (drugs that work for many diseases). These are ORTHOGONAL signals.\n\nIMPLICATION: The h106 multi-signal ensemble correctly combines independent signals. Category tier adds least value (r = 0.082 with hits) but does provide slight improvement for Tier 1 categories.",
+      "result_metric": "7/10 pairs independent (|r| < 0.3); Mechanism+Frequency = 20.04% precision"
     },
     {
       "id": "h112",
@@ -2232,6 +2232,67 @@
       ],
       "findings": "VALIDATED: Fixed disease ID format mismatch in h106_multi_signal_ensemble.py.\n\nBEFORE FIX:\n- Mechanism support: 0 predictions with support (data loading failure)\n- Top 10% ensemble: 22.04% precision\n- Top 20% ensemble: 17.42% precision\n\nAFTER FIX:\n- Mechanism support: 2,718 predictions (20.1%) have support\n- WITH support: 12.10% precision vs WITHOUT: 5.96% (+6.14 pp)\n- Top 10% ensemble: 22.56% precision (+0.52 pp)\n- Top 20% ensemble: 18.23% precision (+0.81 pp)\n\nFIX: Modified load_disease_genes() to return dict with BOTH key formats:\n- Original: 'MESH:xxx'\n- Added: 'drkg:Disease::MESH:xxx'\n\nMechanism support coefficient increased from 0.000 to 0.259, now properly\ncontributing to the ensemble model.",
       "result_metric": "+0.52 pp at top 10% (22.04% \u2192 22.56%)"
+    },
+    {
+      "id": "h114",
+      "title": "Drug Frequency Mechanism: Why Do High-Frequency Drugs Generalize Better?",
+      "category": "analysis",
+      "rationale": "h111 found drug training frequency is the strongest predictor of hits (r=0.187), stronger than mechanism support (r=0.098). But WHY? Is it because: (a) These drugs have broader mechanisms (polypharmacology), (b) They treat common diseases that have similar analogs in the test set, (c) They are over-represented in literature/trials, or (d) Selection bias in the ground truth? Understanding this could inform feature engineering.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Get top-50 high-frequency drugs and analyze their target profiles",
+        "Step 2: Compare to low-frequency drugs: do high-freq drugs have more targets?",
+        "Step 3: Check if high-freq drugs treat more \"central\" diseases in the embedding space",
+        "Step 4: Document causal mechanism for the frequency-hit correlation",
+        "Success criteria: Identify 1+ causal factor explaining frequency signal"
+      ],
+      "dependencies": [
+        "h108",
+        "h111"
+      ]
+    },
+    {
+      "id": "h115",
+      "title": "Ensemble Simplification: Remove Redundant kNN Score/Rank Features",
+      "category": "optimization",
+      "rationale": "h111 found kNN score and inverse rank are highly correlated (r=0.665). h106 ensemble uses both. Removing one may simplify the model without losing precision. Simpler models are more interpretable and less prone to overfitting.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Re-run h106 ensemble with only: mechanism_support, train_frequency, tier_inv, inv_rank",
+        "Step 2: Re-run with only: mechanism_support, train_frequency, tier_inv, norm_score",
+        "Step 3: Compare precision at top 10%/20% to full ensemble",
+        "Success criteria: Simpler ensemble matches or exceeds full ensemble precision"
+      ],
+      "dependencies": [
+        "h106",
+        "h111"
+      ]
+    },
+    {
+      "id": "h116",
+      "title": "Category Tier 2.0: Disease-Specific Tier Calibration",
+      "category": "optimization",
+      "rationale": "h111 showed category tier is the weakest confidence signal (r=0.082 with hits). The current tier system is coarse: Tier 1 = autoimmune/dermatological/psychiatric/ophthalmic. But within Tier 3 (metabolic, infectious, etc.), some diseases may still be easy to predict. Per-disease calibration could improve the signal.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Compute per-disease hit rate from the 5-seed kNN data",
+        "Step 2: Replace category tier with disease-specific historical hit rate",
+        "Step 3: Re-run correlation analysis to check if this improves hit prediction",
+        "Success criteria: Disease-specific calibration achieves r > 0.15 with hits (vs 0.082 for tier)"
+      ],
+      "dependencies": [
+        "h111",
+        "h71"
+      ]
     }
   ],
   "completed": [
@@ -2710,6 +2771,12 @@
       "hypothesis_id": "h105",
       "learning": "Disease coverage strength predicts RECALL (r=0.26, +33.6 pp for high vs low coverage) but NOT precision (-0.45 pp). More similar diseases = more candidates = higher recall but proportionally more false positives too.",
       "implication": "Coverage strength is a recall proxy, not a confidence proxy. Use it to estimate 'how well can kNN rank drugs?' not 'how much should I trust these rankings?'"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h111",
+      "learning": "Confidence signals are mostly independent: mechanism support (h97) and category tier (h71) have near-zero correlation with other signals. Drug frequency is the strongest predictor of hits (r=0.187), followed by rank position signals. Combining Mechanism + Frequency achieves 20% precision on 1000 predictions.",
+      "implication": "Ensemble approach (h106) is sound. Future confidence features should target orthogonal dimensions: mechanism (drug-target-gene), empirical (training frequency), and categorical (disease type)."
     }
   ],
   "collaborations": [

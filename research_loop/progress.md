@@ -1,6 +1,62 @@
 # Research Loop Progress
 
-## Current Session: h104, h110, h106, h113 (2026-02-04, continued)
+## Current Session: h111 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested This Session:**
+- h111: Confidence Feature Independence Analysis - **VALIDATED**
+
+### Key Findings
+
+**h111: Confidence Feature Independence Analysis - VALIDATED**
+
+Analyzed correlation structure between 5 confidence signals across 13,522 predictions:
+
+**CORRELATION ANALYSIS:**
+
+| Signal Pair | Pearson r | Independence |
+|-------------|-----------|--------------|
+| Mechanism ↔ Drug Freq | 0.071 | **INDEPENDENT** |
+| Mechanism ↔ Category Tier | -0.005 | **INDEPENDENT** |
+| Mechanism ↔ kNN Score | 0.118 | **INDEPENDENT** |
+| Drug Freq ↔ Category Tier | 0.031 | **INDEPENDENT** |
+| Category Tier ↔ kNN Score | -0.042 | **INDEPENDENT** |
+| Drug Freq ↔ kNN Score | 0.404 | Correlated |
+| kNN Score ↔ Inv Rank | 0.665 | Correlated |
+
+**7 out of 10 pairs are independent (|r| < 0.3)!**
+
+**HIT PREDICTION POWER (point-biserial correlation):**
+1. Drug Frequency (h108): r = 0.187 ⭐ **Strongest**
+2. Inverse Rank: r = 0.160
+3. kNN Score: r = 0.156
+4. Mechanism Support (h97): r = 0.098
+5. Category Tier (h71): r = 0.082 ⭐ **Weakest**
+
+**BEST COMBINATION:**
+- Mechanism Support + Drug Frequency: **20.04% precision** on 1,013 predictions
+- These signals are truly orthogonal (r = 0.071)
+- Nearly matches h106 ensemble top 10% (22%)
+
+**KEY INSIGHT:**
+Mechanism support captures **mechanistic plausibility** (drug targets disease genes), while drug frequency captures **empirical reliability** (drugs that work for many diseases). These are ORTHOGONAL signals — combining them provides additive gain.
+
+### Session Statistics
+- Hypotheses tested: 1 (h111)
+- Validated: 1
+- New hypotheses added: 3 (h114, h115, h116)
+
+### Next Steps
+1. **h114**: Investigate why drug frequency predicts hits so well
+2. **h115**: Test simplified ensemble (remove redundant kNN score/rank)
+3. **h116**: Improve category tier with per-disease calibration
+
+---
+
+## Previous Session: h104, h110, h106, h113 (2026-02-04, continued)
 
 ### Session Summary
 
