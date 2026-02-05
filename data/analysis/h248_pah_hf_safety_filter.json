@@ -1,0 +1,74 @@
+{
+  "hypothesis": "h248",
+  "title": "Endothelin Antagonist + Prostacyclin Heart Failure Safety Filter",
+  "analysis_date": "2026-02-05",
+  "heart_failure_impact": {
+    "total_hf_predictions": 90,
+    "original_high_confidence": 30,
+    "excluded_contraindicated": 7,
+    "corrected_high_confidence": 23,
+    "percentage_fp_removed": 23.3
+  },
+  "cardiovascular_impact": {
+    "total_high_confidence": 60,
+    "excluded": 7,
+    "percentage_improvement": 11.7
+  },
+  "excluded_predictions": [
+    {
+      "drug": "Bosentan",
+      "disease": "chronic heart failure",
+      "original_tier": "HIGH"
+    },
+    {
+      "drug": "Iloprost",
+      "disease": "chronic heart failure",
+      "original_tier": "HIGH"
+    },
+    {
+      "drug": "Epoprostenol",
+      "disease": "chronic heart failure",
+      "original_tier": "HIGH"
+    },
+    {
+      "drug": "Selexipag",
+      "disease": "chronic heart failure",
+      "original_tier": "HIGH"
+    },
+    {
+      "drug": "Ambrisentan",
+      "disease": "chronic heart failure",
+      "original_tier": "HIGH"
+    },
+    {
+      "drug": "Treprostinil",
+      "disease": "chronic heart failure",
+      "original_tier": "HIGH"
+    },
+    {
+      "drug": "MACITENTAN",
+      "disease": "chronic heart failure",
+      "original_tier": "HIGH"
+    }
+  ],
+  "filter_rules_added": [
+    "Endothelin antagonists (Bosentan, Ambrisentan, Macitentan) + heart failure = EXCLUDED",
+    "Prostacyclin analogs (Epoprostenol, Treprostinil, Iloprost, Selexipag) + heart failure = EXCLUDED"
+  ],
+  "clinical_evidence": {
+    "endothelin_antagonists": {
+      "trials": [
+        "ENABLE",
+        "MELODY",
+        "SERENADE"
+      ],
+      "harm": "Fluid retention, peripheral edema, no clinical benefit"
+    },
+    "prostacyclin_analogs": {
+      "trials": [
+        "FIRST"
+      ],
+      "harm": "INCREASED MORTALITY - trial terminated early"
+    }
+  }
+}

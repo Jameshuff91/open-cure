@@ -4911,7 +4911,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Create list of endothelin antagonists: Bosentan, Ambrisentan, Macitentan",
         "Create list of prostacyclin analogs: Epoprostenol, Treprostinil, Iloprost, Selexipag",
@@ -4921,7 +4921,9 @@
       ],
       "dependencies": [
         "h244"
-      ]
+      ],
+      "findings": "VALIDATED: Safety filter implemented and precision improved.\n\n**Filter Rules Added:**\n1. Endothelin antagonists (Bosentan, Ambrisentan, Macitentan) + heart failure = EXCLUDED\n2. Prostacyclin analogs (Epoprostenol, Treprostinil, Iloprost, Selexipag) + heart failure = EXCLUDED\n\n**Precision Impact:**\n- Heart Failure HIGH predictions: 30 \u2192 23 (7 excluded)\n- 23.3% of HF HIGH predictions were HARMFUL (false positives)\n- Cardiovascular category: 11.7% false positives removed\n\n**Clinical Evidence:**\n- Endothelin antagonists: ENABLE/MELODY/SERENADE trials - fluid retention\n- Prostacyclin analogs: FIRST trial - INCREASED MORTALITY\n\n**Key Finding:** Model predicts these drugs based on shared hemodynamic mechanism, \nbut clinical trials show they are HARMFUL in heart failure despite similar effects in PAH.",
+      "result_metric": "23.3% HF false positives removed; 7 contraindicated predictions excluded"
     },
     {
       "id": "h249",

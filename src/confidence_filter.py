@@ -229,6 +229,24 @@ JAK_INHIBITOR_PATTERNS = [
     r"ruxolitinib",
 ]
 
+# h248: Endothelin Receptor Antagonists - CONTRAINDICATED for heart failure
+# ENABLE, MELODY, SERENADE trials: Fluid retention, no benefit, possible harm
+ENDOTHELIN_ANTAGONIST_PATTERNS = [
+    r"bosentan",
+    r"ambrisentan",
+    r"macitentan",
+]
+
+# h248: Prostacyclin Analogs - CONTRAINDICATED for heart failure
+# FIRST trial: INCREASED MORTALITY - trial terminated early
+PROSTACYCLIN_ANALOG_PATTERNS = [
+    r"epoprostenol",
+    r"treprostinil",
+    r"iloprost",
+    r"selexipag",
+    r"beraprost",
+]
+
 # h164: Immunosuppressants - contraindicated for infectious diseases
 # Immunosuppressants weaken the immune system, making infections WORSE
 # Exception: Autoimmune conditions (e.g., autoimmune hepatitis) are NOT infections
@@ -528,6 +546,36 @@ def filter_prediction(
                     original_score=score,
                     confidence=ConfidenceLevel.EXCLUDED,
                     reason="TNF inhibitors contraindicated - can cause drug-induced lupus or worsen demyelinating/cardiac disease",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f3 (h248): Endothelin receptor antagonists for heart failure
+    # ENABLE, MELODY, SERENADE trials: Fluid retention, peripheral edema, no clinical benefit
+    for pattern in ENDOTHELIN_ANTAGONIST_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if is_cardiac_condition(disease):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Endothelin antagonists cause fluid retention in heart failure (ENABLE/MELODY/SERENADE trials)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f4 (h248): Prostacyclin analogs for systolic heart failure
+    # FIRST trial: INCREASED MORTALITY - trial terminated early due to harm
+    for pattern in PROSTACYCLIN_ANALOG_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if is_cardiac_condition(disease):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Prostacyclin analogs INCREASE MORTALITY in heart failure (FIRST trial terminated for harm)",
                     drug_type=drug_type,
                     adjusted_score=0.0,
                 )
