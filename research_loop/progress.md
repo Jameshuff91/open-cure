@@ -1,61 +1,79 @@
 # Research Loop Progress
 
-## Current Session: h227, h134, h241, h243, h242, h247, h240, h239 (2026-02-05)
+## Current Session: h244, h248, h251, h249 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested: 8**
-- h227: Hybrid Drug-Class/kNN Routing - **VALIDATED** (+9.4pp hybrid vs kNN)
-- h134: Steroid Dominance Analysis in Golden Set - **VALIDATED** (non-steroids 17.7%, calcium blockers 87.5%)
-- h241: Steroid-Free Disease Categories Deep Dive - **VALIDATED** (CV/psychiatric 100% for drug classes)
-- h243: Psychiatric Contraindication Rules - **VALIDATED** (+12.6pp precision with SSRI/stimulant filters)
-- h242: Biologic Precision Rescue via Mechanism Tiers - **INVALIDATED** (no class >=20%)
-- h247: Disease-Specific Biologic Routing - **VALIDATED** (mechanism matching 64.7%, 10x improvement!)
-- h240: Calcium Blocker Cross-Category Repurposing - **VALIDATED** (75% neurological precision)
-- h239: Antifungal Drug Repurposing Analysis - **INVALIDATED** (precision from fungal indications, not repurposing)
+**Status:** In Progress
+**Hypotheses Tested: 4**
+- h244: Pulmonary Hypertension Drug Transfer to Heart Failure - **VALIDATED** (critical safety findings)
+- h248: Endothelin Antagonist + Prostacyclin Heart Failure Safety Filter - **VALIDATED** (23.3% FP removed)
+- h251: SGLT2 Inhibitor Cross-Category Transfer Analysis - **VALIDATED** (63.9% precision!)
+- h249: sGC Stimulator Validation Beyond HF/PAH - **VALIDATED** (27-50% precision)
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 136 |
+| Validated | 140 |
 | Invalidated | 50 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 32 |
-| **Total** | **247** |
+| Pending | 34 |
+| **Total** | **253** |
 
 ### Session Key Learnings
 
-1. **h227:** Hybrid drug-class/kNN routing achieves 39.3% vs 29.9% pure kNN (+9.4pp).
+1. **h244: PAH→HF Transfer - CRITICAL SAFETY FINDINGS**
+   - sGC stimulators VALIDATED (Vericiguat FDA approved for HF)
+   - Endothelin antagonists CONTRAINDICATED (fluid retention)
+   - Prostacyclin analogs CONTRAINDICATED (INCREASED MORTALITY in FIRST trial!)
+   - 7/10 PAH drug predictions for HF were FALSE POSITIVES
 
-2. **h134:** Model captures diverse pharmacology beyond steroids (calcium blockers 87.5%)
+2. **h248: PAH-HF Safety Filter Implemented**
+   - Added endothelin antagonist + prostacyclin filters to confidence system
+   - 23.3% of heart failure HIGH predictions were HARMFUL
+   - 7 predictions removed from HIGH tier
 
-3. **h241:** Steroid-free categories show excellent drug class patterns (CV/psychiatric 100%)
+3. **h251: SGLT2 Inhibitors - BEST DRUG CLASS (63.9% precision)**
+   - 23/36 predictions validated by clinical trials
+   - Validated cross-category: Hypertension, atherosclerosis, MI, CKD, obesity
+   - False positive patterns: hypoglycemia (SGLT2i CAUSE it), uremia (too advanced)
+   - Model correctly captures pleiotropic cardiovascular/renal/metabolic effects
 
-4. **h243:** Psychiatric contraindication rules +12.6pp (SSRI/stimulants for bipolar/schizophrenia)
+4. **h249: sGC Stimulators - Mixed Results**
+   - 27.3% strict precision, 50% lenient (including mechanistically plausible)
+   - CRITICAL: Riociguat + pregnancy = CONTRAINDICATED (teratogenic!)
+   - Validated: CKD, diabetic nephropathy, proteinuria (preclinical evidence)
+   - Plausible: Peripheral arterial disease, stroke, CAD (need clinical trials)
 
-5. **h242→h247:** Biologic mechanism tiering failed but disease-specific routing succeeded:
-   - Mechanism matching: 5.9% → 64.7% (10x improvement!)
+### Session Theme: Drug Class Safety Validation & Precision Analysis
 
-6. **h240:** CCB cross-category repurposing validated:
-   - Neurological (migraine, epilepsy): 75% precision
-   - Verapamil → migraine is FDA-approved (model correctly predicts)
+**Key Safety Filters Added:**
+1. Endothelin antagonists + heart failure = EXCLUDED (fluid retention)
+2. Prostacyclin analogs + heart failure = EXCLUDED (INCREASED MORTALITY)
+3. [Pending h253] sGC stimulators + pregnancy = EXCLUDED (teratogenic)
 
-7. **h239:** Antifungal "repurposing" is actually correct fungal-disease prediction
-   - Fluconazole 80% precision is for aspergillosis, cryptococcosis, etc.
-   - NOT anti-inflammatory repurposing
+**Precision by Drug Class:**
+| Drug Class | Precision | Notes |
+|------------|-----------|-------|
+| SGLT2 inhibitors | 63.9% | BEST - pleiotropic effects validated |
+| sGC stimulators | 27-50% | HF/PAH validated, many FPs in other areas |
+| PAH drugs overall | ~30% | 7/10 predictions for HF were contraindicated |
 
-### Session Theme: Precision Optimization via Rules & Drug Class Analysis
+**New Hypotheses Generated: 6**
+- h248: PAH-HF safety filter (COMPLETED)
+- h249: sGC validation (COMPLETED)
+- h250: Systematic CV drug class safety review
+- h251: SGLT2 analysis (COMPLETED)
+- h252: SGLT2 false positive filter (hypoglycemia/uremia)
+- h253: sGC pregnancy safety filter
 
-**Production Recommendations:**
-1. Implement psychiatric contraindication rules (h243) - +12.6pp
-2. Implement biologic mechanism matching (h247) - 10x precision improvement
-3. Use hybrid routing: drug-class for psychiatric/neurological (h227)
-4. Prioritize CCB predictions for neurological validation (h240)
-5. Antifungals are HIGH precision for fungal diseases but NOT repurposing opportunities
+**Recommended Next Steps:**
+1. Implement h253 (sGC pregnancy filter) - critical safety
+2. Continue with h250 (CV safety review) - systematic approach
+3. Implement h252 (SGLT2 filter) - improve precision
 
 ---
 
