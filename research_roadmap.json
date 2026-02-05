@@ -5612,7 +5612,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Build ontology of complication relationships (diabetes \u2192 nephropathy/neuropathy/retinopathy)",
         "Step 2: Distinguish from true subtype relationships (psoriasis \u2192 plaque psoriasis)",
@@ -5623,8 +5623,8 @@
       "dependencies": [
         "h279"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Dramatic precision difference between subtype and complication relationships.\n\nRESULTS BY RELATIONSHIP TYPE:\n| Relationship | N | Precision |\n|--------------|---|-----------|\n| exact | 756 | 100.0% |\n| gt_is_parent (pred is subtype) | 34 | 41.2% |\n| gt_is_subtype (pred is parent) | 20 | 45.0% |\n| gt_is_base (pred is complication) | 18 | 0.0% |\n| gt_is_complication (pred is base) | 18 | 27.8% |\n| unrelated | 12,615 | 0.0% |\n\nSUMMARY:\n- SUBTYPE relationships: 42.6% precision (N=54)\n- COMPLICATION relationships: 13.9% precision (N=36)\n- Difference: 28.7 pp (subtype >> complication)\n\nCRITICAL FINDING:\nWhen a drug treats a BASE disease (e.g., diabetes) and is predicted for a COMPLICATION \n(e.g., diabetic nephropathy), precision is 0%. This confirms h281's finding that \nbase\u2192complication treatment transfers don't work.\n\nACTIONABLE:\n1. Filter predictions where drug treats base and model predicts complication (0% precision)\n2. Boost predictions where drug treats parent/subtype (42.6% precision)\n3. Use relationship type as confidence tiering signal",
+      "result_metric": "Subtype 42.6% vs Complication 13.9% precision (28.7 pp difference)"
     },
     {
       "id": "h281",
@@ -5822,6 +5822,28 @@
       ],
       "dependencies": [
         "h193"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h290",
+      "title": "Implement Relationship Type Filter in Production Predictor",
+      "category": "precision",
+      "rationale": "h280 validated: base\u2192complication predictions have 0% precision, subtype predictions have 42.6%. Implement as filter/boost in production_predictor.py.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Add complication/subtype ontology to production_predictor.py",
+        "Step 2: Flag predictions as 'base\u2192complication' (FILTER tier) or 'subtype' (boost)",
+        "Step 3: Re-run predictions and validate precision improvement",
+        "Success criteria: >5% precision lift in HIGH tier predictions"
+      ],
+      "dependencies": [
+        "h280",
+        "h281"
       ],
       "findings": null,
       "result_metric": null
@@ -6939,6 +6961,12 @@
       "hypothesis_id": "h193",
       "learning": "Combined ATC signals (coherence + uniqueness) do NOT identify repurposing discoveries. Coherent + classmate-supported predictions have highest precision (9.0% vs 4.5% for incoherent+unique).",
       "implication": "Use ATC coherence as positive signal, not as negative filter for finding novel repurposing"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h280",
+      "learning": "Subtype relationships (plaque psoriasis\u2192psoriasis) have 42.6% precision, while complication relationships (diabetic nephropathy\u2192diabetes) have 13.9%. Base\u2192complication predictions have 0% precision.",
+      "implication": "Filter base\u2192complication predictions; boost subtype-related predictions"
     }
   ],
   "collaborations": [
