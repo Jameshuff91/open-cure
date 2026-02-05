@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h163/h165 Drug Class + Calibration Analysis (2026-02-05)
+## Current Session: h163/h165/h167 Drug Class + Calibration + Production (2026-02-05)
 
 ### Session Summary
 
@@ -9,6 +9,7 @@
 **Hypotheses Tested:**
 - h163: Drug Class Precision Ranking - **VALIDATED** (no new classes found, confirms existing)
 - h165: Per-Disease-Category Precision Calibration - **VALIDATED** (massive miscalibration found)
+- h167: Add Category-Specific Precision to Production - **VALIDATED** (implemented in production_predictor.py)
 
 ### h163: Drug Class Precision Ranking - VALIDATED
 
@@ -57,16 +58,35 @@ Computed precision by (disease_category, confidence_tier) to identify calibratio
 - **h168**: Neurological Disease Performance Gap Analysis (priority 3, medium effort)
 - **h169**: Other Category Disease Re-Classification (priority 3, low effort)
 
+### h167: Add Category-Specific Precision to Production Output - VALIDATED
+
+Implemented category-specific precision in production predictor based on h165 findings.
+
+**Implementation:**
+1. Added `CATEGORY_PRECISION` lookup table with:
+   - MEDIUM/LOW/FILTER values from h165 (5-seed analysis)
+   - GOLDEN/HIGH values from h136/h144/h150/h154/h157 rescue validations
+2. Added `get_category_precision(category, tier)` function with fallback
+3. Updated `PredictionResult.summary()` to include `category_precision_by_tier`
+4. Updated CLI display to show category-adjusted precision
+
+**Key precision values now available:**
+- Autoimmune GOLDEN: 75.4% (vs generic 58%)
+- Psychiatric MEDIUM: 85.0% (vs generic 14%)
+- Neurological LOW: 15.0% (vs generic 6%)
+
+Users now see accurate precision expectations based on their disease category.
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 79 |
+| Validated | 80 |
 | Invalidated | 40 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 24 |
-| **Total Tested** | **127** |
+| Pending | 23 |
+| **Total Tested** | **128** |
 
 ---
 

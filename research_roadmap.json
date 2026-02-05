@@ -3345,14 +3345,18 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add category_precision field to PredictionResult in production_predictor.py",
         "Implement lookup table from h165 calibration data",
         "Update JSON output to include expected_precision_for_category",
         "Update CLI display to show category-adjusted precision"
       ],
-      "dependencies": ["h165"]
+      "dependencies": [
+        "h165"
+      ],
+      "findings": "h167 VALIDATED: Category-specific precision added to production output.\n\nImplementation:\n1. Added CATEGORY_PRECISION lookup table with validated values from h165 (MEDIUM/LOW/FILTER) \n   and h136/h144/h150/h154/h157 rescue criteria (GOLDEN/HIGH)\n2. Added get_category_precision() function with fallback to DEFAULT_TIER_PRECISION\n3. Updated PredictionResult.summary() to include category_precision_by_tier\n4. Updated CLI display to show category-adjusted precision instead of generic tier precision\n\nKey precision values now available per category:\n- Autoimmune GOLDEN: 75.4% (h157 DMARD rescue)\n- Infectious GOLDEN: 55.6% (h136 rescue)  \n- Metabolic GOLDEN: 60.0% (h144 statin rescue)\n- Ophthalmic GOLDEN: 62.5% (h150 antibiotic rescue)\n- Dermatological GOLDEN: 63.6% (h150 topical_steroid rescue)\n\nThis enables users to get accurate precision expectations based on their disease category\nrather than generic tier-only estimates (which are massively miscalibrated per h165).",
+      "result_metric": "Production predictor now shows category-specific precision"
     },
     {
       "id": "h168",
@@ -3362,7 +3366,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Extract neurological disease predictions and analyze hit patterns",
         "Compare kNN neighbor quality for neurological vs high-performing categories",
@@ -4031,6 +4035,12 @@
       "hypothesis_id": "h158",
       "learning": "Immunosuppressants (corticosteroids, antimetabolites) have ZERO mechanism support but HIGH precision. Drug-gene overlap is meaningless for drugs that work through systemic immunosuppression.",
       "implication": "For immunosuppressant classes, mechanism filter should be DISABLED. Add antimetabolite rescue criteria once n>=20."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h167",
+      "learning": "Category-specific precision must be exposed to users because tier-only precision is massively miscalibrated (psychiatric 85% vs other 17% in MEDIUM tier)",
+      "implication": "All future precision communication should be category-aware"
     }
   ],
   "collaborations": [

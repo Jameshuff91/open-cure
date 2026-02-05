@@ -54,6 +54,91 @@ class ConfidenceTier(Enum):
     FILTER = "FILTER"    # ~3.2% precision (excluded)
 
 
+# h165/h167: Category-specific precision calibration
+# Key finding: Overall tier precision is massively miscalibrated by category
+# Psychiatric MEDIUM = 85% vs Other MEDIUM = 17%
+CATEGORY_PRECISION = {
+    # Format: (category, tier) -> precision percentage
+    # From h165 analysis: 5 seeds, 101,939 predictions, 2,455 diseases
+    # GOLDEN/HIGH values from h136/h144/h150/h154/h157 rescue criteria validation
+    #
+    # GOLDEN tier values (from rescue criteria validation):
+    ("autoimmune", "GOLDEN"): 75.4,   # h157: DMARD + rank<=10
+    ("infectious", "GOLDEN"): 55.6,   # h136: rank<=10 + freq>=15 + mech
+    ("metabolic", "GOLDEN"): 60.0,    # h144: statin + rank<=10
+    ("ophthalmic", "GOLDEN"): 62.5,   # h150: antibiotic + rank<=15
+    ("dermatological", "GOLDEN"): 63.6,  # h150: topical_steroid + rank<=5
+    # HIGH tier values (from rescue criteria validation):
+    ("cardiovascular", "HIGH"): 38.2, # h136: rank<=5 + mech OR h154: beta_blocker + rank<=5 (33.3%)
+    ("respiratory", "HIGH"): 35.0,    # h136: rank<=10 + freq>=15 + mech
+    ("cancer", "HIGH"): 40.0,         # h150: taxane + rank<=5
+    ("ophthalmic", "HIGH"): 48.0,     # h150: steroid + rank<=15
+    ("hematological", "HIGH"): 48.6,  # h150: corticosteroid + rank<=10
+    #
+    # MEDIUM tier values (from h165):
+    ("psychiatric", "MEDIUM"): 85.0,
+    ("psychiatric", "LOW"): None,  # No data
+    ("psychiatric", "FILTER"): 90.0,  # Very high!
+    ("autoimmune", "MEDIUM"): 77.8,
+    ("autoimmune", "LOW"): 46.2,
+    ("autoimmune", "FILTER"): 45.9,
+    ("respiratory", "MEDIUM"): 54.2,
+    ("respiratory", "LOW"): 11.1,
+    ("respiratory", "FILTER"): 35.7,
+    ("dermatological", "MEDIUM"): 49.0,
+    ("dermatological", "LOW"): 28.6,
+    ("dermatological", "FILTER"): 17.5,
+    ("metabolic", "MEDIUM"): 47.6,
+    ("metabolic", "LOW"): 35.9,
+    ("metabolic", "FILTER"): 21.6,
+    ("cancer", "MEDIUM"): 45.7,
+    ("cancer", "LOW"): 12.3,
+    ("cancer", "FILTER"): 30.6,
+    ("gastrointestinal", "MEDIUM"): 41.3,
+    ("gastrointestinal", "LOW"): 22.2,
+    ("gastrointestinal", "FILTER"): 18.3,
+    ("hematological", "MEDIUM"): 37.5,
+    ("hematological", "LOW"): 0.0,
+    ("hematological", "FILTER"): 13.6,
+    ("infectious", "MEDIUM"): 38.4,
+    ("infectious", "LOW"): 6.2,
+    ("infectious", "FILTER"): 19.0,
+    ("ophthalmic", "MEDIUM"): 36.1,
+    ("ophthalmic", "LOW"): 67.9,  # Higher than MEDIUM!
+    ("ophthalmic", "FILTER"): 19.9,
+    ("cardiovascular", "MEDIUM"): 36.4,
+    ("cardiovascular", "LOW"): 17.6,
+    ("cardiovascular", "FILTER"): 26.4,
+    ("neurological", "MEDIUM"): 26.1,
+    ("neurological", "LOW"): 15.0,
+    ("neurological", "FILTER"): 12.5,
+    ("other", "MEDIUM"): 17.3,
+    ("other", "LOW"): 4.9,
+    ("other", "FILTER"): 6.2,
+}
+
+# Default tier-only precision (fallback)
+DEFAULT_TIER_PRECISION = {
+    "GOLDEN": 57.7,
+    "HIGH": 20.9,
+    "MEDIUM": 19.3,  # Overall average from h165
+    "LOW": 5.7,
+    "FILTER": 7.6,
+}
+
+
+def get_category_precision(category: str, tier: str) -> float:
+    """Get precision estimate for a (category, tier) pair.
+
+    Returns category-specific precision if available (h165),
+    otherwise falls back to default tier precision (h135).
+    """
+    key = (category.lower(), tier)
+    if key in CATEGORY_PRECISION and CATEGORY_PRECISION[key] is not None:
+        return CATEGORY_PRECISION[key]
+    return DEFAULT_TIER_PRECISION.get(tier, 10.0)
+
+
 @dataclass
 class DrugPrediction:
     """A single drug prediction with confidence metadata."""
@@ -109,12 +194,19 @@ class PredictionResult:
         tier_counts = defaultdict(int)
         for p in self.predictions:
             tier_counts[p.confidence_tier.value] += 1
+
+        # h167: Add category-specific precision estimates
+        precision_by_tier = {}
+        for tier_name in tier_counts.keys():
+            precision_by_tier[tier_name] = get_category_precision(self.category, tier_name)
+
         return {
             'disease': self.disease_name,
             'category': self.category,
             'tier': self.disease_tier,
             'total_predictions': len(self.predictions),
             'by_tier': dict(tier_counts),
+            'category_precision_by_tier': precision_by_tier,  # h167
             'coverage_warning': self.coverage_warning,
         }
 
@@ -621,32 +713,28 @@ def print_predictions(result: PredictionResult) -> None:
     print(f"Category: {result.category} (Tier {result.disease_tier})")
     print(f"Disease ID: {result.disease_id or 'Not found'}")
     if result.coverage_warning:
-        print(f"⚠️  Warning: {result.coverage_warning}")
+        print(f"Warning: {result.coverage_warning}")
     print()
 
     # Print by tier
     tier_order = [ConfidenceTier.GOLDEN, ConfidenceTier.HIGH, ConfidenceTier.MEDIUM, ConfidenceTier.LOW]
     tier_emoji = {
-        ConfidenceTier.GOLDEN: "🏆",
-        ConfidenceTier.HIGH: "✓",
-        ConfidenceTier.MEDIUM: "○",
-        ConfidenceTier.LOW: "·",
-    }
-    tier_precision = {
-        ConfidenceTier.GOLDEN: "~58%",
-        ConfidenceTier.HIGH: "~21%",
-        ConfidenceTier.MEDIUM: "~14%",
-        ConfidenceTier.LOW: "~6%",
+        ConfidenceTier.GOLDEN: "[GOLD]",
+        ConfidenceTier.HIGH: "[HIGH]",
+        ConfidenceTier.MEDIUM: "[MED] ",
+        ConfidenceTier.LOW: "[LOW] ",
     }
 
     for tier in tier_order:
         preds = result.get_by_tier(tier)
         if preds:
-            print(f"\n{tier_emoji[tier]} {tier.value} CONFIDENCE (expected precision: {tier_precision[tier]})")
+            # h167: Show category-specific precision instead of generic tier precision
+            cat_precision = get_category_precision(result.category, tier.value)
+            print(f"\n{tier_emoji[tier]} {tier.value} CONFIDENCE (precision for {result.category}: ~{cat_precision:.0f}%)")
             print("-" * 70)
             print(f"{'Rank':<6} {'Drug':<35} {'Score':<8} {'Freq':<6} {'Mech':<6}")
             for p in preds[:10]:  # Show top 10 per tier
-                mech = "✓" if p.mechanism_support else "-"
+                mech = "Y" if p.mechanism_support else "-"
                 rescue = " [rescued]" if p.category_rescue_applied else ""
                 print(f"{p.rank:<6} {p.drug_name[:33]:<35} {p.norm_score:<8.3f} {p.train_frequency:<6} {mech:<6}{rescue}")
 
@@ -655,6 +743,8 @@ def print_predictions(result: PredictionResult) -> None:
     summary = result.summary()
     print(f"Total predictions: {summary['total_predictions']}")
     print(f"By tier: {summary['by_tier']}")
+    # h167: Show category-specific precision summary
+    print(f"Category precision (for {result.category}): {summary['category_precision_by_tier']}")
 
 
 def main():
