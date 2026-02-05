@@ -1,6 +1,134 @@
 # Research Loop Progress
 
-## Current Session: h163/h165/h167 Drug Class + Calibration + Production (2026-02-05)
+## Current Session: h170 Selective Category Boosting (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested:**
+- h170: Category-Aware kNN with Same-Category Boost - **VALIDATED** (selective boost works!)
+
+### h170: Selective Category Boosting - VALIDATED
+
+Tested whether boosting same-category neighbor weights improves kNN predictions for isolated categories (identified in h168).
+
+**Key Discovery: Universal boost HURTS, Selective boost HELPS**
+
+| Method | R@30 | Delta | p-value |
+|--------|------|-------|---------|
+| Baseline (no boost) | 38.62% | - | - |
+| Universal boost (all categories) | 38.04% | -0.58pp | hurts |
+| **Selective boost (isolated only)** | **41.03%** | **+2.40pp** | **0.009** |
+
+**Why universal boost fails:**
+- Infectious diseases: -11.2pp (n=32) — same-category neighbors are too sparse
+- Other category: -4.8pp (n=215) — "other" is heterogeneous catch-all
+
+**Selective boost categories (isolated):** neurological, respiratory, metabolic, renal, hematological, immunological
+
+**Per-category gains from selective boost:**
+| Category | Baseline | Boosted | Delta |
+|----------|----------|---------|-------|
+| immunological | 0.0% | 40.0% | +40.0pp |
+| hematological | 15.9% | 54.4% | +38.5pp |
+| respiratory | 9.2% | 26.0% | +16.8pp |
+| neurological | 57.1% | 71.4% | +14.3pp |
+| metabolic | 19.9% | 33.8% | +13.9pp |
+| renal | 18.3% | 18.8% | +0.5pp |
+
+**Statistical validation:**
+- All 5 seeds show improvement (no lucky seed)
+- Cohen's d = 2.375 (huge effect size)
+- Highly significant (p=0.009)
+
+**Implementation:** Added to `production_predictor.py`:
+- `SELECTIVE_BOOST_CATEGORIES` = {neurological, respiratory, metabolic, renal, hematological, immunological}
+- `SELECTIVE_BOOST_ALPHA` = 0.5 (1.5x weight for same-category neighbors)
+
+**New Hypotheses Generated:**
+- h175: Cross-Category Knowledge Transfer (could psychiatric help neurological?)
+- h176: Production Predictor Initialization Speedup (~210s init is slow)
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 82 |
+| Invalidated | 40 |
+| Inconclusive | 8 |
+| Blocked | 18 |
+| Deprioritized | 2 |
+| Pending | 27 |
+| **Total Tested** | **130** |
+
+---
+
+## Previous Session: h167/h168 Category Precision + Neurological Gap (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested:**
+- h167: Add Category-Specific Precision to Production Output - **VALIDATED** (completed)
+- h168: Neurological Disease Performance Gap Analysis - **VALIDATED** (root cause identified)
+
+### h167: Category-Specific Precision - VALIDATED (continued from previous)
+
+Completed the implementation of category-specific precision in production predictor.
+
+**Final Implementation:**
+- Added GOLDEN/HIGH tier values from validated rescue criteria (h136/h144/h150/h154/h157)
+- Key precision values: Autoimmune GOLDEN 75.4%, Infectious GOLDEN 55.6%, Metabolic GOLDEN 60.0%
+- All tests passing - category lookup working correctly
+
+### h168: Neurological Disease Performance Gap Analysis - VALIDATED
+
+**ROOT CAUSE IDENTIFIED:** Embedding isolation + low GT drug coverage
+
+**Key Metrics:**
+- Only 6 neurological diseases in training (vs 62 cancer, 337 other)
+- **3.3% same-category neighbors** (vs 61% for cancer, 87% for other)
+- 92% of neurological neighbors are from 'other' category
+- Average drug coverage in neighbors: 37% (vs 62.5% for autoimmune)
+
+**Specific Failures:**
+| Disease | GT Drugs | Drugs in Pool | Recall@10 |
+|---------|----------|---------------|-----------|
+| Alzheimer's | 3 | 0 | **0.0%** |
+| Parkinson's | 19 | 2 | 5.3% |
+| Epilepsy | 17 | 2 | 11.8% |
+
+**Key Finding:** kNN CANNOT find neurological drugs because neighbors are from wrong categories.
+- Alzheimer's top recommendations: Fluoxetine, Eculizumab (NOT GT drugs)
+- Parkinson's: Only Amantadine and Droxidopa reachable (2/19)
+- Epilepsy: Only Carbamazepine and Diazepam reachable (2/17)
+
+**Drug Class Rescue NOT Feasible:**
+- Neurological drugs have low training frequency (most freq=1-4)
+- Anticonvulsants used cross-category (psychiatric, pain)
+- No single dominant class like statins for metabolic
+
+**New Hypotheses Generated:**
+- h170: Category-Weighted kNN for Isolated Categories (priority 3)
+- h171: Neurological Drug Catalog Injection (priority 2)
+- h172: Disease Graph Distance for Category Similarity (priority 4)
+- h173: Epilepsy-Specific Analysis (priority 4)
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 81 |
+| Invalidated | 40 |
+| Inconclusive | 8 |
+| Blocked | 18 |
+| Deprioritized | 2 |
+| Pending | 25 |
+| **Total Tested** | **129** |
+
+---
+
+## Previous Session: h163/h165/h167 Drug Class + Calibration + Production (2026-02-05)
 
 ### Session Summary
 

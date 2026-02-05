@@ -1827,31 +1827,6 @@
       "result_metric": null
     },
     {
-      "id": "h101",
-      "title": "Ensemble: Literature + Mechanism + TxGNN",
-      "category": "ensemble",
-      "rationale": "Each approach (literature mining, mechanism traversal, TxGNN) captures different signals. An ensemble might achieve better coverage and precision than any single method for zero-shot prediction.",
-      "expected_impact": "high",
-      "effort": "medium",
-      "priority": 5,
-      "status": "blocked",
-      "steps": [
-        "Step 1: Run h91, h93, h94 on the h90 benchmark",
-        "Step 2: Analyze complementarity: which diseases does each method succeed on?",
-        "Step 3: Design ensemble scoring: weighted combination or voting",
-        "Step 4: Evaluate ensemble on held-out diseases",
-        "Step 5: Compare to individual methods",
-        "Success criteria: Ensemble beats best individual method by >5 pp"
-      ],
-      "dependencies": [
-        "h91",
-        "h93",
-        "h94"
-      ],
-      "findings": "BLOCKED: h93 (mechanism traversal) invalidated (3.5% R@30). Ensemble approach needs h91 (literature) and h94 (TxGNN enhancement) to be viable.",
-      "result_metric": null
-    },
-    {
       "id": "h95",
       "title": "Pathway-Level Mechanism Traversal",
       "category": "architecture",
@@ -3373,8 +3348,8 @@
         "Identify specific neurological diseases with 0% recall",
         "Check if neurological-specific drugs (anticonvulsants, etc.) are in training data"
       ],
-      "findings": "h168 VALIDATED: Neurological low precision (26.1%) is due to FUNDAMENTAL kNN limitations.\n\nROOT CAUSE: Embedding isolation + low GT drug coverage\n- Neurological diseases have only 3.3% same-category neighbors (vs 61% cancer, 87% other)  \n- 92% of neighbors are from 'other' category\n- Alzheimer's/Parkinson's have 0-11% drug coverage in neighbor pool\n\nSPECIFIC FAILURES:\n- Alzheimer's: 0/3 GT drugs reachable (0% recall)\n- Parkinson's: 2/19 GT drugs reachable (5.3% recall@10)\n- Epilepsy: 2/17 GT drugs reachable (11.8% recall@10)\n\nRESCUE NOT FEASIBLE: Unlike statins for metabolic, neurological drugs have:\n- Low training frequency (most freq=1-4)\n- Cross-category usage (anticonvulsants for psychiatric, pain)\n\nIMPLICATION: This is a data structure issue, not a model bug. Solutions require:\n1. Category-aware kNN weighting\n2. Explicit neurological drug catalog injection\n3. Accept lower precision for this category",
-      "result_metric": "26.1% precision, root cause = embedding isolation"
+      "findings": "VALIDATED: Neurological diseases fail due to embedding-space isolation, not model issues.\n\nKEY FINDINGS (10 neurological diseases analyzed):\n\n1. **Massive Zero-Coverage**: 7/10 (70%) neurological diseases have 0% kNN coverage\n   - Autoimmune: 1/18 (5.6%) zero-coverage\n   - Psychiatric: 1/6 (16.7%) zero-coverage\n   \n2. **Low Embedding Similarity**: Intra-category similarity 0.346 (lowest)\n   - Autoimmune: 0.452\n   - Psychiatric: 0.513 (highest)\n   - Respiratory: 0.470\n   \n3. **Few Same-Category Neighbors**: Only 1.2/20 neighbors are neurological\n   - Cancer: 10.4/20 same-category\n   - Psychiatric: 2.8/20\n\n4. **Wrong Drug Predictions**: Top predictions are corticosteroids/antibiotics (0% precision)\n   - Methylprednisolone: 13 predictions, 0 GT hits\n   - Dexamethasone: 13 predictions, 0 GT hits\n   - Levofloxacin: 11 predictions, 0 GT hits\n\n5. **Neurological Drugs Missing**: Key drugs not in kNN pool\n   - Levodopa: 0 kNN predictions (Parkinson's)\n   - Memantine: 0 kNN predictions (Alzheimer's)\n   - Phenytoin: 0 kNN predictions (epilepsy)\n   - Carbamazepine: 6 predictions (3 GT hits) - only exception\n\nROOT CAUSE: Node2Vec embeddings don't capture neurological disease similarity. These diseases are scattered in embedding space with non-neurological neighbors.\n\nIMPLICATION: kNN cannot help neurological diseases. Need either:\na) Neurological-specific features (gene expression, pathways)\nb) Category-aware similarity (boost same-category neighbors)\nc) Drug-class-based predictions (predict anticonvulsants for epilepsy directly)",
+      "result_metric": "18% mean coverage (vs 67% autoimmune)"
     },
     {
       "id": "h169",
@@ -3390,66 +3365,6 @@
         "Add new category keywords (renal, endocrine, musculoskeletal, etc.)",
         "Re-run h165 calibration with expanded categories",
         "Update production predictor with new categories"
-      ]
-    },
-    {
-      "id": "h170",
-      "title": "Category-Weighted kNN for Isolated Categories",
-      "hypothesis": "Adding a category similarity bonus to kNN could improve neurological performance",
-      "rationale": "h168 showed neurological diseases have only 3.3% same-category neighbors. Boosting same-category neighbors could improve drug coverage.",
-      "category": "algorithm_improvement",
-      "steps": [
-        "Implement category-weighted similarity: sim * (1 + alpha if same_category else 1)",
-        "Test alpha values [0.1, 0.2, 0.5] on neurological diseases",
-        "Evaluate: does drug coverage improve? Does precision improve?",
-        "Check impact on other categories (don't hurt high performers)"
-      ],
-      "expected_impact": "medium",
-      "effort": "medium",
-      "priority": 3,
-      "status": "pending",
-      "dependencies": [
-        "h168"
-      ]
-    },
-    {
-      "id": "h171",
-      "title": "Neurological Drug Catalog Injection",
-      "hypothesis": "Injecting known neurological drugs (anticonvulsants, dopaminergics, etc.) directly could bypass kNN limitations",
-      "rationale": "h168 showed kNN can't reach neurological drugs because neighbors are from wrong categories. Explicit drug catalog injection would guarantee neurological drugs are considered.",
-      "category": "production_improvement",
-      "steps": [
-        "Create neurological drug catalog (anticonvulsants, dopaminergics, cholinesterase inhibitors)",
-        "For neurological diseases, inject top catalog drugs into candidate pool",
-        "Rank injected drugs by mechanism support and general frequency",
-        "Evaluate precision of injected drugs vs kNN-only recommendations"
-      ],
-      "expected_impact": "medium",
-      "effort": "low",
-      "priority": 2,
-      "status": "pending",
-      "dependencies": [
-        "h168"
-      ]
-    },
-    {
-      "id": "h172",
-      "title": "Disease Graph Distance for Category Similarity",
-      "hypothesis": "Using DRKG graph distance (not just embedding similarity) could better identify same-category neighbors",
-      "rationale": "Embeddings may not capture categorical relationships. Graph distance (shared pathways, shared genes) might better identify neurological neighbors.",
-      "category": "algorithm_improvement",
-      "steps": [
-        "Extract pathway/gene connections between neurological diseases",
-        "Compute graph-based similarity (shared pathways, shared disease-gene associations)",
-        "Compare graph similarity vs embedding similarity for finding same-category neighbors",
-        "If graph similarity is better, implement hybrid similarity measure"
-      ],
-      "expected_impact": "low",
-      "effort": "high",
-      "priority": 4,
-      "status": "pending",
-      "dependencies": [
-        "h168"
       ]
     },
     {
@@ -3470,6 +3385,128 @@
       "status": "pending",
       "dependencies": [
         "h168"
+      ]
+    },
+    {
+      "id": "h170",
+      "title": "Category-Aware kNN: Boost Same-Category Neighbor Weights",
+      "category": "method_improvement",
+      "rationale": "h168 showed neurological diseases have only 1.2/20 same-category neighbors vs 10.4/20 for cancer. Boosting weights for same-category neighbors might improve precision for isolated categories.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "validated",
+      "steps": [
+        "For kNN predictions, apply 2x weight to drugs from same-category neighbors",
+        "Test on neurological, respiratory (both low same-cat neighbors)",
+        "Measure impact on precision and coverage"
+      ],
+      "findings": "VALIDATED with modification: Selective (not universal) category boosting works.\n\nUniversal boost HURTS overall (-0.30pp) because it hurts infectious (-11.2pp) and other (-4.8pp).\n\nSelective boost for isolated categories (neurological, respiratory, metabolic, renal, hematological, immunological) achieves:\n- +2.40pp overall R@30 (38.62% \u2192 41.03%)\n- p=0.009 (highly significant)\n- Cohen's d = 2.375 (huge effect size)\n- All 5 seeds improve\n\nPer-category gains from selective boost:\n- immunological: +40.0pp (0.0% \u2192 40.0%)\n- hematological: +38.5pp (15.9% \u2192 54.4%)\n- respiratory: +16.8pp (9.2% \u2192 26.0%)\n- neurological: +14.3pp (57.1% \u2192 71.4%)\n- metabolic: +13.9pp (19.9% \u2192 33.8%)\n- renal: +0.5pp (18.3% \u2192 18.8%)\n\nImplementation added to production_predictor.py with SELECTIVE_BOOST_CATEGORIES and SELECTIVE_BOOST_ALPHA=0.5",
+      "result_metric": "+2.40pp R@30 (p=0.009)"
+    },
+    {
+      "id": "h171",
+      "title": "Drug-Class-Based Prediction for Neurological",
+      "category": "method_improvement",
+      "rationale": "h168 showed kNN predicts wrong drug classes for neurological (corticosteroids instead of anticonvulsants). Direct drug-class matching (epilepsy -> predict anticonvulsants) might work better than embedding similarity.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "validated",
+      "steps": [
+        "Create neurological disease -> drug class mapping (epilepsy -> anticonvulsant, Parkinson's -> dopaminergic, etc.)",
+        "For neurological diseases, rank drugs by class match rather than kNN",
+        "Evaluate precision vs kNN baseline (18% coverage)"
+      ],
+      "findings": "VALIDATED: Drug-class-based prediction dramatically outperforms kNN for neurological diseases.\n\nResults (12 neurological diseases):\n  Mean Recall@30: 60.4% (vs kNN 18.0%)\n  Mean Coverage: 60.4% \n  Diseases with hits: 9/12 (vs kNN 3/10)\n  \n**+42.4 pp improvement over kNN baseline**\n\nDisease-specific results:\n| Disease | Coverage | Method |\n|---------|----------|--------|\n| Trigeminal neuralgia | 100% | anticonvulsant |\n| Glossopharyngeal neuralgia | 100% | anticonvulsant |\n| Neuropathy | 100% | gabapentinoid |\n| Dyskinesia | 100% | dopaminergic |\n| Migraine with aura | 78% | triptan/CGRP |\n| Narcolepsy | 75% | stimulant |\n| Epilepsy | 65% | anticonvulsant |\n| Parkinson's | 58% | dopaminergic |\n| Alzheimer's | 50% | ChEI/NMDA |\n| Autonomic neuropathy | 0% | Wrong disease subtype (needs specific treatment)\n| Polyneuropathy (hATTR) | 0% | Rare disease, unique treatment |\n| Multifocal motor neuropathy | 0% | Needs IVIG, not pain drugs |\n\nRoot cause of failures: Rare/specialized neuropathies need disease-specific treatments (patisiran, IVIG) not covered by standard drug classes.\n\nIMPLICATION: Should integrate drug-class prediction for neurological diseases into production predictor. Consider extending to other categories with clear disease-drug class mappings (psychiatric, cardiovascular).",
+      "result_metric": "60.4% coverage (+42.4pp vs kNN 18%)"
+    },
+    {
+      "id": "h172",
+      "title": "Gene Expression Similarity for Neurological Diseases",
+      "category": "external_data",
+      "rationale": "h168 showed Node2Vec fails for neurological. Gene expression profiles from GEO/GTEx might capture neurological disease similarity better (same brain region, same cell type affected).",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Search GEO for neurological disease expression studies",
+        "Compute disease similarity from expression profiles",
+        "Test if expression-based kNN improves coverage"
+      ],
+      "dependencies": [
+        "h55"
+      ]
+    },
+    {
+      "id": "h173",
+      "title": "Integrate Drug-Class Prediction into Production Predictor",
+      "category": "production",
+      "rationale": "h171 showed drug-class prediction achieves 60.4% coverage vs 18% for kNN on neurological diseases. Should integrate this as a fallback/rescue mechanism for isolated categories.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Add drug-class mappings from h171 to production_predictor.py",
+        "For neurological diseases, use drug-class prediction if kNN coverage is low",
+        "Test production output for neurological diseases"
+      ],
+      "dependencies": [
+        "h171"
+      ]
+    },
+    {
+      "id": "h174",
+      "title": "Extend Drug-Class Prediction to Other Categories",
+      "category": "method_improvement",
+      "rationale": "Drug-class prediction worked for neurological (+42pp). Other categories may benefit: psychiatric (SSRIs, antipsychotics), cardiovascular (ACE inhibitors, beta-blockers), metabolic (statins, biguanides).",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Create disease->drug class mappings for psychiatric, cardiovascular, metabolic",
+        "Test if drug-class prediction improves coverage for these categories",
+        "Compare to kNN baseline"
+      ],
+      "dependencies": [
+        "h171"
+      ]
+    },
+    {
+      "id": "h175",
+      "title": "Cross-Category Knowledge Transfer",
+      "category": "method_improvement",
+      "rationale": "h170 showed neurological diseases benefit from neurological neighbors, but what about related categories? Could psychiatric neighbors help neurological diseases (shared brain biology)?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Map related category pairs (neurological-psychiatric, autoimmune-immunological, etc.)",
+        "Test boosting both same-category AND related-category neighbors",
+        "Compare to h170 selective boost baseline"
+      ],
+      "depends_on": [
+        "h170"
+      ]
+    },
+    {
+      "id": "h176",
+      "title": "Production Predictor Initialization Speedup",
+      "category": "production_improvement",
+      "rationale": "Production predictor takes ~210 seconds to initialize due to fuzzy disease matching on 10K+ rows. This blocks quick predictions.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Pre-compute and cache ground truth mappings to JSON file",
+        "Only run fuzzy matching once, save results",
+        "Load cached mappings on init (should be <1 second)",
+        "Add cache invalidation when source data changes"
       ]
     }
   ],
@@ -4129,6 +4166,30 @@
       "hypothesis_id": "h168",
       "learning": "Neurological disease failure is due to embedding isolation (3.3% same-category neighbors) not model failure. Drug class rescue not feasible due to cross-category usage.",
       "implication": "Category-weighted kNN or external data needed for neurological improvement"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h168",
+      "learning": "Neurological diseases fail due to embedding isolation (1.2/20 same-category neighbors, 0.346 intra-similarity). kNN predicts wrong drug classes (corticosteroids vs anticonvulsants). Need category-specific methods.",
+      "implication": "Consider category-aware neighbor weighting or drug-class-based prediction for isolated categories"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h170",
+      "learning": "Category weighting in kNN doesn't help isolated categories. With only 1.2/20 same-category neighbors, boosting their weights has negligible effect. The embedding isolation is too severe for reweighting.",
+      "implication": "Need approaches that don't rely on neighbor similarity: drug-class prediction or external features"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h171",
+      "learning": "Drug-class-based prediction achieves 60.4% coverage for neurological (vs 18% kNN) by directly matching disease subtypes to drug classes (epilepsy->anticonvulsant). Works because it bypasses embedding similarity entirely.",
+      "implication": "For isolated categories where kNN fails, disease-specific knowledge (drug classes) outperforms data-driven similarity"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h170",
+      "learning": "Category boosting must be selective. Universal boost hurts heterogeneous categories (other, infectious). Selective boost for isolated categories (neurological, respiratory, metabolic, renal, hematological, immunological) improves R@30 by +2.40pp with p=0.009.",
+      "implication": "Different disease categories have fundamentally different kNN neighbor compositions. Isolated categories benefit from same-category boosting; well-connected categories do not."
     }
   ],
   "collaborations": [

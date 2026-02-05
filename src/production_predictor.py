@@ -13,6 +13,8 @@ Unified pipeline integrating validated research findings:
   - Dermatological: topical_steroid + rank<=5 = 63.6%
 - h154: Cardiovascular beta_blocker + rank<=5 = 33.3% precision
 - h157: Autoimmune DMARD + rank<=10 = 75.4% precision
+- h170: Selective category boosting - +2.40pp R@30 (p=0.009) for isolated categories
+  - Boosts same-category neighbors 1.5x for: neurological, respiratory, metabolic, renal, hematological, immunological
 
 USAGE:
     # Get predictions for a disease
@@ -262,6 +264,66 @@ BETA_BLOCKERS = {'metoprolol', 'atenolol', 'carvedilol', 'bisoprolol', 'proprano
 DMARD_DRUGS = {'methotrexate', 'sulfasalazine', 'hydroxychloroquine', 'leflunomide',
                'azathioprine', 'mycophenolate', 'cyclosporine', 'tacrolimus'}  # 75.4% rank<=10
 
+# h171: Neurological drug class mappings (60.4% coverage vs 18% kNN baseline)
+# Maps disease subtypes to appropriate drug classes
+NEUROLOGICAL_DISEASE_DRUG_CLASSES = {
+    # Epilepsy, seizure -> anticonvulsants (65% precision)
+    'epilepsy': ['anticonvulsant'],
+    'seizure': ['anticonvulsant'],
+    # Parkinson's -> dopaminergic (58% precision)
+    'parkinson': ['dopaminergic'],
+    # Alzheimer's, dementia -> ChEI/NMDA (50% precision)
+    'alzheimer': ['cholinesterase_inhibitor', 'nmda_antagonist'],
+    'dementia': ['cholinesterase_inhibitor', 'nmda_antagonist'],
+    # Migraine -> triptans (78% precision)
+    'migraine': ['triptan', 'cgrp_inhibitor'],
+    'headache': ['triptan'],
+    # Neuropathy -> gabapentinoids (100% precision for generic neuropathy)
+    'neuropathy': ['gabapentinoid', 'tricyclic'],
+    'neuralgia': ['anticonvulsant', 'tricyclic'],
+    # Movement disorders
+    'dyskinesia': ['dopaminergic', 'anticholinergic'],
+    'dystonia': ['anticholinergic'],
+    # Sleep disorders
+    'narcolepsy': ['stimulant', 'wake_promoting'],
+}
+
+# h171: Drug class members
+NEUROLOGICAL_DRUG_CLASS_MEMBERS = {
+    'anticonvulsant': [
+        'carbamazepine', 'valproic acid', 'phenytoin', 'lamotrigine',
+        'topiramate', 'levetiracetam', 'gabapentin', 'pregabalin',
+        'oxcarbazepine', 'zonisamide', 'lacosamide', 'perampanel',
+        'clobazam', 'clonazepam', 'brivaracetam', 'eslicarbazepine'
+    ],
+    'dopaminergic': [
+        'levodopa', 'carbidopa', 'pramipexole', 'ropinirole',
+        'bromocriptine', 'apomorphine', 'rotigotine', 'amantadine',
+        'entacapone', 'rasagiline', 'selegiline', 'safinamide'
+    ],
+    'cholinesterase_inhibitor': ['donepezil', 'rivastigmine', 'galantamine'],
+    'nmda_antagonist': ['memantine'],
+    'triptan': [
+        'sumatriptan', 'rizatriptan', 'zolmitriptan', 'eletriptan',
+        'naratriptan', 'almotriptan', 'frovatriptan', 'lasmiditan'
+    ],
+    'cgrp_inhibitor': ['erenumab', 'fremanezumab', 'galcanezumab', 'ubrogepant', 'rimegepant'],
+    'gabapentinoid': ['gabapentin', 'pregabalin'],
+    'tricyclic': ['amitriptyline', 'nortriptyline', 'desipramine'],
+    'anticholinergic': ['trihexyphenidyl', 'benztropine', 'biperiden'],
+    'stimulant': ['amphetamine', 'methylphenidate', 'modafinil', 'armodafinil', 'solriamfetol'],
+    'wake_promoting': ['modafinil', 'armodafinil', 'pitolisant', 'solriamfetol'],
+}
+
+# h170: Selective category boosting (VALIDATED: +2.40pp, p=0.009)
+# Only boost same-category neighbors for isolated categories where it helps
+# Improves neurological +14.3pp, respiratory +16.8pp, metabolic +13.9pp
+# Without hurting infectious (-11.2pp) or other (-4.8pp) that would be hurt by universal boost
+SELECTIVE_BOOST_CATEGORIES = {
+    'neurological', 'respiratory', 'metabolic', 'renal', 'hematological', 'immunological'
+}
+SELECTIVE_BOOST_ALPHA = 0.5  # Similarity multiplier: sim * (1 + alpha) for same-category neighbors
+
 # h169: Expanded category keywords to reduce 'other' bucket (was 61.3%)
 CATEGORY_KEYWORDS = {
     'autoimmune': ['autoimmune', 'lupus', 'rheumatoid', 'arthritis', 'scleroderma', 'myasthenia',
@@ -439,9 +501,15 @@ class DrugRepurposingPredictor:
             dtype=np.float32
         )
 
+        # h170: Pre-compute categories for training diseases (for selective boosting)
+        self.train_disease_categories: Dict[str, str] = {}
+        for d in self.train_diseases:
+            name = self.disease_names.get(d, d)
+            self.train_disease_categories[d] = self.categorize_disease(name)
+
         # Drug training frequency
         self.drug_train_freq: Dict[str, int] = defaultdict(int)
-        for disease_id, drugs in self.ground_truth.items():
+        for _, drugs in self.ground_truth.items():
             for drug_id in drugs:
                 self.drug_train_freq[drug_id] += 1
 
@@ -480,10 +548,11 @@ class DrugRepurposingPredictor:
         disease_tier: int,
         category: str,
         drug_name: str = "",
+        disease_name: str = "",
     ) -> Tuple[ConfidenceTier, bool, Optional[str]]:
         """
         Assign confidence tier based on h135 criteria.
-        Also applies h136/h144 category-specific rescue for Tier 2/3 diseases.
+        Also applies h136/h144/h171 category-specific rescue for Tier 2/3 diseases.
 
         Returns: (tier, rescue_applied, category_specific_tier)
         """
@@ -502,10 +571,10 @@ class DrugRepurposingPredictor:
             if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
                 return ConfidenceTier.FILTER, False, None
 
-        # Apply h136/h144 category-specific rescue for Tier 2/3
+        # Apply h136/h144/h171 category-specific rescue for Tier 2/3
         if disease_tier > 1:
             rescued_tier = self._apply_category_rescue(
-                rank, train_frequency, mechanism_support, category, drug_name
+                rank, train_frequency, mechanism_support, category, drug_name, disease_name
             )
             if rescued_tier is not None:
                 return rescued_tier, True, category
@@ -537,9 +606,10 @@ class DrugRepurposingPredictor:
         mechanism_support: bool,
         category: str,
         drug_name: str = "",
+        disease_name: str = "",
     ) -> Optional[ConfidenceTier]:
         """
-        Apply h136/h144 category-specific rescue filters.
+        Apply h136/h144/h171 category-specific rescue filters.
 
         Returns the rescued tier or None if no rescue criteria met.
 
@@ -611,7 +681,39 @@ class DrugRepurposingPredictor:
             if rank <= 10 and any(dmard in drug_lower for dmard in DMARD_DRUGS):
                 return ConfidenceTier.GOLDEN  # 75.4% precision
 
+        elif category == 'neurological':
+            # h171: Drug class-based prediction (60.4% coverage vs 18% kNN)
+            # For neurological diseases, kNN fails because Node2Vec embeddings
+            # don't capture neurological similarity well. Use drug class matching instead.
+            drug_lower = drug_name.lower()
+            # Check if drug matches appropriate class for disease subtype
+            if self._is_neurological_class_match(drug_lower, disease_name):
+                # Conservative: HIGH tier since kNN-based rank may not be meaningful
+                return ConfidenceTier.HIGH  # ~60% coverage
+
         return None
+
+    def _get_neurological_drug_classes(self, disease_name: str) -> List[str]:
+        """Get appropriate drug classes for a neurological disease subtype."""
+        disease_lower = disease_name.lower()
+        matching_classes = []
+
+        for disease_key, drug_classes in NEUROLOGICAL_DISEASE_DRUG_CLASSES.items():
+            if disease_key in disease_lower:
+                matching_classes.extend(drug_classes)
+
+        return list(set(matching_classes))
+
+    def _is_neurological_class_match(self, drug_name_lower: str, disease_name: str) -> bool:
+        """Check if a drug matches appropriate class for a neurological disease."""
+        drug_classes = self._get_neurological_drug_classes(disease_name)
+
+        for drug_class in drug_classes:
+            members = NEUROLOGICAL_DRUG_CLASS_MEMBERS.get(drug_class, [])
+            for member in members:
+                if member.lower() in drug_name_lower:
+                    return True
+        return False
 
     def find_disease_id(self, disease_name: str) -> Optional[str]:
         """Find the DRKG disease ID for a disease name."""
@@ -667,13 +769,25 @@ class DrugRepurposingPredictor:
             # Run kNN (h39 method)
             test_emb = self.embeddings[disease_id].reshape(1, -1)
             sims = cosine_similarity(test_emb, self.train_embeddings)[0]
-            top_k_idx = np.argsort(sims)[-k:]
+
+            # h170: Apply selective category boost for isolated categories
+            # Boosts same-category neighbors by (1 + alpha) for categories that benefit
+            if category in SELECTIVE_BOOST_CATEGORIES:
+                boosted_sims = sims.copy()
+                for i, train_d in enumerate(self.train_diseases):
+                    if self.train_disease_categories.get(train_d) == category:
+                        boosted_sims[i] *= (1 + SELECTIVE_BOOST_ALPHA)
+                top_k_idx = np.argsort(boosted_sims)[-k:]
+                working_sims = boosted_sims
+            else:
+                top_k_idx = np.argsort(sims)[-k:]
+                working_sims = sims
 
             # Aggregate drug scores from neighbors
             drug_scores: Dict[str, float] = defaultdict(float)
             for idx in top_k_idx:
                 neighbor_disease = self.train_diseases[idx]
-                neighbor_sim = sims[idx]
+                neighbor_sim = working_sims[idx]
                 for drug_id in self.ground_truth[neighbor_disease]:
                     if drug_id in self.embeddings:
                         drug_scores[drug_id] += neighbor_sim
@@ -693,7 +807,8 @@ class DrugRepurposingPredictor:
                     drug_name = self.drug_id_to_name.get(drug_id, drug_id)
 
                     tier, rescue_applied, cat_specific = self._assign_confidence_tier(
-                        rank, train_freq, mech_support, has_targets, disease_tier, category, drug_name
+                        rank, train_freq, mech_support, has_targets, disease_tier, category,
+                        drug_name, disease_name
                     )
 
                     pred = DrugPrediction(

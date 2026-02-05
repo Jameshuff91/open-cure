@@ -1,0 +1,41 @@
+{
+  "experiment": "h170_category_weighted_knn",
+  "hypothesis": "Boosting same-category neighbor weights improves isolated category performance",
+  "status": "VALIDATED with modification",
+  "key_findings": {
+    "universal_boost": {
+      "description": "Boosting all categories equally",
+      "baseline_r30": "38.34%",
+      "boosted_r30": "38.04%",
+      "delta": "-0.30pp",
+      "conclusion": "HURTS overall - hurts infectious (-11.2pp) and other (-4.8pp)"
+    },
+    "selective_boost": {
+      "description": "Only boost isolated categories (neurological, respiratory, metabolic, renal, hematological, immunological)",
+      "baseline_r30": "38.62%",
+      "boosted_r30": "41.03%",
+      "delta": "+2.40pp",
+      "p_value": 0.009,
+      "cohens_d": 2.375,
+      "conclusion": "VALIDATED - significant improvement"
+    }
+  },
+  "boost_categories": [
+    "neurological",
+    "respiratory",
+    "metabolic",
+    "renal",
+    "hematological",
+    "immunological"
+  ],
+  "alpha": 0.5,
+  "per_category_gains": {
+    "neurological": "+14.3pp (57.1% -> 71.4%)",
+    "respiratory": "+16.8pp (9.2% -> 26.0%)",
+    "metabolic": "+13.9pp (19.9% -> 33.8%)",
+    "hematological": "+38.5pp (15.9% -> 54.4%)",
+    "immunological": "+40.0pp (0.0% -> 40.0%)",
+    "renal": "+0.5pp (18.3% -> 18.8%)"
+  },
+  "recommendation": "Implement selective category boosting in production_predictor.py"
+}

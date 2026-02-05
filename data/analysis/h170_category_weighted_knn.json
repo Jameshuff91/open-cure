@@ -1,0 +1,511 @@
+{
+  "experiment": "h170_category_weighted_knn",
+  "method": "Boost same-category neighbor weights by (1+alpha)",
+  "k": 20,
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    1011
+  ],
+  "alphas_tested": [
+    0.0,
+    0.5,
+    1.0,
+    2.0,
+    3.0
+  ],
+  "results": {
+    "alpha_0.0": {
+      "other": {
+        "mean_recall30": 0.4174183955579305,
+        "std_recall30": 0.43346541596302185,
+        "mean_coverage": 0.48413745169559125,
+        "n_samples": 215
+      },
+      "hematological": {
+        "mean_recall30": 0.15873015873015872,
+        "std_recall30": 0.22615566426626996,
+        "mean_coverage": 0.17460317460317462,
+        "n_samples": 6
+      },
+      "cancer": {
+        "mean_recall30": 0.31604874837848257,
+        "std_recall30": 0.31746390905283994,
+        "mean_coverage": 0.4292190544474598,
+        "n_samples": 66
+      },
+      "dermatological": {
+        "mean_recall30": 0.6970008827151686,
+        "std_recall30": 0.31941425068877116,
+        "mean_coverage": 0.7669177383463097,
+        "n_samples": 14
+      },
+      "neurological": {
+        "mean_recall30": 0.5714285714285714,
+        "std_recall30": 0.4948716593053935,
+        "mean_coverage": 0.8571428571428571,
+        "n_samples": 7
+      },
+      "musculoskeletal": {
+        "mean_recall30": 0.038461538461538464,
+        "std_recall30": 0.08600261451922268,
+        "mean_coverage": 0.05128205128205129,
+        "n_samples": 6
+      },
+      "infectious": {
+        "mean_recall30": 0.40730757203243617,
+        "std_recall30": 0.39955675902312743,
+        "mean_coverage": 0.5126399133022774,
+        "n_samples": 32
+      },
+      "psychiatric": {
+        "mean_recall30": 0.4666666666666667,
+        "std_recall30": 0.32956199888808646,
+        "mean_coverage": 0.6375,
+        "n_samples": 8
+      },
+      "autoimmune": {
+        "mean_recall30": 0.5221339209084308,
+        "std_recall30": 0.32804815294109396,
+        "mean_coverage": 0.661249280857124,
+        "n_samples": 18
+      },
+      "ophthalmic": {
+        "mean_recall30": 0.6681481481481482,
+        "std_recall30": 0.23085218163752286,
+        "mean_coverage": 0.7303703703703702,
+        "n_samples": 9
+      },
+      "gastrointestinal": {
+        "mean_recall30": 0.20833333333333334,
+        "std_recall30": 0.30127045804208696,
+        "mean_coverage": 0.23611111111111108,
+        "n_samples": 12
+      },
+      "cardiovascular": {
+        "mean_recall30": 0.3114024930006588,
+        "std_recall30": 0.35900445986154006,
+        "mean_coverage": 0.47188941040843213,
+        "n_samples": 16
+      },
+      "immunological": {
+        "mean_recall30": 0.0,
+        "std_recall30": 0.0,
+        "mean_coverage": 0.0,
+        "n_samples": 5
+      },
+      "metabolic": {
+        "mean_recall30": 0.19765406162464988,
+        "std_recall30": 0.24049261665591268,
+        "mean_coverage": 0.35698574301515473,
+        "n_samples": 17
+      },
+      "respiratory": {
+        "mean_recall30": 0.10618279569892473,
+        "std_recall30": 0.15529283948743067,
+        "mean_coverage": 0.5421146953405018,
+        "n_samples": 6
+      },
+      "renal": {
+        "mean_recall30": 0.1514423076923077,
+        "std_recall30": 0.20677269252911432,
+        "mean_coverage": 0.3482142857142857,
+        "n_samples": 8
+      }
+    },
+    "alpha_0.5": {
+      "other": {
+        "mean_recall30": 0.3693406206196904,
+        "std_recall30": 0.42178792401376847,
+        "mean_coverage": 0.4105178929597534,
+        "n_samples": 215
+      },
+      "hematological": {
+        "mean_recall30": 0.5436507936507937,
+        "std_recall30": 0.26456679842513153,
+        "mean_coverage": 0.5436507936507937,
+        "n_samples": 6
+      },
+      "cancer": {
+        "mean_recall30": 0.37676092287803253,
+        "std_recall30": 0.3215662240828429,
+        "mean_coverage": 0.5381610867906549,
+        "n_samples": 66
+      },
+      "dermatological": {
+        "mean_recall30": 0.6511435654292796,
+        "std_recall30": 0.287045973530024,
+        "mean_coverage": 0.8195331123902553,
+        "n_samples": 14
+      },
+      "neurological": {
+        "mean_recall30": 0.7142857142857143,
+        "std_recall30": 0.45175395145262565,
+        "mean_coverage": 0.8571428571428571,
+        "n_samples": 7
+      },
+      "musculoskeletal": {
+        "mean_recall30": 0.038461538461538464,
+        "std_recall30": 0.08600261451922268,
+        "mean_coverage": 0.05128205128205129,
+        "n_samples": 6
+      },
+      "infectious": {
+        "mean_recall30": 0.29502350759144236,
+        "std_recall30": 0.3258537637502741,
+        "mean_coverage": 0.5490122498274672,
+        "n_samples": 32
+      },
+      "psychiatric": {
+        "mean_recall30": 0.3875,
+        "std_recall30": 0.33247284767999397,
+        "mean_coverage": 0.6375,
+        "n_samples": 8
+      },
+      "autoimmune": {
+        "mean_recall30": 0.5630289826368258,
+        "std_recall30": 0.299146716160574,
+        "mean_coverage": 0.7243056145016928,
+        "n_samples": 18
+      },
+      "ophthalmic": {
+        "mean_recall30": 0.7106172839506173,
+        "std_recall30": 0.23428208708046683,
+        "mean_coverage": 0.7674074074074073,
+        "n_samples": 9
+      },
+      "gastrointestinal": {
+        "mean_recall30": 0.15555555555555553,
+        "std_recall30": 0.19829520330638606,
+        "mean_coverage": 0.23055555555555554,
+        "n_samples": 12
+      },
+      "cardiovascular": {
+        "mean_recall30": 0.26142976984519106,
+        "std_recall30": 0.3642815372348573,
+        "mean_coverage": 0.5127076642786561,
+        "n_samples": 16
+      },
+      "immunological": {
+        "mean_recall30": 0.4,
+        "std_recall30": 0.48989794855663565,
+        "mean_coverage": 0.4,
+        "n_samples": 5
+      },
+      "metabolic": {
+        "mean_recall30": 0.3417896645837823,
+        "std_recall30": 0.2997786782319458,
+        "mean_coverage": 0.4404878618113912,
+        "n_samples": 17
+      },
+      "respiratory": {
+        "mean_recall30": 0.25985663082437277,
+        "std_recall30": 0.3551870054869583,
+        "mean_coverage": 0.7410394265232975,
+        "n_samples": 6
+      },
+      "renal": {
+        "mean_recall30": 0.3125,
+        "std_recall30": 0.3247595264191645,
+        "mean_coverage": 0.4732142857142857,
+        "n_samples": 8
+      }
+    },
+    "alpha_1.0": {
+      "other": {
+        "mean_recall30": 0.36916172974312506,
+        "std_recall30": 0.4219200432803094,
+        "mean_coverage": 0.4101601112066228,
+        "n_samples": 215
+      },
+      "hematological": {
+        "mean_recall30": 0.5436507936507937,
+        "std_recall30": 0.26456679842513153,
+        "mean_coverage": 0.5436507936507937,
+        "n_samples": 6
+      },
+      "cancer": {
+        "mean_recall30": 0.37676092287803253,
+        "std_recall30": 0.3215662240828429,
+        "mean_coverage": 0.55331260194217,
+        "n_samples": 66
+      },
+      "dermatological": {
+        "mean_recall30": 0.6032599675456819,
+        "std_recall30": 0.3545709977215746,
+        "mean_coverage": 0.8219140647712077,
+        "n_samples": 14
+      },
+      "neurological": {
+        "mean_recall30": 0.7142857142857143,
+        "std_recall30": 0.45175395145262565,
+        "mean_coverage": 0.8571428571428571,
+        "n_samples": 7
+      },
+      "musculoskeletal": {
+        "mean_recall30": 0.038461538461538464,
+        "std_recall30": 0.08600261451922268,
+        "mean_coverage": 0.05128205128205129,
+        "n_samples": 6
+      },
+      "infectious": {
+        "mean_recall30": 0.25787612146307803,
+        "std_recall30": 0.2719904840011096,
+        "mean_coverage": 0.5339938103864734,
+        "n_samples": 32
+      },
+      "psychiatric": {
+        "mean_recall30": 0.3875,
+        "std_recall30": 0.33247284767999397,
+        "mean_coverage": 0.6375,
+        "n_samples": 8
+      },
+      "autoimmune": {
+        "mean_recall30": 0.5815655386733819,
+        "std_recall30": 0.2871981689626347,
+        "mean_coverage": 0.7994965999867961,
+        "n_samples": 18
+      },
+      "ophthalmic": {
+        "mean_recall30": 0.7061728395061729,
+        "std_recall30": 0.23969065060320438,
+        "mean_coverage": 0.7674074074074073,
+        "n_samples": 9
+      },
+      "gastrointestinal": {
+        "mean_recall30": 0.13333333333333333,
+        "std_recall30": 0.18408935028645437,
+        "mean_coverage": 0.2138888888888889,
+        "n_samples": 12
+      },
+      "cardiovascular": {
+        "mean_recall30": 0.1534752243906456,
+        "std_recall30": 0.24247385698731158,
+        "mean_coverage": 0.5240713006422925,
+        "n_samples": 16
+      },
+      "immunological": {
+        "mean_recall30": 0.4,
+        "std_recall30": 0.48989794855663565,
+        "mean_coverage": 0.4,
+        "n_samples": 5
+      },
+      "metabolic": {
+        "mean_recall30": 0.34538623141564323,
+        "std_recall30": 0.304959696550238,
+        "mean_coverage": 0.5013933778639661,
+        "n_samples": 17
+      },
+      "respiratory": {
+        "mean_recall30": 0.25985663082437277,
+        "std_recall30": 0.3551870054869583,
+        "mean_coverage": 0.7732974910394265,
+        "n_samples": 6
+      },
+      "renal": {
+        "mean_recall30": 0.3035714285714286,
+        "std_recall30": 0.32043497223082784,
+        "mean_coverage": 0.4732142857142857,
+        "n_samples": 8
+      }
+    },
+    "alpha_2.0": {
+      "other": {
+        "mean_recall30": 0.36916172974312506,
+        "std_recall30": 0.4219200432803094,
+        "mean_coverage": 0.4101601112066228,
+        "n_samples": 215
+      },
+      "hematological": {
+        "mean_recall30": 0.5436507936507937,
+        "std_recall30": 0.26456679842513153,
+        "mean_coverage": 0.5436507936507937,
+        "n_samples": 6
+      },
+      "cancer": {
+        "mean_recall30": 0.37676092287803253,
+        "std_recall30": 0.3215662240828429,
+        "mean_coverage": 0.55331260194217,
+        "n_samples": 66
+      },
+      "dermatological": {
+        "mean_recall30": 0.5881806024663169,
+        "std_recall30": 0.3602012781890865,
+        "mean_coverage": 0.8326995755567185,
+        "n_samples": 14
+      },
+      "neurological": {
+        "mean_recall30": 0.7142857142857143,
+        "std_recall30": 0.45175395145262565,
+        "mean_coverage": 0.8571428571428571,
+        "n_samples": 7
+      },
+      "musculoskeletal": {
+        "mean_recall30": 0.038461538461538464,
+        "std_recall30": 0.08600261451922268,
+        "mean_coverage": 0.05128205128205129,
+        "n_samples": 6
+      },
+      "infectious": {
+        "mean_recall30": 0.24559933574879228,
+        "std_recall30": 0.27621276831751923,
+        "mean_coverage": 0.5339938103864734,
+        "n_samples": 32
+      },
+      "psychiatric": {
+        "mean_recall30": 0.3875,
+        "std_recall30": 0.33247284767999397,
+        "mean_coverage": 0.6375,
+        "n_samples": 8
+      },
+      "autoimmune": {
+        "mean_recall30": 0.5656925228003659,
+        "std_recall30": 0.2701015059136508,
+        "mean_coverage": 0.8366524724367861,
+        "n_samples": 18
+      },
+      "ophthalmic": {
+        "mean_recall30": 0.7017283950617283,
+        "std_recall30": 0.2456240400064933,
+        "mean_coverage": 0.7674074074074073,
+        "n_samples": 9
+      },
+      "gastrointestinal": {
+        "mean_recall30": 0.12777777777777777,
+        "std_recall30": 0.18299632324445114,
+        "mean_coverage": 0.20833333333333334,
+        "n_samples": 12
+      },
+      "cardiovascular": {
+        "mean_recall30": 0.1603111618906456,
+        "std_recall30": 0.2444301155279786,
+        "mean_coverage": 0.5331207798089591,
+        "n_samples": 16
+      },
+      "immunological": {
+        "mean_recall30": 0.4,
+        "std_recall30": 0.48989794855663565,
+        "mean_coverage": 0.4,
+        "n_samples": 5
+      },
+      "metabolic": {
+        "mean_recall30": 0.29548588666235726,
+        "std_recall30": 0.2651402096857144,
+        "mean_coverage": 0.5261419952596423,
+        "n_samples": 17
+      },
+      "respiratory": {
+        "mean_recall30": 0.25448028673835127,
+        "std_recall30": 0.355905135119897,
+        "mean_coverage": 0.7732974910394265,
+        "n_samples": 6
+      },
+      "renal": {
+        "mean_recall30": 0.29395604395604397,
+        "std_recall30": 0.3155127386496642,
+        "mean_coverage": 0.4732142857142857,
+        "n_samples": 8
+      }
+    },
+    "alpha_3.0": {
+      "other": {
+        "mean_recall30": 0.36916172974312506,
+        "std_recall30": 0.4219200432803094,
+        "mean_coverage": 0.4101601112066228,
+        "n_samples": 215
+      },
+      "hematological": {
+        "mean_recall30": 0.511904761904762,
+        "std_recall30": 0.26504253142058004,
+        "mean_coverage": 0.5436507936507937,
+        "n_samples": 6
+      },
+      "cancer": {
+        "mean_recall30": 0.37676092287803253,
+        "std_recall30": 0.3215662240828429,
+        "mean_coverage": 0.55331260194217,
+        "n_samples": 66
+      },
+      "dermatological": {
+        "mean_recall30": 0.5881806024663169,
+        "std_recall30": 0.3602012781890865,
+        "mean_coverage": 0.8326995755567185,
+        "n_samples": 14
+      },
+      "neurological": {
+        "mean_recall30": 0.7142857142857143,
+        "std_recall30": 0.45175395145262565,
+        "mean_coverage": 0.7142857142857143,
+        "n_samples": 7
+      },
+      "musculoskeletal": {
+        "mean_recall30": 0.038461538461538464,
+        "std_recall30": 0.08600261451922268,
+        "mean_coverage": 0.05128205128205129,
+        "n_samples": 6
+      },
+      "infectious": {
+        "mean_recall30": 0.24559933574879228,
+        "std_recall30": 0.27621276831751923,
+        "mean_coverage": 0.5339938103864734,
+        "n_samples": 32
+      },
+      "psychiatric": {
+        "mean_recall30": 0.3875,
+        "std_recall30": 0.33247284767999397,
+        "mean_coverage": 0.6375,
+        "n_samples": 8
+      },
+      "autoimmune": {
+        "mean_recall30": 0.567808924916768,
+        "std_recall30": 0.2669576465634964,
+        "mean_coverage": 0.8243067934244405,
+        "n_samples": 18
+      },
+      "ophthalmic": {
+        "mean_recall30": 0.7017283950617283,
+        "std_recall30": 0.2456240400064933,
+        "mean_coverage": 0.7585185185185185,
+        "n_samples": 9
+      },
+      "gastrointestinal": {
+        "mean_recall30": 0.11666666666666665,
+        "std_recall30": 0.18027756377319948,
+        "mean_coverage": 0.20833333333333334,
+        "n_samples": 12
+      },
+      "cardiovascular": {
+        "mean_recall30": 0.1603111618906456,
+        "std_recall30": 0.2444301155279786,
+        "mean_coverage": 0.5331207798089591,
+        "n_samples": 16
+      },
+      "immunological": {
+        "mean_recall30": 0.4,
+        "std_recall30": 0.48989794855663565,
+        "mean_coverage": 0.4,
+        "n_samples": 5
+      },
+      "metabolic": {
+        "mean_recall30": 0.27286145227321695,
+        "std_recall30": 0.2728665650787767,
+        "mean_coverage": 0.5261419952596423,
+        "n_samples": 17
+      },
+      "respiratory": {
+        "mean_recall30": 0.25448028673835127,
+        "std_recall30": 0.355905135119897,
+        "mean_coverage": 0.7732974910394265,
+        "n_samples": 6
+      },
+      "renal": {
+        "mean_recall30": 0.2760989010989011,
+        "std_recall30": 0.3114044617529779,
+        "mean_coverage": 0.4732142857142857,
+        "n_samples": 8
+      }
+    }
+  }
+}
