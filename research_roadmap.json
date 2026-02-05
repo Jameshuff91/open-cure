@@ -2026,7 +2026,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: For each kNN top-30 prediction, get drug's ATC class",
         "Step 2: Count how many OTHER drugs in same ATC class treat diseases similar to target",
@@ -2037,8 +2037,8 @@
       "dependencies": [
         "h97"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Drug class coherence does NOT meaningfully predict precision.\n\nRESULTS:\n- HIGH coherence predictions: 8.94% precision\n- LOW coherence predictions: 7.77% precision\n- Difference: +1.17 pp (below 5 pp threshold)\n- Correlation(coherence, is_hit): 0.065 (very weak)\n\nANALYSIS:\n- 91% of predictions (12,321/13,522) have ATC data\n- Coherence scores are computed across 5 seeds\n- Even tertile stratification shows no meaningful pattern\n- Middle coherence actually performs WORST (6.36%)\n\nKEY INSIGHT:\nDrug class membership does not transfer across similar diseases well. Two antihypertensives \n(ACE inhibitor and ARB) both treat hypertension, but knowing this doesn't predict whether \nthey treat \"similar\" diseases like heart failure. The similarity-based coherence logic \nis too loose - drugs in the same ATC class often have very different indication profiles.\n\nCOMPARISON TO h97:\n- h97 (mechanism support) showed 2.1x precision improvement with direct gene targeting\n- h104 (class coherence) shows only 1.15x improvement\n- Mechanism support is a stronger signal because it's based on actual biological relationship,\n  not just chemical/pharmacological class membership.",
+      "result_metric": "+1.17 pp (8.94% vs 7.77%), below 5 pp threshold - INVALIDATED"
     },
     {
       "id": "h105",
@@ -2064,7 +2064,7 @@
       "id": "h106",
       "title": "Multi-Signal Confidence Ensemble",
       "category": "confidence",
-      "rationale": "Combine multiple confidence signals: (1) mechanism support (h97 +6.5pp), (2) category tier (h71), (3) drug class coherence, (4) disease coverage strength. Ensemble might capture complementary reliability patterns.",
+      "rationale": "Combine remaining valid confidence signals: (1) mechanism support (h97 +6.5pp), (2) category tier (h71). h104 (class coherence) and h105 (coverage strength) failed as confidence predictors. Ensemble of mechanism + category may still improve.",
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
@@ -2078,9 +2078,69 @@
       ],
       "dependencies": [
         "h97",
-        "h104",
-        "h105"
+        "h71"
       ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h107",
+      "title": "Confidence Feature: Prediction Rank Stability Across Seeds",
+      "category": "confidence",
+      "rationale": "h104 failed because class coherence is too coarse. Alternative: if a drug ranks highly across multiple random seeds (train/test splits), it's more robust. High variance predictions may be unreliable.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Run kNN with 10 different seeds, record drug ranks for each disease",
+        "Step 2: Compute rank variance and mean rank for each drug-disease prediction",
+        "Step 3: Stratify by variance: LOW variance (stable) vs HIGH variance (unstable)",
+        "Step 4: Compare precision between stable and unstable predictions",
+        "Success criteria: Stable predictions have 5%+ better precision"
+      ],
+      "dependencies": [],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h108",
+      "title": "Confidence Feature: Drug Training Frequency",
+      "category": "confidence",
+      "rationale": "Drugs seen frequently in training (many GT indications) may generalize better. Novel or rare drugs in training may produce unreliable predictions. Simple count of training appearances as confidence proxy.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Count how many training diseases each drug appears in (GT frequency)",
+        "Step 2: For kNN predictions, record drug's training frequency",
+        "Step 3: Stratify: HIGH frequency drugs vs LOW frequency drugs",
+        "Step 4: Compare precision between frequent and rare drug predictions",
+        "Success criteria: Frequent-drug predictions have 5%+ better precision"
+      ],
+      "dependencies": [],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h109",
+      "title": "Confidence Feature: Chemical Fingerprint Similarity to Known Treatments",
+      "category": "confidence",
+      "rationale": "h104 failed because ATC class is too coarse. Alternative: compute Tanimoto similarity between predicted drug and known treatments for similar diseases. High chemical similarity to proven drugs = more confidence.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load drug SMILES and compute Morgan fingerprints",
+        "Step 2: For each prediction, find drugs known to treat similar diseases",
+        "Step 3: Compute max Tanimoto similarity to any known treatment",
+        "Step 4: Stratify by similarity: HIGH vs LOW",
+        "Step 5: Compare precision between chemically-similar and dissimilar predictions",
+        "Success criteria: Chemically-similar predictions have 5%+ better precision"
+      ],
+      "dependencies": [],
       "findings": null,
       "result_metric": null
     }
