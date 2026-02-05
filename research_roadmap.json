@@ -2241,7 +2241,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Step 1: Get top-50 high-frequency drugs and analyze their target profiles",
         "Step 2: Compare to low-frequency drugs: do high-freq drugs have more targets?",
@@ -2252,7 +2252,9 @@
       "dependencies": [
         "h108",
         "h111"
-      ]
+      ],
+      "findings": "VALIDATED: Identified two causal mechanisms for drug frequency predicting hits.\n\nHYPOTHESIS A: POLYPHARMACOLOGY - **CONFIRMED**\n- HIGH-freq drugs: mean 48.9 targets (median 14)\n- LOW-freq drugs: mean 21.5 targets (median 5.5)\n- Mann-Whitney U test: p = 2.2e-14\n- High-frequency drugs have 2.3x MORE targets on average\n\nHYPOTHESIS B: DISEASE CENTRALITY - **CONFIRMED**\n- HIGH-freq drugs treat diseases with mean centrality 0.367\n- LOW-freq drugs treat diseases with mean centrality 0.325\n- Mann-Whitney U test: p = 2.2e-15\n- High-frequency drugs treat more CENTRAL diseases (more similar to other diseases)\n\nHYPOTHESIS C: DRUG EMBEDDING CENTRALITY - NOT CONFIRMED\n- Actually slightly NEGATIVE correlation (\u03c1 = -0.12)\n- High-freq drugs are NOT more central in embedding space\n\nDIRECT CORRELATIONS WITH FREQUENCY:\n- Number of targets: \u03c1 = 0.24* (strongest signal)\n- Disease centrality: \u03c1 = 0.10*\n- Drug embedding centrality: \u03c1 = -0.12* (negative\\!)\n\nTOP 5 HIGH-FREQUENCY DRUGS:\n1. Lidocaine (42 diseases, 31 targets)\n2. Dexamethasone (42 diseases, 450 targets)\n3. Methylprednisolone (40 diseases, 38 targets)\n4. Prednisolone (40 diseases, 38 targets)\n5. Hydrocortisone (36 diseases, 76 targets)\n\nINTERPRETATION:\nDrug frequency predicts hits because:\n1. POLYPHARMACOLOGY: More targets = more chances to match disease pathways\n2. DISEASE COVERAGE: Central diseases have more similar diseases in training set\n\nThis is NOT selection bias - it reflects real drug properties. Corticosteroids dominate because they genuinely treat many conditions via broad anti-inflammatory mechanisms.\n\nIMPLICATION FOR PRODUCTION:\n- Number of known targets is a valid confidence feature\n- Could add \"drug target breadth\" as independent signal (\u03c1 = 0.24 with frequency)",
+      "result_metric": "Polypharmacology (\u03c1=0.24) + Disease Centrality (\u03c1=0.10) - VALIDATED"
     },
     {
       "id": "h115",
@@ -2292,6 +2294,26 @@
       "dependencies": [
         "h111",
         "h71"
+      ]
+    },
+    {
+      "id": "h117",
+      "title": "Confidence Feature: Drug Target Breadth",
+      "category": "confidence",
+      "rationale": "h114 found number of targets correlates with drug frequency (rho=0.24) and frequency predicts hits (r=0.187). Target breadth is more direct than frequency - drugs with more targets have more chances to hit disease pathways. Could be independent of frequency if we control for it.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Add n_targets as feature in h106 ensemble",
+        "Step 2: Check correlation with existing features (frequency, mechanism support)",
+        "Step 3: Compare precision: HIGH targets vs LOW targets",
+        "Success criteria: Target breadth provides 5+ pp precision difference"
+      ],
+      "dependencies": [
+        "h114",
+        "h106"
       ]
     }
   ],
@@ -2783,6 +2805,12 @@
       "hypothesis_id": "h111",
       "learning": "Confidence signals (tier, mechanism, frequency) are orthogonal and SUPER-ADDITIVE. Combining Tier 1 + mechanism achieves 43.2% precision vs 28.5% expected - a +14.7 pp gain.",
       "implication": "For production, use multiple independent signals to identify highest-confidence predictions. 43% precision is achievable on ~1.6% of predictions."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h114",
+      "learning": "High drug training frequency predicts hits due to (1) polypharmacology - more targets means more disease pathway matches, and (2) disease centrality - central diseases have more analogs in training. Drug embedding centrality does NOT matter.",
+      "implication": "Target breadth (n_targets) could be added as independent confidence feature. Corticosteroids dominate high-freq because they genuinely treat many conditions."
     }
   ],
   "collaborations": [

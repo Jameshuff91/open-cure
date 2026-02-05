@@ -49,10 +49,46 @@ Mechanism support captures **mechanistic plausibility** (drug targets disease ge
 - Validated: 1
 - New hypotheses added: 3 (h114, h115, h116)
 
+---
+
+## h114: Drug Frequency Mechanism (2026-02-05, continued)
+
+### Key Findings
+
+**h114: Drug Frequency Mechanism - VALIDATED**
+
+Investigated WHY drug training frequency (h108) is the strongest predictor of hits.
+
+**CONFIRMED MECHANISMS (p < 0.001):**
+
+| Hypothesis | Finding | Evidence |
+|------------|---------|----------|
+| **POLYPHARMACOLOGY** | High-freq drugs have 2.3x MORE targets | 48.9 vs 21.5 targets, p = 2e-14 |
+| **DISEASE CENTRALITY** | High-freq drugs treat more central diseases | 0.367 vs 0.325, p = 2e-15 |
+| Drug embedding centrality | NOT a factor | ρ = -0.12 (negative!) |
+
+**DIRECT CORRELATIONS WITH FREQUENCY:**
+- Number of targets: ρ = 0.24* (strongest)
+- Disease centrality: ρ = 0.10*
+- Drug embedding centrality: ρ = -0.12* (negative!)
+
+**TOP HIGH-FREQUENCY DRUGS:**
+Corticosteroids dominate (Dexamethasone, Prednisolone, Prednisone) due to broad anti-inflammatory mechanisms.
+
+**INTERPRETATION:**
+Drugs generalize better when they have:
+1. More targets → more chances to match disease pathways
+2. Treat central diseases → more similar diseases in test set
+
+### Session Statistics
+- Hypotheses tested: 2 (h111, h114)
+- Validated: 2
+- New hypotheses added: 4 (h114, h115, h116, h117)
+
 ### Next Steps
-1. **h114**: Investigate why drug frequency predicts hits so well
+1. **h117**: Add target breadth as confidence feature
 2. **h115**: Test simplified ensemble (remove redundant kNN score/rank)
-3. **h116**: Improve category tier with per-disease calibration
+3. **h112**: Cross-class drug discovery analysis
 
 ---
 
