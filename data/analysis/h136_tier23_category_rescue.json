@@ -1,0 +1,560 @@
+{
+  "category_results": {
+    "cardiovascular": {
+      "n_predictions": 690,
+      "base_precision": 11.159420289855072,
+      "filters": {
+        "freq>=5": {
+          "n": 173,
+          "precision": 13.872832369942195
+        },
+        "freq>=10": {
+          "n": 23,
+          "precision": 0.0
+        },
+        "freq>=15": {
+          "n": 16,
+          "precision": 0.0
+        },
+        "mech": {
+          "n": 228,
+          "precision": 17.543859649122805
+        },
+        "rank<=5": {
+          "n": 115,
+          "precision": 21.73913043478261
+        },
+        "rank<=10": {
+          "n": 230,
+          "precision": 19.130434782608695
+        },
+        "score>0.5": {
+          "n": 307,
+          "precision": 12.37785016286645
+        },
+        "score>0.7": {
+          "n": 98,
+          "precision": 17.346938775510203
+        },
+        "rank<=5 + mech": {
+          "n": 55,
+          "precision": 38.18181818181819
+        },
+        "score>0.7 + mech": {
+          "n": 50,
+          "precision": 34.0
+        },
+        "best": [
+          "rank<=5 + mech",
+          {
+            "n": 55,
+            "precision": 38.18181818181819
+          }
+        ]
+      },
+      "best_filter": "rank<=5 + mech",
+      "best_precision": 38.18181818181819
+    },
+    "cancer": {
+      "n_predictions": 2070,
+      "base_precision": 4.879227053140096,
+      "filters": {
+        "freq>=5": {
+          "n": 653,
+          "precision": 7.9632465543644715
+        },
+        "freq>=10": {
+          "n": 241,
+          "precision": 9.12863070539419
+        },
+        "freq>=15": {
+          "n": 68,
+          "precision": 0.0
+        },
+        "mech": {
+          "n": 1062,
+          "precision": 6.591337099811676
+        },
+        "rank<=5": {
+          "n": 345,
+          "precision": 6.3768115942028984
+        },
+        "rank<=10": {
+          "n": 690,
+          "precision": 6.956521739130435
+        },
+        "score>0.5": {
+          "n": 786,
+          "precision": 6.23409669211196
+        },
+        "score>0.7": {
+          "n": 267,
+          "precision": 8.614232209737828
+        },
+        "freq>=10 + mech": {
+          "n": 139,
+          "precision": 13.66906474820144
+        },
+        "freq>=15 + mech": {
+          "n": 32,
+          "precision": 0.0
+        },
+        "rank<=5 + freq>=10": {
+          "n": 80,
+          "precision": 11.25
+        },
+        "rank<=5 + mech": {
+          "n": 204,
+          "precision": 6.862745098039216
+        },
+        "rank<=10 + freq>=15 + mech": {
+          "n": 14,
+          "precision": 0.0
+        },
+        "score>0.7 + mech": {
+          "n": 148,
+          "precision": 10.81081081081081
+        },
+        "score>0.7 + freq>=10": {
+          "n": 64,
+          "precision": 10.9375
+        },
+        "best": [
+          "freq>=10 + mech",
+          {
+            "n": 139,
+            "precision": 13.66906474820144
+          }
+        ]
+      },
+      "best_filter": "freq>=10 + mech",
+      "best_precision": 13.66906474820144
+    },
+    "gastrointestinal": {
+      "n_predictions": 270,
+      "base_precision": 0.0,
+      "filters": {
+        "freq>=5": {
+          "n": 120,
+          "precision": 0.0
+        },
+        "freq>=10": {
+          "n": 55,
+          "precision": 0.0
+        },
+        "freq>=15": {
+          "n": 39,
+          "precision": 0.0
+        },
+        "mech": {
+          "n": 19,
+          "precision": 0.0
+        },
+        "rank<=5": {
+          "n": 45,
+          "precision": 0.0
+        },
+        "rank<=10": {
+          "n": 90,
+          "precision": 0.0
+        },
+        "score>0.5": {
+          "n": 84,
+          "precision": 0.0
+        },
+        "score>0.7": {
+          "n": 34,
+          "precision": 0.0
+        },
+        "rank<=5 + freq>=10": {
+          "n": 18,
+          "precision": 0.0
+        },
+        "score>0.7 + freq>=10": {
+          "n": 22,
+          "precision": 0.0
+        },
+        "best": [
+          "freq>=5",
+          {
+            "n": 120,
+            "precision": 0.0
+          }
+        ]
+      },
+      "best_filter": "freq>=5",
+      "best_precision": 0.0
+    },
+    "hematological": {
+      "n_predictions": 270,
+      "base_precision": 2.5925925925925926,
+      "filters": {
+        "freq>=5": {
+          "n": 123,
+          "precision": 5.691056910569105
+        },
+        "freq>=10": {
+          "n": 57,
+          "precision": 12.280701754385964
+        },
+        "freq>=15": {
+          "n": 43,
+          "precision": 16.27906976744186
+        },
+        "mech": {
+          "n": 25,
+          "precision": 0.0
+        },
+        "rank<=5": {
+          "n": 45,
+          "precision": 8.88888888888889
+        },
+        "rank<=10": {
+          "n": 90,
+          "precision": 7.777777777777778
+        },
+        "score>0.5": {
+          "n": 75,
+          "precision": 8.0
+        },
+        "score>0.7": {
+          "n": 41,
+          "precision": 9.75609756097561
+        },
+        "freq>=10 + mech": {
+          "n": 12,
+          "precision": 0.0
+        },
+        "freq>=15 + mech": {
+          "n": 10,
+          "precision": 0.0
+        },
+        "rank<=5 + freq>=10": {
+          "n": 27,
+          "precision": 14.814814814814813
+        },
+        "rank<=5 + mech": {
+          "n": 12,
+          "precision": 0.0
+        },
+        "rank<=10 + freq>=15 + mech": {
+          "n": 10,
+          "precision": 0.0
+        },
+        "score>0.7 + mech": {
+          "n": 13,
+          "precision": 0.0
+        },
+        "score>0.7 + freq>=10": {
+          "n": 29,
+          "precision": 13.793103448275861
+        },
+        "best": [
+          "freq>=15",
+          {
+            "n": 43,
+            "precision": 16.27906976744186
+          }
+        ]
+      },
+      "best_filter": "freq>=15",
+      "best_precision": 16.27906976744186
+    },
+    "neurological": {
+      "n_predictions": 300,
+      "base_precision": 2.0,
+      "filters": {
+        "freq>=5": {
+          "n": 93,
+          "precision": 1.0752688172043012
+        },
+        "freq>=10": {
+          "n": 53,
+          "precision": 1.8867924528301887
+        },
+        "freq>=15": {
+          "n": 37,
+          "precision": 2.7027027027027026
+        },
+        "mech": {
+          "n": 124,
+          "precision": 3.225806451612903
+        },
+        "rank<=5": {
+          "n": 50,
+          "precision": 6.0
+        },
+        "rank<=10": {
+          "n": 100,
+          "precision": 5.0
+        },
+        "score>0.5": {
+          "n": 140,
+          "precision": 3.571428571428571
+        },
+        "score>0.7": {
+          "n": 55,
+          "precision": 3.6363636363636362
+        },
+        "freq>=10 + mech": {
+          "n": 14,
+          "precision": 0.0
+        },
+        "rank<=5 + freq>=10": {
+          "n": 16,
+          "precision": 0.0
+        },
+        "rank<=5 + mech": {
+          "n": 21,
+          "precision": 14.285714285714285
+        },
+        "score>0.7 + mech": {
+          "n": 20,
+          "precision": 10.0
+        },
+        "score>0.7 + freq>=10": {
+          "n": 10,
+          "precision": 0.0
+        },
+        "best": [
+          "rank<=5 + mech",
+          {
+            "n": 21,
+            "precision": 14.285714285714285
+          }
+        ]
+      },
+      "best_filter": "rank<=5 + mech",
+      "best_precision": 14.285714285714285
+    },
+    "metabolic": {
+      "n_predictions": 480,
+      "base_precision": 8.125,
+      "filters": {
+        "freq>=5": {
+          "n": 155,
+          "precision": 6.451612903225806
+        },
+        "freq>=10": {
+          "n": 65,
+          "precision": 0.0
+        },
+        "freq>=15": {
+          "n": 49,
+          "precision": 0.0
+        },
+        "mech": {
+          "n": 107,
+          "precision": 11.214953271028037
+        },
+        "rank<=5": {
+          "n": 80,
+          "precision": 16.25
+        },
+        "rank<=10": {
+          "n": 160,
+          "precision": 14.374999999999998
+        },
+        "score>0.5": {
+          "n": 145,
+          "precision": 8.96551724137931
+        },
+        "score>0.7": {
+          "n": 61,
+          "precision": 11.475409836065573
+        },
+        "freq>=10 + mech": {
+          "n": 31,
+          "precision": 0.0
+        },
+        "freq>=15 + mech": {
+          "n": 27,
+          "precision": 0.0
+        },
+        "rank<=5 + freq>=10": {
+          "n": 31,
+          "precision": 0.0
+        },
+        "rank<=5 + mech": {
+          "n": 27,
+          "precision": 11.11111111111111
+        },
+        "rank<=10 + freq>=15 + mech": {
+          "n": 21,
+          "precision": 0.0
+        },
+        "score>0.7 + mech": {
+          "n": 23,
+          "precision": 4.3478260869565215
+        },
+        "score>0.7 + freq>=10": {
+          "n": 31,
+          "precision": 0.0
+        },
+        "best": [
+          "rank<=5",
+          {
+            "n": 80,
+            "precision": 16.25
+          }
+        ]
+      },
+      "best_filter": "rank<=5",
+      "best_precision": 16.25
+    },
+    "infectious": {
+      "n_predictions": 625,
+      "base_precision": 9.92,
+      "filters": {
+        "freq>=5": {
+          "n": 417,
+          "precision": 13.42925659472422
+        },
+        "freq>=10": {
+          "n": 219,
+          "precision": 21.91780821917808
+        },
+        "freq>=15": {
+          "n": 136,
+          "precision": 28.676470588235293
+        },
+        "mech": {
+          "n": 113,
+          "precision": 26.548672566371685
+        },
+        "rank<=5": {
+          "n": 105,
+          "precision": 29.523809523809526
+        },
+        "rank<=10": {
+          "n": 210,
+          "precision": 21.904761904761905
+        },
+        "score>0.5": {
+          "n": 242,
+          "precision": 20.66115702479339
+        },
+        "score>0.7": {
+          "n": 126,
+          "precision": 23.809523809523807
+        },
+        "freq>=10 + mech": {
+          "n": 70,
+          "precision": 41.42857142857143
+        },
+        "freq>=15 + mech": {
+          "n": 65,
+          "precision": 44.61538461538462
+        },
+        "rank<=5 + freq>=10": {
+          "n": 82,
+          "precision": 36.58536585365854
+        },
+        "rank<=5 + mech": {
+          "n": 30,
+          "precision": 53.333333333333336
+        },
+        "rank<=10 + freq>=15 + mech": {
+          "n": 45,
+          "precision": 55.55555555555556
+        },
+        "score>0.7 + mech": {
+          "n": 32,
+          "precision": 50.0
+        },
+        "score>0.7 + freq>=10": {
+          "n": 96,
+          "precision": 29.166666666666668
+        },
+        "best": [
+          "rank<=10 + freq>=15 + mech",
+          {
+            "n": 45,
+            "precision": 55.55555555555556
+          }
+        ]
+      },
+      "best_filter": "rank<=10 + freq>=15 + mech",
+      "best_precision": 55.55555555555556
+    },
+    "respiratory": {
+      "n_predictions": 300,
+      "base_precision": 12.333333333333334,
+      "filters": {
+        "freq>=5": {
+          "n": 183,
+          "precision": 12.021857923497267
+        },
+        "freq>=10": {
+          "n": 122,
+          "precision": 13.114754098360656
+        },
+        "freq>=15": {
+          "n": 96,
+          "precision": 15.625
+        },
+        "mech": {
+          "n": 82,
+          "precision": 15.853658536585366
+        },
+        "rank<=5": {
+          "n": 50,
+          "precision": 20.0
+        },
+        "rank<=10": {
+          "n": 100,
+          "precision": 18.0
+        },
+        "score>0.5": {
+          "n": 144,
+          "precision": 22.916666666666664
+        },
+        "score>0.7": {
+          "n": 81,
+          "precision": 18.51851851851852
+        },
+        "freq>=10 + mech": {
+          "n": 42,
+          "precision": 19.047619047619047
+        },
+        "freq>=15 + mech": {
+          "n": 38,
+          "precision": 21.052631578947366
+        },
+        "rank<=5 + freq>=10": {
+          "n": 39,
+          "precision": 23.076923076923077
+        },
+        "rank<=5 + mech": {
+          "n": 16,
+          "precision": 25.0
+        },
+        "rank<=10 + freq>=15 + mech": {
+          "n": 20,
+          "precision": 35.0
+        },
+        "score>0.7 + mech": {
+          "n": 36,
+          "precision": 19.444444444444446
+        },
+        "score>0.7 + freq>=10": {
+          "n": 58,
+          "precision": 22.413793103448278
+        },
+        "best": [
+          "rank<=10 + freq>=15 + mech",
+          {
+            "n": 20,
+            "precision": 35.0
+          }
+        ]
+      },
+      "best_filter": "rank<=10 + freq>=15 + mech",
+      "best_precision": 35.0
+    }
+  },
+  "success": true,
+  "best_category": "infectious",
+  "best_precision": 55.55555555555556,
+  "target": 30.0
+}

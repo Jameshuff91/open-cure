@@ -2717,7 +2717,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Step 1: Analyze Tier 2/3 categories separately",
         "Step 2: Test various filter combinations for each category",
@@ -2726,7 +2726,9 @@
       ],
       "dependencies": [
         "h132"
-      ]
+      ],
+      "findings": "VALIDATED: Category-specific filters CAN rescue Tier 2/3 categories!\n\nSURPRISING FINDING: Infectious diseases achieve 55.6% precision (nearly = Tier 1's 57.9%)!\n\nBEST FILTERS BY CATEGORY (achieving >30%):\n| Category       | Filter                      | Precision | N   |\n|----------------|----------------------------|-----------|-----|\n| infectious     | rank<=10 + freq>=15 + mech | 55.6%     | 45  |\n| cardiovascular | rank<=5 + mech             | 38.2%     | 55  |\n| respiratory    | rank<=10 + freq>=15 + mech | 35.0%     | 20  |\n\nCATEGORIES THAT CANNOT BE RESCUED (<30%):\n| Category         | Best Filter      | Precision |\n|------------------|------------------|-----------|\n| hematological    | freq>=15         | 16.3%     |\n| metabolic        | rank<=5          | 16.2%     |\n| neurological     | rank<=5 + mech   | 14.3%     |\n| cancer           | freq>=10 + mech  | 13.7%     |\n| gastrointestinal | freq>=5          | 0.0%      |\n\nKEY INSIGHTS:\n1. Infectious contradicts expectations! High precision achievable despite prior assumptions.\n2. Mechanism support is KEY for infectious/cardio/respiratory - different from Tier 1 (which uses freq+tier)\n3. Rank constraint helps: top 5-10 ranks have better precision than top 30\n4. Cancer/GI/neurological/metabolic remain problematic - no filter achieves >20%\n\nPRODUCTION IMPLICATIONS:\n- Add infectious/cardiovascular/respiratory to \"GOLDEN\" tier with appropriate filters\n- Keep cancer/GI/neuro/metabolic as lower confidence\n- Category-specific filtering is essential",
+      "result_metric": "Infectious 55.6%, Cardiovascular 38.2%, Respiratory 35.0% - all exceeding 30% target"
     },
     {
       "id": "h137",
@@ -3298,6 +3300,12 @@
       "hypothesis_id": "h135",
       "learning": "Production tiered confidence: GOLDEN (57.7%), HIGH (20.9%), MEDIUM (14.3%), LOW (6.4%), FILTER (3.2%). Separation 9.1x. Monotonic decrease. FILTER removes 47% with minimal hit loss.",
       "implication": "Deploy tiered system for production. GOLDEN = immediate expert review, HIGH = investigation queue, MEDIUM = bulk validation, LOW = archive, FILTER = exclude."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h136",
+      "learning": "Category-specific filters rescue Tier 2/3! Infectious achieves 55.6% (rank<=10+freq>=15+mech), cardiovascular 38.2% (rank<=5+mech). Different filters work for different categories. Cancer/GI remain unsalvageable.",
+      "implication": "Production system needs category-specific golden criteria, not one-size-fits-all"
     }
   ],
   "collaborations": [
