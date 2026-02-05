@@ -1,13 +1,16 @@
 # Research Loop Progress
 
-## Current Session: h111 (2026-02-05)
+## Current Session: h111, h114, h117, h112 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
+**Status:** Complete
 **Hypotheses Tested This Session:**
 - h111: Confidence Feature Independence Analysis - **VALIDATED**
+- h114: Drug Frequency Mechanism Analysis - **VALIDATED**
+- h117: Target Breadth as Confidence Feature - **VALIDATED**
+- h112: Cross-Class Drug Discovery - **INCONCLUSIVE** (missing ATC data)
 
 ### Key Findings
 
@@ -101,15 +104,41 @@ Drugs generalize better when they have:
 - Correlation with train_frequency: ρ = 0.27 (independent, |r| < 0.3)
 - Effect persists when controlling for frequency
 
+---
+
+## h112: Cross-Class Drug Discovery (2026-02-05, continued)
+
+**h112: Cross-Class Drug Discovery - INCONCLUSIVE**
+
+Attempted to analyze why incoherent predictions (drugs from ATC classes that never treat similar diseases) have HIGHER precision than coherent ones (11.24% vs 6.69%).
+
+**BLOCKED:** Missing drug_atc_codes.json file. ATC mappings require extraction from unified_edges_clean.csv.
+
+**PRELIMINARY HYPOTHESES (untested):**
+1. Selection pressure: Incoherent hits need stronger kNN signals
+2. Polypharmacology: Incoherent hits may have more targets
+3. Confounding: Coherent predictions capture obvious/known associations
+
 ### Session Statistics
-- Hypotheses tested: 3 (h111, h114, h117)
+- Hypotheses tested: 4 (h111, h114, h117, h112)
 - Validated: 3
+- Inconclusive: 1
 - New hypotheses added: 4 (h114, h115, h116, h117)
 
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 48 |
+| Invalidated | 31 |
+| Inconclusive | 5 |
+| Blocked | 15 |
+| Pending | 16 |
+| **Total Tested** | **84** |
+
 ### Next Steps
-1. **h112**: Cross-class drug discovery analysis (why incoherent predictions work)
-2. **h115**: Test simplified ensemble (remove redundant kNN score/rank)
-3. **h116**: Per-disease calibration for category tier
+1. **h115**: Test simplified ensemble (remove redundant kNN score/rank)
+2. **h116**: Per-disease calibration for category tier
+3. **h69**: Production Pipeline Integration
 
 ---
 

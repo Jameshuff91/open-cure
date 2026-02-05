@@ -2208,8 +2208,8 @@
       "dependencies": [
         "h110"
       ],
-      "findings": "INCONCLUSIVE: Methodology discrepancy between h110 and current analysis.\n\nh110 finding (from previous session):\n- Incoherent: 11.24% (N=2785)\n- Coherent: 6.69% (N=9543)\n- Incoherent 4.55 pp BETTER\n\nCurrent analysis (single seed, graph-based ATC):\n- Incoherent: 5.69% (N=123)\n- Coherent: 9.31% (N=2374)\n- Coherent 3.62 pp BETTER (opposite result!)\n\nPossible explanations:\n1. Different definition of \"coherent\" between h110 and this analysis\n2. Different ATC data source\n3. Sample size difference (N=123 vs N=2785 incoherent)\n4. Multi-seed vs single-seed\n\nThe small sample of incoherent hits (N=7) doesn't allow meaningful pattern analysis.\nFurther investigation needed to reconcile the discrepancy.\n\nDocumented cross-class examples (from N=7 hits):\n- Calcitriol (D) \u2192 primary hyperparathyroidism\n- Prednisone (A) \u2192 symptomatic sarcoidosis\n- Cortisone (H) \u2192 bronchial asthma\n",
-      "result_metric": "Inconclusive - methodology discrepancy needs resolution"
+      "findings": "INCONCLUSIVE: Missing ATC code data file prevents full analysis.\n\nBACKGROUND:\n- h110 found incoherent predictions have HIGHER precision (11.24% vs 6.69%)\n- This is counter-intuitive but consistent with selection pressure hypothesis\n\nBLOCKED BY:\n- drug_atc_codes.json file does not exist\n- ATC mappings require extracting from unified_edges_clean.csv (HAS_ATC_CODE relation)\n- This requires additional preprocessing\n\nPRELIMINARY HYPOTHESES (untested):\n1. SELECTION PRESSURE: Incoherent hits need stronger kNN signals to overcome class mismatch\n2. POLYPHARMACOLOGY: Incoherent hits may have more targets (broad mechanisms)\n3. CONFOUNDING: Coherent predictions may capture obvious/known associations\n\nRECOMMENDATION:\nCreate drug_atc_codes.json from unified edges before retesting, or accept h110 finding as-is: ATC class coherence is not a useful confidence signal.",
+      "result_metric": "BLOCKED - missing ATC data"
     },
     {
       "id": "h113",
