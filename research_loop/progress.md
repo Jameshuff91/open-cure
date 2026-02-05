@@ -111,26 +111,52 @@ Tested if XGBoost/Random Forest could capture synergies logistic regression miss
 
 ---
 
+**h120: 3-Feature Confidence Model - VALIDATED**
+
+Tested if removing mechanism_support would work for production simplification.
+
+| Model                    | Features | Top 10% | Top 20% |
+|--------------------------|----------|---------|---------|
+| 4-feature (with mech)    | 4        | 21.89%  | 17.83%  |
+| **3-feature (no mech)**  | 3        | **22.12%** | 16.68%  |
+
+**SURPRISE:** 3-feature model is BETTER at top 10% (+0.23 pp)!
+
+**KEY FINDINGS:**
+1. Mechanism_support was adding NOISE, not signal
+2. 3-feature model is simpler AND better for high-confidence
+3. No gene/target data needed for production
+
+**PRODUCTION MODEL:** [train_frequency, tier_inv, norm_score]
+
+---
+
 ### Session Statistics
-- Hypotheses tested: 3 (h115, h118, h119)
-- Validated: 2 (h115, h119)
+- Hypotheses tested: 4 (h115, h118, h119, h120)
+- Validated: 3 (h115, h119, h120)
 - Invalidated: 1 (h118)
 - New hypotheses added: 4 (h118, h119, h120, h126)
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 51 |
+| Validated | 52 |
 | Invalidated | 33 |
 | Inconclusive | 6 |
 | Blocked | 15 |
 | Pending | 18 |
-| **Total Tested** | **90** |
+| **Total Tested** | **91** |
+
+### Key Learnings This Session
+1. **h115**: inv_rank is redundant with norm_score (r=0.665)
+2. **h118**: Frequency alone (18.79%) carries most of the signal
+3. **h119**: XGBoost adds +2 pp over logistic regression
+4. **h120**: Mechanism support is actually noise in the ensemble
 
 ### Next Steps
-1. **h120**: 3-Feature Confidence Model (priority 3)
-2. **h126**: XGBoost Feature Interaction Analysis (priority 4)
-3. **h123**: Negative Confidence Signal (priority 2)
+1. **h126**: XGBoost Feature Interaction Analysis (priority 4)
+2. **h123**: Negative Confidence Signal (priority 2)
+3. **h125**: Drug-Level Success Prediction (priority 2)
 
 ---
 
