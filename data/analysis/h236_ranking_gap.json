@@ -1,0 +1,19 @@
+{
+  "hypothesis": "h236",
+  "title": "High-Indication Drug Ranking Gap Analysis",
+  "key_finding": "kNN collaborative filtering favors FOCUSED drugs over BROAD-SPECTRUM drugs",
+  "example": {
+    "metformin": {
+      "gt_diseases": 123,
+      "missing_from_t2d_top30": true,
+      "reason": "Spread across diverse diseases; diluted signal for any specific disease"
+    },
+    "empagliflozin": {
+      "gt_diseases": 9,
+      "in_t2d_top30": true,
+      "reason": "Focused on metabolic diseases; concentrated signal"
+    }
+  },
+  "implication": "This is a design property, not a bug. kNN is good for predicting what a disease IS LIKE, but misses broadly-applicable drugs.",
+  "recommendation": "Could add indication-count-based boosting but may increase false positives"
+}

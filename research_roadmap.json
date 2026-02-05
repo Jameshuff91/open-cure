@@ -4666,14 +4666,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Load kNN raw scores for a disease Aspirin should treat (e.g., pain, cardiovascular)",
         "Check where Aspirin ranks (if at all)",
         "Compare embedding distances of Aspirin vs drugs that DO rank highly",
         "Identify what makes common drugs rank poorly",
         "Success: Identify actionable cause for low ranking"
-      ]
+      ],
+      "findings": "h236 VALIDATED: kNN favors \"specialist\" drugs over \"generalist\" drugs\n\nKEY FINDING:\n- Empagliflozin: 9 GT diseases \u2192 11 predictions (appears everywhere it should)\n- Metformin: 123 GT diseases \u2192 0 predictions (NEVER appears despite treating more)\n\nROOT CAUSE:\n1. Empagliflozin's 9 diseases are tightly clustered (metabolic/cardiovascular)\n2. When predicting for any metabolic disease, ALL 9 contribute to Empagliflozin's score\n3. Metformin's 123 diseases span many categories (diabetes, PCOS, cancer, etc.)\n4. For any specific disease, only a FEW of Metformin's diseases are in k=20 neighbors\n5. Focused drugs like Empagliflozin outscore Metformin in every disease\n\nCASE STUDY - Type 2 Diabetes:\n- 640 GT drugs, only 30 predicted\n- Empagliflozin: rank 5, score 0.69\n- Metformin: NOT in top 30 despite being THE diabetes drug\n\nDESIGN IMPLICATION:\nThis is a PROPERTY of frequency-based collaborative filtering, not a bug.\n- Good for discovery: specialists suggest specific mechanisms\n- Bad for recall: misses broadly-applicable drugs\n\nMITIGATION OPTIONS:\n1. Add indication-count boost (h237)\n2. Use category-specific kNN to concentrate Metformin's metabolic indications\n3. Accept as design tradeoff\n",
+      "result_metric": "Metformin (123 GT) in 0 predictions; Empagliflozin (9 GT) in 11 predictions"
     },
     {
       "id": "h237",
@@ -4688,6 +4690,22 @@
         "Test boost formula: score \u00d7 (1 + log(indication_count) / 10)",
         "Evaluate impact on recall",
         "Check if this causes false positive inflation"
+      ]
+    },
+    {
+      "id": "h238",
+      "title": "Category-Restricted kNN for Generalist Drug Recovery",
+      "rationale": "h236 found that generalist drugs (Metformin) never appear because their indications span many categories. If we run kNN WITHIN each category (e.g., only metabolic diseases), Metformin's 45 metabolic indications might cluster and score highly.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Classify all diseases by category",
+        "For each category, run kNN only within that category",
+        "Check if generalist drugs now rank highly within their primary categories",
+        "Compare recall of Metformin, Aspirin between global vs category-restricted kNN",
+        "Success: Metformin ranks top-30 for T2D in category-restricted kNN"
       ]
     }
   ],
@@ -5605,6 +5623,12 @@
       "hypothesis_id": "h221",
       "learning": "Manual rules help drugs NOT in DRKG. Common drugs like Aspirin (235 GT pairs) and Metformin (123 GT pairs) ARE in DRKG with hundreds of targets but appear in 0 predictions because kNN doesn't rank them highly. This is a fundamental kNN limitation, not a data gap.",
       "implication": "Expanding manual rules has diminishing returns. Focus on why kNN ranks common drugs poorly."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h236",
+      "learning": "kNN collaborative filtering favors 'specialist' drugs (few focused indications) over 'generalist' drugs (many diverse indications). Empagliflozin (9 GT diseases) appears in 11 predictions while Metformin (123 GT diseases) appears in 0. This is because generalist drugs' indications are diluted across many disease categories.",
+      "implication": "This is a design property, not a bug. Consider category-restricted kNN or indication-count boosting to recover generalist drugs."
     }
   ],
   "collaborations": [
