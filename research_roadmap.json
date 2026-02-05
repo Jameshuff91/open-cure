@@ -2509,7 +2509,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Add freq_x_score = train_frequency * norm_score as explicit feature",
         "Step 2: Train logistic regression with 5 features (4 original + interaction)",
@@ -2518,7 +2518,9 @@
       ],
       "dependencies": [
         "h126"
-      ]
+      ],
+      "findings": "VALIDATED: Explicit freq_x_score captures 43% of XGBoost advantage.\n\n**BASELINE (Linear, 4 features):** 24.48% precision @ top 10%\n**With freq_x_score:** 25.37% precision @ top 10% (+0.89 pp)\n**XGBoost:** 26.55% precision @ top 10% (+2.07 pp)\n\n**CAPTURE RATIO:** 0.89 / 2.07 = 42.9%\n\n**OTHER INTERACTIONS TESTED:**\n- tier_x_score: +0.52 pp (second best)\n- freq_x_mech: -0.67 pp (counterintuitively WORSE)\n- Others: ~0 pp\n\n**WHY XGBoost STILL WINS:**\nThe remaining 57% (1.18 pp) comes from:\n- Non-linear decision boundaries\n- Adaptive tree-based interactions\n- Ensemble averaging\n\n**RECOMMENDATION:**\n- Simple use: Linear + freq_x_score (25.37%)\n- Max performance: XGBoost (26.55%)\n- Difference: Only 1.18 pp\n\n**PRACTICAL IMPLICATION:**\nFor interpretability, use linear model with freq_x_score.\nFor maximum precision, use XGBoost.\nThe difference is minimal (1.18 pp).",
+      "result_metric": "freq_x_score captures 43% of XGBoost advantage (25.37% vs 26.55%)"
     },
     {
       "id": "h128",
@@ -5503,6 +5505,12 @@
       "hypothesis_id": "h232",
       "learning": "Stroke treatment is broader than traditional drug classes (32.8% coverage). Includes BP control, cognitive support, spasticity. kNN wins because stroke neighbors include HTN, dementia, heart disease.",
       "implication": "Do NOT use drug-class prediction for stroke. Keep kNN. Drug-class works for diseases with well-defined drug classes (HF, AFib, MI) but not for multi-faceted conditions like stroke."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h127",
+      "learning": "Adding freq_x_score interaction to linear model captures 43% of XGBoost's advantage. Linear+interaction achieves 25.37% vs XGBoost 26.55% - only 1.18 pp difference.",
+      "implication": "For interpretability, linear model with explicit interaction is nearly as good as XGBoost. freq_x_mech interaction actually HURTS (-0.67 pp) when added alone."
     }
   ],
   "collaborations": [

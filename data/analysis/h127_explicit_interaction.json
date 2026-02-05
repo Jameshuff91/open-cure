@@ -1,0 +1,47 @@
+{
+  "hypothesis": "h127",
+  "status": "validated",
+  "objective": "Test if explicit freq_x_score interaction matches XGBoost performance",
+  "baseline_precision_top10": 24.48,
+  "with_freq_x_score_top10": 25.37,
+  "improvement_pp": 0.89,
+  "xgboost_improvement_pp": 2.07,
+  "capture_ratio": 0.43,
+  "missing_pp": 1.18,
+  "all_interactions": {
+    "freq_x_mech": {
+      "precision": 23.816568047337277,
+      "improvement": -0.665680473372781
+    },
+    "freq_x_tier": {
+      "precision": 24.40828402366864,
+      "improvement": -0.07396449704141972
+    },
+    "freq_x_score": {
+      "precision": 25.3698224852071,
+      "improvement": 0.8875739644970402
+    },
+    "mech_x_tier": {
+      "precision": 24.556213017751478,
+      "improvement": 0.07396449704141972
+    },
+    "mech_x_score": {
+      "precision": 24.48224852071006,
+      "improvement": 0.0
+    },
+    "tier_x_score": {
+      "precision": 25.0,
+      "improvement": 0.5177514792899416
+    },
+    "log_freq": {
+      "precision": 24.48224852071006,
+      "improvement": 0.0
+    },
+    "freq_squared": {
+      "precision": 24.48224852071006,
+      "improvement": 0.0
+    }
+  },
+  "conclusion": "Explicit freq_x_score captures 43% of XGBoost advantage. Linear + interaction is simpler with only 1.18 pp precision loss vs XGBoost.",
+  "recommendation": "For most use cases, linear model + freq_x_score is sufficient (25.37% vs 26.55%)"
+}
