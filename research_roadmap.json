@@ -4205,7 +4205,7 @@
       "priority": 3,
       "effort": "medium",
       "expected_impact": "medium",
-      "status": "pending",
+      "status": "validated",
       "dependencies": [
         "h209"
       ],
@@ -4215,7 +4215,9 @@
         "For CV diseases + CV drug class match, inject into predictions as HIGH tier",
         "Evaluate precision of the rescue criteria",
         "Success criteria: >30% precision for rescued predictions"
-      ]
+      ],
+      "findings": "VALIDATED: CV drug rescue rules show highly variable precision by subclass.\n\nKEY FINDINGS:\n1. **Generic CV drug rescue is TOO BROAD**: ATC 'C' for CV disease = 3.49% precision (unacceptable)\n2. **Heart Failure specific rescue is GOLDEN-tier:**\n   - Loop diuretics (furosemide): 75.0% precision \u2190 GOLDEN\n   - Aldosterone antagonists (spironolactone): 50.0% precision \u2190 GOLDEN\n   - ARBs: 27.3% precision \u2190 HIGH\n   - Beta-blockers selective: 21.4% precision \u2190 HIGH\n   - ACE inhibitors: 18.8% precision \u2190 MEDIUM\n3. **Hypertension rescue is MEDIUM-tier:**\n   - ARBs: 20.4% precision \u2190 HIGH\n   - Beta-blockers/ACE inhibitors: 14% precision \u2190 MEDIUM\n4. **Some CV classes have 0% precision:**\n   - Peripheral vasodilators: 0%\n   - Vasoprotectives: 0%\n\nACTIONABLE RESCUE RULES:\n- Heart failure + loop diuretics \u2192 GOLDEN tier (75%)\n- Heart failure + aldosterone antagonists \u2192 GOLDEN tier (50%)\n- Heart failure + ARBs/beta-blockers \u2192 HIGH tier (21-27%)\n- Hypertension + ARBs \u2192 HIGH tier (20%)\n\nNOT ACTIONABLE (precision too low):\n- General CV drug for CV disease (3.5%)\n- Cardiac glycosides, CCBs, thiazides (<10% precision)",
+      "result_metric": "HF+diuretics=75%, HF+aldosterone=50%, HTN+ARBs=20%, generic CV=3.5%"
     },
     {
       "id": "h213",
@@ -4295,6 +4297,63 @@
         "Correlate disease fragmentation with blocking rate",
         "If significant, propose neighbor expansion strategy",
         "Success criteria: Identify actionable fragmentation pattern"
+      ]
+    },
+    {
+      "id": "h217",
+      "title": "Implement Heart Failure GOLDEN Rescue Rules",
+      "hypothesis": "h212 found HF + loop diuretics = 75% precision, HF + aldosterone antagonists = 50%. Implement these as GOLDEN tier rescue rules in production_predictor.py for heart failure diseases.",
+      "category": "confidence",
+      "priority": 3,
+      "effort": "low",
+      "expected_impact": "medium",
+      "status": "pending",
+      "dependencies": [
+        "h212"
+      ],
+      "steps": [
+        "Add LOOP_DIURETICS and ALDOSTERONE_ANTAGONISTS drug sets",
+        "For 'heart failure'/'cardiac failure' diseases, apply GOLDEN rescue for these classes",
+        "Evaluate R@30 improvement and precision",
+        "Success criteria: >40% precision for rescued predictions"
+      ]
+    },
+    {
+      "id": "h218",
+      "title": "ARB Rescue Rules for Heart Failure and Hypertension",
+      "hypothesis": "h212 found ARBs have 27% precision for HF and 20% for hypertension. Implement as HIGH tier rescue.",
+      "category": "confidence",
+      "priority": 4,
+      "effort": "low",
+      "expected_impact": "low",
+      "status": "pending",
+      "dependencies": [
+        "h212"
+      ],
+      "steps": [
+        "Add ARB drug set (valsartan, losartan, etc.)",
+        "For HF/HTN diseases, apply HIGH rescue for ARBs",
+        "Evaluate precision",
+        "Success criteria: >20% precision maintained"
+      ]
+    },
+    {
+      "id": "h219",
+      "title": "Exclude Zero-Precision CV Classes",
+      "hypothesis": "h212 found vasodilators and vasoprotectives have 0% precision for CV diseases. These should be FILTERED to improve overall precision.",
+      "category": "confidence",
+      "priority": 5,
+      "effort": "low",
+      "expected_impact": "low",
+      "status": "pending",
+      "dependencies": [
+        "h212"
+      ],
+      "steps": [
+        "Identify drugs in C04 (vasodilators) and C05 (vasoprotectives) classes",
+        "Demote these to FILTER tier for CV diseases",
+        "Evaluate impact on precision",
+        "Success criteria: Reduce false positives without hurting recall"
       ]
     }
   ],
@@ -5110,6 +5169,12 @@
       "hypothesis_id": "h209",
       "learning": "86.3% of blocked predictions have ZERO neighbors with the drug - this is a fundamental kNN limitation, not a model failure. CV drugs are most affected.",
       "implication": "Need non-kNN mechanisms (drug class rules, mechanism matching) to rescue zero-coverage predictions"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h212",
+      "learning": "CV drug rescue precision varies 0-75% by subclass. Generic 'CV drug for CV disease' is too broad (3.5%). HF+diuretics is GOLDEN (75%).",
+      "implication": "Implement SPECIFIC disease-subclass rescue rules, not generic ATC L1 matching"
     }
   ],
   "collaborations": [

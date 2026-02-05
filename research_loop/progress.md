@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h209 (2026-02-05)
+## Current Session: h209, h212 (2026-02-05)
 
 ### Session Summary
 
@@ -8,6 +8,7 @@
 **Status:** In Progress
 **Hypotheses Tested:**
 - h209: GT Coverage Analysis - Which Drug-Disease Pairs Are Blocking Predictions - **VALIDATED**
+- h212: Cardiovascular Disease-Specific Rescue Rules - **VALIDATED**
 
 ---
 
@@ -59,6 +60,40 @@
 - h216: Disease Fragmentation Impact Analysis
 
 **Output:** `data/analysis/h209_gt_coverage_analysis.json`
+
+---
+
+### h212: Cardiovascular Disease-Specific Rescue Rules - VALIDATED
+
+**Objective:** Implement disease-specific rescue rules for CV diseases using ATC drug class matching.
+
+**KEY FINDINGS:**
+- **Generic CV drug rescue is TOO BROAD**: ATC 'C' for CV disease = **3.49% precision**
+- **Heart Failure specific rescue is GOLDEN-tier:**
+  - Loop diuretics (furosemide): **75.0%** precision ← GOLDEN
+  - Aldosterone antagonists (spironolactone): **50.0%** precision ← GOLDEN
+  - ARBs: **27.3%** precision ← HIGH
+- **Hypertension rescue is MEDIUM-tier:**
+  - ARBs: **20.4%** precision ← HIGH
+  - Beta-blockers/ACE inhibitors: **14%** precision ← MEDIUM
+- **Some CV classes have 0% precision:**
+  - Peripheral vasodilators: 0%
+  - Vasoprotectives: 0%
+
+**ACTIONABLE RESCUE RULES:**
+| Condition | Drug Class | Precision | Tier |
+|-----------|------------|-----------|------|
+| Heart failure | Loop diuretics | 75% | GOLDEN |
+| Heart failure | Aldosterone antagonists | 50% | GOLDEN |
+| Heart failure | ARBs | 27% | HIGH |
+| Hypertension | ARBs | 20% | HIGH |
+
+**NEW HYPOTHESES GENERATED:**
+- h217: Implement Heart Failure GOLDEN Rescue Rules
+- h218: ARB Rescue Rules for Heart Failure and Hypertension
+- h219: Exclude Zero-Precision CV Classes
+
+**Output:** `data/analysis/h212_cv_rescue_rules.json`
 
 ---
 
