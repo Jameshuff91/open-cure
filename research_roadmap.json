@@ -4831,7 +4831,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all PAH drug predictions for non-PAH cardiovascular diseases",
         "Search ClinicalTrials.gov for PAH drugs in heart failure trials",
@@ -4840,7 +4840,9 @@
       ],
       "dependencies": [
         "h241"
-      ]
+      ],
+      "findings": "VALIDATED with critical safety findings.\n\n**PAH Drug Classes \u2192 Heart Failure Evidence:**\n\n| Drug Class | Drugs | Clinical Evidence | Status |\n|------------|-------|-------------------|--------|\n| sGC Stimulators | Riociguat | VICTORIA trial: Vericiguat FDA-approved 2021 | **VALIDATED** |\n| PDE5 Inhibitors | Sildenafil, Tadalafil | SilHF trial neutral; mixed smaller studies | INCONCLUSIVE |\n| Endothelin Antagonists | Bosentan, Macitentan | ENABLE/MELODY/SERENADE: Fluid retention | **CONTRAINDICATED** |\n| Prostacyclin Analogs | Epoprostenol, Treprostinil | FIRST trial: INCREASED MORTALITY | **CONTRAINDICATED** |\n\n**Key Findings:**\n1. Model correctly predicts sGC stimulator mechanism - validated by Vericiguat approval\n2. 7/10 PAH drug predictions for HF are FALSE POSITIVES (contraindicated classes)\n3. Critical safety issue: Prostacyclin analogs INCREASE MORTALITY in systolic HF\n4. Need drug-class-specific filtering for PAH drugs in cardiovascular predictions\n\n**Production Action Required:**\n- Add endothelin antagonist + prostacyclin HF filter to confidence system",
+      "result_metric": "1/4 PAH drug classes validated (sGC stimulators); 2/4 CONTRAINDICATED (safety)"
     },
     {
       "id": "h245",
@@ -4900,6 +4902,86 @@
       ],
       "findings": "VALIDATED: Disease-specific biologic routing transforms precision from 5.9% to 64.7%.\n\n**PRECISION COMPARISON:**\n| Approach | Predictions | Precision |\n|----------|-------------|-----------|\n| All biologics | 239 | 5.9% |\n| Broad disease filter | 92 | 13.0% |\n| Tier 1 diseases only | 23 | **30.4%** |\n| Mechanism matching | 17 | **64.7%** |\n\n**MECHANISM MATCHING RULES (key drugs):**\n- Adalimumab/Infliximab: RA, psoriasis, Crohn's, UC, ankylosing spondylitis\n- Etanercept: RA, psoriasis, ankylosing spondylitis\n- Tocilizumab: RA, JIA, temporal arteritis, giant cell arteritis\n- Rituximab: RA, vasculitis, pemphigus, lupus\n- Tofacitinib/Baricitinib: RA, psoriasis, UC, Crohn's, dermatitis\n- Pembrolizumab/Nivolumab: melanoma, lung cancer, renal, head/neck\n\n**MECHANISM-MATCHED PREDICTIONS (11/17 = 64.7% precision):**\n\u2713 Etanercept \u2192 RA, \u2713 Tofacitinib \u2192 RA, \u2713 Adalimumab \u2192 PsA, \u2713 Secukinumab \u2192 PsA\n\u2713 Rituximab \u2192 pemphigus, \u2713 Infliximab \u2192 UC, \u2713 Adalimumab \u2192 Crohn's\n\u2713 Tofacitinib \u2192 Crohn's, \u2713 Tocilizumab \u2192 temporal arteritis\n\u2713 Nivolumab \u2192 melanoma, \u2713 Tocilizumab \u2192 JIA\n\n**CONCLUSION:**\nBiologic predictions go from \"exclude\" (5.9%) to \"high confidence\" (64.7%) with mechanism matching.\nThis is a 10x improvement - integrate into production filter.",
       "result_metric": "Mechanism matching: 64.7% precision (from 5.9% baseline)"
+    },
+    {
+      "id": "h248",
+      "title": "Endothelin Antagonist + Prostacyclin Heart Failure Safety Filter",
+      "category": "precision",
+      "rationale": "h244 found that endothelin receptor antagonists (Bosentan, Macitentan) and prostacyclin analogs (Epoprostenol, Treprostinil) are CONTRAINDICATED for heart failure due to fluid retention and increased mortality respectively. Add explicit filter to confidence system.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Create list of endothelin antagonists: Bosentan, Ambrisentan, Macitentan",
+        "Create list of prostacyclin analogs: Epoprostenol, Treprostinil, Iloprost, Selexipag",
+        "Add filter: These drugs + heart failure = EXCLUDE or LOW confidence tier",
+        "Apply retrospectively to existing predictions",
+        "Measure precision change"
+      ],
+      "dependencies": [
+        "h244"
+      ]
+    },
+    {
+      "id": "h249",
+      "title": "sGC Stimulator Validation: Are Other Cardiovascular Predictions Correct?",
+      "category": "validation",
+      "rationale": "h244 validated sGC stimulators (Riociguat) for heart failure. Model also predicts Riociguat for stroke, coronary artery disease, and peripheral arterial disease. Do these have clinical evidence?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Extract all sGC stimulator predictions beyond heart failure",
+        "Search ClinicalTrials.gov for Riociguat in peripheral arterial disease",
+        "Search for sGC stimulators in stroke prevention",
+        "Document evidence status for each prediction",
+        "If validated, these are high-confidence novel predictions"
+      ],
+      "dependencies": [
+        "h244"
+      ]
+    },
+    {
+      "id": "h250",
+      "title": "Systematic Drug Class Safety Review for Cardiovascular",
+      "category": "precision",
+      "rationale": "h244 revealed that mechanism similarity doesn't guarantee safety - prostacyclins cause mortality in HF despite vasodilatory benefit. Other cardiovascular drug classes may have similar hidden contraindications.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "List all drug classes predicted for multiple cardiovascular diseases",
+        "For each class, search for contraindication evidence",
+        "Focus on: vasodilators, nitrates, positive inotropes",
+        "Document class-specific contraindication rules",
+        "Add to confidence filter system"
+      ],
+      "dependencies": [
+        "h244"
+      ]
+    },
+    {
+      "id": "h251",
+      "title": "SGLT2 Inhibitor Cross-Category Transfer Analysis",
+      "category": "drug_class_analysis",
+      "rationale": "h241 mentioned Canagliflozin\u2192HF as a CORRECT novel prediction. SGLT2 inhibitors have been validated for HF (multiple trials). Are there other SGLT2 predictions that represent real repurposing?",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Extract all SGLT2 inhibitor predictions (Canagliflozin, Empagliflozin, Dapagliflozin)",
+        "Identify predictions beyond diabetes and heart failure",
+        "Search for kidney disease predictions (DAPA-CKD, CREDENCE validated)",
+        "Search for liver disease predictions (emerging evidence)",
+        "Calculate precision for SGLT2 class predictions"
+      ],
+      "dependencies": [
+        "h241"
+      ]
     }
   ],
   "completed": [

@@ -1,0 +1,168 @@
+{
+  "hypothesis": "h244",
+  "title": "Pulmonary Hypertension Drug Transfer to Heart Failure",
+  "analysis_date": "2026-02-05",
+  "pah_drug_classes": {
+    "endothelin_receptor_antagonists": {
+      "drugs": [
+        "Bosentan",
+        "Ambrisentan",
+        "Macitentan"
+      ],
+      "heart_failure_evidence": {
+        "ENABLE_trials": {
+          "drug": "Bosentan",
+          "n": 1613,
+          "result": "NEGATIVE",
+          "primary_endpoint": "38.8% vs 39.7% (p=0.9)",
+          "safety_concerns": "Fluid retention, peripheral edema, weight gain",
+          "source": "JACC: Heart Failure 2017"
+        },
+        "MELODY_trial": {
+          "drug": "Macitentan",
+          "n": 63,
+          "result": "NEGATIVE",
+          "notes": "Significant fluid retention in 7/31 macitentan vs 4/32 placebo",
+          "source": "Eur Respir J 2018"
+        },
+        "SERENADE_trial": {
+          "drug": "Macitentan",
+          "result": "NEGATIVE/HARMFUL",
+          "notes": "No benefit, possible harm in HFpEF",
+          "source": "Circ Heart Fail 2024"
+        }
+      },
+      "conclusion": "CONTRAINDICATED - Class effect of fluid retention"
+    },
+    "pde5_inhibitors": {
+      "drugs": [
+        "Sildenafil",
+        "Tadalafil"
+      ],
+      "heart_failure_evidence": {
+        "SilHF_trial": {
+          "drug": "Sildenafil",
+          "n": 69,
+          "result": "NEUTRAL",
+          "notes": "Did not improve symptoms, QoL, or exercise capacity vs placebo",
+          "limitations": "Underpowered study",
+          "source": "Eur J Heart Fail 2022"
+        },
+        "PASSION_trial": {
+          "drug": "Tadalafil",
+          "n": 125,
+          "result": "ONGOING/INCOMPLETE",
+          "population": "HFpEF with pulmonary hypertension",
+          "source": "Circulation 2024"
+        },
+        "earlier_studies": {
+          "result": "POSITIVE",
+          "notes": "Reduced pulmonary vascular resistance, improved exercise capacity",
+          "limitations": "Single-center studies"
+        }
+      },
+      "conclusion": "INCONCLUSIVE - Mixed results, no large positive trials"
+    },
+    "sgc_stimulators": {
+      "drugs": [
+        "Riociguat",
+        "Vericiguat"
+      ],
+      "heart_failure_evidence": {
+        "DYNAMIC_trial": {
+          "drug": "Riociguat",
+          "result": "MIXED",
+          "hemodynamics": "Improved cardiac output at rest",
+          "symptoms": "No change in clinical symptoms",
+          "source": "Eur Heart J 2022"
+        },
+        "VICTORIA_trial": {
+          "drug": "Vericiguat",
+          "n": 5050,
+          "result": "POSITIVE",
+          "primary_endpoint": "35.5% vs 38.5% (p=0.02)",
+          "effect_size": "10% reduction in CV death + HF hospitalization",
+          "fda_approval": "January 2021",
+          "source": "NEJM 2020"
+        }
+      },
+      "conclusion": "VALIDATED via Vericiguat - FDA approved for HFrEF"
+    },
+    "prostacyclin_analogs": {
+      "drugs": [
+        "Epoprostenol",
+        "Treprostinil",
+        "Iloprost",
+        "Selexipag"
+      ],
+      "heart_failure_evidence": {
+        "FIRST_trial": {
+          "drug": "Epoprostenol",
+          "result": "HARMFUL",
+          "notes": "INCREASED MORTALITY - trial terminated early",
+          "source": "Historical"
+        },
+        "current_status": "CONTRAINDICATED in systolic heart failure"
+      },
+      "conclusion": "CONTRAINDICATED - Increased mortality risk"
+    }
+  },
+  "model_predictions_validated": {
+    "true_positives": {
+      "sgc_stimulator_class": {
+        "predicted": [
+          "Riociguat"
+        ],
+        "validated_by": "Vericiguat FDA approval (same mechanism)",
+        "precision_implication": "Model correctly identifies sGC stimulator mechanism"
+      }
+    },
+    "true_negatives_missed": {
+      "should_have_been_filtered": [
+        {
+          "drug": "Bosentan",
+          "reason": "Fluid retention risk"
+        },
+        {
+          "drug": "Ambrisentan",
+          "reason": "Fluid retention risk"
+        },
+        {
+          "drug": "Macitentan",
+          "reason": "Fluid retention, possible harm"
+        },
+        {
+          "drug": "Epoprostenol",
+          "reason": "INCREASED MORTALITY"
+        },
+        {
+          "drug": "Treprostinil",
+          "reason": "Class effect - mortality concern"
+        },
+        {
+          "drug": "Iloprost",
+          "reason": "Class effect - mortality concern"
+        },
+        {
+          "drug": "Selexipag",
+          "reason": "Class effect - mortality concern"
+        }
+      ]
+    }
+  },
+  "key_findings": [
+    "1. Model correctly predicts sGC stimulator mechanism (Riociguat\u2192HF) - VALIDATED by Vericiguat approval",
+    "2. Model INCORRECTLY predicts endothelin antagonists (Bosentan, etc.) - Fluid retention risk",
+    "3. Model INCORRECTLY predicts prostacyclin analogs - INCREASED MORTALITY in FIRST trial",
+    "4. PDE5 inhibitors (Sildenafil, Tadalafil) remain inconclusive - no large positive trials",
+    "5. Critical insight: Same target class may have opposite effects (sGC stimulators vs prostacyclins)"
+  ],
+  "production_recommendations": [
+    "ADD TO CONFIDENCE FILTER: Endothelin receptor antagonists for heart failure (fluid retention)",
+    "ADD TO CONFIDENCE FILTER: Prostacyclin analogs for systolic heart failure (mortality risk)",
+    "RETAIN: sGC stimulator predictions for heart failure (Vericiguat-validated mechanism)",
+    "DOWNGRADE: PDE5 inhibitor predictions for heart failure (inconclusive evidence)"
+  ],
+  "hypothesis_status": "VALIDATED",
+  "validation_type": "mixed - partial validation with important contraindications discovered"
+}
