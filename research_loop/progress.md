@@ -1,215 +1,102 @@
 # Research Loop Progress
 
-## Current Session: h104, h110 (2026-02-04, continued)
+## Current Session: h104, h107, h108, h106 (2026-02-04, continued)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
 **Hypotheses Tested This Session:**
-- h104: Confidence Feature - Drug Class Coherence - **INVALIDATED** (weak signal)
-- h110: ATC Incoherence as Negative Signal - **INVALIDATED** (counter-intuitive!)
+- h104: Confidence Feature - Drug Class Coherence - **INVALIDATED** (+1.2 pp < 5 pp threshold)
+- h107: Rank Stability Across Seeds - **INVALIDATED** (-0.06 pp, no correlation)
+- h108: Drug Training Frequency - **VALIDATED** (+9.4 pp, strongest signal!)
+- h106: Multi-Signal Confidence Ensemble - **VALIDATED** (21.75% precision @ top 10%)
 
 ### Key Findings
 
-**h104: Drug Class Coherence is Weak Confidence Signal (+1.3 pp)**
-- HIGH coherence precision: 8.98%
-- LOW coherence precision: 7.66%
-- Difference: +1.32 pp (below 5 pp success threshold)
-- Correlation(coherence, is_hit): 0.065 (very weak)
-- 90.9% of predictions have ATC data
+**h104: Drug Class Coherence - INVALIDATED**
+- HIGH coherence: 8.94% precision
+- LOW coherence: 7.77% precision
+- Difference: +1.17 pp (below 5 pp threshold)
+- Class membership too coarse to predict precision
 
-**h110: COUNTER-INTUITIVE RESULT - Incoherence Predicts HIGHER Precision!**
-- COHERENT (classmate treats similar): 6.69% precision (N=9543)
-- INCOHERENT (no classmate treats similar): 11.24% precision (N=2785)
-- Difference: -4.55 pp (INCOHERENT is BETTER)
+**h107: Rank Stability - INVALIDATED**
+- STABLE predictions (low CV): 6.56% precision
+- UNSTABLE predictions (high CV): 6.62% precision
+- Difference: -0.06 pp (no signal)
+- Rank stability doesn't predict precision beyond rank itself
 
-**INTERPRETATION:** If a drug from an "irrelevant" ATC class is ranked highly by kNN, it must be due to strong similarity signals from multiple independent sources, not class bias. This suggests cross-class drug repurposing may be more reliable than within-class extensions.
+**h108: Drug Training Frequency - VALIDATED (+9.4 pp)**
+- HIGH frequency drugs: 12.87% precision
+- LOW frequency drugs: 3.46% precision
+- Difference: +9.40 pp (3.7x improvement!)
+- Drugs with more training indications generalize better
+- **STRONGEST confidence signal found**
 
-**COMPARISON OF CONFIDENCE SIGNALS:**
+**h106: Multi-Signal Ensemble - VALIDATED**
+- Top 10%: 21.75% precision (exceeds 15% target)
+- Top 20%: 16.90% precision (exceeds 15% target)
+- Top 33%: 13.42% precision
+- Feature importance: train_frequency > tier_inv > norm_score ≈ inv_rank
+- Ensemble provides 45% more high-confidence predictions than Tier 1 alone
+
+### Confidence Feature Summary
+
 | Signal | Precision Diff | Status |
 |--------|---------------|--------|
+| h108 Drug frequency | +9.40 pp | **VALIDATED** (strongest) |
 | h97 Mechanism support | +6.48 pp | **VALIDATED** |
 | h71 Category tier | varies | **VALIDATED** |
-| h104 ATC coherence | +1.32 pp | INVALIDATED |
+| h106 Ensemble | 21.75% @ top 10% | **VALIDATED** |
+| h104 ATC coherence | +1.17 pp | INVALIDATED |
+| h107 Rank stability | -0.06 pp | INVALIDATED |
 | h105 Coverage strength | -0.45 pp | INVALIDATED |
-| h110 ATC incoherence | -4.55 pp (inverted) | INVALIDATED |
-
-**CONCLUSION:** ATC class information does NOT improve confidence prediction. Avoid using ATC coherence/incoherence as a confidence feature.
-
-### New Hypotheses Added
-- h110: ATC Incoherence as Negative Signal (tested - invalidated)
-- h111: Confidence Feature Independence Analysis
-- h112: Cross-Class Drug Discovery (why incoherent works better)
+| h110 ATC incoherence | -4.55 pp | INVALIDATED (inverted!) |
 
 ### Session Statistics
-- Hypotheses tested: 2 (h104, h110)
-- Invalidated: 2 (h104, h110)
-- New hypotheses added: 3 (h110, h111, h112)
+- Hypotheses tested: 4 (h104, h107, h108, h106)
+- Validated: 2 (h108, h106)
+- Invalidated: 2 (h104, h107)
+- New hypotheses added: 3 (h107, h108, h109)
+
+### Pending Hypotheses: 17
 
 ---
 
-## Previous Session: h93, h97 (2026-02-04)
+## Previous Session: h93, h95, h97, h105 (2026-02-04)
 
 ### Session Summary
 
-**Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested This Session:**
-- h93: Direct Mechanism Traversal (No ML) - **INVALIDATED**
-- h97: Mechanism-kNN Hybrid Confidence - **VALIDATED**
-- h95: Pathway-Level Mechanism Traversal - **INVALIDATED**
-- h105: Disease Coverage Strength as Confidence - **INVALIDATED** (but insightful)
+**Hypotheses Tested:**
+- h93: Direct Mechanism Traversal - **INVALIDATED** (3.53% R@30)
+- h95: Pathway-Level Traversal - **INVALIDATED** (3.57% R@30)
+- h97: Mechanism-kNN Hybrid Confidence - **VALIDATED** (+6.5 pp)
+- h105: Disease Coverage Strength - **INVALIDATED** (predicts recall, not precision)
 
-### Key Findings
-
-**h93: Direct Mechanism Traversal Fails (3.53% R@30)**
-- Implemented pure graph traversal: Disease → Gene → Drug
-- ROOT CAUSES of failure:
-  1. 63% of GT drugs have NO target gene annotations
-  2. Only 39% of pairs with data have ANY gene overlap
-  3. Even with overlap, only 14% of GT drugs rank in top 30 (mean rank 516)
-- **CRITICAL INSIGHT:** Drug repurposing is NOT about direct gene targeting
-- Node2Vec kNN captures indirect mechanisms that explicit traversal misses
-
-**h97: Mechanism Support Improves kNN Precision by 2.1x**
-- Mechanism-supported predictions: 12.19% precision (329/2698 hits)
-- Pattern-only predictions: 5.72% precision (464/8116 hits)
-- Difference: +6.48 pp (below 10 pp threshold, but meaningful)
-- Only 20% of predictions have mechanism support
-- **IMPLICATION:** Use as confidence feature, not hard filter
-
-**h95: Pathway-Level Traversal Fails (3.57% R@30)**
-- Despite 2x better coverage (51% vs 22% of GT drugs reachable)
-- Pathway dilution: more shared pathways = more false positives
-- **CRITICAL INSIGHT:** Explicit symbolic reasoning (genes OR pathways) fails
-- Node2Vec embeddings learn implicit patterns that explicit traversal cannot
-
-### Key Takeaway from h93/h95/h97
+### Key Takeaway
 
 **Learned representations >> explicit graph traversal for drug repurposing**
 
-The 26% kNN vs 3.5% traversal gap quantifies the value of embeddings. Symbolic rules (gene overlap, pathway membership) have too many false positives or false negatives. The embeddings capture something more complex.
-
-However, mechanism support is STILL useful as a confidence signal (+6.5 pp precision boost for kNN predictions with gene overlap).
-
-### New Hypotheses Added
-- h95: Pathway-Level Mechanism Traversal (tested - invalidated)
-- h96: PPI-Extended Drug Targets
-- h97: Mechanism-kNN Hybrid Confidence (tested - validated)
-
-**h105: Coverage Strength Predicts Recall, Not Precision**
-- HIGH coverage: 8.59% precision, 60.08% recall
-- LOW coverage: 9.04% precision, 26.50% recall
-- Coverage predicts recall (+33.6 pp) but NOT precision (-0.45 pp)
-- **INSIGHT:** More similar diseases = more candidates = higher recall AND more false positives
-
-### Session Statistics
-- Hypotheses tested: 4
-- Validated: 1 (h97)
-- Invalidated: 3 (h93, h95, h105)
-- New hypotheses added: 6 (h95, h96, h97, h104, h105, h106)
+The 26% kNN vs 3.5% traversal gap quantifies the value of embeddings.
 
 ---
 
-## Previous Session: h71, h82, h83, h86, h80, h81, h88, h84, h89, h74 (2026-01-31, continued)
-
-### Session Summary
-
-**Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested This Session:**
-- h71: Per-Category Calibration - **VALIDATED**
-- h82: Category-Specific k + Thresholds Combined - **INCONCLUSIVE**
-- h83: Why Is Respiratory So Poorly Calibrated - **VALIDATED**
-- h86: Same-Category Neighbor Ratio as Confidence Feature - **INVALIDATED**
-- h80: Autoimmune-Only Production Model - **VALIDATED**
-- h81: GI Disease Alternative Strategy - **VALIDATED**
-- h88: Confidence Explanation Generation - **VALIDATED**
-- h84: Tier-Based User Interface Design - **VALIDATED**
-- h89: Validation Priority Scoring - **VALIDATED**
-- h74: Use Case-Aware Production API - **VALIDATED**
-
-### Key Findings
-
-**h71: Per-Category Calibration Reveals Reliability Tiers**
-- Tier 1 (HIGH): autoimmune, dermatological, psychiatric, ophthalmic (93-100% precision)
-- Tier 2 (MEDIUM): cardiovascular, other, cancer (75-92% precision at 0.6+)
-- Tier 3 (LOW): metabolic, respiratory, GI, hematological (<50% precision)
-
-**h83: Respiratory Root Cause Identified**
-- Respiratory has 8.8% same-category neighbor ratio (lowest)
-- 65% of neighbors are from "other" category
-
-**h80: Autoimmune Excellence Confirmed**
-- 480 predictions, 100% HIGH confidence
-- Top drugs: corticosteroids, immunomodulators
-
-**h88: Confidence Explanation Framework**
-- 3 tier-based templates for user-facing explanations
-- Tier 1: "93-100% precision" / Tier 2: "~80% at 0.6+" / Tier 3: "Exploratory only"
-
-**h84: Tier-Based UI Design**
-- 🟢 Tier 1: 1,020 predictions (7.6%)
-- 🟡 Tier 2: 10,928 predictions (81.5%)
-- 🔴 Tier 3: 1,468 predictions (10.9%)
-
-**h89: Validation Priority Scoring**
-- Formula: priority = confidence × novelty × tier_weight × rarity
-- Top priorities: JIA, RA, Crohn's, atherosclerosis
-
-### Session Statistics
-
-- Hypotheses tested: 10
-- Validated: 8 (h71, h83, h80, h81, h88, h84, h89, h74)
-- Inconclusive: 1 (h82)
-- Invalidated: 1 (h86)
-- New hypotheses added: h82-h89
-
-### Pending Hypotheses
-
-| Priority | ID | Title | Effort |
-|----------|-----|-------|--------|
-| 1 | h69 | Production Pipeline Integration | high |
-
-| 3 | h55 | GEO Gene Expression Data Integration | high |
-| 3 | h85 | Metabolic Disease Rescue | medium |
-| 3 | h87 | Drug Mechanism Clustering | medium |
-| 4 | h64 | ARCHS4 Gene Expression | high |
-| 20 | h16 | Clinical Trial Phase Features | medium |
-
-### Key Learnings
-
-1. **Category is king:** Disease category is the strongest predictor of reliability
-2. **Tier-based UI:** Users understand tiers better than numeric scores
-3. **Priority scoring:** Combine confidence × novelty × tier × rarity for validation prioritization
-4. **Exclusion is valid:** For poorly-calibrated categories, exclusion is better than rescue attempts
-
----
-
-## Previous Sessions
-
-### h79, h76 (2026-01-31)
-- 2 hypotheses tested, 2 validated
-- Category subsetting: 3.8x coverage gain at 93.5% precision
-
-### h70, h75, h77, h78, h67 (2026-01-31)
-- 5 hypotheses tested, 2 validated
-- Use case thresholds: discovery (0.3), validation (0.5), clinical (0.8)
-
-### h68, h72, h73, h66 (2026-01-31)
-- 4 hypotheses tested, 4 validated
-- Production deliverable: 13K predictions, 2.8K HIGH confidence
-
----
-
-## Cumulative Statistics (2026-01-31)
+## Cumulative Statistics
 
 | Status | Count |
 |--------|-------|
-| Validated | 38 |
-| Invalidated | 25 |
+| Validated | 41 |
+| Invalidated | 29 |
 | Inconclusive | 4 |
 | Blocked | 14 |
-| Pending | 6 |
-| **Total Tested** | **67** |
+| Pending | 17 |
+| In Progress | 0 |
+| **Total Tested** | **74** |
+
+---
+
+## Recommended Next Steps
+
+1. **h109: Chemical Fingerprint Similarity** - Test if structural similarity to known treatments predicts precision
+2. **h111: Confidence Feature Independence** - Check if signals (frequency, tier, mechanism) are correlated or orthogonal
+3. **h91: Literature Mining** - Extract drug-disease hypotheses from PubMed for zero-shot diseases
