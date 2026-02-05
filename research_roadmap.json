@@ -1948,7 +1948,9 @@
         "Step 4: Compare to direct gene targeting",
         "Step 5: Evaluate on benchmark"
       ],
-      "status": "pending"
+      "status": "invalidated",
+      "findings": "h100 INVALIDATED: Gene overlap is BETTER than pathway overlap\n\nCOMPARISON (13,461 predictions, 1,095 known):\n| Metric | Gene Overlap | Pathway Overlap |\n|--------|--------------|-----------------|\n| Coverage (>0) | 27-47% | 64-73% |\n| Separation ratio | 2.36x | 1.74x |\n\nPRECISION BY THRESHOLD:\n| Threshold | Gene | Pathway |\n|-----------|------|---------|\n| >= 1 | 13.3% | 9.1% |\n| >= 5 | 17.2% | 10.2% |\n| >= 10 | 17.9% | 11.0% |\n\nCONCLUSION:\n- Pathway overlap has HIGHER COVERAGE (64.5% vs 27.0% of unknown predictions)\n- But gene overlap has BETTER PRECISION (17.9% vs 11.0% at threshold 10)\n- Gene-level targeting is more specific and informative\n\nPathway overlap is useful as a SECONDARY signal when gene overlap is zero,\nbut should not replace direct gene targeting.\n",
+      "result_metric": "Gene 2.36x separation, 17.9% precision vs Pathway 1.74x, 11.0%"
     },
     {
       "id": "h101",
@@ -5637,6 +5639,12 @@
       "hypothesis_id": "h238",
       "learning": "Category-restricted kNN recovers generalist drugs that global kNN misses. Metformin ranks #16 in metabolic category (vs not appearing globally). This works because generalist drugs' category-specific indications become significant when not diluted by cross-category competition.",
       "implication": "Consider parallel category-restricted kNN pipeline for generalist drug recovery."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h100",
+      "learning": "Direct gene overlap (drug target \u2229 disease gene) is a better signal than pathway overlap. Gene overlap achieves 17.9% precision vs pathway's 11.0% at threshold >=10. Pathway overlap has higher coverage but lower specificity.",
+      "implication": "Use gene overlap as primary mechanism signal; pathway overlap as secondary for zero-gene-overlap cases."
     }
   ],
   "collaborations": [
