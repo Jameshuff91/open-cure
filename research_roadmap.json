@@ -1952,7 +1952,9 @@
         "Step 4: Compare to gene-based similarity",
         "Step 5: Evaluate on benchmark"
       ],
-      "status": "in_progress"
+      "status": "inconclusive",
+      "findings": "INCONCLUSIVE: Symptom-based kNN underperforms Node2Vec but has limited data coverage.\n\nDATA AVAILABILITY:\n- GT diseases with symptom data: 58 out of 472 (12.3%)\n- Test diseases per fold: 7-11 (very small sample)\n- Total test predictions: 43 (across 5 seeds)\n\nRESULTS (on diseases WITH symptom data):\n| Method              | R@30   |\n|---------------------|--------|\n| Symptom-based kNN   | 21.34% |\n| Node2Vec kNN        | 42.44% |\n\nDifference: -21.09 pp (symptom-based WORSE)\n\nANALYSIS:\n- Jaccard similarity mean: 0.285 (reasonable overlap)\n- 72% of test diseases have nearest neighbor with Jaccard > 0.2\n- Despite reasonable symptom overlap, drug transfer doesn't work well\n\nKEY FINDINGS:\n1. Node2Vec on this subset = 42.44% (vs ~26% overall) \u2192 diseases with symptom data are EASIER to predict\n2. Symptom similarity doesn't capture drug treatment patterns as well as graph embeddings\n3. Symptoms may be too high-level or non-specific for drug targeting\n4. 88% of GT diseases LACK symptom data \u2192 this approach can't scale\n\nINTERPRETATION:\nSymptom phenotypes don't correlate strongly with drug response.\nDiseases with similar symptoms (e.g., fever, fatigue) may have very different treatments.\nGraph proximity (Node2Vec) captures mechanistic similarity better than symptom overlap.\n\nBLOCKED due to low coverage (12.3%). Would need HPO or other phenotype ontology.",
+      "result_metric": "Symptom kNN 21.34% vs Node2Vec 42.44% (-21 pp, limited to 58 diseases)"
     },
     {
       "id": "h100",
@@ -2383,6 +2385,115 @@
         "h115",
         "h118"
       ]
+    },
+    {
+      "id": "h121",
+      "title": "Minimal Ensemble: 3-Feature Confidence Scoring",
+      "category": "optimization",
+      "rationale": "h115 showed inv_rank is redundant with norm_score. h111 showed mechanism_support and train_frequency are the most independent signals. Could a 3-feature ensemble (mechanism, frequency, tier) match the 4-feature version?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Test ensemble with [mechanism_support, train_frequency, tier_inv] only",
+        "Step 2: Compare precision at top 10%/20% to 4-feature ensemble",
+        "Step 3: Test 2-feature variants (just mechanism+frequency)",
+        "Success criteria: 3-feature ensemble loses <1 pp vs 4-feature"
+      ],
+      "dependencies": [
+        "h115",
+        "h111"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h122",
+      "title": "Category Misclassification Analysis",
+      "category": "error_analysis",
+      "rationale": "h116 showed huge calibration errors for some categories (dermatological: 40% error, infectious: 37% error). These errors may indicate diseases that are 'miscategorized' by our keyword system. Identifying these diseases could improve predictions.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify diseases where predicted tier hit rate >> actual hit rate",
+        "Step 2: Examine disease names to understand why miscategorized",
+        "Step 3: Create refined keyword rules or manual overrides",
+        "Step 4: Re-evaluate with corrected categories",
+        "Success criteria: Reduce average calibration error by >10 pp"
+      ],
+      "dependencies": [
+        "h116"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h123",
+      "title": "Negative Confidence Signal: What Predicts Misses?",
+      "category": "precision",
+      "rationale": "h111 focused on what predicts HITS. But for precision, we also need to predict MISSES. If we can identify features that predict a drug will NOT work, we can filter them out and improve precision.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze false positives (high-ranked drugs that are NOT in GT)",
+        "Step 2: Look for patterns: drug class, target count, mechanism, etc.",
+        "Step 3: Test if any feature negatively correlates with being a hit",
+        "Step 4: Create exclusion rules based on negative signals",
+        "Success criteria: Identify feature(s) where presence predicts miss with >80% accuracy"
+      ],
+      "dependencies": [
+        "h111"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h124",
+      "title": "Disease Embedding Interpretability: What Makes Diseases Similar?",
+      "category": "meta_analysis",
+      "rationale": "Node2Vec embeddings work well but are black boxes. Understanding what makes two diseases similar in embedding space (shared genes? shared symptoms? graph proximity?) could guide feature engineering.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: For top kNN pairs, compute multiple similarity measures (gene overlap, symptom overlap, path length)",
+        "Step 2: Correlate each measure with Node2Vec cosine similarity",
+        "Step 3: Identify which biological features best explain embedding similarity",
+        "Step 4: Use insights to create interpretable similarity measure",
+        "Success criteria: Identify biological basis for >50% of embedding similarity"
+      ],
+      "dependencies": [],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h125",
+      "title": "Drug-Level Success Prediction",
+      "category": "precision",
+      "rationale": "Current confidence features operate at disease or prediction level. But some DRUGS may be inherently more reliable (e.g., well-studied drugs with clear mechanisms). A drug-level reliability score could improve precision.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each drug, compute historical hit rate across training diseases",
+        "Step 2: Test correlation between drug hit rate and being a hit on test diseases",
+        "Step 3: Compare to existing signals (train_frequency, target_count)",
+        "Step 4: Add to confidence ensemble if independent",
+        "Success criteria: Drug-level hit rate achieves r > 0.15 with hits (independent of frequency)"
+      ],
+      "dependencies": [
+        "h111",
+        "h114"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
