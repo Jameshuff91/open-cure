@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h152, h189, h190 (2026-02-05)
+## Current Session: h152, h189, h190, h87 (2026-02-05)
 
 ### Session Summary
 
@@ -10,6 +10,7 @@
 - h152: ATC Code Integration for Precision - **VALIDATED** (+11.1pp mean precision)
 - h189: ATC L4 Rescue Criteria Implementation - **VALIDATED** (+383% coverage)
 - h190: ATC-Based Biologic Gap Analysis - **VALIDATED** (sparse GT is root cause)
+- h87: Drug Mechanism Clustering - **VALIDATED** (mechanism breadth predicts transfer)
 
 ### h152: ATC Code Integration for Precision - VALIDATED
 
@@ -104,16 +105,37 @@ Analyzed why biologics have consistently low precision (biologic gap: mAbs 27% v
 
 **Conclusion:** Biologic gap is a DATA QUALITY issue, not a METHOD issue. kNN over-predicts biologics because GT doesn't capture their actual indications comprehensively.
 
+### h87: Drug Mechanism Clustering for Cross-Disease Transfer - VALIDATED
+
+Analyzed which drug mechanisms transfer well across disease categories.
+
+**Key Findings:**
+
+1. **CORTICOSTEROIDS transfer most broadly**:
+   - H02AB (glucocorticoids): 45% avg across 10 categories
+   - D07AA (topical steroids): 51% avg across 9 categories
+   - Pleiotropic anti-inflammatory effects explain transfer
+
+2. **Traditional immunosuppressants (L04AX) also transfer**:
+   - 43% avg across 3 categories (autoimmune, cancer, other)
+   - MTX, azathioprine have broad mechanisms
+
+3. **BIOLOGICS DO NOT TRANSFER** (confirms h190):
+   - <20% in ALL category combinations
+   - Target-specific mechanisms limit cross-disease applicability
+
+**Conclusion:** Mechanism breadth predicts transfer success. Drugs with pleiotropic effects (steroids, MTX) transfer; target-specific drugs (biologics) do not.
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 92 |
+| Validated | 93 |
 | Invalidated | 41 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 30 |
-| **Total Tested** | **143** |
+| Pending | 29 |
+| **Total Tested** | **144** |
 
 ### Key Session Learnings
 
@@ -123,6 +145,7 @@ Analyzed why biologics have consistently low precision (biologic gap: mAbs 27% v
 4. **ATC provides systematic drug classification** - No need to maintain manual lists for 90.6% of drugs
 5. **ATC rescue provides 383% coverage with precision maintained** - Implemented in production_predictor.py
 6. **Biologic gap is DATA QUALITY issue** - TNF has 23 GT entries vs glucocorticoids 1832
+7. **Mechanism breadth predicts transfer** - Corticosteroids transfer to 10 categories; biologics don't transfer
 
 ### Recommended Next Steps
 
