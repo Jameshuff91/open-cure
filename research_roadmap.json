@@ -1620,13 +1620,14 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "in_progress",
+      "status": "deprioritized",
       "steps": [
         "1. Check if metabolic diseases have weak Node2Vec neighbors",
         "2. Extract KEGG pathway annotations for metabolic diseases",
         "3. Test pathway-based kNN for metabolic-only",
         "4. Compare to Node2Vec baseline for metabolic category"
-      ]
+      ],
+      "findings": "Deprioritized: h144 already provided metabolic rescue via statins (60% precision). Alternative similarity approach not needed given statin rescue success."
     },
     {
       "id": "h86",
@@ -3361,13 +3362,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Identify common disease types in 'other' category",
         "Add new category keywords (renal, endocrine, musculoskeletal, etc.)",
         "Re-run h165 calibration with expanded categories",
         "Update production predictor with new categories"
-      ]
+      ],
+      "findings": "Superseded by h186 and h188 which accomplished comprehensive reclassification. Other reduced from 78 to 18 diseases.",
+      "result_metric": "Superseded by h186/h188"
     },
     {
       "id": "h177",
