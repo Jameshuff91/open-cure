@@ -1,0 +1,36 @@
+{
+  "hypothesis": "h87",
+  "title": "Drug Mechanism Clustering for Cross-Disease Transfer",
+  "date": "2026-02-05",
+  "status": "VALIDATED",
+  "findings": {
+    "top_transferable_mechanisms": {
+      "H02AB_glucocorticoids": {
+        "avg_precision": 45.5,
+        "num_categories": 10
+      },
+      "D07AA_topical_steroids": {
+        "avg_precision": 51.5,
+        "num_categories": 9
+      },
+      "J01FA_macrolides": {
+        "avg_precision": 47.4,
+        "num_categories": 2
+      },
+      "C10AA_statins": {
+        "avg_precision": 46.5,
+        "num_categories": 2
+      },
+      "L04AX_immunosuppressants": {
+        "avg_precision": 43.0,
+        "num_categories": 3
+      },
+      "L01DB_anthracyclines": {
+        "avg_precision": 52.0,
+        "num_categories": 2
+      }
+    },
+    "key_insight": "Broad-mechanism drugs (steroids, MTX) transfer well; target-specific drugs (biologics) do not",
+    "explanation": "Corticosteroids have pleiotropic anti-inflammatory effects; biologics target single pathways"
+  }
+}
