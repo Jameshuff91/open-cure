@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h209, h212, h217 (2026-02-05)
+## Current Session: h209, h212, h217, h213 (2026-02-05)
 
 ### Session Summary
 
@@ -10,6 +10,7 @@
 - h209: GT Coverage Analysis - Which Drug-Disease Pairs Are Blocking Predictions - **VALIDATED**
 - h212: Cardiovascular Disease-Specific Rescue Rules - **VALIDATED**
 - h217: Implement Heart Failure GOLDEN Rescue Rules - **VALIDATED**
+- h213: Zero-Coverage Drug Injection Layer - **INVALIDATED**
 
 ---
 
@@ -118,6 +119,28 @@
 - ARBs: Telmisartan for dilated cardiomyopathy (HIGH)
 
 **SUCCESS:** Target was >40% precision. Achieved 66.7% GOLDEN, 33.3% HIGH.
+
+---
+
+### h213: Zero-Coverage Drug Injection Layer - INVALIDATED
+
+**Objective:** Create secondary prediction layer injecting zero-coverage drugs based on mechanism/ATC matching.
+
+**KEY FINDINGS:**
+- **1,436 zero-coverage GT pairs** (not 297 from h209 sample)
+- 38.4% have mechanism overlap, 23.9% have ATC match
+- **53.8% have NEITHER** - fundamentally unreachable
+
+**INJECTION PRECISION (50 disease simulation):**
+| Criteria | TP | FP | Precision |
+|----------|----|----|-----------|
+| mechanism_only | 171 | 26,663 | **0.6%** |
+| atc_only | 156 | 5,474 | **2.8%** |
+| both | 91 | 1,576 | **5.5%** |
+
+**CONCLUSION:** Zero-coverage injection does NOT work. Even best criteria (mech+ATC) has 5.5% precision = 17 false positives per true positive.
+
+**IMPLICATION:** Only specific drug class rules (like h217) work. General injection fails.
 
 ---
 

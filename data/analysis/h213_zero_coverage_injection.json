@@ -1,0 +1,493 @@
+{
+  "summary": {
+    "zero_coverage_pairs": 1436,
+    "diseases_analyzed": 448,
+    "diseases_sampled_for_injection": 50
+  },
+  "zero_coverage_characteristics": {
+    "has_mechanism": 552,
+    "has_atc_match": 343,
+    "has_both": 232,
+    "has_neither": 773,
+    "freq_10+": 51,
+    "freq_5+": 289
+  },
+  "injection_precision": {
+    "mechanism_only": {
+      "true_pos": 171,
+      "false_pos": 26663,
+      "total": 26834,
+      "precision": 0.64
+    },
+    "atc_only": {
+      "true_pos": 156,
+      "false_pos": 5474,
+      "total": 5630,
+      "precision": 2.77
+    },
+    "both": {
+      "true_pos": 91,
+      "false_pos": 1576,
+      "total": 1667,
+      "precision": 5.46
+    },
+    "mechanism_and_freq10": {
+      "true_pos": 4,
+      "false_pos": 298,
+      "total": 302,
+      "precision": 1.32
+    }
+  },
+  "sample_zero_coverage_pairs": [
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB09083",
+      "drug_name": "Ivabradine",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00774",
+      "drug_name": "Hydroflumethiazide",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00700",
+      "drug_name": "Eplerenone",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 4
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00887",
+      "drug_name": "Bumetanide",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB14217",
+      "drug_name": "Quinaprilat",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 6
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB01324",
+      "drug_name": "Polythiazide",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00264",
+      "drug_name": "Metoprolol",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00722",
+      "drug_name": "Lisinopril",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 6
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB01064",
+      "drug_name": "Isoprenaline",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00590",
+      "drug_name": "Doxazosin",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 6
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB01076",
+      "drug_name": "Atorvastatin",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 7
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB01023",
+      "drug_name": "Felodipine",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 6
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00235",
+      "drug_name": "Milrinone",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00214",
+      "drug_name": "Torasemide",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 4
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00310",
+      "drug_name": "Chlorthalidone",
+      "has_mechanism": true,
+      "atc_match": false,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB09220",
+      "drug_name": "Nicorandil",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00808",
+      "drug_name": "Indapamide",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB06704",
+      "drug_name": "Iobenguane",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 4
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00275",
+      "drug_name": "Olmesartan",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 6
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00524",
+      "drug_name": "Metolazone",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00819",
+      "drug_name": "Acetazolamide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00177",
+      "drug_name": "Valsartan",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00880",
+      "drug_name": "Chlorothiazide",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB01118",
+      "drug_name": "Amiodarone",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00335",
+      "drug_name": "Atenolol",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 7
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB13919",
+      "drug_name": "Candesartan",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB09153",
+      "drug_name": "Sodium chloride",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB06212",
+      "drug_name": "Tolvaptan",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00457",
+      "drug_name": "Prazosin",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 6
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB14209",
+      "drug_name": "Trandolaprilat",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00384",
+      "drug_name": "Triamterene",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB14208",
+      "drug_name": "Ramiprilat",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 4
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006333",
+      "disease_name": "chronic heart failure",
+      "drug_id": "drkg:Compound::DB00584",
+      "drug_name": "Enalapril",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00774",
+      "drug_name": "Hydroflumethiazide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00531",
+      "drug_name": "Cyclophosphamide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 10
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00695",
+      "drug_name": "Furosemide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00887",
+      "drug_name": "Bumetanide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB01324",
+      "drug_name": "Polythiazide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB08827",
+      "drug_name": "Lomitapide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00227",
+      "drug_name": "Lovastatin",
+      "has_mechanism": true,
+      "atc_match": false,
+      "train_freq": 10
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00310",
+      "drug_name": "Chlorthalidone",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB01432",
+      "drug_name": "Cholestyramine",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 9
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00524",
+      "drug_name": "Metolazone",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00421",
+      "drug_name": "Spironolactone",
+      "has_mechanism": true,
+      "atc_match": false,
+      "train_freq": 7
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00880",
+      "drug_name": "Chlorothiazide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00999",
+      "drug_name": "Hydrochlorothiazide",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009404",
+      "disease_name": "nephrotic syndrome",
+      "drug_id": "drkg:Compound::DB00384",
+      "drug_name": "Triamterene",
+      "has_mechanism": false,
+      "atc_match": false,
+      "train_freq": 2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006973",
+      "disease_name": "hypertension",
+      "drug_id": "drkg:Compound::DB15059",
+      "drug_name": "Aprocitentan",
+      "has_mechanism": false,
+      "atc_match": true,
+      "train_freq": 5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006973",
+      "disease_name": "hypertension",
+      "drug_id": "drkg:Compound::DB00678",
+      "drug_name": "Losartan",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 6
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006973",
+      "disease_name": "hypertension",
+      "drug_id": "drkg:Compound::DB04861",
+      "drug_name": "Nebivolol",
+      "has_mechanism": true,
+      "atc_match": true,
+      "train_freq": 2
+    }
+  ]
+}

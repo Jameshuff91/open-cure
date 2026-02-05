@@ -4227,7 +4227,7 @@
       "priority": 3,
       "effort": "medium",
       "expected_impact": "medium",
-      "status": "pending",
+      "status": "invalidated",
       "dependencies": [
         "h209"
       ],
@@ -4237,7 +4237,9 @@
         "Inject as MEDIUM tier predictions after kNN top-30",
         "Evaluate recall and precision of injected predictions",
         "Success criteria: Rescue 10%+ of zero-coverage pairs with >15% precision"
-      ]
+      ],
+      "findings": "INVALIDATED: Zero-coverage drug injection has unacceptably low precision.\n\nKEY FINDINGS:\n1. **1,436 zero-coverage GT pairs** (much more than h209's sample of 297)\n2. Only 38.4% have mechanism overlap, 23.9% have ATC match\n3. **53.8% have NEITHER** - fundamentally unreachable by mechanism/ATC\n\nINJECTION PRECISION (50 disease simulation):\n| Criteria | TP | FP | Precision |\n|----------|----|----|-----------|\n| mechanism_only | 171 | 26,663 | **0.6%** |\n| atc_only | 156 | 5,474 | **2.8%** |\n| both (mech + ATC) | 91 | 1,576 | **5.5%** |\n| mech + freq>=10 | 4 | 298 | **1.3%** |\n\nROOT CAUSE:\n- DISEASE_ATC_RELEVANCE is too broad (diabetes \u2192 A,C,H = 1000s of drugs)\n- Mechanism overlap alone is too weak a signal\n- Most zero-coverage drugs have no predictive features\n\nCONCLUSION:\nZero-coverage drug injection does NOT work. Even the most restrictive criteria (mech + ATC) has only 5.5% precision = 17 false positives per true positive.\n\nIMPLICATION:\nkNN collaborative filtering is the best we can do. Zero-coverage drugs require either:\n1. GT expansion (add the drug to a neighbor's GT)\n2. Manual rules for specific drug classes (like h217's heart failure rules)\n3. External data sources (clinical trials, literature)",
+      "result_metric": "INVALIDATED: Best precision 5.5% (mech+ATC), too low for injection"
     },
     {
       "id": "h214",
@@ -5185,6 +5187,12 @@
       "hypothesis_id": "h217",
       "learning": "HF rescue rules achieve 66.7% GOLDEN precision. Beta-blockers (carvedilol, bisoprolol) are key HF drugs. Sample size is small (3 diseases) but results are promising.",
       "implication": "Consider expanding HF disease coverage in GT to validate further"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h213",
+      "learning": "Zero-coverage drug injection fails - best precision 5.5%. Mechanism and ATC matching are too weak for general injection. Only specific drug class rules (h217) work.",
+      "implication": "Focus on targeted rescue rules (drug class + disease subtype), not general injection"
     }
   ],
   "collaborations": [
