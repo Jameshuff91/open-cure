@@ -2064,7 +2064,7 @@
       "id": "h106",
       "title": "Multi-Signal Confidence Ensemble",
       "category": "confidence",
-      "rationale": "Combine remaining valid confidence signals: (1) mechanism support (h97 +6.5pp), (2) category tier (h71). h104 (class coherence) and h105 (coverage strength) failed as confidence predictors. Ensemble of mechanism + category may still improve.",
+      "rationale": "Combine validated confidence signals:\n1. Mechanism support (h97): +6.5 pp\n2. Drug training frequency (h108): +9.4 pp \n3. Category tier (h71): Tier 1 = 93-100% precision\n\nh104 (class coherence), h105 (coverage), h107 (rank stability) FAILED.\nEnsemble of mechanism + frequency + category may achieve >15% precision.",
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
@@ -2078,6 +2078,7 @@
       ],
       "dependencies": [
         "h97",
+        "h108",
         "h71"
       ],
       "findings": null,
@@ -2091,7 +2092,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Step 1: Run kNN with 10 different seeds, record drug ranks for each disease",
         "Step 2: Compute rank variance and mean rank for each drug-disease prediction",
@@ -2100,8 +2101,8 @@
         "Success criteria: Stable predictions have 5%+ better precision"
       ],
       "dependencies": [],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Rank stability (variance across seeds) does NOT predict precision.\n\nRESULTS:\n- STABLE predictions (low CV): 6.56% precision\n- UNSTABLE predictions (high CV): 6.62% precision\n- Difference: -0.06 pp (essentially zero)\n- Correlation(CV, is_hit): -0.008 (no relationship)\n\nALTERNATIVE FINDING:\nMean rank IS a strong predictor (+9.48 pp difference between top and low ranked),\nbut this is expected behavior from the kNN scoring, not a new confidence signal.\n\nKEY INSIGHT:\nRank stability across random seeds does NOT add information beyond the rank itself.\nA drug can be stably ranked at position 50 (low CV, bad prediction) or\nunstably ranked between 1-15 (high CV, good prediction). The stability\nof the ranking is independent of prediction quality.\n\nIMPLICATION:\nCross-seed stability is not a useful confidence feature. Focus on features\nthat capture biological/mechanistic signals (h97 mechanism support worked)\nrather than statistical properties of the ranking process.",
+      "result_metric": "-0.06 pp (stable vs unstable), CV correlation -0.008 - INVALIDATED"
     },
     {
       "id": "h108",
@@ -2111,7 +2112,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Count how many training diseases each drug appears in (GT frequency)",
         "Step 2: For kNN predictions, record drug's training frequency",
@@ -2120,8 +2121,8 @@
         "Success criteria: Frequent-drug predictions have 5%+ better precision"
       ],
       "dependencies": [],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Drug training frequency is a strong confidence predictor (+9.4 pp).\n\nRESULTS:\n- HIGH frequency drugs (16.5 mean indications): 12.87% precision\n- LOW frequency drugs (1.5 mean indications): 3.46% precision\n- Difference: +9.40 pp (3.7x improvement)\n- Correlation(frequency, is_hit): 0.187 (moderate positive)\n\nKEY INSIGHT:\nDrugs with more training indications generalize better to new diseases. This makes\nintuitive sense - a drug like Metformin (treats 42 diseases in GT) has proven\npolypharmacology and is likely to work for similar conditions. A drug with only\n1 indication is more likely to be specific to that disease.\n\nCOMPARISON TO OTHER CONFIDENCE FEATURES:\n- h108 (drug frequency): +9.4 pp (STRONGEST)\n- h97 (mechanism support): +6.5 pp\n- h104 (class coherence): +1.2 pp (failed)\n- h107 (rank stability): -0.1 pp (failed)\n- h105 (coverage strength): -0.5 pp (failed)\n\nIMPLICATIONS:\n1. Add drug training frequency as a confidence feature in production\n2. When drug frequency is low, flag predictions as \"exploratory\"\n3. Combine with mechanism support (h97) for multi-signal confidence",
+      "result_metric": "+9.40 pp (12.87% vs 3.46%), correlation 0.187 - VALIDATED"
     },
     {
       "id": "h109",
@@ -2152,7 +2153,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Identify predictions where drug ATC class has ZERO overlap with target disease category",
         "Step 2: Compute precision for incoherent vs coherent predictions",
@@ -2162,8 +2163,8 @@
       "dependencies": [
         "h104"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "COUNTER-INTUITIVE RESULT: Incoherence actually predicts HIGHER precision!\n\nRESULTS:\n- COHERENT (classmate treats similar): 6.69% precision (N=9543)\n- INCOHERENT (no classmate treats similar): 11.24% precision (N=2785)\n- No ATC data: 1.76% precision (N=1194)\n- Difference: -4.55 pp (INCOHERENT is 4.55 pp BETTER)\n\nINTERPRETATION:\n1. Selection bias: If a drug from an \"irrelevant\" ATC class is ranked highly, it must be \n   due to strong kNN signal from multiple independent neighbor diseases, not class bias.\n2. Coherent predictions may be capturing obvious drug class \u2192 disease associations that\n   are already well-known (confounding with known indications).\n3. ATC coherence may actually be a NEGATIVE confidence signal, not positive.\n\nCONCLUSION: Neither high coherence (h104: +1.3 pp) nor incoherence (h110: -4.55 pp) \nprovides the expected confidence signal. ATC class information does not improve \nprecision prediction in a useful way. Avoid using ATC coherence as a confidence feature.",
+      "result_metric": "Incoherent 11.24% vs Coherent 6.69% (opposite of hypothesis)"
     },
     {
       "id": "h111",
