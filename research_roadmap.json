@@ -2037,8 +2037,8 @@
       "dependencies": [
         "h97"
       ],
-      "findings": "INVALIDATED: Drug class coherence does NOT meaningfully predict precision.\n\nRESULTS:\n- HIGH coherence predictions: 8.94% precision\n- LOW coherence predictions: 7.77% precision\n- Difference: +1.17 pp (below 5 pp threshold)\n- Correlation(coherence, is_hit): 0.065 (very weak)\n\nANALYSIS:\n- 91% of predictions (12,321/13,522) have ATC data\n- Coherence scores are computed across 5 seeds\n- Even tertile stratification shows no meaningful pattern\n- Middle coherence actually performs WORST (6.36%)\n\nKEY INSIGHT:\nDrug class membership does not transfer across similar diseases well. Two antihypertensives \n(ACE inhibitor and ARB) both treat hypertension, but knowing this doesn't predict whether \nthey treat \"similar\" diseases like heart failure. The similarity-based coherence logic \nis too loose - drugs in the same ATC class often have very different indication profiles.\n\nCOMPARISON TO h97:\n- h97 (mechanism support) showed 2.1x precision improvement with direct gene targeting\n- h104 (class coherence) shows only 1.15x improvement\n- Mechanism support is a stronger signal because it's based on actual biological relationship,\n  not just chemical/pharmacological class membership.",
-      "result_metric": "+1.17 pp (8.94% vs 7.77%), below 5 pp threshold - INVALIDATED"
+      "findings": "Drug class coherence has a weak positive effect (+1.32 pp precision difference) but does NOT meet the 5 pp success threshold.\n\nKEY FINDINGS:\n- HIGH coherence precision: 8.98%\n- LOW coherence precision: 7.66%\n- Difference: +1.32 pp (below 5 pp threshold)\n- Correlation(coherence, is_hit): 0.065 (very weak)\n\nCOMPARISON TO OTHER CONFIDENCE SIGNALS:\n- h97 Mechanism support: +6.5 pp (STRONG, validated)\n- h104 Drug class coherence: +1.3 pp (WEAK, invalidated)\n- h105 Coverage strength: predicts recall, not precision (invalidated)\n\nINSIGHT: The within-class drug similarity captured by ATC provides minimal additional signal beyond what kNN already captures from disease similarity. The kNN approach already recommends drugs that treat similar diseases, so ATC class coherence is partially redundant.\n\nOnly 90.9% of predictions have ATC data. The 9.1% without ATC data cannot use this feature anyway.",
+      "result_metric": "+1.32 pp precision (below 5 pp threshold)"
     },
     {
       "id": "h105",
@@ -2091,7 +2091,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Run kNN with 10 different seeds, record drug ranks for each disease",
         "Step 2: Compute rank variance and mean rank for each drug-disease prediction",
@@ -2141,6 +2141,50 @@
         "Success criteria: Chemically-similar predictions have 5%+ better precision"
       ],
       "dependencies": [],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h110",
+      "title": "ATC Incoherence as Negative Signal",
+      "category": "confidence",
+      "rationale": "h104 showed ATC coherence provides weak positive signal (+1.3 pp). But the INVERSE may be stronger: if a drug is predicted for a disease FAR outside its normal therapeutic area (e.g., antibiotic for metabolic disease), that should be a strong negative signal. Predictions with HIGH incoherence (drug class never treats similar diseases) may have much lower precision.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify predictions where drug ATC class has ZERO overlap with target disease category",
+        "Step 2: Compute precision for incoherent vs coherent predictions",
+        "Step 3: Success criteria: incoherent predictions have 5+ pp LOWER precision",
+        "Step 4: If validated, use as negative filter in confidence scoring"
+      ],
+      "dependencies": [
+        "h104"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h111",
+      "title": "Confidence Feature Independence Analysis",
+      "category": "meta",
+      "rationale": "h104 drug class coherence (+1.3 pp) is weak likely because it overlaps with kNN signal. h97 mechanism support (+6.5 pp) is strong. h71 category tier is strong. Question: are these signals INDEPENDENT? If mechanism support and category tier are correlated, combining them may not help. If independent, ensemble could be 2x as powerful.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: For all kNN predictions, compute: (a) mechanism support binary, (b) category tier, (c) kNN score",
+        "Step 2: Compute correlation matrix between signals",
+        "Step 3: For independent signals, check if combining them provides additive precision gain",
+        "Step 4: Output: which signals are independent and worth combining"
+      ],
+      "dependencies": [
+        "h97",
+        "h71",
+        "h104"
+      ],
       "findings": null,
       "result_metric": null
     }

@@ -1,11 +1,50 @@
 # Research Loop Progress
 
-## Current Session: h93, h97 (2026-02-04)
+## Current Session: h104 (2026-02-04, continued)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
+**Hypotheses Tested This Session:**
+- h104: Confidence Feature - Drug Class Coherence - **INVALIDATED** (weak signal)
+
+### Key Findings
+
+**h104: Drug Class Coherence is Weak Confidence Signal (+1.3 pp)**
+- HIGH coherence precision: 8.98%
+- LOW coherence precision: 7.66%
+- Difference: +1.32 pp (below 5 pp success threshold)
+- Correlation(coherence, is_hit): 0.065 (very weak)
+- 90.9% of predictions have ATC data
+
+**INSIGHT:** ATC class coherence is partially redundant with what kNN already captures from disease similarity. The kNN approach recommends drugs that treat similar diseases, so within-class drug similarity adds minimal additional signal.
+
+**COMPARISON OF CONFIDENCE SIGNALS:**
+| Signal | Precision Diff | Status |
+|--------|---------------|--------|
+| h97 Mechanism support | +6.48 pp | **VALIDATED** |
+| h71 Category tier | varies | **VALIDATED** |
+| h104 ATC coherence | +1.32 pp | INVALIDATED |
+| h105 Coverage strength | -0.45 pp | INVALIDATED |
+
+### New Hypotheses Added
+- h110: ATC Incoherence as Negative Signal (inverse of h104)
+- h111: Confidence Feature Independence Analysis
+
+### Session Statistics
+- Hypotheses tested: 1 (h104)
+- Invalidated: 1 (h104)
+- New hypotheses added: 2 (h110, h111)
+
+---
+
+## Previous Session: h93, h97 (2026-02-04)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
 **Hypotheses Tested This Session:**
 - h93: Direct Mechanism Traversal (No ML) - **INVALIDATED**
 - h97: Mechanism-kNN Hybrid Confidence - **VALIDATED**
