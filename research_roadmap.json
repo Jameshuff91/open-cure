@@ -1330,7 +1330,7 @@
       "id": "h69",
       "title": "Production Pipeline Integration",
       "description": "Create end-to-end production pipeline: Disease \u2192 Category \u2192 Success Prediction \u2192 kNN \u2192 Confidence Tier \u2192 Filtered Recommendations",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 1,
       "expected_impact": "high",
       "effort": "high",
@@ -2421,7 +2421,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Step 1: Identify diseases where predicted tier hit rate >> actual hit rate",
         "Step 2: Examine disease names to understand why miscategorized",
@@ -2432,8 +2432,8 @@
       "dependencies": [
         "h116"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INCONCLUSIVE: Category misclassification exists but is addressed by existing per-disease confidence.\n\nKEY FINDINGS:\n1. 53 explicit category mismatches (assigned vs keyword classification)\n2. 182 diseases over-perform their category (>20 pp deviation)\n3. The \"other\" category is BIMODAL:\n   - 92 diseases with 100% hit rate (mostly infections, inflammatory)\n   - 80 diseases with 4.4% hit rate (rare genetic/metabolic)\n4. Category-level calibration has 57.4 pp average error\n5. Correcting \"other\" expectation only reduces error by 4 pp (not meeting >10 pp target)\n\nWHY INCONCLUSIVE:\nThe per-disease confidence features (prob_h52, prob_h65) from h79 already address this:\n- prob_h52 has +0.313 difference between high/low hit \"other\" diseases\n- combined_avg threshold 0.6: 81.9% vs 32.6% hit rate separation\n\nIMPLICATION:\nCategory-based tiers are fundamentally limited by bimodal distributions.\nThe production system should prioritize per-disease confidence scores over category tiers.\n",
+      "result_metric": "4 pp calibration improvement (below 10 pp target)"
     },
     {
       "id": "h123",
@@ -2750,6 +2750,55 @@
       ],
       "findings": "VALIDATED: 3 structural factors explain Tier 1's 58% golden precision vs ~28% for other tiers.\n\nKEY FINDINGS:\n\n1. MECHANISM COVERAGE (50.2% vs 35.4%)\n   - Tier 1 drug-disease pairs have 42% more mechanism support\n   - Autoimmune/dermatological diseases have more drug-gene-disease overlap\n   - This is why mechanism filter is so effective for Tier 1\n\n2. HIGH-FREQUENCY DRUGS (10.6% vs 3.3%)\n   - Tier 1 has 3.2x more drugs with freq>=10\n   - Corticosteroids dominate: Dexamethasone 40.5%, Methylprednisolone 40.5%\n   - High-freq drugs have more training signal, better kNN recommendations\n\n3. DRUG OVERLAP (Jaccard 0.062 vs 0.005) - MOST IMPORTANT\n   - Tier 1 diseases share drugs with each other at 13x the rate of Tier 2/3\n   - This is WHY kNN collaborative filtering works for Tier 1\n   - Similar diseases \u2192 shared treatments \u2192 kNN predicts correctly\n   - Tier 2/3 diseases have heterogeneous treatments \u2192 kNN struggles\n\nADDITIONAL INSIGHTS:\n- Tier 1 has avg 13.7 drugs/disease vs 5.3 for Tier 2 (more options)\n- Tier 1 top drugs are all corticosteroids (Dex, Methylpred, Lidocaine, Hydrocortisone)\n- Tier 2's \"other\" category (267 diseases) dilutes any shared signal\n\nIMPLICATIONS FOR TIER 2/3:\n- Cannot use same golden criteria (drug overlap too low)\n- May need different similarity measures (not Node2Vec)\n- Could try disease-specific features rather than kNN",
       "result_metric": "3 factors: Mechanism 50%>35%, High-freq 10.6%>3.3%, Jaccard 13x higher"
+    },
+    {
+      "id": "h138",
+      "title": "Other Category Sub-Stratification",
+      "description": "Split the \"other\" category into sub-groups based on disease characteristics (infectious-other, rare-genetic-other) to improve calibration",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Create keyword rules for infectious diseases currently in \"other\"",
+        "Step 2: Create keyword rules for rare genetic conditions",
+        "Step 3: Assign sub-categories to \"other\" diseases",
+        "Step 4: Calculate calibration error with sub-categories",
+        "Step 5: Compare to per-disease confidence approach",
+        "Success criteria: >10 pp calibration error reduction"
+      ]
+    },
+    {
+      "id": "h139",
+      "title": "Hybrid Confidence: Category + Per-Disease Features",
+      "description": "Combine category tier with per-disease features (prob_h52, prob_h65) for optimal calibration",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each disease, compute category tier expectation",
+        "Step 2: Weight category expectation with per-disease confidence",
+        "Step 3: Test weighting schemes (equal, confidence-dominated, etc.)",
+        "Step 4: Evaluate calibration error vs pure category and pure confidence",
+        "Success criteria: Better calibration than either alone"
+      ]
+    },
+    {
+      "id": "h140",
+      "title": "Bimodality Predictor for Other Category",
+      "description": "Train a classifier to predict whether an \"other\" disease will have 0% or 100% hit rate based on disease characteristics",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract features from \"other\" diseases (name patterns, graph connectivity)",
+        "Step 2: Label as high (>50%) or low (<=50%) hit rate",
+        "Step 3: Train simple classifier (logistic regression)",
+        "Step 4: Evaluate on held-out diseases",
+        "Success criteria: >70% accuracy in predicting high vs low hit"
+      ]
     }
   ],
   "completed": [
@@ -3306,6 +3355,12 @@
       "hypothesis_id": "h136",
       "learning": "Category-specific filters rescue Tier 2/3! Infectious achieves 55.6% (rank<=10+freq>=15+mech), cardiovascular 38.2% (rank<=5+mech). Different filters work for different categories. Cancer/GI remain unsalvageable.",
       "implication": "Production system needs category-specific golden criteria, not one-size-fits-all"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h122",
+      "learning": "Category \"other\" is bimodal (53% have 100% hit, 42% have 0%). Category-level calibration fails for heterogeneous buckets.",
+      "implication": "Per-disease confidence features (prob_h52) are essential for \"other\" category predictions. Category tiers are insufficient alone."
     }
   ],
   "collaborations": [
