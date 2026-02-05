@@ -1,27 +1,28 @@
 # Research Loop Progress
 
-## Current Session: h226, h233, h221, h236, h238 (2026-02-05)
+## Current Session: h226, h233, h221, h236, h238, h100 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 5**
+**Hypotheses Tested: 6**
 - h226: Two-Hop Mechanism Paths - **INVALIDATED** (6.3% precision vs 13.3% 1-hop)
 - h233: Threshold-Based 2-Hop Paths - **VALIDATED** (marginal: >=15 achieves 10.2%)
 - h221: Manual Rule Expansion - **VALIDATED** (existing 30 rules sufficient)
 - h236: High-Indication Drug Ranking Gap - **VALIDATED** (kNN favors specialists)
 - h238: Category-Restricted kNN - **VALIDATED** (recovers generalist drugs)
+- h100: Pathway-Level Drug Matching - **INVALIDATED** (gene overlap is better)
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
 | Validated | 130 |
-| Invalidated | 47 |
+| Invalidated | 48 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 32 |
+| Pending | 30 |
 | **Total** | **238** |
 
 ### Session Key Learnings
@@ -35,37 +36,28 @@
 4. **h236 KEY INSIGHT:** kNN collaborative filtering favors "specialist" drugs over "generalist" drugs:
    - Empagliflozin (9 GT diseases) → 11 predictions
    - Metformin (123 GT diseases) → 0 predictions
-   - This is a design property of frequency-based collaborative filtering
 
 5. **h238 SOLUTION:** Category-restricted kNN recovers generalist drugs:
    - Metformin ranks #16 in metabolic category (vs not in top 30 globally)
-   - Empagliflozin drops to #61 in metabolic category (from #5 globally)
-   - Within-category competition benefits category-focused drugs
 
-### Session Theme: kNN Algorithm Limitations and Solutions
+6. **h100:** Gene overlap is a better signal than pathway overlap:
+   - Gene: 2.36x separation, 17.9% precision at threshold >=10
+   - Pathway: 1.74x separation, 11.0% precision at threshold >=10
 
-**Two-Hop Mechanism Paths (h226, h233):**
-- Extending mechanism paths via PPI adds noise, not signal
-- Even high thresholds (>=15 paths) only achieve 10.2% precision
-- Direct 1-hop paths remain the gold standard for mechanism support
+### Session Theme: Mechanism Path Analysis and kNN Limitations
 
-**Manual Rule Limitations (h221):**
-- Manual rules help drugs NOT in DRKG
-- Common drugs like Metformin ARE in DRKG but don't rank highly
-- This requires algorithm changes, not data additions
+**Mechanism Path Hierarchy:**
+1. Direct gene overlap (h100, h166): Best signal, 17.9% precision
+2. 1-hop mechanism paths: 13.3% precision (validated in h166)
+3. Pathway overlap (h100): Lower precision (11.0%) but higher coverage
+4. 2-hop PPI paths (h226): Poor precision (6.3%), adds noise
 
-**kNN Specialist Bias (h236):**
-- Drugs treating many diverse diseases get diluted in kNN scoring
-- Drugs treating few focused diseases cluster and score highly
-- Explains why broadly-applicable drugs are systematically missed
-
-**Category-Restricted kNN (h238):**
-- Running kNN within categories recovers generalist drugs
-- Metformin: Global=not ranked → Metabolic=#16
-- Could implement parallel category-restricted pipeline
+**kNN Algorithm Insights:**
+- Favors specialist drugs over generalist drugs (h236)
+- Category-restricted kNN can recover generalists (h238)
+- Manual rules help drugs NOT in DRKG, not ranking issues (h221)
 
 ### New Hypotheses Generated
-- h233: Threshold-Based 2-Hop Paths (validated marginal)
 - h234: Weighted PPI Path Scoring (pending)
 - h235: Same-Pathway 2-Hop filtering (pending)
 - h237: Indication-Weighted Drug Boosting (pending)
