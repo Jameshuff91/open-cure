@@ -3366,13 +3366,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Extract neurological disease predictions and analyze hit patterns",
         "Compare kNN neighbor quality for neurological vs high-performing categories",
         "Identify specific neurological diseases with 0% recall",
         "Check if neurological-specific drugs (anticonvulsants, etc.) are in training data"
-      ]
+      ],
+      "findings": "h168 VALIDATED: Neurological low precision (26.1%) is due to FUNDAMENTAL kNN limitations.\n\nROOT CAUSE: Embedding isolation + low GT drug coverage\n- Neurological diseases have only 3.3% same-category neighbors (vs 61% cancer, 87% other)  \n- 92% of neighbors are from 'other' category\n- Alzheimer's/Parkinson's have 0-11% drug coverage in neighbor pool\n\nSPECIFIC FAILURES:\n- Alzheimer's: 0/3 GT drugs reachable (0% recall)\n- Parkinson's: 2/19 GT drugs reachable (5.3% recall@10)\n- Epilepsy: 2/17 GT drugs reachable (11.8% recall@10)\n\nRESCUE NOT FEASIBLE: Unlike statins for metabolic, neurological drugs have:\n- Low training frequency (most freq=1-4)\n- Cross-category usage (anticonvulsants for psychiatric, pain)\n\nIMPLICATION: This is a data structure issue, not a model bug. Solutions require:\n1. Category-aware kNN weighting\n2. Explicit neurological drug catalog injection\n3. Accept lower precision for this category",
+      "result_metric": "26.1% precision, root cause = embedding isolation"
     },
     {
       "id": "h169",
@@ -3382,12 +3384,92 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Identify common disease types in 'other' category",
         "Add new category keywords (renal, endocrine, musculoskeletal, etc.)",
         "Re-run h165 calibration with expanded categories",
         "Update production predictor with new categories"
+      ]
+    },
+    {
+      "id": "h170",
+      "title": "Category-Weighted kNN for Isolated Categories",
+      "hypothesis": "Adding a category similarity bonus to kNN could improve neurological performance",
+      "rationale": "h168 showed neurological diseases have only 3.3% same-category neighbors. Boosting same-category neighbors could improve drug coverage.",
+      "category": "algorithm_improvement",
+      "steps": [
+        "Implement category-weighted similarity: sim * (1 + alpha if same_category else 1)",
+        "Test alpha values [0.1, 0.2, 0.5] on neurological diseases",
+        "Evaluate: does drug coverage improve? Does precision improve?",
+        "Check impact on other categories (don't hurt high performers)"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "dependencies": [
+        "h168"
+      ]
+    },
+    {
+      "id": "h171",
+      "title": "Neurological Drug Catalog Injection",
+      "hypothesis": "Injecting known neurological drugs (anticonvulsants, dopaminergics, etc.) directly could bypass kNN limitations",
+      "rationale": "h168 showed kNN can't reach neurological drugs because neighbors are from wrong categories. Explicit drug catalog injection would guarantee neurological drugs are considered.",
+      "category": "production_improvement",
+      "steps": [
+        "Create neurological drug catalog (anticonvulsants, dopaminergics, cholinesterase inhibitors)",
+        "For neurological diseases, inject top catalog drugs into candidate pool",
+        "Rank injected drugs by mechanism support and general frequency",
+        "Evaluate precision of injected drugs vs kNN-only recommendations"
+      ],
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "dependencies": [
+        "h168"
+      ]
+    },
+    {
+      "id": "h172",
+      "title": "Disease Graph Distance for Category Similarity",
+      "hypothesis": "Using DRKG graph distance (not just embedding similarity) could better identify same-category neighbors",
+      "rationale": "Embeddings may not capture categorical relationships. Graph distance (shared pathways, shared genes) might better identify neurological neighbors.",
+      "category": "algorithm_improvement",
+      "steps": [
+        "Extract pathway/gene connections between neurological diseases",
+        "Compute graph-based similarity (shared pathways, shared disease-gene associations)",
+        "Compare graph similarity vs embedding similarity for finding same-category neighbors",
+        "If graph similarity is better, implement hybrid similarity measure"
+      ],
+      "expected_impact": "low",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "dependencies": [
+        "h168"
+      ]
+    },
+    {
+      "id": "h173",
+      "title": "Epilepsy-Specific Analysis (Best Neurological Case)",
+      "hypothesis": "Epilepsy has the best neurological coverage (11.8%) - understanding why could help other neurological diseases",
+      "rationale": "h168 showed epilepsy has better drug coverage than Alzheimer's/Parkinson's. Understanding what makes epilepsy 'work' could inform strategies for other neurological diseases.",
+      "category": "error_analysis",
+      "steps": [
+        "Analyze epilepsy's k=20 neighbors in detail - what diseases and why?",
+        "Check which GT epilepsy drugs are reachable and why (carbamazepine, diazepam)",
+        "Identify what makes these drugs findable vs Alzheimer's drugs (donepezil, rivastigmine)",
+        "Document patterns that could be exploited"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "dependencies": [
+        "h168"
       ]
     }
   ],
@@ -4041,6 +4123,12 @@
       "hypothesis_id": "h167",
       "learning": "Category-specific precision must be exposed to users because tier-only precision is massively miscalibrated (psychiatric 85% vs other 17% in MEDIUM tier)",
       "implication": "All future precision communication should be category-aware"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h168",
+      "learning": "Neurological disease failure is due to embedding isolation (3.3% same-category neighbors) not model failure. Drug class rescue not feasible due to cross-category usage.",
+      "implication": "Category-weighted kNN or external data needed for neurological improvement"
     }
   ],
   "collaborations": [

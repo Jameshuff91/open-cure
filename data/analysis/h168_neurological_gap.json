@@ -1,0 +1,55 @@
+{
+  "hypothesis": "h168",
+  "title": "Neurological Disease Performance Gap Analysis",
+  "status": "validated",
+  "findings": {
+    "root_cause": "EMBEDDING ISOLATION + LOW GT DRUG COVERAGE",
+    "key_metrics": {
+      "neurological_diseases_count": 6,
+      "same_category_neighbors": "3.3% (vs 61% for cancer, 87% for other)",
+      "neighbor_category_breakdown": "92% from 'other' category",
+      "avg_drug_coverage": "37% (vs 62.5% for autoimmune)"
+    },
+    "specific_failures": {
+      "alzheimers": {
+        "gt_drugs": 3,
+        "drugs_in_neighbor_pool": 0,
+        "recall_at_10": "0.0%",
+        "note": "kNN has NO chance of finding correct drugs"
+      },
+      "parkinsons": {
+        "gt_drugs": 19,
+        "drugs_in_neighbor_pool": 2,
+        "recall_at_10": "5.3%",
+        "note": "Only Amantadine and Droxidopa reachable"
+      },
+      "epilepsy": {
+        "gt_drugs": 17,
+        "drugs_in_neighbor_pool": 2,
+        "recall_at_10": "11.8%",
+        "note": "Only Carbamazepine and Diazepam reachable"
+      }
+    },
+    "drug_class_analysis": {
+      "anticonvulsants_total_freq": 131,
+      "dopaminergics_total_freq": 37,
+      "cholinesterase_inhibitors_total_freq": 9,
+      "note": "Unlike statins, neurological drugs have cross-category usage (psychiatric, pain)"
+    },
+    "rescue_feasibility": {
+      "statin_like_rescue": "NOT FEASIBLE",
+      "reasons": [
+        "Neurological-specific drugs have low training frequency (freq=1-4)",
+        "Anticonvulsants used cross-category (psychiatric, pain, etc.)",
+        "No single dominant drug class like statins for metabolic"
+      ]
+    },
+    "possible_mitigations": [
+      "Category-aware similarity weighting (boost same-category neighbors)",
+      "Explicit neurological drug catalog injection at inference",
+      "Accept lower precision for neurological category",
+      "External data: Gene expression profiles for neurological diseases"
+    ]
+  },
+  "conclusion": "h168 VALIDATED: Neurological low precision (26.1%) is due to FUNDAMENTAL kNN limitations.\n    \nNeurological diseases cluster with 'other' category in embedding space (92% of neighbors).\nThis means kNN recommendations come from non-neurological diseases which don't have neurological drugs.\nDrug class rescue (like h144 statins) is not feasible because neurological drugs have:\n- Low training frequency (most freq=1-4)\n- Cross-category usage (anticonvulsants for psychiatric, pain)\n\nThis is NOT a model bug but a DATA STRUCTURE issue. The only solutions require either:\n1. Modifying the kNN algorithm (category-weighted similarity)\n2. External data injection (explicit neurological drug catalogs)\n3. Accepting lower precision for this category"
+}

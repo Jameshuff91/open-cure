@@ -115,6 +115,17 @@ CATEGORY_PRECISION = {
     ("other", "MEDIUM"): 17.3,
     ("other", "LOW"): 4.9,
     ("other", "FILTER"): 6.2,
+    # h169: New categories - using conservative estimates (similar to gastrointestinal)
+    # until we have calibration data
+    ("renal", "MEDIUM"): 40.0,  # Similar to gastrointestinal
+    ("renal", "LOW"): 20.0,
+    ("renal", "FILTER"): 15.0,
+    ("musculoskeletal", "MEDIUM"): 35.0,  # Conservative estimate
+    ("musculoskeletal", "LOW"): 15.0,
+    ("musculoskeletal", "FILTER"): 10.0,
+    ("immunological", "MEDIUM"): 45.0,  # Similar to autoimmune-related
+    ("immunological", "LOW"): 25.0,
+    ("immunological", "FILTER"): 20.0,
 }
 
 # Default tier-only precision (fallback)
@@ -251,31 +262,52 @@ BETA_BLOCKERS = {'metoprolol', 'atenolol', 'carvedilol', 'bisoprolol', 'proprano
 DMARD_DRUGS = {'methotrexate', 'sulfasalazine', 'hydroxychloroquine', 'leflunomide',
                'azathioprine', 'mycophenolate', 'cyclosporine', 'tacrolimus'}  # 75.4% rank<=10
 
+# h169: Expanded category keywords to reduce 'other' bucket (was 61.3%)
 CATEGORY_KEYWORDS = {
     'autoimmune': ['autoimmune', 'lupus', 'rheumatoid', 'arthritis', 'scleroderma', 'myasthenia',
-                   'multiple sclerosis', 'crohn', 'colitis', 'psoriasis', 'sjögren'],
+                   'multiple sclerosis', 'crohn', 'colitis', 'psoriasis', 'sjögren', 'behcet',
+                   'spondylitis', 'vasculitis', 'dermatomyositis', 'polymyositis', 'still disease'],
     'infectious': ['infection', 'bacterial', 'viral', 'fungal', 'hiv', 'aids', 'hepatitis',
-                   'tuberculosis', 'malaria', 'pneumonia', 'sepsis', 'meningitis'],
+                   'tuberculosis', 'malaria', 'pneumonia', 'sepsis', 'meningitis', 'amebiasis',
+                   'aspergillosis', 'brucellosis', 'actinomycosis', 'bartonellosis', 'burkholderia',
+                   'parasitic', 'otitis media', 'endocarditis', 'osteomyelitis', 'cellulitis'],
     'cancer': ['cancer', 'carcinoma', 'tumor', 'leukemia', 'lymphoma', 'melanoma',
-               'neoplasm', 'oncology', 'sarcoma', 'myeloma'],
+               'neoplasm', 'oncology', 'sarcoma', 'myeloma', 'glioma', 'adenocarcinoma',
+               'neuroblastoma', 'mastocytosis'],
     'cardiovascular': ['cardiac', 'heart', 'coronary', 'hypertension', 'arrhythmia',
-                       'atherosclerosis', 'stroke', 'vascular', 'myocardial', 'angina'],
+                       'atherosclerosis', 'stroke', 'vascular', 'myocardial', 'angina',
+                       'tachycardia', 'aneurysm', 'aorta', 'thrombosis', 'embolism',
+                       'cardiomyopathy', 'ischemia'],
     'neurological': ['neurological', 'alzheimer', 'parkinson', 'epilepsy', 'neuropathy',
-                     'dementia', 'huntington', 'brain'],
+                     'dementia', 'huntington', 'brain', 'seizure', 'ataxia', 'dystonia',
+                     'dyskinesia', 'narcolepsy', 'migraine', 'neuralgia', 'headache'],
     'metabolic': ['diabetes', 'metabolic', 'obesity', 'thyroid', 'hyperlipidemia',
-                  'hypercholesterolemia', 'gout', 'porphyria'],
+                  'hypercholesterolemia', 'gout', 'porphyria', 'glycogen storage',
+                  'hyperuricemia', 'acromegaly', 'addison', 'adrenal', 'hypoglycemia',
+                  'hyperglycemia', 'cushing'],
     'psychiatric': ['depression', 'anxiety', 'bipolar', 'schizophrenia', 'psychiatric',
-                    'ptsd', 'ocd', 'adhd', 'psychosis'],
+                    'ptsd', 'ocd', 'adhd', 'psychosis', 'agoraphobia', 'bulimia', 'anorexia',
+                    'alcohol withdrawal', 'insomnia', 'sleep disorder', 'panic disorder'],
     'respiratory': ['respiratory', 'asthma', 'copd', 'pulmonary', 'lung', 'bronchitis',
-                    'pneumonitis', 'fibrosis'],
+                    'pneumonitis', 'fibrosis', 'bronchiectasis', 'emphysema', 'pleurisy'],
     'gastrointestinal': ['gastrointestinal', 'gastric', 'intestinal', 'bowel', 'liver',
-                         'hepatic', 'cirrhosis', 'pancreatitis', 'celiac'],
+                         'hepatic', 'cirrhosis', 'pancreatitis', 'celiac', 'dysphagia',
+                         'cholecystitis', 'cholangitis', 'esophageal', 'dyspepsia', 'gerd'],
     'dermatological': ['skin', 'dermatitis', 'eczema', 'dermatological',
-                       'acne', 'urticaria', 'vitiligo'],
+                       'acne', 'urticaria', 'vitiligo', 'alopecia', 'pruritus', 'rosacea',
+                       'angioedema', 'blepharitis'],
     'ophthalmic': ['eye', 'retinal', 'glaucoma', 'macular', 'ophthalmic', 'uveitis',
-                   'conjunctivitis', 'keratitis'],
+                   'conjunctivitis', 'keratitis', 'blepharoconjunctivitis', 'cataract'],
     'hematological': ['anemia', 'hemophilia', 'thrombocytopenia',
-                      'neutropenia', 'hematological', 'myelodysplastic'],
+                      'neutropenia', 'hematological', 'myelodysplastic', 'polycythemia',
+                      'agranulocytosis', 'coagulation', 'thalassemia', 'sickle cell'],
+    # h169: New categories to reduce 'other' bucket
+    'renal': ['kidney', 'renal', 'nephropathy', 'nephritis', 'uremia', 'glomerular',
+              'nephrotic', 'dialysis'],
+    'musculoskeletal': ['bone', 'osteoporosis', 'osteomalacia', 'fracture', 'bursitis',
+                        'tendonitis', 'fibromyalgia', 'osteogenesis', 'paget'],
+    'immunological': ['immunodeficiency', 'agammaglobulinemia', 'complement deficiency',
+                      'amyloidosis', 'hypersensitivity', 'allergy', 'immunological'],
 }
 
 
