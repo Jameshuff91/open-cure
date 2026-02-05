@@ -23,6 +23,9 @@ Unified pipeline integrating validated research findings:
 - h189: ATC L4-based rescue criteria (more systematic drug class identification)
   - Autoimmune: H02AB (glucocorticoids) 77%, L04AX (methotrexate/azathioprine) 82%
   - Excludes biologics (L04AB, L04AC, L04AF) which have low precision (8-17%)
+- h309/h310: ATC coherence boost - drugs matching expected ATC for disease category
+  - Coherent: 35.5% precision vs Incoherent: 18.7% (+16.8 pp gap)
+  - Boosts LOW→MEDIUM for coherent predictions with rank<=10 + evidence
 
 USAGE:
     # Get predictions for a disease
@@ -835,6 +838,37 @@ CATEGORY_KEYWORDS = {
                      'endometritis', 'toxemia of pregnancy', 'primary ovarian failure'],
 }
 
+# h309/h310: Refined ATC-Category Coherence Map for confidence boosting
+# Maps disease categories to expected ATC L1 codes for that category
+# h309 finding: Coherent predictions (drug ATC matches category) have 35.5% precision
+# vs 18.7% for incoherent (gap: +16.8 pp)
+#
+# Refinement: Added H (systemic hormonal, includes corticosteroids) and A (alimentary,
+# where some corticosteroid formulations are classified) to inflammatory categories
+# because corticosteroids are used broadly for inflammation across many disease categories
+DISEASE_CATEGORY_ATC_MAP: Dict[str, Set[str]] = {
+    'autoimmune': {'L', 'M', 'H', 'A'},  # Added A (corticosteroid formulations)
+    'cancer': {'L'},
+    'cardiovascular': {'C', 'B'},
+    'dermatological': {'D', 'L', 'H', 'A'},  # Added H, A (corticosteroids)
+    'infectious': {'J', 'P'},
+    'metabolic': {'A', 'H'},
+    'neurological': {'N'},
+    'ophthalmic': {'S', 'H', 'A'},  # Added H, A (corticosteroids for inflammation)
+    'ophthalmological': {'S', 'H', 'A'},  # Same for alternate spelling
+    'psychiatric': {'N'},
+    'respiratory': {'R', 'H', 'A'},  # Added H, A (corticosteroids for asthma/inflammation)
+    'gastrointestinal': {'A'},
+    'hematological': {'B', 'L', 'H', 'A'},  # Added H, A (corticosteroids for blood disorders)
+    'renal': {'C'},
+    'musculoskeletal': {'M', 'H', 'A'},  # Added H, A (corticosteroids for inflammation)
+    'genetic': {'H', 'A'},  # For genetic disorders treated with corticosteroids
+    'immunological': {'L', 'H', 'A'},  # Immunomodulators and corticosteroids
+    'endocrine': {'H', 'A'},  # Hormones
+    'reproductive': {'G', 'H'},  # Genitourinary hormones
+    'other': set(),  # No ATC coherence for uncategorized
+}
+
 
 def extract_cancer_types(disease_name: str) -> Set[str]:
     """
@@ -1320,6 +1354,39 @@ class DrugRepurposingPredictor:
         disease_lower = disease_name.lower()
         return disease_lower in HIGHLY_REPURPOSABLE_DISEASES
 
+    def _is_atc_coherent(self, drug_name: str, category: str) -> bool:
+        """
+        h309/h310: Check if drug's ATC code is coherent with disease category.
+
+        Coherent predictions (ATC L1 matches expected codes for category)
+        have 35.5% precision vs 18.7% for incoherent (+16.8 pp gap).
+
+        Args:
+            drug_name: Name of the drug
+            category: Disease category (e.g., 'autoimmune', 'infectious')
+
+        Returns:
+            True if drug's ATC L1 code is in expected codes for category,
+            False otherwise. Returns False if no ATC mapping exists.
+        """
+        expected_atc = DISEASE_CATEGORY_ATC_MAP.get(category, set())
+        if not expected_atc:
+            return False  # No coherence check for uncategorized
+
+        try:
+            mapper = _get_atc_mapper()
+            atc_codes = mapper.get_atc_codes(drug_name)
+            if not atc_codes:
+                return False  # No ATC code found
+
+            # Check if any of the drug's ATC L1 codes match expected
+            for code in atc_codes:
+                if code and code[0] in expected_atc:
+                    return True
+            return False
+        except Exception:
+            return False
+
     @staticmethod
     def categorize_disease(disease_name: str) -> str:
         """Categorize a disease by name."""
@@ -1493,6 +1560,14 @@ class DrugRepurposingPredictor:
         # These diseases have drugs widely used across many conditions
         if is_highly_repurposable and (mechanism_support or train_frequency >= 5):
             return ConfidenceTier.MEDIUM, False, 'highly_repurposable'
+
+        # h309/h310: ATC coherence boost for LOW tier predictions
+        # Coherent predictions have 35.5% precision vs 18.7% for incoherent
+        # Boost coherent LOW→MEDIUM when drug has good rank and some support
+        if drug_name and category and self._is_atc_coherent(drug_name, category):
+            # Only boost if there's some additional evidence
+            if rank <= 10 and (mechanism_support or train_frequency >= 3):
+                return ConfidenceTier.MEDIUM, True, f'atc_coherent_{category}'
 
         # LOW tier
         return ConfidenceTier.LOW, False, None
