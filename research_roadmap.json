@@ -1770,7 +1770,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: For each disease in DRKG, get associated genes",
         "Step 2: For each gene, get drugs that target it (directly or via protein)",
@@ -1782,8 +1782,8 @@
       "dependencies": [
         "h90"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Mechanism traversal achieves only 3.53% ± 0.55% R@30 on 5-seed disease holdout (458 test diseases per seed).\n\nROOT CAUSES (3 layers of failure):\n1. DATA SPARSITY: Only 36.9% of GT drugs (2,682/7,276) have any target gene information in drug_targets.json. 63.1% have NO targets annotated.\n\n2. GENE NON-OVERLAP: Even when both disease and drug have gene data, only 39.0% of GT pairs (11,691/30,001) have ANY gene overlap. The hypothesis that 'drugs work by targeting disease genes' is false for most drug-disease pairs.\n\n3. POOR RANKING: Even with gene overlap, only 13.9% of GT drugs (1,623/11,691) rank in top 30. Mean rank is 516, median is 226. Drugs that DO target disease genes are diluted among 1000s of other drugs.\n\nCOVERAGE ANALYSIS:\n- Diseases with gene annotations: 3,454\n- GT diseases mappable: 2,292\n- Diseases with at least 1 reachable GT drug: 960 (41.9%)\n- Theoretical ceiling (any rank): 22.3% of GT drugs reachable\n\nKEY INSIGHT: Drug repurposing based purely on 'drug targets disease genes' is a flawed model because:\n1. Most approved drugs lack target annotations\n2. Most drugs that work for diseases do NOT do so via direct gene targeting\n3. Mechanisms are indirect (pathways, phenotypes, network effects)\n4. The 'disease genes' in DRKG may not be the therapeutically relevant targets\n\nThis validates why Node2Vec kNN (26-37%) >> mechanism traversal (3.5%): embeddings capture indirect network relationships that direct gene overlap misses.\n\nScript: scripts/h93_mechanism_traversal.py",
+      "result_metric": "3.53% ± 0.55% R@30 (5-seed) - drastically worse than kNN baseline (26%)"
     },
     {
       "id": "h94",
@@ -1848,6 +1848,68 @@
         "h93",
         "h94"
       ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h95",
+      "title": "Pathway-Level Mechanism Traversal",
+      "category": "architecture",
+      "rationale": "h93 showed direct gene targeting fails (3.5% R@30) because drug-disease gene overlap is rare (39%). However, drugs and diseases may share PATHWAYS without sharing exact genes. Hypothesis: Drug targets gene in same KEGG pathway as disease genes = candidate. This captures indirect mechanism while being more biologically plausible than direct targeting.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load KEGG pathway data from data/reference/pathway/",
+        "Step 2: For each disease gene, get its pathway memberships",
+        "Step 3: For each drug target gene, get its pathway memberships",
+        "Step 4: Score drugs by: number of shared pathways with disease",
+        "Step 5: Evaluate R@30 on disease holdout",
+        "Success criteria: > 5% R@30 (beat h93's 3.5%) or useful as kNN booster feature"
+      ],
+      "dependencies": ["h93"],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h96",
+      "title": "PPI-Extended Drug Targets",
+      "category": "data",
+      "rationale": "h93 showed 63% of GT drugs have NO target annotations. Can we extend targets via PPI? If drug A targets protein X, and X interacts with Y, then Y is an 'indirect target'. This could expand druggable gene coverage without requiring new drug data.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load PPI network from data/reference/ppi/",
+        "Step 2: For each drug with known targets, add 1-hop PPI neighbors as indirect targets",
+        "Step 3: Re-run h93 mechanism traversal with extended targets",
+        "Step 4: Compare coverage and R@30",
+        "Success criteria: Double coverage of GT drugs (36% → 70%+) while maintaining R@30"
+      ],
+      "dependencies": ["h93"],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h97",
+      "title": "Mechanism-kNN Hybrid Confidence",
+      "category": "confidence",
+      "rationale": "h93 mechanism traversal fails as primary signal (3.5%) but kNN works (26%). However, when a kNN prediction ALSO has mechanism support (drug targets disease genes), it may be higher confidence. Use mechanism overlap as a confidence booster, not a prediction method.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Run kNN to get drug rankings per disease",
+        "Step 2: For each top-30 kNN prediction, check if drug-disease has gene overlap",
+        "Step 3: Tier predictions: 'mechanism-supported' (has overlap) vs 'pattern-only' (kNN only)",
+        "Step 4: Compare precision of mechanism-supported vs pattern-only predictions",
+        "Step 5: If mechanism support improves precision, integrate into confidence model",
+        "Success criteria: Mechanism-supported predictions have 10%+ higher precision"
+      ],
+      "dependencies": ["h93"],
       "findings": null,
       "result_metric": null
     }
@@ -2292,6 +2354,12 @@
       "hypothesis_id": "h74",
       "learning": "Use case-aware API with discovery/validation/clinical modes allows users to select precision-coverage tradeoff appropriate for their research stage.",
       "implication": "Production API should require use_case parameter to ensure users understand precision expectations."
+    },
+    {
+      "date": "2026-02-04",
+      "hypothesis_id": "h93",
+      "learning": "Direct mechanism traversal (Disease→Gene→Drug) achieves only 3.53% R@30 due to 3 compounding failures: (1) 63% of GT drugs have NO target genes annotated, (2) only 39% of pairs with data have gene overlap, (3) even with overlap, only 14% rank in top 30.",
+      "implication": "Drug repurposing cannot rely on direct gene targeting. Indirect mechanisms (pathways, network effects, phenotypes) dominate. Node2Vec embeddings capture these indirect relationships where explicit graph traversal fails. This validates the kNN approach."
     }
   ],
   "collaborations": [
