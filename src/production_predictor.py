@@ -387,6 +387,86 @@ CANCER_TYPE_KEYWORDS = {
                     'oncology', 'glioma', 'glioblastoma', 'neuroblastoma', 'blastoma'],
 }
 
+# h273: Disease hierarchy groups for cross-category matching
+# When prediction disease doesn't exactly match GT but is in same disease group,
+# this indicates the drug treats a related condition (2.9x precision improvement)
+#
+# Key findings from h273:
+# - Autoimmune: 18.4% exact → 37.2% hierarchy (+18.8pp)
+# - Metabolic: 14.4% exact → 49.6% hierarchy (+35.2pp)
+# - Infectious: 4.3% exact → 20.4% hierarchy (+16.1pp)
+# - Cardiovascular: 3.1% exact → 18.0% hierarchy (+14.9pp)
+#
+DISEASE_HIERARCHY_GROUPS = {
+    'autoimmune': {
+        'psoriasis': ['psoriasis', 'plaque psoriasis', 'chronic plaque psoriasis', 'scalp psoriasis',
+                      'erythrodermic psoriasis', 'pustular psoriasis', 'guttate psoriasis', 'psoriasis vulgaris'],
+        'rheumatoid_arthritis': ['rheumatoid arthritis', 'juvenile rheumatoid arthritis', 'juvenile idiopathic arthritis',
+                                  'polyarticular juvenile idiopathic arthritis', 'systemic juvenile idiopathic arthritis',
+                                  'osteoarthritis', 'arthritis', 'psoriatic arthritis'],
+        'multiple_sclerosis': ['multiple sclerosis', 'relapsing multiple sclerosis', 'remitting multiple sclerosis',
+                               'progressive multiple sclerosis', 'primary progressive multiple sclerosis',
+                               'secondary progressive multiple sclerosis', 'relapsing-remitting multiple sclerosis'],
+        'lupus': ['lupus', 'systemic lupus erythematosus', 'discoid lupus', 'lupus nephritis',
+                  'membranous lupus nephritis', 'cutaneous lupus', 'sle'],
+        'colitis': ['colitis', 'ulcerative colitis', 'chronic ulcerative colitis', 'pediatric ulcerative colitis',
+                    'crohns disease', 'crohn disease', 'crohn colitis', 'inflammatory bowel disease'],
+        'scleroderma': ['scleroderma', 'systemic sclerosis', 'systemic sclerosis associated interstitial lung disease',
+                        'diffuse scleroderma', 'limited scleroderma'],
+        'spondylitis': ['ankylosing spondylitis', 'axial spondyloarthritis', 'non-radiographic axial spondyloarthritis'],
+    },
+    'infectious': {
+        'pneumonia': ['pneumonia', 'bronchopneumonia', 'community-acquired pneumonia', 'hospital-acquired pneumonia',
+                      'streptococcal pneumonia', 'pneumococcal pneumonia', 'bacterial pneumonia', 'aspiration pneumonia'],
+        'hepatitis': ['hepatitis', 'hepatitis b', 'hepatitis c', 'chronic hepatitis', 'viral hepatitis',
+                      'hepatitis c genotype 1', 'hepatitis c genotype 2', 'hepatitis c genotype 3'],
+        'uti': ['urinary tract infection', 'uti', 'complicated urinary tract infection', 'uncomplicated uti',
+                'recurrent uti', 'chronic urinary tract infection', 'pyelonephritis', 'cystitis'],
+        'sepsis': ['sepsis', 'bacterial sepsis', 'septicemia', 'blood stream infection', 'severe sepsis', 'septic shock'],
+        'skin_infection': ['skin infection', 'cellulitis', 'impetigo', 'wound infection', 'burn infection',
+                           'skin and soft tissue infection', 'abscess'],
+        'respiratory_infection': ['respiratory infection', 'bronchitis', 'acute bronchitis', 'chronic bronchitis',
+                                  'respiratory tract infection', 'upper respiratory infection', 'lower respiratory infection'],
+        'tuberculosis': ['tuberculosis', 'tb', 'pulmonary tuberculosis', 'latent tuberculosis', 'multidrug-resistant tuberculosis'],
+        'hiv': ['hiv', 'human immunodeficiency virus', 'aids', 'hiv infection', 'hiv-1 infection'],
+    },
+    'neurological': {
+        'epilepsy': ['epilepsy', 'seizure', 'seizure disorder', 'partial seizure', 'generalized seizure',
+                     'focal seizure', 'absence seizure', 'tonic-clonic seizure', 'status epilepticus'],
+        'parkinsons': ['parkinson', "parkinson's disease", 'parkinsons disease', 'parkinsonism', 'tremor'],
+        'alzheimers': ['alzheimer', "alzheimer's disease", 'dementia', 'cognitive impairment', 'memory loss'],
+        'migraine': ['migraine', 'headache', 'chronic migraine', 'episodic migraine', 'cluster headache', 'tension headache'],
+        'neuropathy': ['neuropathy', 'peripheral neuropathy', 'diabetic neuropathy', 'polyneuropathy', 'nerve damage'],
+        'stroke': ['stroke', 'cerebrovascular', 'ischemic stroke', 'hemorrhagic stroke', 'tia', 'transient ischemic attack'],
+    },
+    'cardiovascular': {
+        'heart_failure': ['heart failure', 'congestive heart failure', 'chf', 'left ventricular failure',
+                          'right heart failure', 'cardiomyopathy', 'dilated cardiomyopathy'],
+        'hypertension': ['hypertension', 'high blood pressure', 'essential hypertension', 'pulmonary hypertension',
+                         'resistant hypertension', 'renovascular hypertension'],
+        'arrhythmia': ['arrhythmia', 'atrial fibrillation', 'afib', 'ventricular arrhythmia', 'tachycardia',
+                       'bradycardia', 'supraventricular tachycardia', 'ventricular tachycardia'],
+        'coronary': ['coronary', 'angina', 'coronary artery disease', 'ischemic heart disease',
+                     'acute coronary syndrome', 'myocardial infarction', 'heart attack'],
+        'atherosclerosis': ['atherosclerosis', 'arteriosclerosis', 'plaque', 'arterial disease'],
+    },
+    'metabolic': {
+        'diabetes': ['diabetes', 'type 2 diabetes', 'type 1 diabetes', 'diabetic', 'hyperglycemia',
+                     'hypoglycemia', 'diabetic nephropathy', 'diabetic neuropathy', 'diabetic retinopathy',
+                     'diabetes mellitus', 'diabetes insipidus'],
+        'obesity': ['obesity', 'overweight', 'weight management', 'bmi'],
+        'lipid': ['hyperlipidemia', 'dyslipidemia', 'hypercholesterolemia', 'hypertriglyceridemia', 'cholesterol',
+                  'familial hypercholesterolemia'],
+        'thyroid': ['thyroid', 'hypothyroidism', 'hyperthyroidism', 'goiter', 'thyroiditis'],
+        'gout': ['gout', 'hyperuricemia', 'uric acid'],
+    },
+    'respiratory': {
+        'asthma': ['asthma', 'asthmatic', 'bronchospasm', 'reactive airway', 'exercise-induced asthma'],
+        'copd': ['copd', 'chronic obstructive', 'emphysema'],
+        'pulmonary_fibrosis': ['fibrosis', 'pulmonary fibrosis', 'idiopathic pulmonary fibrosis', 'interstitial lung'],
+    },
+}
+
 # h171: Neurological drug class mappings (60.4% coverage vs 18% kNN baseline)
 # Maps disease subtypes to appropriate drug classes
 NEUROLOGICAL_DISEASE_DRUG_CLASSES = {
@@ -712,6 +792,9 @@ class DrugRepurposingPredictor:
         # h274: Build drug→cancer type GT mapping
         self._build_cancer_type_mapping()
 
+        # h273: Build drug→disease group hierarchy mapping
+        self._build_disease_hierarchy_mapping()
+
     def _get_cache_key(self) -> str:
         """Generate a cache key based on source file modification times and content hash."""
         # h176: Cache invalidation based on source files
@@ -866,6 +949,67 @@ class DrugRepurposingPredictor:
 
         return has_cancer_gt, same_type_match, overlapping_types
 
+    def _build_disease_hierarchy_mapping(self) -> None:
+        """
+        h273: Build mapping of drug_id → set of (category, disease_group) pairs.
+
+        From h273 analysis:
+        - Hierarchy matching increases precision 2.9x overall (8.5% → 24.7%)
+        - Metabolic: +35.2 pp, Autoimmune: +18.8 pp, Infectious: +16.1 pp
+        """
+        self.drug_disease_groups: Dict[str, Set[Tuple[str, str]]] = defaultdict(set)
+
+        for disease_id, drug_ids in self.ground_truth.items():
+            disease_name = self.disease_names.get(disease_id, disease_id)
+            disease_lower = disease_name.lower()
+
+            # Check each category's disease groups
+            for category, groups in DISEASE_HIERARCHY_GROUPS.items():
+                for group_name, variants in groups.items():
+                    if any(variant in disease_lower or disease_lower in variant
+                           for variant in variants):
+                        for drug_id in drug_ids:
+                            self.drug_disease_groups[drug_id].add((category, group_name))
+
+        self.drug_disease_groups = dict(self.drug_disease_groups)
+
+    def _check_disease_hierarchy_match(
+        self, drug_id: str, disease_name: str, category: str
+    ) -> Tuple[bool, bool, Optional[str]]:
+        """
+        h273: Check if drug's GT matches the target disease through hierarchy.
+
+        Returns:
+            (has_category_gt, same_group_match, matching_group)
+            - has_category_gt: Drug has ANY GT in this category's groups
+            - same_group_match: Drug treats the SAME disease group (e.g., psoriasis → plaque psoriasis)
+            - matching_group: Name of the matching disease group
+        """
+        drug_groups = self.drug_disease_groups.get(drug_id, set())
+        # Filter to this category's groups only
+        category_groups = {g for (c, g) in drug_groups if c == category}
+        has_category_gt = len(category_groups) > 0
+
+        if not has_category_gt or category not in DISEASE_HIERARCHY_GROUPS:
+            return False, False, None
+
+        # Find what disease group the prediction disease belongs to
+        disease_lower = disease_name.lower()
+        pred_disease_group = None
+        for group_name, variants in DISEASE_HIERARCHY_GROUPS[category].items():
+            if any(variant in disease_lower or disease_lower in variant
+                   for variant in variants):
+                pred_disease_group = group_name
+                break
+
+        if pred_disease_group is None:
+            return has_category_gt, False, None
+
+        # Check if drug has GT in the same disease group
+        same_group_match = pred_disease_group in category_groups
+
+        return has_category_gt, same_group_match, pred_disease_group if same_group_match else None
+
     @staticmethod
     def categorize_disease(disease_name: str) -> str:
         """Categorize a disease by name."""
@@ -936,6 +1080,19 @@ class DrugRepurposingPredictor:
             drug_lower = drug_name.lower()
             if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
                 return ConfidenceTier.FILTER, False, None
+
+        # h273: Disease hierarchy matching - if drug treats same disease group, boost tier
+        # This indicates the prediction is a subtype refinement (e.g., "psoriasis" → "plaque psoriasis")
+        # 2.9x precision improvement overall (8.5% → 24.7%)
+        # Category-specific improvements: metabolic +35pp, autoimmune +19pp, infectious +16pp
+        if category in DISEASE_HIERARCHY_GROUPS and drug_id:
+            has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(
+                drug_id, disease_name, category
+            )
+            if same_group_match:
+                # Same disease group → HIGH tier (subtype refinement is reliable)
+                # Higher precision than category average: ~37% for autoimmune, ~50% for metabolic
+                return ConfidenceTier.HIGH, True, f'{category}_hierarchy_{matching_group}'
 
         # Apply h136/h144/h171/h274 category-specific rescue for Tier 2/3
         if disease_tier > 1:

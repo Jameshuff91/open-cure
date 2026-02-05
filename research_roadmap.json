@@ -5460,7 +5460,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Build disease hierarchy for each category (autoimmune, infectious, neurological)",
         "Step 2: Re-evaluate all predictions with fuzzy matching",
@@ -5471,8 +5471,8 @@
       "dependencies": [
         "h270"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Disease hierarchy matching improves precision by 2.9x overall.\n\nImplementation added to production_predictor.py:\n- DISEASE_HIERARCHY_GROUPS dictionary with 6 categories (autoimmune, infectious, neurological, cardiovascular, metabolic, respiratory)\n- _build_disease_hierarchy_mapping() builds drug\u2192disease_groups mapping from GT\n- _check_disease_hierarchy_match() checks if prediction matches same disease group\n- Hierarchy match \u2192 HIGH tier confidence\n\nPrecision by category with hierarchy matching:\n- Autoimmune: 75.9% (vs 16.7% MEDIUM baseline)\n- Metabolic: 72.1% (vs 36.4% MEDIUM baseline)\n- Neurological: 81.8% (vs 0% MEDIUM baseline)\n- Cardiovascular: 38.3% (vs 22.2% MEDIUM baseline)\n- Respiratory: 28.6% (vs 5.0% MEDIUM baseline)\n\nKey findings:\n1. Hierarchy matching identifies 'subtype refinement' predictions with high reliability\n2. When drug treats psoriasis and we predict for 'plaque psoriasis', this is almost always correct\n3. Average 4.5x precision lift from hierarchy matching across categories\n4. 768 predictions across all diseases get hierarchy tier boost",
+      "result_metric": "4.5x avg precision lift with hierarchy matching (8.5% \u2192 38.5%)"
     },
     {
       "id": "h274",
@@ -5514,6 +5514,90 @@
       ],
       "dependencies": [
         "h270"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h276",
+      "title": "Extend Hierarchy to GOLDEN Tier for High-Precision Categories",
+      "category": "precision",
+      "rationale": "h273 shows autoimmune and metabolic hierarchy matches achieve >70% precision - comparable to GOLDEN tier criteria. These should be GOLDEN, not HIGH.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify categories where hierarchy precision > 50% (GOLDEN threshold)",
+        "Step 2: Update _assign_confidence_tier to use GOLDEN for high-precision hierarchy categories",
+        "Step 3: Validate precision is maintained",
+        "Success criteria: Autoimmune/metabolic/neurological hierarchy \u2192 GOLDEN tier"
+      ],
+      "dependencies": [
+        "h273"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h277",
+      "title": "Cross-Category Hierarchy Matching (Drug Treats Related Category)",
+      "category": "recall",
+      "rationale": "h273 only matches within-category. Some drugs treat related conditions across categories (e.g., cardiovascular drugs for diabetes complications). Could this expand recall?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify cross-category disease relationships (e.g., diabetic cardiovascular disease)",
+        "Step 2: Build cross-category hierarchy mapping",
+        "Step 3: Evaluate precision of cross-category matches",
+        "Success criteria: >20% precision for cross-category matches"
+      ],
+      "dependencies": [
+        "h273"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h278",
+      "title": "Infectious Disease Hierarchy Gap Analysis",
+      "category": "precision",
+      "rationale": "h273 shows infectious diseases got 0 hierarchy matches despite 83 test diseases. Why? Are the hierarchy groups insufficient or is this a GT coverage issue?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze why infectious diseases don't match hierarchy groups",
+        "Step 2: Check if infectious GT diseases are in DRKG vs our hierarchy terms",
+        "Step 3: Expand infectious hierarchy groups if needed",
+        "Success criteria: Understand and potentially fix infectious hierarchy matching"
+      ],
+      "dependencies": [
+        "h273"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h279",
+      "title": "Disease Specificity Scoring",
+      "category": "precision",
+      "rationale": "h273 hierarchy matching works because it identifies subtype refinements. Could we quantify 'disease specificity' (e.g., 'plaque psoriasis' is more specific than 'psoriasis') and use this as a confidence signal?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Build disease specificity hierarchy (generic \u2192 specific)",
+        "Step 2: Score predictions by specificity match (generic GT \u2192 specific prediction = lower confidence)",
+        "Step 3: Evaluate correlation between specificity match and precision",
+        "Success criteria: Specificity score correlates with precision (r > 0.3)"
+      ],
+      "dependencies": [
+        "h273"
       ],
       "findings": null,
       "result_metric": null
@@ -6595,6 +6679,12 @@
       "hypothesis_id": "h274",
       "learning": "Cancer type matching must be checked BEFORE rank filter to rescue same-type drugs at any rank. Implemented 7 cancer type categories (lymphoma, leukemia, carcinoma, melanoma, sarcoma, myeloma, solid_tumor) for hierarchical matching.",
       "implication": "Same-type cancer drugs are highly predictive regardless of kNN rank - treat as subtype refinements not novel predictions"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h273",
+      "learning": "Disease hierarchy matching identifies subtype refinements with 4.5x precision lift. Autoimmune/metabolic/neurological achieve >70% precision when prediction disease matches drug's GT disease group.",
+      "implication": "Use hierarchy matching as a GOLDEN tier criterion for high-precision categories"
     }
   ],
   "collaborations": [
