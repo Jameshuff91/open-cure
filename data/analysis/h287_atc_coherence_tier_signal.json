@@ -1,0 +1,53 @@
+{
+  "hypothesis": "h287",
+  "overall_coherent_precision": 9.86,
+  "overall_incoherent_precision": 8.36,
+  "overall_lift_pp": 1.51,
+  "n_coherent": 3366,
+  "n_incoherent": 9119,
+  "tier_results": [
+    {
+      "tier": "GOLDEN",
+      "coherent_n": 95,
+      "coherent_prec": 15.79,
+      "incoherent_n": 1444,
+      "incoherent_prec": 23.41,
+      "lift_pp": -7.62
+    },
+    {
+      "tier": "HIGH",
+      "coherent_n": 425,
+      "coherent_prec": 17.18,
+      "incoherent_n": 1160,
+      "incoherent_prec": 14.22,
+      "lift_pp": 2.95
+    },
+    {
+      "tier": "MEDIUM",
+      "coherent_n": 448,
+      "coherent_prec": 11.38,
+      "incoherent_n": 1175,
+      "incoherent_prec": 7.4,
+      "lift_pp": 3.98
+    },
+    {
+      "tier": "LOW",
+      "coherent_n": 725,
+      "coherent_prec": 9.66,
+      "incoherent_n": 1104,
+      "incoherent_prec": 5.53,
+      "lift_pp": 4.13
+    },
+    {
+      "tier": "FILTER",
+      "coherent_n": 1673,
+      "coherent_prec": 7.35,
+      "incoherent_n": 4236,
+      "incoherent_prec": 2.62,
+      "lift_pp": 4.73
+    }
+  ],
+  "success_criterion_met": false,
+  "high_tier_coherent_precision": 17.18,
+  "conclusion": "INVALIDATED - coherence HURTS at GOLDEN tier (-7.6 pp), helps only marginally at lower tiers"
+}

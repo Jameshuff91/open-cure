@@ -5780,7 +5780,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Add ATC coherence flag to production_predictor.py",
         "Step 2: Boost coherent predictions by one tier (LOW \u2192 MEDIUM, MEDIUM \u2192 HIGH)",
@@ -5791,8 +5791,9 @@
       "dependencies": [
         "h193"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h287 INVALIDATED: ATC coherence is NOT a useful tier boost signal.\n\nKEY FINDINGS:\n1. GOLDEN tier: Coherent = 15.79% vs Incoherent = 23.41% (-7.62 pp)\n   \u2192 COHERENCE HURTS at GOLDEN tier! Counter-intuitive.\n\n2. HIGH tier: Coherent = 17.18% vs Incoherent = 14.22% (+2.95 pp)\n   \u2192 Coherence helps but coherent precision < 25% target\n\n3. MEDIUM/LOW/FILTER: Coherence helps consistently (+3.98 to +4.73 pp)\n   \u2192 But final precision still low (<12%)\n\nINTERPRETATION:\n- GOLDEN tier selection (freq>=15 + mechanism) already captures best signal\n- Incoherent GOLDEN predictions may be TRUE repurposing discoveries\n- Coherence at high tiers is NEGATIVE signal (drugs used outside typical class)\n\nSUCCESS CRITERION NOT MET:\n- HIGH tier coherent = 17.18%, target was >25%\n\nINVERSE FINDING:\n- GOLDEN + incoherent = 23.41% precision (highest observed!)\n- This could be a positive discovery signal worth investigating",
+      "result_metric": "GOLDEN coherent 15.8% vs incoherent 23.4% (-7.6 pp); HIGH coherent 17.2% < 25% target",
+      "completed_date": "2026-02-05"
     },
     {
       "id": "h288",
@@ -6200,6 +6201,26 @@
         "Step 3: Identify what makes Lidocaine unique hits different",
         "Step 4: Determine if Lidocaine + conditions -> tier boost is warranted",
         "Success criteria: Identify reliable Lidocaine pattern (>30% precision)"
+      ]
+    },
+    {
+      "id": "h308",
+      "title": "Incoherence at High Tiers as Repurposing Discovery Signal",
+      "category": "confidence",
+      "description": "h287 found GOLDEN + incoherent = 23.41% precision (highest!). These are drugs reaching high confidence for unexpected disease categories. May represent true repurposing discoveries.",
+      "status": "pending",
+      "priority": 4,
+      "effort": "low",
+      "expected_impact": "medium",
+      "dependencies": [
+        "h287"
+      ],
+      "steps": [
+        "Step 1: Extract GOLDEN + incoherent predictions",
+        "Step 2: Analyze what drug classes and disease categories are represented",
+        "Step 3: Look for known repurposing successes in this subset",
+        "Step 4: Determine if this is a reliable signal or sample size artifact (N=1444)",
+        "Success criteria: Identify pattern of true repurposing in incoherent GOLDEN predictions"
       ]
     }
   ],
@@ -7393,6 +7414,12 @@
       "hypothesis_id": "h303",
       "learning": "Class uniqueness is NOT an independent signal - frequency is the confounding variable. High-freq unique = 27.3%, high-freq not-unique = 22.6% (only +4.6 pp gap). Low-freq unique is actually WORSE (-2.3 to -3.4 pp).",
       "implication": "Do not implement uniqueness-based modifiers. Existing frequency-based rules are sufficient."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h287",
+      "learning": "ATC coherence is NOT a useful tier boost signal. GOLDEN + incoherent has HIGHER precision (23.4%) than GOLDEN + coherent (15.8%). The GOLDEN tier criteria (freq>=15 + mechanism) already capture quality; incoherent predictions at this level may be true repurposing discoveries.",
+      "implication": "Do not implement coherence-based tier boost. Consider investigating incoherent GOLDEN predictions as discovery signal."
     }
   ],
   "collaborations": [
