@@ -4481,8 +4481,10 @@
         "Compare precision of 1-hop vs 2-hop paths",
         "Determine if 2-hop adds value or just noise"
       ],
-      "status": "pending",
-      "priority": 4
+      "status": "invalidated",
+      "priority": 4,
+      "findings": "2-hop PPI paths (drug->gene1->gene2->disease) extend coverage significantly but at poor precision.\n\nKEY RESULTS:\n| Path Type | Coverage | Precision |\n|-----------|----------|-----------|\n| 1-hop only | 36.5% | 13.3% |\n| 2-hop only | +37.7% | 6.3% |\n| No path | 25.8% | 4.6% |\n\nANALYSIS:\n- 2-hop extends coverage from 36.5% to 74.2% total\n- BUT precision drops to 6.3% (only 0.48x of 1-hop)\n- This is barely above \"no path\" baseline (4.6%)\n- 2-hop adds NOISE, not signal\n\nPRECISION BY 2-HOP COUNT:\n| Count | Precision |\n|-------|-----------|\n| 1 path | 3.9% |\n| 2-5 paths | 5.4% |\n| 6-10 paths | 5.5% |\n| 10+ paths | 9.4% |\n\nNUANCE: High 2-hop counts (10+) approach useful precision (9.4%), suggesting threshold-based filtering could rescue some value.\n\nCONCLUSION: Raw 2-hop paths not useful. Only high-count 2-hop paths (10+) may have value.\n",
+      "result_metric": "Coverage: +37.7%, Precision: 6.3% (0.48x of 1-hop) - POOR"
     },
     {
       "id": "h227",
@@ -4607,6 +4609,51 @@
       ],
       "findings": "VALIDATED: Identified why drug-class prediction fails for stroke.\n\n**DRUG CLASS COVERAGE:**\n- 40/122 (32.8%) stroke drugs covered by traditional classes\n- Compare to AFib 65.6%, MI 47.9%, CAD 65.8%\n\n**ROOT CAUSE:**\nStroke treatment paradigm is BROADER than traditional drug classes:\n1. **Acute treatment:** thrombolytics, antiplatelets (covered)\n2. **Prevention:** anticoagulants, statins (covered)\n3. **BP management:** ACE inhibitors, ARBs, CCBs (NOT in stroke classes)\n4. **Post-stroke:** cognitive drugs, spasticity drugs (NOT in stroke classes)\n5. **Complications:** cerebral edema steroids (NOT in stroke classes)\n\n**WHY kNN WINS:**\nkNN captures stroke's BREADTH because stroke shares neighbors with:\n- Hypertension (finds BP drugs)\n- Dementia/Alzheimer's (finds cognitive drugs)\n- Heart disease (finds cardiac drugs)\n\n**DRUGS NOT IN CLASSES (top examples):**\n- clazosentan (3x) - cerebral vasospasm\n- dantrolene, baclofen (spasticity)\n- Various ACE inhibitors, ARBs (BP control)\n- Corticosteroids (cerebral edema)\n\n**IMPLICATION:**\nFor stroke, should NOT use drug-class prediction. Keep kNN for stroke category.\nCould expand stroke drug classes to include:\n- Antihypertensives (BP control)\n- Muscle relaxants (spasticity)\n- Corticosteroids (edema)\nBut this would be stroke-specific, not generalizable.",
       "result_metric": "32.8% class coverage (explains kNN advantage)"
+    },
+    {
+      "id": "h233",
+      "title": "Threshold-Based 2-Hop Paths (10+ paths only)",
+      "rationale": "h226 found that 10+ 2-hop paths achieve 9.4% precision (vs 3.9% for single paths). This approaches 1-hop precision (13.3%). Could using a high threshold (10+ paths) extend coverage while maintaining precision?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Filter 2-hop-only predictions to those with 10+ paths",
+        "Calculate coverage and precision for this subset",
+        "Compare to 1-hop baseline",
+        "If precision >10%, integrate as secondary confidence signal"
+      ]
+    },
+    {
+      "id": "h234",
+      "title": "Weighted PPI Path Scoring (confidence scores)",
+      "rationale": "h226 used raw PPI interaction counts. StringDB has confidence scores (0-1000). Could weighting by interaction confidence improve 2-hop precision?",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Load StringDB confidence scores for PPI interactions",
+        "Score 2-hop paths by interaction confidence",
+        "Test if high-confidence 2-hop paths have better precision",
+        "Success: precision >10% for top confidence quartile"
+      ]
+    },
+    {
+      "id": "h235",
+      "title": "Same-Pathway 2-Hop (gene1 and gene2 in same KEGG pathway)",
+      "rationale": "h226's 2-hop paths may fail because gene1->gene2 interactions are functionally irrelevant. Filtering to gene pairs in the same KEGG pathway could improve signal.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Load gene->pathway mappings",
+        "Filter 2-hop paths to those where gene1 and gene2 share a pathway",
+        "Compare precision to unfiltered 2-hop paths",
+        "Success: precision >10%"
+      ]
     }
   ],
   "completed": [
@@ -5511,6 +5558,12 @@
       "hypothesis_id": "h127",
       "learning": "Adding freq_x_score interaction to linear model captures 43% of XGBoost's advantage. Linear+interaction achieves 25.37% vs XGBoost 26.55% - only 1.18 pp difference.",
       "implication": "For interpretability, linear model with explicit interaction is nearly as good as XGBoost. freq_x_mech interaction actually HURTS (-0.67 pp) when added alone."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h226",
+      "learning": "2-hop PPI paths (drug->gene1->gene2->disease) extend coverage from 36% to 74% but precision drops to 6.3% (0.48x of 1-hop). Only high 2-hop counts (10+) approach useful precision (9.4%). Raw PPI-based path extension adds noise.",
+      "implication": "PPI interactions are too non-specific for mechanism path extension. Consider pathway-filtered or confidence-weighted approaches."
     }
   ],
   "collaborations": [

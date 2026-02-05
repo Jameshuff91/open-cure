@@ -1,0 +1,567 @@
+{
+  "hypothesis": "h226",
+  "title": "Two-Hop Mechanism Paths (Drug->Gene1->Gene2->Disease)",
+  "summary": {
+    "total_predictions": 10558,
+    "coverage_1hop": 3850,
+    "coverage_1hop_pct": 36.47,
+    "coverage_2hop_only": 3985,
+    "coverage_2hop_only_pct": 37.74,
+    "coverage_any_path": 7835,
+    "coverage_any_path_pct": 74.21,
+    "no_path": 2723,
+    "no_path_pct": 25.79
+  },
+  "precision": {
+    "no_path": 4.59,
+    "1hop_only": 13.33,
+    "2hop_only": 6.35,
+    "both": 13.27,
+    "all_1hop": 13.27
+  },
+  "verdict": "LOW_VALUE",
+  "details": {
+    "no_path": 2723,
+    "one_hop_only": 150,
+    "two_hop_only": 3985,
+    "both": 3700
+  },
+  "sample_2hop_only": [
+    {
+      "drug": "Perindoprilat",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 2,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "1636",
+          "59272"
+        ],
+        [
+          "1636",
+          "3630"
+        ]
+      ]
+    },
+    {
+      "drug": "Irbesartan",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 58,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "1544",
+          "2950"
+        ],
+        [
+          "348",
+          "335"
+        ],
+        [
+          "348",
+          "3630"
+        ],
+        [
+          "348",
+          "7099"
+        ],
+        [
+          "348",
+          "5468"
+        ]
+      ]
+    },
+    {
+      "drug": "Canagliflozin",
+      "disease": "MESH:D006333",
+      "is_known": true,
+      "n_1hop": 0,
+      "n_2hop": 23,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "213",
+          "335"
+        ],
+        [
+          "213",
+          "3630"
+        ],
+        [
+          "213",
+          "2152"
+        ],
+        [
+          "213",
+          "7076"
+        ],
+        [
+          "213",
+          "590"
+        ]
+      ]
+    },
+    {
+      "drug": "Tadalafil",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 2,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "1576",
+          "4128"
+        ],
+        [
+          "1576",
+          "2950"
+        ]
+      ]
+    },
+    {
+      "drug": "Hydroxyzine",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 2,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "1565",
+          "4128"
+        ],
+        [
+          "1565",
+          "2950"
+        ]
+      ]
+    },
+    {
+      "drug": "Mecamylamine",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 9,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "1958",
+          "1490"
+        ],
+        [
+          "1958",
+          "5468"
+        ],
+        [
+          "1958",
+          "6236"
+        ],
+        [
+          "1958",
+          "2152"
+        ],
+        [
+          "9797",
+          "7494"
+        ]
+      ]
+    },
+    {
+      "drug": "Bosentan",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 5,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "5696",
+          "3107"
+        ],
+        [
+          "1559",
+          "5743"
+        ],
+        [
+          "1559",
+          "2950"
+        ],
+        [
+          "1576",
+          "4128"
+        ],
+        [
+          "1576",
+          "2950"
+        ]
+      ]
+    },
+    {
+      "drug": "Azilsartan medoxomil",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 2,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "185",
+          "59272"
+        ],
+        [
+          "186",
+          "59272"
+        ]
+      ]
+    },
+    {
+      "drug": "Iloprost",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 18,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "11251",
+          "3565"
+        ],
+        [
+          "5327",
+          "3630"
+        ],
+        [
+          "5327",
+          "7450"
+        ],
+        [
+          "5327",
+          "2152"
+        ],
+        [
+          "133522",
+          "5468"
+        ]
+      ]
+    },
+    {
+      "drug": "Sotatercept",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 3,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "92",
+          "652"
+        ],
+        [
+          "92",
+          "2660"
+        ],
+        [
+          "92",
+          "654"
+        ]
+      ]
+    },
+    {
+      "drug": "Selexipag",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 4,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "1558",
+          "5743"
+        ],
+        [
+          "1558",
+          "2950"
+        ],
+        [
+          "1576",
+          "4128"
+        ],
+        [
+          "1576",
+          "2950"
+        ]
+      ]
+    },
+    {
+      "drug": "Sildenafil",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 32,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "54205",
+          "3630"
+        ],
+        [
+          "54205",
+          "23411"
+        ],
+        [
+          "54205",
+          "308"
+        ],
+        [
+          "54205",
+          "5743"
+        ],
+        [
+          "54205",
+          "3162"
+        ]
+      ]
+    },
+    {
+      "drug": "Amiloride",
+      "disease": "MESH:D006333",
+      "is_known": true,
+      "n_1hop": 0,
+      "n_2hop": 39,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "5328",
+          "4312"
+        ],
+        [
+          "5328",
+          "7057"
+        ],
+        [
+          "5328",
+          "2152"
+        ],
+        [
+          "5327",
+          "3630"
+        ],
+        [
+          "5327",
+          "7450"
+        ]
+      ]
+    },
+    {
+      "drug": "MACITENTAN",
+      "disease": "MESH:D006333",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 35,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "2099",
+          "3630"
+        ],
+        [
+          "2099",
+          "1432"
+        ],
+        [
+          "2099",
+          "23411"
+        ],
+        [
+          "2099",
+          "6462"
+        ],
+        [
+          "2099",
+          "801"
+        ]
+      ]
+    },
+    {
+      "drug": "Lidocaine",
+      "disease": "MESH:D009404",
+      "is_known": true,
+      "n_1hop": 0,
+      "n_2hop": 55,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "1555",
+          "240"
+        ],
+        [
+          "3684",
+          "6382"
+        ],
+        [
+          "3684",
+          "718"
+        ],
+        [
+          "3684",
+          "3596"
+        ],
+        [
+          "1559",
+          "240"
+        ]
+      ]
+    },
+    {
+      "drug": "Bupivacaine",
+      "disease": "MESH:D009404",
+      "is_known": true,
+      "n_1hop": 0,
+      "n_2hop": 17,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "2251",
+          "6382"
+        ],
+        [
+          "2251",
+          "3479"
+        ],
+        [
+          "2251",
+          "3630"
+        ],
+        [
+          "7124",
+          "3952"
+        ],
+        [
+          "7124",
+          "3630"
+        ]
+      ]
+    },
+    {
+      "drug": "Corticotropin",
+      "disease": "MESH:D009404",
+      "is_known": true,
+      "n_1hop": 0,
+      "n_2hop": 28,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "4157",
+          "5443"
+        ],
+        [
+          "4157",
+          "1906"
+        ],
+        [
+          "2516",
+          "5443"
+        ],
+        [
+          "627",
+          "3952"
+        ],
+        [
+          "627",
+          "3630"
+        ]
+      ]
+    },
+    {
+      "drug": "Rituximab",
+      "disease": "MESH:D009404",
+      "is_known": true,
+      "n_1hop": 0,
+      "n_2hop": 6,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "331",
+          "396"
+        ],
+        [
+          "7157",
+          "3630"
+        ],
+        [
+          "7157",
+          "2908"
+        ],
+        [
+          "7157",
+          "3479"
+        ],
+        [
+          "7157",
+          "4763"
+        ]
+      ]
+    },
+    {
+      "drug": "Adalimumab",
+      "disease": "MESH:D009404",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 10,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "7124",
+          "3952"
+        ],
+        [
+          "7124",
+          "3630"
+        ],
+        [
+          "7124",
+          "3596"
+        ],
+        [
+          "7124",
+          "2908"
+        ],
+        [
+          "7124",
+          "3479"
+        ]
+      ]
+    },
+    {
+      "drug": "Dupilumab",
+      "disease": "MESH:D009404",
+      "is_known": false,
+      "n_1hop": 0,
+      "n_2hop": 4,
+      "one_hop_genes": [],
+      "two_hop_paths": [
+        [
+          "3566",
+          "3952"
+        ],
+        [
+          "3566",
+          "5781"
+        ],
+        [
+          "3566",
+          "3456"
+        ],
+        [
+          "3566",
+          "3596"
+        ]
+      ]
+    }
+  ]
+}
