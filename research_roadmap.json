@@ -3685,14 +3685,16 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add proposed keywords from h186 to CATEGORY_KEYWORDS in production_predictor.py",
         "Consider adding new \"reproductive\" category for 5 fertility/pregnancy diseases",
         "Invalidate ground truth cache (delete data/cache/ground_truth_cache.json)",
         "Re-run h184 precision evaluation to measure impact",
         "Update CATEGORY_PRECISION calibration values if needed"
-      ]
+      ],
+      "findings": "Successfully implemented keyword additions from h186.\n\nCHANGES:\n- Added 17 keywords to infectious (q fever, syphilis, tularemia, etc.)\n- Added 6 keywords to autoimmune (polyarteritis nodosa, takayasu, etc.)\n- Added 5 keywords to reproductive (new category)\n- Added 4 keywords to cardiovascular, neurological, musculoskeletal\n- Added 3 keywords to gastrointestinal, dermatological, hematological\n- Added 2 keywords to ophthalmic, renal\n\nRESULTS:\n- 'Other' diseases: 78 \u2192 18 (77% reduction)\n- New 'reproductive' category with 5 diseases\n- Remaining 18 are true edge cases (poisonings, rare genetic)\n\nThese 60 reclassified diseases can now use category-specific rescue criteria.",
+      "result_metric": "78 \u2192 18 other diseases (77% reduction)"
     }
   ],
   "completed": [

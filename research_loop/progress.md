@@ -74,16 +74,40 @@ True edge cases: poisonings (5), pain syndromes (2), rare genetic (5), misc (9)
 **New Hypotheses Generated:**
 - h188: Implement h186 Keyword Additions to Reduce Other
 
+### h188: Implement h186 Keyword Additions - VALIDATED
+
+Implemented keyword additions from h186 to reduce 'other' category.
+
+**Changes:**
+- Added 17 keywords to infectious (q fever, syphilis, tularemia, etc.)
+- Added 6 keywords to autoimmune (polyarteritis nodosa, takayasu, etc.)
+- Created new 'reproductive' category with 5 diseases
+- Added keywords to 8 other categories
+
+**Results:**
+| Metric | Before | After |
+|--------|--------|-------|
+| 'Other' diseases | 78 | 18 |
+| Reduction | - | 77% |
+| Reclassified | - | 60 |
+
+**Remaining 'other' (18 true edge cases):**
+- Poisonings (5): ethylene glycol, methanol, mercury, lead, general
+- Pain (2): pain, chronic pain
+- Rare genetic: Bardet-Biedl, malignant hyperthermia, etc.
+
+These 60 reclassified diseases can now use category-specific rescue criteria!
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 86 |
+| Validated | 87 |
 | Invalidated | 41 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 32 |
-| **Total Tested** | **135** |
+| Pending | 31 |
+| **Total Tested** | **136** |
 
 ---
 

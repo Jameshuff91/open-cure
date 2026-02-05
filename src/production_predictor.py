@@ -334,7 +334,10 @@ CATEGORY_KEYWORDS = {
                    'spondylitis', 'vasculitis', 'dermatomyositis', 'polymyositis', 'still disease',
                    # h148: Additional autoimmune patterns
                    'graft versus host', 'eosinophilic granulomatosis', 'autoinflammatory',
-                   'microscopic polyangiitis', 'lichen planus', 'familial mediterranean fever'],
+                   'microscopic polyangiitis', 'lichen planus', 'familial mediterranean fever',
+                   # h188: Additional from h186 analysis
+                   'polyarteritis nodosa', 'takayasu', 'temporal arteritis', 'pyoderma gangrenosum',
+                   'rheumatic fever', 'sarcoidosis'],
     'infectious': ['infection', 'bacterial', 'viral', 'fungal', 'hiv', 'aids', 'hepatitis',
                    'tuberculosis', 'malaria', 'pneumonia', 'sepsis', 'meningitis', 'amebiasis',
                    'aspergillosis', 'brucellosis', 'actinomycosis', 'bartonellosis', 'burkholderia',
@@ -348,7 +351,12 @@ CATEGORY_KEYWORDS = {
                    'toxoplasmosis', 'herpes zoster', 'shingles', 'fusariosis', 'zygomycosis',
                    'schistosomiasis', 'strongyloides', 'giardia', 'dysentery', 'gastroenteritis',
                    'influenza', 'japanese encephalitis', 'leprosy', 'mycetoma', 'nocardiosis',
-                   'onchocerciasis', 'gonococcal'],
+                   'onchocerciasis', 'gonococcal',
+                   # h188: Additional from h186 analysis
+                   'q fever', 'relapsing fever', 'tularemia', 'syphilis', 'yaws', 'trichomoniasis',
+                   'smallpox', 'encephalitis', 'shigellosis', 'sporotrichosis', 'scabies',
+                   'ringworm', 'tinea', 'tonsillitis', 'vulvovaginitis', 'proctitis',
+                   'staphylococcus', 'pseudomonas'],
     'cancer': ['cancer', 'carcinoma', 'tumor', 'leukemia', 'lymphoma', 'melanoma',
                'neoplasm', 'oncology', 'sarcoma', 'myeloma', 'glioma', 'adenocarcinoma',
                'neuroblastoma', 'mastocytosis',
@@ -363,7 +371,9 @@ CATEGORY_KEYWORDS = {
                        # h148: Additional cardiovascular patterns
                        'cerebral infarction', 'deep vein thrombosis', 'dvt', 'pulmonary embolism',
                        'raynaud', 'claudication', 'peripheral arterial', 'varicose', 'phlebitis',
-                       'patent ductus arteriosus', 'orthostatic hypotension'],
+                       'patent ductus arteriosus', 'orthostatic hypotension',
+                       # h188: Additional from h186 analysis
+                       'torsades de pointes', 'tetralogy of fallot', 'edema', 'lymphedema'],
     'neurological': ['neurological', 'alzheimer', 'parkinson', 'epilepsy', 'neuropathy',
                      'dementia', 'huntington', 'brain', 'seizure', 'ataxia', 'dystonia',
                      'dyskinesia', 'narcolepsy', 'migraine', 'neuralgia', 'headache',
@@ -372,7 +382,10 @@ CATEGORY_KEYWORDS = {
                      'spinal cord', 'spinal muscular', 'chorea', 'cerebral palsy',
                      'hydrocephalus', 'myelitis', 'lennox gastaut', 'multiple system atrophy',
                      'neurofibromatosis', 'neuromuscular', 'neuronal ceroid lipofuscinosis',
-                     'motion sickness'],
+                     'motion sickness',
+                     # h188: Additional from h186 analysis
+                     'tuberous sclerosis', 'periodic paralysis', 'pure autonomic failure',
+                     'achondroplasia'],
     'metabolic': ['diabetes', 'metabolic', 'obesity', 'thyroid', 'hyperlipidemia',
                   'hypercholesterolemia', 'gout', 'porphyria', 'glycogen storage',
                   'hyperuricemia', 'acromegaly', 'addison', 'adrenal', 'hypoglycemia',
@@ -385,7 +398,10 @@ CATEGORY_KEYWORDS = {
                   'chylomicronemia', 'mucopolysaccharidosis', 'sphingolipidosis',
                   'lipid storage', 'lysosomal storage', 'multinodular goiter', 'myxedema',
                   'hypophosphatasia', 'lysosomal acid lipase', 'mevalonate kinase',
-                  'ornithine carbamoyltransferase'],
+                  'ornithine carbamoyltransferase',
+                  # h188: Additional from h186 analysis
+                  'thyrotoxicosis', 'zollinger ellison', 'lactic acidosis',
+                  'hyperlipoproteinemia', 'hyperphenylalaninemia', 'scurvy'],
     'psychiatric': ['depression', 'anxiety', 'bipolar', 'schizophrenia', 'psychiatric',
                     'ptsd', 'ocd', 'adhd', 'psychosis', 'agoraphobia', 'bulimia', 'anorexia',
                     'alcohol withdrawal', 'insomnia', 'sleep disorder', 'panic disorder',
@@ -405,7 +421,9 @@ CATEGORY_KEYWORDS = {
                          'peptic ulcer', 'gastroparesis', 'diverticulitis', 'appendicitis',
                          'peritonitis', 'ascites', 'duodenal ulcer', 'esophagitis',
                          'pancreat', 'gallbladder', 'diarrhea', 'constipation', 'ileus',
-                         'volvulus', 'intussusception', 'malabsorption', 'chronic cholestasis'],
+                         'volvulus', 'intussusception', 'malabsorption', 'chronic cholestasis',
+                         # h188: Additional from h186 analysis
+                         'gingivitis', 'dental caries', 'stomatitis'],
     'dermatological': ['skin', 'dermatitis', 'eczema', 'dermatological',
                        'acne', 'urticaria', 'vitiligo', 'alopecia', 'pruritus', 'rosacea',
                        'angioedema', 'blepharitis',
@@ -414,13 +432,17 @@ CATEGORY_KEYWORDS = {
                        'pemphigus', 'pemphigoid', 'erythema', 'impetigo',
                        'folliculitis', 'furuncle', 'carbuncle', 'paronychia',
                        'hidradenitis', 'hordeolum', 'stye', 'dermatosis', 'lichenoid',
-                       'hyperhidrosis', 'hirsutism', 'keloid', 'psoriatic', 'otitis externa'],
+                       'hyperhidrosis', 'hirsutism', 'keloid', 'psoriatic', 'otitis externa',
+                       # h188: Additional from h186 analysis
+                       'pityriasis', 'toxic epidermal necrolysis', 'pyoderma'],
     'ophthalmic': ['eye', 'retinal', 'glaucoma', 'macular', 'ophthalmic', 'uveitis',
                    'conjunctivitis', 'keratitis', 'blepharoconjunctivitis', 'cataract',
                    # h148: Additional ophthalmic patterns
                    'corneal', 'choroiditis', 'dacryocystitis', 'iritis', 'retinitis',
                    'scleritis', 'optic', 'blindness', 'keratoconus', 'pterygium',
-                   'hyperopia', 'myopia'],
+                   'hyperopia', 'myopia',
+                   # h188: Additional from h186 analysis
+                   'retinoblastoma', 'retinopathy'],
     'hematological': ['anemia', 'hemophilia', 'thrombocytopenia',
                       'neutropenia', 'hematological', 'myelodysplastic', 'polycythemia',
                       'agranulocytosis', 'coagulation', 'thalassemia', 'sickle cell',
@@ -429,24 +451,35 @@ CATEGORY_KEYWORDS = {
                       'coagulopathy', 'hemorrhagic', 'von willebrand', 'factor viii',
                       'prothrombin deficiency', 'protein c deficiency', 'protein s deficiency',
                       'factor deficiency', 'hemostasis', 'leukopenia',
-                      'paroxysmal nocturnal hemoglobinuria', 'hypereosinophilic'],
+                      'paroxysmal nocturnal hemoglobinuria', 'hypereosinophilic',
+                      # h188: Additional from h186 analysis
+                      'red cell aplasia', 'osteopetrosis', 'thrombophilia'],
     # h169: New categories to reduce 'other' bucket
     'renal': ['kidney', 'renal', 'nephropathy', 'nephritis', 'uremia', 'glomerular',
               'nephrotic', 'dialysis',
               # h148: Additional renal patterns
               'cystitis', 'pyelonephritis', 'urolithiasis', 'nephrolithiasis',
-              'hydronephrosis', 'urinary incontinence', 'overactive bladder'],
+              'hydronephrosis', 'urinary incontinence', 'overactive bladder',
+              # h188: Additional from h186 analysis
+              'vesicoureteral reflux', 'proteinuria'],
     'musculoskeletal': ['bone', 'osteoporosis', 'osteomalacia', 'fracture', 'bursitis',
                         'tendonitis', 'fibromyalgia', 'osteogenesis', 'paget',
                         # h148: Additional musculoskeletal patterns
-                        'muscular dystrophy', 'myotonic', 'rhabdomyolysis', 'fasciitis', 'myositis'],
+                        'muscular dystrophy', 'myotonic', 'rhabdomyolysis', 'fasciitis', 'myositis',
+                        # h188: Additional from h186 analysis
+                        'tendinitis', 'tenosynovitis', 'spina bifida', 'paraplegia'],
     'immunological': ['immunodeficiency', 'agammaglobulinemia', 'complement deficiency',
                       'amyloidosis', 'hypersensitivity', 'allergy', 'immunological',
                       # h148: Additional immunological patterns
                       'anaphylaxis', 'granulomatous disease', 'hyperimmunoglobulin', 'mast cell'],
     # h148: New category for endocrine diseases
     'endocrine': ['precocious puberty', 'hypogonadotropic', 'hypopituitarism', 'pituitary',
-                  'growth hormone', 'prolactinoma', 'hormone deficiency'],
+                  'growth hormone', 'prolactinoma', 'hormone deficiency',
+                  # h188: Additional from h186 analysis
+                  'adrenocortical insufficiency'],
+    # h188: New category for reproductive diseases
+    'reproductive': ['female infertility', 'ovarian hyperstimulation', 'hypoestrogenism',
+                     'endometritis', 'toxemia of pregnancy', 'primary ovarian failure'],
 }
 
 
