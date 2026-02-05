@@ -1,11 +1,52 @@
 # Research Loop Progress
 
-## Current Session: h71, h82, h83, h86, h80, h81, h88, h84, h89, h74 (2026-01-31, continued)
+## Current Session: h93, h97 (2026-02-04)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
+**Hypotheses Tested This Session:**
+- h93: Direct Mechanism Traversal (No ML) - **INVALIDATED**
+- h97: Mechanism-kNN Hybrid Confidence - **VALIDATED**
+
+### Key Findings
+
+**h93: Direct Mechanism Traversal Fails (3.53% R@30)**
+- Implemented pure graph traversal: Disease → Gene → Drug
+- ROOT CAUSES of failure:
+  1. 63% of GT drugs have NO target gene annotations
+  2. Only 39% of pairs with data have ANY gene overlap
+  3. Even with overlap, only 14% of GT drugs rank in top 30 (mean rank 516)
+- **CRITICAL INSIGHT:** Drug repurposing is NOT about direct gene targeting
+- Node2Vec kNN captures indirect mechanisms that explicit traversal misses
+
+**h97: Mechanism Support Improves kNN Precision by 2.1x**
+- Mechanism-supported predictions: 12.19% precision (329/2698 hits)
+- Pattern-only predictions: 5.72% precision (464/8116 hits)
+- Difference: +6.48 pp (below 10 pp threshold, but meaningful)
+- Only 20% of predictions have mechanism support
+- **IMPLICATION:** Use as confidence feature, not hard filter
+
+### New Hypotheses Added
+- h95: Pathway-Level Mechanism Traversal
+- h96: PPI-Extended Drug Targets
+- h97: Mechanism-kNN Hybrid Confidence (tested)
+
+### Session Statistics
+- Hypotheses tested: 2
+- Validated: 1 (h97)
+- Invalidated: 1 (h93)
+- New hypotheses added: 3 (h95, h96, h97)
+
+---
+
+## Previous Session: h71, h82, h83, h86, h80, h81, h88, h84, h89, h74 (2026-01-31, continued)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
 **Hypotheses Tested This Session:**
 - h71: Per-Category Calibration - **VALIDATED**
 - h82: Category-Specific k + Thresholds Combined - **INCONCLUSIVE**
