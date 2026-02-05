@@ -2197,7 +2197,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Step 1: Sample incoherent predictions that are true positives (hits)",
         "Step 2: Analyze what types of drugs/diseases these represent",
@@ -2208,8 +2208,8 @@
       "dependencies": [
         "h110"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INCONCLUSIVE: Methodology discrepancy between h110 and current analysis.\n\nh110 finding (from previous session):\n- Incoherent: 11.24% (N=2785)\n- Coherent: 6.69% (N=9543)\n- Incoherent 4.55 pp BETTER\n\nCurrent analysis (single seed, graph-based ATC):\n- Incoherent: 5.69% (N=123)\n- Coherent: 9.31% (N=2374)\n- Coherent 3.62 pp BETTER (opposite result!)\n\nPossible explanations:\n1. Different definition of \"coherent\" between h110 and this analysis\n2. Different ATC data source\n3. Sample size difference (N=123 vs N=2785 incoherent)\n4. Multi-seed vs single-seed\n\nThe small sample of incoherent hits (N=7) doesn't allow meaningful pattern analysis.\nFurther investigation needed to reconcile the discrepancy.\n\nDocumented cross-class examples (from N=7 hits):\n- Calcitriol (D) \u2192 primary hyperparathyroidism\n- Prednisone (A) \u2192 symptomatic sarcoidosis\n- Cortisone (H) \u2192 bronchial asthma\n",
+      "result_metric": "Inconclusive - methodology discrepancy needs resolution"
     },
     {
       "id": "h113",
