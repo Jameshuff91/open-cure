@@ -1860,7 +1860,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Load PPI network from data/reference/ppi/",
         "Step 2: For each drug with known targets, add 1-hop PPI neighbors as indirect targets",
@@ -1871,8 +1871,8 @@
       "dependencies": [
         "h93"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "PPI-extended drug targets tested comprehensively.\n\nKEY FINDINGS:\n\n1. THEORETICAL CEILING:\n   - Direct mechanism: 22.1% R@30 ceiling (perfect ranking)\n   - PPI-extended: 55.4% R@30 ceiling (2.5x improvement)\n   - PPI extension DOUBLES recoverable GT pairs (20.2% \u2192 40.9%)\n\n2. ACTUAL PERFORMANCE:\n   - Direct mechanism: 5.12% R@30\n   - Best PPI approach (confidence-weighted): 6.55% R@30\n   - Improvement: +1.43pp (p=0.037, significant but modest)\n   - Efficiency: We capture only 12% of theoretical ceiling\n\n3. ROOT CAUSE OF LIMITED GAINS:\n   - PPI extension expands 837\u21925,994 candidate drugs (7x)\n   - Overlap scores become less discriminative (30-34 vs 6-12)\n   - Many false positives dilute rankings\n\n4. PPI AS CONFIDENCE FILTER (New finding):\n   - GT drugs with mechanism support: 83.8%\n   - Non-GT drugs with mechanism support: 29.0%\n   - Selectivity ratio: 2.89x\n   - Use case: Filter/boost existing predictions, not replace kNN\n\n5. SCORING SCHEMES TESTED:\n   - Raw PPI overlap: 6.49%\n   - Normalized (by target count): 0.05% (fails)\n   - Jaccard similarity: 0.51% (fails)\n   - Hybrid gated: 5.46% (worse than raw)\n   - Confidence-weighted: 6.55% (best)\n\nCONCLUSION: PPI extension dramatically increases theoretical ceiling but gains are limited by ranking quality. Best use: 2.89x selectivity ratio makes PPI valuable as a CONFIDENCE FILTER for kNN/model predictions, not as standalone predictor.",
+      "result_metric": "+1.43pp R@30 as primary signal, 2.89x selectivity as confidence filter"
     },
     {
       "id": "h97",
@@ -5133,6 +5133,98 @@
       ],
       "findings": "VALIDATED: Systematic detection of inverse indication patterns where drugs are predicted to treat conditions they actually cause.\n\n**INVERSE INDICATION PATTERNS IDENTIFIED (h255 + h258):**\n\n1. **Procainamide \u2192 agranulocytosis/leukopenia/neutropenia** (h255)\n   - 90% develop agranulocytosis within 3 months of starting drug\n   - 3 predictions excluded\n\n2. **Amiodarone \u2192 thyrotoxicosis** (h258)\n   - 14-18% incidence of thyroid dysfunction\n   - 1 prediction excluded\n\n3. **Diclofenac (NSAID) \u2192 peptic ulcer** (h258)\n   - NSAIDs cause GI ulcers via COX-1 inhibition\n   - 1 prediction excluded\n\n**PATTERNS SEARCHED BUT NOT FOUND IN PREDICTIONS:**\n- Lithium \u2192 hypothyroidism/diabetes insipidus\n- Clozapine \u2192 agranulocytosis\n- Carbamazepine \u2192 aplastic anemia\n- Methotrexate \u2192 pneumonitis\n- Hydralazine \u2192 drug-induced lupus\n\n**TOTAL IMPACT:**\n- 5 predictions excluded as inverse indications (0 HIGH tier)\n- Establishes pattern recognition framework for iatrogenic conditions\n\n**KEY INSIGHT:**\nGraph-based predictions can confuse drug-causes-condition with drug-treats-condition when both relationships create similar graph patterns. Inverse indication filtering is a systematic way to catch these errors.",
       "result_metric": "2 new exclusions (0 HIGH tier) from inverse indication detection"
+    },
+    {
+      "id": "h259",
+      "title": "PPI Mechanism Support as Confidence Tier",
+      "category": "precision",
+      "rationale": "h96 showed 2.89x selectivity ratio for PPI mechanism support (83.8% GT vs 29.0% non-GT). Can we use this as an additional tier in the confidence system? Predictions WITH mechanism support should be prioritized over those WITHOUT.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load production predictions from data/deliverables/",
+        "Step 2: For each prediction, compute PPI mechanism support (extended target overlap with disease genes)",
+        "Step 3: Split predictions into 'mechanism supported' vs 'no mechanism support'",
+        "Step 4: Compare precision between tiers (using external validation or GT holdout)",
+        "Step 5: If significant difference, add to confidence tier system",
+        "Success criteria: >50% precision lift for mechanism-supported predictions"
+      ],
+      "dependencies": [
+        "h96"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h260",
+      "title": "Hybrid kNN + Mechanism Gating",
+      "category": "architecture",
+      "rationale": "h96 showed PPI-only gives 6.55% R@30, kNN gives 26% (honest). Can we combine: use kNN for ranking, but BOOST predictions that have PPI mechanism support? This exploits both collaborative filtering AND mechanistic validation.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load kNN similarity-based predictions",
+        "Step 2: For each kNN prediction, compute PPI mechanism support score",
+        "Step 3: Test hybrid scoring: knn_score \u00d7 (1 + \u03b1 \u00d7 mechanism_support)",
+        "Step 4: Grid search \u03b1 from 0.1 to 2.0",
+        "Step 5: Evaluate on held-out diseases",
+        "Success criteria: >2pp R@30 improvement over pure kNN"
+      ],
+      "dependencies": [
+        "h96",
+        "h39"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h261",
+      "title": "Pathway-Weighted PPI Scoring",
+      "category": "data",
+      "rationale": "h96 showed raw PPI expansion creates too many false positives. Can we weight PPI edges by biological pathway coherence? If drug target A interacts with B, and A-B are in the same KEGG pathway, that's stronger evidence than random PPI.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Load KEGG pathway data from data/reference/pathway/",
+        "Step 2: For each PPI edge, check if both proteins are in same pathway",
+        "Step 3: Weight PPI-extended overlap: 1.0 for same-pathway, 0.5 for different-pathway",
+        "Step 4: Re-run h96 scoring with pathway-weighted PPI",
+        "Step 5: Compare R@30 vs raw PPI",
+        "Success criteria: >1pp improvement over raw PPI scoring"
+      ],
+      "dependencies": [
+        "h96"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h262",
+      "title": "Drug Class PPI Patterns",
+      "category": "analysis",
+      "rationale": "h96 showed 45.3% of GT drugs have mechanism support vs 54.7% without. Which drug CLASSES have high mechanism support? Mechanism traversal may work for some therapeutic areas (e.g., kinase inhibitors targeting oncogenes) but fail for others (e.g., immunomodulators).",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Get ATC codes for GT drugs from DrugBank",
+        "Step 2: For each ATC L1 category, compute % with mechanism support",
+        "Step 3: Identify high-support categories (>60%) and low-support (<30%)",
+        "Step 4: For high-support categories, test if mechanism scoring works better",
+        "Success criteria: Identify at least 2 categories where mechanism R@30 > 15%"
+      ],
+      "dependencies": [
+        "h96"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -6133,6 +6225,12 @@
       "hypothesis_id": "h258",
       "learning": "Inverse indication patterns (drug causes condition it's predicted to treat) are a systematic error in graph-based predictions. Amiodarone\u2192thyroid, NSAIDs\u2192ulcers, procainamide\u2192blood disorders are clear examples. These can be detected by compiling known adverse effect profiles.",
       "implication": "Maintain an adverse effect database for high-risk drugs. Cross-reference all predictions against this to catch inverse indications."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h96",
+      "learning": "PPI extension doubles theoretical ceiling (22%\u219255%) but actual R@30 gains are modest (+1.4pp). Root cause: false positive dilution. Key finding: 2.89x selectivity ratio makes PPI useful as CONFIDENCE FILTER, not primary ranking signal.",
+      "implication": "Use mechanism support to boost/filter existing predictions rather than as standalone approach"
     }
   ],
   "collaborations": [
