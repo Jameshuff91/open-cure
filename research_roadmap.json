@@ -3011,8 +3011,8 @@
         "Test class-specific precision criteria",
         "Success: Find class criteria achieving >30% for at least one category"
       ],
-      "findings": "VALIDATED: Drug class rescue criteria work for multiple categories.\n\nSUCCESSFUL CRITERIA (>30% precision):\n1. Cancer - taxane + rank<=5: 40.0% precision (n=10)\n2. Cancer - alkylating + rank<=10: 36.4% precision (n=11)\n3. Ophthalmic - antibiotic + rank<=15: 62.5% precision (n=16)\n4. Ophthalmic - steroid + rank<=15: 48.0% precision (n=25)\n5. Dermatological - topical_steroid + rank<=5: 63.6% precision (n=11)\n\nFAILED CATEGORIES:\n- GI: PPIs/H2 blockers showed 0% precision (drugs not in DRKG top-30)\n- Neurological: Drug classes showed 0% precision (sparse coverage)\n- Hematological: Only 1 colony_factor matched (n too small)\n- Cardiovascular: beta_blocker + rank<=10 = 25% (close but not >30%)\n- Respiratory: bronchodilator/mucolytic showed promise but n<5\n\nPRODUCTION UPDATE:\n- Added to production_predictor.py:\n  - ALKYLATING_DRUGS, OPHTHALMIC_ANTIBIOTICS, OPHTHALMIC_STEROIDS, TOPICAL_STEROIDS\n  - Cancer alkylating rank<=10 \u2192 HIGH tier\n  - Ophthalmic antibiotic rank<=15 \u2192 GOLDEN tier (62.5%)\n  - Ophthalmic steroid rank<=15 \u2192 HIGH tier (48%)\n  - Dermatological topical_steroid rank<=5 \u2192 GOLDEN tier (63.6%)\n\nKEY INSIGHT: Drug class rescue works best when:\n1. Drug class is well-represented in DRKG\n2. Disease category has >10 evaluable diseases\n3. Drug class has clear mechanism for category (e.g., antibiotics for eye infections)\n\nCategories with sparse drug class coverage (GI, neurological) cannot be rescued this way.",
-      "result_metric": "5 successful rescue criteria: Cancer taxane 40%, Cancer alkylating 36.4%, Ophthalmic antibiotic 62.5%, Ophthalmic steroid 48%, Dermatological topical_steroid 63.6%"
+      "findings": "VALIDATED: Drug class rescue criteria found for hematological diseases.\n\nMULTI-SEED EVALUATION (5 seeds, 20 neighbors, 80/20 split):\n\n| Category | Drug Class | Criteria | Precision | vs Base |\n|----------|------------|----------|-----------|---------|\n| ophthalmic | corticosteroid | rank<=10 | **78.6%** | +48.6pp |\n| dermatological | corticosteroid | rank<=10 | **63.5%** | +19.9pp |\n| hematological | corticosteroid | rank<=10 | **48.6%** | +28.6pp |\n| cancer | targeted_cancer | rank<=10 | 20.0% | +9.0pp |\n\nKEY FINDINGS:\n1. Ophthalmic + corticosteroid + rank<=10 = 78.6% precision (ALREADY Tier 1)\n2. Dermatological + corticosteroid + rank<=10 = 63.5% precision (ALREADY Tier 1)\n3. Hematological + corticosteroid + rank<=10 = **48.6% precision** -> HIGH rescue (NEW!)\n4. Cancer + targeted_cancer did not meet threshold (20.0% < 30%)\n\nIMPLEMENTATION:\n- Added CORTICOSTEROID_DRUGS set to production_predictor.py\n- Added hematological rescue: corticosteroid + rank<=10 -> HIGH tier\n- Mechanism support NOT required (immunosuppression mechanism)\n\nIMPORTANT: Mechanism filter HURTS for hematological (14.3% vs 48.6%)\n- Corticosteroids work through immunosuppression, not gene overlap\n- Drug-target/disease-gene overlap is poor for this class\n\nTest verified: thrombocytopenia now shows 7 HIGH predictions [rescued]",
+      "result_metric": "hematological + corticosteroid + rank<=10 = 48.6% precision -> HIGH rescue"
     },
     {
       "id": "h151",
@@ -3123,7 +3123,7 @@
       "rationale": "Individual class criteria have high precision but low coverage. Combining classes may maintain precision while improving recall.",
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 2,
       "category": "precision",
       "dependencies": [
@@ -3154,6 +3154,66 @@
         "Evaluate class-specific precision for autoimmune diseases",
         "Compare to generic mechanism+frequency criteria",
         "Success: Find class criteria outperforming generic rules"
+      ]
+    },
+    {
+      "id": "h158",
+      "title": "Mechanism-Free Drug Classes: Expand Immunosuppression Pattern",
+      "description": "h150 found corticosteroids work without mechanism support for hematological. Test if similar immunosuppression pattern applies to other categories (autoimmune subtypes, transplant).",
+      "rationale": "Corticosteroids work through immunosuppression, not direct gene overlap. Other immunosuppressants (cyclosporine, azathioprine) may show similar patterns.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "priority": 3,
+      "category": "precision",
+      "dependencies": [
+        "h150"
+      ],
+      "steps": [
+        "Test cyclosporine, azathioprine, tacrolimus for autoimmune diseases",
+        "Check if mechanism filter improves or hurts precision",
+        "If beneficial, add mechanism-free rescue criteria",
+        "Success: Find >30% precision for at least one immunosuppressant class"
+      ]
+    },
+    {
+      "id": "h159",
+      "title": "Category Boundary Refinement: Autoimmune vs Hematological",
+      "description": "Some diseases overlap (autoimmune hemolytic anemia). Current keyword matching may mis-categorize. Analyze impact of category boundaries on rescue effectiveness.",
+      "rationale": "autoimmune hemolytic anemia is categorized as autoimmune (Tier 1) but could benefit from hematological rescue. Keyword order affects classification.",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "priority": 4,
+      "category": "precision",
+      "dependencies": [
+        "h150"
+      ],
+      "steps": [
+        "Identify diseases matching multiple categories",
+        "Test precision under different categorizations",
+        "If beneficial, consider multi-category rescue or hierarchy",
+        "Success: Improve precision by >=5pp for overlapping diseases"
+      ]
+    },
+    {
+      "id": "h160",
+      "title": "Cancer Targeted Therapy Specificity",
+      "description": "h150 cancer + targeted_cancer only achieved 20%. Test cancer subtypes (kinase inhibitors vs mAbs vs immunotherapy) and cancer types (solid vs hematological malignancy).",
+      "rationale": "Cancer is heterogeneous. Imatinib (CML) and trastuzumab (breast cancer) have very different targets. May need cancer subtype + drug subtype matching.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 3,
+      "category": "precision",
+      "dependencies": [
+        "h150"
+      ],
+      "steps": [
+        "Stratify cancer by type: leukemia, lymphoma, solid tumor",
+        "Stratify drugs: kinase inhibitors, mAbs, immunotherapy, chemotherapy",
+        "Test precision for subtype combinations",
+        "Success: Find subtype combo achieving >30% precision"
       ]
     }
   ],
@@ -3777,6 +3837,12 @@
       "hypothesis_id": "h147",
       "learning": "TNF inhibitors can induce autoimmune hepatitis - add to contraindication filter. Pembrolizumab -> cholangiocarcinoma is FDA-approved (GT gap). Checkpoint inhibitors have limited efficacy in sarcomas.",
       "implication": "Biologic predictions need mechanism-specific validation. GT has gaps in recent FDA approvals."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h150",
+      "learning": "Mechanism support can HURT precision for certain drug classes. Corticosteroids achieve 48.6% for hematological WITHOUT mechanism (14.3% WITH mechanism). Immunosuppression works through pathways not captured in gene overlap.",
+      "implication": "Consider mechanism-free rescue criteria for drugs with indirect/pleiotropic mechanisms. Drug class is more informative than mechanism overlap for corticosteroids."
     }
   ],
   "collaborations": [
