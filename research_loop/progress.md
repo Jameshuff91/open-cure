@@ -1,72 +1,86 @@
 # Research Loop Progress
 
-## Current Session: h279, h277, h282 (2026-02-05)
+## Current Session: h281, h193, h280 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
+**Status:** In Progress
 **Hypotheses Tested: 3**
-- h279: Disease Specificity Scoring - **VALIDATED**
-- h277: Cross-Category Hierarchy Matching - **INVALIDATED**
-- h282: Hierarchy Depth Delta - **VALIDATED**
+- h281: Bidirectional Treatment Analysis - **VALIDATED**
+- h193: Combined ATC Coherence Signals - **INVALIDATED**
+- h280: Complication vs Subtype Classification - **VALIDATED**
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 161 |
-| Invalidated | 53 |
+| Validated | 163 |
+| Invalidated | 54 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 38 |
-| **Total** | **284** (4 new hypotheses added)
+| Pending | 43 |
+| **Total** | **293** (9 new hypotheses added this session)
 
 ### KEY SESSION FINDINGS
 
-#### h279: Disease Specificity Scoring - VALIDATED
+#### h281: Bidirectional Treatment Analysis - VALIDATED
 
-| Relationship | Precision | N |
-|--------------|-----------|---|
-| Exact disease | 78.7% | 277 |
-| Generic→Specific | 19.3% | 88 |
-| **Specific→Generic** | **4.1%** | 98 |
+| Direction | Predictions | Correct | Precision |
+|-----------|-------------|---------|-----------|
+| Base → Complication | 11 | 1 | **9.1%** |
+| Complication → Base | 47 | 17 | **36.2%** |
 
-**Key Finding:** Specific→Generic predictions have **4.7x LOWER precision** (15.2 pp difference).
+**Key Finding:** Treating a complication is **4x more predictive** of treating the base disease than vice versa.
+- Diabetes → diabetic nephropathy: 0% precision
+- DKA → diabetes: 62.5% precision
 
-#### h277: Cross-Category Hierarchy Matching - INVALIDATED
+#### h193: Combined ATC Coherence Signals - INVALIDATED
 
-| Category Match Type | Precision | N |
-|---------------------|-----------|---|
-| Within-category | 10.4% | 10,124 |
-| Cross-category match | **0.0%** | 187 |
+| Quadrant | N | Precision |
+|----------|---|-----------|
+| Coherent + Not Unique | 2,632 | **9.0%** (BEST) |
+| Coherent + Unique | 129 | 7.8% |
+| Incoherent + Not Unique | 1,373 | 5.0% |
+| Incoherent + Unique | 291 | **4.5%** (WORST) |
 
-**Key Finding:** Cross-category is a RECALL problem, not precision. Model predicts single-category diseases instead of cross-category ones.
+**Key Finding:** Opposite of hypothesis! Category-incoherent + class-unique does NOT identify true repurposing. Following ATC conventions + classmate support = highest precision.
 
-#### h282: Hierarchy Depth Delta - VALIDATED ⭐
+#### h280: Complication vs Subtype Classification - VALIDATED ⭐
 
-| Delta Magnitude | Precision | N |
-|-----------------|-----------|---|
-| |delta| = 0 (same level) | **51.6%** | 440 |
-| |delta| = 1 (off by 1) | 12.0% | 125 |
-| |delta| = 2 (off by 2) | 5.4% | 37 |
+| Relationship Type | N | Precision |
+|-------------------|---|-----------|
+| Exact match | 756 | 100.0% |
+| Subtype relationships | 54 | **42.6%** |
+| Complication relationships | 36 | **13.9%** |
+| Base → Complication | 18 | **0.0%** |
 
-**Major Finding:** Same-level predictions have **39.6 pp higher precision** than off-by-1! Clear precision gradient by delta magnitude.
-
-**Actionable:** Can use delta magnitude as confidence signal:
-- |delta| = 0 → HIGH tier (51.6% precision)
-- |delta| = 1 → MEDIUM tier (12.0% precision)
-- |delta| ≥ 2 → LOW tier (5.4% precision)
+**Major Finding:** Subtype relationships have **28.7 pp higher precision** than complication relationships!
+- Base→complication predictions should be FILTERED (0% precision)
+- Subtype predictions should be BOOSTED (42.6% precision)
 
 ### New Hypotheses Generated
-- **h280**: Complication vs Subtype Classification for Confidence
-- **h281**: Bidirectional Treatment Analysis (base disease → complications)
-- **h283**: Cross-Category Disease Recall Enhancement
+- **h284**: Complication Specialization Score for Confidence
+- **h285**: Disease Relationship Type Classification
+- **h286**: Mechanistic Pathway Overlap for Complication Predictions
+- **h287**: ATC Coherence as Positive Confidence Tier Signal
+- **h288**: ATC Class-Supported Predictions as GOLDEN Tier Candidate
+- **h289**: Why Does Class Uniqueness Hurt Precision?
+- **h290**: Implement Relationship Type Filter in Production Predictor
 
 ### Recommended Next Steps
-1. **Implement h282** in production_predictor.py - use delta magnitude for tiering
-2. **h280**: Distinguish complications from true subtypes (medium effort)
-3. **h193**: Combined ATC Coherence Signals (medium effort)
+1. **h290**: Implement relationship type filter (priority 2, low effort)
+2. **h284**: Complication transferability scoring (priority 3, medium effort)
+3. Continue testing pending hypotheses
+
+---
+
+## Previous Session: h279, h277, h282 (2026-02-05)
+
+**Hypotheses Tested: 3**
+- h279: Disease Specificity Scoring - **VALIDATED** (specific→generic = 4.1% precision)
+- h277: Cross-Category Hierarchy Matching - **INVALIDATED** (0% cross-category precision)
+- h282: Hierarchy Depth Delta - **VALIDATED** (51.6% same-level vs 12% off-by-1)
 
 ---
 
