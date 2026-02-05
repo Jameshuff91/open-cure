@@ -1,15 +1,17 @@
 # Research Loop Progress
 
-## Current Session: h115, h118, h119 (2026-02-05, continued)
+## Current Session: h115, h116, h99, h123, h125 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
+**Status:** Complete
 **Hypotheses Tested This Session:**
 - h115: Ensemble Simplification - **VALIDATED**
-- h118: Minimal 2-Feature Confidence Score - **INVALIDATED**
-- h119: Non-Linear Feature Interactions - **VALIDATED (partial)**
+- h116: Category Tier 2.0 - **INVALIDATED**
+- h99: Phenotype-Based Drug Transfer - **INCONCLUSIVE**
+- h123: Negative Confidence Signal - **VALIDATED** ⭐
+- h125: Drug-Level Success Prediction - **INVALIDATED**
 
 ### Key Findings
 
@@ -73,25 +75,65 @@ Tested symptom/phenotype similarity as alternative to Node2Vec for kNN.
 
 ---
 
+**h123: Negative Confidence Signal - VALIDATED** ⭐
+
+Multiple features predict MISSES with >94% accuracy:
+
+| Feature              | Miss Rate | N     |
+|----------------------|-----------|-------|
+| has_no_targets       | 98.8%     | 482   |
+| high_rank (>20)      | 97.1%     | 4,482 |
+| low_knn_score (<0.3) | 96.6%     | 3,550 |
+| is_low_freq (≤2)     | 96.6%     | 4,414 |
+| no_mechanism         | 94.1%     | 10,819|
+
+**PRODUCTION APPLICATION:**
+Filter predictions where rank > 20 OR no_targets OR (low_freq AND no_mechanism)
+Removes 27-33% of predictions while losing only 2-6% of hits.
+
 ---
 
-**h118: Minimal 2-Feature Confidence Score - INVALIDATED**
+**h125: Drug-Level Success Prediction - INVALIDATED**
 
-Tested if mechanism_support + train_frequency alone could match 4-feature ensemble.
+Drug hit rate correlates with hits (r=0.155) but is 63% correlated with train_frequency.
+Signal is redundant - frequency already captures drug reliability.
+
+---
+
+### Session Statistics
+- Hypotheses tested: 5 (h115, h116, h99, h123, h125)
+- Validated: 2 (h115, h123)
+- Invalidated: 2 (h116, h125)
+- Inconclusive: 1 (h99)
+- New hypotheses added: 5 (h121-h125)
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 50 |
+| Invalidated | 33 |
+| Inconclusive | 6 |
+| Blocked | 15 |
+| Pending | 18 |
+| **Total Tested** | **89** |
+
+### Pending Hypotheses: 18
+
+### Next Steps
+1. **h121: Minimal 3-Feature Ensemble** - Can we simplify further?
+2. **h122: Category Misclassification Analysis** - Why do some categories have huge errors?
+3. **h124: Disease Embedding Interpretability** - What makes diseases similar?
+
+---
+
+## Previous Session: h118, h119 (2026-02-05)
+
+**h118: Minimal 2-Feature Confidence Score - INVALIDATED**
 
 | Model                    | Features | Top 10% | Top 20% |
 |--------------------------|----------|---------|---------|
 | 4-feature (h115 best)    | 4        | 21.89%  | 17.83%  |
 | 2-feature (mech + freq)  | 2        | 19.38%  | 16.09%  |
-| Frequency only           | 1        | 18.79%  | 15.90%  |
-| Mechanism only           | 1        | 10.36%  | 12.24%  |
-
-**KEY FINDINGS:**
-1. 2-feature model loses -2.51 pp vs 4-feature (exceeds 2 pp tolerance)
-2. Frequency alone (18.79%) is nearly as good as 2-feature
-3. tier_inv and norm_score contribute ~2.5 pp to the ensemble
-
----
 
 **h119: Non-Linear Feature Interactions - VALIDATED (partial)**
 
