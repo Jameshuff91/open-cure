@@ -4357,7 +4357,7 @@
       "priority": 5,
       "effort": "low",
       "expected_impact": "low",
-      "status": "pending",
+      "status": "invalidated",
       "dependencies": [
         "h212"
       ],
@@ -4366,7 +4366,9 @@
         "Demote these to FILTER tier for CV diseases",
         "Evaluate impact on precision",
         "Success criteria: Reduce false positives without hurting recall"
-      ]
+      ],
+      "findings": "INVALIDATED: Blanket filtering of C04/C05 would be harmful.\n\nKEY FINDINGS:\n1. 62 drugs in C04/C05 classes (vasodilators/vasoprotectives)\n2. Only 4.4% of CV predictions include these drugs\n3. Many are LEGITIMATE treatments:\n   - Diltiazem for AF: HIT (rate control agent)\n   - Some steroids are multi-classified\n4. h212's \"0% precision\" was an artifact of broad analysis\n\nSPECIFIC FINDINGS:\n- Diltiazem + atrial fibrillation: TRUE POSITIVE\n- Steroids + DIC: False positive (but steroids have multiple ATC codes)\n- Pentoxifylline + pulmonary hypertension: LOW tier (not GOLDEN/HIGH)\n\nCONCLUSION:\nBlanket filtering of C04/C05 would HARM precision by removing valid predictions.\nThe ATC-based filtering approach is too coarse - drugs have multiple indications\nand ATC classifications don't capture this nuance.\n\nRECOMMENDATION:\nContinue with disease-specific drug class rules (like h217 for heart failure)\nrather than broad ATC-based filtering.",
+      "result_metric": "INVALIDATED: Only 4.4% predictions affected, some are true positives"
     }
   ],
   "completed": [
@@ -5211,6 +5213,12 @@
       "hypothesis_id": "h216",
       "learning": "Disease fragmentation is NOT a bug - it reflects genuine therapeutic differences. Similar disease names have low GT overlap (J=0.02-0.20).",
       "implication": "Continue with specific drug class rescue rules per disease subtype"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h219",
+      "learning": "ATC-based blanket filtering is too coarse. C04/C05 includes drugs like Diltiazem that ARE valid CV treatments.",
+      "implication": "Continue with specific drug-disease rules rather than ATC class filtering"
     }
   ],
   "collaborations": [

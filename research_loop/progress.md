@@ -14,6 +14,7 @@
 - h214: Heart Failure Specific Drug Rules - **SUPERSEDED BY h217**
 - h215: Cancer CDK Inhibitor Rules - **VALIDATED**
 - h216: Disease Fragmentation Impact Analysis - **INVALIDATED**
+- h219: Exclude Zero-Precision CV Classes - **INVALIDATED**
 
 ---
 
@@ -172,11 +173,11 @@
 | Status | Count |
 |--------|-------|
 | Validated | 116 |
-| Invalidated | 44 |
+| Invalidated | 46 |
 | Inconclusive | 8 |
 | Blocked | 17 |
 | Deprioritized | 3 |
-| Pending | 31 |
+| Pending | 29 |
 | **Total** | **219** |
 
 ### Session Learnings
@@ -187,8 +188,9 @@
 4. **h213:** Zero-coverage injection FAILS - even mech+ATC only achieves 5.5% precision.
 5. **h215:** CDK inhibitors for breast cancer = 100% precision. Design limits rescue to rank <= 20.
 6. **h216:** Disease fragmentation is NOT a bug - it reflects real therapeutic differences (J=0.02-0.20).
+7. **h219:** ATC-based blanket filtering harmful - Diltiazem for AF is a true positive despite C05 class.
 
-**Key Insight:** Targeted drug class + disease subtype rules work (75-100% precision). General mechanism/ATC matching fails (<6% precision). Disease subtypes are correctly separated by kNN - merging would hurt precision.
+**Key Insight:** Targeted drug class + disease subtype rules work (75-100% precision). General mechanism/ATC matching fails (<6% precision). Disease subtypes are correctly separated by kNN - merging would hurt precision. ATC class-level filtering is too coarse.
 
 ---
 
