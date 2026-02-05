@@ -247,6 +247,24 @@ PROSTACYCLIN_ANALOG_PATTERNS = [
     r"beraprost",
 ]
 
+# h253: sGC Stimulators - CONTRAINDICATED in pregnancy (TERATOGENIC)
+# Riociguat: FDA Pregnancy Category X - contraindicated in pregnancy
+# Can cause fetal harm based on animal studies
+SGC_STIMULATOR_PATTERNS = [
+    r"riociguat",
+    r"vericiguat",
+    r"cinaciguat",
+    r"lificiguat",
+]
+
+# Pregnancy-related conditions where teratogenic drugs are HARMFUL
+PREGNANCY_CONDITIONS = [
+    "pregnancy", "pregnant", "gestational", "prenatal",
+    "toxemia", "preeclampsia", "eclampsia",
+    "hellp syndrome", "hyperemesis gravidarum",
+    "placenta", "fetal", "maternal",
+]
+
 # h164: Immunosuppressants - contraindicated for infectious diseases
 # Immunosuppressants weaken the immune system, making infections WORSE
 # Exception: Autoimmune conditions (e.g., autoimmune hepatitis) are NOT infections
@@ -576,6 +594,21 @@ def filter_prediction(
                     original_score=score,
                     confidence=ConfidenceLevel.EXCLUDED,
                     reason="Prostacyclin analogs INCREASE MORTALITY in heart failure (FIRST trial terminated for harm)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f5 (h253): sGC stimulators for pregnancy conditions
+    # Riociguat is FDA Pregnancy Category X - TERATOGENIC
+    for pattern in SGC_STIMULATOR_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(preg in disease_lower for preg in PREGNANCY_CONDITIONS):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="sGC stimulators are TERATOGENIC - FDA Pregnancy Category X (CONTRAINDICATED)",
                     drug_type=drug_type,
                     adjusted_score=0.0,
                 )

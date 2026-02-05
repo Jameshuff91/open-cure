@@ -5015,7 +5015,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add filter: sGC stimulators (riociguat, vericiguat) + pregnancy conditions = EXCLUDED",
         "Include: toxemia, preeclampsia, gestational conditions",
@@ -5023,7 +5023,9 @@
       ],
       "dependencies": [
         "h249"
-      ]
+      ],
+      "findings": "VALIDATED: sGC stimulator pregnancy safety filter implemented.\n\n**Filter Added:**\n- sGC stimulators (Riociguat, Vericiguat, Cinaciguat, Lificiguat) + pregnancy conditions = EXCLUDED\n- Reason: FDA Pregnancy Category X - TERATOGENIC (can cause fetal harm)\n\n**Predictions Affected:**\n- 1 prediction excluded: Riociguat \u2192 toxemia of pregnancy (LOW tier)\n\n**Critical Safety Note:**\nWhile only 1 prediction affected, this is a CRITICAL safety issue.\nRiociguat is absolutely contraindicated in pregnancy - can cause fetal abnormalities.\nThe filter prevents any sGC stimulator from being recommended for:\n- Toxemia/preeclampsia\n- Gestational conditions\n- Any pregnancy-related diseases\n\n**Wider Implication:**\nThis highlights need for comprehensive teratogenicity screening of drug predictions.",
+      "result_metric": "1 TERATOGENIC prediction excluded; critical safety filter added"
     }
   ],
   "completed": [
