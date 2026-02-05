@@ -3816,7 +3816,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Reproduce h110 within-class uniqueness calculation",
         "Cross-tabulate: category coherent/incoherent x class unique/not-unique",
@@ -3828,7 +3828,9 @@
       "dependencies": [
         "h110",
         "h191"
-      ]
+      ],
+      "findings": "INVALIDATED: Combined ATC signals do NOT identify true repurposing discoveries.\n\nQUADRANT ANALYSIS (N=4,425 with both signals):\n| Category Coherent | Class Unique | N | Precision |\n|-------------------|--------------|---|-----------|\n| YES | NO | 2,632 | 9.0% (BEST) |\n| YES | YES | 129 | 7.8% |\n| NO | NO | 1,373 | 5.0% |\n| NO | YES | 291 | 4.5% (WORST) |\n\nKEY FINDING: The hypothesis predicted that \"incoherent + unique\" would identify\ntrue repurposing (drugs outside their typical class finding new uses). Instead:\n- Incoherent + Unique = 4.5% precision (WORST)\n- Coherent + Not Unique = 9.0% precision (BEST)\n\nINTERPRETATION:\n1. Following ATC conventions (coherent) is better than breaking them\n2. Having classmate support (not unique) is better than being alone\n3. \"Repurposing discoveries\" are NOT hidden in the incoherent+unique quadrant\n4. The signal h110 found (incoherent > coherent) was likely confounded\n\nACTIONABLE: Use ATC coherence as positive confidence signal (not negative filter).\nCoherent predictions have 4.0 pp higher precision overall.",
+      "result_metric": "Coherent+NotUnique 9.0% > Incoherent+Unique 4.5% (opposite of hypothesis)"
     },
     {
       "id": "h194",
@@ -5756,6 +5758,73 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h287",
+      "title": "ATC Coherence as Positive Confidence Tier Signal",
+      "category": "precision",
+      "rationale": "h193 showed coherent predictions have 9.0% precision vs 5.0% incoherent (4 pp lift). h191/h110 showed similar effects. Rather than filtering, use ATC coherence as a positive tiering signal.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Add ATC coherence flag to production_predictor.py",
+        "Step 2: Boost coherent predictions by one tier (LOW \u2192 MEDIUM, MEDIUM \u2192 HIGH)",
+        "Step 3: Evaluate tier distribution changes",
+        "Step 4: Validate precision at each tier",
+        "Success criteria: Coherent HIGH tier has >25% precision"
+      ],
+      "dependencies": [
+        "h193"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h288",
+      "title": "ATC Class-Supported Predictions as GOLDEN Tier Candidate",
+      "category": "precision",
+      "rationale": "h193 showed coherent + classmate-supported = 9.0% precision (best quadrant). Could these be GOLDEN tier candidates alongside hierarchy matches?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify predictions in coherent+classmate quadrant",
+        "Step 2: Check if these already have hierarchy matches (avoid double-counting)",
+        "Step 3: Test precision of coherent+classmate WITHOUT hierarchy match",
+        "Step 4: If >40% precision, add as GOLDEN tier criterion",
+        "Success criteria: New GOLDEN criterion with >40% precision"
+      ],
+      "dependencies": [
+        "h193",
+        "h273"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h289",
+      "title": "Why Does Class Uniqueness Hurt Precision?",
+      "category": "error_analysis",
+      "rationale": "h193 showed class-unique predictions have LOWER precision (4.5-7.8%) than class-supported (5.0-9.0%). Why? Hypothesis: unique predictions lack validation signal - if no classmate treats this, maybe it's not a real indication.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze class-unique correct predictions - what makes them work?",
+        "Step 2: Analyze class-unique incorrect predictions - what's the failure mode?",
+        "Step 3: Test if unique predictions have weaker kNN signal",
+        "Step 4: Test if unique predictions have lower drug frequency",
+        "Success criteria: Identify distinguishing feature of unique correct vs incorrect"
+      ],
+      "dependencies": [
+        "h193"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -6864,6 +6933,12 @@
       "hypothesis_id": "h281",
       "learning": "Complication\u2192Base predictions have 4x higher precision than Base\u2192Complication. Diabetes drugs rarely treat diabetic complications but complication drugs often treat base disease.",
       "implication": "Use prediction direction as confidence signal in tiering system"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h193",
+      "learning": "Combined ATC signals (coherence + uniqueness) do NOT identify repurposing discoveries. Coherent + classmate-supported predictions have highest precision (9.0% vs 4.5% for incoherent+unique).",
+      "implication": "Use ATC coherence as positive signal, not as negative filter for finding novel repurposing"
     }
   ],
   "collaborations": [
