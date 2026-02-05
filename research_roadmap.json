@@ -2775,14 +2775,16 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: For each disease, compute category tier expectation",
         "Step 2: Weight category expectation with per-disease confidence",
         "Step 3: Test weighting schemes (equal, confidence-dominated, etc.)",
         "Step 4: Evaluate calibration error vs pure category and pure confidence",
         "Success criteria: Better calibration than either alone"
-      ]
+      ],
+      "findings": "INVALIDATED: Hybrid category+per-disease confidence does NOT improve calibration.\n\nCALIBRATION ERROR COMPARISON:\n- Category only: 57.4 pp (poor)\n- prob_h52 only: 31.7 pp (best)\n- Hybrid approaches: 39-44 pp (worse than pure prob_h52)\n\nAll tested hybrid schemes:\n- Equal 0.5/0.5: 44.0 pp\n- Weighted 0.3/0.7: 39.0 pp\n- Max(cat, h52): 31.7 pp (ties pure h52)\n- h52 for other, cat for rest: 44.7 pp\n\nKEY INSIGHT:\nprob_h52 alone is optimal. Category expectations add noise, not signal.\nThe per-disease confidence feature has already captured what matters.\n\nIMPLICATION:\nFor calibration, use prob_h52 directly. Do not blend with category tiers.\nCategory tiers may still be useful for interpretability/explanation to users.\n",
+      "result_metric": "31.7 pp error (no improvement over prob_h52 baseline)"
     },
     {
       "id": "h140",
@@ -3361,6 +3363,12 @@
       "hypothesis_id": "h122",
       "learning": "Category \"other\" is bimodal (53% have 100% hit, 42% have 0%). Category-level calibration fails for heterogeneous buckets.",
       "implication": "Per-disease confidence features (prob_h52) are essential for \"other\" category predictions. Category tiers are insufficient alone."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h139",
+      "learning": "Per-disease confidence (prob_h52) is sufficient for calibration. Adding category expectations only increases error.",
+      "implication": "Use prob_h52 directly for confidence. Category tiers are redundant for calibration purposes."
     }
   ],
   "collaborations": [
