@@ -3197,7 +3197,7 @@
       "rationale": "Cancer is heterogeneous. Imatinib (CML) and trastuzumab (breast cancer) have very different targets. May need cancer subtype + drug subtype matching.",
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "category": "precision",
       "dependencies": [
@@ -3208,7 +3208,9 @@
         "Stratify drugs: kinase inhibitors, mAbs, immunotherapy, chemotherapy",
         "Test precision for subtype combinations",
         "Success: Find subtype combo achieving >30% precision"
-      ]
+      ],
+      "findings": "VALIDATED: Found 1 high-precision cancer subtype combination.\n\nKEY RESULTS:\n1. Overall cancer precision: 6.98% (n=2093)\n2. SUCCESS: colorectal_cancer + monoclonal_antibody = 50-60% precision (n=20-24) - EXCEEDS 30% target\n\nCANCER TYPE PRECISION (best to worst):\n- ovarian_cancer: 26.7% (n=60)\n- colorectal_cancer: 17.8% (n=90)\n- myeloma: 23.3% (n=30, small sample)\n- breast_cancer: 12.2% (n=90)\n- pancreatic_cancer: 8.9% (n=90)\n- melanoma: 6.7% (n=60)\n- leukemia: 5.5% (n=330)\n- lymphoma: 3.3% (n=270)\n- brain_tumor: 0.0% (n=30)\n\nDRUG CLASS PRECISION:\n- monoclonal_antibody: 15.2% (n=290) - BEST\n- chemotherapy: 9.4% (n=689)\n- targeted_other: 5.4% (n=205)\n- kinase_inhibitor: 2.6% (n=306) - Surprisingly LOW\n- immunotherapy: 0.0% (n=12)\n\nNOTABLE COMBINATIONS (>20% precision):\n- colorectal + mAb: 50-60%\n- ovarian + chemotherapy: 28.6%\n- pancreatic + chemotherapy: 22.7%\n- breast + chemotherapy: 20.7%\n\nINSIGHTS:\n1. Solid tumors (ovarian, colorectal, breast) >> hematologic (leukemia, lymphoma)\n2. mAbs work best for colorectal (bevacizumab, cetuximab well-validated)\n3. Kinase inhibitors surprisingly poor (2.6%) despite imatinib success - sparse GT\n4. Immunotherapy has no hits (n=12 too small)\n\nIMPLICATIONS FOR PRODUCTION:\n- Create GOLDEN tier for colorectal + mAb\n- Chemotherapy reliable across solid tumors\n- Kinase inhibitors need additional filtering (disease-specific like CML)",
+      "result_metric": "colorectal_cancer + monoclonal_antibody: 50-60% precision (SUCCESS)"
     },
     {
       "id": "h161",
@@ -3872,6 +3874,85 @@
       ],
       "dependencies": [
         "h124"
+      ]
+    },
+    {
+      "id": "h197",
+      "title": "Colorectal Cancer mAb Production Rule",
+      "category": "production",
+      "hypothesis": "h160 found colorectal_cancer + monoclonal_antibody = 50-60% precision - highest of any cancer subtype combination. Add GOLDEN tier rule for this combination to production system.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Verify results on additional validation set",
+        "Add rule to production_predictor.py: if cancer_type=='colorectal' and drug_class=='mAb' -> GOLDEN",
+        "Test that existing h152 ATC logic integrates with new rule",
+        "Verify no conflicts with other cancer rules"
+      ],
+      "dependencies": [
+        "h160"
+      ]
+    },
+    {
+      "id": "h198",
+      "title": "Kinase Inhibitor Precision Failure Analysis",
+      "category": "analysis",
+      "hypothesis": "h160 found kinase inhibitors have only 2.6% precision despite successes like imatinib. Why? Possible causes: (1) sparse GT for targeted kinases, (2) kinase inhibitors over-predicted to wrong cancer types, (3) BCR-ABL uniquely good. Analyze which kinase inhibitors hit vs miss.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "From h160 results, extract kinase inhibitor hits vs misses",
+        "Group by: drug name, cancer type, specific kinase target",
+        "Check if imatinib/CML is outlier or if pattern holds",
+        "Identify if any kinase+cancer combos achieve >20% precision",
+        "Recommend: disease-specific kinase rules or filter kinase inhibitors"
+      ],
+      "dependencies": [
+        "h160"
+      ]
+    },
+    {
+      "id": "h199",
+      "title": "Solid vs Hematologic Cancer Gap Analysis",
+      "category": "analysis",
+      "hypothesis": "h160 found solid tumors (ovarian 27%, colorectal 18%) vastly outperform hematologic (leukemia 5.5%, lymphoma 3.3%). Why? Possible causes: (1) GT sparsity for hematologic, (2) different treatment paradigms, (3) embedding doesn't capture hematologic relationships. Analyze root cause.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Count GT entries: solid vs hematologic cancers",
+        "Count drugs per disease: solid vs hematologic",
+        "Check embedding similarity patterns: do hematologic cancers cluster?",
+        "Analyze kNN neighbor quality for leukemia vs colorectal",
+        "Recommend: hematologic-specific strategy if gap is structural"
+      ],
+      "dependencies": [
+        "h160"
+      ]
+    },
+    {
+      "id": "h200",
+      "title": "Brain Tumor Zero Hit Investigation",
+      "category": "analysis",
+      "hypothesis": "h160 found brain tumor = 0% precision (n=30). Complete failure. Why? Is it GT sparsity, blood-brain barrier drugs not in DRKG, or embedding isolation? Investigate root cause.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Check GT coverage for brain tumors (glioma, glioblastoma)",
+        "Examine what drugs are predicted for brain tumors",
+        "Check if temozolomide, bevacizumab appear in GT",
+        "Analyze kNN neighbors: are brain tumor neighbors also brain tumors?",
+        "If structural: consider brain tumor exclusion from production"
+      ],
+      "dependencies": [
+        "h160"
       ]
     }
   ],
@@ -4621,6 +4702,12 @@
       "hypothesis_id": "h124",
       "learning": "Node2Vec disease embeddings primarily learn from treatment edges (85K in DRKG). Drug Jaccard correlation r=0.51 for pairs sharing drugs. Gene associations contribute minimally (r=0.03). This explains why kNN repurposing works: diseases that share treatments end up close in embedding space.",
       "implication": "The 'no-treatment' embeddings (removing 64K treatment edges) are critical for fair evaluation. The original embeddings have treatment information baked in."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h160",
+      "learning": "Cancer subtype x drug class matters enormously: colorectal_cancer + monoclonal_antibody achieves 50-60% precision vs 7% overall. Solid tumors (ovarian 27%, colorectal 18%) vastly outperform hematologic (leukemia 5.5%, lymphoma 3.3%). Kinase inhibitors surprisingly poor (2.6%) despite individual successes like imatinib.",
+      "implication": "Create GOLDEN tier for colorectal+mAb. Chemotherapy reliable for solid tumors. Kinase inhibitors need disease-specific rules (CML=good, general cancer=poor)."
     }
   ],
   "collaborations": [

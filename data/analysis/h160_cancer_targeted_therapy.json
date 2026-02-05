@@ -1,0 +1,269 @@
+{
+  "overall_precision": 0.06736741519350214,
+  "n_predictions": 2093,
+  "cancer_type_stats": {
+    "brain_tumor": {
+      "n": 30,
+      "precision": 0.0,
+      "hits": 0
+    },
+    "breast_cancer": {
+      "n": 90,
+      "precision": 0.12222222222222222,
+      "hits": 11
+    },
+    "colorectal_cancer": {
+      "n": 90,
+      "precision": 0.17777777777777778,
+      "hits": 16
+    },
+    "leukemia": {
+      "n": 330,
+      "precision": 0.05454545454545454,
+      "hits": 18
+    },
+    "lymphoma": {
+      "n": 270,
+      "precision": 0.03333333333333333,
+      "hits": 9
+    },
+    "melanoma": {
+      "n": 60,
+      "precision": 0.06666666666666667,
+      "hits": 4
+    },
+    "myeloma": {
+      "n": 30,
+      "precision": 0.2,
+      "hits": 6
+    },
+    "other_cancer": {
+      "n": 420,
+      "precision": 0.06666666666666667,
+      "hits": 28
+    },
+    "other_carcinoma": {
+      "n": 353,
+      "precision": 0.04815864022662889,
+      "hits": 17
+    },
+    "other_neoplasm": {
+      "n": 90,
+      "precision": 0.022222222222222223,
+      "hits": 2
+    },
+    "other_tumor": {
+      "n": 30,
+      "precision": 0.0,
+      "hits": 0
+    },
+    "ovarian_cancer": {
+      "n": 60,
+      "precision": 0.26666666666666666,
+      "hits": 16
+    },
+    "pancreatic_cancer": {
+      "n": 90,
+      "precision": 0.08888888888888889,
+      "hits": 8
+    },
+    "prostate_cancer": {
+      "n": 30,
+      "precision": 0.0,
+      "hits": 0
+    },
+    "sarcoma": {
+      "n": 120,
+      "precision": 0.05,
+      "hits": 6
+    }
+  },
+  "drug_class_stats": {
+    "chemotherapy": {
+      "n": 689,
+      "precision": 0.09433962264150944,
+      "hits": 65
+    },
+    "hormone_therapy": {
+      "n": 9,
+      "precision": 0.0,
+      "hits": 0
+    },
+    "immunotherapy": {
+      "n": 14,
+      "precision": 0.0,
+      "hits": 0
+    },
+    "kinase_inhibitor": {
+      "n": 306,
+      "precision": 0.026143790849673203,
+      "hits": 8
+    },
+    "monoclonal_antibody": {
+      "n": 290,
+      "precision": 0.15172413793103448,
+      "hits": 44
+    },
+    "targeted_other": {
+      "n": 205,
+      "precision": 0.05365853658536585,
+      "hits": 11
+    },
+    "unknown_class": {
+      "n": 580,
+      "precision": 0.022413793103448276,
+      "hits": 13
+    }
+  },
+  "top_combinations": [
+    {
+      "cancer_type": "colorectal_cancer",
+      "drug_class": "monoclonal_antibody",
+      "n": 24,
+      "precision": 0.5,
+      "hits": 12
+    },
+    {
+      "cancer_type": "ovarian_cancer",
+      "drug_class": "chemotherapy",
+      "n": 21,
+      "precision": 0.2857142857142857,
+      "hits": 6
+    },
+    {
+      "cancer_type": "pancreatic_cancer",
+      "drug_class": "chemotherapy",
+      "n": 21,
+      "precision": 0.23809523809523808,
+      "hits": 5
+    },
+    {
+      "cancer_type": "breast_cancer",
+      "drug_class": "chemotherapy",
+      "n": 30,
+      "precision": 0.2,
+      "hits": 6
+    },
+    {
+      "cancer_type": "other_cancer",
+      "drug_class": "monoclonal_antibody",
+      "n": 74,
+      "precision": 0.17567567567567569,
+      "hits": 13
+    },
+    {
+      "cancer_type": "colorectal_cancer",
+      "drug_class": "chemotherapy",
+      "n": 31,
+      "precision": 0.12903225806451613,
+      "hits": 4
+    },
+    {
+      "cancer_type": "other_carcinoma",
+      "drug_class": "monoclonal_antibody",
+      "n": 52,
+      "precision": 0.11538461538461539,
+      "hits": 6
+    },
+    {
+      "cancer_type": "leukemia",
+      "drug_class": "chemotherapy",
+      "n": 91,
+      "precision": 0.10989010989010989,
+      "hits": 10
+    },
+    {
+      "cancer_type": "sarcoma",
+      "drug_class": "chemotherapy",
+      "n": 61,
+      "precision": 0.09836065573770492,
+      "hits": 6
+    },
+    {
+      "cancer_type": "other_cancer",
+      "drug_class": "chemotherapy",
+      "n": 142,
+      "precision": 0.08450704225352113,
+      "hits": 12
+    },
+    {
+      "cancer_type": "lymphoma",
+      "drug_class": "targeted_other",
+      "n": 29,
+      "precision": 0.06896551724137931,
+      "hits": 2
+    },
+    {
+      "cancer_type": "other_carcinoma",
+      "drug_class": "chemotherapy",
+      "n": 146,
+      "precision": 0.06164383561643835,
+      "hits": 9
+    },
+    {
+      "cancer_type": "leukemia",
+      "drug_class": "kinase_inhibitor",
+      "n": 84,
+      "precision": 0.05952380952380952,
+      "hits": 5
+    },
+    {
+      "cancer_type": "pancreatic_cancer",
+      "drug_class": "unknown_class",
+      "n": 40,
+      "precision": 0.05,
+      "hits": 2
+    },
+    {
+      "cancer_type": "lymphoma",
+      "drug_class": "chemotherapy",
+      "n": 87,
+      "precision": 0.04597701149425287,
+      "hits": 4
+    },
+    {
+      "cancer_type": "lymphoma",
+      "drug_class": "monoclonal_antibody",
+      "n": 22,
+      "precision": 0.045454545454545456,
+      "hits": 1
+    },
+    {
+      "cancer_type": "lymphoma",
+      "drug_class": "kinase_inhibitor",
+      "n": 54,
+      "precision": 0.037037037037037035,
+      "hits": 2
+    },
+    {
+      "cancer_type": "leukemia",
+      "drug_class": "monoclonal_antibody",
+      "n": 33,
+      "precision": 0.030303030303030304,
+      "hits": 1
+    },
+    {
+      "cancer_type": "other_carcinoma",
+      "drug_class": "unknown_class",
+      "n": 72,
+      "precision": 0.027777777777777776,
+      "hits": 2
+    },
+    {
+      "cancer_type": "other_cancer",
+      "drug_class": "unknown_class",
+      "n": 117,
+      "precision": 0.02564102564102564,
+      "hits": 3
+    }
+  ],
+  "high_precision_combos": [
+    {
+      "cancer_type": "colorectal_cancer",
+      "drug_class": "monoclonal_antibody",
+      "n": 24,
+      "precision": 0.5,
+      "hits": 12
+    }
+  ]
+}
