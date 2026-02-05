@@ -5205,7 +5205,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Load KEGG pathway data from data/reference/pathway/",
         "Step 2: For each PPI edge, check if both proteins are in same pathway",
@@ -5217,7 +5217,7 @@
       "dependencies": [
         "h96"
       ],
-      "findings": null,
+      "findings": "h261 INVALIDATED: Pathway weighting does not improve PPI scoring.\n\nMETHODOLOGY:\n- Extended drug targets 1-hop via STRING PPI network\n- Scored overlap with disease genes two ways:\n  a) Raw count: +1 for each overlapping gene\n  b) Pathway-weighted: +1.0 if gene shares KEGG pathway with drug target, +0.5 otherwise\n- 5-seed evaluation with 80/20 train/test disease split\n\nDATA COVERAGE:\n- PPI network: 15,757 nodes\n- Gene-pathway mappings: 9,522 genes\n- PPI genes with pathway info: 50.1% (7,888/15,757)\n\nRESULTS:\n- Raw PPI R@30: 6.21% \u00b1 0.79%\n- Pathway-weighted R@30: 6.46% \u00b1 0.87%\n- Improvement: +0.25 pp (below 1pp threshold)\n\nROOT CAUSE:\n1. Only 50% of PPI genes have pathway annotations\n2. Pathway membership is too broad - many genes share pathways\n3. The signal is already captured by PPI connectivity\n\nCONCLUSION: Pathway weighting adds negligible value over raw PPI overlap.\nUse raw PPI as simpler baseline for mechanism-based scoring.",
       "result_metric": null
     },
     {
@@ -7485,6 +7485,12 @@
       "hypothesis_id": "h310",
       "learning": "ATC coherence with disease category (refined map including corticosteroids) provides 16.8pp precision advantage",
       "implication": "ATC L1 matching can be used as tier boost signal when properly calibrated for cross-category drugs like corticosteroids"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h261",
+      "learning": "KEGG pathway co-membership does not improve PPI-based drug-disease scoring (+0.25pp)",
+      "implication": "Pathway signal is redundant with PPI connectivity; no need to integrate pathway data for mechanism scoring"
     }
   ],
   "collaborations": [
