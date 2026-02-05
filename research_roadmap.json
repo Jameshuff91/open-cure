@@ -4406,8 +4406,10 @@
         "Add to manual_drug_rules.json",
         "Re-run production deliverable"
       ],
-      "status": "pending",
-      "priority": 3
+      "status": "validated",
+      "priority": 3,
+      "findings": "h221 Analysis: Manual Rules Expansion - REDUNDANT\n\nINVESTIGATION:\n1. Current 30 manual rules: 24/30 (80%) appear in predictions\n2. 6 missing because their indication diseases aren't being predicted\n3. The main \"missing\" drugs (Aspirin-235 GT pairs, Metformin-123 GT pairs) ARE in DRKG\n4. They don't appear because kNN doesn't rank them top-30 for any disease\n\nROOT CAUSE IDENTIFIED:\n- Manual rules help drugs NOT IN DRKG\n- The coverage gap is drugs IN DRKG that don't rank highly\n- This is a kNN algorithm limitation, not a manual rules problem\n\nCONCLUSION:\n- Existing 30 manual rules are sufficient\n- Adding more biologics has diminishing returns\n- Real improvement needs kNN algorithm changes\n\nNEW INSIGHT: Common drugs (Aspirin, Metformin) with many indications \nare poorly ranked by kNN despite being in DRKG with hundreds of targets.\nThis warrants a new hypothesis about \"generic drug ranking improvement\".\n",
+      "result_metric": "24/30 manual rules effective; remaining gap is kNN limitation"
     },
     {
       "id": "h222",
@@ -4655,6 +4657,37 @@
         "Filter 2-hop paths to those where gene1 and gene2 share a pathway",
         "Compare precision to unfiltered 2-hop paths",
         "Success: precision >10%"
+      ]
+    },
+    {
+      "id": "h236",
+      "title": "High-Indication Drug Ranking Gap Analysis",
+      "rationale": "h221 found Aspirin (235 GT pairs) and Metformin (123 GT pairs) are IN DRKG but appear in 0 predictions. Why doesn't kNN rank common drugs highly? Understanding this could improve recall significantly.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Load kNN raw scores for a disease Aspirin should treat (e.g., pain, cardiovascular)",
+        "Check where Aspirin ranks (if at all)",
+        "Compare embedding distances of Aspirin vs drugs that DO rank highly",
+        "Identify what makes common drugs rank poorly",
+        "Success: Identify actionable cause for low ranking"
+      ]
+    },
+    {
+      "id": "h237",
+      "title": "Indication-Weighted Drug Boosting",
+      "rationale": "Drugs treating many diseases (Aspirin, Metformin) may have embeddings spread across categories, reducing their similarity to any specific disease. Could boosting drugs proportional to their GT indication count improve ranking?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "For each predicted disease, boost scores of drugs with many GT indications",
+        "Test boost formula: score \u00d7 (1 + log(indication_count) / 10)",
+        "Evaluate impact on recall",
+        "Check if this causes false positive inflation"
       ]
     }
   ],
@@ -5566,6 +5599,12 @@
       "hypothesis_id": "h226",
       "learning": "2-hop PPI paths (drug->gene1->gene2->disease) extend coverage from 36% to 74% but precision drops to 6.3% (0.48x of 1-hop). Only high 2-hop counts (10+) approach useful precision (9.4%). Raw PPI-based path extension adds noise.",
       "implication": "PPI interactions are too non-specific for mechanism path extension. Consider pathway-filtered or confidence-weighted approaches."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h221",
+      "learning": "Manual rules help drugs NOT in DRKG. Common drugs like Aspirin (235 GT pairs) and Metformin (123 GT pairs) ARE in DRKG with hundreds of targets but appear in 0 predictions because kNN doesn't rank them highly. This is a fundamental kNN limitation, not a data gap.",
+      "implication": "Expanding manual rules has diminishing returns. Focus on why kNN ranks common drugs poorly."
     }
   ],
   "collaborations": [

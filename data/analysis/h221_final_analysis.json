@@ -1,0 +1,13 @@
+{
+  "hypothesis": "h221",
+  "status": "validated",
+  "findings": {
+    "manual_rules_current": 30,
+    "manual_rules_in_predictions": 24,
+    "manual_rules_missing_diseases": 6,
+    "root_cause_aspirin_metformin": "IN DRKG but kNN doesn't rank highly - manual rules won't help",
+    "additional_biologics_needed": 0,
+    "conclusion": "Existing manual rules sufficient; gap is in kNN ranking, not missing drugs"
+  },
+  "implication": "Focus on kNN ranking improvements rather than expanding manual rules"
+}
