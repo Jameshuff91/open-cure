@@ -3916,7 +3916,7 @@
       "dependencies": [
         "h160"
       ],
-      "findings": "VALIDATED: Identified root cause of kinase inhibitor low precision.\n\nOVERALL KINASE INHIBITOR PRECISION: 2.6% (8/307)\n\nBY DRUG (only drugs with hits):\n- Imatinib: 15.8% (3/19) - BCR-ABL inhibitor\n- Ibrutinib: 7.0% (3/43) - BTK inhibitor\n- Acalabrutinib: 4.0% (1/25) - BTK inhibitor\n- Zanubrutinib: 4.0% (1/25) - BTK inhibitor\n- All others: 0% (0/195)\n\nBY CANCER TYPE:\n- Leukemia: 6.1% (5/82) - BEST\n- Lymphoma: 3.7% (2/54)\n- All others: 0%\n\nHIGH-PRECISION COMBINATIONS (>=20%):\n- leukemia + Imatinib: 22.2% (2/9) - CML, ALL\n- lymphoma + Ibrutinib: 22.2% (2/9) - lymphoplasmacytic lymphoma, SLL\n\nSPECIFIC HITS (all 8):\n1. Imatinib → CML (BCR-ABL+)\n2. Imatinib → ALL (Ph+ subset)\n3. Imatinib → mastocytosis (KIT mutation)\n4. Ibrutinib → lymphoplasmacytic lymphoma (BTK driven)\n5. Ibrutinib → lymphoplasmacytic lymphoma (BTK driven)\n6. Ibrutinib → SLL (BTK driven)\n7. Acalabrutinib → SLL (BTK driven)\n8. Zanubrutinib → SLL (BTK driven)\n\nROOT CAUSE: Kinase inhibitors are TARGET-SPECIFIC, not CANCER-GENERIC.\n- BCR-ABL inhibitors (imatinib) only work for BCR-ABL+ diseases (CML, Ph+ ALL)\n- BTK inhibitors (ibrutinib/acalabrutinib/zanubrutinib) only work for B-cell malignancies\n- Model over-predicts kinase inhibitors to all cancers because they're common in cancer training data\n\nRECOMMENDATION: Create disease-specific kinase rules in production_predictor.py:\n- CML + imatinib/nilotinib/dasatinib → HIGH tier\n- Lymphoma/CLL + ibrutinib/acalabrutinib/zanubrutinib → HIGH tier\n- Do NOT use kinase inhibitors as general cancer rescue (unlike mAbs/chemo)",
+      "findings": "VALIDATED: Identified root cause of kinase inhibitor low precision.\n\nOVERALL KINASE INHIBITOR PRECISION: 2.6% (8/307)\n\nBY DRUG (only drugs with hits):\n- Imatinib: 15.8% (3/19) - BCR-ABL inhibitor\n- Ibrutinib: 7.0% (3/43) - BTK inhibitor\n- Acalabrutinib: 4.0% (1/25) - BTK inhibitor\n- Zanubrutinib: 4.0% (1/25) - BTK inhibitor\n- All others: 0% (0/195)\n\nBY CANCER TYPE:\n- Leukemia: 6.1% (5/82) - BEST\n- Lymphoma: 3.7% (2/54)\n- All others: 0%\n\nHIGH-PRECISION COMBINATIONS (>=20%):\n- leukemia + Imatinib: 22.2% (2/9) - CML, ALL\n- lymphoma + Ibrutinib: 22.2% (2/9) - lymphoplasmacytic lymphoma, SLL\n\nSPECIFIC HITS (all 8):\n1. Imatinib \u2192 CML (BCR-ABL+)\n2. Imatinib \u2192 ALL (Ph+ subset)\n3. Imatinib \u2192 mastocytosis (KIT mutation)\n4. Ibrutinib \u2192 lymphoplasmacytic lymphoma (BTK driven)\n5. Ibrutinib \u2192 lymphoplasmacytic lymphoma (BTK driven)\n6. Ibrutinib \u2192 SLL (BTK driven)\n7. Acalabrutinib \u2192 SLL (BTK driven)\n8. Zanubrutinib \u2192 SLL (BTK driven)\n\nROOT CAUSE: Kinase inhibitors are TARGET-SPECIFIC, not CANCER-GENERIC.\n- BCR-ABL inhibitors (imatinib) only work for BCR-ABL+ diseases (CML, Ph+ ALL)\n- BTK inhibitors (ibrutinib/acalabrutinib/zanubrutinib) only work for B-cell malignancies\n- Model over-predicts kinase inhibitors to all cancers because they're common in cancer training data\n\nRECOMMENDATION: Create disease-specific kinase rules in production_predictor.py:\n- CML + imatinib/nilotinib/dasatinib \u2192 HIGH tier\n- Lymphoma/CLL + ibrutinib/acalabrutinib/zanubrutinib \u2192 HIGH tier\n- Do NOT use kinase inhibitors as general cancer rescue (unlike mAbs/chemo)",
       "result_metric": "2 high-precision combos found: CML+imatinib 22.2%, lymphoma+ibrutinib 22.2%"
     },
     {
@@ -3927,7 +3927,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Count GT entries: solid vs hematologic cancers",
         "Count drugs per disease: solid vs hematologic",
@@ -3937,7 +3937,9 @@
       ],
       "dependencies": [
         "h160"
-      ]
+      ],
+      "findings": "VALIDATED: Disease fragmentation explains the solid vs hematologic precision gap.\n\nKEY FINDINGS:\n1. Precision gap: Hematologic 5.4% vs Solid 13.1% (2.4x difference)\n\n2. ROOT CAUSE: Disease fragmentation, NOT embedding quality or GT density\n   - Leukemia: 49 diseases, 45% with only 1 drug\n   - Lymphoma: 35 diseases, 37% with only 1 drug\n   - Myeloma: 3 diseases, concentrated coverage \u2192 23.3% precision (exception)\n\n3. Embedding analysis: Hematologic cancers cluster BETTER (0.56 vs 0.52)\n   - Embedding quality is NOT the cause\n\n4. GT density: Hematologic has MORE entries/disease (4.7 vs 3.6)\n   - GT sparsity is NOT the cause\n\n5. Drug transferability: Leukemia drugs actually transfer MORE across subtypes\n   - But predictions hit sparse diseases, causing low precision\n\nIMPLICATION: Subtype-specific rules (like CML+imatinib in h201) are the solution.\nFor leukemia/lymphoma, only trust predictions that match specific high-GT subtypes.\n\nMYELOMA EXCEPTION: Concentrated coverage (3 diseases, 14 drugs/disease) enables 23.3% precision.",
+      "result_metric": "Root cause identified: disease fragmentation (45% leukemia diseases have 1 drug)"
     },
     {
       "id": "h200",
@@ -3979,6 +3981,65 @@
       ],
       "findings": "VALIDATED: Implemented disease-specific kinase inhibitor rules.\n\nIMPLEMENTATION:\n1. BCR-ABL inhibitor rules:\n   - Keywords: CML_KEYWORDS, ALL_KEYWORDS\n   - Drugs: imatinib, nilotinib, dasatinib, ponatinib, bosutinib\n   - Tier: HIGH (22% precision from h198)\n\n2. BTK inhibitor rules:\n   - Keywords: CLL_KEYWORDS, LYMPHOMA_BTK_KEYWORDS (lymphoplasmacytic, mantle cell, etc.)\n   - Drugs: ibrutinib, acalabrutinib, zanubrutinib, pirtobrutinib\n   - Tier: HIGH (22% precision from h198)\n\nVERIFICATION:\n- CML: Imatinib gets HIGH tier (rank 3)\n- CLL: Ibrutinib, Zanubrutinib, Acalabrutinib all get HIGH tier\n- Generic 'leukemia': No kinase inhibitors in top 10 (correct - rules are specific)\n- No conflicts with h197 colorectal mAb rule (different disease types)\n\nNO NEW RULES GENERATED: This is a direct implementation of h198 findings.",
       "result_metric": "CML+imatinib: HIGH, CLL+BTK inhibitors: HIGH - all verified"
+    },
+    {
+      "id": "h202",
+      "title": "Subtype-Specific Leukemia Production Rules",
+      "category": "production",
+      "hypothesis": "h199 found leukemia has 49 diseases with 45% having only 1 drug. h201 showed CML+imatinib works. Expand to: AML (cytarabine, azacitidine), ALL (asparaginase, vincristine), CLL (ibrutinib, venetoclax) with subtype-matching rules.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Identify key drugs for each leukemia subtype from GT",
+        "Define keyword matchers for AML, CML, ALL, CLL",
+        "Implement production rules: HIGH tier for matched subtype+drug",
+        "Verify precision improvement on leukemia predictions"
+      ],
+      "dependencies": [
+        "h199",
+        "h201"
+      ]
+    },
+    {
+      "id": "h203",
+      "title": "GT-Density Weighted Confidence Scoring",
+      "category": "confidence",
+      "hypothesis": "h199 showed diseases with higher GT density (e.g., myeloma 14 drugs/disease vs leukemia subtypes 1-2) have better precision. Add GT density as a confidence feature - predictions for high-GT diseases should score higher.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Compute GT density for each disease in training set",
+        "For predictions, look up disease GT density",
+        "Add as confidence feature: high_gt_density (>10 drugs)",
+        "Test correlation with precision",
+        "If significant, add to tiering rules"
+      ],
+      "dependencies": [
+        "h199"
+      ]
+    },
+    {
+      "id": "h204",
+      "title": "Lymphoma Subtype Stratification",
+      "category": "analysis",
+      "hypothesis": "h199 found lymphoma has 35 diseases with 37% single-drug. Unlike leukemia where subtypes are mechanistically distinct, lymphoma subtypes may share more treatments (rituximab works across many). Analyze if lymphoma can be improved differently than leukemia.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Map lymphoma subtypes and their GT drugs",
+        "Compute drug overlap between lymphoma subtypes",
+        "Compare to leukemia subtype overlap",
+        "If higher overlap: lymphoma may benefit from different strategy"
+      ],
+      "dependencies": [
+        "h199"
+      ]
     }
   ],
   "completed": [
@@ -4733,6 +4794,12 @@
       "hypothesis_id": "h160",
       "learning": "Cancer subtype x drug class matters enormously: colorectal_cancer + monoclonal_antibody achieves 50-60% precision vs 7% overall. Solid tumors (ovarian 27%, colorectal 18%) vastly outperform hematologic (leukemia 5.5%, lymphoma 3.3%). Kinase inhibitors surprisingly poor (2.6%) despite individual successes like imatinib.",
       "implication": "Create GOLDEN tier for colorectal+mAb. Chemotherapy reliable for solid tumors. Kinase inhibitors need disease-specific rules (CML=good, general cancer=poor)."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h199",
+      "learning": "Hematologic cancer precision gap (5.4% vs 13.1%) caused by disease fragmentation not embedding quality. Leukemia has 49 diseases (45% with 1 drug) vs myeloma 3 diseases (23.3% precision). Subtype-specific rules are the solution.",
+      "implication": "For hematologic cancers, implement subtype-specific rules rather than general category rules"
     }
   ],
   "collaborations": [

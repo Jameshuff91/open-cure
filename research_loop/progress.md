@@ -1,85 +1,76 @@
 # Research Loop Progress
 
-## Current Session: h191, h194, h124 (2026-02-05)
+## Current Session: h199 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested:**
-- h191: ATC L1 Incoherence as Novel Repurposing Signal - **INVALIDATED** (but revealed complementary insight)
-- h194: Validated Cross-Category Repurposing Database - **VALIDATED** (11 patterns)
-- h124: Disease Embedding Interpretability - **VALIDATED** (treatment edges explain similarity)
+**Hypothesis Tested:** h199 - Solid vs Hematologic Cancer Gap Analysis
 
-### h191: ATC L1 Incoherence - INVALIDATED
+### h199: Solid vs Hematologic Cancer Gap Analysis - VALIDATED
 
-Tested whether ATC L1 incoherence predicts novel repurposing.
+**Objective:** Analyze why solid tumors (ovarian 27%, colorectal 18%) vastly outperform hematologic (leukemia 5.5%, lymphoma 3.3%) in precision.
 
-**Key Finding:** Two DIFFERENT coherence signals exist:
-- h110: Within-class uniqueness → higher precision for unique
-- h191: Category match → higher precision for coherent
+**Precision Gap:**
+- Hematologic: 5.4% (n=630)
+- Solid: 13.1% (n=420)
+- Ratio: 2.4x
 
-**Result:** Coherent 11.1% > Incoherent 6.4% (-4.7pp)
+**ROOT CAUSE IDENTIFIED: Disease Fragmentation**
 
-**Cross-category patterns identified:** CV→metabolic, steroids→respiratory, SGLT2→CV
+NOT the cause (ruled out):
+- Embedding quality: Hematologic clusters BETTER (0.56 vs 0.52 within-class similarity)
+- GT density: Hematologic has MORE entries/disease (4.7 vs 3.6)
+- Drug transferability: Leukemia drugs transfer MORE across subtypes (2.06 diseases/drug)
 
-### h194: Cross-Category Repurposing Database - VALIDATED
+IS the cause:
+- **Disease fragmentation**: Hematologic cancers have many specific subtypes with sparse GT
+- Leukemia: 49 diseases, **45% with only 1 drug**
+- Lymphoma: 35 diseases, 37% with only 1 drug
+- Myeloma: 3 diseases, 14 drugs/disease → **23.3% precision (exception)**
 
-Created validated database of 11 cross-category repurposing patterns.
+**Why This Matters:**
+When kNN predicts drugs for leukemia subtypes:
+- Hits disease with 1-2 GT drugs → likely MISS
+- Myeloma hits disease with 39 GT drugs → likely HIT
 
-**High confidence patterns (10):**
-1. Statins → metabolic (FDA, ADA guidelines)
-2. Azithromycin → respiratory (NEJM 2011)
-3. SGLT2i → cardiovascular (FDA, EMPA-REG)
-4. Doxycycline → dermatological (FDA for rosacea)
-5. Corticosteroids → respiratory/infectious
-6. Antihistamines → dermatological
-7. And 4 more...
+**Output:** `data/analysis/h199_solid_vs_hematologic_gap.json`
 
-**Output:** `data/reference/validated_cross_category_repurposing.json`
+### New Hypotheses Generated
 
-### h124: Disease Embedding Interpretability - VALIDATED
+1. **h202: Subtype-Specific Leukemia Production Rules** (priority 3)
+   - Expand h201 approach: AML, CML, ALL, CLL specific rules
 
-**KEY FINDING: Node2Vec learns from TREATMENT EDGES.**
+2. **h203: GT-Density Weighted Confidence Scoring** (priority 3)
+   - Add GT density as confidence feature
 
-**Correlations with embedding similarity:**
-| Feature | Pearson r | Notes |
-|---------|-----------|-------|
-| Drug Jaccard (graph) | **0.384** | Strongest |
-| Drug Jaccard (shared pairs) | **0.512** | Very strong |
-| Gene Jaccard | 0.030 | Not significant |
-
-**Graph structure:**
-- 85,849 treatment edges drive similarity
-- Gene edges (123K) don't contribute much
-- Only 543 direct disease-disease edges
-
-**Implication:** kNN works because diseases sharing treatments end up close in embedding space. "No-treatment" embeddings (26% R@30) are fair; original (37%) include treatment leakage.
+3. **h204: Lymphoma Subtype Stratification** (priority 4)
+   - Analyze if lymphoma behaves differently than leukemia
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 95 |
+| Validated | 96 |
 | Invalidated | 43 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 30 |
-| **Total Tested** | **148** |
+| Pending | 33 |
+| **Total Tested** | **149** |
 
-### Key Session Learnings
+### Key Session Learning
 
-1. **h110 and h191 measure different signals** - both valid and complementary
-2. **11 cross-category patterns validated** via literature (SGLT2, azithromycin, statins, etc.)
-3. **Node2Vec = treatment similarity** - Drug Jaccard r=0.51 for shared pairs
-4. **Gene associations don't explain embeddings** - r=0.03 only
-5. **Treatment edges are the primary signal** - 85K edges in DRKG
+**Disease fragmentation is the structural cause of hematologic cancer low precision.**
+- Leukemia/lymphoma: many sparse diseases → predictions miss
+- Myeloma: few concentrated diseases → predictions hit
+- Solution: subtype-specific rules, not general category rules
 
 ### Recommended Next Steps
 
-1. **h193: Combined ATC Coherence Signals** (priority 3) - Test both coherence signals together
-2. **h160: Cancer Targeted Therapy Specificity** (priority 3) - Stratify cancer drugs
-3. **h196: Gene-Augmented Disease Similarity** (priority 4) - Test if gene overlap helps
+1. **h202: Subtype-Specific Leukemia Rules** (priority 3) - Implement AML/CML/ALL/CLL rules
+2. **h203: GT-Density Confidence** (priority 3) - Weight by GT coverage
+3. **h195: Metabolic Exception Analysis** (priority 3, low effort) - Quick win
 
 ---
 

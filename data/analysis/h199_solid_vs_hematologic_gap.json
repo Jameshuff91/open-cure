@@ -1,0 +1,72 @@
+{
+  "hypothesis": "h199",
+  "title": "Solid vs Hematologic Cancer Gap Analysis",
+  "status": "validated",
+  "key_finding": "Disease fragmentation explains the solid vs hematologic precision gap",
+  "precision_gap": {
+    "hematologic": 5.4,
+    "solid": 13.1,
+    "ratio": "2.4x"
+  },
+  "root_cause": "disease_fragmentation",
+  "explanation": "Hematologic cancers (leukemia, lymphoma) have many specific subtypes with sparse GT coverage. Predictions hit low-GT diseases. Myeloma is an exception with concentrated coverage.",
+  "disease_fragmentation_stats": {
+    "leukemia": {
+      "n_diseases": 49,
+      "pct_with_1_drug": 45,
+      "mean_drugs_per_disease": 4.1,
+      "median_drugs_per_disease": 2.0
+    },
+    "lymphoma": {
+      "n_diseases": 35,
+      "pct_with_1_drug": 37,
+      "mean_drugs_per_disease": 5.1,
+      "median_drugs_per_disease": 2.0
+    },
+    "myeloma": {
+      "n_diseases": 3,
+      "pct_with_1_drug": 33,
+      "mean_drugs_per_disease": 14.0,
+      "concentrated_coverage": true
+    },
+    "breast_cancer": {
+      "n_diseases": 24,
+      "pct_with_1_drug": 33,
+      "mean_drugs_per_disease": 5.7,
+      "median_drugs_per_disease": 2.0
+    },
+    "colorectal": {
+      "n_diseases": 12,
+      "pct_with_1_drug": 33,
+      "mean_drugs_per_disease": 4.8,
+      "median_drugs_per_disease": 2.5
+    }
+  },
+  "embedding_analysis": {
+    "finding": "Hematologic cancers cluster BETTER than solid tumors in embedding space",
+    "within_class_similarity": {
+      "hematologic": 0.5637,
+      "solid": 0.519,
+      "other_cancer": 0.492
+    },
+    "implication": "Embedding quality is NOT the cause of precision gap"
+  },
+  "gt_density_analysis": {
+    "hematologic_gt_entries": 385,
+    "solid_gt_entries": 831,
+    "hematologic_entries_per_disease": 4.7,
+    "solid_entries_per_disease": 3.6,
+    "implication": "GT density is NOT the cause - hematologic actually has MORE per disease"
+  },
+  "actionable_implications": [
+    "1. Consider subtype-specific rules for hematologic cancers (like CML+imatinib rule in h201)",
+    "2. Weight predictions toward high-GT diseases",
+    "3. For leukemia: only trust predictions that match specific subtypes",
+    "4. Myeloma exceptions show concentrated coverage enables high precision"
+  ],
+  "recommended_follow_up": [
+    "h202: Subtype-Specific Leukemia Rules (AML, CML, ALL, CLL)",
+    "h203: GT-Density Weighted Confidence Scoring",
+    "h204: Lymphoma Subtype Stratification Analysis"
+  ]
+}

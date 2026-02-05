@@ -1,5 +1,5 @@
 {
-  "overall_precision": 0.06880076445293837,
+  "overall_precision": 0.0678451982799809,
   "n_predictions": 2093,
   "cancer_type_stats": {
     "brain_tumor": {
@@ -34,13 +34,13 @@
     },
     "myeloma": {
       "n": 30,
-      "precision": 0.26666666666666666,
-      "hits": 8
+      "precision": 0.23333333333333334,
+      "hits": 7
     },
     "other_cancer": {
       "n": 420,
-      "precision": 0.06904761904761905,
-      "hits": 29
+      "precision": 0.06666666666666667,
+      "hits": 28
     },
     "other_carcinoma": {
       "n": 353,
@@ -80,9 +80,9 @@
   },
   "drug_class_stats": {
     "chemotherapy": {
-      "n": 685,
-      "precision": 0.09927007299270073,
-      "hits": 68
+      "n": 696,
+      "precision": 0.09913793103448276,
+      "hits": 69
     },
     "hormone_therapy": {
       "n": 8,
@@ -90,28 +90,28 @@
       "hits": 0
     },
     "immunotherapy": {
-      "n": 12,
+      "n": 14,
       "precision": 0.0,
       "hits": 0
     },
     "kinase_inhibitor": {
-      "n": 307,
-      "precision": 0.026058631921824105,
+      "n": 308,
+      "precision": 0.025974025974025976,
       "hits": 8
     },
     "monoclonal_antibody": {
-      "n": 289,
-      "precision": 0.1522491349480969,
-      "hits": 44
+      "n": 275,
+      "precision": 0.14909090909090908,
+      "hits": 41
     },
     "targeted_other": {
-      "n": 206,
-      "precision": 0.05339805825242718,
+      "n": 200,
+      "precision": 0.055,
       "hits": 11
     },
     "unknown_class": {
-      "n": 586,
-      "precision": 0.02218430034129693,
+      "n": 592,
+      "precision": 0.02195945945945946,
       "hits": 13
     }
   },
@@ -119,16 +119,23 @@
     {
       "cancer_type": "colorectal_cancer",
       "drug_class": "monoclonal_antibody",
-      "n": 20,
-      "precision": 0.5,
+      "n": 22,
+      "precision": 0.45454545454545453,
       "hits": 10
     },
     {
       "cancer_type": "ovarian_cancer",
       "drug_class": "chemotherapy",
-      "n": 20,
-      "precision": 0.3,
+      "n": 21,
+      "precision": 0.2857142857142857,
       "hits": 6
+    },
+    {
+      "cancer_type": "breast_cancer",
+      "drug_class": "chemotherapy",
+      "n": 32,
+      "precision": 0.25,
+      "hits": 8
     },
     {
       "cancer_type": "pancreatic_cancer",
@@ -138,52 +145,45 @@
       "hits": 5
     },
     {
-      "cancer_type": "breast_cancer",
-      "drug_class": "chemotherapy",
-      "n": 29,
-      "precision": 0.20689655172413793,
-      "hits": 6
-    },
-    {
       "cancer_type": "other_cancer",
       "drug_class": "monoclonal_antibody",
-      "n": 75,
-      "precision": 0.17333333333333334,
-      "hits": 13
+      "n": 70,
+      "precision": 0.17142857142857143,
+      "hits": 12
     },
     {
       "cancer_type": "other_carcinoma",
       "drug_class": "monoclonal_antibody",
-      "n": 49,
-      "precision": 0.12244897959183673,
+      "n": 48,
+      "precision": 0.125,
       "hits": 6
     },
     {
       "cancer_type": "colorectal_cancer",
       "drug_class": "chemotherapy",
-      "n": 35,
-      "precision": 0.11428571428571428,
+      "n": 33,
+      "precision": 0.12121212121212122,
       "hits": 4
     },
     {
       "cancer_type": "leukemia",
       "drug_class": "chemotherapy",
-      "n": 91,
-      "precision": 0.10989010989010989,
+      "n": 90,
+      "precision": 0.1111111111111111,
       "hits": 10
     },
     {
       "cancer_type": "sarcoma",
       "drug_class": "chemotherapy",
-      "n": 58,
-      "precision": 0.10344827586206896,
+      "n": 60,
+      "precision": 0.1,
       "hits": 6
     },
     {
       "cancer_type": "other_cancer",
       "drug_class": "chemotherapy",
-      "n": 139,
-      "precision": 0.09352517985611511,
+      "n": 144,
+      "precision": 0.09027777777777778,
       "hits": 13
     },
     {
@@ -196,50 +196,50 @@
     {
       "cancer_type": "other_carcinoma",
       "drug_class": "chemotherapy",
-      "n": 146,
-      "precision": 0.06164383561643835,
+      "n": 148,
+      "precision": 0.060810810810810814,
       "hits": 9
     },
     {
       "cancer_type": "leukemia",
       "drug_class": "kinase_inhibitor",
-      "n": 82,
-      "precision": 0.06097560975609756,
+      "n": 85,
+      "precision": 0.058823529411764705,
       "hits": 5
     },
     {
       "cancer_type": "pancreatic_cancer",
       "drug_class": "unknown_class",
-      "n": 41,
-      "precision": 0.04878048780487805,
+      "n": 40,
+      "precision": 0.05,
       "hits": 2
     },
     {
       "cancer_type": "lymphoma",
-      "drug_class": "chemotherapy",
-      "n": 85,
-      "precision": 0.047058823529411764,
-      "hits": 4
-    },
-    {
-      "cancer_type": "lymphoma",
       "drug_class": "monoclonal_antibody",
-      "n": 24,
-      "precision": 0.041666666666666664,
+      "n": 22,
+      "precision": 0.045454545454545456,
       "hits": 1
     },
     {
       "cancer_type": "lymphoma",
+      "drug_class": "chemotherapy",
+      "n": 88,
+      "precision": 0.045454545454545456,
+      "hits": 4
+    },
+    {
+      "cancer_type": "lymphoma",
       "drug_class": "kinase_inhibitor",
-      "n": 54,
-      "precision": 0.037037037037037035,
+      "n": 53,
+      "precision": 0.03773584905660377,
       "hits": 2
     },
     {
       "cancer_type": "leukemia",
       "drug_class": "monoclonal_antibody",
-      "n": 35,
-      "precision": 0.02857142857142857,
+      "n": 32,
+      "precision": 0.03125,
       "hits": 1
     },
     {
@@ -252,8 +252,8 @@
     {
       "cancer_type": "other_cancer",
       "drug_class": "unknown_class",
-      "n": 118,
-      "precision": 0.025423728813559324,
+      "n": 119,
+      "precision": 0.025210084033613446,
       "hits": 3
     }
   ],
@@ -261,16 +261,9 @@
     {
       "cancer_type": "colorectal_cancer",
       "drug_class": "monoclonal_antibody",
-      "n": 20,
-      "precision": 0.5,
+      "n": 22,
+      "precision": 0.45454545454545453,
       "hits": 10
-    },
-    {
-      "cancer_type": "ovarian_cancer",
-      "drug_class": "chemotherapy",
-      "n": 20,
-      "precision": 0.3,
-      "hits": 6
     }
   ]
 }
