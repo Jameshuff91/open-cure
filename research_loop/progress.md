@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h205, h207, h206 (2026-02-05)
+## Current Session: h205, h207, h206, h202, h208, h211 (2026-02-05)
 
 ### Session Summary
 
@@ -10,6 +10,9 @@
 - h205: Lymphoma Mechanism-Based Production Rules (CD30+/CD20+) - **VALIDATED**
 - h207: Rituximab Prediction Gap Analysis - **VALIDATED**
 - h206: Manual Rule Injection for Missing DRKG Drugs - **VALIDATED**
+- h202: Subtype-Specific Leukemia Production Rules - **VALIDATED**
+- h208: DRKG Biologic Coverage Audit - **SUPERSEDED BY h206**
+- h211: TKI DRKG Coverage Check for CML - **VALIDATED**
 
 ---
 
@@ -71,38 +74,57 @@
 
 ---
 
+### h202: Subtype-Specific Leukemia Production Rules - VALIDATED
+
+**Key Findings:**
+- AML: 10% precision, expected drugs found (Midostaurin, Daunorubicin)
+- CML: 6.7% precision, NO TKIs in top 30 despite all being FDA-approved
+- ALL: 6.7% precision, 1 expected drug found
+
+**Output:** `data/analysis/h202_leukemia_subtype_rules.json`
+
+---
+
+### h211: TKI DRKG Coverage Check - VALIDATED
+
+**Key Finding:** All 5 TKIs (imatinib, nilotinib, dasatinib, bosutinib, ponatinib) HAVE embeddings but NOT predicted for CML.
+
+**ROOT CAUSE:** Same as h207 - kNN neighbors don't have TKIs in their GT.
+Imatinib is predicted 33 times across other diseases, but NOT for CML.
+
+---
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 107 |
+| Validated | 110 |
 | Invalidated | 43 |
 | Inconclusive | 8 |
 | Blocked | 17 |
 | Deprioritized | 3 |
-| Pending | 32 |
-| **Total** | **210** |
+| Pending | 30 |
+| **Total** | **211** |
 
 ### Key Session Learnings
 
 1. **h205:** Adcetris missing from DRKG = fundamental coverage gap for CD30+ lymphomas
 2. **h207:** kNN neighbor GT coverage determines drug recommendations - zero coverage = zero prediction
 3. **h206:** 37.5% of GT drugs have no DRKG embeddings; newer biologics systematically absent
+4. **h202:** Leukemia subtypes have expected drugs but often not predicted due to neighbor GT gaps
+5. **h211:** TKIs have embeddings but CML's kNN neighbors don't have them in GT
 
-### Session Theme: DRKG Coverage Gaps
+### Session Theme: Two Types of Coverage Gaps
 
-All three hypotheses converged on the same root cause: **DRKG drug coverage is the fundamental bottleneck**.
+1. **DRKG Embedding Gap** (h205, h206): Drug has no embedding → cannot be predicted at all
+2. **kNN Neighbor GT Gap** (h207, h211): Drug has embedding but neighbors don't have it → won't be recommended
 
-The kNN collaborative filtering approach works correctly, but:
-- If a drug has no embedding → cannot be predicted
-- If no kNN neighbors have a drug in GT → cannot be recommended
-
-This is NOT a model failure - it's a data coverage gap.
+Both are NOT model failures - they're data coverage issues. The kNN collaborative filtering approach works correctly given its constraints.
 
 ### Recommended Next Steps
 
 1. **h210: Implement Manual Rule Injection Layer** (priority 4) - integrate manual_drug_rules.json
-2. **h208: DRKG Biologic Coverage Audit** (priority 3) - systematic gap analysis
-3. **h209: GT Coverage Analysis** (priority 3) - identify all blocked predictions
+2. **h209: GT Coverage Analysis** (priority 3) - identify all blocked predictions
+3. **Investigate why CML neighbors don't have TKIs** - may be disease similarity issue
 
 ---
 
