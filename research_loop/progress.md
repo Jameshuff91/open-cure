@@ -1,14 +1,15 @@
 # Research Loop Progress
 
-## Current Session: h210, h164 (2026-02-05)
+## Current Session: h210, h164, h166 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 3**
 - h210: Implement Manual Rule Injection Layer in Production Pipeline - **VALIDATED**
 - h164: Contraindication Database: Systematic Safety Filter Expansion - **VALIDATED**
+- h166: Drug-Disease Mechanism Path Tracing for Interpretability - **VALIDATED**
 
 ---
 
@@ -91,6 +92,42 @@ Immunosuppressants (tacrolimus, cyclosporine, azathioprine, sirolimus) + Infecti
 **NEW HYPOTHESES:**
 - h223: DrugBank Licensed Data (blocked - need license)
 - h224: Quinolone Tendon Warning Annotation
+
+---
+
+### h166: Mechanism Path Tracing - VALIDATED
+
+**Objective:** Extract drug->gene->disease paths from DRKG to explain predictions mechanistically.
+
+**KEY RESULTS:**
+| Metric | Value |
+|--------|-------|
+| Predictions with mechanism path | 2,975/13,416 (22.1%) |
+| Average connecting genes | 6.3 |
+| Precision with path | 13.6% |
+| Precision without path | 6.2% |
+| **Precision lift** | **2.2x** |
+
+**PRECISION BY CONNECTING GENES:**
+| Genes | Precision | Total |
+|-------|-----------|-------|
+| 1 | 12.7% | 1,324 |
+| 3+ | 15.7% | 1,129 |
+| 5+ | 15.8% | 689 |
+| 10+ | 14.6% | 364 |
+
+**SAMPLE MECHANISM PATHS:**
+- Propranolol -> heart failure: 9 genes (adrenergic receptors)
+- Losartan -> heart failure: 12 genes (angiotensin pathway)
+- Spironolactone -> heart failure: 3 genes (mineralocorticoid receptor)
+
+**IMPLICATION:** Mechanism paths are a valid confidence signal. Can add to production output.
+
+**NEW HYPOTHESES:**
+- h225: Add Mechanism Support to Production Deliverable
+- h226: Two-Hop Mechanism Paths (Drug->Gene->Gene->Disease)
+
+**Output:** `data/analysis/h166_mechanism_path_analysis.json`
 
 ---
 

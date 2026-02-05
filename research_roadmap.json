@@ -3315,13 +3315,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "For a test set of predictions, extract drug->gene->pathway->disease paths from DRKG",
         "Classify paths by mechanistic relevance (direct target, shared pathway, etc.)",
         "Add mechanism_explanation field to production output",
         "Validate: do predictions with clear mechanism paths have higher precision?"
-      ]
+      ],
+      "findings": "Mechanism path tracing successfully extracts drug->gene->disease paths from DRKG.\n\nKEY FINDINGS:\n- 22.1% of predictions (2,975/13,416) have direct mechanism paths\n- Average 6.3 connecting genes when path exists\n- **2.2x precision lift**: 13.6% with path vs 6.2% without path\n\nPRECISION BY CONNECTING GENES:\n| Genes | Precision | Note |\n|-------|-----------|------|\n| 1 | 12.7% | Baseline |\n| 3+ | 15.7% | Moderate improvement |\n| 5+ | 15.8% | Good threshold |\n| 10+ | 14.6% | Plateaus |\n\nIMPLICATIONS:\n1. Mechanism paths are a valid confidence signal (2.2x lift)\n2. Can add 'mechanism_support' field to predictions\n3. Number of connecting genes moderately correlates with precision\n4. 78% of predictions lack direct mechanism paths but may still be valid\n\nSAMPLE MECHANISM EXPLANATIONS:\n- Propranolol -> heart failure: Targets 9 genes linked to disease\n- Losartan -> heart failure: Targets 12 genes linked to disease  \n- Spironolactone -> heart failure: Targets genes including mineralocorticoid receptor\n\nOUTPUT: data/analysis/h166_mechanism_path_analysis.json",
+      "result_metric": "2.2x precision lift (13.6% vs 6.2%), 22.1% coverage"
     },
     {
       "id": "h167",
@@ -4445,6 +4447,36 @@
       ],
       "status": "pending",
       "priority": 5
+    },
+    {
+      "id": "h225",
+      "title": "Add Mechanism Support to Production Deliverable",
+      "rationale": "h166 validated that mechanism paths provide 2.2x precision lift. Should add mechanism_support field (n_connecting_genes) to production output to help prioritize predictions.",
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Add get_mechanism_path() function to production pipeline",
+        "Add n_mechanism_genes column to deliverable",
+        "Add has_mechanism_path boolean column",
+        "Update confidence scoring to include mechanism support"
+      ],
+      "status": "pending",
+      "priority": 4
+    },
+    {
+      "id": "h226",
+      "title": "Two-Hop Mechanism Paths (Drug->Gene->Gene->Disease)",
+      "rationale": "h166 found only 22% direct paths. Could extend to 2-hop paths through gene-gene interactions (PPI). May increase coverage while maintaining mechanistic grounding.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Extract gene-gene interaction edges from DRKG",
+        "Find drug->gene1->gene2->disease paths",
+        "Compare precision of 1-hop vs 2-hop paths",
+        "Determine if 2-hop adds value or just noise"
+      ],
+      "status": "pending",
+      "priority": 4
     }
   ],
   "completed": [
@@ -5307,6 +5339,12 @@
       "hypothesis_id": "h164",
       "learning": "Systematic contraindication expansion has diminishing returns. Most obvious harmful patterns either already filtered or don't appear in kNN predictions. Model implicitly avoids many contraindicated combinations. Rule-based approach sufficient for high-priority patterns.",
       "implication": "Focus safety filter on evidence-backed specific rules rather than exhaustive contraindication lists. The kNN approach naturally produces relevant drug-disease pairs."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h166",
+      "learning": "Mechanism paths (drug->gene->disease) provide 2.2x precision lift. 22% of predictions have direct paths. More connecting genes moderately improves precision up to ~5 genes, then plateaus.",
+      "implication": "Mechanism support is a valid confidence signal. Add to production output and consider in tiering. 2-hop paths may increase coverage."
     }
   ],
   "collaborations": [
