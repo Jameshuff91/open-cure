@@ -5755,7 +5755,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Get drug mechanisms/pathways from existing pathway data",
         "Step 2: Get complication pathways (e.g., diabetic nephropathy = renal, vascular)",
@@ -5766,7 +5766,7 @@
       "dependencies": [
         "h281"
       ],
-      "findings": null,
+      "findings": "BLOCKED: Data format mismatch prevents direct pathway overlap analysis.\n\nDATA FORMAT ISSUES:\n- GT uses CHEBI IDs for drugs\n- Pathway data uses DrugBank/CHEMBL IDs for drugs\n- Pathway data uses MESH IDs for diseases\n- No existing mapping between these formats\n\nEFFORT ASSESSMENT:\n- Would require building CHEBI \u2194 DrugBank/CHEMBL mapping\n- Would require building disease name \u2194 MESH ID mapping\n- High effort for uncertain gain\n\nRELATED FINDING (h293):\n- Base\u2192comp precision is already only 2.9% overall\n- Organ-specific complications have 0% precision regardless\n- Pathway overlap unlikely to change this fundamental pattern\n\nRECOMMENDATION: Deprioritize in favor of other approaches.",
       "result_metric": null
     },
     {
@@ -6020,7 +6020,7 @@
     {
       "id": "h299",
       "title": "Alternative Methods for Mechanism-Specific Diseases",
-      "status": "pending",
+      "status": "blocked",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -6031,7 +6031,8 @@
         "Step 3: Test: Literature co-occurrence (if drug and disease mentioned together)",
         "Step 4: Compare precision vs kNN baseline",
         "Success criteria: >10% precision for mechanism-specific diseases (vs ~0% kNN)"
-      ]
+      ],
+      "findings": "BLOCKED: ID format mismatch prevents alternative method testing.\n\nDATA FORMAT MISMATCH:\n- GT drug IDs: CHEBI (e.g., CHEBI:8327), PUBCHEM, UNII\n- Drug targets uses: DrugBank (DB00635), CHEMBL\n- Overlap: 0/2,382 (0%)\n\n- GT disease IDs: MONDO (e.g., MONDO:0005009), UMLS\n- Disease genes uses: MESH (e.g., MESH:D005909)\n- Overlap: 0/2,688 (0%)\n\nIMPLICATION:\nCannot test target-based scoring or mechanism matching for mechanism-specific\ndiseases without extensive ID mapping infrastructure.\n\nRECOMMENDATION:\n1. This would require building/sourcing CHEBI\u2194DrugBank and MONDO\u2194MESH mappings\n2. High effort with uncertain benefit\n3. For now, mechanism-specific diseases should simply get LOW confidence\n4. Alternative: Use literature mining (h91) which doesn't require ID mapping"
     },
     {
       "id": "h300",
@@ -6047,6 +6048,22 @@
         "Step 3: If repurposing evidence exists, consider GT expansion",
         "Step 4: If truly mechanism-specific, use as negative control for kNN",
         "Success criteria: Determine if HIV drugs are genuinely mechanism-specific"
+      ]
+    },
+    {
+      "id": "h301",
+      "title": "Build Drug/Disease ID Mapping Infrastructure",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "high",
+      "effort": "high",
+      "description": "Build mappings between GT IDs (CHEBI, MONDO) and reference data IDs (DrugBank, MESH) to enable target-based predictions",
+      "steps": [
+        "Step 1: Source CHEBI\u2192DrugBank mapping (UniChem or similar)",
+        "Step 2: Source MONDO\u2192MESH mapping (OLS API or UMLS)",
+        "Step 3: Build mapping pipeline and validate coverage",
+        "Step 4: Re-evaluate h299 with mappings",
+        "Success criteria: >50% coverage for both drug and disease mappings"
       ]
     }
   ],
@@ -7210,6 +7227,12 @@
       "hypothesis_id": "h293",
       "learning": "Organ-specific complications (retinopathy, neuropathy) have 0% base\u2192comp precision. Pathway-comprehensive (MI, DKA) have 16.1%.",
       "implication": "h280 filter is correct. Organ-specific complications require specialized treatment regardless of base disease control."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h299",
+      "learning": "Zero overlap between GT IDs (CHEBI/MONDO) and reference data IDs (DrugBank/MESH). ID mapping infrastructure needed.",
+      "implication": "Target-based scoring and mechanism matching blocked until ID mappings are built."
     }
   ],
   "collaborations": [
