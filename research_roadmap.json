@@ -2009,17 +2009,18 @@
       "id": "h103",
       "title": "ATC Hierarchy Navigation for Broader Coverage",
       "description": "When ATC Level 3 produces no candidates, fall back to Level 2; when Level 2 fails, use Level 1. Adaptive hierarchy navigation may improve coverage.",
-      "priority": 3,
+      "priority": 99,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: For each disease, try ATC Level 4 first",
         "Step 2: If <10 candidates, fall back to Level 3",
         "Step 3: If still <10, fall back to Level 2",
         "Step 4: Track which level produced hits",
         "Step 5: Report coverage improvement"
-      ]
+      ],
+      "findings": "BLOCKED: h67 showed ATC boosting hurts kNN, and only 29.1% of drugs have ATC mappings. Hierarchical ATC navigation cannot overcome low coverage issue."
     },
     {
       "id": "h104",
@@ -2571,7 +2572,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Split data by disease category tier",
         "Step 2: Compute mechanism_support hit rate by tier",
@@ -2581,7 +2582,9 @@
       ],
       "dependencies": [
         "h126"
-      ]
+      ],
+      "findings": "VALIDATED: Infectious diseases have 2.68x mechanism predictive effect (exceeds 2x target).\n\nMECHANISM RATIO BY CATEGORY:\n| Category       | Base | w/Mech | Ratio |\n|----------------|------|--------|-------|\n| infectious     | 9.9% | 26.5%  | 2.68x |\n| neurological   | 2.0% | 3.2%   | 1.61x |\n| cardiovascular | 11.2%| 17.5%  | 1.57x |\n| metabolic      | 8.1% | 11.2%  | 1.38x |\n| cancer         | 4.9% | 6.6%   | 1.35x |\n| respiratory    | 12.3%| 15.9%  | 1.29x |\n\nKEY FINDING: Tier 3 categories (1.74x avg) benefit more from mechanism than Tier 2 (1.46x avg).\nInfectious diseases have exceptionally high mechanism benefit (2.68x).\n\nIMPLICATION:\nFor infectious disease predictions, mechanism support should be heavily weighted in confidence scores.\n",
+      "result_metric": "Infectious diseases: 2.68x mechanism effect (exceeds 2x target)"
     },
     {
       "id": "h130",
@@ -3381,6 +3384,12 @@
       "hypothesis_id": "h138",
       "learning": "Keyword-based sub-categorization cannot beat per-disease ML confidence (prob_h52). Even granular sub-categories have internal variance that ML captures better.",
       "implication": "Stop pursuing category-based calibration improvements. Focus on per-disease features."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h129",
+      "learning": "Mechanism evidence has 2.68x predictive value for infectious diseases, far exceeding other categories (1.29-1.61x).",
+      "implication": "Weight mechanism support more heavily for infectious disease predictions. Lower tiers benefit more from mechanism evidence."
     }
   ],
   "collaborations": [
