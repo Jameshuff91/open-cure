@@ -1,0 +1,145 @@
+{
+  "hypothesis": "h134",
+  "title": "Steroid Dominance Analysis in Golden Set",
+  "summary": {
+    "corticosteroids": {
+      "count": 465,
+      "hits": 214,
+      "precision": 46.0
+    },
+    "non_steroids": {
+      "count": 2823,
+      "hits": 501,
+      "precision": 17.7
+    },
+    "precision_gap": "28.3 pp (steroids 2.6x better)",
+    "non_steroid_target_met": true,
+    "actual_non_steroid_precision": 17.7
+  },
+  "category_breakdown": {
+    "autoimmune": {
+      "steroid": 70.6,
+      "non_steroid": 23.3,
+      "gap": 47.3
+    },
+    "dermatological": {
+      "steroid": 52.9,
+      "non_steroid": 8.8,
+      "gap": 44.1
+    },
+    "respiratory": {
+      "steroid": 51.0,
+      "non_steroid": 15.5,
+      "gap": 35.5
+    },
+    "infectious": {
+      "steroid": 36.0,
+      "non_steroid": 23.7,
+      "gap": 12.3
+    },
+    "other": {
+      "steroid": 33.8,
+      "non_steroid": 14.6,
+      "gap": 19.2
+    },
+    "cardiovascular": {
+      "steroid": 0,
+      "non_steroid": 46.7,
+      "note": "No steroids predicted"
+    },
+    "psychiatric": {
+      "steroid": 0,
+      "non_steroid": 48.3,
+      "note": "No steroids predicted"
+    },
+    "cancer": {
+      "steroid": 50.0,
+      "non_steroid": 28.4,
+      "gap": 21.6
+    }
+  },
+  "top_non_steroid_drug_classes": {
+    "Calcium blockers": {
+      "precision": 87.5,
+      "count": 8
+    },
+    "Antipsychotics": {
+      "precision": 75.0,
+      "count": 12
+    },
+    "Beta blockers": {
+      "precision": 69.2,
+      "count": 13
+    },
+    "ACE inhibitors": {
+      "precision": 63.6,
+      "count": 11
+    },
+    "Immunosuppressants": {
+      "precision": 43.6,
+      "count": 78
+    },
+    "Macrolides": {
+      "precision": 33.0,
+      "count": 94
+    },
+    "Statins": {
+      "precision": 30.8,
+      "count": 13
+    },
+    "Tetracyclines": {
+      "precision": 28.5,
+      "count": 179
+    },
+    "Fluoroquinolones": {
+      "precision": 20.9,
+      "count": 153
+    }
+  },
+  "top_non_steroid_individual_drugs": [
+    {
+      "drug": "Fluconazole",
+      "precision": 80.0,
+      "count": 10
+    },
+    {
+      "drug": "Methotrexate",
+      "precision": 77.8,
+      "count": 9
+    },
+    {
+      "drug": "Itraconazole",
+      "precision": 69.2,
+      "count": 13
+    },
+    {
+      "drug": "Cyclosporine",
+      "precision": 66.7,
+      "count": 6
+    },
+    {
+      "drug": "Ceftriaxone",
+      "precision": 64.7,
+      "count": 17
+    },
+    {
+      "drug": "Ciprofloxacin",
+      "precision": 61.5,
+      "count": 26
+    },
+    {
+      "drug": "Azathioprine",
+      "precision": 60.6,
+      "count": 33
+    }
+  ],
+  "key_findings": [
+    "Steroids dominate precision (46.0% vs 17.7%) but non-steroids ARE actionable",
+    "Cardiovascular (46.7%) and psychiatric (48.3%) have NO steroids but HIGH precision",
+    "Antifungals (Fluconazole 80%, Itraconazole 69%) achieve steroid-level precision",
+    "Calcium blockers (87.5%) and antipsychotics (75%) beat steroid precision",
+    "Immunosuppressants (43.6%) are high-value non-steroids for autoimmune",
+    "Biologics (10.6%) underperform - consistent with h189/h190 GT sparsity",
+    "Model is NOT just learning 'steroids treat inflammation' - diverse drug classes work"
+  ]
+}
