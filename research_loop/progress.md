@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h152, h189 (2026-02-05)
+## Current Session: h152, h189, h190 (2026-02-05)
 
 ### Session Summary
 
@@ -9,6 +9,7 @@
 **Hypotheses Tested:**
 - h152: ATC Code Integration for Precision - **VALIDATED** (+11.1pp mean precision)
 - h189: ATC L4 Rescue Criteria Implementation - **VALIDATED** (+383% coverage)
+- h190: ATC-Based Biologic Gap Analysis - **VALIDATED** (sparse GT is root cause)
 
 ### h152: ATC Code Integration for Precision - VALIDATED
 
@@ -71,16 +72,48 @@ Implemented ATC L4-based rescue criteria as follow-up to h152.
 - **Biologics correctly excluded** - 14.5% confirms they should NOT be GOLDEN
 - **New drugs captured**: Corticosteroids, Lenalidomide
 
+### h190: ATC-Based Biologic Gap Analysis - VALIDATED
+
+Analyzed why biologics have consistently low precision (biologic gap: mAbs 27% vs small molecules 32%).
+
+**Key Findings:**
+
+1. **All biologic subclasses have low precision (<20%)**:
+   | ATC Code | Class | Precision |
+   |----------|-------|-----------|
+   | L04AB | TNF inhibitors (Adalimumab) | 7.2% |
+   | L04AC | IL inhibitors (Tocilizumab) | 1.9% |
+   | L04AF | JAK inhibitors (Tofacitinib) | 12.5% |
+   | L01F* | Oncology mAbs | 2.0% |
+
+2. **No category + biologic combination exceeds 30%**:
+   - Best: autoimmune + JAK = 19%
+   - Best: autoimmune + TNF = 17%
+
+3. **ROOT CAUSE: SPARSE GT COVERAGE**:
+   | Drug Class | GT Entries |
+   |------------|------------|
+   | Glucocorticoids (H02AB) | **1832** |
+   | Traditional immunosuppressants (L04AX) | **557** |
+   | TNF inhibitors (L04AB) | 23 |
+   | IL inhibitors (L04AC) | 11 |
+
+4. **Biologics ARE in GT but with few indications per drug**:
+   - Tofacitinib: 24 diseases
+   - Adalimumab: only 4 diseases (vs hundreds of predictions)
+
+**Conclusion:** Biologic gap is a DATA QUALITY issue, not a METHOD issue. kNN over-predicts biologics because GT doesn't capture their actual indications comprehensively.
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 91 |
+| Validated | 92 |
 | Invalidated | 41 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 31 |
-| **Total Tested** | **142** |
+| Pending | 30 |
+| **Total Tested** | **143** |
 
 ### Key Session Learnings
 
@@ -89,12 +122,13 @@ Implemented ATC L4-based rescue criteria as follow-up to h152.
 3. **Corticosteroids are critical for autoimmune** - H02AB needed in ATC mapping, not just L+M
 4. **ATC provides systematic drug classification** - No need to maintain manual lists for 90.6% of drugs
 5. **ATC rescue provides 383% coverage with precision maintained** - Implemented in production_predictor.py
+6. **Biologic gap is DATA QUALITY issue** - TNF has 23 GT entries vs glucocorticoids 1832
 
 ### Recommended Next Steps
 
-1. **h190: ATC Biologic Gap Analysis** (priority 3) - Understand why biologics fail
-2. **h87: Drug Mechanism Clustering** (priority 3) - Cross-disease transfer via mechanisms
-3. **h191: ATC L1 Incoherence** (priority 3) - Investigate if ATC mismatch predicts repurposing
+1. **h87: Drug Mechanism Clustering** (priority 3) - Cross-disease transfer via mechanisms
+2. **h191: ATC L1 Incoherence** (priority 3) - Investigate if ATC mismatch predicts repurposing
+3. **h124: Disease Embedding Interpretability** (priority 3) - Understand what makes diseases similar
 
 ---
 
