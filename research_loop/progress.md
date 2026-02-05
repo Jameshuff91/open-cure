@@ -68,12 +68,17 @@ prob_h52 with threshold 0.5 achieves **76.2% accuracy** on predicting whether "o
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 64 |
-| Invalidated | 40 |
+| Validated | 63 |
+| Invalidated | 38 |
 | Inconclusive | 7 |
 | Blocked | 17 |
-| Pending | 16 |
-| **Total Tested** | **111** |
+| Deprioritized | 2 |
+| Pending | 17 |
+| **Total Tested** | **127** |
+
+### Session 2 Updates (h141, h143)
+- h141: Mechanism weighting already implemented in h136 filters (superseded)
+- h143: Zero-hit predictor achieves 81.6% precision at prob_h52 < 0.3
 
 ### Key Learnings This Session
 
