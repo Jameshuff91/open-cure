@@ -1,13 +1,14 @@
 # Research Loop Progress
 
-## Current Session: h210 (2026-02-05)
+## Current Session: h210, h164 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 1**
+**Hypotheses Tested: 2**
 - h210: Implement Manual Rule Injection Layer in Production Pipeline - **VALIDATED**
+- h164: Contraindication Database: Systematic Safety Filter Expansion - **VALIDATED**
 
 ---
 
@@ -55,6 +56,41 @@
 - h222: Injection Layer Quality Check (standard of care vs repurposing)
 
 **Output:** Updated `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
+
+---
+
+### h164: Contraindication Database Expansion - VALIDATED
+
+**Objective:** Systematically expand safety filter using contraindication patterns.
+
+**ANALYSIS:**
+- Current filter: 890 lines, 25 exclusion rules
+- Already excludes 186 predictions (1.4%)
+- DrugBank vocabulary lacks contraindication data (need licensed XML)
+
+**KEY FINDING:**
+Most obvious drug-contraindicated disease combinations DON'T appear in predictions. The kNN model implicitly avoids harmful patterns.
+
+**NEW RULE ADDED:**
+Immunosuppressants (tacrolimus, cyclosporine, azathioprine, sirolimus) + Infectious diseases
+
+| Pattern | Excluded | Reason |
+|---------|----------|--------|
+| Cyclosporine + TB | 1 | Worsens infection |
+| Cyclosporine + Influenza | 1 | Worsens infection |
+| Azathioprine + Hepatitis B/C | 2 | Reactivates virus |
+| Various + CMV | 2 | Worsens infection |
+| Total new exclusions | 10 | |
+
+**EXCEPTIONS PRESERVED:**
+- Autoimmune hepatitis (azathioprine is treatment)
+- Autoimmune interstitial pneumonia
+
+**TOTAL EXCLUSIONS AFTER h164:** 196/13,461 (1.5%)
+
+**NEW HYPOTHESES:**
+- h223: DrugBank Licensed Data (blocked - need license)
+- h224: Quinolone Tendon Warning Annotation
 
 ---
 

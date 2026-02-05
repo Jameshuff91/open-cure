@@ -229,6 +229,30 @@ JAK_INHIBITOR_PATTERNS = [
     r"ruxolitinib",
 ]
 
+# h164: Immunosuppressants - contraindicated for infectious diseases
+# Immunosuppressants weaken the immune system, making infections WORSE
+# Exception: Autoimmune conditions (e.g., autoimmune hepatitis) are NOT infections
+IMMUNOSUPPRESSANT_PATTERNS = [
+    r"tacrolimus", r"cyclosporine", r"mycophenolate", r"azathioprine",
+    r"sirolimus", r"everolimus", r"basiliximab", r"belatacept",
+    r"leflunomide", r"teriflunomide",
+]
+
+# Infectious disease patterns where immunosuppressants are harmful
+INFECTIOUS_DISEASE_PATTERNS = [
+    "tuberculosis", " tb ", "hepatitis b", "hepatitis c", "hiv",
+    "cytomegalovirus", " cmv ", "herpes zoster", "shingles",
+    "influenza", "pneumonia", "sepsis", "bacterial infection",
+    "fungal infection", "candida", "aspergillus", "malaria",
+    "foot infection", "cellulitis", "abscess",
+]
+
+# Exceptions: These contain "infection" keywords but ARE autoimmune/treated with immunosuppressants
+INFECTIOUS_EXCEPTIONS = [
+    "autoimmune hepatitis",  # Autoimmune, not viral
+    "interstitial pneumonia associated with",  # Autoimmune lung disease
+]
+
 # Metabolic disease names
 METABOLIC_DISEASES = [
     "diabetes", "type 2 diabetes", "type 1 diabetes", "metabolic syndrome",
@@ -573,6 +597,26 @@ def filter_prediction(
                     original_score=score,
                     confidence=ConfidenceLevel.EXCLUDED,
                     reason="Cancer-specific antibody targets tumor marker, not autoimmune pathway",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0m (h164): Immunosuppressants for infectious diseases
+    # Immunosuppressants weaken immunity and make infections WORSE
+    # Exception: Autoimmune conditions that contain "infection" keywords
+    for pattern in IMMUNOSUPPRESSANT_PATTERNS:
+        if re.search(pattern, drug_lower):
+            # Check for infectious disease patterns
+            is_infectious = any(inf in disease_lower for inf in INFECTIOUS_DISEASE_PATTERNS)
+            # Check for exceptions (autoimmune conditions)
+            is_exception = any(exc in disease_lower for exc in INFECTIOUS_EXCEPTIONS)
+            if is_infectious and not is_exception:
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Immunosuppressants weaken immunity - contraindicated for infections (HARMFUL)",
                     drug_type=drug_type,
                     adjusted_score=0.0,
                 )

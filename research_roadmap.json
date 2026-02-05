@@ -3280,13 +3280,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract contraindications from DrugBank",
         "Map contraindicated conditions to disease categories",
         "Identify which contraindications overlap with our predictions",
         "Add high-priority contraindications to safety filter"
-      ]
+      ],
+      "findings": "Analyzed current confidence_filter.py (890 lines, 25 exclusion rules) and expanded with h164 findings.\n\nKEY FINDINGS:\n1. DrugBank vocabulary data doesn't contain contraindications (need full XML with license)\n2. Current filter already catches 186 predictions (1.4%) across 9 exclusion categories\n3. Most common drug-contraindicated disease combinations DON'T appear in predictions (model implicitly learned)\n4. One significant gap identified: Immunosuppressants + Infectious diseases\n\nNEW RULE ADDED (h164):\n- Immunosuppressants (tacrolimus, cyclosporine, azathioprine, sirolimus, etc.) + infectious diseases\n- 10 harmful predictions now excluded\n- Exceptions properly handled: autoimmune hepatitis, autoimmune interstitial pneumonia\n\nEXCLUSION BREAKDOWN (after h164):\n- Diagnostic agents: 76 (39%)\n- Antibiotics + metabolic: 57 (29%)\n- Corticosteroids + diabetes: 23 (12%)\n- Withdrawn drugs: 17 (9%)\n- Immunosuppressants + infections: 10 (5%) \u2190 NEW\n- TNF inhibitors + lupus/MS/HF: 8 (4%)\n- Other: 5 (3%)\n\nTotal exclusions: 196/13,461 (1.5%)\n\nCONCLUSION: Most obvious contraindications are either already filtered or don't appear in predictions. DrugBank systematic contraindications require licensed data access. The current rule-based approach is effective for high-priority harmful patterns.",
+      "result_metric": "+10 exclusions (196 total, 1.5% of predictions)"
     },
     {
       "id": "h165",
@@ -4414,6 +4416,35 @@
       ],
       "status": "pending",
       "priority": 5
+    },
+    {
+      "id": "h223",
+      "title": "DrugBank Licensed Data: Full Contraindication Extraction",
+      "rationale": "h164 showed DrugBank vocabulary doesn't contain contraindications. The full DrugBank XML (requires academic license) has comprehensive contraindication/interaction data. Could automate safety filter expansion significantly.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Apply for DrugBank academic license",
+        "Parse full XML to extract contraindications",
+        "Map contraindicated conditions to disease categories",
+        "Integrate high-confidence contraindications into filter"
+      ],
+      "status": "blocked",
+      "priority": 5
+    },
+    {
+      "id": "h224",
+      "title": "Quinolone Warning: Add Tendon Risk Annotation",
+      "rationale": "h164 found 435 quinolone predictions. While appropriate for infections, quinolones have FDA black box warning for tendon rupture. Should add annotation/warning rather than exclusion.",
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Add quinolone pattern list",
+        "Add 'tendon_risk_warning' field to predictions",
+        "Don't exclude but flag for clinical review"
+      ],
+      "status": "pending",
+      "priority": 5
     }
   ],
   "completed": [
@@ -5270,6 +5301,12 @@
       "hypothesis_id": "h210",
       "learning": "Manual rule injection adds FDA-approved drugs missing from DRKG. 69% coverage with fuzzy matching. Main blockers: unmapped disease names (16) and diseases without embeddings (4).",
       "implication": "Can improve coverage by adding explicit MESH mappings for failed disease names. Consider expanding manual rules to more missing drugs."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h164",
+      "learning": "Systematic contraindication expansion has diminishing returns. Most obvious harmful patterns either already filtered or don't appear in kNN predictions. Model implicitly avoids many contraindicated combinations. Rule-based approach sufficient for high-priority patterns.",
+      "implication": "Focus safety filter on evidence-backed specific rules rather than exhaustive contraindication lists. The kNN approach naturally produces relevant drug-disease pairs."
     }
   ],
   "collaborations": [
