@@ -3606,12 +3606,13 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Identify drugs that treat multiple categories",
         "For predictions, if drug treats related-category diseases, boost its score",
         "Test vs baseline kNN"
-      ]
+      ],
+      "findings": "h181 INVALIDATED: Cross-category drug boosting hurts performance.\n\nMETHODOLOGY:\n- Built drug\u2192categories mapping from GT (1,038 drugs with category info)\n- For predictions, boosted drugs treating related categories by 1.5x\n- Related categories defined by co-treatment analysis (e.g., respiratory\u2192infectious 41%)\n\nRESULTS:\n- Baseline kNN R@30: 38.06% \u00b1 3.21%\n- Cross-category boost R@30: 37.32% \u00b1 3.63%\n- Improvement: -0.74 pp (NEGATIVE)\n\nROOT CAUSE:\nBoosting drugs from related categories dilutes the signal from the most\nrelevant kNN neighbors. The kNN already captures cross-category patterns\nthrough disease similarity - explicit category boosting is redundant and\nintroduces noise.\n\nDRUG CATEGORY DISTRIBUTION:\n- 69% single-category drugs\n- 21% two-category drugs  \n- 10% three+ category drugs\n\nCONCLUSION: kNN collaborative filtering already captures the useful\ncross-category transfer signal. Explicit boosting adds no value."
     },
     {
       "id": "h182",
@@ -7491,6 +7492,12 @@
       "hypothesis_id": "h261",
       "learning": "KEGG pathway co-membership does not improve PPI-based drug-disease scoring (+0.25pp)",
       "implication": "Pathway signal is redundant with PPI connectivity; no need to integrate pathway data for mechanism scoring"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h181",
+      "learning": "Explicit drug cross-category boosting hurts performance (-0.74pp) - kNN already captures this signal",
+      "implication": "Category-based boosting should be at disease/prediction level, not drug level"
     }
   ],
   "collaborations": [
