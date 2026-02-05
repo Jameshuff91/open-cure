@@ -1,29 +1,30 @@
 # Research Loop Progress
 
-## Current Session: h284, h288, h292, h159, h177, h295, h296 (2026-02-05)
+## Current Session: h284, h288, h292, h159, h177, h295, h296, h291 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 7**
+**Hypotheses Tested: 8**
 - h284: Complication Specialization Score - **VALIDATED**
 - h288: ATC Class-Supported GOLDEN Tier - **INVALIDATED**
 - h292: Cardiovascular Event Transferability - **VALIDATED**
 - h159: Category Boundary Refinement - **INCONCLUSIVE**
 - h177: Epilepsy-Specific Analysis - **VALIDATED**
 - h295: Drug Pool Size as Confidence Signal - **VALIDATED**
-- h296: Statin-Only CV Predictions - **VALIDATED** (100% vs 0% precision!)
+- h296: Statin-Only CV Predictions - **VALIDATED** (100% vs 0%)
+- h291: Implement Comp→Base Confidence Boost - **VALIDATED** (code deployed!)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 170 |
+| Validated | 171 |
 | Invalidated | 55 |
 | Inconclusive | 10 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 41 |
+| Pending | 40 |
 | **Total** | **297** (7 new hypotheses added this session)
 
 ### KEY SESSION FINDINGS
@@ -84,13 +85,22 @@ ITP/TTP are autoimmune-hematological but GT is tiny (2-4 drugs). Expansion would
 
 **Key Finding:** Statins treat BOTH symptom (dyslipidemia) AND underlying cause (atherosclerosis). Non-statins (PCSK9i, antiplatelets, GLP-1) don't have atherosclerosis indication.
 
+#### h291: Implement Comp→Base Confidence Boost - VALIDATED
+
+**Implementation completed in production_predictor.py:**
+- COMPLICATION_TRANSFERABILITY dict (25 complications)
+- _is_comp_to_base() detection function
+- Statin + CV event → GOLDEN (100% precision)
+- Non-statin + CV event → NO BOOST (0% precision)
+- HIGH transferability (≥50%) → HIGH tier
+
 ### New Hypotheses Generated
 - **h291-h297**: Transferability implementation, CV event expansion, drug pool confidence signals, statin-only CV predictions, mechanism-specific categories
 
 ### Recommended Next Steps
-1. h291 (Implement Comp→Base Boost) - implement h284 transferability findings
-2. h297 (Mechanism-Specific Disease Categories) - identify diseases where kNN won't help
-3. Consider implementing statin boost rule from h296
+1. h297 (Mechanism-Specific Disease Categories) - identify diseases where kNN won't help
+2. Run full evaluation to measure impact of h291 implementation
+3. Consider implementing drug pool size confidence signal (h295)
 
 ---
 
