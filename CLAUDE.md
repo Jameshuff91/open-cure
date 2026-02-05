@@ -168,7 +168,13 @@ vastai destroy instance <INSTANCE_ID>
 - **ML improvements** (h41-h45) - Gene similarity hurts, XGBoost doesn't help, learned similarity overfits
 - **37% = DRKG ceiling** - kNN at 37%, oracle 60%; 23 pp gap needs external data or new architectures
 - **Treatment edge leakage** - Original 36.59% → honest 26.06% (29% was leakage)
+- **Explicit graph traversal** (h93, h95) - Gene: 3.53% R@30, Pathway: 3.57% R@30. Embeddings >> symbolic reasoning
 - Details: `docs/archive/experiment_history.md`
+
+### Confidence Features (2026-02-04)
+- **Mechanism support** (h97): +6.5 pp precision for predictions where drug targets disease genes (2.1x improvement)
+- **Coverage strength** (h105): Predicts RECALL (+33.6 pp) but NOT precision (-0.45 pp); recall proxy, not confidence proxy
+- Category tier (h71) remains the strongest confidence predictor
 
 ## Performance Gaps (Summary)
 
