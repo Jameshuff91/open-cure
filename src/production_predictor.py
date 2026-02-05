@@ -398,8 +398,11 @@ BASE_TO_COMPLICATIONS = {
         'hypertensive crisis', 'hypertensive emergency'
     ],
     'atherosclerosis': [
-        # Note: MI is technically a complication but statins work for both (50% precision)
-        # Don't filter these as they're valid cross-category predictions
+        # h292/h296: CV events as complications of atherosclerosis
+        # Statins achieve 100% precision, non-statins 0% (handled by statin rule)
+        'myocardial infarction', 'ischemic stroke', 'stroke',
+        'transient ischemic attack', 'acute coronary syndrome',
+        'unstable angina', 'angina pectoris',
     ],
     'alcoholism': [
         'alcoholic liver disease', 'alcoholic hepatitis', 'alcoholic cirrhosis',
@@ -417,6 +420,56 @@ BASE_TO_COMPLICATIONS = {
         'renal osteodystrophy', 'uremia'
     ],
 }
+
+# h284/h291: Complication Transferability for confidence boosting
+# Transferability = % of drugs treating complication that also treat base
+# HIGH transferability complications: comp→base predictions work well (62.5% precision)
+# LOW transferability complications: drugs are complication-specific
+#
+# Format: {complication_term: transferability_percentage}
+COMPLICATION_TRANSFERABILITY = {
+    # HIGH transferability (≥50%) - comp→base predictions reliable
+    'acute heart failure': 100.0,
+    'chronic heart failure': 94.8,
+    'diabetic ketoacidosis': 86.7,
+    'diabetic nephropathy': 80.0,
+    'pulmonary edema': 75.0,
+    'diabetic kidney disease': 68.8,
+    'anemia of chronic kidney disease': 62.1,
+    'stroke': 72.2,
+    'transient ischemic attack': 50.0,
+    'deep vein thrombosis': 100.0,
+    # MEDIUM transferability (20-50%)
+    'pulmonary embolism': 46.2,
+    'ischemic stroke': 41.7,
+    'angina pectoris': 40.0,
+    'alcoholic cirrhosis': 33.3,
+    'cardiac arrest': 33.3,
+    'secondary hyperparathyroidism': 25.0,
+    # LOW transferability (<20%) - drugs are complication-specific
+    'myocardial infarction': 18.5,  # h292: statins only, see h296
+    'diabetic neuropathy': 0.0,
+    'diabetic retinopathy': 0.0,
+    'diabetic macular edema': 5.6,
+    'diabetic peripheral neuropathy': 0.0,
+    'unstable angina': 12.5,
+    'stable angina': 12.5,
+    'obstructive sleep apnea': 16.7,
+    'uremic pruritus': 10.0,
+}
+
+# h296: Statins achieve 100% precision for CV event→atherosclerosis
+# Non-statins achieve 0% precision for same predictions
+STATIN_NAMES = [
+    'atorvastatin', 'rosuvastatin', 'simvastatin', 'pravastatin',
+    'lovastatin', 'fluvastatin', 'pitavastatin', 'cerivastatin',
+]
+
+# CV events where statin rule applies (from h292)
+CV_EVENTS_FOR_STATIN_RULE = [
+    'myocardial infarction', 'stroke', 'ischemic stroke', 'transient ischemic attack',
+    'acute coronary syndrome', 'unstable angina',
+]
 
 # h274: Cancer type matching for confidence tiering (from h270 analysis)
 # Same cancer type (subtype refinement): 100% precision
@@ -1151,6 +1204,51 @@ class DrugRepurposingPredictor:
 
         return False
 
+    def _is_comp_to_base(self, drug_id: str, predicted_disease: str) -> Tuple[bool, float, bool]:
+        """
+        h284/h291: Check if prediction is a comp→base pattern and get transferability.
+
+        Returns: (is_comp_to_base, transferability_score, is_statin_cv)
+
+        HIGH transferability (≥50%): comp→base predictions work well (62.5% precision)
+        h296: For CV events, statins achieve 100% precision, non-statins 0%
+        """
+        if not drug_id or not predicted_disease:
+            return False, 0.0, False
+
+        drug_gt = self.drug_to_diseases.get(drug_id, set())
+        if not drug_gt:
+            return False, 0.0, False
+
+        pred_lower = predicted_disease.lower()
+        drug_name = self._get_drug_name(drug_id).lower()
+
+        # Check if drug treats a complication and prediction is for a base
+        for comp, transferability in COMPLICATION_TRANSFERABILITY.items():
+            comp_lower = comp.lower()
+            # Does drug treat this complication?
+            drug_treats_comp = any(comp_lower in gt.lower() for gt in drug_gt)
+            if drug_treats_comp:
+                # Is prediction for the base disease?
+                # Check if prediction is a base disease for this complication
+                for base_disease, complications in BASE_TO_COMPLICATIONS.items():
+                    if comp_lower in [c.lower() for c in complications]:
+                        # comp is a complication of base_disease
+                        base_lower = base_disease.lower()
+                        if base_lower in pred_lower or pred_lower in base_lower:
+                            # This is a comp→base prediction
+                            # h296: Check statin rule for CV events
+                            is_statin = any(s in drug_name for s in STATIN_NAMES)
+                            is_cv_event = any(cv in comp_lower for cv in CV_EVENTS_FOR_STATIN_RULE)
+                            is_statin_cv = is_statin and is_cv_event
+                            return True, transferability, is_statin_cv
+
+        return False, 0.0, False
+
+    def _get_drug_name(self, drug_id: str) -> str:
+        """Get drug name from ID using drug_id_to_name lookup."""
+        return self.drug_id_to_name.get(drug_id, drug_id)
+
     @staticmethod
     def categorize_disease(disease_name: str) -> str:
         """Categorize a disease by name."""
@@ -1232,6 +1330,31 @@ class DrugRepurposingPredictor:
         # h280 finding: 0% precision for these predictions
         if drug_id and self._is_base_to_complication(drug_id, disease_name):
             return ConfidenceTier.FILTER, False, 'base_to_complication'
+
+        # h284/h291: Boost comp→base predictions based on transferability
+        # HIGH transferability (≥50%) = 62.5% precision → HIGH tier
+        # h296: Statins for CV events achieve 100% precision → GOLDEN tier
+        #       Non-statins for CV events achieve 0% precision → NO BOOST
+        if drug_id:
+            is_comp_to_base, transferability, is_statin_cv = self._is_comp_to_base(drug_id, disease_name)
+            if is_comp_to_base:
+                if is_statin_cv:
+                    # h296: Statins treating CV events and predicting atherosclerosis = 100% precision
+                    return ConfidenceTier.GOLDEN, True, 'statin_cv_event'
+                # h296: Check if this is a non-statin CV event (0% precision - no boost)
+                drug_name_lower = self._get_drug_name(drug_id).lower()
+                is_statin = any(s in drug_name_lower for s in STATIN_NAMES)
+                is_cv_pred = 'athero' in disease_name.lower()
+                if is_cv_pred and not is_statin:
+                    # Non-statin predicting atherosclerosis from CV event - don't boost (0% precision)
+                    pass  # Continue to standard tier assignment
+                elif transferability >= 50:
+                    # h284: HIGH transferability comp→base = 62.5% precision
+                    return ConfidenceTier.HIGH, True, f'comp_to_base_high_{transferability:.0f}'
+                elif transferability >= 20:
+                    # MEDIUM transferability
+                    return ConfidenceTier.MEDIUM, True, f'comp_to_base_med_{transferability:.0f}'
+                # LOW transferability - no boost, continue to standard tier assignment
 
         # h273/h276/h278: Disease hierarchy matching - boost tier for subtype refinements
         # This indicates the prediction is a subtype refinement (e.g., "psoriasis" → "plaque psoriasis")
