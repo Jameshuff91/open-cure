@@ -2616,7 +2616,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "blocked",
       "steps": [
         "Step 1: Add freq_x_score to 3-feature logistic model",
         "Step 2: Compare to XGBoost on same features",
@@ -2626,7 +2626,8 @@
       "dependencies": [
         "h126",
         "h120"
-      ]
+      ],
+      "findings": "DUPLICATE of h127"
     },
     {
       "id": "h132",
@@ -2863,6 +2864,47 @@
       ],
       "findings": "VALIDATED: prob_h52 < 0.3 achieves 81.6% precision in predicting zero-hit diseases.\n\nZERO-HIT PREDICTION PERFORMANCE:\n| Threshold | Precision | Recall |\n|-----------|-----------|--------|\n| 0.30      | 81.6%     | 36.4%  | <-- Meets >80% target\n| 0.35      | 78.7%     | 43.6%  |\n| 0.40      | 76.3%     | 52.7%  |\n| 0.45      | 74.5%     | 63.6%  |\n| 0.50      | 72.5%     | 71.8%  |\n\nFEATURE DIFFERENCES (zero vs non-zero):\n- prob_h52: 0.42 vs 0.74 (0.32 difference)\n- pool_size: 55.5 vs 58.4 (similar)\n\nZero-hit diseases are mostly:\n- \"other\" category (73/110)\n- Rare genetic conditions (alkaptonuria, cystinosis, etc.)\n\nIMPLICATION:\nFilter out predictions with prob_h52 < 0.3 to avoid low-value zero-hit diseases.\n81.6% of diseases with prob_h52 < 0.3 will have zero hits.\n",
       "result_metric": "81.6% precision at threshold 0.3 (exceeds 80% target)"
+    },
+    {
+      "id": "h144",
+      "title": "Metabolic Disease Rescue: Alternative Confidence Signals",
+      "category": "precision",
+      "rationale": "Type 2 diabetes shows 0 GOLDEN and 0 HIGH predictions in production. h136 found no rescue criteria for metabolic diseases. Are there alternative signals (drug class, pathway, ATC) that could improve confidence for this category?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze metabolic disease predictions in detail",
+        "Step 2: Check if ATC class A10 (diabetes) drugs have higher precision",
+        "Step 3: Check if specific drug mechanisms (PPAR, GLP-1, SGLT2) correlate with precision",
+        "Step 4: Test alternative rescue criteria for metabolic diseases",
+        "Success criteria: Find criteria achieving >30% precision for metabolic diseases"
+      ],
+      "dependencies": [
+        "h69",
+        "h136"
+      ]
+    },
+    {
+      "id": "h145",
+      "title": "Production Pipeline: Novel Prediction Export",
+      "category": "production",
+      "rationale": "h69 generates predictions for individual diseases. Need batch export of novel predictions (not FDA-approved) with confidence tiers for collaborator review.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "in_progress",
+      "steps": [
+        "Step 1: Extend predictor to batch all evaluable diseases",
+        "Step 2: Add FDA-approval lookup to identify truly novel predictions",
+        "Step 3: Apply confidence filter exclusions (withdrawn drugs, etc.)",
+        "Step 4: Export to data/deliverables with GOLDEN/HIGH/MEDIUM tiers",
+        "Success criteria: Generate prioritized novel predictions file"
+      ],
+      "dependencies": [
+        "h69"
+      ]
     }
   ],
   "completed": [
