@@ -2,49 +2,114 @@
   "correlations": {
     "mechanism_support": {
       "mechanism_support": 1.0,
-      "train_frequency": 0.0700367665181709,
-      "category_tier": 0.004453551296550722,
-      "knn_score": 0.11852618842771283,
-      "is_hit": 0.09734682321012356
+      "train_frequency": 0.07,
+      "category_tier": 0.004,
+      "knn_score": 0.119,
+      "is_hit": 0.097
     },
     "train_frequency": {
-      "mechanism_support": 0.0700367665181709,
+      "mechanism_support": 0.07,
       "train_frequency": 1.0,
-      "category_tier": -0.031139711410591662,
-      "knn_score": 0.403757845293217,
-      "is_hit": 0.1861011979251249
+      "category_tier": -0.031,
+      "knn_score": 0.404,
+      "is_hit": 0.186
     },
     "category_tier": {
-      "mechanism_support": 0.004453551296550722,
-      "train_frequency": -0.031139711410591662,
+      "mechanism_support": 0.004,
+      "train_frequency": -0.031,
       "category_tier": 1.0,
-      "knn_score": 0.04156202063736199,
-      "is_hit": -0.08234478311615548
+      "knn_score": 0.042,
+      "is_hit": -0.082
     },
     "knn_score": {
-      "mechanism_support": 0.11852618842771283,
-      "train_frequency": 0.403757845293217,
-      "category_tier": 0.04156202063736199,
+      "mechanism_support": 0.119,
+      "train_frequency": 0.404,
+      "category_tier": 0.042,
       "knn_score": 1.0,
-      "is_hit": 0.15540338965566436
+      "is_hit": 0.155
     },
     "is_hit": {
-      "mechanism_support": 0.09734682321012356,
-      "train_frequency": 0.1861011979251249,
-      "category_tier": -0.08234478311615548,
-      "knn_score": 0.15540338965566436,
+      "mechanism_support": 0.097,
+      "train_frequency": 0.186,
+      "category_tier": -0.082,
+      "knn_score": 0.155,
       "is_hit": 1.0
     }
   },
-  "independence": {
-    "mechanism_tier": 1.0,
-    "mechanism_frequency": 1.0,
-    "tier_frequency": 1.0
+  "independence_verification": {
+    "mechanism_tier_correlation": 0.004,
+    "mechanism_frequency_correlation": 0.07,
+    "tier_frequency_correlation": -0.031,
+    "all_below_0.1": true
   },
   "combined_analysis": {
-    "tier1_precision": 0.2086021505376344,
-    "mechanism_precision": 0.12222222222222222,
-    "combined_precision": 0.4690721649484536,
-    "expected_if_independent": 0.3053285543608124
+    "tier1_precision": 0.187,
+    "mechanism_precision": 0.121,
+    "combined_precision": 0.432,
+    "expected_if_independent": 0.285,
+    "super_additive_gain_pp": 14.7
+  },
+  "sample_sizes": {
+    "total_predictions": 13522,
+    "tier1_predictions": 1050,
+    "mechanism_predictions": 2710,
+    "both_signals": 213
+  },
+  "statistical_test": {
+    "test": "binomial",
+    "p_value": 0.0,
+    "significant": true
+  },
+  "seed_by_seed_results": [
+    {
+      "seed": 42,
+      "tier1_prec": 0.294,
+      "mech_prec": 0.172,
+      "both_prec": 0.739,
+      "super_add": 0.323,
+      "n_both": 46
+    },
+    {
+      "seed": 123,
+      "tier1_prec": 0.193,
+      "mech_prec": 0.123,
+      "both_prec": 0.429,
+      "super_add": 0.137,
+      "n_both": 56
+    },
+    {
+      "seed": 456,
+      "tier1_prec": 0.242,
+      "mech_prec": 0.092,
+      "both_prec": 0.407,
+      "super_add": 0.096,
+      "n_both": 27
+    },
+    {
+      "seed": 789,
+      "tier1_prec": 0.094,
+      "mech_prec": 0.105,
+      "both_prec": 0.203,
+      "super_add": 0.014,
+      "n_both": 69
+    },
+    {
+      "seed": 1024,
+      "tier1_prec": 0.207,
+      "mech_prec": 0.111,
+      "both_prec": 0.6,
+      "super_add": 0.305,
+      "n_both": 15
+    }
+  ],
+  "conclusions": {
+    "h111_status": "VALIDATED",
+    "key_findings": [
+      "Signals are orthogonal (all pairwise correlations < 0.1)",
+      "Combined precision (43.2%) exceeds expected (28.5%)",
+      "Super-additive gain of +14.7 pp is statistically significant (p < 0.0001)",
+      "213 predictions have both signals - modest sample size but large effect"
+    ],
+    "production_implication": "Use Tier 1 + mechanism support filter for highest-confidence predictions (43% precision)"
   }
 }

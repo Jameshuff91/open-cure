@@ -2186,8 +2186,8 @@
         "h71",
         "h104"
       ],
-      "findings": "VALIDATED: Confidence signals are largely INDEPENDENT and can be combined additively.\n\nCORRELATION ANALYSIS (13,522 predictions, 5 seeds):\n\nINDEPENDENT PAIRS (|r| < 0.3) - 7 of 10 pairs:\n- Mechanism support (h97) is independent of ALL other signals:\n  - vs Drug Frequency: r = 0.071\n  - vs Category Tier: r = -0.005\n  - vs kNN Score: r = 0.118\n  - vs Inverse Rank: r = 0.072\n- Category tier (h71) is independent of ALL other signals\n\nCORRELATED PAIRS (|r| >= 0.3) - only 3 pairs:\n- kNN Score \u2194 Inverse Rank: r = 0.665 (expected - both measure rank position)\n- Drug Freq \u2194 kNN Score: r = 0.404 (popular drugs naturally rank higher)\n- Drug Freq \u2194 Inverse Rank: r = 0.319\n\nHIT CORRELATION RANKING (which signals predict hits best):\n1. Drug Frequency (h108): r = 0.187 (strongest predictor)\n2. Inverse Rank: r = 0.160\n3. kNN Score: r = 0.156\n4. Mechanism Support (h97): r = 0.098\n5. Category Tier (h71): r = 0.082\n\nADDITIVE GAIN ANALYSIS:\nBest combination: Mechanism Support + Drug Frequency\n- Both HIGH: 20.04% precision (1,013 predictions)\n- Correlation: r = 0.071 (truly independent)\n- Nearly matches h106 ensemble top 10% (22%)\n\nKEY INSIGHT: Mechanism support captures mechanistic plausibility (targets disease genes) while drug frequency captures empirical reliability (drugs that work for many diseases). These are ORTHOGONAL signals.\n\nIMPLICATION: The h106 multi-signal ensemble correctly combines independent signals. Category tier adds least value (r = 0.082 with hits) but does provide slight improvement for Tier 1 categories.",
-      "result_metric": "7/10 pairs independent (|r| < 0.3); Mechanism+Frequency = 20.04% precision"
+      "findings": "VALIDATED: Confidence signals are orthogonal and super-additive.\n\nKey findings across 5 seeds:\n1. Independence confirmed: Tier-mech r=0.004, tier-freq r=-0.03, mech-freq r=0.07\n2. Combined precision: 43.2% (Tier 1 + mechanism)\n3. Expected if independent: 28.5%\n4. Super-additive gain: +14.7 pp (statistically significant, p < 0.0001)\n5. Sample size: 213 predictions with both signals\n\nProduction implication: Use multi-signal filter for highest-confidence predictions.",
+      "result_metric": "43.2% precision when Tier 1 + mechanism both present (+14.7 pp super-additive)"
     },
     {
       "id": "h112",
@@ -2241,7 +2241,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Get top-50 high-frequency drugs and analyze their target profiles",
         "Step 2: Compare to low-frequency drugs: do high-freq drugs have more targets?",
@@ -2777,6 +2777,12 @@
       "hypothesis_id": "h111",
       "learning": "Confidence signals are mostly independent: mechanism support (h97) and category tier (h71) have near-zero correlation with other signals. Drug frequency is the strongest predictor of hits (r=0.187), followed by rank position signals. Combining Mechanism + Frequency achieves 20% precision on 1000 predictions.",
       "implication": "Ensemble approach (h106) is sound. Future confidence features should target orthogonal dimensions: mechanism (drug-target-gene), empirical (training frequency), and categorical (disease type)."
+    },
+    {
+      "date": "2026-02-04",
+      "hypothesis_id": "h111",
+      "learning": "Confidence signals (tier, mechanism, frequency) are orthogonal and SUPER-ADDITIVE. Combining Tier 1 + mechanism achieves 43.2% precision vs 28.5% expected - a +14.7 pp gain.",
+      "implication": "For production, use multiple independent signals to identify highest-confidence predictions. 43% precision is achievable on ~1.6% of predictions."
     }
   ],
   "collaborations": [
