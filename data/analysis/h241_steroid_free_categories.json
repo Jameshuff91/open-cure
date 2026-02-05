@@ -1,0 +1,100 @@
+{
+  "hypothesis": "h241",
+  "title": "Steroid-Free Disease Categories Deep Dive",
+  "summary": {
+    "cardiovascular": {
+      "total_predictions": 60,
+      "known_indications": 28,
+      "novel_predictions": 32,
+      "precision": 46.7,
+      "diseases": [
+        "chronic heart failure",
+        "hypertension"
+      ]
+    },
+    "psychiatric": {
+      "total_predictions": 60,
+      "known_indications": 29,
+      "novel_predictions": 31,
+      "precision": 48.3,
+      "diseases": [
+        "bipolar disorder",
+        "schizophrenia"
+      ]
+    }
+  },
+  "top_drug_classes_by_precision": {
+    "cardiovascular": {
+      "Beta blockers": {
+        "precision": 100,
+        "count": 5
+      },
+      "Calcium blockers": {
+        "precision": 100,
+        "count": 3
+      },
+      "Diuretics": {
+        "precision": 100,
+        "count": 3
+      },
+      "Vasodilators": {
+        "precision": 100,
+        "count": 3
+      },
+      "ARBs": {
+        "precision": 75,
+        "count": 4
+      },
+      "ACE inhibitors": {
+        "precision": 60,
+        "count": 5
+      }
+    },
+    "psychiatric": {
+      "Atypical antipsychotics": {
+        "precision": 90,
+        "count": 10
+      },
+      "Typical antipsychotics": {
+        "precision": 80,
+        "count": 5
+      },
+      "Mood stabilizers": {
+        "precision": 67,
+        "count": 3
+      },
+      "Anxiolytics": {
+        "precision": 50,
+        "count": 4
+      }
+    }
+  },
+  "novel_prediction_quality": {
+    "cardiovascular": {
+      "plausible": 22,
+      "controversial": 2,
+      "implausible": 4,
+      "uncertain": 4,
+      "plausibility_rate": "~70%"
+    },
+    "psychiatric": {
+      "plausible": 10,
+      "controversial": 15,
+      "implausible": 6,
+      "plausibility_rate": "~40%"
+    }
+  },
+  "key_findings": [
+    "Cardiovascular: 100% precision for beta blockers, calcium blockers, diuretics, vasodilators",
+    "Psychiatric: 90% precision for atypical antipsychotics, 80% for typical",
+    "~70% of cardiovascular novel predictions are clinically plausible",
+    "~40% of psychiatric novel predictions are plausible (SSRIs/stimulants for bipolar are CONTROVERSIAL)",
+    "Model captures drug mechanisms but misses psychiatric contraindication rules",
+    "Canagliflozin for HF is a CORRECT novel prediction (PROVEN in trials post-GT curation)"
+  ],
+  "recommendations": [
+    "Cardiovascular predictions are high-quality - prioritize for external validation",
+    "Psychiatric: Add SSRI/stimulant contraindication rules for bipolar disorder",
+    "Consider Sotatercept \u2192 PAH as emerging novel prediction (STELLAR trial 2023)"
+  ]
+}

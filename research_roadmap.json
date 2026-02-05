@@ -4762,7 +4762,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all cardiovascular and psychiatric HIGH confidence predictions",
         "Analyze drug class distribution (beta blockers, ACE inhibitors, antipsychotics, etc.)",
@@ -4771,7 +4771,9 @@
       ],
       "dependencies": [
         "h134"
-      ]
+      ],
+      "findings": "VALIDATED: Steroid-free categories (CV, psychiatric) show strong patterns.\n\n**CARDIOVASCULAR (60 predictions, 46.7% precision)**\n| Drug Class | Count | Precision |\n|------------|-------|-----------|\n| Beta blockers | 5 | **100%** |\n| Calcium blockers | 3 | **100%** |\n| Diuretics | 3 | **100%** |\n| Vasodilators | 3 | **100%** |\n| ARBs | 4 | 75% |\n| ACE inhibitors | 5 | 60% |\n\nDiseases: Heart failure (36.7%) and Hypertension (56.7%)\nKnown vs Novel: 28 known indications, 32 novel predictions\n~70% of novel predictions are clinically plausible\n\n**PSYCHIATRIC (60 predictions, 48.3% precision)**\n| Drug Class | Count | Precision |\n|------------|-------|-----------|\n| Atypical antipsychotics | 10 | **90%** |\n| Typical antipsychotics | 5 | **80%** |\n| Mood stabilizers | 3 | 67% |\n| Anxiolytics | 4 | 50% |\n\nDiseases: Bipolar (46.7%) and Schizophrenia (50%)\nKnown vs Novel: 29 known indications, 31 novel predictions\n~40% of novel predictions are clinically plausible\n\n**CRITICAL FINDING:**\nPsychiatric novel predictions include DANGEROUS contraindicated drugs:\n- SSRIs/SNRIs for bipolar \u2192 can trigger mania\n- Stimulants for bipolar/schizophrenia \u2192 can worsen psychosis\n- Model captures mechanisms but misses contraindication rules\n\n**HIGHLIGHT:**\n- Canagliflozin \u2192 Heart Failure: CORRECT novel prediction (PROVEN in trials post-GT)\n- Cardiovascular predictions show high clinical coherence",
+      "result_metric": "CV: 100% precision for core drug classes; Psychiatric: 90% for antipsychotics"
     },
     {
       "id": "h242",
@@ -4791,6 +4793,64 @@
       "dependencies": [
         "h134",
         "h189"
+      ]
+    },
+    {
+      "id": "h243",
+      "title": "Psychiatric Contraindication Rules",
+      "category": "confidence_calibration",
+      "rationale": "h241 showed SSRIs/SNRIs and stimulants are predicted for bipolar/schizophrenia but are contraindicated (mania/psychosis risk). Need explicit contraindication rules.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Define contraindication rules: SSRIs/SNRIs without mood stabilizer for bipolar",
+        "Define contraindication rules: Stimulants for schizophrenia",
+        "Apply filters to psychiatric predictions",
+        "Re-evaluate precision after filtering",
+        "Success criteria: Remove >90% of implausible psychiatric predictions"
+      ],
+      "dependencies": [
+        "h241"
+      ]
+    },
+    {
+      "id": "h244",
+      "title": "Pulmonary Hypertension Drug Transfer to Heart Failure",
+      "category": "drug_class_analysis",
+      "rationale": "h241 showed many PAH drugs (Bosentan, Riociguat, Ambrisentan, etc.) predicted for heart failure. Both conditions share hemodynamic mechanisms. Is this a validated repurposing pattern?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Extract all PAH drug predictions for non-PAH cardiovascular diseases",
+        "Search ClinicalTrials.gov for PAH drugs in heart failure trials",
+        "Validate: Do any PAH drugs have evidence for HF benefit?",
+        "Success criteria: Find clinical trial evidence for >3 PAH\u2192HF repurposing opportunities"
+      ],
+      "dependencies": [
+        "h241"
+      ]
+    },
+    {
+      "id": "h245",
+      "title": "Emerging Treatments Validation (Sotatercept)",
+      "category": "external_validation",
+      "rationale": "h241 identified Sotatercept as a novel prediction. STELLAR trial (2023) showed benefit in PAH. Are there other emerging treatments our model correctly predicts?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Identify novel predictions for cardiovascular diseases",
+        "Search for recent (2023-2026) clinical trial results for these drugs",
+        "Count how many predictions are validated by emerging evidence",
+        "Success criteria: Find >3 emerging treatments correctly predicted"
+      ],
+      "dependencies": [
+        "h241"
       ]
     }
   ],
@@ -5738,6 +5798,12 @@
       "hypothesis_id": "h134",
       "learning": "Steroids dominate golden set (46% vs 17.7%) but non-steroids ARE actionable. Calcium blockers (87.5%), antipsychotics (75%), beta blockers (69%), and ACE inhibitors (63.6%) beat steroids. Model captures diverse pharmacology.",
       "implication": "Cardiovascular and psychiatric categories are steroid-free with high precision \u2014 prioritize these for non-steroid repurposing"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h241",
+      "learning": "Steroid-free categories have excellent drug class precision: CV (beta blockers 100%, calcium blockers 100%), psychiatric (atypical antipsychotics 90%). But psychiatric predictions include dangerous contraindicated drugs (SSRIs for bipolar).",
+      "implication": "Add contraindication rules for psychiatric predictions; prioritize cardiovascular novel predictions for validation"
     }
   ],
   "collaborations": [
