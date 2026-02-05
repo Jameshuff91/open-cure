@@ -2549,7 +2549,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Step 1: Compute median train_frequency and median norm_score",
         "Step 2: Filter predictions to those with both features above median",
@@ -2559,7 +2559,9 @@
       ],
       "dependencies": [
         "h126"
-      ]
+      ],
+      "findings": "INVALIDATED: Simple freq\u00d7score filtering cannot achieve 30% precision.\n\nKEY FINDINGS:\n1. Baseline precision: 7.16% (all 13,522 predictions)\n2. High freq only (>4): 11.40% precision (44% of data)\n3. High score only (>0.465): 9.84% precision (50% of data)\n4. BOTH high freq AND high score: 15.02% precision (27% of data)\n\nSYNERGY ANALYSIS:\n- Expected precision if independent: 15.67%\n- Actual precision with both: 15.02%\n- Synergy bonus: -0.65 pp (NEGATIVE!)\n\nThis contradicts h126's SHAP interaction finding. The explanation:\n- SHAP measures how XGBoost USES the interaction when making predictions\n- Simple threshold filtering \u2260 how XGBoost leverages the interaction\n- XGBoost may use freq\u00d7score in non-monotonic ways (e.g., very high score + low freq still good)\n- The interaction helps XGBoost's probability estimation, not simple filtering\n\nBEST ACHIEVABLE:\n- 80th percentile both: 22.27% precision (10% coverage)\n- Top 5% by freq\u00d7score: 24.11% precision (5% coverage)\n- Still below 30% target\n\nIMPLICATION: To leverage interactions, must use the XGBoost model directly, not simple filters.",
+      "result_metric": "Best: 24.1% precision at 5% coverage (top by freq\u00d7score). Below 30% target."
     },
     {
       "id": "h129",
@@ -3154,6 +3156,12 @@
       "hypothesis_id": "h126",
       "learning": "XGBoost +2.07 pp comes from ensemble of small effects, not single interaction. Frequency dominates (35%). freq_x_mech has +4.90 pp synergy. Linear model predictions have higher hit rate than XGBoost-preferred.",
       "implication": "Consider hybrid: use XGBoost for ranking but Linear for calibration. High-freq + mechanism drugs are \"golden\" predictions."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h128",
+      "learning": "SHAP interaction values show how a model USES interactions, not that simple threshold filtering will work. Freq\u00d7score has strong SHAP interaction but negative synergy with simple thresholds (-0.65 pp).",
+      "implication": "Must use XGBoost model to capture interaction value, not heuristic filters"
     }
   ],
   "collaborations": [

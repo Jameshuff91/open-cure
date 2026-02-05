@@ -1,0 +1,109 @@
+{
+  "n_predictions": 13522,
+  "baseline_precision": 7.15870433367845,
+  "median_freq": 4.0,
+  "median_score": 0.4654850363731384,
+  "high_freq_only": {
+    "n": 5965,
+    "precision": 11.399832355406538
+  },
+  "high_score_only": {
+    "n": 6757,
+    "precision": 9.841645700754773
+  },
+  "high_both": {
+    "n": 3622,
+    "precision": 15.019326339039205
+  },
+  "synergy_analysis": {
+    "expected_if_independent": 15.672264960307736,
+    "actual": 15.019326339039205,
+    "synergy_bonus": -0.6529386212685306
+  },
+  "all_results": [
+    {
+      "method": "Baseline (all)",
+      "n": 13522,
+      "precision": 7.15870433367845
+    },
+    {
+      "method": "Top 10% by rank",
+      "n": 1352,
+      "precision": 17.52958579881657
+    },
+    {
+      "method": "High freq only",
+      "n": 5965,
+      "precision": 11.399832355406538
+    },
+    {
+      "method": "High score only",
+      "n": 6757,
+      "precision": 9.841645700754773
+    },
+    {
+      "method": "Freq AND Score high",
+      "n": 3622,
+      "precision": 15.019326339039205
+    },
+    {
+      "method": "50th pct both",
+      "n": 4209,
+      "precision": 13.70871941078641
+    },
+    {
+      "method": "60th pct both",
+      "n": 3120,
+      "precision": 16.602564102564102
+    },
+    {
+      "method": "70th pct both",
+      "n": 2269,
+      "precision": 18.995152049360954
+    },
+    {
+      "method": "75th pct both",
+      "n": 1867,
+      "precision": 20.460632029994645
+    },
+    {
+      "method": "80th pct both",
+      "n": 1347,
+      "precision": 22.271714922049
+    },
+    {
+      "method": "90th pct both",
+      "n": 361,
+      "precision": 23.545706371191137
+    },
+    {
+      "method": "Top 5% freq\u00d7score",
+      "n": 676,
+      "precision": 24.11242603550296
+    },
+    {
+      "method": "Top 10% freq\u00d7score",
+      "n": 1352,
+      "precision": 21.301775147928996
+    },
+    {
+      "method": "Top 20% freq\u00d7score",
+      "n": 2704,
+      "precision": 17.45562130177515
+    },
+    {
+      "method": "Top 25% freq\u00d7score",
+      "n": 3380,
+      "precision": 15.769230769230768
+    },
+    {
+      "method": "Top 33% freq\u00d7score",
+      "n": 4462,
+      "precision": 13.267593007619901
+    }
+  ],
+  "best_method": "80th pct both",
+  "best_precision": 22.271714922049,
+  "success": false,
+  "success_target": 30.0
+}
