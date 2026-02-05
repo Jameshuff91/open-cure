@@ -1,11 +1,69 @@
 # Research Loop Progress
 
-## Current Session: h205, h207, h206, h202, h208, h211 (2026-02-05)
+## Current Session: h209 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
+**Status:** In Progress
+**Hypotheses Tested:**
+- h209: GT Coverage Analysis - Which Drug-Disease Pairs Are Blocking Predictions - **VALIDATED**
+
+---
+
+### h209: GT Coverage Analysis - VALIDATED
+
+**Objective:** Systematically identify all GT drug-disease pairs NOT predicted because no kNN neighbor has them.
+
+**KEY FINDINGS:**
+- **88.1% of GT pairs ARE predicted** (2547/2891 in top-30)
+- **344 blocked pairs** (11.9%) NOT in top-30
+- **264 unique drugs** have zero neighbor coverage for at least one disease
+- **86.3% of blocked pairs have ZERO neighbors** with the drug (297/344)
+- **13.7% have exactly 1 neighbor** (47/344)
+
+**COVERAGE DISTRIBUTION:**
+| Neighbors | Count | Percent |
+|-----------|-------|---------|
+| 0 | 297 | 86.3% |
+| 1 | 47 | 13.7% |
+
+**ROOT CAUSE:** Unlike h206's DRKG embedding gap (drugs missing from DRKG entirely), here drugs HAVE embeddings but kNN can't find them because no similar diseases have them as treatments.
+
+**TOP BLOCKED DISEASE HOTSPOTS:**
+1. Chronic Heart Failure - 28 blocked drugs (diuretics, ACE inhibitors)
+2. Hypertension - 50+ blocked drugs (CCBs, ARBs, beta-blockers)
+3. Type 1 Diabetes - cardiovascular/metabolic drugs blocked
+4. Breast Cancer - CDK inhibitors (Palbociclib, Ribociclib)
+
+**TOP BLOCKED DRUGS (by count):**
+| Drug | Blocked | Zero Coverage | Total GT |
+|------|---------|---------------|----------|
+| Quinaprilat | 5 | 3 | 6 |
+| Doxazosin | 5 | 3 | 6 |
+| Ramiprilat | 4 | 2 | 4 |
+| Eplerenone | 4 | 2 | 4 |
+| Aprocitentan | 4 | 3 | 5 |
+
+**ACTIONABLE INSIGHTS:**
+1. GT expansion should prioritize drugs with high zero-coverage counts
+2. Disease-specific rules could rescue zero-coverage drugs
+3. Cardiovascular disease category has most blocking issues
+4. The 88.1% prediction rate is good given DRKG constraints
+
+**NEW HYPOTHESES GENERATED:**
+- h212: Cardiovascular Disease-Specific Rescue Rules
+- h213: Zero-Coverage Drug Injection Layer
+- h214: Heart Failure Specific Drug Rules
+- h215: Cancer CDK Inhibitor Rules
+- h216: Disease Fragmentation Impact Analysis
+
+**Output:** `data/analysis/h209_gt_coverage_analysis.json`
+
+---
+
+## Previous Session: h205, h207, h206, h202, h208, h211 (2026-02-05)
+
 **Hypotheses Tested:**
 - h205: Lymphoma Mechanism-Based Production Rules (CD30+/CD20+) - **VALIDATED**
 - h207: Rituximab Prediction Gap Analysis - **VALIDATED**

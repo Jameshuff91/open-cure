@@ -4144,7 +4144,7 @@
       "priority": 3,
       "effort": "medium",
       "expected_impact": "high",
-      "status": "pending",
+      "status": "validated",
       "dependencies": [
         "h207"
       ],
@@ -4153,7 +4153,9 @@
         "Count how many kNN neighbors have that drug",
         "Identify drugs with zero or low neighbor coverage",
         "Prioritize GT expansion by impact (# blocked predictions)"
-      ]
+      ],
+      "findings": "VALIDATED: Comprehensive GT coverage analysis reveals systematic prediction blocking patterns.\n\nKEY FINDINGS:\n1. **88.1% of GT pairs ARE predicted** (2547/2891 in top-30)\n2. **344 blocked pairs** (11.9%) NOT in top-30\n3. **264 unique drugs** have zero neighbor coverage for at least one disease\n4. **86.3% of blocked pairs have ZERO neighbors** with the drug (297/344)\n5. **13.7% have exactly 1 neighbor** (47/344) - low but not zero coverage\n\nCOVERAGE DISTRIBUTION:\n- 0 neighbors: 297 pairs (86.3%) - FUNDAMENTALLY BLOCKED\n- 1 neighbor: 47 pairs (13.7%) - partially blocked\n\nROOT CAUSE ANALYSIS:\nUnlike h206's DRKG embedding gap (drugs missing from DRKG entirely), here drugs HAVE embeddings but kNN collaborative filtering can't find them because no similar diseases have them as treatments.\n\nTOP BLOCKED DISEASE HOTSPOTS:\n1. Chronic Heart Failure - 28 blocked drugs (diuretics, ACE inhibitors)\n2. Hypertension - 50+ blocked drugs (CCBs, ARBs, beta-blockers)\n3. Type 1 Diabetes - cardiovascular/metabolic drugs blocked\n4. Breast Cancer - CDK inhibitors (Palbociclib, Ribociclib)\n\nTOP BLOCKED DRUGS (by count):\n- Quinaprilat (5 blocked), Doxazosin (5), Ramiprilat (4), Eplerenone (4)\n- Pattern: Mostly cardiovascular drugs not in neighbors' GT\n\nACTIONABLE INSIGHTS:\n1. GT expansion should prioritize drugs with high zero-coverage counts\n2. Disease-specific rules could rescue zero-coverage drugs (like h206's manual rules)\n3. Cardiovascular disease category has most blocking issues\n4. The 88.1% prediction rate is actually quite good given DRKG constraints",
+      "result_metric": "88.1% prediction rate, 344 blocked pairs, 297 (86.3%) have zero neighbor coverage"
     },
     {
       "id": "h210",
@@ -4194,6 +4196,106 @@
       ],
       "findings": "VALIDATED: TKIs have embeddings but NOT predicted for CML.\n\nTKI DRKG COVERAGE:\n- Imatinib: HAS embedding, 33 predictions (but NOT for CML)\n- Nilotinib: HAS embedding, 5 predictions (NOT for CML)\n- Dasatinib: HAS embedding, 5 predictions (NOT for CML)\n- Bosutinib: HAS embedding, 0 predictions anywhere\n- Ponatinib: HAS embedding, 5 predictions (NOT for CML)\n\nCML PREDICTIONS: Dominated by AML drugs (Midostaurin, Ibrutinib, etc.)\nThis is same pattern as h207 (Rituximab) - kNN neighbors determine drug pool.\n\nROOT CAUSE: CML's kNN neighbors likely don't have TKIs in their GT.\nThis is a GT coverage problem, not DRKG embedding problem.",
       "result_metric": "All 5 TKIs have embeddings; Imatinib predicted 33x but NOT for CML"
+    },
+    {
+      "id": "h212",
+      "title": "Cardiovascular Disease-Specific Rescue Rules",
+      "hypothesis": "h209 found that chronic heart failure and hypertension have the most blocked predictions (50+ drugs). Cardiovascular drugs (ACE inhibitors, ARBs, beta-blockers, diuretics) are systematically blocked due to no neighbor coverage. Implement disease-specific rescue rules for CV diseases similar to h157's DMARD rules for autoimmune.",
+      "category": "confidence",
+      "priority": 3,
+      "effort": "medium",
+      "expected_impact": "medium",
+      "status": "pending",
+      "dependencies": [
+        "h209"
+      ],
+      "steps": [
+        "Identify all cardiovascular drug classes (ACE inhibitors, ARBs, CCBs, beta-blockers, diuretics)",
+        "Map drugs to ATC codes for systematic identification",
+        "For CV diseases + CV drug class match, inject into predictions as HIGH tier",
+        "Evaluate precision of the rescue criteria",
+        "Success criteria: >30% precision for rescued predictions"
+      ]
+    },
+    {
+      "id": "h213",
+      "title": "Zero-Coverage Drug Injection Layer",
+      "hypothesis": "264 drugs have zero neighbor coverage for specific diseases but ARE in DRKG. These are fundamentally blocked from kNN. Create a secondary prediction layer that injects these drugs based on mechanism/class matching when kNN fails.",
+      "category": "architecture",
+      "priority": 3,
+      "effort": "medium",
+      "expected_impact": "medium",
+      "status": "pending",
+      "dependencies": [
+        "h209"
+      ],
+      "steps": [
+        "For each disease, identify drugs with zero neighbor coverage but matching: mechanism, drug class, or ATC category",
+        "Score injected drugs based on (1) mechanism overlap, (2) ATC L1 match, (3) training frequency",
+        "Inject as MEDIUM tier predictions after kNN top-30",
+        "Evaluate recall and precision of injected predictions",
+        "Success criteria: Rescue 10%+ of zero-coverage pairs with >15% precision"
+      ]
+    },
+    {
+      "id": "h214",
+      "title": "Heart Failure Specific Drug Rules",
+      "hypothesis": "Heart failure has 28 blocked drugs including standard-of-care (Torasemide, Bumetanide, Nicorandil, Eplerenone, diuretics). These are FDA-approved and well-known. Create HF-specific injection rules.",
+      "category": "confidence",
+      "priority": 4,
+      "effort": "low",
+      "expected_impact": "low",
+      "status": "pending",
+      "dependencies": [
+        "h209",
+        "h212"
+      ],
+      "steps": [
+        "List all FDA-approved heart failure drugs",
+        "For diseases containing 'heart failure' or 'cardiomyopathy', inject HF drugs",
+        "Assign MEDIUM tier (or HIGH if mechanism overlap)",
+        "Evaluate precision against GT",
+        "Success criteria: >40% precision for HF drug injections"
+      ]
+    },
+    {
+      "id": "h215",
+      "title": "Cancer CDK Inhibitor Rules",
+      "hypothesis": "h209 found Palbociclib and Ribociclib (CDK4/6 inhibitors) blocked for breast cancer. These are FDA-approved for HR+/HER2- breast cancer. Implement targeted injection rules for CDK inhibitors.",
+      "category": "confidence",
+      "priority": 4,
+      "effort": "low",
+      "expected_impact": "low",
+      "status": "pending",
+      "dependencies": [
+        "h209"
+      ],
+      "steps": [
+        "Identify CDK4/6 inhibitors (palbociclib, ribociclib, abemaciclib)",
+        "For HR+ breast cancer indications, inject CDK inhibitors",
+        "Evaluate precision against GT",
+        "Success criteria: >50% precision for CDK inhibitor injections"
+      ]
+    },
+    {
+      "id": "h216",
+      "title": "Disease Fragmentation Impact Analysis",
+      "hypothesis": "h209 shows heart failure, hypertension, and T1DM have many blocked drugs. Are these diseases fragmented (multiple MESH IDs for subtypes) causing neighbor dilution? Analyze whether disease fragmentation correlates with blocking.",
+      "category": "analysis",
+      "priority": 4,
+      "effort": "low",
+      "expected_impact": "medium",
+      "status": "pending",
+      "dependencies": [
+        "h209"
+      ],
+      "steps": [
+        "For top-10 diseases by blocked count, search for related MESH IDs (subtypes)",
+        "Count how many neighbors are 'semantically similar' but different MESH IDs",
+        "Correlate disease fragmentation with blocking rate",
+        "If significant, propose neighbor expansion strategy",
+        "Success criteria: Identify actionable fragmentation pattern"
+      ]
     }
   ],
   "completed": [
@@ -5002,6 +5104,12 @@
       "hypothesis_id": "h202",
       "learning": "Leukemia subtype-drug matching shows the model already has some correct predictions (AML: Midostaurin, Daunorubicin). But CML has ZERO TKIs predicted despite all 5 being in GT. Likely DRKG coverage gap for tyrosine kinase inhibitors.",
       "implication": "Before implementing subtype rules, verify TKIs have DRKG embeddings"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h209",
+      "learning": "86.3% of blocked predictions have ZERO neighbors with the drug - this is a fundamental kNN limitation, not a model failure. CV drugs are most affected.",
+      "implication": "Need non-kNN mechanisms (drug class rules, mechanism matching) to rescue zero-coverage predictions"
     }
   ],
   "collaborations": [
