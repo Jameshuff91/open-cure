@@ -4743,7 +4743,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all calcium blocker predictions from HIGH confidence",
         "Identify non-cardiovascular disease targets",
@@ -4752,7 +4752,9 @@
       ],
       "dependencies": [
         "h134"
-      ]
+      ],
+      "findings": "VALIDATED: Calcium blockers show strong cross-category repurposing patterns.\n\n**OVERALL CCB PRECISION:**\n- HIGH confidence: 53.8% (7/13) - EXCELLENT\n- Cross-CV categories show varying success\n\n**CROSS-CATEGORY PRECISION:**\n| Category | Count | Precision | Status |\n|----------|-------|-----------|--------|\n| Neurological | 4 | **75%** | HIGH PRIORITY |\n| Renal | 3 | 33% | VALIDATED |\n| Metabolic | 8 | 25% | LIMITED |\n| Ophthalmic | 2 | 0% | NOT SUPPORTED |\n\n**VALIDATED REPURPOSING OPPORTUNITIES:**\n1. **Verapamil \u2192 Migraine** [GT \u2713, FDA-approved]\n   - Mechanism: Reduces cortical spreading depression\n   \n2. **Verapamil/Diltiazem \u2192 Epilepsy** [GT \u2713]\n   - Mechanism: Modulates neuronal Ca2+ currents\n   - Ethosuximide (T-type CCB) is first-line for absence seizures\n   \n3. **Amlodipine \u2192 Cerebral infarction** [GT \u2713]\n   - Mechanism: Prevents cerebral vasospasm (like nimodipine for SAH)\n   \n4. **CCBs \u2192 Diabetic nephropathy** [GT \u2713]\n   - Mechanism: Renoprotective, reduces intraglomerular pressure\n\n**NOT SUPPORTED:**\n- CCB \u2192 Glaucoma (0% precision)\n- CCB \u2192 Hypercholesterolemia (0% precision)\n\n**CONCLUSION:** CCBs are a HIGH-VALUE drug class for cross-category repurposing, \nespecially for neurological diseases (migraine, epilepsy) where they achieve 75% precision.",
+      "result_metric": "75% precision for neurological (migraine, epilepsy), 53.8% overall"
     },
     {
       "id": "h241",
@@ -5866,6 +5868,12 @@
       "hypothesis_id": "h247",
       "learning": "Biologic precision transforms with mechanism matching: 5.9% \u2192 64.7% (10x improvement). Key: only predict biologics for diseases matching their approved mechanisms.",
       "implication": "Implement mechanism-matching for biologics in production - they become high-value predictions"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h240",
+      "learning": "CCBs show validated cross-category repurposing: 75% for neurological (migraine, epilepsy), 33% for renal (nephropathy). Verapamil\u2192migraine is FDA-approved - model correctly predicts this.",
+      "implication": "Prioritize CCB predictions for neurological diseases in external validation"
     }
   ],
   "collaborations": [

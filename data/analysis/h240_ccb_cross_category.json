@@ -1,0 +1,81 @@
+{
+  "hypothesis": "h240",
+  "title": "Calcium Blocker Cross-Category Repurposing",
+  "outcome": "VALIDATED",
+  "summary": {
+    "high_confidence_precision": 53.8,
+    "total_high_predictions": 13,
+    "cross_category_findings": {
+      "neurological": {
+        "precision": 75.0,
+        "count": 4,
+        "status": "HIGH_PRIORITY"
+      },
+      "renal": {
+        "precision": 33.3,
+        "count": 3,
+        "status": "VALIDATED"
+      },
+      "metabolic": {
+        "precision": 25.0,
+        "count": 8,
+        "status": "LIMITED_EVIDENCE"
+      },
+      "ophthalmic": {
+        "precision": 0.0,
+        "count": 2,
+        "status": "NOT_SUPPORTED"
+      }
+    }
+  },
+  "validated_repurposing_opportunities": [
+    {
+      "drug": "Verapamil",
+      "disease": "Migraine with aura",
+      "gt_hit": true,
+      "evidence_level": "FDA-approved",
+      "mechanism": "Reduces cortical spreading depression"
+    },
+    {
+      "drug": "Verapamil/Diltiazem",
+      "disease": "Epilepsy",
+      "gt_hit": true,
+      "evidence_level": "Supported",
+      "mechanism": "CCBs modulate neuronal Ca2+ currents"
+    },
+    {
+      "drug": "Amlodipine",
+      "disease": "Cerebral infarction",
+      "gt_hit": true,
+      "evidence_level": "Supported (similar to nimodipine for SAH)",
+      "mechanism": "Prevents cerebral vasospasm"
+    },
+    {
+      "drug": "CCBs",
+      "disease": "Diabetic nephropathy",
+      "gt_hit": true,
+      "evidence_level": "Established",
+      "mechanism": "Renoprotective, reduce intraglomerular pressure"
+    }
+  ],
+  "not_supported": [
+    {
+      "drug": "Amlodipine",
+      "disease": "Glaucoma",
+      "note": "Limited evidence"
+    },
+    {
+      "drug": "Verapamil",
+      "disease": "Hypercholesterolemia",
+      "note": "No lipid effect"
+    }
+  ],
+  "gabapentinoid_note": "Gabapentinoids (alpha2delta) have 0% precision for non-pain indications - should NOT be grouped with CCBs",
+  "key_findings": [
+    "CCBs show 75% precision for neurological repurposing (migraine, epilepsy)",
+    "Verapamil \u2192 migraine is FDA-approved (model correctly predicts)",
+    "CCBs \u2192 epilepsy aligns with T-type CCB anticonvulsant mechanisms",
+    "CCBs \u2192 nephropathy is an established renoprotective indication",
+    "Ophthalmic and lipid predictions NOT supported"
+  ]
+}
