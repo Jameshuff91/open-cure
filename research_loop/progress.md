@@ -1,14 +1,15 @@
 # Research Loop Progress
 
-## Current Session: h175 Cross-Category Knowledge Transfer (2026-02-05)
+## Current Session: h148/h175/h176 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
 **Hypotheses Tested:**
-- h175: Cross-Category Knowledge Transfer - **INVALIDATED** (hurts performance)
 - h176: Production Predictor Initialization Speedup - **VALIDATED** (33x speedup)
+- h175: Cross-Category Knowledge Transfer - **INVALIDATED** (hurts performance)
+- h148: Disease Category Gap Analysis - **VALIDATED** ('other' reduced 44.9% → 13.8%)
 
 ### h175: Cross-Category Knowledge Transfer - INVALIDATED
 
@@ -39,16 +40,38 @@ Tested whether boosting related-category neighbors (based on drug overlap) impro
 - h181: Drug-Level Cross-Category Transfer
 - h182: Category Boundary Refinement
 
+### h148: Disease Category Gap Analysis - VALIDATED
+
+Expanded CATEGORY_KEYWORDS with 150+ new patterns to reduce 'other' bucket.
+
+**Results:**
+| Category | Before | After | Change |
+|----------|--------|-------|--------|
+| other | 201 (44.9%) | 62 (13.8%) | -139 |
+| infectious | 32 | 69 | +37 |
+| metabolic | 22 | 41 | +19 |
+| dermatological | 17 | 29 | +12 |
+| neurological | 11 | 22 | +11 |
+
+**Key Changes:**
+- Added 150+ disease keywords across all categories
+- Created new 'endocrine' category
+- Remaining 'other' is truly cross-cutting (pain, toxicology, reproductive)
+
+**Impact:** Better categorization enables more accurate tier assignment and precision calibration.
+
+**New Hypotheses:** h183 (Reproductive category), h184 (Tier reassignment impact)
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 83 |
+| Validated | 84 |
 | Invalidated | 41 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
 | Pending | 30 |
-| **Total Tested** | **132** |
+| **Total Tested** | **133** |
 
 ---
 

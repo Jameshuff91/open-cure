@@ -2935,7 +2935,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Analyze which diseases fall into \"other\" category",
         "Identify common disease types that should have their own category",
@@ -2944,7 +2944,9 @@
       ],
       "dependencies": [
         "h145"
-      ]
+      ],
+      "findings": "h148 VALIDATED: Disease Category Gap Analysis\n\nPROBLEM: 44.9% of training diseases were categorized as \"other\", limiting tier assignment accuracy.\n\nSOLUTION: Expanded CATEGORY_KEYWORDS with 150+ new patterns across 17 categories.\n\nRESULTS:\n| Category | Before | After | Change |\n|----------|--------|-------|--------|\n| other | 201 (44.9%) | 62 (13.8%) | -139 |\n| infectious | 32 (7.1%) | 69 (15.4%) | +37 |\n| cancer | 65 (14.5%) | 73 (16.3%) | +8 |\n| metabolic | 22 (4.9%) | 41 (9.2%) | +19 |\n| dermatological | 17 (3.8%) | 29 (6.5%) | +12 |\n| neurological | 11 (2.5%) | 22 (4.9%) | +11 |\n| gastrointestinal | 12 (2.7%) | 21 (4.7%) | +9 |\n| hematological | 10 (2.2%) | 19 (4.2%) | +9 |\n| respiratory | 8 (1.8%) | 16 (3.6%) | +8 |\n| ophthalmic | 8 (1.8%) | 15 (3.3%) | +7 |\n\nNEW CATEGORY: \"endocrine\" added (2 diseases)\n\nREMAINING 'OTHER' (62 diseases):\n- Truly cross-cutting: pain, edema\n- Toxicology: poisoning, lead poisoning, mercury poisoning\n- Reproductive: infertility, endometritis (could add category)\n- Dental: dental caries, gingivitis (could add category)\n\nIMPACT: Better categorization enables:\n- More accurate tier assignment\n- Better precision calibration by category\n- Improved selective boosting coverage (h170)",
+      "result_metric": "'other' reduced from 44.9% to 13.8% (139 diseases reclassified)"
     },
     {
       "id": "h149",
@@ -3591,6 +3593,36 @@
         "Cluster diseases by drug treatment overlap (Jaccard)",
         "Compare clusters to current keyword-based categories",
         "Test if cluster-based boosting outperforms category-based"
+      ]
+    },
+    {
+      "id": "h183",
+      "title": "Reproductive Disease Category",
+      "category": "infrastructure",
+      "rationale": "h148 found 4 reproductive diseases (infertility, endometritis, ovarian disorders) in \"other\". Adding a reproductive category could improve precision calibration for these conditions.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Add reproductive keywords to CATEGORY_KEYWORDS",
+        "Verify correct categorization of reproductive diseases",
+        "Update precision calibration for new category"
+      ]
+    },
+    {
+      "id": "h184",
+      "title": "Tier Reassignment Impact Measurement",
+      "category": "evaluation",
+      "rationale": "h148 reclassified 139 diseases out of \"other\". This should change their tier assignments (Tier 3 \"other\" -> possibly Tier 1/2). Measure how this affects prediction quality.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Compare tier distribution before/after h148",
+        "Measure precision by tier after reclassification",
+        "Identify if any diseases moved to higher-confidence tiers"
       ]
     }
   ],
@@ -4286,6 +4318,12 @@
       "hypothesis_id": "h175",
       "learning": "Cross-category drug overlap (15-27%) is insufficient for knowledge transfer. kNN needs near-complete drug overlap, not partial.",
       "implication": "Focus on same-category signals rather than related categories. Category boundaries matter more than drug statistics suggest."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h148",
+      "learning": "Keyword-based disease categorization can achieve 86% coverage with comprehensive patterns. Remaining \"other\" is truly cross-cutting (pain, toxicology, reproductive).",
+      "implication": "Future work could add reproductive/dental/toxicology categories, but diminishing returns."
     }
   ],
   "collaborations": [

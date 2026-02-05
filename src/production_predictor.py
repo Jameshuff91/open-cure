@@ -326,52 +326,127 @@ SELECTIVE_BOOST_CATEGORIES = {
 }
 SELECTIVE_BOOST_ALPHA = 0.5  # Similarity multiplier: sim * (1 + alpha) for same-category neighbors
 
-# h169: Expanded category keywords to reduce 'other' bucket (was 61.3%)
+# h169/h148: Expanded category keywords to reduce 'other' bucket
+# h148 reduced 'other' from 44.9% to ~25% with comprehensive keyword expansion
 CATEGORY_KEYWORDS = {
     'autoimmune': ['autoimmune', 'lupus', 'rheumatoid', 'arthritis', 'scleroderma', 'myasthenia',
                    'multiple sclerosis', 'crohn', 'colitis', 'psoriasis', 'sjögren', 'behcet',
-                   'spondylitis', 'vasculitis', 'dermatomyositis', 'polymyositis', 'still disease'],
+                   'spondylitis', 'vasculitis', 'dermatomyositis', 'polymyositis', 'still disease',
+                   # h148: Additional autoimmune patterns
+                   'graft versus host', 'eosinophilic granulomatosis', 'autoinflammatory',
+                   'microscopic polyangiitis', 'lichen planus', 'familial mediterranean fever'],
     'infectious': ['infection', 'bacterial', 'viral', 'fungal', 'hiv', 'aids', 'hepatitis',
                    'tuberculosis', 'malaria', 'pneumonia', 'sepsis', 'meningitis', 'amebiasis',
                    'aspergillosis', 'brucellosis', 'actinomycosis', 'bartonellosis', 'burkholderia',
-                   'parasitic', 'otitis media', 'endocarditis', 'osteomyelitis', 'cellulitis'],
+                   'parasitic', 'otitis media', 'endocarditis', 'osteomyelitis', 'cellulitis',
+                   # h148: Additional infectious patterns
+                   'cholera', 'chagas', 'trypanosomiasis', 'leishmaniasis', 'cryptococcosis',
+                   'coccidioidomycosis', 'histoplasmosis', 'blastomycosis', 'candidiasis',
+                   'chromomycosis', 'common cold', 'yellow fever', 'rabies', 'leptospirosis',
+                   'listeriosis', 'botulism', 'tetanus', 'anthrax', 'plague', 'typhoid',
+                   'diphtheria', 'pertussis', 'polio', 'measles', 'mumps', 'rubella',
+                   'toxoplasmosis', 'herpes zoster', 'shingles', 'fusariosis', 'zygomycosis',
+                   'schistosomiasis', 'strongyloides', 'giardia', 'dysentery', 'gastroenteritis',
+                   'influenza', 'japanese encephalitis', 'leprosy', 'mycetoma', 'nocardiosis',
+                   'onchocerciasis', 'gonococcal'],
     'cancer': ['cancer', 'carcinoma', 'tumor', 'leukemia', 'lymphoma', 'melanoma',
                'neoplasm', 'oncology', 'sarcoma', 'myeloma', 'glioma', 'adenocarcinoma',
-               'neuroblastoma', 'mastocytosis'],
+               'neuroblastoma', 'mastocytosis',
+               # h148: Additional cancer patterns
+               'carcinoid', 'ependymoma', 'hemangioendothelioma', 'mole', 'neoplasia',
+               'langerhans cell histiocytosis', 'lymphangioleiomyomatosis', 'lymphangioma',
+               'medulloblastoma'],
     'cardiovascular': ['cardiac', 'heart', 'coronary', 'hypertension', 'arrhythmia',
                        'atherosclerosis', 'stroke', 'vascular', 'myocardial', 'angina',
                        'tachycardia', 'aneurysm', 'aorta', 'thrombosis', 'embolism',
-                       'cardiomyopathy', 'ischemia'],
+                       'cardiomyopathy', 'ischemia',
+                       # h148: Additional cardiovascular patterns
+                       'cerebral infarction', 'deep vein thrombosis', 'dvt', 'pulmonary embolism',
+                       'raynaud', 'claudication', 'peripheral arterial', 'varicose', 'phlebitis',
+                       'patent ductus arteriosus', 'orthostatic hypotension'],
     'neurological': ['neurological', 'alzheimer', 'parkinson', 'epilepsy', 'neuropathy',
                      'dementia', 'huntington', 'brain', 'seizure', 'ataxia', 'dystonia',
-                     'dyskinesia', 'narcolepsy', 'migraine', 'neuralgia', 'headache'],
+                     'dyskinesia', 'narcolepsy', 'migraine', 'neuralgia', 'headache',
+                     # h148: Additional neurological patterns
+                     'als', 'amyotrophic lateral sclerosis', 'cerebral', 'motor neuron',
+                     'spinal cord', 'spinal muscular', 'chorea', 'cerebral palsy',
+                     'hydrocephalus', 'myelitis', 'lennox gastaut', 'multiple system atrophy',
+                     'neurofibromatosis', 'neuromuscular', 'neuronal ceroid lipofuscinosis',
+                     'motion sickness'],
     'metabolic': ['diabetes', 'metabolic', 'obesity', 'thyroid', 'hyperlipidemia',
                   'hypercholesterolemia', 'gout', 'porphyria', 'glycogen storage',
                   'hyperuricemia', 'acromegaly', 'addison', 'adrenal', 'hypoglycemia',
-                  'hyperglycemia', 'cushing'],
+                  'hyperglycemia', 'cushing',
+                  # h148: Additional metabolic patterns
+                  'hyperammonemia', 'acidemia', 'alkaptonuria', 'cystinosis', 'cystinuria',
+                  'phenylketonuria', 'homocystinuria', 'galactosemia', 'tyrosinemia',
+                  'maple syrup', 'fatty acid oxidation', 'urea cycle', 'diabetic',
+                  'dyslipidemia', 'lipodystrophy', 'gaucher', 'fabry', 'niemann-pick',
+                  'chylomicronemia', 'mucopolysaccharidosis', 'sphingolipidosis',
+                  'lipid storage', 'lysosomal storage', 'multinodular goiter', 'myxedema',
+                  'hypophosphatasia', 'lysosomal acid lipase', 'mevalonate kinase',
+                  'ornithine carbamoyltransferase'],
     'psychiatric': ['depression', 'anxiety', 'bipolar', 'schizophrenia', 'psychiatric',
                     'ptsd', 'ocd', 'adhd', 'psychosis', 'agoraphobia', 'bulimia', 'anorexia',
-                    'alcohol withdrawal', 'insomnia', 'sleep disorder', 'panic disorder'],
+                    'alcohol withdrawal', 'insomnia', 'sleep disorder', 'panic disorder',
+                    # h148: Additional psychiatric patterns
+                    'hyperactive', 'major depressive', 'obsessive compulsive'],
     'respiratory': ['respiratory', 'asthma', 'copd', 'pulmonary', 'lung', 'bronchitis',
-                    'pneumonitis', 'fibrosis', 'bronchiectasis', 'emphysema', 'pleurisy'],
+                    'pneumonitis', 'fibrosis', 'bronchiectasis', 'emphysema', 'pleurisy',
+                    # h148: Additional respiratory patterns
+                    'rhinitis', 'sinusitis', 'pharyngitis', 'laryngitis', 'bronchiolitis',
+                    'croup', 'whooping cough', 'pleural', 'pneumothorax', 'tracheitis',
+                    'empyema', 'pneumoconiosis', 'silicosis', 'asbestosis',
+                    'obstructive sleep apnea'],
     'gastrointestinal': ['gastrointestinal', 'gastric', 'intestinal', 'bowel', 'liver',
                          'hepatic', 'cirrhosis', 'pancreatitis', 'celiac', 'dysphagia',
-                         'cholecystitis', 'cholangitis', 'esophageal', 'dyspepsia', 'gerd'],
+                         'cholecystitis', 'cholangitis', 'esophageal', 'dyspepsia', 'gerd',
+                         # h148: Additional gastrointestinal patterns
+                         'peptic ulcer', 'gastroparesis', 'diverticulitis', 'appendicitis',
+                         'peritonitis', 'ascites', 'duodenal ulcer', 'esophagitis',
+                         'pancreat', 'gallbladder', 'diarrhea', 'constipation', 'ileus',
+                         'volvulus', 'intussusception', 'malabsorption', 'chronic cholestasis'],
     'dermatological': ['skin', 'dermatitis', 'eczema', 'dermatological',
                        'acne', 'urticaria', 'vitiligo', 'alopecia', 'pruritus', 'rosacea',
-                       'angioedema', 'blepharitis'],
+                       'angioedema', 'blepharitis',
+                       # h148: Additional dermatological patterns
+                       'actinic keratosis', 'ichthyosis', 'keratosis', 'seborrheic',
+                       'pemphigus', 'pemphigoid', 'erythema', 'impetigo',
+                       'folliculitis', 'furuncle', 'carbuncle', 'paronychia',
+                       'hidradenitis', 'hordeolum', 'stye', 'dermatosis', 'lichenoid',
+                       'hyperhidrosis', 'hirsutism', 'keloid', 'psoriatic', 'otitis externa'],
     'ophthalmic': ['eye', 'retinal', 'glaucoma', 'macular', 'ophthalmic', 'uveitis',
-                   'conjunctivitis', 'keratitis', 'blepharoconjunctivitis', 'cataract'],
+                   'conjunctivitis', 'keratitis', 'blepharoconjunctivitis', 'cataract',
+                   # h148: Additional ophthalmic patterns
+                   'corneal', 'choroiditis', 'dacryocystitis', 'iritis', 'retinitis',
+                   'scleritis', 'optic', 'blindness', 'keratoconus', 'pterygium',
+                   'hyperopia', 'myopia'],
     'hematological': ['anemia', 'hemophilia', 'thrombocytopenia',
                       'neutropenia', 'hematological', 'myelodysplastic', 'polycythemia',
-                      'agranulocytosis', 'coagulation', 'thalassemia', 'sickle cell'],
+                      'agranulocytosis', 'coagulation', 'thalassemia', 'sickle cell',
+                      # h148: Additional hematological patterns
+                      'thrombotic thrombocytopenic', 'hemolytic uremic', 'purpura',
+                      'coagulopathy', 'hemorrhagic', 'von willebrand', 'factor viii',
+                      'prothrombin deficiency', 'protein c deficiency', 'protein s deficiency',
+                      'factor deficiency', 'hemostasis', 'leukopenia',
+                      'paroxysmal nocturnal hemoglobinuria', 'hypereosinophilic'],
     # h169: New categories to reduce 'other' bucket
     'renal': ['kidney', 'renal', 'nephropathy', 'nephritis', 'uremia', 'glomerular',
-              'nephrotic', 'dialysis'],
+              'nephrotic', 'dialysis',
+              # h148: Additional renal patterns
+              'cystitis', 'pyelonephritis', 'urolithiasis', 'nephrolithiasis',
+              'hydronephrosis', 'urinary incontinence', 'overactive bladder'],
     'musculoskeletal': ['bone', 'osteoporosis', 'osteomalacia', 'fracture', 'bursitis',
-                        'tendonitis', 'fibromyalgia', 'osteogenesis', 'paget'],
+                        'tendonitis', 'fibromyalgia', 'osteogenesis', 'paget',
+                        # h148: Additional musculoskeletal patterns
+                        'muscular dystrophy', 'myotonic', 'rhabdomyolysis', 'fasciitis', 'myositis'],
     'immunological': ['immunodeficiency', 'agammaglobulinemia', 'complement deficiency',
-                      'amyloidosis', 'hypersensitivity', 'allergy', 'immunological'],
+                      'amyloidosis', 'hypersensitivity', 'allergy', 'immunological',
+                      # h148: Additional immunological patterns
+                      'anaphylaxis', 'granulomatous disease', 'hyperimmunoglobulin', 'mast cell'],
+    # h148: New category for endocrine diseases
+    'endocrine': ['precocious puberty', 'hypogonadotropic', 'hypopituitarism', 'pituitary',
+                  'growth hormone', 'prolactinoma', 'hormone deficiency'],
 }
 
 
