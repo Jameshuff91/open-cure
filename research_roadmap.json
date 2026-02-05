@@ -2894,7 +2894,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Step 1: Extend predictor to batch all evaluable diseases",
         "Step 2: Add FDA-approval lookup to identify truly novel predictions",
@@ -2904,7 +2904,9 @@
       ],
       "dependencies": [
         "h69"
-      ]
+      ],
+      "findings": "VALIDATED: Novel prediction export successfully generates prioritized deliverables.\n\nEXPORT RESULTS (2026-02-05):\n- Total diseases evaluated: 448\n- Diseases with predictions: 392\n- Novel predictions exported: 2,384\n\nBY CONFIDENCE TIER:\n- GOLDEN: 72 predictions (~58% expected precision)\n- HIGH: 266 predictions (~21% expected precision)\n- MEDIUM: 2,046 predictions (~14% expected precision)\n\nFILTERING SUMMARY:\n- FDA-approved pairs filtered: 964 (from ground truth)\n- Safety filter exclusions: 44 (diagnostics, harmful combos)\n- Withdrawn drugs: 0\n\nBY DISEASE CATEGORY:\n- other: 1,480 (largest - many rare/misc diseases)\n- cancer: 213\n- infectious: 176 (includes rescued predictions)\n- autoimmune: 91\n- cardiovascular: 73\n- dermatological: 57\n\nOUTPUT FILES:\n- data/deliverables/novel_predictions_20260205.json (1.4 MB)\n- data/deliverables/novel_predictions_20260205.xlsx (470 KB, multi-sheet)\n\nTOP GOLDEN PREDICTIONS:\n1. Methylprednisolone -> systemic myasthenia gravis (freq=40, mech+)\n2. Methylprednisolone -> Crohn's disease (freq=40, mech+)\n3. Methylprednisolone -> hepatitis B [rescued] (freq=40, mech+)\n4. Dexamethasone -> urticaria (freq=42, mech+)\n5. Minocycline -> bacterial meningitis [rescued] (freq=19, mech+)\n\nScript: scripts/export_novel_predictions.py\n",
+      "result_metric": "2,384 novel predictions: 72 GOLDEN, 266 HIGH, 2,046 MEDIUM"
     }
   ],
   "completed": [
@@ -3497,6 +3499,12 @@
       "hypothesis_id": "h69",
       "learning": "Production pipeline unifies kNN (h39), tiered confidence (h135), and category rescue (h136). Different disease tiers produce different confidence distributions.",
       "implication": "Tier 1 diseases (autoimmune, psychiatric) get more GOLDEN predictions; Tier 3 can be rescued for specific categories"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h145",
+      "learning": "Novel prediction export successfully batches 448 diseases. 28% of predictions (964/3392) are FDA-approved and filtered. Category rescue rescues 5/72 GOLDEN predictions for infectious diseases.",
+      "implication": "Production pipeline delivers actionable predictions. GOLDEN tier should be prioritized for expert review."
     }
   ],
   "collaborations": [
