@@ -211,11 +211,13 @@ TNF_INHIBITOR_PATTERNS = [
 ]
 
 # Diseases where TNF inhibitors are contraindicated
+# h146/h147: TNF inhibitors can CAUSE drug-induced lupus, worsen MS, and induce AIH
 TNF_CONTRAINDICATED_DISEASES = [
     "systemic lupus erythematosus", "sle", "lupus",
     "multiple sclerosis", "ms",
     "heart failure", "congestive heart failure", "cardiac failure",
     "demyelinating disease", "optic neuritis",
+    "autoimmune hepatitis",  # h147: TNF inhibitors can INDUCE AIH
 ]
 
 # JAK inhibitors - contraindicated in certain conditions

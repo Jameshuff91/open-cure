@@ -116,6 +116,12 @@ class PredictionResult:
 TIER_1_CATEGORIES = {'autoimmune', 'dermatological', 'psychiatric', 'ophthalmic'}
 TIER_2_CATEGORIES = {'cardiovascular', 'other', 'cancer'}
 
+# h144: Statins achieve 60% precision for metabolic diseases (vs 6% baseline)
+STATIN_DRUGS = {
+    'atorvastatin', 'simvastatin', 'rosuvastatin', 'pravastatin', 'lovastatin',
+    'fluvastatin', 'pitavastatin', 'cerivastatin',
+}
+
 CATEGORY_KEYWORDS = {
     'autoimmune': ['autoimmune', 'lupus', 'rheumatoid', 'arthritis', 'scleroderma', 'myasthenia',
                    'multiple sclerosis', 'crohn', 'colitis', 'psoriasis', 'sjögren'],
@@ -312,10 +318,11 @@ class DrugRepurposingPredictor:
         has_targets: bool,
         disease_tier: int,
         category: str,
+        drug_name: str = "",
     ) -> Tuple[ConfidenceTier, bool, Optional[str]]:
         """
         Assign confidence tier based on h135 criteria.
-        Also applies h136 category-specific rescue for Tier 2/3 diseases.
+        Also applies h136/h144 category-specific rescue for Tier 2/3 diseases.
 
         Returns: (tier, rescue_applied, category_specific_tier)
         """
@@ -327,10 +334,10 @@ class DrugRepurposingPredictor:
         if train_frequency <= 2 and not mechanism_support:
             return ConfidenceTier.FILTER, False, None
 
-        # Apply h136 category-specific rescue for Tier 2/3
+        # Apply h136/h144 category-specific rescue for Tier 2/3
         if disease_tier > 1:
             rescued_tier = self._apply_category_rescue(
-                rank, train_frequency, mechanism_support, category
+                rank, train_frequency, mechanism_support, category, drug_name
             )
             if rescued_tier is not None:
                 return rescued_tier, True, category
@@ -361,9 +368,10 @@ class DrugRepurposingPredictor:
         train_frequency: int,
         mechanism_support: bool,
         category: str,
+        drug_name: str = "",
     ) -> Optional[ConfidenceTier]:
         """
-        Apply h136 category-specific rescue filters.
+        Apply h136/h144 category-specific rescue filters.
 
         Returns the rescued tier or None if no rescue criteria met.
 
@@ -371,6 +379,9 @@ class DrugRepurposingPredictor:
         - Infectious: rank<=10 + freq>=15 + mech = 55.6% precision (GOLDEN!)
         - Cardiovascular: rank<=5 + mech = 38.2% precision (HIGH)
         - Respiratory: rank<=10 + freq>=15 + mech = 35.0% precision (HIGH)
+
+        h144 findings:
+        - Metabolic + statin + rank<=10 = 60.0% precision (GOLDEN!)
         """
         if category == 'infectious':
             if rank <= 10 and train_frequency >= 15 and mechanism_support:
@@ -385,6 +396,12 @@ class DrugRepurposingPredictor:
         elif category == 'respiratory':
             if rank <= 10 and train_frequency >= 15 and mechanism_support:
                 return ConfidenceTier.HIGH  # 35.0% precision
+
+        elif category == 'metabolic':
+            # h144: Statin drugs achieve 60% precision for metabolic diseases
+            drug_lower = drug_name.lower()
+            if rank <= 10 and any(statin in drug_lower for statin in STATIN_DRUGS):
+                return ConfidenceTier.GOLDEN  # 60.0% precision
 
         return None
 
@@ -465,12 +482,11 @@ class DrugRepurposingPredictor:
                     train_freq = self.drug_train_freq.get(drug_id, 0)
                     mech_support = self._compute_mechanism_support(drug_id, disease_id)
                     has_targets = drug_id in self.drug_targets and len(self.drug_targets[drug_id]) > 0
+                    drug_name = self.drug_id_to_name.get(drug_id, drug_id)
 
                     tier, rescue_applied, cat_specific = self._assign_confidence_tier(
-                        rank, train_freq, mech_support, has_targets, disease_tier, category
+                        rank, train_freq, mech_support, has_targets, disease_tier, category, drug_name
                     )
-
-                    drug_name = self.drug_id_to_name.get(drug_id, drug_id)
 
                     pred = DrugPrediction(
                         drug_name=drug_name,

@@ -2939,7 +2939,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Filter predictions for biologic drug types",
         "Analyze which biologics have highest confidence scores",
@@ -2948,7 +2948,9 @@
       ],
       "dependencies": [
         "h145"
-      ]
+      ],
+      "findings": "Analyzed biologic drug predictions and created biologic-specific deliverable.\n\nBIOLOGIC PREDICTIONS SUMMARY:\n- 124 total biologic predictions\n- 2 GOLDEN tier, 26 HIGH tier, 96 MEDIUM tier\n\nTOP DRUGS:\n1. Pembrolizumab (checkpoint inhibitor): 26 predictions, mostly cancers\n2. Rituximab (anti-CD20): 45 predictions\n3. Adalimumab (TNF inhibitor): 37 predictions\n\nVALIDATION RESULTS:\n| Prediction | Status | Notes |\n|------------|--------|-------|\n| Pembrolizumab -> cholangiocarcinoma | FDA-APPROVED | GT gap, FDA approved Oct 2023 |\n| Pembrolizumab -> osteosarcoma | FAILED | 5% response rate in Phase 2 |\n| Rituximab -> glaucoma | PARTIAL | Indirect benefit via steroid-sparing |\n| Adalimumab -> autoimmune hepatitis | FALSE POSITIVE | TNF can CAUSE AIH |\n\nKEY FINDING: Added autoimmune hepatitis to TNF contraindication filter.\n\nDELIVERABLE: data/deliverables/biologic_predictions_20260205.json",
+      "result_metric": "124 biologic predictions, 1 false positive filtered"
     },
     {
       "id": "h148",
@@ -3665,6 +3667,12 @@
       "hypothesis_id": "h144",
       "learning": "Drug class (statin) achieves 60% precision for metabolic vs 6% base. Mechanism support fails (0% at freq>=10+mech). Modern drugs (GLP-1, SGLT2) not in DRKG.",
       "implication": "Use drug class-based rescue for metabolic. Investigate ATC codes. DRKG has coverage gap for 2015+ drugs."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h147",
+      "learning": "TNF inhibitors can induce autoimmune hepatitis - add to contraindication filter. Pembrolizumab -> cholangiocarcinoma is FDA-approved (GT gap). Checkpoint inhibitors have limited efficacy in sarcomas.",
+      "implication": "Biologic predictions need mechanism-specific validation. GT has gaps in recent FDA approvals."
     }
   ],
   "collaborations": [

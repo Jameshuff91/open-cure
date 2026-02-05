@@ -1,6 +1,47 @@
 # Research Loop Progress
 
-## Current Session: h69+h145 Production Pipeline (2026-02-05)
+## Current Session: h145, h146, h149 Production & Validation (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested:**
+- h145: Production Novel Prediction Export - **VALIDATED**
+- h146: Minocycline Repurposing Validation - **VALIDATED** (20% validated, 10% false positive)
+- h149: Mechanistic Contraindication Filter - **VALIDATED** (3 false positives filtered)
+
+### Key Findings This Session
+
+1. **h145 Novel Prediction Export:**
+   - 2,391 novel predictions exported
+   - 1,457 truly novel, 934 broad-spectrum
+   - 39% are broad-spectrum drugs (corticosteroids, NSAIDs)
+
+2. **h146 Validation:**
+   - Minocycline -> malaria: VALIDATED
+   - Minocycline -> pneumonia: VALIDATED
+   - Adalimumab -> SLE: **FALSE POSITIVE** (TNF inhibitors contraindicated)
+
+3. **h149 Contraindication Filter:**
+   - Added TNF inhibitor contraindication filter
+   - Filters adalimumab/infliximab/etanercept for SLE, MS, heart failure
+   - 3 false positives now correctly excluded
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 68 |
+| Invalidated | 38 |
+| Inconclusive | 8 |
+| Blocked | 18 |
+| Deprioritized | 2 |
+| Pending | 19 |
+| **Total Tested** | **116** |
+
+---
+
+## Previous Session: h69 Production Pipeline (2026-02-05)
 
 ### Session Summary
 
