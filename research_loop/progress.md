@@ -1,77 +1,85 @@
 # Research Loop Progress
 
-## Current Session: h281, h193, h280, h290 (2026-02-05)
+## Current Session: h284, h288, h292, h159, h177 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 4**
-- h281: Bidirectional Treatment Analysis - **VALIDATED**
-- h193: Combined ATC Coherence Signals - **INVALIDATED**
-- h280: Complication vs Subtype Classification - **VALIDATED**
-- h290: Implement Relationship Type Filter - **VALIDATED**
+**Hypotheses Tested: 5**
+- h284: Complication Specialization Score - **VALIDATED**
+- h288: ATC Class-Supported GOLDEN Tier - **INVALIDATED**
+- h292: Cardiovascular Event Transferability - **VALIDATED**
+- h159: Category Boundary Refinement - **INCONCLUSIVE**
+- h177: Epilepsy-Specific Analysis - **VALIDATED**
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 165 |
-| Invalidated | 54 |
-| Inconclusive | 8 |
+| Validated | 168 |
+| Invalidated | 55 |
+| Inconclusive | 10 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 41 |
-| **Total** | **290** (6 new hypotheses added this session)
+| Pending | 43 |
+| **Total** | **297** (7 new hypotheses added this session)
 
 ### KEY SESSION FINDINGS
 
-#### h281: Bidirectional Treatment Analysis - VALIDATED
+#### h284: Complication Specialization Score - VALIDATED
 
-| Direction | Predictions | Correct | Precision |
-|-----------|-------------|---------|-----------|
-| Base → Complication | 11 | 1 | **9.1%** |
-| Complication → Base | 47 | 17 | **36.2%** |
+| Direction | Tier | N | Precision |
+|-----------|------|---|-----------|
+| Comp→Base | HIGH transferability | 8 | **62.5%** |
+| Comp→Base | UNKNOWN | 12 | **41.7%** |
+| Base→Comp | ALL tiers | 9 | **0.0%** |
 
-**Key Finding:** Treating a complication is **4x more predictive** of treating the base disease than vice versa.
+**Key Finding:** Transferability score predicts comp→base precision (62.5% vs 41.7%), but base→comp is ALWAYS 0% regardless. Confirms h290 filter is correct.
 
-#### h193: Combined ATC Coherence Signals - INVALIDATED
+#### h292: Cardiovascular Event Transferability - VALIDATED
 
-| Quadrant | N | Precision |
-|----------|---|-----------|
-| Coherent + Not Unique | 2,632 | **9.0%** (BEST) |
-| Incoherent + Unique | 291 | **4.5%** (WORST) |
+| Event Type | N | Transferability | Category |
+|------------|---|-----------------|----------|
+| Stroke/TIA | 83 | 50-72% | HIGH |
+| MI | 92 | 18.5% | LOW |
+| Angina | 16 | 12.5% | LOW |
 
-**Key Finding:** Opposite of hypothesis! Incoherent+unique is WORST, not best.
+**Key Finding:** MI has LOW transferability (18.5%) despite being THE classic atherosclerosis complication. Statins are the ONLY drugs that correctly predict event→atherosclerosis.
 
-#### h280: Complication vs Subtype Classification - VALIDATED ⭐
+#### h177: Epilepsy-Specific Analysis - VALIDATED
 
-| Relationship Type | N | Precision |
-|-------------------|---|-----------|
-| Subtype relationships | 54 | **42.6%** |
-| Complication relationships | 36 | **13.9%** |
-| Base → Complication | 18 | **0.0%** |
+| Category | N Drugs | Mean Breadth | kNN Expected |
+|----------|---------|--------------|--------------|
+| Diabetes | 175 | 8.1 | GOOD |
+| Hypertension | 161 | 5.3 | GOOD |
+| Epilepsy | 37 | 5.8 | GOOD |
+| Alzheimer's | 15 | 3.4 | POOR |
 
-**Major Finding:** Subtype relationships have **28.7 pp higher precision** than complication relationships!
+**Key Finding:** Drug pool size and breadth predict kNN success. Epilepsy drugs have cross-neurological utility (psychiatric, pain, movement). Alzheimer's drugs are mechanism-specific (no repurposability).
 
-#### h290: Implement Relationship Type Filter - VALIDATED ✅
+#### h288: ATC Class GOLDEN Tier - INVALIDATED
+Pre-check from h193: Coherent+classmate precision = 9.0%, far below 40% GOLDEN threshold.
 
-**Implementation complete:**
-- Added BASE_TO_COMPLICATIONS mapping (32 complications)
-- Added _is_base_to_complication() filter
-- Integrated into production_predictor.py
-
-**Test Results:**
-- Diabetic nephropathy: 10 predictions filtered
-- Type 2 diabetes: 0 filtered (correct)
-- Chronic kidney disease: 0 filtered (correct)
+#### h159: Category Boundary Refinement - INCONCLUSIVE
+ITP/TTP are autoimmune-hematological but GT is tiny (2-4 drugs). Expansion would add ~1 correct prediction.
 
 ### New Hypotheses Generated
-- **h284-h290**: Complication scoring, relationship classification, pathway overlap, ATC coherence tiering, etc.
+- **h291-h297**: Transferability implementation, CV event expansion, drug pool confidence signals, statin-only CV predictions, mechanism-specific categories
 
 ### Recommended Next Steps
-1. Continue testing pending hypotheses
-2. Consider h284 (Complication Specialization Score) for follow-up
-3. Run full evaluation to measure precision improvement
+1. h295 (Drug Pool Size as Confidence Signal) - builds on h177
+2. h296 (Statin-Only CV Predictions) - builds on h292
+3. h291 (Implement Comp→Base Boost) - builds on h284
+
+---
+
+## Previous Session: h281, h193, h280, h290 (2026-02-05)
+
+**Hypotheses Tested: 4**
+- h281: Bidirectional Treatment Analysis - **VALIDATED** (4x asymmetry)
+- h193: Combined ATC Coherence Signals - **INVALIDATED**
+- h280: Complication vs Subtype Classification - **VALIDATED** (42.6% vs 13.9%)
+- h290: Implement Relationship Type Filter - **VALIDATED**
 
 ---
 
@@ -81,17 +89,6 @@
 - h279: Disease Specificity Scoring - **VALIDATED**
 - h277: Cross-Category Hierarchy Matching - **INVALIDATED**
 - h282: Hierarchy Depth Delta - **VALIDATED**
-
----
-
-## Previous Session: h273, h276, h278, h271, h275 (2026-02-05)
-
-**Hypotheses Tested: 5** - All VALIDATED
-- h273: Disease Hierarchy Matching - 4.5x precision lift
-- h276: GOLDEN tier for metabolic/neurological hierarchy
-- h278: Infectious hierarchy gap analysis
-- h271: Domain-isolated drug filter
-- h275: Subtype refinements have 99.2% fuzzy precision
 
 ---
 

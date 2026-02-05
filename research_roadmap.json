@@ -5931,6 +5931,57 @@
         "Step 4: Use organ matching as confidence signal",
         "Success criteria: Organ-matched predictions >30% vs <10% precision"
       ]
+    },
+    {
+      "id": "h295",
+      "title": "Drug Pool Size as kNN Confidence Signal",
+      "description": "Use drug pool size and breadth to predict kNN success per disease. Small pools (<20 drugs) or low breadth (<4) should be LOW confidence.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Calculate drug pool size and mean breadth for each disease category",
+        "Step 2: Correlate pool metrics with actual kNN precision",
+        "Step 3: Define thresholds (e.g., <20 drugs = LOW, >50 = HIGH)",
+        "Step 4: Implement as confidence signal in production_predictor.py",
+        "Success criteria: >10 pp precision difference between pool tiers"
+      ]
+    },
+    {
+      "id": "h296",
+      "title": "Statin-Only CV Event Predictions",
+      "description": "From h292: Statins are the ONLY drugs that correctly predict event\u2192atherosclerosis. Filter CV event predictions to statins for higher precision.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Identify all statin drugs in GT",
+        "Step 2: For CV event\u2192condition predictions, check if drug is a statin",
+        "Step 3: Boost statin predictions, filter non-statin predictions",
+        "Step 4: Measure precision improvement",
+        "Success criteria: Statin CV predictions >50% precision"
+      ]
+    },
+    {
+      "id": "h297",
+      "title": "Mechanism-Specific Disease Categories",
+      "description": "From h177: Alzheimer's drugs fail kNN because they're mechanism-specific. Identify other mechanism-specific disease categories.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Identify diseases with drug pools <20 and breadth <4",
+        "Step 2: Check drug mechanisms (are they all same MoA?)",
+        "Step 3: Flag these as 'mechanism-specific' categories",
+        "Step 4: Use alternative prediction methods for these (not kNN)",
+        "Success criteria: Identify >5 mechanism-specific categories"
+      ]
     }
   ],
   "completed": [
