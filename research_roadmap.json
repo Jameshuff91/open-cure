@@ -5960,7 +5960,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Identify all statin drugs in GT",
@@ -5968,7 +5968,11 @@
         "Step 3: Boost statin predictions, filter non-statin predictions",
         "Step 4: Measure precision improvement",
         "Success criteria: Statin CV predictions >50% precision"
-      ]
+      ],
+      "started_date": "2026-02-05",
+      "completed_date": "2026-02-05",
+      "findings": "VALIDATED: Statins achieve 100% precision for CV event\u2192atherosclerosis predictions.\n\nRESULTS:\n| Drug Class | Correct | Total | Precision |\n|------------|---------|-------|-----------|\n| Statins | 5 | 5 | **100%** |\n| Non-statins | 0 | 7 | **0%** |\n\nNON-STATIN FAILURES:\n- Evolocumab/Alirocumab (PCSK9i): Treat dyslipidemia, not atherosclerosis directly\n- Niacin: Failed CV outcome trials (AIM-HIGH, HPS2-THRIVE)\n- Bempedoic acid: Too new, limited CV outcome data\n- Semaglutide: CV benefits secondary to diabetes indication\n- Clopidogrel: Antiplatelet - prevents clots, not underlying disease\n\nWHY STATINS WORK:\nStatins treat BOTH the symptom (dyslipidemia) AND the underlying cause \n(atherosclerotic plaque progression). They're uniquely indicated for \natherosclerosis prevention, not just lipid management.\n\nACTIONABLE:\n1. BOOST statin CV event predictions \u2192 HIGH confidence\n2. FILTER or LOWER non-statin CV event predictions\n3. Could implement as drug-class-specific rule in production_predictor.py",
+      "result_metric": "100% statin precision vs 0% non-statin for CV event\u2192atherosclerosis"
     },
     {
       "id": "h297",
