@@ -4032,7 +4032,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Map lymphoma subtypes and their GT drugs",
         "Compute drug overlap between lymphoma subtypes",
@@ -4041,6 +4041,28 @@
       ],
       "dependencies": [
         "h199"
+      ],
+      "findings": "VALIDATED: Lymphoma and leukemia have IDENTICAL drug overlap (6% Jaccard).\n\nKEY FINDINGS:\n1. Drug overlap comparison:\n   - Lymphoma mean pairwise Jaccard: 6.0%\n   - Leukemia mean pairwise Jaccard: 5.9%\n   - Ratio: 1.0x (identical)\n   \n2. Hypothesis REJECTED: Lymphoma does NOT share more treatments across subtypes\n\n3. BUT mechanism-based groupings exist:\n   - CD30+: Adcetris covers 9 lymphoma diseases (Hodgkin, ALCL, PTCL, CTCL)\n   - CD20+: Rituximab covers 6 lymphoma diseases (B-cell NHL types)\n\n4. Pan-drug coverage is similar:\n   - Lymphoma: 21 pan-drugs covering 83% of diseases\n   - Leukemia: 23 pan-drugs covering 78% of diseases\n\nRECOMMENDATION: Implement mechanism-based rules (CD30+/CD20+) instead of relying on subtype overlap.",
+      "result_metric": "Drug overlap 6.0% = 5.9% (identical); mechanism-based rules identified"
+    },
+    {
+      "id": "h205",
+      "title": "Lymphoma Mechanism-Based Production Rules (CD30+/CD20+)",
+      "category": "production",
+      "hypothesis": "h204 found mechanism-based groupings in lymphoma: CD30+ (Adcetris, 9 diseases) and CD20+ (rituximab, 6 diseases). Implement production rules that match lymphoma subtype to appropriate targeted therapy.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Define CD30+ keywords: hodgkin, anaplastic large cell, ALCL, T-cell lymphoma",
+        "Define CD20+ keywords: B-cell, follicular, DLBCL, burkitt, NHL",
+        "Implement rules: CD30+ disease + Adcetris \u2192 HIGH tier",
+        "Implement rules: CD20+ disease + rituximab \u2192 HIGH tier",
+        "Test precision improvement on lymphoma predictions"
+      ],
+      "dependencies": [
+        "h204"
       ]
     }
   ],
@@ -4808,6 +4830,12 @@
       "hypothesis_id": "h203",
       "learning": "GT density is a strong confidence signal. Low GT diseases (1-5 drugs) have 7x WORSE precision than baseline. High GT (>20) has 4.4x BETTER precision. This is independent of disease category.",
       "implication": "Add GT density to confidence scoring. Filter/downgrade Low GT predictions."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h204",
+      "learning": "Lymphoma and leukemia have identical drug overlap (6%). The key insight is mechanism-based groupings: CD30+ (Hodgkin, ALCL) \u2192 Adcetris; CD20+ (B-cell NHL) \u2192 Rituximab. These can enable targeted production rules.",
+      "implication": "Use mechanism-of-action matching rather than subtype overlap for hematologic cancer rules"
     }
   ],
   "collaborations": [

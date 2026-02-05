@@ -1,0 +1,67 @@
+{
+  "hypothesis": "h204",
+  "title": "Lymphoma Subtype Stratification",
+  "status": "validated",
+  "finding": "Lymphoma and leukemia have EQUAL drug overlap; improvement requires mechanism-based rules",
+  "key_results": {
+    "drug_overlap_comparison": {
+      "lymphoma_mean_jaccard": "6.0%",
+      "leukemia_mean_jaccard": "5.9%",
+      "ratio": "1.0x (identical)",
+      "conclusion": "Lymphoma does NOT share more drugs across subtypes than leukemia"
+    },
+    "pan_drug_analysis": {
+      "lymphoma_pan_drugs": 21,
+      "leukemia_pan_drugs": 23,
+      "lymphoma_disease_coverage": "83% (29/35)",
+      "leukemia_disease_coverage": "78% (38/49)",
+      "conclusion": "Similar pan-drug patterns"
+    },
+    "mechanism_based_groupings": {
+      "CD30_positive": {
+        "drug": "Adcetris (brentuximab vedotin)",
+        "diseases": 9,
+        "types": [
+          "Hodgkin",
+          "ALCL",
+          "PTCL",
+          "CTCL"
+        ]
+      },
+      "CD20_positive": {
+        "drug": "Rituximab",
+        "diseases": 6,
+        "types": [
+          "B-cell NHL",
+          "DLBCL",
+          "FL",
+          "Burkitt"
+        ]
+      }
+    }
+  },
+  "actionable_insight": "Lymphoma can be improved via mechanism-based rules (CD30+, CD20+) rather than general subtype overlap",
+  "recommended_rules": [
+    {
+      "rule": "CD30+ lymphoma + Adcetris/brentuximab",
+      "keywords": [
+        "hodgkin",
+        "anaplastic large cell",
+        "ALCL",
+        "T-cell lymphoma"
+      ],
+      "tier": "HIGH"
+    },
+    {
+      "rule": "CD20+ lymphoma + rituximab",
+      "keywords": [
+        "B-cell",
+        "follicular",
+        "DLBCL",
+        "burkitt",
+        "NHL"
+      ],
+      "tier": "HIGH"
+    }
+  ]
+}
