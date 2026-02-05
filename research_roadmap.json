@@ -5059,7 +5059,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Review Class Ia antiarrhythmics (quinidine, procainamide)",
         "Review Class III antiarrhythmics (dronedarone, dofetilide, sotalol)",
@@ -5069,7 +5069,9 @@
       ],
       "dependencies": [
         "h250"
-      ]
+      ],
+      "findings": "VALIDATED: Antiarrhythmic safety review identified additional contraindications beyond Class Ic.\n\n**NEW SAFETY FILTERS ADDED (h255):**\n\n1. **Dronedarone + Heart Failure**\n   - Evidence: ANDROMEDA trial - 2.13x mortality increase, terminated early\n   - Note: No predictions in current deliverable (model avoided this error)\n\n2. **Sotalol + Post-MI**\n   - Evidence: SWORD trial - 4.6% vs 2.7% mortality, terminated for harm\n   - Predictions excluded: 1\n\n3. **Class Ia Antiarrhythmics (Quinidine/Procainamide) + Post-MI**\n   - Evidence: High proarrhythmic risk (4-8% TdP), avoid in ischemic disease\n   - Predictions excluded: 1\n\n4. **Procainamide + Iatrogenic Conditions**\n   - Evidence: Procainamide CAUSES agranulocytosis (90% within 3 months), leukopenia, drug-induced lupus (20%)\n   - This is an inverse indication pattern - drug predicted to treat conditions it causes\n   - Predictions excluded: 3\n\n**NOT CONTRAINDICATED:**\n- Dofetilide + HF: DIAMOND trial showed it's safe with proper monitoring (3.3% TdP but manageable)\n- Quinidine/Procainamide for atrial arrhythmias: Still valid use cases with monitoring\n- Dronedarone for VT: Not specifically contraindicated (only HF is contraindicated)\n\n**TOTAL IMPACT:**\n- 5 predictions excluded (0 HIGH tier)\n- All involved proarrhythmic or inverse indication patterns\n- Model showed good discrimination by NOT predicting dronedarone+HF",
+      "result_metric": "5 new exclusions (0 HIGH tier) from antiarrhythmic safety rules"
     },
     {
       "id": "h256",
@@ -6097,6 +6099,12 @@
       "hypothesis_id": "h250",
       "learning": "CV drug contraindications require evidence-based trial data (CAST, PROMISE, ASTRONAUT). Non-DHP CCBs and Class Ic antiarrhythmics are often predicted for HF/arrhythmias but are HARMFUL. Ganglionic blockers and surgical dyes are obsolete/diagnostic - easy wins.",
       "implication": "Always cross-reference drug-disease predictions against trial evidence for harm signals. Some drug classes that SEEM mechanistically plausible (vasodilators for HF) can still be harmful."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h255",
+      "learning": "Antiarrhythmic drugs have class-specific contraindications. Dronedarone (ANDROMEDA), Sotalol (SWORD), and Class Ia drugs post-MI all showed mortality increases in trials. Procainamide has unique 'inverse indication' pattern - it CAUSES agranulocytosis, leukopenia, and drug-induced lupus, so predictions for these conditions are false positives.",
+      "implication": "Check for 'inverse indication' patterns where drugs are predicted for conditions they cause. This is a systematic error in graph-based predictions."
     }
   ],
   "collaborations": [

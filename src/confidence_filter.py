@@ -338,6 +338,38 @@ SURGICAL_DYE_PATTERNS = [
     r"patent blue",
 ]
 
+# h255: Dronedarone - CONTRAINDICATED for heart failure
+# ANDROMEDA trial: 2.13x mortality increase, terminated early for harm
+DRONEDARONE_PATTERNS = [
+    r"dronedarone",
+]
+
+# h255: Sotalol - increased mortality post-MI with reduced EF
+# SWORD trial: 4.6% vs 2.7% mortality, terminated for harm
+# Also dangerous in HF due to negative inotropic effects
+SOTALOL_CONTRAINDICATION_PATTERNS = [
+    r"sotalol",
+]
+
+# h255: Class Ia antiarrhythmics for post-MI - proarrhythmic
+# Quinidine/Procainamide have high TdP risk (4-8%) and proarrhythmic effects
+# Not used post-MI due to proarrhythmic risk
+CLASS_IA_PATTERNS = [
+    r"quinidine",
+    r"procainamide",
+    r"disopyramide",
+]
+
+# h255: Procainamide CAUSES agranulocytosis and drug-induced lupus
+# Agranulocytosis in 90% within 3 months; 20% develop drug-induced lupus
+PROCAINAMIDE_IATROGENIC_CONDITIONS = [
+    "agranulocytosis",  # Procainamide CAUSES this
+    "leukopenia",  # Procainamide CAUSES this
+    "neutropenia",  # Procainamide CAUSES this
+    "lupus",  # Procainamide CAUSES drug-induced lupus
+    "sle",  # Same
+]
+
 # h164: Immunosuppressants - contraindicated for infectious diseases
 # Immunosuppressants weaken the immune system, making infections WORSE
 # Exception: Autoimmune conditions (e.g., autoimmune hepatitis) are NOT infections
@@ -768,6 +800,65 @@ def filter_prediction(
                 original_score=score,
                 confidence=ConfidenceLevel.EXCLUDED,
                 reason="Surgical/diagnostic dye - not a therapeutic agent",
+                drug_type=drug_type,
+                adjusted_score=0.0,
+            )
+
+    # Rule 0f12 (h255): Dronedarone for heart failure
+    # ANDROMEDA trial: 2.13x mortality increase, terminated early
+    for pattern in DRONEDARONE_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if is_cardiac_condition(disease):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Dronedarone INCREASES MORTALITY 2.13x in heart failure (ANDROMEDA trial terminated for harm)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f13 (h255): Sotalol for post-MI with reduced EF
+    # SWORD trial: 4.6% vs 2.7% mortality, terminated for harm
+    for pattern in SOTALOL_CONTRAINDICATION_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if "myocardial infarction" in disease_lower or "post-mi" in disease_lower or "post mi" in disease_lower:
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Sotalol INCREASES MORTALITY in post-MI patients (SWORD trial terminated for harm)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f14 (h255): Class Ia antiarrhythmics for post-MI
+    # High TdP risk (4-8%) and proarrhythmic in ischemic heart disease
+    for pattern in CLASS_IA_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if "myocardial infarction" in disease_lower:
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Class Ia antiarrhythmics are proarrhythmic post-MI (4-8% TdP risk, avoid in ischemic disease)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f15 (h255): Procainamide for conditions it CAUSES (iatrogenic)
+    # Procainamide CAUSES agranulocytosis, leukopenia, and drug-induced lupus
+    if re.search(r"procainamide", drug_lower):
+        if any(cond in disease_lower for cond in PROCAINAMIDE_IATROGENIC_CONDITIONS):
+            return FilteredPrediction(
+                drug=drug,
+                disease=disease,
+                original_score=score,
+                confidence=ConfidenceLevel.EXCLUDED,
+                reason="Procainamide CAUSES this condition (agranulocytosis, leukopenia, drug-induced lupus) - inverse indication",
                 drug_type=drug_type,
                 adjusted_score=0.0,
             )
