@@ -5985,7 +5985,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Identify diseases with drug pools <20 and breadth <4",
@@ -5993,6 +5993,56 @@
         "Step 3: Flag these as 'mechanism-specific' categories",
         "Step 4: Use alternative prediction methods for these (not kNN)",
         "Success criteria: Identify >5 mechanism-specific categories"
+      ],
+      "findings": "VALIDATED: Mechanism-specific diseases identified and quantified.\n\nKEY METRICS:\n- MECHANISM_SPECIFIC diseases (breadth<3, mono>70%): 50 diseases (1.9% of total)\n- HIGHLY_REPURPOSABLE diseases (breadth\u22655, mono<40%): 452 diseases (16.8% of total)\n- MODERATE: 846 diseases (31.5%)\n\nVALIDATION:\n- Mechanism-specific diseases: only 6.6% of GT drugs are repurposable (used in >2 diseases)\n- Other diseases: 87.9% of GT drugs are repurposable\n- Difference: 81.3 percentage points\n\nEXAMPLES OF MECHANISM-SPECIFIC (kNN will fail):\n- ALS: 3 drugs, breadth=1.0, mono=100%\n- Fabry disease: 4 drugs, breadth=1.0, mono=100%\n- HIV-1 infection: 38 drugs, breadth=1.9, mono=82%\n- Huntington disease: 3 drugs, breadth=2.0, mono=100%\n\nEXAMPLES OF HIGHLY_REPURPOSABLE (kNN works well):\n- ocular cicatricial pemphigoid: breadth=95.5, mono=0%\n- lupus erythematosus: breadth=89.7, mono=0%\n- idiopathic nephrotic syndrome: breadth=89.7, mono=0%\n\nIMPLICATION: Use mechanism-specificity (breadth + mono_pct) as confidence signal.\nMechanism-specific diseases should be flagged for alternative prediction methods (not kNN).",
+      "result_metric": "81.3 pp difference in repurposable drug %"
+    },
+    {
+      "id": "h298",
+      "title": "Implement Mechanism-Specificity Confidence Signal",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "description": "Implement h297 findings in production_predictor.py as confidence signal",
+      "steps": [
+        "Step 1: Add MECHANISM_SPECIFIC_DISEASES list (50 diseases from h297)",
+        "Step 2: Add check in confidence scoring: if disease in list, set LOW confidence",
+        "Step 3: For HIGHLY_REPURPOSABLE diseases, boost to HIGH confidence",
+        "Step 4: Test impact on prediction tiering",
+        "Success criteria: Clear separation of confidence tiers by disease type"
+      ]
+    },
+    {
+      "id": "h299",
+      "title": "Alternative Methods for Mechanism-Specific Diseases",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "description": "kNN fails for mechanism-specific diseases (6.6% repurposable). What alternatives work?",
+      "steps": [
+        "Step 1: For mechanism-specific diseases, identify available prediction signals",
+        "Step 2: Test: Target-based scoring (if drug shares targets with disease genes)",
+        "Step 3: Test: Literature co-occurrence (if drug and disease mentioned together)",
+        "Step 4: Compare precision vs kNN baseline",
+        "Success criteria: >10% precision for mechanism-specific diseases (vs ~0% kNN)"
+      ]
+    },
+    {
+      "id": "h300",
+      "title": "HIV Drug Network Analysis",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "description": "HIV has 38 drugs but breadth=1.9, mono=82%. Are HIV drugs truly non-repurposable or is this data artifact?",
+      "steps": [
+        "Step 1: List all 38 HIV drugs and their indication counts",
+        "Step 2: Check for off-label uses in literature (ARVs for HBV, inflammation, etc.)",
+        "Step 3: If repurposing evidence exists, consider GT expansion",
+        "Step 4: If truly mechanism-specific, use as negative control for kNN",
+        "Success criteria: Determine if HIV drugs are genuinely mechanism-specific"
       ]
     }
   ],
@@ -7138,6 +7188,12 @@
       "hypothesis_id": "h177",
       "learning": "Drug pool size and breadth predict kNN success. Large pools with high breadth (diabetes, hypertension) perform well. Small pools with low breadth (Alzheimer's, rare diseases) fail because drugs are mechanism-specific.",
       "implication": "Use pool size/breadth as confidence signal. For small-pool diseases, kNN underperforms and alternative methods needed."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h297",
+      "learning": "Mechanism-specificity (breadth<3, mono>70%) predicts kNN failure. 6.6% vs 87.9% repurposable drugs in GT.",
+      "implication": "Use as confidence signal. 50 mechanism-specific diseases need alternative methods, not kNN."
     }
   ],
   "collaborations": [
