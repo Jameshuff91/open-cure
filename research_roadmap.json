@@ -4617,13 +4617,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Filter 2-hop-only predictions to those with 10+ paths",
         "Calculate coverage and precision for this subset",
         "Compare to 1-hop baseline",
         "If precision >10%, integrate as secondary confidence signal"
-      ]
+      ],
+      "findings": "Threshold-based 2-hop paths analysis shows marginal value.\n\nPRECISION BY THRESHOLD:\n| Threshold | Coverage (of 2-hop) | Precision |\n|-----------|---------------------|-----------|\n| >=5       | 47.9%               | 8.0%      |\n| >=10      | 30.1%               | 9.4%      |\n| >=15      | 18.0%               | 10.2%     |\n| >=20      | 12.0%               | 11.7%     |\n\nKEY FINDING: Higher thresholds DO improve precision.\n- >=20 paths approaches 1-hop precision (11.7% vs 13.3%)\n- But coverage gain is small (+4.5%)\n\nTRADE-OFF:\n- >=15 threshold: +6.8% coverage, -0.6pp precision\n- >=20 threshold: +4.5% coverage, -0.3pp precision\n- Adds ~73 true positives (14% more than 1-hop alone)\n\nVERDICT: MARGINAL VALUE as secondary signal. Not worth integrating into primary mechanism filtering.\n",
+      "result_metric": ">=15 threshold: 10.2% precision, +6.8% coverage extension"
     },
     {
       "id": "h234",
