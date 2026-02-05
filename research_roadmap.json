@@ -4005,7 +4005,7 @@
         "h199",
         "h201"
       ],
-      "findings": "VALIDATED with limited actionability.\n\nLEUKEMIA SUBTYPE ANALYSIS:\n- AML: 8 diseases, 36 drugs, 40 GT pairs - expected drugs found 8/8\n- CML: 1 disease, 15 drugs, 16 GT pairs - expected drugs found 5/5\n- ALL: 9 diseases, 34 drugs, 47 GT pairs - expected drugs found 4/7\n- CLL: 2 diseases, 19 drugs, 20 GT pairs - expected drugs found 7/7\n\nPREDICTION PERFORMANCE:\n- AML: 10.0% precision (3/30 known hits), 2 expected drugs predicted\n- CML: 6.7% precision (2/30), NO expected drugs in top 30\n- ALL: 6.7% precision (2/30), 1 expected drug predicted\n- Other leukemia: 1.7% precision (2/120)\n\nKEY FINDING: CML has ZERO TKIs (imatinib, dasatinib, etc.) in top 30 predictions.\nThis is likely another DRKG coverage gap - need to verify TKI embeddings exist.\n\nLIMITED VALUE: Subtype rules won't help if expected drugs are not in prediction pool.",
+      "findings": "VALIDATED with limited actionability.\n\nLEUKEMIA SUBTYPE ANALYSIS:\n- AML: 8 diseases, 36 drugs, 40 GT pairs - expected drugs found 8/8\n- CML: 1 disease, 15 drugs, 16 GT pairs - expected drugs found 5/5\n- ALL: 9 diseases, 34 drugs, 47 GT pairs - expected drugs found 4/7\n- CLL: 2 diseases, 19 drugs, 20 GT pairs - expected drugs found 7/7\n\nPREDICTION PERFORMANCE:\n- AML: 10.0% precision (3/30 known hits), 2 expected drugs predicted\n- CML: 6.7% precision (2/30), NO expected drugs in top 30\n- ALL: 6.7% precision (2/30), 1 expected drug predicted\n- Other leukemia: 1.7% precision (2/120)\n\nKEY FINDING: CML has ZERO TKIs (imatinib, dasatinib, etc.) in top 30 predictions.\nThis is likely another DRKG coverage gap - need to verify TKI embeddings exist.\n\nLIMITED VALUE: Subtype rules won't help if expected drugs are not in prediction pool.\n\nh211 FOLLOW-UP: TKIs have embeddings but kNN neighbors don't have them in GT.",
       "result_metric": "AML 10%, CML 6.7%, ALL 6.7% precision; CML missing all TKIs"
     },
     {
@@ -4182,7 +4182,7 @@
       "priority": 2,
       "effort": "low",
       "expected_impact": "medium",
-      "status": "pending",
+      "status": "validated",
       "dependencies": [
         "h202"
       ],
@@ -4191,7 +4191,9 @@
         "Check if each TKI ID has an embedding in DRKG",
         "If missing, add to manual_drug_rules.json",
         "If present, investigate why not being predicted"
-      ]
+      ],
+      "findings": "VALIDATED: TKIs have embeddings but NOT predicted for CML.\n\nTKI DRKG COVERAGE:\n- Imatinib: HAS embedding, 33 predictions (but NOT for CML)\n- Nilotinib: HAS embedding, 5 predictions (NOT for CML)\n- Dasatinib: HAS embedding, 5 predictions (NOT for CML)\n- Bosutinib: HAS embedding, 0 predictions anywhere\n- Ponatinib: HAS embedding, 5 predictions (NOT for CML)\n\nCML PREDICTIONS: Dominated by AML drugs (Midostaurin, Ibrutinib, etc.)\nThis is same pattern as h207 (Rituximab) - kNN neighbors determine drug pool.\n\nROOT CAUSE: CML's kNN neighbors likely don't have TKIs in their GT.\nThis is a GT coverage problem, not DRKG embedding problem.",
+      "result_metric": "All 5 TKIs have embeddings; Imatinib predicted 33x but NOT for CML"
     }
   ],
   "completed": [
