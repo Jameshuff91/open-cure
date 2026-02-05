@@ -1,0 +1,60 @@
+{
+  "hypothesis": "h251",
+  "title": "SGLT2 Inhibitor Cross-Category Transfer Analysis",
+  "analysis_date": "2026-02-05",
+  "precision": 63.9,
+  "counts": {
+    "total_predictions": 36,
+    "clinically_validated": 23,
+    "not_validated": 13,
+    "unknown": 0
+  },
+  "validated_indications": {
+    "primary_approved": [
+      "Type 2 diabetes",
+      "Heart failure (HFrEF/HFpEF)",
+      "Chronic kidney disease"
+    ],
+    "validated_repurposing": [
+      {
+        "indication": "Hypertension",
+        "evidence": "3-9 mmHg BP reduction in clinical trials"
+      },
+      {
+        "indication": "Atherosclerosis/ASCVD",
+        "evidence": "EMPA-REG: 14% reduction in MACE"
+      },
+      {
+        "indication": "Myocardial infarction",
+        "evidence": "Secondary prevention - reduced CV events"
+      },
+      {
+        "indication": "Obesity",
+        "evidence": "1.6-2 kg weight loss vs placebo"
+      },
+      {
+        "indication": "Peripheral vascular disease",
+        "evidence": "Part of CV risk reduction"
+      }
+    ]
+  },
+  "false_positive_patterns": [
+    {
+      "disease": "Spina bifida",
+      "reason": "No biological mechanism"
+    },
+    {
+      "disease": "Tuberous sclerosis complex",
+      "reason": "No SGLT2 connection to mTOR pathway"
+    },
+    {
+      "disease": "Hypoparathyroidism",
+      "reason": "Wrong calcium pathway"
+    },
+    {
+      "disease": "Hypoglycemia",
+      "reason": "SGLT2i cause hypoglycemia - not treat it"
+    }
+  ],
+  "key_finding": "SGLT2 inhibitors show HIGH precision (61%) due to validated pleiotropic effects"
+}

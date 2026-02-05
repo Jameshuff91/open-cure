@@ -4973,7 +4973,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all SGLT2 inhibitor predictions (Canagliflozin, Empagliflozin, Dapagliflozin)",
         "Identify predictions beyond diabetes and heart failure",
@@ -4983,6 +4983,26 @@
       ],
       "dependencies": [
         "h241"
+      ],
+      "findings": "VALIDATED: SGLT2 inhibitors show 63.9% precision - highest among drug classes.\n\n**Precision Analysis:**\n- Total predictions: 36\n- Clinically validated: 23 (63.9%)\n- False positives: 13 (36.1%)\n\n**Validated Cross-Category Predictions (beyond diabetes/HF):**\n| Indication | Evidence |\n|------------|----------|\n| Hypertension | 3-9 mmHg BP reduction in trials |\n| Atherosclerosis/ASCVD | EMPA-REG: 14% MACE reduction |\n| Myocardial infarction | Secondary prevention data |\n| Chronic kidney disease | DAPA-CKD/CREDENCE: 40% kidney progression reduction |\n| Obesity | 1.6-2 kg weight loss vs placebo |\n| Peripheral vascular disease | CV risk reduction |\n\n**False Positive Patterns:**\n- Hypoparathyroidism (HIGH tier) - wrong calcium pathway\n- Tuberous sclerosis complex (HIGH tier) - no mTOR connection\n- Hypoglycemia - SGLT2i CAUSE hypoglycemia, don't treat it\n- Uremia (4 drugs) - model confuses renal benefit with uremia treatment\n\n**Key Finding:** SGLT2 inhibitors are the BEST-PERFORMING drug class, with model correctly\ncapturing their pleiotropic cardiovascular, renal, and metabolic effects.",
+      "result_metric": "63.9% precision; 23/36 predictions validated by clinical trials"
+    },
+    {
+      "id": "h252",
+      "title": "SGLT2 False Positive Filter: Hypoglycemia and Uremia",
+      "category": "precision",
+      "rationale": "h251 found SGLT2 inhibitors predicted for hypoglycemia (4 drugs) and uremia (4 drugs). These are FALSE POSITIVES - SGLT2i CAUSE hypoglycemia and treat kidney disease (not uremia/ESRD). Add explicit filter.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Add filter: SGLT2 inhibitors + hypoglycemia = EXCLUDED (SGLT2i cause hypoglycemia)",
+        "Add filter: SGLT2 inhibitors + uremia/ESRD = EXCLUDED (too advanced for SGLT2i)",
+        "Document: SGLT2i are for CKD stages 2-4, NOT uremia/ESRD (stage 5)"
+      ],
+      "dependencies": [
+        "h251"
       ]
     }
   ],
