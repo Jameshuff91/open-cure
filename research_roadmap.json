@@ -4803,7 +4803,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Define contraindication rules: SSRIs/SNRIs without mood stabilizer for bipolar",
         "Define contraindication rules: Stimulants for schizophrenia",
@@ -4813,7 +4813,9 @@
       ],
       "dependencies": [
         "h241"
-      ]
+      ],
+      "findings": "VALIDATED: Psychiatric contraindication rules improve HIGH confidence precision by +12.6 pp.\n\n**CONTRAINDICATION RULES:**\n1. SSRI/SNRI for bipolar disorder (mania risk without mood stabilizer)\n2. Stimulants for bipolar disorder (mania risk)  \n3. Stimulants for schizophrenia (psychosis risk)\n4. Local anesthetics for any psychiatric (no indication)\n\n**IMPACT ON HIGH CONFIDENCE PSYCHIATRIC:**\n| Metric | Before | After |\n|--------|--------|-------|\n| Predictions | 60 | 41 |\n| GT hits | 29 | 25 |\n| Precision | 48.3% | **61.0%** |\n| Improvement | \u2014 | **+12.6 pp** |\n\n**PREDICTIONS REMOVED:**\n- SSRI/SNRI for bipolar: 6 (1 GT hit)\n- Stimulants for bipolar: 5 (1 GT hit)\n- Stimulants for schizophrenia: 6 (2 GT hits)\n- Local anesthetics: 2 (1 GT hit - edge case)\n\n**GT HITS LOST (5 total):**\n- Fluoxetine, Methylphenidate, Amphetamine for bipolar/schizophrenia\n- These are ADJUNCT uses (with mood stabilizer/antipsychotic), not monotherapy\n- Trade-off: 5 GT lost vs 15 implausible removed = net positive\n\n**RECOMMENDATION:** Integrate these rules into production confidence filter.",
+      "result_metric": "HIGH: 48.3% \u2192 61.0% precision (+12.6 pp)"
     },
     {
       "id": "h244",
@@ -4851,6 +4853,25 @@
       ],
       "dependencies": [
         "h241"
+      ]
+    },
+    {
+      "id": "h246",
+      "title": "Adjunct Therapy Detection for Psychiatric",
+      "category": "confidence_calibration",
+      "rationale": "h243 lost 5 GT hits that are legitimate ADJUNCT therapies (SSRI + mood stabilizer, stimulant + antipsychotic). Can we detect adjunct use patterns to allow these predictions?",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Identify pattern: If disease has BOTH antipsychotic AND stimulant in top predictions, allow stimulant",
+        "Identify pattern: If disease has BOTH mood stabilizer AND SSRI in top predictions, allow SSRI",
+        "Test if these patterns recover lost GT hits without adding implausible predictions",
+        "Success criteria: Recover >=3 of 5 GT hits without losing precision"
+      ],
+      "dependencies": [
+        "h243"
       ]
     }
   ],
@@ -5804,6 +5825,12 @@
       "hypothesis_id": "h241",
       "learning": "Steroid-free categories have excellent drug class precision: CV (beta blockers 100%, calcium blockers 100%), psychiatric (atypical antipsychotics 90%). But psychiatric predictions include dangerous contraindicated drugs (SSRIs for bipolar).",
       "implication": "Add contraindication rules for psychiatric predictions; prioritize cardiovascular novel predictions for validation"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h243",
+      "learning": "Psychiatric contraindication rules (SSRI/stimulants for bipolar/schizophrenia) improve precision +12.6pp. Lost 5 GT hits but these are adjunct uses requiring combination therapy.",
+      "implication": "Add contraindication rules to production filter; consider adjunct detection for refinement"
     }
   ],
   "collaborations": [

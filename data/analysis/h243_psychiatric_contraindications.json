@@ -1,0 +1,122 @@
+{
+  "hypothesis": "h243",
+  "title": "Psychiatric Contraindication Rules",
+  "contraindication_rules": {
+    "rule_1": {
+      "name": "SSRI/SNRI for bipolar",
+      "drugs": [
+        "fluoxetine",
+        "sertraline",
+        "paroxetine",
+        "escitalopram",
+        "citalopram",
+        "fluvoxamine",
+        "venlafaxine",
+        "desvenlafaxine",
+        "duloxetine"
+      ],
+      "condition": "bipolar disorder",
+      "reason": "Can trigger manic episodes without mood stabilizer"
+    },
+    "rule_2": {
+      "name": "Stimulants for bipolar",
+      "drugs": [
+        "amphetamine",
+        "methamphetamine",
+        "dextroamphetamine",
+        "lisdexamfetamine",
+        "methylphenidate",
+        "dexmethylphenidate"
+      ],
+      "condition": "bipolar disorder",
+      "reason": "Can trigger mania"
+    },
+    "rule_3": {
+      "name": "Stimulants for schizophrenia",
+      "drugs": [
+        "amphetamine",
+        "methamphetamine",
+        "dextroamphetamine",
+        "lisdexamfetamine",
+        "methylphenidate",
+        "dexmethylphenidate"
+      ],
+      "condition": "schizophrenia",
+      "reason": "Can worsen psychosis"
+    },
+    "rule_4": {
+      "name": "Local anesthetics for psychiatric",
+      "drugs": [
+        "lidocaine",
+        "bupivacaine",
+        "procaine",
+        "tetracaine",
+        "ropivacaine"
+      ],
+      "condition": "any psychiatric",
+      "reason": "No therapeutic indication"
+    }
+  },
+  "impact": {
+    "high_confidence": {
+      "before": {
+        "n": 60,
+        "hits": 29,
+        "precision": 48.3
+      },
+      "after": {
+        "n": 41,
+        "hits": 25,
+        "precision": 61.0
+      },
+      "improvement_pp": 12.6,
+      "removed": 19
+    },
+    "all_psychiatric": {
+      "before": {
+        "n": 90,
+        "hits": 42,
+        "precision": 46.7
+      },
+      "after": {
+        "n": 70,
+        "hits": 37,
+        "precision": 52.9
+      },
+      "improvement_pp": 6.2,
+      "removed": 20
+    }
+  },
+  "gt_hits_lost": {
+    "count": 5,
+    "predictions": [
+      {
+        "drug": "Lidocaine",
+        "disease": "social anxiety disorder",
+        "note": "Edge case - procedural use"
+      },
+      {
+        "drug": "Fluoxetine",
+        "disease": "bipolar disorder",
+        "note": "Used with mood stabilizer"
+      },
+      {
+        "drug": "Methylphenidate",
+        "disease": "bipolar disorder",
+        "note": "Comorbid ADHD"
+      },
+      {
+        "drug": "Amphetamine",
+        "disease": "schizophrenia",
+        "note": "Comorbid ADHD"
+      },
+      {
+        "drug": "Methylphenidate",
+        "disease": "schizophrenia",
+        "note": "Comorbid ADHD"
+      }
+    ],
+    "clinical_note": "These are adjunct uses (with mood stabilizer/antipsychotic), not monotherapy"
+  },
+  "conclusion": "Rules improve precision by +12.6pp for HIGH confidence. Trade-off of 5 GT lost vs 15 implausible removed is acceptable."
+}
