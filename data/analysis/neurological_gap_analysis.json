@@ -1,0 +1,241 @@
+{
+  "category_coverage": {
+    "neurological": {
+      "mean": 0.1801470588235294,
+      "std": 0.33124571551711113,
+      "n_diseases": 10
+    },
+    "autoimmune": {
+      "mean": 0.6717631497043262,
+      "std": 0.335730032603516,
+      "n_diseases": 18
+    },
+    "psychiatric": {
+      "mean": 0.4903968253968254,
+      "std": 0.2906947417044611,
+      "n_diseases": 6
+    },
+    "respiratory": {
+      "mean": 0.2889784946236559,
+      "std": 0.316500152470813,
+      "n_diseases": 10
+    },
+    "cancer": {
+      "mean": 0.34407087208426496,
+      "std": 0.34620976211346105,
+      "n_diseases": 64
+    }
+  },
+  "neurological_details": [
+    {
+      "disease": "alzheimers disease",
+      "disease_id": "drkg:Disease::MESH:D000544",
+      "gt_drug_count": 4,
+      "coverage": 0.0,
+      "neighbor_mean_sim": "0.37246817",
+      "same_cat_neighbors": 2,
+      "gt_drugs": [
+        "Lecanemab",
+        "Rivastigmine",
+        "Donepezil",
+        "Flortaucipir F-18"
+      ]
+    },
+    {
+      "disease": "trigeminal neuralgia",
+      "disease_id": "drkg:Disease::MESH:D014277",
+      "gt_drug_count": 1,
+      "coverage": 0.0,
+      "neighbor_mean_sim": "0.82220733",
+      "same_cat_neighbors": 0,
+      "gt_drugs": [
+        "Carbamazepine"
+      ]
+    },
+    {
+      "disease": "glossopharyngeal neuralgia",
+      "disease_id": "drkg:Disease::MESH:D020435",
+      "gt_drug_count": 1,
+      "coverage": 0.0,
+      "neighbor_mean_sim": "0.77344954",
+      "same_cat_neighbors": 1,
+      "gt_drugs": [
+        "Carbamazepine"
+      ]
+    },
+    {
+      "disease": "migraine with aura",
+      "disease_id": "drkg:Disease::MESH:D020325",
+      "gt_drug_count": 9,
+      "coverage": 0.0,
+      "neighbor_mean_sim": "0.5343256",
+      "same_cat_neighbors": 1,
+      "gt_drugs": [
+        "Zolmitriptan",
+        "Lasmiditan",
+        "Almotriptan",
+        "Celecoxib",
+        "Meloxicam"
+      ]
+    },
+    {
+      "disease": "nondiabetic autonomic neuropathy",
+      "disease_id": "drkg:Disease::MESH:D001342",
+      "gt_drug_count": 1,
+      "coverage": 0.0,
+      "neighbor_mean_sim": "0.62153107",
+      "same_cat_neighbors": 1,
+      "gt_drugs": [
+        "Droxidopa"
+      ]
+    },
+    {
+      "disease": "polyneuropathy of hereditary transthyretinmediated amyloidosis",
+      "disease_id": "drkg:Disease::MESH:D011115",
+      "gt_drug_count": 4,
+      "coverage": 0.0,
+      "neighbor_mean_sim": "0.54772055",
+      "same_cat_neighbors": 1,
+      "gt_drugs": [
+        "Fx-1006A",
+        "Human immunoglobulin G",
+        "Inotersen",
+        "Patisiran"
+      ]
+    },
+    {
+      "disease": "dyskinesia",
+      "disease_id": "drkg:Disease::MESH:D020820",
+      "gt_drug_count": 1,
+      "coverage": 0.0,
+      "neighbor_mean_sim": "0.76024675",
+      "same_cat_neighbors": 1,
+      "gt_drugs": [
+        "Amantadine"
+      ]
+    },
+    {
+      "disease": "epilepsy",
+      "disease_id": "drkg:Disease::MESH:D004827",
+      "gt_drug_count": 17,
+      "coverage": 0.17647058823529413,
+      "neighbor_mean_sim": "0.43842936",
+      "same_cat_neighbors": 3,
+      "gt_drugs": [
+        "Gabapentin",
+        "Levetiracetam",
+        "Oxcarbazepine",
+        "Zonisamide",
+        "Lamotrigine"
+      ]
+    },
+    {
+      "disease": "narcolepsy",
+      "disease_id": "drkg:Disease::MESH:D009290",
+      "gt_drug_count": 8,
+      "coverage": 0.625,
+      "neighbor_mean_sim": "0.53280103",
+      "same_cat_neighbors": 1,
+      "gt_drugs": [
+        "Solriamfetol",
+        "Pitolisant",
+        "Armodafinil",
+        "Amphetamine",
+        "Modafinil"
+      ]
+    },
+    {
+      "disease": "neuropathy",
+      "disease_id": "drkg:Disease::MESH:D010523",
+      "gt_drug_count": 1,
+      "coverage": 1.0,
+      "neighbor_mean_sim": "0.4821046",
+      "same_cat_neighbors": 1,
+      "gt_drugs": [
+        "Lidocaine"
+      ]
+    }
+  ],
+  "top_predicted_drugs": [
+    [
+      "Lidocaine",
+      16
+    ],
+    [
+      "Methylprednisolone",
+      13
+    ],
+    [
+      "Dexamethasone",
+      13
+    ],
+    [
+      "Prednisolone",
+      12
+    ],
+    [
+      "Levofloxacin",
+      11
+    ],
+    [
+      "Hydrocortisone",
+      10
+    ],
+    [
+      "Amphotericin B",
+      10
+    ],
+    [
+      "Moxifloxacin",
+      10
+    ],
+    [
+      "Prednisone",
+      9
+    ],
+    [
+      "Azithromycin",
+      9
+    ],
+    [
+      "Penicillin V",
+      9
+    ],
+    [
+      "Erythromycin",
+      9
+    ],
+    [
+      "Paroxetine",
+      8
+    ],
+    [
+      "Corticotropin",
+      8
+    ],
+    [
+      "Betamethasone",
+      8
+    ],
+    [
+      "Doxycycline",
+      8
+    ],
+    [
+      "Sulfadiazine",
+      8
+    ],
+    [
+      "Olanzapine",
+      7
+    ],
+    [
+      "Aripiprazole",
+      7
+    ],
+    [
+      "Liothyronine",
+      7
+    ]
+  ]
+}

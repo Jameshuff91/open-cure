@@ -3618,11 +3618,61 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compare tier distribution before/after h148",
         "Measure precision by tier after reclassification",
         "Identify if any diseases moved to higher-confidence tiers"
+      ],
+      "findings": "h148 reclassification enables category-specific rescue criteria.\n\nKEY FINDINGS:\n1. Proper categorization enables GOLDEN tier access (+4.2pp overall precision)\n2. 'Other' has NO GOLDEN predictions (no rescue criteria apply)\n3. Specific categories achieve 60.8% weighted GOLDEN precision vs 0% for 'other'\n\nDETAILED RESULTS:\n- 'other' precision: 23.0% (66/287) - baseline\n- infectious: 23.8%, GOLDEN 90.9% (rescue working)\n- metabolic: 17.1%, GOLDEN 45.5% (statin rescue - lower due to edge cases)\n- autoimmune: 50.8%, GOLDEN 69.3% (DMARD rescue working)\n- dermatological: 26.5%, GOLDEN 43.6%\n\nTIER DISTRIBUTION AFTER h148:\n- Tier 1: 78 diseases (autoimmune, dermatological, psychiatric, ophthalmic)\n- Tier 2: 187 diseases (cancer, other, cardiovascular) \n- Tier 3: 225 diseases (infectious, metabolic, neurological, etc.)\n\nKEY INSIGHT: Tier assignment is less important than categorization because:\n- Category-specific rescue criteria provide high-precision paths for Tier 3 diseases\n- 'other' diseases have no rescue path regardless of tier\n- Proper categorization unlocks rescue criteria worth +4-50pp precision",
+      "result_metric": "+4.2pp precision improvement from categorization"
+    },
+    {
+      "id": "h185",
+      "title": "Edge Case Statin Filtering for Metabolic",
+      "category": "precision",
+      "rationale": "h184 showed statin rescue at 45.5% vs expected 60%. Edge cases like hyperthyroidism and diabetic nephropathy dilute precision. Filter statins to only hyperlipidemia/hypercholesterolemia for higher precision.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Identify metabolic disease subtypes where statins are NOT indicated",
+        "Add STATIN_EXCLUDED_DISEASES set (hyperthyroidism, diabetic nephropathy, etc)",
+        "Apply filter to statin rescue criteria",
+        "Measure precision improvement"
+      ]
+    },
+    {
+      "id": "h186",
+      "title": "Other Category Drug Class Analysis",
+      "category": "precision",
+      "rationale": "h184 showed \"other\" has 23% precision but NO rescue criteria. Analyze drug classes for \"other\" diseases to find hidden high-precision signals.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Get all diseases in \"other\" category",
+        "Analyze drug class distribution of hits vs misses",
+        "Identify any drug classes with >30% precision",
+        "If found, add rescue criteria for \"other\""
+      ]
+    },
+    {
+      "id": "h187",
+      "title": "Neurological Rescue Criteria Development",
+      "category": "precision",
+      "rationale": "h184 showed neurological has NO GOLDEN predictions despite being properly categorized. h168 identified this as embedding isolation. Develop alternative rescue criteria for neurological diseases.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Analyze neurological drug classes (anticonvulsants, dopamine agonists, cholinesterase inhibitors)",
+        "Compute precision by drug class for neurological diseases",
+        "Develop neurological-specific rescue criteria",
+        "Test and validate"
       ]
     }
   ],
