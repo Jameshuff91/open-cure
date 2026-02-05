@@ -366,6 +366,58 @@ FLUOROQUINOLONE_DRUGS = {'ciprofloxacin', 'levofloxacin', 'moxifloxacin', 'oflox
 # mAbs for cancer have 6.2% precision despite seeming appropriate (sparse GT)
 # Kinase inhibitors for cancer have 2.8% precision (sparse GT)
 
+# h280/h281: Complication vs Subtype relationship mapping
+# Complications are CAUSED BY the base disease (different treatment expected)
+# Subtypes are IS_A relationships (same treatment expected)
+# h280 finding: Base→Complication predictions have 0% precision (FILTER these)
+# h281 finding: Complication→Base predictions have 36.2% precision (acceptable)
+#
+# Format: {base_disease_term: [complication_terms]}
+# If drug treats base and prediction is for complication → FILTER (0% precision)
+BASE_TO_COMPLICATIONS = {
+    'diabetes': [
+        'diabetic nephropathy', 'diabetic neuropathy', 'diabetic retinopathy',
+        'diabetic macular edema', 'diabetic foot', 'diabetic ketoacidosis',
+        'diabetic peripheral neuropathy', 'diabetic peripheral angiopathy',
+        'diabetic kidney disease', 'proliferative diabetic retinopathy'
+    ],
+    'diabetes mellitus': [
+        'diabetic nephropathy', 'diabetic neuropathy', 'diabetic retinopathy',
+        'diabetic macular edema', 'diabetic ketoacidosis', 'diabetic kidney disease'
+    ],
+    'type 2 diabetes mellitus': [
+        'diabetic nephropathy', 'diabetic neuropathy', 'diabetic retinopathy',
+        'diabetic macular edema', 'diabetic ketoacidosis', 'diabetic kidney disease'
+    ],
+    'type 1 diabetes mellitus': [
+        'diabetic nephropathy', 'diabetic neuropathy', 'diabetic retinopathy',
+        'diabetic ketoacidosis'
+    ],
+    'hypertension': [
+        'hypertensive heart disease', 'hypertensive nephropathy', 'hypertensive retinopathy',
+        'hypertensive crisis', 'hypertensive emergency'
+    ],
+    'atherosclerosis': [
+        # Note: MI is technically a complication but statins work for both (50% precision)
+        # Don't filter these as they're valid cross-category predictions
+    ],
+    'alcoholism': [
+        'alcoholic liver disease', 'alcoholic hepatitis', 'alcoholic cirrhosis',
+        'wernicke encephalopathy', 'korsakoff syndrome'
+    ],
+    'obesity': [
+        'obstructive sleep apnea', 'nonalcoholic fatty liver', 'metabolic syndrome',
+        'obesity hypoventilation syndrome'
+    ],
+    'heart failure': [
+        'pulmonary edema', 'cardiorenal syndrome', 'cardiac cachexia'
+    ],
+    'chronic kidney disease': [
+        'anemia of chronic kidney disease', 'uremic pruritus', 'secondary hyperparathyroidism',
+        'renal osteodystrophy', 'uremia'
+    ],
+}
+
 # h274: Cancer type matching for confidence tiering (from h270 analysis)
 # Same cancer type (subtype refinement): 100% precision
 # Different cancer type (cross-repurposing): 30.6% precision
@@ -907,6 +959,14 @@ class DrugRepurposingPredictor:
             for drug_id in drugs:
                 self.drug_train_freq[drug_id] += 1
 
+        # h280/h281: Reverse mapping - drug_id → set of disease names (for complication check)
+        self.drug_to_diseases: Dict[str, Set[str]] = defaultdict(set)
+        for disease_id, drug_ids in self.ground_truth.items():
+            disease_name = self.disease_names.get(disease_id, disease_id)
+            for drug_id in drug_ids:
+                self.drug_to_diseases[drug_id].add(disease_name.lower())
+        self.drug_to_diseases = dict(self.drug_to_diseases)
+
     def _build_cancer_type_mapping(self) -> None:
         """
         h274: Build mapping of drug_id → set of cancer types in GT.
@@ -1053,6 +1113,44 @@ class DrugRepurposingPredictor:
         drug_category = self.domain_isolated_drugs[drug_id]
         return drug_category != target_category
 
+    def _is_base_to_complication(self, drug_id: str, predicted_disease: str) -> bool:
+        """
+        h280/h281: Check if prediction is a base→complication pattern (0% precision).
+
+        Returns True if:
+        1. Drug treats a base disease (e.g., diabetes) in GT
+        2. Prediction is for a complication of that base disease (e.g., diabetic nephropathy)
+
+        These predictions have 0% precision and should be filtered.
+        """
+        if not drug_id or not predicted_disease:
+            return False
+
+        drug_gt = self.drug_to_diseases.get(drug_id, set())
+        if not drug_gt:
+            return False
+
+        pred_lower = predicted_disease.lower()
+
+        # Check each base disease the drug treats
+        for base_disease, complications in BASE_TO_COMPLICATIONS.items():
+            base_lower = base_disease.lower()
+            # Does drug treat this base disease?
+            drug_treats_base = any(base_lower in gt or gt == base_lower
+                                   for gt in drug_gt)
+            if drug_treats_base:
+                # Is prediction for one of its complications?
+                # Use strict matching: prediction must BE the complication
+                # e.g., "diabetic nephropathy" matches but "chronic kidney disease"
+                # doesn't match "anemia of chronic kidney disease"
+                for comp in complications:
+                    comp_lower = comp.lower()
+                    # Match if prediction equals complication exactly, or starts with it
+                    if pred_lower == comp_lower or pred_lower.startswith(comp_lower + ' '):
+                        return True
+
+        return False
+
     @staticmethod
     def categorize_disease(disease_name: str) -> str:
         """Categorize a disease by name."""
@@ -1128,6 +1226,12 @@ class DrugRepurposingPredictor:
         # Domain-isolated drugs only treat one category, cross-domain predictions are always wrong
         if drug_id and self._is_cross_domain_isolated(drug_id, category):
             return ConfidenceTier.FILTER, False, 'cross_domain_isolated'
+
+        # h280/h281: Filter base→complication predictions (0% precision)
+        # When drug treats base disease (diabetes) and prediction is for complication (diabetic nephropathy)
+        # h280 finding: 0% precision for these predictions
+        if drug_id and self._is_base_to_complication(drug_id, disease_name):
+            return ConfidenceTier.FILTER, False, 'base_to_complication'
 
         # h273/h276/h278: Disease hierarchy matching - boost tier for subtype refinements
         # This indicates the prediction is a subtype refinement (e.g., "psoriasis" → "plaque psoriasis")

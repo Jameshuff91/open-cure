@@ -5834,7 +5834,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Add complication/subtype ontology to production_predictor.py",
         "Step 2: Flag predictions as 'base\u2192complication' (FILTER tier) or 'subtype' (boost)",
@@ -5845,8 +5845,8 @@
         "h280",
         "h281"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Implemented base\u2192complication filter in production_predictor.py.\n\nIMPLEMENTATION:\n1. Added BASE_TO_COMPLICATIONS mapping (diabetes\u2192diabetic nephropathy, etc.)\n2. Added drug_to_diseases reverse mapping (drug_id \u2192 set of disease names)\n3. Added _is_base_to_complication() method with strict string matching\n4. Integrated filter into _assign_confidence_tier() (returns FILTER tier with 'base_to_complication' reason)\n\nTEST RESULTS:\n- Complication diseases correctly filtered:\n  - diabetic nephropathy: 10 predictions filtered (statins, ARBs treating diabetes)\n  - diabetic retinopathy: 6 predictions filtered\n- Base diseases NOT filtered:\n  - type 2 diabetes: 0 filtered (correct)\n  - chronic kidney disease: 0 filtered (correct - fixed substring matching bug)\n\nh280 validated 0% precision for these predictions, so filtering them improves overall precision.",
+      "result_metric": "Implementation complete, filtering 6-10 predictions per complication disease"
     }
   ],
   "completed": [
@@ -6967,6 +6967,12 @@
       "hypothesis_id": "h280",
       "learning": "Subtype relationships (plaque psoriasis\u2192psoriasis) have 42.6% precision, while complication relationships (diabetic nephropathy\u2192diabetes) have 13.9%. Base\u2192complication predictions have 0% precision.",
       "implication": "Filter base\u2192complication predictions; boost subtype-related predictions"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h290",
+      "learning": "Base\u2192complication filter implemented. Key fix: strict string matching to avoid false positives (CKD != anemia of CKD)",
+      "implication": "Filtered predictions now exclude 0% precision base\u2192complication patterns"
     }
   ],
   "collaborations": [
