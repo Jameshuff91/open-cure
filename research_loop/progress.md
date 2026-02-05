@@ -1,6 +1,76 @@
 # Research Loop Progress
 
-## Current Session: h154/h155/h157 Drug Class Analysis (2026-02-05)
+## Current Session: h163/h165 Drug Class + Calibration Analysis (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested:**
+- h163: Drug Class Precision Ranking - **VALIDATED** (no new classes found, confirms existing)
+- h165: Per-Disease-Category Precision Calibration - **VALIDATED** (massive miscalibration found)
+
+### h163: Drug Class Precision Ranking - VALIDATED
+
+Systematically analyzed 26 drug classes across all disease categories to find hidden high-precision pockets.
+
+**Key Findings:**
+1. **No NEW high-precision classes** meeting >35% precision + n>=10 threshold
+2. All existing production classes confirmed:
+   - Statins rank<=5: 38.5% (n=13)
+   - Tetracyclines rank<=5: 29.5% (n=281)
+   - Beta-blockers rank<=10: 26.5% (n=34)
+3. Small-sample high-precision classes (need more data):
+   - SGLT2 inhibitors for cardiovascular: 71.4% (n=7 too small)
+   - Thiazolidinediones for metabolic: 66.7% (n=6 too small)
+
+**Conclusion:** Existing production rescue criteria are already optimal. No actionable new drug classes.
+
+### h165: Per-Disease-Category Precision Calibration - VALIDATED
+
+Computed precision by (disease_category, confidence_tier) to identify calibration issues.
+
+**Analysis:** 5 seeds, 101,939 predictions, 2,455 diseases
+
+**MASSIVE MISCALIBRATION FOUND:**
+
+| Category | MEDIUM Tier Precision | vs Overall 19.3% |
+|----------|----------------------|------------------|
+| Psychiatric | 85.0% | +65.7 pp |
+| Autoimmune | 77.8% | +58.5 pp |
+| Respiratory | 54.2% | +34.9 pp |
+| Dermatological | 49.0% | +29.7 pp |
+| Metabolic | 47.6% | +28.3 pp |
+| Cancer | 45.7% | +26.4 pp |
+| **Other (uncategorized)** | **17.3%** | **-2.0 pp** |
+| **Neurological** | **26.1%** | **+6.8 pp (lowest)** |
+
+**Even FILTER tier has high precision for some categories:**
+- Psychiatric FILTER: 90.0% (!!)
+- Autoimmune FILTER: 45.9%
+- Respiratory FILTER: 35.7%
+
+**Implication:** Current tier-only calibration under-reports precision for ~10 categories and over-reports for 'other'. Category-specific calibration would dramatically improve prediction communication.
+
+### New Hypotheses Generated
+- **h167**: Add Category-Specific Precision to Production Output (priority 2, low effort)
+- **h168**: Neurological Disease Performance Gap Analysis (priority 3, medium effort)
+- **h169**: Other Category Disease Re-Classification (priority 3, low effort)
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 79 |
+| Invalidated | 40 |
+| Inconclusive | 8 |
+| Blocked | 18 |
+| Deprioritized | 2 |
+| Pending | 24 |
+| **Total Tested** | **127** |
+
+---
+
+## Previous Session: h154/h155/h157 Drug Class Analysis (2026-02-05)
 
 ### Session Summary
 

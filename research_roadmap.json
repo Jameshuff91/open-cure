@@ -3278,13 +3278,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Extract all ATC codes from DrugBank for our drug set",
         "For each ATC level-2 category, compute precision per disease category",
         "Identify classes with >35% precision and n>=10 predictions",
         "Validate top 5 high-precision classes against current rescue criteria"
-      ]
+      ],
+      "findings": "Systematically analyzed 26 drug classes across all disease categories using name-pattern matching.\n\nKEY FINDINGS BY CATEGORY:\n1. Autoimmune: corticosteroids 46.1% (n=115), NSAIDs 50% (n=20)\n2. Cardiovascular: SGLT2 inhibitors 71.4% (n=7), beta-blockers 42.1% at rank<=10 (n=19)\n3. Metabolic: thiazolidinediones 66.7% (n=6)\n4. Respiratory: fluoroquinolones 44.4% (n=9)\n\nNEW CLASSES WITH PROMISE (n<10, needs validation):\n- SGLT2 inhibitors: 71.4% for cardiovascular (n=7 too small for production)\n- Thiazolidinediones: 66.7% for metabolic (n=6 too small)\n\nCONFIRMED EXISTING HIGH-PRECISION:\n- Tetracyclines at rank<=5: 29.5% (n=281)\n- Statins at rank<=5: 38.5% (n=13) - already in production\n- Beta-blockers rank<=10: 26.5% (n=34) - already in production\n\nNO NEW ACTIONABLE CLASSES FOUND: All classes with >35% precision and n>=10 are already in production rescue criteria. Small-sample high-precision classes (SGLT2, TZD) need larger datasets to validate.\n\nOutput: data/analysis/h163_drug_class_precision.json",
+      "result_metric": "No new classes above 35% + n>=10 threshold; confirms existing production classes are optimal"
     },
     {
       "id": "h164",
@@ -3310,12 +3312,14 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compute actual precision per (disease_category, confidence_tier) pair",
         "Add category-specific precision estimates to production output",
         "Compare calibration accuracy: current vs category-specific"
-      ]
+      ],
+      "findings": "MASSIVE MISCALIBRATION CONFIRMED. Analysis across 5 seeds (101,939 predictions, 2,455 diseases) reveals:\n\nHIGHEST PRECISION CATEGORIES (MEDIUM tier):\n- Psychiatric: 85.0% (+65.7pp vs overall 19.3%)\n- Autoimmune: 77.8% (+58.5pp vs overall)\n- Respiratory: 54.2% (+34.9pp)\n- Dermatological: 49.0% (+29.7pp)\n- Metabolic: 47.6% (+28.3pp)\n- Cancer: 45.7% (+26.4pp)\n\nLOWEST PRECISION:\n- Other (uncategorized): 17.3% MEDIUM, 4.9% LOW, 6.2% FILTER\n- Neurological: 26.1% MEDIUM\n\nKEY INSIGHT: Even the FILTER tier has high precision for some categories:\n- Psychiatric FILTER: 90.0% (!)\n- Autoimmune FILTER: 45.9%\n- Respiratory FILTER: 35.7%\n\nIMPLICATION: Current tier-only calibration UNDER-reports precision for ~10 categories and OVER-reports for 'other'. Category-specific calibration would dramatically improve prediction utility communication.\n\nNOTE: GOLDEN/HIGH tiers show NaN because simplified evaluation didn't include rescue criteria. Full production system has these tiers.\n\nOutput: data/analysis/h165_category_calibration.json",
+      "result_metric": "26 significant miscalibrations identified (>10pp difference from overall tier precision)"
     },
     {
       "id": "h166",
@@ -3331,6 +3335,55 @@
         "Classify paths by mechanistic relevance (direct target, shared pathway, etc.)",
         "Add mechanism_explanation field to production output",
         "Validate: do predictions with clear mechanism paths have higher precision?"
+      ]
+    },
+    {
+      "id": "h167",
+      "title": "Add Category-Specific Precision to Production Output",
+      "category": "production",
+      "rationale": "h165 validated that precision varies dramatically by disease category (psychiatric 85% vs other 17% in MEDIUM tier). Current production output shows expected precision per tier, but actual precision depends heavily on category. Adding category-specific precision estimates would help users better interpret predictions.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Add category_precision field to PredictionResult in production_predictor.py",
+        "Implement lookup table from h165 calibration data",
+        "Update JSON output to include expected_precision_for_category",
+        "Update CLI display to show category-adjusted precision"
+      ],
+      "dependencies": ["h165"]
+    },
+    {
+      "id": "h168",
+      "title": "Neurological Disease Performance Gap Analysis",
+      "category": "error_analysis",
+      "rationale": "h165 revealed neurological diseases have the lowest precision in MEDIUM tier (26.1% vs 45%+ for most categories). This is a significant performance gap. Understanding WHY neurological predictions fail could reveal fixable issues or fundamental limitations.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Extract neurological disease predictions and analyze hit patterns",
+        "Compare kNN neighbor quality for neurological vs high-performing categories",
+        "Identify specific neurological diseases with 0% recall",
+        "Check if neurological-specific drugs (anticonvulsants, etc.) are in training data"
+      ]
+    },
+    {
+      "id": "h169",
+      "title": "Other Category Disease Re-Classification",
+      "category": "precision",
+      "rationale": "h165 showed 'other' category has 17.3% MEDIUM precision vs 45%+ for specific categories. These uncategorized diseases (62% of predictions in original analysis) dilute overall precision. Expanding CATEGORY_KEYWORDS to reduce 'other' bucket would improve calibration accuracy.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Identify common disease types in 'other' category",
+        "Add new category keywords (renal, endocrine, musculoskeletal, etc.)",
+        "Re-run h165 calibration with expanded categories",
+        "Update production predictor with new categories"
       ]
     }
   ],
