@@ -320,6 +320,20 @@ ARB_DRUGS = {'losartan', 'valsartan', 'irbesartan', 'candesartan', 'telmisartan'
 # Heart failure disease keywords
 HF_KEYWORDS = {'heart failure', 'cardiac failure', 'cardiomyopathy', 'ventricular dysfunction'}
 
+# h230: Additional CV drug classes (from h229 validation: +21.8pp vs kNN)
+# AFib: 65.6% drug-class coverage vs 23.9% kNN (+41.7pp)
+AFIB_KEYWORDS = {'atrial fibrillation', 'atrial flutter', 'afib', 'a-fib'}
+ANTICOAGULANT_DRUGS = {'warfarin', 'rivaroxaban', 'apixaban', 'dabigatran', 'edoxaban',
+                       'heparin', 'enoxaparin', 'dalteparin', 'fondaparinux'}  # DOACs + warfarin + heparin
+RATE_CONTROL_DRUGS = {'diltiazem', 'verapamil', 'digoxin'}  # Non-beta-blocker rate control
+
+# MI/CAD: 47.9%/65.8% drug-class coverage vs 10.2%/31.7% kNN
+MI_KEYWORDS = {'myocardial infarction', 'heart attack', 'stemi', 'nstemi', 'mi '}
+CAD_KEYWORDS = {'coronary artery disease', 'coronary heart', 'ischemic heart', 'angina'}
+ANTIPLATELET_DRUGS = {'aspirin', 'clopidogrel', 'prasugrel', 'ticagrelor', 'dipyridamole',
+                      'ticlopidine', 'vorapaxar', 'cangrelor'}  # P2Y12 inhibitors + aspirin
+NITRATE_DRUGS = {'nitroglycerin', 'isosorbide', 'nitrate'}  # Vasodilators
+
 # h157: DMARDs achieve 75.4% precision for autoimmune diseases
 DMARD_DRUGS = {'methotrexate', 'sulfasalazine', 'hydroxychloroquine', 'leflunomide',
                'azathioprine', 'mycophenolate', 'cyclosporine', 'tacrolimus'}  # 75.4% rank<=10
@@ -440,7 +454,9 @@ CATEGORY_KEYWORDS = {
                        'raynaud', 'claudication', 'peripheral arterial', 'varicose', 'phlebitis',
                        'patent ductus arteriosus', 'orthostatic hypotension',
                        # h188: Additional from h186 analysis
-                       'torsades de pointes', 'tetralogy of fallot', 'edema', 'lymphedema'],
+                       'torsades de pointes', 'tetralogy of fallot', 'edema', 'lymphedema',
+                       # h230: AFib and flutter (previously missing)
+                       'atrial fibrillation', 'atrial flutter', 'fibrillation'],
     'neurological': ['neurological', 'alzheimer', 'parkinson', 'epilepsy', 'neuropathy',
                      'dementia', 'huntington', 'brain', 'seizure', 'ataxia', 'dystonia',
                      'dyskinesia', 'narcolepsy', 'migraine', 'neuralgia', 'headache',
@@ -884,6 +900,48 @@ class DrugRepurposingPredictor:
             if 'hypertension' in disease_lower or 'hypertensive' in disease_lower:
                 if any(arb in drug_lower for arb in ARB_DRUGS):
                     return ConfidenceTier.HIGH  # 20% precision (h212)
+
+            # h230: AFib specific rescue rules (from h229 validation: +41.7pp vs kNN)
+            # AFib: 65.6% drug-class coverage vs 23.9% kNN
+            is_afib = any(kw in disease_lower for kw in AFIB_KEYWORDS)
+            if is_afib:
+                # Anticoagulants for AFib stroke prevention (HIGH tier)
+                if any(ac in drug_lower for ac in ANTICOAGULANT_DRUGS):
+                    return ConfidenceTier.HIGH  # Stroke prevention
+                # Rate control drugs (beta-blockers already handled above, add non-BB rate control)
+                if any(rc in drug_lower for rc in RATE_CONTROL_DRUGS):
+                    return ConfidenceTier.HIGH
+                # Antiarrhythmics (amiodarone, sotalol already in beta-blockers, add others)
+                if 'amiodarone' in drug_lower or 'dronedarone' in drug_lower:
+                    return ConfidenceTier.HIGH
+
+            # h230: MI/ACS specific rescue rules (from h229 validation: +37.8pp vs kNN)
+            # MI: 47.9% drug-class coverage vs 10.2% kNN
+            is_mi = any(kw in disease_lower for kw in MI_KEYWORDS)
+            if is_mi:
+                # Antiplatelet drugs for MI (HIGH tier)
+                if any(ap in drug_lower for ap in ANTIPLATELET_DRUGS):
+                    return ConfidenceTier.HIGH
+                # Statins for MI (already covered by metabolic statin rule, but add here for clarity)
+                if any(st in drug_lower for st in STATIN_DRUGS):
+                    return ConfidenceTier.HIGH
+                # Nitrates for acute MI
+                if any(ni in drug_lower for ni in NITRATE_DRUGS):
+                    return ConfidenceTier.HIGH
+
+            # h230: CAD/Angina specific rescue rules (from h229 validation: +34.1pp vs kNN)
+            # CAD: 65.8% drug-class coverage vs 31.7% kNN
+            is_cad = any(kw in disease_lower for kw in CAD_KEYWORDS)
+            if is_cad:
+                # Antiplatelet drugs for CAD
+                if any(ap in drug_lower for ap in ANTIPLATELET_DRUGS):
+                    return ConfidenceTier.HIGH
+                # Nitrates for angina
+                if any(ni in drug_lower for ni in NITRATE_DRUGS):
+                    return ConfidenceTier.HIGH
+                # Statins for CAD
+                if any(st in drug_lower for st in STATIN_DRUGS):
+                    return ConfidenceTier.HIGH
 
             # h136 generic rescue
             if rank <= 5 and mechanism_support:

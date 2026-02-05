@@ -4550,7 +4550,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add CV disease classification to production_predictor.py",
         "Implement drug class matching for AFib (anticoagulants, rate control)",
@@ -4560,7 +4560,9 @@
       ],
       "dependencies": [
         "h229"
-      ]
+      ],
+      "findings": "VALIDATED: Integrated full CV drug-class prediction into production_predictor.py.\n\n**IMPLEMENTATION:**\n1. Added drug class constants:\n   - AFIB_KEYWORDS, ANTICOAGULANT_DRUGS, RATE_CONTROL_DRUGS\n   - MI_KEYWORDS, CAD_KEYWORDS, ANTIPLATELET_DRUGS, NITRATE_DRUGS\n2. Added 'atrial fibrillation', 'atrial flutter', 'fibrillation' to CATEGORY_KEYWORDS['cardiovascular']\n3. Added rescue rules in _apply_category_rescue() for:\n   - AFib: anticoagulants, rate control drugs, antiarrhythmics -> HIGH\n   - MI: antiplatelets, statins, nitrates -> HIGH\n   - CAD: antiplatelets, nitrates, statins -> HIGH\n\n**PRECISION EVALUATION (8 CV diseases, top 20):**\n- HIGH tier: 59.4% precision (19/32)\n- Per-disease:\n  - AFib: 7/7 HIGH tier TP (100% precision!)\n  - Hypertension: 6/6 HIGH tier TP (100% precision!)\n  - CAD: 2/3 HIGH tier TP (67% precision)\n  - MI: 1/8 HIGH tier TP (12.5% precision - needs investigation)\n\n**KEY DRUGS NOW RESCUED:**\n- AFib: Propranolol, Verapamil, Carvedilol, Bisoprolol, Rivaroxaban, Diltiazem, Warfarin\n- MI: Clopidogrel, Vorapaxar (antiplatelets), Pravastatin, Lovastatin (statins)\n- CAD: Propranolol, Ticagrelor, Nitroglycerin\n\n**LIMITATION:** MI precision lower than expected (12.5% vs 47.9% from h229). May need disease-specific GT matching tuning.",
+      "result_metric": "59.4% HIGH tier precision"
     },
     {
       "id": "h231",
@@ -5479,6 +5481,12 @@
       "hypothesis_id": "h229",
       "learning": "Drug-class prediction works well for cardiovascular (+21.8pp vs kNN). Best for HF (+45pp), AFib (+42pp), MI (+38pp), CAD (+34pp). Complements h174 psychiatric (+7.9pp) result.",
       "implication": "Can integrate drug-class prediction for CV into production predictor. Combined with h174 (psychiatric), drug-class approach is now validated for 2 major disease categories."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h230",
+      "learning": "CV drug-class rescue rules achieve 59.4% HIGH tier precision. AFib and hypertension achieve 100% precision with rescue rules. MI underperforms (12.5%) - may need GT matching tuning.",
+      "implication": "Production predictor now has comprehensive CV coverage. Combined with h217 (HF) and existing h154 (beta-blockers), cardiovascular predictions significantly improved."
     }
   ],
   "collaborations": [
