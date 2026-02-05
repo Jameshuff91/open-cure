@@ -5142,7 +5142,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Load production predictions from data/deliverables/",
         "Step 2: For each prediction, compute PPI mechanism support (extended target overlap with disease genes)",
@@ -5154,8 +5154,8 @@
       "dependencies": [
         "h96"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "PPI mechanism support as confidence tier - STRONGLY VALIDATED.\n\nKEY RESULTS:\n\n1. OVERALL PRECISION LIFT:\n   - With PPI mechanism: 18.90% (1361/7201 predictions)\n   - Without PPI mechanism: 7.22% (452/6260 predictions)\n   - Lift: 2.62x (p < 0.000001, chi-square = 390.97)\n\n2. LIFT BY EXISTING TIER:\n   | Tier   | With Mech | Without Mech | Lift |\n   |--------|-----------|--------------|------|\n   | HIGH   | 30.4%     | 13.5%        | 2.25x|\n   | MEDIUM | 17.7%     | 6.4%         | 2.77x|\n   | LOW    | 9.6%      | 2.4%         | 4.06x|\n\n3. KEY INSIGHT: TIER REORGANIZATION NEEDED\n   MEDIUM+MECH (17.7%) > HIGH (13.5%)\n   LOW+MECH (9.6%) > MEDIUM (6.4%)\n   \n   Current tiers based on model confidence\n   New tiers should combine model confidence + mechanism support\n\n4. PROPOSED NEW TIER SYSTEM:\n   - HIGH+MECH: 30.4% precision (top tier)\n   - MEDIUM+MECH: 17.7% (upgrade to HIGH-equivalent)\n   - HIGH: 13.5%\n   - LOW+MECH: 9.6%\n   - MEDIUM: 6.4%\n   - LOW: 2.4%\n\n5. COVERAGE:\n   - 53.5% of predictions have PPI mechanism support\n   - This is higher than the 21.8% with direct mechanism support\n\nCONCLUSION: PPI mechanism support provides 2.62x precision lift and should be incorporated into the confidence tier system. MEDIUM+MECH predictions should be prioritized over HIGH predictions without mechanism support.",
+      "result_metric": "2.62x precision lift (18.9% vs 7.2%), p < 0.000001"
     },
     {
       "id": "h260",
@@ -6231,6 +6231,12 @@
       "hypothesis_id": "h96",
       "learning": "PPI extension doubles theoretical ceiling (22%\u219255%) but actual R@30 gains are modest (+1.4pp). Root cause: false positive dilution. Key finding: 2.89x selectivity ratio makes PPI useful as CONFIDENCE FILTER, not primary ranking signal.",
       "implication": "Use mechanism support to boost/filter existing predictions rather than as standalone approach"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h259",
+      "learning": "PPI mechanism support provides 2.62x precision lift (p<0.000001). MEDIUM+MECH (17.7%) > HIGH without mechanism (13.5%). Tier system should combine model confidence with mechanism validation.",
+      "implication": "Reorganize confidence tiers: HIGH+MECH > MEDIUM+MECH > HIGH > LOW+MECH > MEDIUM > LOW"
     }
   ],
   "collaborations": [
