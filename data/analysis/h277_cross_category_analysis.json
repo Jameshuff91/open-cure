@@ -1,0 +1,374 @@
+{
+  "hypothesis": "h277",
+  "summary": {
+    "within_category": {
+      "total": 10124,
+      "correct": 1050,
+      "precision": 10.37139470564994
+    },
+    "cross_category_match": {
+      "total": 187,
+      "correct": 0,
+      "precision": 0.0
+    },
+    "cross_category_no_match": {
+      "total": 3105,
+      "correct": 0,
+      "precision": 0.0
+    }
+  },
+  "examples": {
+    "within_category": [
+      {
+        "drug_name": "Rivaroxaban",
+        "disease": "chronic heart failure",
+        "pred_cats": [
+          "cardiovascular"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "other",
+          "cardiovascular"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Propranolol",
+        "disease": "chronic heart failure",
+        "pred_cats": [
+          "cardiovascular"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "cardiovascular"
+        ],
+        "is_correct": true,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Perindopril",
+        "disease": "chronic heart failure",
+        "pred_cats": [
+          "cardiovascular"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "cardiovascular"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Perindoprilat",
+        "disease": "chronic heart failure",
+        "pred_cats": [
+          "cardiovascular"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "cardiovascular"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Carvedilol",
+        "disease": "chronic heart failure",
+        "pred_cats": [
+          "cardiovascular"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "cardiovascular"
+        ],
+        "is_correct": true,
+        "tier": "HIGH"
+      }
+    ],
+    "cross_category_match": [
+      {
+        "drug_name": "Ranibizumab",
+        "disease": "diabetic foot infections without osteomyelitis",
+        "pred_cats": [
+          "metabolic",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "metabolic"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Demeclocycline",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Oxytetracycline",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Sitafloxacin",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Cefiderocol",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Cefaclor",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "other",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Penicillin V",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "cardiovascular",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Azithromycin",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "other",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Clindamycin",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      },
+      {
+        "drug_name": "Garenoxacin",
+        "disease": "uncomplicated urinary tract infections",
+        "pred_cats": [
+          "renal",
+          "infectious"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "infectious"
+        ],
+        "is_correct": false,
+        "tier": "HIGH"
+      }
+    ],
+    "cross_category_no_match": [
+      {
+        "drug_name": "Azathioprine",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "infectious",
+          "autoimmune"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Budesonide",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "gastrointestinal",
+          "autoimmune"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Adalimumab",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "autoimmune"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Dupilumab",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "other",
+          "gastrointestinal"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Naproxen",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "autoimmune"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Indomethacin",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "autoimmune"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Diclofenac",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "other",
+          "cancer",
+          "autoimmune"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Celecoxib",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "neurological",
+          "other",
+          "cardiovascular",
+          "autoimmune"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Human immunoglobulin G",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "neurological",
+          "other"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      },
+      {
+        "drug_name": "Tocilizumab",
+        "disease": "nephrotic syndrome",
+        "pred_cats": [
+          "renal"
+        ],
+        "drug_gt_cats": [
+          "respiratory",
+          "other",
+          "autoimmune"
+        ],
+        "is_correct": false,
+        "tier": "MEDIUM"
+      }
+    ]
+  }
+}

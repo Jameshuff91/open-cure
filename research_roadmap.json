@@ -5547,7 +5547,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Identify cross-category disease relationships (e.g., diabetic cardiovascular disease)",
         "Step 2: Build cross-category hierarchy mapping",
@@ -5557,8 +5557,8 @@
       "dependencies": [
         "h273"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Cross-category matching has 0% precision.\n\n**Results:**\n| Category Match Type | Precision | N |\n|---------------------|-----------|---|\n| Within-category | 10.4% | 10,124 |\n| Cross-category match | 0.0% | 187 |\n| Cross-category no match | 0.0% | 3,105 |\n\n**Root causes:**\n1. Cross-category diseases (diabetic nephropathy, lupus nephritis) are RARE in GT - only 4 true cross-category diseases found\n2. When drugs treat both base disease and complication (75% overlap for diabetes\u2192diabetic nephropathy), the model predicts for SINGLE-category versions\n3. Example: Losartan treats diabetic nephropathy (GT) but model predicts \"chronic kidney disease\" (single-category) instead\n\n**Key insight:** The model's recall issue for cross-category diseases is NOT about confidence/precision - it's that kNN doesn't recommend the right drugs for cross-category conditions in the first place.\n\n**Implication:** Cross-category hierarchy matching would NOT improve precision. Instead, need to address the recall gap for cross-category diseases (different problem).",
+      "result_metric": "Cross-category: 0.0% precision vs Within-category: 10.4%"
     },
     {
       "id": "h278",
@@ -5664,6 +5664,28 @@
       ],
       "dependencies": [
         "h279"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h283",
+      "title": "Cross-Category Disease Recall Enhancement",
+      "category": "recall",
+      "rationale": "h277 revealed cross-category diseases (diabetic nephropathy, lupus nephritis) have 0% prediction precision because the kNN model doesn't recommend correct drugs for them at all. This is a recall problem, not precision. Could we expand the kNN neighbor search to include diseases from related categories?",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify cross-category diseases in GT (diabetic nephropathy, lupus nephritis)",
+        "Step 2: For these diseases, also search kNN neighbors in the \"parent\" category",
+        "Step 3: E.g., for diabetic nephropathy, include diabetes (metabolic) neighbors + nephropathy (renal) neighbors",
+        "Step 4: Evaluate if this improves R@30 for cross-category diseases",
+        "Success criteria: >20% R@30 for cross-category diseases"
+      ],
+      "dependencies": [
+        "h277"
       ],
       "findings": null,
       "result_metric": null
@@ -6757,6 +6779,12 @@
       "hypothesis_id": "h279",
       "learning": "Disease specificity direction matters: Specific\u2192Generic predictions have 4.1% precision vs 19.3% for Generic\u2192Specific (4.7x difference). However, the hierarchy definition is critical - need to distinguish true subtypes from complications.",
       "implication": "Could implement specificity-based confidence scoring, but requires careful ontological classification"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h277",
+      "learning": "Cross-category diseases have 0% prediction precision because the model doesn't recommend the right drugs at all (recall issue). 75% of diabetic nephropathy drugs also treat diabetes, but model predicts single-category diseases instead (e.g., \"chronic kidney disease\" vs \"diabetic nephropathy\").",
+      "implication": "Cross-category is a RECALL problem, not precision. Need to modify kNN neighbor search to include related categories."
     }
   ],
   "collaborations": [
