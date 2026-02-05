@@ -1,0 +1,45 @@
+{
+  "correlations": {
+    "drug_jaccard": {
+      "pearson": 0.18223135338412483,
+      "spearman": 0.18073369577799756,
+      "p_value": 7.104678912720952e-36
+    },
+    "gene_jaccard": {
+      "pearson": NaN,
+      "spearman": NaN,
+      "p_value": NaN
+    },
+    "neighbor_jaccard": {
+      "pearson": -0.07281706901612547,
+      "spearman": -0.12074982112913347,
+      "p_value": 7.009823597784567e-07
+    },
+    "common_neighbors": {
+      "pearson": -0.10085156953761754,
+      "spearman": -0.12096775236719651,
+      "p_value": 6.005052929535126e-12
+    }
+  },
+  "r2_scores": {
+    "drug_jaccard": 0.03320826615620964,
+    "gene_jaccard": 0.0,
+    "neighbor_jaccard": 0.00530232554009924,
+    "common_neighbors": 0.01017103907820105
+  },
+  "combined_r2": 0.04436732140455968,
+  "best_feature": "drug_jaccard",
+  "high_sim_means": {
+    "drug_jaccard": 0.0803717556427235,
+    "gene_jaccard": 0.0,
+    "neighbor_jaccard": 0.0,
+    "common_neighbors": 0.0
+  },
+  "low_sim_means": {
+    "drug_jaccard": 0.0004915411925106374,
+    "gene_jaccard": 0.0,
+    "neighbor_jaccard": 0.0010746245093925817,
+    "common_neighbors": 0.9935344827586207
+  },
+  "n_pairs": 4632
+}
