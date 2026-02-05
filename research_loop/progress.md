@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h184 (2026-02-05)
+## Current Session: h184, h186, h188, h187 (2026-02-05)
 
 ### Session Summary
 
@@ -8,6 +8,9 @@
 **Status:** Complete
 **Hypotheses Tested:**
 - h184: Tier Reassignment Impact Measurement - **VALIDATED** (+4.2pp precision from categorization)
+- h186: Other Category Drug Class Analysis - **VALIDATED** (reclassification > rescue)
+- h188: Implement h186 Keyword Additions - **VALIDATED** (78 → 18 other diseases)
+- h187: Neurological Rescue Criteria - **VALIDATED** (epilepsy anticonvulsant 100%)
 
 ### h184: Tier Reassignment Impact Measurement - VALIDATED
 
@@ -137,7 +140,20 @@ Developed GOLDEN rescue criteria for neurological diseases (specifically epileps
 | Blocked | 18 |
 | Deprioritized | 2 |
 | Pending | 29 |
-| **Total Tested** | **137** |
+| **Total Tested** | **139** |
+
+### Key Session Learnings
+
+1. **Categorization enables rescue criteria** - Diseases in 'other' have 0% GOLDEN predictions; proper categorization unlocks rescue paths
+2. **'Other' is too heterogeneous** - No single drug class >30% precision; reclassification is better than rescue criteria
+3. **Neurological needs disease-specific rescue** - Anticonvulsants only work for epilepsy/seizure; other neuro diseases need different criteria
+4. **Keyword additions are high ROI** - Adding 60 keywords reduced 'other' by 77% with minimal effort
+
+### Recommended Next Steps
+
+1. **h91: Literature Mining** (priority 2, high effort) - 93.4% of zero-treatment diseases need this
+2. **h87: Drug Mechanism Clustering** (priority 3, medium effort) - Could help cross-disease transfer
+3. **h124: Disease Embedding Interpretability** (priority 3, medium effort) - Understand why kNN works
 
 ---
 
