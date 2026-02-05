@@ -5654,7 +5654,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Compute hierarchy depth delta for each prediction (pred_level - gt_level)",
         "Step 2: Bucket by delta: -2, -1, 0, +1, +2",
@@ -5665,8 +5665,8 @@
       "dependencies": [
         "h279"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED with strong results.\n\n**Precision by hierarchy delta magnitude:**\n| Delta Magnitude | Precision | N |\n|-----------------|-----------|---|\n| |delta| = 0 (same level) | **51.6%** | 440 |\n| |delta| = 1 (off by 1) | 12.0% | 125 |\n| |delta| = 2 (off by 2) | 5.4% | 37 |\n\n**Key insight:** Same-level predictions (where GT and prediction are at the SAME specificity level) have **39.6 pp higher precision** than predictions that cross specificity levels.\n\nThis is a clear precision gradient:\n- Same level: 51.6% precision\n- Off by 1 level: 12.0% precision (4.3x worse)\n- Off by 2 levels: 5.4% precision (9.6x worse)\n\n**By direction:**\n- Delta -2 (much less specific): 5.7%\n- Delta -1 (less specific): 4.5%\n- Delta 0 (same): 51.6%\n- Delta +1 (more specific): 16.0%\n- Delta +2 (much more specific): 0.0%\n\nNote: More specific (+1) has higher precision (16%) than less specific (-1, 4.5%), confirming h279 finding.\n\n**Actionable:** Delta magnitude could be used as a confidence signal - predictions with |delta| > 0 should be lower confidence tier.",
+      "result_metric": "Same-level 51.6% vs Off-by-1 12.0% (+39.6 pp)"
     },
     {
       "id": "h283",
@@ -6785,6 +6785,12 @@
       "hypothesis_id": "h277",
       "learning": "Cross-category diseases have 0% prediction precision because the model doesn't recommend the right drugs at all (recall issue). 75% of diabetic nephropathy drugs also treat diabetes, but model predicts single-category diseases instead (e.g., \"chronic kidney disease\" vs \"diabetic nephropathy\").",
       "implication": "Cross-category is a RECALL problem, not precision. Need to modify kNN neighbor search to include related categories."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h282",
+      "learning": "Hierarchy depth delta strongly predicts precision: |delta|=0 has 51.6% precision vs |delta|=1 at 12.0% (4.3x worse). Clear precision gradient by delta magnitude.",
+      "implication": "Can use delta magnitude as confidence signal. Same-level matches should be HIGH tier, cross-level should be MEDIUM or LOW."
     }
   ],
   "collaborations": [
