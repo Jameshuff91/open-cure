@@ -1,0 +1,26 @@
+{
+  "hypothesis": "h190",
+  "title": "ATC-Based Biologic Gap Analysis",
+  "date": "2026-02-05",
+  "status": "VALIDATED",
+  "findings": {
+    "biologic_precision": {
+      "L04AB_TNF": 7.2,
+      "L04AC_IL": 1.9,
+      "L04AF_JAK": 12.5,
+      "L01F_oncology_mabs": 2.0
+    },
+    "traditional_precision": {
+      "L04AX_immunosuppressants": 32.8,
+      "H02AB_glucocorticoids": 77.0
+    },
+    "gt_coverage": {
+      "H02AB_glucocorticoids": 1832,
+      "L04AX_immunosuppressants": 557,
+      "L04AB_TNF": 23,
+      "L04AC_IL": 11,
+      "L04AF_JAK": 28
+    },
+    "root_cause": "Sparse GT coverage for biologics - few approved indications per drug"
+  }
+}

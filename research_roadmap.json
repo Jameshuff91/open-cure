@@ -3732,7 +3732,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "category": "error_analysis",
       "dependencies": [
         "h152"
@@ -3743,7 +3743,9 @@
         "Correlate with target mechanism and disease categories",
         "Identify if any biologic subclass has acceptable precision",
         "Success: Find biologic subclass with >30% precision or explain why all fail"
-      ]
+      ],
+      "findings": "ATC-based biologic gap analysis reveals:\n\n1. **All biologic subclasses have low precision (<20%)**:\n   - TNF inhibitors (L04AB): 7.2%\n   - IL inhibitors (L04AC): 1.9%\n   - JAK inhibitors (L04AF): 12.5%\n   - Oncology mAbs (L01F*): 2.0%\n\n2. **No category + biologic combination exceeds 30%**:\n   - Best: autoimmune + JAK: 19%\n   - Best: autoimmune + TNF: 17%\n   - All others <10%\n\n3. **Root cause: SPARSE GT COVERAGE**:\n   - Glucocorticoids (H02AB): 1832 GT entries\n   - Traditional immunosuppressants (L04AX): 557 GT entries  \n   - TNF inhibitors (L04AB): only 23 GT entries\n   - IL inhibitors (L04AC): only 11 GT entries\n\n4. **Biologics ARE in GT but with few indications**:\n   - Tofacitinib: 24 diseases\n   - Etanercept: 9 diseases\n   - Adalimumab: 4 diseases (vs hundreds of predicted)\n\n5. **Implication**: Biologic gap is partly DATA QUALITY issue, not just METHOD issue.\n   kNN recommends biologics based on similar-disease patterns, but GT doesn't capture\n   their actual indications comprehensively.\n\nConclusion: Cannot improve biologic precision with current GT. Need either:\n- Better GT coverage for biologics\n- Different evaluation for sparse-indication drugs\n- Accept that biologics are low-confidence predictions",
+      "result_metric": "No biologic subclass >20% precision; sparse GT is root cause"
     },
     {
       "id": "h191",
@@ -4503,6 +4505,12 @@
       "hypothesis_id": "h189",
       "learning": "ATC L4 rescue provides 383% coverage increase for autoimmune while maintaining 75.7% precision. Biologic exclusion (L04AB/AC/AF) critical - they have only 14.5% vs 77-82% for traditional drugs.",
       "implication": "Use ATC as complement to manual lists for rescue criteria"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h190",
+      "learning": "Biologic gap is largely due to sparse GT coverage (23 TNF entries vs 1832 glucocorticoid). Biologics have few approved indications, so kNN over-predicts them. This is a data quality issue, not method issue.",
+      "implication": "Accept biologics as low-confidence OR expand GT with biologic indications"
     }
   ],
   "collaborations": [
