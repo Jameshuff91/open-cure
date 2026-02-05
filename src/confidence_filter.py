@@ -200,6 +200,33 @@ BCELL_DEPLETING_PATTERNS = [
     r"bectumomab",
 ]
 
+# TNF inhibitors - contraindicated in SLE, MS, and heart failure (h146/h149)
+# Can cause drug-induced lupus and worsen demyelinating diseases
+TNF_INHIBITOR_PATTERNS = [
+    r"adalimumab",
+    r"infliximab",
+    r"etanercept",
+    r"certolizumab",
+    r"golimumab",
+]
+
+# Diseases where TNF inhibitors are contraindicated
+TNF_CONTRAINDICATED_DISEASES = [
+    "systemic lupus erythematosus", "sle", "lupus",
+    "multiple sclerosis", "ms",
+    "heart failure", "congestive heart failure", "cardiac failure",
+    "demyelinating disease", "optic neuritis",
+]
+
+# JAK inhibitors - contraindicated in certain conditions
+JAK_INHIBITOR_PATTERNS = [
+    r"tofacitinib",
+    r"baricitinib",
+    r"upadacitinib",
+    r"filgotinib",
+    r"ruxolitinib",
+]
+
 # Metabolic disease names
 METABOLIC_DISEASES = [
     "diabetes", "type 2 diabetes", "type 1 diabetes", "metabolic syndrome",
@@ -452,6 +479,21 @@ def filter_prediction(
                     original_score=score,
                     confidence=ConfidenceLevel.EXCLUDED,
                     reason="B-cell depletion paradoxically induces/worsens psoriasis",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f2: TNF inhibitors contraindicated for SLE, MS, heart failure (h146/h149)
+    # TNF inhibitors can cause drug-induced lupus and worsen demyelinating diseases
+    for pattern in TNF_INHIBITOR_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(d in disease_lower for d in TNF_CONTRAINDICATED_DISEASES):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="TNF inhibitors contraindicated - can cause drug-induced lupus or worsen demyelinating/cardiac disease",
                     drug_type=drug_type,
                     adjusted_score=0.0,
                 )

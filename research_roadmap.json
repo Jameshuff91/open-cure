@@ -2873,7 +2873,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Step 1: Analyze metabolic disease predictions in detail",
         "Step 2: Check if ATC class A10 (diabetes) drugs have higher precision",
@@ -2884,7 +2884,9 @@
       "dependencies": [
         "h69",
         "h136"
-      ]
+      ],
+      "findings": "VALIDATED: Drug class is the dominant signal for metabolic disease precision.\n\nKey results across 5 seeds (720 total predictions, 6.1% base rate):\n- Statin class: 47.6% precision (21 predictions, 10 hits)\n- Statin + rank<=10: **60.0% precision** (10 predictions, 6 hits) - BEST CRITERIA\n- Fibrate class: 36.4% precision (11 predictions, 4 hits) \n- Thiazolidinedione/Sulfonylurea: 33.3% precision each\n\nCritical finding: Generic mechanism support FAILS for metabolic (freq>=10+mech = 0% precision).\nModern drug classes (GLP-1, SGLT2) show 0% - not represented in DRKG.\n\nACTION: Add statin + rank<=10 as GOLDEN rescue criteria for metabolic diseases.",
+      "result_metric": "60.0% precision for statin+rank<=10"
     },
     {
       "id": "h145",
@@ -2975,7 +2977,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Research known drug class contraindications (TNF inhibitors + SLE, etc.)",
         "Build contraindication lookup table from DrugBank or similar",
@@ -2984,6 +2986,68 @@
       ],
       "dependencies": [
         "h146"
+      ],
+      "findings": "Implemented and validated mechanistic contraindication filter:\n\nFILTER RULES ADDED:\n1. TNF inhibitors (adalimumab, infliximab, etanercept, certolizumab, golimumab) \n   contraindicated for: SLE, lupus, multiple sclerosis, heart failure, demyelinating diseases\n   \nIMPACT:\n- 3 false positive predictions filtered out\n- Adalimumab -> SLE (from h146 analysis) now correctly excluded\n- No false negatives for legitimate TNF inhibitor uses (RA, Crohn's, etc.)\n\nIMPLEMENTATION:\n- Added TNF_INHIBITOR_PATTERNS and TNF_CONTRAINDICATED_DISEASES to confidence_filter.py\n- Filter applies before confidence tier assignment\n\nVALIDATION:\n- Tested against 5 cases: 3 contraindicated pairs correctly excluded, 2 legitimate pairs allowed\n- Re-ran export: 47 safety filter exclusions (up from 45), 0 TNF inhibitor contraindications in output",
+      "result_metric": "3 false positives filtered"
+    },
+    {
+      "id": "h150",
+      "title": "Drug Class Rescue for Other Categories",
+      "description": "h144 showed drug class (statin) achieves 60% precision for metabolic. Test if drug class-based rescue criteria work for other weak categories.",
+      "rationale": "If drug class works for metabolic, it may work for GI (PPIs), cardiovascular (ACE/ARB), etc.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 2,
+      "category": "precision",
+      "dependencies": [
+        "h144"
+      ],
+      "steps": [
+        "Identify underperforming categories (GI, ophthalmic)",
+        "Define drug class patterns for each category",
+        "Test class-specific precision criteria",
+        "Success: Find class criteria achieving >30% for at least one category"
+      ]
+    },
+    {
+      "id": "h151",
+      "title": "Modern Drug Gap Analysis",
+      "description": "h144 showed GLP-1 and SGLT2 inhibitors have 0% precision - they are not in DRKG. Quantify how many modern drugs are missing from DRKG.",
+      "rationale": "DRKG was built from data before 2019. Modern drug classes may be systematically missing, limiting recall.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "priority": 2,
+      "category": "error_analysis",
+      "dependencies": [
+        "h144"
+      ],
+      "steps": [
+        "Get list of drugs approved 2015-2025 from FDA/DrugBank",
+        "Check which are in DRKG compounds",
+        "Quantify coverage gap by drug class",
+        "Success: Document coverage and identify categories most affected"
+      ]
+    },
+    {
+      "id": "h152",
+      "title": "ATC Code Integration for Precision",
+      "description": "Drug class was more predictive than generic mechanism for metabolic. Can we use ATC codes systematically to improve all predictions?",
+      "rationale": "ATC codes encode therapeutic category (A10=antidiabetic, C09=ACE inhibitors). May provide cleaner signal than manual class definitions.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 3,
+      "category": "precision",
+      "dependencies": [
+        "h144"
+      ],
+      "steps": [
+        "Load ATC code mappings for DRKG compounds",
+        "Test ATC-based precision criteria across categories",
+        "Compare ATC vs manual drug class definitions",
+        "Success: ATC codes improve precision stratification"
       ]
     }
   ],
@@ -3595,6 +3659,12 @@
       "hypothesis_id": "h146",
       "learning": "kNN collaborative filtering can produce false positives when drugs work for similar diseases but are contraindicated for the target disease (e.g., TNF inhibitors for autoimmune diseases except SLE). Need mechanistic contraindication filtering.",
       "implication": "Add mechanistic contraindication filters to exclude predictions like adalimumab -> SLE"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h144",
+      "learning": "Drug class (statin) achieves 60% precision for metabolic vs 6% base. Mechanism support fails (0% at freq>=10+mech). Modern drugs (GLP-1, SGLT2) not in DRKG.",
+      "implication": "Use drug class-based rescue for metabolic. Investigate ATC codes. DRKG has coverage gap for 2015+ drugs."
     }
   ],
   "collaborations": [

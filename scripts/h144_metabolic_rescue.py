@@ -416,8 +416,8 @@ def main():
         'total_metabolic_predictions': len(df),
         'base_hit_rate': float(df['is_hit'].mean() * 100),
         'best_criteria': best_criteria,
-        'best_precision': best_precision,
-        'success': best_precision >= 30,
+        'best_precision': float(best_precision),
+        'success': bool(best_precision >= 30),
     }
 
     results_file = ANALYSIS_DIR / "h144_metabolic_rescue.json"
