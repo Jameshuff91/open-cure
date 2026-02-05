@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h145, h146, h149 Production & Validation (2026-02-05)
+## Current Session: h145, h146, h147, h149 Production & Validation (2026-02-05)
 
 ### Session Summary
 
@@ -9,7 +9,8 @@
 **Hypotheses Tested:**
 - h145: Production Novel Prediction Export - **VALIDATED**
 - h146: Minocycline Repurposing Validation - **VALIDATED** (20% validated, 10% false positive)
-- h149: Mechanistic Contraindication Filter - **VALIDATED** (3 false positives filtered)
+- h149: Mechanistic Contraindication Filter - **VALIDATED** (4+ false positives filtered)
+- h147: Biologic Drug Prioritization - **VALIDATED** (124 biologics analyzed)
 
 ### Key Findings This Session
 
@@ -25,19 +26,24 @@
 
 3. **h149 Contraindication Filter:**
    - Added TNF inhibitor contraindication filter
-   - Filters adalimumab/infliximab/etanercept for SLE, MS, heart failure
-   - 3 false positives now correctly excluded
+   - Filters adalimumab/infliximab/etanercept for SLE, MS, heart failure, AIH
+   - 4+ false positives now correctly excluded
+
+4. **h147 Biologic Prioritization:**
+   - 124 biologic predictions (2 GOLDEN, 26 HIGH, 96 MEDIUM)
+   - Pembrolizumab -> cholangiocarcinoma is FDA-APPROVED (GT gap)
+   - Adalimumab -> autoimmune hepatitis: FALSE POSITIVE (added to filter)
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 68 |
+| Validated | 69 |
 | Invalidated | 38 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 19 |
-| **Total Tested** | **116** |
+| Pending | 18 |
+| **Total Tested** | **117** |
 
 ---
 
