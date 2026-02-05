@@ -4293,7 +4293,7 @@
       "priority": 4,
       "effort": "low",
       "expected_impact": "medium",
-      "status": "pending",
+      "status": "invalidated",
       "dependencies": [
         "h209"
       ],
@@ -4303,7 +4303,9 @@
         "Correlate disease fragmentation with blocking rate",
         "If significant, propose neighbor expansion strategy",
         "Success criteria: Identify actionable fragmentation pattern"
-      ]
+      ],
+      "findings": "INVALIDATED: Disease fragmentation is NOT the cause of blocked predictions.\n\nKEY FINDINGS:\n1. Similar disease NAMES have LOW GT drug overlap:\n   - Diabetes: T1DM \u2229 T2DM = 17 drugs (Jaccard 0.26)\n   - Hypertension: Systemic \u2229 Pulmonary = 13 drugs (J=0.14)\n   - Leukemia: CML \u2229 ALL = 3 drugs (J=0.18)\n   - Lymphoma: Average J=0.041\n\n2. Disease subtypes are CORRECTLY separated:\n   - kNN properly distinguishes between related but different diseases\n   - This is NOT fragmentation, it's clinically accurate\n\n3. Arthritis has highest overlap (J=0.205) due to shared autoimmune mechanisms\n\nCONCLUSION:\nDisease fragmentation is NOT causing blocked predictions. The blocking reflects\ngenuine therapeutic differences between disease subtypes. Merging would HURT\nprecision, not help recall.\n\nIMPLICATION:\nEach disease subtype needs its own specific rescue rules (like h217 for heart failure,\nh215 for breast cancer + CDK inhibitors). General merging strategies will fail.",
+      "result_metric": "INVALIDATED: Fragmentation reflects real therapeutic differences (avg Jaccard 0.02-0.20)"
     },
     {
       "id": "h217",
@@ -5203,6 +5205,12 @@
       "hypothesis_id": "h215",
       "learning": "CDK inhibitors for breast cancer have 100% precision. Rescue rules only apply to rank <= 20 due to FILTER check order.",
       "implication": "Consider restructuring tier assignment to allow category rescue before FILTER cutoff for specific drug classes"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h216",
+      "learning": "Disease fragmentation is NOT a bug - it reflects genuine therapeutic differences. Similar disease names have low GT overlap (J=0.02-0.20).",
+      "implication": "Continue with specific drug class rescue rules per disease subtype"
     }
   ],
   "collaborations": [
