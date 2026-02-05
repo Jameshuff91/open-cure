@@ -265,6 +265,26 @@ PREGNANCY_CONDITIONS = [
     "placenta", "fetal", "maternal",
 ]
 
+# h252: SGLT2 Inhibitors - FALSE POSITIVE patterns
+# SGLT2i cause hypoglycemia (don't treat it) and are for CKD stages 2-4 (not uremia/ESRD)
+SGLT2_INHIBITOR_PATTERNS = [
+    r"canagliflozin",
+    r"empagliflozin",
+    r"dapagliflozin",
+    r"ertugliflozin",
+    r"sotagliflozin",
+    r"ipragliflozin",
+]
+
+# Conditions where SGLT2 inhibitors are FALSE POSITIVES
+SGLT2_FALSE_POSITIVE_CONDITIONS = [
+    "hypoglycemia",  # SGLT2i can CAUSE hypoglycemia, not treat it
+    "uremia",  # Too advanced (ESRD/CKD stage 5) - SGLT2i for stages 2-4
+    "kidney failure",  # Same as uremia
+    "end stage renal",  # Same as uremia
+    "esrd",  # End-stage renal disease
+]
+
 # h164: Immunosuppressants - contraindicated for infectious diseases
 # Immunosuppressants weaken the immune system, making infections WORSE
 # Exception: Autoimmune conditions (e.g., autoimmune hepatitis) are NOT infections
@@ -609,6 +629,21 @@ def filter_prediction(
                     original_score=score,
                     confidence=ConfidenceLevel.EXCLUDED,
                     reason="sGC stimulators are TERATOGENIC - FDA Pregnancy Category X (CONTRAINDICATED)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f6 (h252): SGLT2 inhibitors for hypoglycemia/uremia (FALSE POSITIVES)
+    # SGLT2i cause hypoglycemia (don't treat) and are for CKD 2-4 (not ESRD/uremia)
+    for pattern in SGLT2_INHIBITOR_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(fp in disease_lower for fp in SGLT2_FALSE_POSITIVE_CONDITIONS):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="SGLT2 inhibitors: CAUSE hypoglycemia (don't treat) and are for CKD 2-4 (not uremia/ESRD)",
                     drug_type=drug_type,
                     adjusted_score=0.0,
                 )

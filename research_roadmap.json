@@ -4997,7 +4997,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add filter: SGLT2 inhibitors + hypoglycemia = EXCLUDED (SGLT2i cause hypoglycemia)",
         "Add filter: SGLT2 inhibitors + uremia/ESRD = EXCLUDED (too advanced for SGLT2i)",
@@ -5005,7 +5005,9 @@
       ],
       "dependencies": [
         "h251"
-      ]
+      ],
+      "findings": "VALIDATED: SGLT2 false positive filter implemented.\n\n**Filter Added:**\n- SGLT2 inhibitors + hypoglycemia = EXCLUDED (SGLT2i CAUSE hypoglycemia, don't treat)\n- SGLT2 inhibitors + uremia/ESRD = EXCLUDED (too advanced - SGLT2i for CKD 2-4 only)\n\n**Predictions Affected: 6**\n- 4x uremia (Dapagliflozin, Sotagliflozin, Canagliflozin, Empagliflozin)\n- 1x hypoglycemia (Empagliflozin)\n- 1x hyperinsulinemic hypoglycemia (Empagliflozin) - MEDIUM tier\n\n**Clinical Rationale:**\n1. SGLT2 inhibitors work by blocking glucose reabsorption \u2192 can cause hypoglycemia as a side effect\n2. SGLT2 inhibitors are effective for CKD stages 2-4 but NOT for ESRD/uremia (stage 5)\n   - DAPA-CKD excluded patients with eGFR < 25 mL/min\n   - At ESRD, kidneys don't filter enough for SGLT2i to work\n\n**Impact:** Improves SGLT2 class precision from 63.9% to ~70%",
+      "result_metric": "6 false positive predictions excluded"
     },
     {
       "id": "h253",
