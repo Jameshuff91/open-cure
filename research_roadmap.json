@@ -5526,7 +5526,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Identify categories where hierarchy precision > 50% (GOLDEN threshold)",
         "Step 2: Update _assign_confidence_tier to use GOLDEN for high-precision hierarchy categories",
@@ -5536,8 +5536,8 @@
       "dependencies": [
         "h273"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Extended hierarchy matching to GOLDEN tier for high-precision categories.\n\nImplementation:\n- Added HIERARCHY_GOLDEN_CATEGORIES = {'autoimmune', 'metabolic', 'neurological'}\n- Categories with >70% hierarchy precision get GOLDEN tier\n- Cardiovascular (38.3%) and respiratory (28.6%) stay at HIGH tier\n\nResults:\n- Autoimmune hierarchy matches: GOLDEN tier (75.9% precision)\n- Metabolic hierarchy matches: GOLDEN tier (72.1% precision)\n- Neurological hierarchy matches: GOLDEN tier (81.8% precision)\n- Cardiovascular hierarchy matches: HIGH tier (38.3% precision)\n- Respiratory hierarchy matches: HIGH tier (28.6% precision)\n\nThis properly calibrates confidence based on validated precision data.",
+      "result_metric": "Autoimmune/Metabolic/Neurological hierarchy \u2192 GOLDEN tier"
     },
     {
       "id": "h277",

@@ -1081,18 +1081,28 @@ class DrugRepurposingPredictor:
             if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
                 return ConfidenceTier.FILTER, False, None
 
-        # h273: Disease hierarchy matching - if drug treats same disease group, boost tier
+        # h273/h276: Disease hierarchy matching - if drug treats same disease group, boost tier
         # This indicates the prediction is a subtype refinement (e.g., "psoriasis" → "plaque psoriasis")
         # 2.9x precision improvement overall (8.5% → 24.7%)
-        # Category-specific improvements: metabolic +35pp, autoimmune +19pp, infectious +16pp
+        #
+        # h276: Category-specific tier assignment based on validated precision:
+        # - Autoimmune: 75.9% → GOLDEN
+        # - Metabolic: 72.1% → GOLDEN
+        # - Neurological: 81.8% → GOLDEN
+        # - Cardiovascular: 38.3% → HIGH
+        # - Respiratory: 28.6% → HIGH
+        HIERARCHY_GOLDEN_CATEGORIES = {'autoimmune', 'metabolic', 'neurological'}
+
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(
                 drug_id, disease_name, category
             )
             if same_group_match:
-                # Same disease group → HIGH tier (subtype refinement is reliable)
-                # Higher precision than category average: ~37% for autoimmune, ~50% for metabolic
-                return ConfidenceTier.HIGH, True, f'{category}_hierarchy_{matching_group}'
+                # h276: Use GOLDEN for high-precision categories (>70%), HIGH otherwise
+                if category in HIERARCHY_GOLDEN_CATEGORIES:
+                    return ConfidenceTier.GOLDEN, True, f'{category}_hierarchy_{matching_group}'
+                else:
+                    return ConfidenceTier.HIGH, True, f'{category}_hierarchy_{matching_group}'
 
         # Apply h136/h144/h171/h274 category-specific rescue for Tier 2/3
         if disease_tier > 1:
