@@ -45,6 +45,7 @@ STUCK_THRESHOLD_SESSIONS = 3  # Sessions without progress before considered stuc
 SLACK_WEBHOOK_ENV_VAR = "SLACK_WEBHOOK_URL"
 MAX_CONSECUTIVE_ERRORS = 5  # Stop after this many consecutive errors
 RETRY_BACKOFF_BASE = 5  # Base seconds for exponential backoff on errors
+SESSION_TIMEOUT_SECONDS = 1800  # 30 min max per session to prevent hangs
 
 
 def setup_session_logger(project_dir: Path, session_num: int) -> logging.Logger:
@@ -398,7 +399,17 @@ def run_claude_session(
         err_fl = fcntl.fcntl(err_fd, fcntl.F_GETFL)
         fcntl.fcntl(err_fd, fcntl.F_SETFL, err_fl | os.O_NONBLOCK)
 
+        session_start = time.time()
         while True:
+            # Check for session timeout (prevents infinite hangs)
+            elapsed = time.time() - session_start
+            if elapsed > SESSION_TIMEOUT_SECONDS:
+                if logger:
+                    logger.error("Session timeout after %d seconds", int(elapsed))
+                print(f"\n  ⚠️  Session timeout after {int(elapsed)}s - killing process")
+                _cleanup_process(process)
+                return "error", f"Session timeout after {int(elapsed)} seconds"
+
             ret = process.poll()
             readable, _, _ = select.select(
                 [process.stdout, process.stderr], [], [], 0.5
