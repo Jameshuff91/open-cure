@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h122, h139, h129, h133, h138, h140 (2026-02-05 cont.)
+## Current Session: 9 Hypotheses Resolved (2026-02-05 cont.)
 
 ### Session Summary
 
@@ -9,10 +9,13 @@
 **Hypotheses Tested This Session:**
 - h122: Category Misclassification Analysis - **INCONCLUSIVE** (problem found but already addressed)
 - h139: Hybrid Confidence - **INVALIDATED** (pure prob_h52 is optimal)
-- h129: Mechanism-Category Interaction - **VALIDATED** ⭐
+- h129: Mechanism-Category Interaction - **VALIDATED** ⭐ (infectious 2.68x)
 - h133: Non-Tier1 Category Golden Criteria - **VALIDATED** (superseded by h136)
 - h138: Other Category Sub-Stratification - **INVALIDATED** (worse than prob_h52)
 - h140: Bimodality Predictor - **VALIDATED** (prob_h52 achieves 76.2% accuracy)
+- h141: Infectious Mechanism Weighting - **VALIDATED** (superseded by h136)
+- h143: Zero-Hit Disease Predictor - **VALIDATED** ⭐ (81.6% precision)
+- h142: prob_h52 Feature Decomposition - **INCONCLUSIVE** (33.7% variance < 50% target)
 
 ### Key Findings
 
@@ -76,9 +79,17 @@ prob_h52 with threshold 0.5 achieves **76.2% accuracy** on predicting whether "o
 | Pending | 17 |
 | **Total Tested** | **127** |
 
-### Session 2 Updates (h141, h143)
+### Session 2 Updates (h141, h142, h143)
 - h141: Mechanism weighting already implemented in h136 filters (superseded)
 - h143: Zero-hit predictor achieves 81.6% precision at prob_h52 < 0.3
+- h142: prob_h52 explains 33.7% variance; captures within-category variation (r=0.511)
+
+### Final Session Statistics
+- Hypotheses resolved this session: 9
+- Validated: 5 (h129, h133, h140, h141, h143)
+- Invalidated: 2 (h138, h139)
+- Inconclusive: 2 (h122, h142)
+- Cumulative tested: 128
 
 ### Key Learnings This Session
 
