@@ -3235,7 +3235,7 @@
       "rationale": "Unlike other categories, dermatological benefited from combining classes. Biologics (adalimumab, ustekinumab, etc.) may be strong predictors for skin conditions.",
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "category": "precision",
       "dependencies": [
@@ -3246,7 +3246,9 @@
         "Test biologic + rank<=10 or rank<=15 criteria",
         "If >40% precision, add to production_predictor.py",
         "Success: Biologic rescue criteria achieving >40% precision"
-      ]
+      ],
+      "findings": "INVALIDATED based on h156 data already collected.\n\nh156 showed biologic + rank<=20 for dermatological: 0% precision (n=6)\n\nCombined criteria (30.8%) improved only because adding drugs to pool \nincreased coverage, not because biologics contributed hits.\n\nNo rescue criteria needed for dermatological biologics.",
+      "result_metric": "Biologic + rank<=20: 0% precision (n=6) - below threshold"
     },
     {
       "id": "h162",
@@ -3276,7 +3278,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Extract all ATC codes from DrugBank for our drug set",
         "For each ATC level-2 category, compute precision per disease category",

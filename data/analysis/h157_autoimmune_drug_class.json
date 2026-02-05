@@ -1,0 +1,37 @@
+{
+  "hypothesis": "h157",
+  "title": "Autoimmune Drug Class Analysis",
+  "summary": "DMARDs achieve 75.4% precision for autoimmune diseases. Biologics (anti-TNF, IL inhibitors) rarely appear due to training data sparsity.",
+  "key_findings": {
+    "dmard_precision": "75.4% \u00b1 4.7% (5-seed, n=21.6/seed)",
+    "anti_tnf_precision": "N/A - 0 predictions in top-30",
+    "il_inhibitor_precision": "N/A - 0 predictions in top-30",
+    "jak_inhibitor_precision": "0.0% (n=0.8/seed)"
+  },
+  "root_cause": {
+    "issue": "Biologics have extremely low training frequency",
+    "adalimumab": "freq=4 (vs methotrexate=275)",
+    "infliximab": "freq=6",
+    "etanercept": "freq=9",
+    "most_il_inhibitors": "freq=0-2",
+    "dmards": "freq=56-275 (methotrexate=275, cyclosporine=232, azathioprine=120)"
+  },
+  "drug_class_frequencies": {
+    "methotrexate": 275,
+    "cyclosporine": 232,
+    "azathioprine": 120,
+    "hydroxychloroquine": 58,
+    "sulfasalazine": 56,
+    "etanercept": 9,
+    "tacrolimus": 8,
+    "infliximab": 6,
+    "leflunomide": 5,
+    "adalimumab": 4,
+    "tocilizumab": 2,
+    "secukinumab": 2,
+    "ustekinumab": 1,
+    "golimumab": 1
+  },
+  "production_recommendation": "Add DMARD + rank<=10 as GOLDEN tier for autoimmune (75% precision). Biologics cannot be rescued - data sparsity is fundamental.",
+  "success": true
+}

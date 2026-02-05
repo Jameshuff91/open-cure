@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h154/h155 Drug Class Analysis (2026-02-05)
+## Current Session: h154/h155/h157 Drug Class Analysis (2026-02-05)
 
 ### Session Summary
 
@@ -9,6 +9,7 @@
 **Hypotheses Tested:**
 - h154: Cardiovascular Beta-Blocker Combined Criteria - **VALIDATED**
 - h155: GI Drug Coverage Gap Analysis - **VALIDATED**
+- h157: Autoimmune Drug Class Analysis - **VALIDATED**
 
 ### h154: Cardiovascular Beta-Blocker Combined Criteria - VALIDATED
 
@@ -42,16 +43,40 @@ Investigated why GI drugs (PPIs, H2 blockers) appeared to have 0% precision in h
 
 **Production:** No rescue criteria needed - GI drugs already have high precision when applicable.
 
+### h157: Autoimmune Drug Class Analysis - VALIDATED
+
+Tested if biologics (anti-TNF, IL inhibitors) or DMARDs show class-specific precision for autoimmune diseases.
+
+**Key Results:**
+
+| Drug Class | Mean N/seed | Precision |
+|------------|-------------|-----------|
+| DMARDs | 21.6 | **75.4% ± 4.7%** |
+| Anti-TNF | 0 | N/A (not predicted) |
+| IL inhibitors | 0 | N/A (not predicted) |
+| JAK inhibitors | 0.8 | 0% |
+
+**Root Cause of Biologic Failure - Training Frequency:**
+- Methotrexate: 275 (dominates)
+- Cyclosporine: 232
+- Azathioprine: 120
+- Adalimumab: 4 (!)
+- Most IL inhibitors: 0-2
+
+Biologics simply don't appear in enough training diseases. This is DATA SPARSITY, not model failure.
+
+**Production Update:** Added DMARD + rank<=10 as GOLDEN tier for autoimmune (75.4% precision).
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 76 |
+| Validated | 77 |
 | Invalidated | 40 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 22 |
-| **Total Tested** | **124** |
+| Pending | 21 |
+| **Total Tested** | **125** |
 
 ---
 

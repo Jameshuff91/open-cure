@@ -12,6 +12,7 @@ Unified pipeline integrating validated research findings:
   - Ophthalmic: antibiotic + rank<=15 = 62.5%, steroid + rank<=15 = 48%
   - Dermatological: topical_steroid + rank<=5 = 63.6%
 - h154: Cardiovascular beta_blocker + rank<=5 = 33.3% precision
+- h157: Autoimmune DMARD + rank<=10 = 75.4% precision
 
 USAGE:
     # Get predictions for a disease
@@ -153,6 +154,10 @@ TOPICAL_STEROIDS = {'hydrocortisone', 'betamethasone', 'triamcinolone', 'clobeta
 # h154: Cardiovascular beta-blockers achieve 33.3% precision at rank<=5
 BETA_BLOCKERS = {'metoprolol', 'atenolol', 'carvedilol', 'bisoprolol', 'propranolol',
                  'labetalol', 'nebivolol', 'nadolol', 'timolol', 'esmolol', 'sotalol'}  # 33.3% rank<=5
+
+# h157: DMARDs achieve 75.4% precision for autoimmune diseases
+DMARD_DRUGS = {'methotrexate', 'sulfasalazine', 'hydroxychloroquine', 'leflunomide',
+               'azathioprine', 'mycophenolate', 'cyclosporine', 'tacrolimus'}  # 75.4% rank<=10
 
 CATEGORY_KEYWORDS = {
     'autoimmune': ['autoimmune', 'lupus', 'rheumatoid', 'arthritis', 'scleroderma', 'myasthenia',
@@ -475,6 +480,12 @@ class DrugRepurposingPredictor:
             drug_lower = drug_name.lower()
             if rank <= 10 and any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
                 return ConfidenceTier.HIGH  # 48.6% precision
+
+        elif category == 'autoimmune':
+            # h157: DMARDs achieve 75.4% precision for autoimmune diseases
+            drug_lower = drug_name.lower()
+            if rank <= 10 and any(dmard in drug_lower for dmard in DMARD_DRUGS):
+                return ConfidenceTier.GOLDEN  # 75.4% precision
 
         return None
 
