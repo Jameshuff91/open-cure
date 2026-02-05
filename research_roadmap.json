@@ -5632,7 +5632,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Identify drugs with GT for base diseases (diabetes, hypertension)",
         "Step 2: Find predictions for their complications (diabetic nephropathy, hypertensive heart disease)",
@@ -5643,8 +5643,8 @@
       "dependencies": [
         "h279"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Strong directional asymmetry in base\u2194complication treatment transfer.\n\nKEY FINDINGS:\n1. Base \u2192 Complication predictions: 9.1% precision (11 predictions, 1 correct)\n2. Complication \u2192 Base predictions: 36.2% precision (47 predictions, 17 correct)\n3. 4x precision difference confirms directional asymmetry\n\nBREAKDOWN:\n- Diabetes \u2192 complications: 0% (8 predictions, 0 correct)\n- Atherosclerosis \u2192 MI: 50% (2 predictions, 1 correct)  \n- DKA \u2192 Diabetes: 62.5% (8 predictions, 5 correct)\n- MI \u2192 Atherosclerosis: 40% (10 predictions, 4 correct)\n\nINSIGHT: Treating a complication is MORE predictive of base disease treatment than vice versa.\nThis is clinically sensible: complications require specialized treatments (e.g., diabetic retinopathy needs anti-VEGF, not metformin).\n\nACTIONABLE: Use direction as confidence signal:\n- Drug treats base, predicted for complication \u2192 LOW tier (9%)\n- Drug treats complication, predicted for base \u2192 MEDIUM tier (36%)\n",
+      "result_metric": "Base\u2192Comp: 9.1% precision, Comp\u2192Base: 36.2% precision (4x difference)"
     },
     {
       "id": "h282",
@@ -5686,6 +5686,73 @@
       ],
       "dependencies": [
         "h277"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h284",
+      "title": "Complication Specialization Score for Confidence",
+      "category": "precision",
+      "rationale": "h281 showed drugs treating complications rarely transfer to base diseases (9%). But WHICH complications predict good base disease treatment? DKA\u2192diabetes was 62.5%, MI\u2192atherosclerosis was 40%. Could systematically score complication 'transferability'.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each complication in GT, calculate % of drugs that also treat base disease",
+        "Step 2: Rank complications by 'transferability score'",
+        "Step 3: Use transferability score in confidence tiering",
+        "Step 4: Validate on held-out predictions",
+        "Success criteria: >10 pp precision lift for high-transferability complications"
+      ],
+      "dependencies": [
+        "h281"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h285",
+      "title": "Disease Relationship Type Classification",
+      "category": "precision",
+      "rationale": "h281 showed base\u2194complication relationships have different precision than subtypes. But our current system doesn't distinguish relationship types. Could we classify: IS_A (subtype), CAUSED_BY (complication), SIMILAR_TO (related)?",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Build taxonomy of disease relationship types from medical ontologies",
+        "Step 2: Classify existing disease pairs by relationship type",
+        "Step 3: Calculate precision by relationship type",
+        "Step 4: Use relationship type in confidence scoring",
+        "Success criteria: >15 pp precision difference across relationship types"
+      ],
+      "dependencies": [
+        "h281",
+        "h279"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h286",
+      "title": "Mechanistic Pathway Overlap for Complication Predictions",
+      "category": "precision",
+      "rationale": "Why do some base\u2192complication transfers work (statins\u2192MI) and others fail (metformin\u2192nephropathy)? Hypothesis: transfers work when drug mechanism addresses complication pathway. Statins work on atherosclerosis (cause of MI). Metformin doesn't address neuropathy pathways.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Get drug mechanisms/pathways from existing pathway data",
+        "Step 2: Get complication pathways (e.g., diabetic nephropathy = renal, vascular)",
+        "Step 3: Calculate pathway overlap between drug mechanism and complication",
+        "Step 4: Test if high pathway overlap predicts successful base\u2192complication transfer",
+        "Success criteria: Pathway overlap predicts >30% vs <10% precision split"
+      ],
+      "dependencies": [
+        "h281"
       ],
       "findings": null,
       "result_metric": null
@@ -6791,6 +6858,12 @@
       "hypothesis_id": "h282",
       "learning": "Hierarchy depth delta strongly predicts precision: |delta|=0 has 51.6% precision vs |delta|=1 at 12.0% (4.3x worse). Clear precision gradient by delta magnitude.",
       "implication": "Can use delta magnitude as confidence signal. Same-level matches should be HIGH tier, cross-level should be MEDIUM or LOW."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h281",
+      "learning": "Complication\u2192Base predictions have 4x higher precision than Base\u2192Complication. Diabetes drugs rarely treat diabetic complications but complication drugs often treat base disease.",
+      "implication": "Use prediction direction as confidence signal in tiering system"
     }
   ],
   "collaborations": [

@@ -1,0 +1,211 @@
+{
+  "hypothesis": "h281",
+  "summary": {
+    "base_to_complication": {
+      "total": 11,
+      "correct": 1,
+      "precision": 9.090909090909092
+    },
+    "complication_to_base": {
+      "total": 47,
+      "correct": 17,
+      "precision": 36.17021276595745
+    }
+  },
+  "examples": {
+    "base_to_comp_correct": [
+      {
+        "drug": "pravastatin",
+        "base_disease": "atherosclerosis",
+        "predicted_complication": "myocardial infarction",
+        "is_correct": true
+      }
+    ],
+    "base_to_comp_incorrect": [
+      {
+        "drug": "cholestyramine",
+        "base_disease": "atherosclerosis",
+        "predicted_complication": "myocardial infarction",
+        "is_correct": false
+      },
+      {
+        "drug": "bromocriptine",
+        "base_disease": "type 2 diabetes mellitus",
+        "predicted_complication": "diabetic ketoacidosis",
+        "is_correct": false
+      },
+      {
+        "drug": "cholestyramine",
+        "base_disease": "diabetes mellitus",
+        "predicted_complication": "diabetic nephropathy",
+        "is_correct": false
+      },
+      {
+        "drug": "lovastatin",
+        "base_disease": "diabetes mellitus",
+        "predicted_complication": "diabetic nephropathy",
+        "is_correct": false
+      },
+      {
+        "drug": "telmisartan",
+        "base_disease": "type 2 diabetes mellitus",
+        "predicted_complication": "diabetic nephropathy",
+        "is_correct": false
+      },
+      {
+        "drug": "colestipol",
+        "base_disease": "diabetes mellitus",
+        "predicted_complication": "diabetic nephropathy",
+        "is_correct": false
+      },
+      {
+        "drug": "gemfibrozil",
+        "base_disease": "diabetes mellitus",
+        "predicted_complication": "diabetic nephropathy",
+        "is_correct": false
+      },
+      {
+        "drug": "empagliflozin",
+        "base_disease": "type 2 diabetes mellitus",
+        "predicted_complication": "diabetic nephropathy",
+        "is_correct": false
+      },
+      {
+        "drug": "semaglutide",
+        "base_disease": "type 1 diabetes mellitus",
+        "predicted_complication": "diabetic nephropathy",
+        "is_correct": false
+      },
+      {
+        "drug": "semaglutide",
+        "base_disease": "type 2 diabetes mellitus",
+        "predicted_complication": "diabetic nephropathy",
+        "is_correct": false
+      }
+    ],
+    "comp_to_base_correct": [
+      {
+        "drug": "glipizide",
+        "complication": "diabetic ketoacidosis",
+        "predicted_base": "type 1 diabetes mellitus",
+        "is_correct": true
+      },
+      {
+        "drug": "glimepiride",
+        "complication": "diabetic ketoacidosis",
+        "predicted_base": "type 1 diabetes mellitus",
+        "is_correct": true
+      },
+      {
+        "drug": "pioglitazone",
+        "complication": "diabetic ketoacidosis",
+        "predicted_base": "type 1 diabetes mellitus",
+        "is_correct": true
+      },
+      {
+        "drug": "rosiglitazone",
+        "complication": "diabetic ketoacidosis",
+        "predicted_base": "type 1 diabetes mellitus",
+        "is_correct": true
+      },
+      {
+        "drug": "insulin human",
+        "complication": "diabetic ketoacidosis",
+        "predicted_base": "type 1 diabetes mellitus",
+        "is_correct": true
+      },
+      {
+        "drug": "lovastatin",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": true
+      },
+      {
+        "drug": "rosuvastatin",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": true
+      },
+      {
+        "drug": "pravastatin",
+        "complication": "transient ischemic attack",
+        "predicted_base": "atherosclerosis",
+        "is_correct": true
+      },
+      {
+        "drug": "pravastatin",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": true
+      },
+      {
+        "drug": "simvastatin",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": true
+      }
+    ],
+    "comp_to_base_incorrect": [
+      {
+        "drug": "nateglinide",
+        "complication": "diabetic ketoacidosis",
+        "predicted_base": "type 1 diabetes mellitus",
+        "is_correct": false
+      },
+      {
+        "drug": "repaglinide",
+        "complication": "diabetic ketoacidosis",
+        "predicted_base": "type 1 diabetes mellitus",
+        "is_correct": false
+      },
+      {
+        "drug": "empagliflozin",
+        "complication": "diabetic ketoacidosis",
+        "predicted_base": "type 1 diabetes mellitus",
+        "is_correct": false
+      },
+      {
+        "drug": "evolocumab",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": false
+      },
+      {
+        "drug": "niacin",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": false
+      },
+      {
+        "drug": "alirocumab",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": false
+      },
+      {
+        "drug": "bempedoic acid",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": false
+      },
+      {
+        "drug": "semaglutide",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": false
+      },
+      {
+        "drug": "clopidogrel",
+        "complication": "ischemic stroke",
+        "predicted_base": "atherosclerosis",
+        "is_correct": false
+      },
+      {
+        "drug": "clopidogrel",
+        "complication": "myocardial infarction",
+        "predicted_base": "atherosclerosis",
+        "is_correct": false
+      }
+    ]
+  }
+}
