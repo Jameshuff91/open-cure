@@ -157,18 +157,10 @@ vastai destroy instance <INSTANCE_ID>
 - **Node2Vec XGBoost**: 25.85% ± 4.06% mean (5-seed honest, h40)
 - Previously reported 31.09%/28.73% were from lucky seed 42
 
-### What SEEMED to Work (but was data leakage)
-1. **Boost features** - Target overlap, chemical similarity, ATC were circular
-2. **Evaluating on training diseases** - Inflated recall from 41.9% to 47.5%
-3. **All negative sampling strategies** - Hard negatives, random, drug-treats-other ALL fail under disease holdout
-
-### What Fails (Key Patterns)
-- **External data** (h17, h19) - HPO/PPI features WORSE than Node2Vec; already captured
-- **Additional features** (h34, h35) - Gene/graph features add nothing (sparsity, leakage)
-- **ML improvements** (h41-h45) - Gene similarity hurts, XGBoost doesn't help, learned similarity overfits
-- **37% = DRKG ceiling** - kNN at 37%, oracle 60%; 23 pp gap needs external data or new architectures
-- **Treatment edge leakage** - Original 36.59% → honest 26.06% (29% was leakage)
-- **Explicit graph traversal** (h93, h95) - Gene: 3.53% R@30, Pathway: 3.57% R@30. Embeddings >> symbolic reasoning
+### What Fails (Summary)
+- **37% = DRKG ceiling** - kNN at 37%, oracle 60%; gap needs external data
+- **ML on top of kNN** - XGBoost/gene features add nothing (h41-h45)
+- **Explicit traversal** - Gene/Pathway: 3.5% R@30 (h93, h95). Embeddings >> symbolic
 - Details: `docs/archive/experiment_history.md`
 
 ### Confidence Features (h111 validated)
@@ -190,6 +182,26 @@ vastai destroy instance <INSTANCE_ID>
 - h126: XGBoost +2.07pp from interactions (freq dominant at 35%)
 - h130: Linear better for infectious/autoimmune/ophthalmic; ALL hits had Linear>XGBoost
 - h132: Tier1+freq>=15+mech = 57.9% precision (8x baseline)
+
+### PPI Mechanism Integration (h96, h259, h262, h263 validated 2026-02-05)
+
+**CRITICAL: Mechanism = PRECISION signal, NOT RECALL signal**
+- h259: 2.62x overall precision lift (18.9% vs 7.2%, p<0.000001)
+- h260: Mechanism boost does NOT improve kNN R@30 (+0pp)
+- h264: Mechanism-only R@30 = 9.5% (below 15% threshold)
+
+**Category-Specific Lifts (h262):**
+| Category | Lift | Prec w/Mech | Prec w/o |
+|----------|------|-------------|----------|
+| Cardiovascular | 33.7x | 22.6% | 0.7% |
+| Neurological | 13.3x | 15.3% | 1.1% |
+| Autoimmune | 8.9x | 37.6% | 4.2% |
+| Infectious | 1.8x | 25.2% | 14.4% |
+
+**Production Rules (h263):**
+- REQUIRE mechanism for CV/Neuro (>10x lift): 236 excluded, only 2 GT lost
+- CV precision: 15.3% → 22.6% (+47% improvement)
+- Neuro precision: 9.5% → 15.3% (+62% improvement)
 
 ### ATC Integration (h152, h189, h190, h87 validated 2026-02-05)
 
