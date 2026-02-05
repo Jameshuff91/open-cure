@@ -1,0 +1,101 @@
+{
+  "hypothesis": "h247",
+  "title": "Disease-Specific Biologic Routing",
+  "outcome": "VALIDATED",
+  "summary": {
+    "baseline_precision": 5.9,
+    "broad_filtering": {
+      "description": "All known biologic success diseases",
+      "predictions": 92,
+      "precision": 13.0,
+      "improvement": "+7.2 pp"
+    },
+    "tier1_filtering": {
+      "description": "RA, PsA, melanoma, psoriasis, temporal arteritis only",
+      "predictions": 23,
+      "precision": 30.4,
+      "improvement": "+24.5 pp",
+      "success_criteria": "PASS (>25%)"
+    },
+    "mechanism_matching": {
+      "description": "Drug mechanism matches disease indication",
+      "predictions": 17,
+      "precision": 64.7,
+      "improvement": "+58.8 pp",
+      "success_criteria": "PASS (>25%)"
+    }
+  },
+  "mechanism_matching_rules": {
+    "adalimumab": [
+      "rheumatoid",
+      "psoria",
+      "crohn",
+      "colitis",
+      "ankylosing"
+    ],
+    "infliximab": [
+      "rheumatoid",
+      "psoria",
+      "crohn",
+      "colitis",
+      "ankylosing"
+    ],
+    "etanercept": [
+      "rheumatoid",
+      "psoria",
+      "ankylosing"
+    ],
+    "tocilizumab": [
+      "rheumatoid",
+      "juvenile idiopathic",
+      "temporal arteritis",
+      "giant cell"
+    ],
+    "rituximab": [
+      "rheumatoid",
+      "vasculitis",
+      "pemphigus",
+      "lupus"
+    ],
+    "secukinumab": [
+      "psoria",
+      "ankylosing"
+    ],
+    "tofacitinib": [
+      "rheumatoid",
+      "psoria",
+      "colitis",
+      "crohn"
+    ],
+    "baricitinib": [
+      "rheumatoid",
+      "dermatitis",
+      "alopecia"
+    ],
+    "pembrolizumab": [
+      "melanoma",
+      "lung cancer",
+      "renal",
+      "head neck",
+      "bladder"
+    ],
+    "nivolumab": [
+      "melanoma",
+      "lung cancer",
+      "renal",
+      "head neck"
+    ]
+  },
+  "key_findings": [
+    "Broad disease filtering improves from 5.9% to 13.0% but doesn't reach 25% threshold",
+    "Tier 1 disease filtering (5 diseases) achieves 30.4% precision - PASSES threshold",
+    "Mechanism matching achieves 64.7% precision - BEST approach for biologics",
+    "11/17 mechanism-matched predictions are GT hits",
+    "This transforms biologics from 'exclude' to 'high confidence when matched'"
+  ],
+  "recommendations": [
+    "Implement mechanism-matching for biologic predictions in production",
+    "Only show biologic predictions when drug mechanism matches disease indication",
+    "This is a major improvement: 5.9% \u2192 64.7% precision"
+  ]
+}
