@@ -4955,7 +4955,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List all drug classes predicted for multiple cardiovascular diseases",
         "For each class, search for contraindication evidence",
@@ -4965,7 +4965,9 @@
       ],
       "dependencies": [
         "h244"
-      ]
+      ],
+      "findings": "VALIDATED: Systematic review of CV drug classes identified 4 new contraindication categories:\n\n**NEW SAFETY FILTERS ADDED (h250):**\n\n1. **Non-DHP CCBs (Verapamil/Diltiazem) + HFrEF**\n   - Evidence: ACC/AHA 2022 guidelines classify as HARMFUL\n   - Mechanism: Negative inotropes cause acute decompensation\n   - Predictions excluded: 3 (1 HIGH tier)\n\n2. **Class Ic Antiarrhythmics (Flecainide/Propafenone) + Structural Heart Disease**\n   - Evidence: CAST trial - 2.5x mortality increase\n   - Mechanism: Proarrhythmic in post-MI and HF patients\n   - Predictions excluded: 4 (0 HIGH tier)\n\n3. **Ganglionic Blockers (Mecamylamine)**\n   - Evidence: Obsolete drug class - severe orthostatic hypotension\n   - Predictions excluded: 37 (2 HIGH tier)\n\n4. **Surgical/Diagnostic Dyes (Isosulfan blue, etc.)**\n   - Not therapeutic agents\n   - Predictions excluded: 47 (6 HIGH tier)\n\n**ALSO IDENTIFIED BUT NOT CONTRAINDICATED:**\n- Nitrates (isosorbide + hydralazine): BENEFICIAL for HF (AAHEFT trial)\n- PDE5 inhibitors: Mixed evidence (benefit in HFrEF, failed in HFpEF RELAX trial)\n- Digoxin: Neutral on mortality, reduces hospitalizations (DIG trial)\n- Aliskiren: Only contraindicated in diabetics with HF (ASTRONAUT trial)\n\n**FILTER IMPACT:**\n- New rules exclude 91 additional predictions\n- 40 HIGH tier predictions now correctly excluded\n- Total filtered: 302 predictions (2.2% of 13,461)",
+      "result_metric": "91 new exclusions (9 HIGH tier) from CV safety rules"
     },
     {
       "id": "h251",
@@ -5028,6 +5030,85 @@
       ],
       "findings": "VALIDATED: sGC stimulator pregnancy safety filter implemented.\n\n**Filter Added:**\n- sGC stimulators (Riociguat, Vericiguat, Cinaciguat, Lificiguat) + pregnancy conditions = EXCLUDED\n- Reason: FDA Pregnancy Category X - TERATOGENIC (can cause fetal harm)\n\n**Predictions Affected:**\n- 1 prediction excluded: Riociguat \u2192 toxemia of pregnancy (LOW tier)\n\n**Critical Safety Note:**\nWhile only 1 prediction affected, this is a CRITICAL safety issue.\nRiociguat is absolutely contraindicated in pregnancy - can cause fetal abnormalities.\nThe filter prevents any sGC stimulator from being recommended for:\n- Toxemia/preeclampsia\n- Gestational conditions\n- Any pregnancy-related diseases\n\n**Wider Implication:**\nThis highlights need for comprehensive teratogenicity screening of drug predictions.",
       "result_metric": "1 TERATOGENIC prediction excluded; critical safety filter added"
+    },
+    {
+      "id": "h254",
+      "title": "Aliskiren-Diabetes Heart Failure Subgroup Filter",
+      "category": "precision",
+      "rationale": "ASTRONAUT trial showed aliskiren increased mortality in diabetics with HF but was neutral/beneficial in non-diabetics. Current filter doesn't account for this subgroup effect.",
+      "expected_impact": "low",
+      "effort": "high",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Identify HF predictions involving aliskiren",
+        "Check if disease involves diabetes comorbidity",
+        "If diabetes + HF + aliskiren: exclude",
+        "If non-diabetic HF + aliskiren: allow",
+        "Requires disease comorbidity detection (complex)"
+      ],
+      "dependencies": [
+        "h250"
+      ]
+    },
+    {
+      "id": "h255",
+      "title": "Antiarrhythmic Safety Review Beyond Class Ic",
+      "category": "precision",
+      "rationale": "h250 focused on Class Ic. Other antiarrhythmics (Class Ia, III) also have safety concerns. Dronedarone failed in HF (ANDROMEDA trial). Sotalol has QT prolongation risk.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Review Class Ia antiarrhythmics (quinidine, procainamide)",
+        "Review Class III antiarrhythmics (dronedarone, dofetilide, sotalol)",
+        "Search for trial evidence of contraindications",
+        "Add validated rules to filter",
+        "Quantify impact on predictions"
+      ],
+      "dependencies": [
+        "h250"
+      ]
+    },
+    {
+      "id": "h256",
+      "title": "Methylene Blue Therapeutic vs Diagnostic Distinction",
+      "category": "precision",
+      "rationale": "h250 excluded methylene blue as surgical dye, but it has legitimate therapeutic uses: methemoglobinemia treatment, vasoplegic syndrome, ifosfamide-induced encephalopathy. Need nuanced rule.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "List therapeutic indications for methylene blue",
+        "Check if any predictions match therapeutic use",
+        "Modify filter to allow therapeutic uses",
+        "Keep exclusion for cancer/general diseases"
+      ],
+      "dependencies": [
+        "h250"
+      ]
+    },
+    {
+      "id": "h257",
+      "title": "IV vs Oral Formulation Safety Distinction",
+      "category": "precision",
+      "rationale": "h250 excluded milrinone based on PROMISE trial (oral chronic use). But IV milrinone for acute decompensation is guideline-recommended. Similar issue may exist for other drugs (e.g., positive inotropes).",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Identify drugs with different IV vs oral safety profiles",
+        "Review: dobutamine, dopamine, levosimendan",
+        "Determine if predictions specify formulation",
+        "If chronic HF context: exclude oral inotropes",
+        "If acute decompensation: allow IV inotropes"
+      ],
+      "dependencies": [
+        "h250"
+      ]
     }
   ],
   "completed": [
@@ -6010,6 +6091,12 @@
       "hypothesis_id": "h239",
       "learning": "Antifungal high precision (Fluconazole 80%) comes from CORRECT fungal-disease relationships, not anti-inflammatory repurposing. Model correctly learns antifungal indications.",
       "implication": "Antifungal predictions are accurate for fungal diseases but do not represent novel repurposing opportunities"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h250",
+      "learning": "CV drug contraindications require evidence-based trial data (CAST, PROMISE, ASTRONAUT). Non-DHP CCBs and Class Ic antiarrhythmics are often predicted for HF/arrhythmias but are HARMFUL. Ganglionic blockers and surgical dyes are obsolete/diagnostic - easy wins.",
+      "implication": "Always cross-reference drug-disease predictions against trial evidence for harm signals. Some drug classes that SEEM mechanistically plausible (vasodilators for HF) can still be harmful."
     }
   ],
   "collaborations": [

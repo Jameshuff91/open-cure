@@ -285,6 +285,59 @@ SGLT2_FALSE_POSITIVE_CONDITIONS = [
     "esrd",  # End-stage renal disease
 ]
 
+# h250: Non-DHP Calcium Channel Blockers - CONTRAINDICATED for HFrEF
+# Negative inotropes that can cause acute decompensation
+# ACC/AHA 2022 guidelines: CCBs classified as HARMFUL in HFrEF
+NON_DHP_CCB_PATTERNS = [
+    r"verapamil",
+    r"diltiazem",
+]
+
+# h250: Class Ic Antiarrhythmics - CONTRAINDICATED with structural heart disease
+# CAST trial: 2.5x mortality increase, proarrhythmic in post-MI and HF patients
+CLASS_IC_ANTIARRHYTHMIC_PATTERNS = [
+    r"flecainide",
+    r"propafenone",
+    r"encainide",
+]
+
+# Structural heart disease patterns where Class Ic is dangerous
+STRUCTURAL_HEART_PATTERNS = [
+    "heart failure", "cardiomyopathy", "cardiac failure",
+    "myocardial infarction", "post-mi", "post mi",
+    "ventricular tachycardia", "ventricular fibrillation",
+    "ischemic heart", "ischemic cardiomyopathy",
+]
+
+# h250: Oral Milrinone for chronic HF - CONTRAINDICATED
+# PROMISE trial: 28% increase in all-cause mortality, 34% increase in CV mortality
+# IV milrinone for acute decompensation is different (OK for short-term)
+ORAL_INOTROPE_PATTERNS = [
+    r"milrinone",  # Only oral chronic use is contraindicated
+]
+
+# h250: Aliskiren - increased mortality in diabetics with HF
+# ASTRONAUT trial: Higher risk of death in diabetics
+ALISKIREN_PATTERNS = [
+    r"aliskiren",
+]
+
+# h250: Ganglionic blockers - obsolete, severe orthostatic hypotension
+# No longer used due to severe side effects and better alternatives
+GANGLIONIC_BLOCKER_PATTERNS = [
+    r"mecamylamine",
+    r"trimethaphan",
+    r"hexamethonium",
+]
+
+# h250: Surgical dyes/agents - not therapeutic
+SURGICAL_DYE_PATTERNS = [
+    r"isosulfan blue",
+    r"methylene blue",  # Can be therapeutic in some contexts but often diagnostic
+    r"indocyanine green",
+    r"patent blue",
+]
+
 # h164: Immunosuppressants - contraindicated for infectious diseases
 # Immunosuppressants weaken the immune system, making infections WORSE
 # Exception: Autoimmune conditions (e.g., autoimmune hepatitis) are NOT infections
@@ -647,6 +700,77 @@ def filter_prediction(
                     drug_type=drug_type,
                     adjusted_score=0.0,
                 )
+
+    # Rule 0f7 (h250): Non-DHP CCBs for HFrEF - negative inotropes cause decompensation
+    # ACC/AHA 2022: Non-DHP CCBs classified as HARMFUL in HFrEF
+    for pattern in NON_DHP_CCB_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if is_cardiac_condition(disease):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Non-DHP CCBs (Verapamil/Diltiazem) are HARMFUL in HFrEF - negative inotrope causes decompensation",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f8 (h250): Class Ic antiarrhythmics with structural heart disease
+    # CAST trial: 2.5x mortality, proarrhythmic in post-MI and HF
+    for pattern in CLASS_IC_ANTIARRHYTHMIC_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if any(shd in disease_lower for shd in STRUCTURAL_HEART_PATTERNS):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Class Ic antiarrhythmics INCREASE MORTALITY 2.5x in structural heart disease (CAST trial)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f9 (h250): Oral milrinone for chronic HF
+    # PROMISE trial: 28% increase in all-cause mortality
+    for pattern in ORAL_INOTROPE_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if is_cardiac_condition(disease):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Oral milrinone INCREASES MORTALITY 28% in chronic HF (PROMISE trial)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+
+    # Rule 0f10 (h250): Ganglionic blockers - obsolete, severe side effects
+    for pattern in GANGLIONIC_BLOCKER_PATTERNS:
+        if re.search(pattern, drug_lower):
+            return FilteredPrediction(
+                drug=drug,
+                disease=disease,
+                original_score=score,
+                confidence=ConfidenceLevel.EXCLUDED,
+                reason="Ganglionic blockers are obsolete - severe orthostatic hypotension and multiple side effects",
+                drug_type=drug_type,
+                adjusted_score=0.0,
+            )
+
+    # Rule 0f11 (h250): Surgical dyes - not therapeutic
+    for pattern in SURGICAL_DYE_PATTERNS:
+        if re.search(pattern, drug_lower):
+            return FilteredPrediction(
+                drug=drug,
+                disease=disease,
+                original_score=score,
+                confidence=ConfidenceLevel.EXCLUDED,
+                reason="Surgical/diagnostic dye - not a therapeutic agent",
+                drug_type=drug_type,
+                adjusted_score=0.0,
+            )
 
     # Rule 0g: TRAIL agonists for inflammatory diseases
     for pattern in TRAIL_AGONIST_PATTERNS:

@@ -1,88 +1,88 @@
 # Research Loop Progress
 
-## Current Session: h244, h248, h251, h249, h253, h252 (2026-02-05)
+## Current Session: h250 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 6**
-- h244: Pulmonary Hypertension Drug Transfer to Heart Failure - **VALIDATED** (critical safety findings)
-- h248: Endothelin Antagonist + Prostacyclin Heart Failure Safety Filter - **VALIDATED** (23.3% FP removed)
-- h251: SGLT2 Inhibitor Cross-Category Transfer Analysis - **VALIDATED** (63.9% precision!)
-- h249: sGC Stimulator Validation Beyond HF/PAH - **VALIDATED** (27-50% precision)
-- h253: sGC Stimulator Pregnancy Safety Filter - **VALIDATED** (teratogenic warning)
-- h252: SGLT2 False Positive Filter (Hypoglycemia/Uremia) - **VALIDATED** (6 FPs removed)
+**Hypotheses Tested: 1**
+- h250: Systematic Drug Class Safety Review for Cardiovascular - **VALIDATED**
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 142 |
+| Validated | 143 |
 | Invalidated | 50 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 32 |
-| **Total** | **253** |
+| Pending | 35 |
+| **Total** | **257** |
 
-### Session Key Learnings
+### h250 Findings: CV Drug Class Safety Review
 
-1. **h244: PAH→HF Transfer - CRITICAL SAFETY FINDINGS**
-   - sGC stimulators VALIDATED (Vericiguat FDA approved for HF)
-   - Endothelin antagonists CONTRAINDICATED (fluid retention)
-   - Prostacyclin analogs CONTRAINDICATED (INCREASED MORTALITY in FIRST trial!)
-   - 7/10 PAH drug predictions for HF were FALSE POSITIVES
+**EVIDENCE-BASED CONTRAINDICATIONS IDENTIFIED:**
 
-2. **h248: PAH-HF Safety Filter Implemented**
-   - Added endothelin antagonist + prostacyclin filters to confidence system
-   - 23.3% of heart failure HIGH predictions were HARMFUL
-   - 7 predictions removed from HIGH tier
+1. **Non-DHP CCBs (Verapamil, Diltiazem) + Heart Failure**
+   - Source: ACC/AHA 2022 Guidelines
+   - Mechanism: Negative inotropes cause acute decompensation
+   - Predictions excluded: 3 (1 HIGH tier)
 
-3. **h251: SGLT2 Inhibitors - BEST DRUG CLASS (63.9% precision)**
-   - 23/36 predictions validated by clinical trials
-   - Validated cross-category: Hypertension, atherosclerosis, MI, CKD, obesity
-   - Model correctly captures pleiotropic cardiovascular/renal/metabolic effects
+2. **Class Ic Antiarrhythmics (Flecainide, Propafenone) + Structural Heart Disease**
+   - Source: CAST trial (NEJM 1991)
+   - Finding: 2.5x mortality increase in post-MI patients
+   - Predictions excluded: 4
 
-4. **h249: sGC Stimulators - Mixed Results**
-   - 27.3% strict precision, 50% lenient (including mechanistically plausible)
-   - CRITICAL: Riociguat + pregnancy = CONTRAINDICATED (teratogenic!)
-   - Validated: CKD, diabetic nephropathy, proteinuria (preclinical evidence)
+3. **Ganglionic Blockers (Mecamylamine)**
+   - Status: Obsolete drug class
+   - Issues: Severe orthostatic hypotension, multiple side effects
+   - Predictions excluded: 37 (2 HIGH tier)
 
-5. **h253: sGC Pregnancy Safety Filter**
-   - sGC stimulators + pregnancy conditions = EXCLUDED (FDA Category X)
-   - 1 teratogenic prediction excluded
+4. **Surgical/Diagnostic Dyes (Isosulfan blue, Methylene blue, etc.)**
+   - Not therapeutic agents
+   - Predictions excluded: 47 (6 HIGH tier)
 
-6. **h252: SGLT2 False Positive Filter**
-   - SGLT2 + hypoglycemia = EXCLUDED (SGLT2i CAUSE it)
-   - SGLT2 + uremia/ESRD = EXCLUDED (too advanced)
-   - 6 predictions excluded, improves precision to ~70%
+**DRUGS REVIEWED BUT NOT CONTRAINDICATED:**
 
-### Session Theme: Drug Class Safety Validation & Production Filters
+| Drug Class | Evidence | Conclusion |
+|------------|----------|------------|
+| Nitrates (isosorbide + hydralazine) | AAHEFT trial | BENEFICIAL for HF |
+| PDE5 inhibitors (sildenafil) | RELAX trial (HFpEF failed) | Mixed - OK for HFrEF |
+| Digoxin | DIG trial | Neutral on mortality, reduces hospitalizations |
+| Aliskiren | ASTRONAUT trial | Only harmful in diabetics with HF |
 
-**Safety Filters Added to Production System:**
-1. Endothelin antagonists + heart failure = EXCLUDED (fluid retention)
-2. Prostacyclin analogs + heart failure = EXCLUDED (INCREASED MORTALITY)
-3. sGC stimulators + pregnancy = EXCLUDED (TERATOGENIC)
-4. SGLT2 inhibitors + hypoglycemia = EXCLUDED (SGLT2i CAUSE it)
-5. SGLT2 inhibitors + uremia/ESRD = EXCLUDED (too advanced)
+**FILTER IMPACT:**
+- New rules added: 4 (non-DHP CCB, Class Ic, ganglionic blockers, surgical dyes)
+- Total predictions now excluded: 302 (2.2%)
+- HIGH tier predictions excluded: 40
+- Newly excluded from h250 rules: 91 (9 HIGH tier)
 
-**Precision by Drug Class:**
-| Drug Class | Precision | Notes |
-|------------|-----------|-------|
-| SGLT2 inhibitors | ~70% | BEST - pleiotropic effects validated |
-| sGC stimulators | 27-50% | HF/PAH validated, many FPs elsewhere |
-| PAH drugs overall | ~30% | Most predictions for HF were contraindicated |
+**NEW HYPOTHESES GENERATED (4):**
+- h254: Aliskiren-Diabetes HF Subgroup Filter
+- h255: Antiarrhythmic Safety Review Beyond Class Ic
+- h256: Methylene Blue Therapeutic vs Diagnostic Distinction
+- h257: IV vs Oral Formulation Safety Distinction
 
-**Total False Positives Removed: 21**
-- 7 from endothelin/prostacyclin HF filter
-- 6 from SGLT2 hypoglycemia/uremia filter
-- 1 from sGC pregnancy filter
-- (+ others already caught by existing filters)
+### Key Learning
+
+CV drug contraindications require evidence-based trial data (CAST, PROMISE, ASTRONAUT). Drugs that SEEM mechanistically plausible (vasodilators for HF) can still be harmful. Non-DHP CCBs and Class Ic antiarrhythmics are commonly predicted for HF/arrhythmias but are HARMFUL based on clinical trial evidence.
 
 ### Recommended Next Steps (Priority Order)
-1. **h250**: Systematic CV drug class safety review
+1. **h255**: Antiarrhythmic Safety Review Beyond Class Ic
 2. **h96**: PPI-Extended Drug Targets
 3. **h91**: Literature Mining (high effort but critical for zero-treatment diseases)
+
+---
+
+## Previous Session: h244, h248, h251, h249, h253, h252 (2026-02-05)
+
+See git history for detailed session notes.
+
+### Key findings:
+- SGLT2 inhibitors: 63.9% precision (BEST drug class)
+- PAH drug safety filters: 23.3% of HF predictions were HARMFUL
+- sGC stimulators: Teratogenic - pregnancy filter added
 
 ---
 
