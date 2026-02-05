@@ -1926,7 +1926,7 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Step 1: Load ATC codes for all drugs in DrugBank",
         "Step 2: For each zero-shot disease, find similar diseases (kNN) with known treatments",
@@ -1934,7 +1934,9 @@
         "Step 4: Find other drugs in same ATC classes as candidates",
         "Step 5: Rank by ATC class frequency and disease similarity",
         "Step 6: Evaluate on benchmark"
-      ]
+      ],
+      "findings": "VALIDATED: ATC-based zero-shot recommendations achieve 16.7% R@30 - 2x better than direct mechanism traversal (8.3%).\n\nRESULTS BY ATC LEVEL:\n- Level 2 (therapeutic subgroup): 16.7% R@30 (3/18) - allergic asthma, psoriasis variants\n- Level 3 (pharmacological subgroup): 16.7% R@30 (3/18) - psoriasis, colon cancer\n- Level 4 (chemical subgroup): 11.1% R@30 (2/18) - psoriasis, testis neoplasm\n\nSUCCESSFUL PREDICTIONS:\n- Allergic asthma: Omalizumab (rank 1) - anti-IgE monoclonal antibody\n- Psoriasis: Tacalcitol (ranks 2-5), Infliximab (rank 9) - vitamin D analogs, TNF inhibitors\n- Colon cancer: Oxaliplatin (rank 18) - platinum-based chemotherapy\n- Testis neoplasm: Paclitaxel poliglumex (rank 5) - taxane chemotherapy\n\nLIMITATIONS:\n- Lower than kNN baseline (26-37%) but applicable to zero-shot diseases\n- Only 18/31 benchmark diseases evaluable (need MESH mapping + embeddings)\n- Works best for diseases with similar diseases in training set\n\nCONCLUSION: ATC-based transfer captures drug class relationships that direct gene targeting misses. Combined approach (mechanism + ATC class) may perform better.",
+      "result_metric": "16.7% R@30 (Level 2/3), 2x better than mechanism traversal"
     },
     {
       "id": "h99",
@@ -1983,6 +1985,38 @@
         "Step 5: Evaluate on benchmark"
       ],
       "status": "pending"
+    },
+    {
+      "id": "h102",
+      "title": "Hybrid Zero-Shot: Mechanism + ATC Ensemble",
+      "description": "Combine mechanism traversal scores with ATC class transfer scores. Mechanism captures biological targets, ATC captures therapeutic class relationships.",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Step 1: Run mechanism traversal for zero-shot diseases",
+        "Step 2: Run ATC-based recommendations in parallel",
+        "Step 3: Normalize both score sets to [0,1]",
+        "Step 4: Combine with weighted average (tune weights)",
+        "Step 5: Evaluate hybrid vs each individual method"
+      ]
+    },
+    {
+      "id": "h103",
+      "title": "ATC Hierarchy Navigation for Broader Coverage",
+      "description": "When ATC Level 3 produces no candidates, fall back to Level 2; when Level 2 fails, use Level 1. Adaptive hierarchy navigation may improve coverage.",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Step 1: For each disease, try ATC Level 4 first",
+        "Step 2: If <10 candidates, fall back to Level 3",
+        "Step 3: If still <10, fall back to Level 2",
+        "Step 4: Track which level produced hits",
+        "Step 5: Report coverage improvement"
+      ]
     }
   ],
   "completed": [
@@ -2449,6 +2483,12 @@
       "hypothesis_id": "h95",
       "learning": "Pathway-level traversal (3.57% R@30) doesn't improve on gene-level (3.53%) despite 2x better coverage (51% vs 22% of GT drugs reachable). The pathway dilution problem: more coverage = more false positives.",
       "implication": "Explicit symbolic reasoning (genes or pathways) fundamentally fails for drug repurposing. The Node2Vec embeddings capture implicit relationships that explicit traversal cannot. The 26% kNN vs 3.5% traversal gap quantifies the value of learned representations."
+    },
+    {
+      "date": "2026-02-04",
+      "hypothesis_id": "h98",
+      "learning": "ATC drug class transfer (16.7% R@30) outperforms direct gene targeting (8.3%) for zero-shot diseases. Drug classes capture therapeutic relationships missed by mechanism-level analysis.",
+      "implication": "For zero-shot diseases, prioritize similar-disease drug class transfer over mechanism traversal. Consider hybrid approaches combining both signals."
     }
   ],
   "collaborations": [
