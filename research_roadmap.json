@@ -5350,7 +5350,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Step 1: Split autoimmune into subtypes (inflammatory arthritis, connective tissue, skin, neurological)",
         "Step 2: Calculate NSAID vs DMARD precision per subtype",
@@ -5361,8 +5361,8 @@
       "dependencies": [
         "h265"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h268 INCONCLUSIVE: Subtype-specific data not available\n\nANALYSIS ATTEMPT:\n- Tried to split autoimmune into subtypes (RA, lupus, psoriasis, MS, IBD)\n- But h163 data only has overall \"autoimmune\" category precision\n\nEXISTING FINDINGS FROM h163/h265:\n- NSAID + autoimmune = 50% (already HIGH tier via h265)\n- DMARD + autoimmune = 75.4% (already GOLDEN tier via h157)\n- Corticosteroid + autoimmune = 46.1%\n- Kinase inhibitor + autoimmune = 30.8% (surprise!)\n- Receptor fusion + autoimmune = 30.0%\n\nCONCLUSION:\nThe existing production_predictor rules are already optimal for \"autoimmune\" as a single category.\nTo determine subtype-specific preferences (e.g., RA vs psoriasis vs MS), would need:\n1. Re-run kNN with subtype classification\n2. Large enough n per subtype (many subtypes have n<10)\n\nThis is medium-high effort with uncertain benefit since current rules work well.",
+      "result_metric": "NSAID=50%, DMARD=75.4%, Steroid=46.1% for autoimmune (no subtype split)"
     }
   ],
   "completed": [
@@ -6417,6 +6417,12 @@
       "hypothesis_id": "h266",
       "learning": "Rank constraints interact with drug class precision. Beta blocker+CV improved from 33.3% (rank<=5) to 42.1% (rank<=10) by capturing more predictions. SGLT2+CV is so predictive (71-100%) that rank constraints don't matter.",
       "implication": "Drug class rules should be tuned with class-specific rank constraints rather than uniform rank cutoffs."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h268",
+      "learning": "Autoimmune subtype-specific analysis blocked by data structure. h163 only has aggregate autoimmune precision. Would need dedicated evaluation with subtype classification. Current rules (DMARD=75%, NSAID=50%, Steroid=46%) are already optimal for aggregate autoimmune.",
+      "implication": "Further precision improvements in autoimmune require either subtype-specific evaluation or external data sources."
     }
   ],
   "collaborations": [
