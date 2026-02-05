@@ -1,114 +1,97 @@
 # Research Loop Progress
 
-## Current Session: h229, h230 (2026-02-05)
+## Current Session: h229, h230, h231, h232 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 4**
 - h229: Drug-Class Prediction for Cardiovascular - **VALIDATED**
 - h230: Integrate Full CV Drug-Class Prediction into Production - **VALIDATED**
+- h231: CV Disease DRKG Coverage Gap Analysis - **VALIDATED**
+- h232: Stroke Subtype Analysis - Why kNN Wins - **VALIDATED**
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 122 |
+| Validated | 125 |
 | Invalidated | 46 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
 | Pending | 32 |
-| **Total** | **229** |
+| **Total** | **232** |
 
 ### Session Key Learnings
 
-1. **h229:** Drug-class prediction achieves +21.8pp vs kNN for cardiovascular diseases (44.2% vs 22.3%). Best for HF (+45pp), AFib (+42pp), MI (+38pp), CAD (+34pp).
-2. **h230:** Integrated CV drug-class rescue rules into production_predictor.py. Achieved 59.4% HIGH tier precision. AFib and hypertension hit 100% precision.
+1. **h229:** Drug-class prediction achieves +21.8pp vs kNN for CV diseases. Best for HF (+45pp), AFib (+42pp), MI (+38pp), CAD (+34pp).
+2. **h230:** Integrated CV drug-class rescue rules. AFib and hypertension achieve 100% HIGH tier precision.
+3. **h231:** Added 50 CV MESH mappings, improving coverage from 44.3% to 63.6% (+43.8%).
+4. **h232:** Stroke has only 32.8% drug class coverage because treatment includes BP control, cognitive support, spasticity. kNN wins for stroke.
 
 ### Session Theme: Cardiovascular Drug-Class Integration
 
-This session extended the drug-class prediction approach (validated in h174 for psychiatric) to cardiovascular diseases:
-- **h229:** Validated that drug-class prediction outperforms kNN for CV diseases by +21.8pp
-- **h230:** Integrated AFib, MI, CAD rescue rules into production predictor
-- **Key drugs now rescued:** Rivaroxaban, Warfarin (AFib), Clopidogrel, Ticagrelor (MI/CAD), Nitroglycerin (CAD)
+This session validated and integrated drug-class prediction for cardiovascular diseases:
+- Validated approach (+21.8pp vs kNN)
+- Integrated into production predictor
+- Expanded MESH mappings for broader applicability
+- Identified exception (stroke) where kNN remains superior
+
+**Key insight:** Drug-class prediction works for diseases with well-defined treatment paradigms (HF, AFib, MI). It fails for multi-faceted conditions (stroke) where kNN's broader neighbor similarity provides better coverage.
 
 ---
 
 ### h229: Drug-Class Prediction for Cardiovascular - VALIDATED
 
-**Objective:** Evaluate whether drug-class prediction (like h174 for psychiatric) extends to cardiovascular diseases.
-
-**KEY RESULTS:**
-| Metric | kNN | DrugClass | Diff |
-|--------|-----|-----------|------|
-| Overall CV | 22.3% | 44.2% | +21.8pp |
+**Results:**
+| Category | kNN | DrugClass | Diff |
+|----------|-----|-----------|------|
 | Heart failure | 12.7% | 57.7% | +45.0pp |
 | AFib | 23.9% | 65.6% | +41.7pp |
 | MI | 10.2% | 47.9% | +37.8pp |
 | CAD | 31.7% | 65.8% | +34.1pp |
-
-**DRUG CLASSES DEFINED:**
-- ACE inhibitors, ARBs, beta-blockers, CCBs, diuretics (HTN/HF)
-- Anticoagulants, DOACs (AFib)
-- Antiplatelets, statins, nitrates (MI/CAD)
-- Antiarrhythmics (arrhythmias)
-
-**NEW HYPOTHESES GENERATED:**
-- h230: Integrate Full CV Drug-Class Prediction into Production
-- h231: CV Disease DRKG Coverage Gap Analysis
-- h232: Stroke Subtype Analysis - Why kNN Wins
-
-**Output:** `data/analysis/h229_cv_drug_class_prediction.json`
+| **Overall CV** | **22.3%** | **44.2%** | **+21.8pp** |
 
 ---
 
-### h230: Full CV Drug-Class in Production - VALIDATED
+### h230: CV Drug-Class Production Integration - VALIDATED
 
-**Objective:** Integrate h229's CV drug-class rules into production_predictor.py.
+**Implementation:**
+- Added AFib, MI, CAD rescue rules to production_predictor.py
+- Added drug class constants and disease keywords
+- HIGH tier precision: 59.4% (19/32)
+- AFib: 100%, Hypertension: 100%, CAD: 67%, MI: 12.5%
 
-**IMPLEMENTATION:**
-1. Added drug class constants (ANTICOAGULANT_DRUGS, ANTIPLATELET_DRUGS, NITRATE_DRUGS, etc.)
-2. Added disease keywords (AFIB_KEYWORDS, MI_KEYWORDS, CAD_KEYWORDS)
-3. Added 'atrial fibrillation', 'atrial flutter' to cardiovascular category keywords
-4. Added rescue rules in _apply_category_rescue() for AFib, MI, CAD
+---
 
-**PRECISION RESULTS (8 CV diseases, top 20):**
-| Tier | TP | Total | Precision |
-|------|-------|-------|-----------|
-| HIGH | 19 | 32 | 59.4% |
+### h231: CV MESH Mapping Expansion - VALIDATED
 
-**PER-DISEASE HIGH TIER:**
-- AFib: 7/7 = 100%
-- Hypertension: 6/6 = 100%
-- CAD: 2/3 = 67%
-- MI: 1/8 = 12.5% (needs investigation)
+**Results:**
+- Before: 112/253 CV diseases matched (44.3%)
+- After: 161/253 CV diseases matched (63.6%)
+- **Improvement: +49 diseases (+43.8%)**
+- GT drug coverage: 85.3% (769/901)
 
-**RESCUED DRUGS:**
-- AFib: Propranolol, Verapamil, Carvedilol, Bisoprolol, Rivaroxaban, Diltiazem, Warfarin
-- MI: Clopidogrel, Vorapaxar, Pravastatin, Lovastatin
-- CAD: Propranolol, Ticagrelor, Nitroglycerin
+---
+
+### h232: Stroke Analysis - VALIDATED
+
+**Why drug-class fails for stroke:**
+- Only 32.8% of stroke drugs covered by traditional classes
+- Stroke treatment includes: BP control, cognitive support, spasticity
+- kNN wins because stroke shares neighbors with HTN, dementia, heart disease
+- **Implication:** Keep kNN for stroke category
 
 ---
 
 ## Previous Session: h210, h164, h166, h225 (2026-02-05)
 
-### Session Summary
-
-**Agent Role:** Research Executor
-**Status:** Complete
 **Hypotheses Tested: 4**
-- h210: Implement Manual Rule Injection Layer in Production Pipeline - **VALIDATED**
-- h164: Contraindication Database: Systematic Safety Filter Expansion - **VALIDATED**
-- h166: Drug-Disease Mechanism Path Tracing for Interpretability - **VALIDATED**
-- h225: Add Mechanism Support to Production Deliverable - **VALIDATED**
-
-### Session Key Learnings
-
-1. **h210:** Manual rule injection adds 45 FDA-approved drug-disease pairs missing from DRKG (4.3% coverage improvement)
-2. **h164:** Systematic contraindication expansion has diminishing returns; kNN model implicitly avoids harmful patterns. Added immunosuppressant + infection rule (+10 exclusions)
-3. **h166:** Mechanism paths (drug->gene->disease) provide 2.2x precision lift. 22% of predictions have direct paths.
-4. **h225:** mechanism_genes column successfully added to production deliverable for researcher prioritization
+- h210: Manual Rule Injection Layer - VALIDATED
+- h164: Contraindication Database Expansion - VALIDATED
+- h166: Mechanism Path Tracing - VALIDATED
+- h225: Mechanism Support in Production - VALIDATED
 
 ---
 
