@@ -3668,14 +3668,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "in_progress",
+      "status": "blocked",
       "steps": [
         "Identify metabolic disease subtypes where statins are NOT indicated",
         "Add STATIN_EXCLUDED_DISEASES set (hyperthyroidism, diabetic nephropathy, etc)",
         "Apply filter to statin rescue criteria",
         "Measure precision improvement"
       ],
-      "started_date": "2026-02-05"
+      "started_date": "2026-02-05",
+      "findings": "Left in_progress from previous session. Need to review context before continuing."
     },
     {
       "id": "h186",
@@ -6231,7 +6232,7 @@
       "title": "Refine ATC-Category Coherence Map for Corticosteroids",
       "category": "method_improvement",
       "description": "h308 found ATC coherence fails because corticosteroids (ATC A/H) are used across many disease categories. Refine the DISEASE_CATEGORY_ATC_MAP to include H02 (corticosteroids) for autoimmune, respiratory, dermatological, ophthalmological categories.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "effort": "low",
       "expected_impact": "low",
@@ -6243,6 +6244,29 @@
         "Step 2: Re-run h287 analysis with refined map",
         "Step 3: Check if coherence signal becomes more useful after refinement",
         "Success criteria: Coherent precision > incoherent precision after map refinement"
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "GOLDEN coherent 35.5% vs 18.7% (+16.8 pp gap, was -13.5 pp)",
+      "findings": "h309 VALIDATED: Refined ATC map fixes coherence signal at GOLDEN tier.\n\nKEY FINDINGS:\n1. ORIGINAL GOLDEN:\n   - Coherent: 15.00% precision (100 predictions)\n   - Incoherent: 28.51% precision (898 predictions)\n   - Gap: -13.51 pp (coherent WORSE than incoherent)\n\n2. REFINED GOLDEN (added H/A to inflammatory categories):\n   - Coherent: 35.45% precision (505 predictions)\n   - Incoherent: 18.66% precision (493 predictions)\n   - Gap: +16.78 pp (coherent NOW BETTER!)\n\n3. Change: Gap swung from -13.5 pp to +16.8 pp (+30.3 pp improvement!)\n\nINTERPRETATION:\nThe original ATC L1 map failed because:\n- Corticosteroids (H02) are classified under H (systemic hormonal) or A (alimentary)\n- They are used broadly for inflammation across ALL disease categories\n- Original map only included H/A for metabolic diseases\n\nThe refined map adds H and A to inflammatory categories:\n- autoimmune, dermatological, respiratory, ophthalmological, hematological, musculoskeletal\n\nACTIONABLE:\nUpdate DISEASE_CATEGORY_ATC_MAP in production code with refined mapping.\nNow coherence CAN be used as a positive tier signal (was invalid before)."
+    },
+    {
+      "id": "h310",
+      "title": "Implement Coherence Boost with Refined ATC Map",
+      "category": "method_improvement",
+      "description": "h309 showed refined ATC map makes coherence a valid signal (GOLDEN coherent 35.5% vs 18.7%). Implement coherence-based tier boost using the refined map.",
+      "status": "pending",
+      "priority": 3,
+      "effort": "medium",
+      "expected_impact": "medium",
+      "dependencies": [
+        "h309"
+      ],
+      "steps": [
+        "Step 1: Update DISEASE_CATEGORY_ATC_MAP in production_predictor.py with refined mapping",
+        "Step 2: Add is_atc_coherent() check using refined map",
+        "Step 3: Boost coherent predictions by one tier (LOW -> MEDIUM, etc.)",
+        "Step 4: Run full evaluation to measure cumulative precision impact",
+        "Success criteria: >2 pp improvement in overall precision"
       ]
     }
   ],
@@ -7448,6 +7472,12 @@
       "hypothesis_id": "h308",
       "learning": "ATC L1 coherence fails at GOLDEN tier because corticosteroids (ATC A/H) are used broadly but classified narrowly. GOLDEN + incoherent = 28.5% vs coherent = 15.0%. The incoherence is driven by corticosteroids treating inflammatory diseases across categories.",
       "implication": "Do not filter GOLDEN tier by coherence. Consider refining ATC-category mapping to include cross-category drug classes."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h309",
+      "learning": "ATC L1 coherence signal failed because corticosteroids (H02, classified as H/A) are used broadly but original map only included H/A for metabolic diseases. Adding H/A to inflammatory categories (autoimmune, dermatological, respiratory, ophthalmological, hematological, musculoskeletal) fixed the signal: GOLDEN coherent went from 15% to 35.5%, gap swung from -13.5 pp to +16.8 pp.",
+      "implication": "Use refined ATC map for coherence-based tier boosting. Cross-category drug classes (corticosteroids, NSAIDs) need broader category mapping."
     }
   ],
   "collaborations": [
