@@ -1,0 +1,502 @@
+{
+  "hypothesis": "h206",
+  "title": "Missing DRKG Drugs Analysis",
+  "summary": {
+    "total_gt_drugs": 2367,
+    "drugs_with_embeddings": 1480,
+    "drugs_without_embeddings": 887,
+    "biologics_missing": 40,
+    "total_blocked_pairs": 2429,
+    "biologic_blocked_pairs": 75
+  },
+  "missing_biologics_top_20": [
+    {
+      "drug": "CERTOLIZUMAB",
+      "n_indications": 6,
+      "indications": [
+        "rheumatoid arthritis",
+        "ankylosing spondylitis",
+        "psoriatic arthritis",
+        "Chronic small plaque psoriasis",
+        "pustular psoriasis",
+        "Erythrodermic psoriasis"
+      ]
+    },
+    {
+      "drug": "Faricimab",
+      "n_indications": 5,
+      "indications": [
+        "wet macular degeneration",
+        "diabetic macular edema",
+        "age-related macular degeneration",
+        "Macular Edema",
+        "retinal vein occlusion"
+      ]
+    },
+    {
+      "drug": "Epcoritamab",
+      "n_indications": 4,
+      "indications": [
+        "diffuse large B-cell lymphoma",
+        "relapsed/refractory diffuse large B-cell lymphoma",
+        "primary mediastinal large B-cell lymphoma",
+        "follicular lymphoma"
+      ]
+    },
+    {
+      "drug": "Sutimlimab",
+      "n_indications": 3,
+      "indications": [
+        "cold agglutinin disease",
+        "Hemolysis",
+        "hemolytic anemia"
+      ]
+    },
+    {
+      "drug": "Inotuzumab ozogamicin only product",
+      "n_indications": 3,
+      "indications": [
+        "acute lymphoblastic leukemia",
+        "precursor B-cell acute lymphoblastic leukemia",
+        "B-cell acute lymphoblastic leukemia"
+      ]
+    },
+    {
+      "drug": "Soravtansine",
+      "n_indications": 3,
+      "indications": [
+        "ovarian carcinoma",
+        "fallopian tube cancer",
+        "Primary Peritoneal Cancer"
+      ]
+    },
+    {
+      "drug": "Tislelizumab",
+      "n_indications": 3,
+      "indications": [
+        "esophageal squamous cell carcinoma",
+        "gastric cancer",
+        "gastroesophageal junction adenocarcinoma"
+      ]
+    },
+    {
+      "drug": "Gemtuzumab",
+      "n_indications": 3,
+      "indications": [
+        "acute myeloid leukemia",
+        "acute promyelocytic leukemia",
+        "Relapsing acute myeloid leukemia"
+      ]
+    },
+    {
+      "drug": "Tilmanocept",
+      "n_indications": 3,
+      "indications": [
+        "breast cancer",
+        "melanoma",
+        "oral cavity squamous cell carcinoma"
+      ]
+    },
+    {
+      "drug": "Elranatamab",
+      "n_indications": 2,
+      "indications": [
+        "Relapse multiple myeloma",
+        "plasma cell myeloma"
+      ]
+    },
+    {
+      "drug": "Teclistamab",
+      "n_indications": 2,
+      "indications": [
+        "Relapse multiple myeloma",
+        "plasma cell myeloma"
+      ]
+    },
+    {
+      "drug": "marstacimab",
+      "n_indications": 2,
+      "indications": [
+        "hemophilia A",
+        "hemophilia B"
+      ]
+    },
+    {
+      "drug": "Amivantamab",
+      "n_indications": 2,
+      "indications": [
+        "EGFR-related lung cancer",
+        "non-small cell lung carcinoma"
+      ]
+    },
+    {
+      "drug": "Mirikizumab",
+      "n_indications": 2,
+      "indications": [
+        "ulcerative colitis",
+        "Crohn disease"
+      ]
+    },
+    {
+      "drug": "Nipocalimab",
+      "n_indications": 2,
+      "indications": [
+        "Generalized myasthenia",
+        "myasthenia gravis"
+      ]
+    },
+    {
+      "drug": "Satralizumab",
+      "n_indications": 2,
+      "indications": [
+        "neuromyelitis optica spectrum disorder with anti-AQP4 antibodies",
+        "neuromyelitis optica"
+      ]
+    },
+    {
+      "drug": "Spesolimab",
+      "n_indications": 2,
+      "indications": [
+        "generalized pustular psoriasis",
+        "pustular psoriasis"
+      ]
+    },
+    {
+      "drug": "Glofitamab",
+      "n_indications": 2,
+      "indications": [
+        "relapsed/refractory diffuse large B-cell lymphoma",
+        "diffuse large B-cell lymphoma"
+      ]
+    },
+    {
+      "drug": "LONCASTUXIMAB",
+      "n_indications": 2,
+      "indications": [
+        "diffuse large B-cell lymphoma",
+        "high grade B-cell lymphoma"
+      ]
+    },
+    {
+      "drug": "Ibritumomab",
+      "n_indications": 2,
+      "indications": [
+        "non-Hodgkin lymphoma",
+        "mantle cell lymphoma"
+      ]
+    }
+  ],
+  "manual_rules": [
+    {
+      "drug_name": "CERTOLIZUMAB",
+      "indications": [
+        "rheumatoid arthritis",
+        "ankylosing spondylitis",
+        "psoriatic arthritis",
+        "Chronic small plaque psoriasis",
+        "pustular psoriasis",
+        "Erythrodermic psoriasis"
+      ],
+      "n_indications": 6,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Faricimab",
+      "indications": [
+        "wet macular degeneration",
+        "diabetic macular edema",
+        "age-related macular degeneration",
+        "Macular Edema",
+        "retinal vein occlusion"
+      ],
+      "n_indications": 5,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Epcoritamab",
+      "indications": [
+        "diffuse large B-cell lymphoma",
+        "relapsed/refractory diffuse large B-cell lymphoma",
+        "primary mediastinal large B-cell lymphoma",
+        "follicular lymphoma"
+      ],
+      "n_indications": 4,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Sutimlimab",
+      "indications": [
+        "cold agglutinin disease",
+        "Hemolysis",
+        "hemolytic anemia"
+      ],
+      "n_indications": 3,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Inotuzumab ozogamicin only product",
+      "indications": [
+        "acute lymphoblastic leukemia",
+        "precursor B-cell acute lymphoblastic leukemia",
+        "B-cell acute lymphoblastic leukemia"
+      ],
+      "n_indications": 3,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Soravtansine",
+      "indications": [
+        "ovarian carcinoma",
+        "fallopian tube cancer",
+        "Primary Peritoneal Cancer"
+      ],
+      "n_indications": 3,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Tislelizumab",
+      "indications": [
+        "esophageal squamous cell carcinoma",
+        "gastric cancer",
+        "gastroesophageal junction adenocarcinoma"
+      ],
+      "n_indications": 3,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Gemtuzumab",
+      "indications": [
+        "acute myeloid leukemia",
+        "acute promyelocytic leukemia",
+        "Relapsing acute myeloid leukemia"
+      ],
+      "n_indications": 3,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Tilmanocept",
+      "indications": [
+        "breast cancer",
+        "melanoma",
+        "oral cavity squamous cell carcinoma"
+      ],
+      "n_indications": 3,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Elranatamab",
+      "indications": [
+        "Relapse multiple myeloma",
+        "plasma cell myeloma"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Teclistamab",
+      "indications": [
+        "Relapse multiple myeloma",
+        "plasma cell myeloma"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "marstacimab",
+      "indications": [
+        "hemophilia A",
+        "hemophilia B"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Amivantamab",
+      "indications": [
+        "EGFR-related lung cancer",
+        "non-small cell lung carcinoma"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Mirikizumab",
+      "indications": [
+        "ulcerative colitis",
+        "Crohn disease"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Nipocalimab",
+      "indications": [
+        "Generalized myasthenia",
+        "myasthenia gravis"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Satralizumab",
+      "indications": [
+        "neuromyelitis optica spectrum disorder with anti-AQP4 antibodies",
+        "neuromyelitis optica"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Spesolimab",
+      "indications": [
+        "generalized pustular psoriasis",
+        "pustular psoriasis"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Glofitamab",
+      "indications": [
+        "relapsed/refractory diffuse large B-cell lymphoma",
+        "diffuse large B-cell lymphoma"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "LONCASTUXIMAB",
+      "indications": [
+        "diffuse large B-cell lymphoma",
+        "high grade B-cell lymphoma"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Ibritumomab",
+      "indications": [
+        "non-Hodgkin lymphoma",
+        "mantle cell lymphoma"
+      ],
+      "n_indications": 2,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Pozelimab",
+      "indications": [
+        "diarrhea 10, protein-losing enteropathy type"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "crovalimab",
+      "indications": [
+        "paroxysmal nocturnal hemoglobinuria"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Talquetamab",
+      "indications": [
+        "plasma cell myeloma"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "donanemab",
+      "indications": [
+        "Alzheimer disease"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Tisotumab vedotin",
+      "indications": [
+        "cervical cancer"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "zanidatamab",
+      "indications": [
+        "biliary tract cancer"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Nirsevimab",
+      "indications": [
+        "respiratory syncytial virus infectious disease"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Ansuvimab",
+      "indications": [
+        "Zaire Ebolavirus disease"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "Gemtuzumab ozogamicin only product",
+      "indications": [
+        "acute myeloid leukemia"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    },
+    {
+      "drug_name": "penpulimab",
+      "indications": [
+        "nasopharyngeal type undifferentiated carcinoma"
+      ],
+      "n_indications": 1,
+      "rule_type": "manual_injection",
+      "source": "every_cure_gt"
+    }
+  ],
+  "suffix_counts": {
+    "mab": 35,
+    "ase": 4,
+    "ADC": 1,
+    "cept": 1
+  }
+}
