@@ -3668,13 +3668,14 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Identify metabolic disease subtypes where statins are NOT indicated",
         "Add STATIN_EXCLUDED_DISEASES set (hyperthyroidism, diabetic nephropathy, etc)",
         "Apply filter to statin rescue criteria",
         "Measure precision improvement"
-      ]
+      ],
+      "started_date": "2026-02-05"
     },
     {
       "id": "h186",
@@ -6101,7 +6102,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Define high-frequency unique: class-unique AND train_freq > 20",
         "Step 2: Calculate precision for this subset",
@@ -6111,7 +6112,10 @@
       ],
       "dependencies": [
         "h289"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "High-freq unique: 27.3%, NOT unique at same freq: 22.6%; gap only +4.6 pp",
+      "findings": "h303 INVALIDATED: High-frequency unique is NOT a distinct signal worth implementing.\n\nKEY FINDINGS:\n1. Unique correct predictions have train_freq = 25.02 vs 8.14 for incorrect (16.9 gap)\n2. High-freq unique (>=30): 27.27% precision, +20.5 pp vs unique baseline (6.8%)\n3. BUT: NOT unique at same freq (>=30): 22.64% precision\n4. The +4.6 pp gap (unique vs not-unique at high freq) is:\n   - Small sample size: only 77 unique predictions\n   - Marginal improvement not worth implementation complexity\n\nINVERSE FINDING (more actionable):\nLow-frequency unique is WORSE than low-freq not-unique:\n- freq <= 2: Unique 1.75% vs Not-unique 4.44% (-2.7 pp)\n- freq <= 5: Unique 3.11% vs Not-unique 5.43% (-2.3 pp)\n- freq <= 10: Unique 3.12% vs Not-unique 6.51% (-3.4 pp)\n\nCONCLUSION:\nThe dominant signal is FREQUENCY, not uniqueness.\n- High frequency (>=15) is already rewarded by existing tier rules\n- Low-frequency unique could be demoted, but existing freq<=2 filter covers worst cases\n- NOT WORTH implementing uniqueness-based modifier\n- The \"unique\" aspect identified in h289 is explained by frequency confounding"
     },
     {
       "id": "h304",
@@ -6157,6 +6161,46 @@
       "completed_date": "2026-02-05",
       "findings": "h305 INVALIDATED: Cost-benefit analysis shows implementation not worthwhile.\n\nANALYSIS:\n- h302 showed 3-4 classmate filter gives +0.44 pp improvement\n- 7 classmates gives 16.3% precision (2x baseline) but only N=692 predictions\n- Full implementation requires:\n  1. Build ATC class \u2192 drugs mapping at init\n  2. Track neighbor drugs per prediction\n  3. Calculate n_classmates per drug\n  4. Add tier modifier logic\n\nCOST-BENEFIT:\n- Implementation: ~50-100 lines of code\n- Benefit: +0.44 pp precision (modest)\n- Complexity: Adds another signal to already complex tier system\n- Risk: Could slow down predictions\n\nDECISION: Not worth implementing. The precision gain is too small to justify\nthe additional complexity. Better to focus on higher-ROI hypotheses.\n\nALTERNATIVE: If we wanted to capture this signal, a simpler approach would be:\n- Just filter out 3-4 classmate predictions post-hoc if needed\n- Log n_classmates for future analysis without affecting tiers\n\nThe 7-classmate golden zone insight is valuable for understanding\nwhy predictions succeed, but implementing it as a tier modifier isn't worth it.",
       "result_metric": "Not implemented: +0.44pp gain insufficient for complexity cost"
+    },
+    {
+      "id": "h306",
+      "title": "Low-Frequency Unique Demotion Rule",
+      "category": "confidence",
+      "description": "h303 found low-freq unique is 2.3-3.4 pp worse than low-freq not-unique. Test if adding unique + freq<=5 -> demote one tier improves precision.",
+      "status": "pending",
+      "priority": 4,
+      "effort": "low",
+      "expected_impact": "low",
+      "dependencies": [
+        "h303"
+      ],
+      "steps": [
+        "Step 1: Add uniqueness check to production_predictor.py",
+        "Step 2: Implement tier demotion: unique + freq<=5 -> demote one tier",
+        "Step 3: Run full evaluation to measure precision improvement",
+        "Step 4: Calculate trade-off (precision gain vs coverage loss)",
+        "Success criteria: >1 pp precision improvement at MEDIUM tier"
+      ]
+    },
+    {
+      "id": "h307",
+      "title": "Lidocaine-Specific Boosting Analysis",
+      "category": "confidence",
+      "description": "h303 found Lidocaine dominates unique correct predictions (21 of 44 hits). Is Lidocaine pattern reliable enough to warrant special handling?",
+      "status": "pending",
+      "priority": 5,
+      "effort": "low",
+      "expected_impact": "low",
+      "dependencies": [
+        "h303"
+      ],
+      "steps": [
+        "Step 1: Analyze all Lidocaine predictions across diseases",
+        "Step 2: Calculate Lidocaine-specific precision by category",
+        "Step 3: Identify what makes Lidocaine unique hits different",
+        "Step 4: Determine if Lidocaine + conditions -> tier boost is warranted",
+        "Success criteria: Identify reliable Lidocaine pattern (>30% precision)"
+      ]
     }
   ],
   "completed": [
@@ -7343,6 +7387,12 @@
       "hypothesis_id": "h302",
       "learning": "ATC classmate count shows clear precision pattern: 7 classmates = 16.33% precision (2x baseline), 3-4 classmates = 2.9% (worst). Filtering 3-4 classmates removes 7.4% predictions but only loses 2.5% of hits.",
       "implication": "Consider n_classmates as confidence signal. Can implement as tier modifier: 7 classmates \u2192 boost, 3-4 classmates \u2192 demote."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h303",
+      "learning": "Class uniqueness is NOT an independent signal - frequency is the confounding variable. High-freq unique = 27.3%, high-freq not-unique = 22.6% (only +4.6 pp gap). Low-freq unique is actually WORSE (-2.3 to -3.4 pp).",
+      "implication": "Do not implement uniqueness-based modifiers. Existing frequency-based rules are sufficient."
     }
   ],
   "collaborations": [
