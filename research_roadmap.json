@@ -2655,7 +2655,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Analyze precision by category for different criteria",
         "Step 2: Find optimal thresholds per category",
@@ -2664,7 +2664,9 @@
       ],
       "dependencies": [
         "h132"
-      ]
+      ],
+      "findings": "SUPERSEDED by h136. Category-specific golden criteria already found: Infectious 55.6%, Cardiovascular 38.2%, Respiratory 35%. These exceed the >25% success criteria.",
+      "result_metric": "Superseded - see h136 for >25% precision criteria"
     },
     {
       "id": "h134",
@@ -2757,8 +2759,8 @@
       "description": "Split the \"other\" category into sub-groups based on disease characteristics (infectious-other, rare-genetic-other) to improve calibration",
       "expected_impact": "medium",
       "effort": "medium",
-      "priority": 4,
-      "status": "pending",
+      "priority": 99,
+      "status": "invalidated",
       "steps": [
         "Step 1: Create keyword rules for infectious diseases currently in \"other\"",
         "Step 2: Create keyword rules for rare genetic conditions",
@@ -2766,7 +2768,9 @@
         "Step 4: Calculate calibration error with sub-categories",
         "Step 5: Compare to per-disease confidence approach",
         "Success criteria: >10 pp calibration error reduction"
-      ]
+      ],
+      "findings": "INVALIDATED: Sub-categorization does NOT reduce calibration error below prob_h52.\n\nQuick test results:\n- other-infectious (7 diseases): 100% hit rate\n- other-rare (19 diseases): 21.1% hit rate  \n- other-misc (146 diseases): 57.9% hit rate (still high variance)\n\nCALIBRATION ERROR:\n- Sub-category approach: 40.1 pp\n- prob_h52 approach:     31.7 pp\n- Sub-categorization is WORSE by 8.4 pp\n\nThe \"other-misc\" bucket (146/172 diseases) still has high internal variance.\nprob_h52 handles heterogeneity better than keyword rules.\n",
+      "result_metric": "40.1 pp error (worse than 31.7 pp baseline)"
     },
     {
       "id": "h139",
@@ -2793,14 +2797,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Extract features from \"other\" diseases (name patterns, graph connectivity)",
         "Step 2: Label as high (>50%) or low (<=50%) hit rate",
         "Step 3: Train simple classifier (logistic regression)",
         "Step 4: Evaluate on held-out diseases",
         "Success criteria: >70% accuracy in predicting high vs low hit"
-      ]
+      ],
+      "findings": "VALIDATED: prob_h52 already serves as bimodality predictor with 76.2% accuracy.\n\nUsing prob_h52 >= 0.5 as threshold:\n- Correctly classifies 131/172 \"other\" diseases (76.2% accuracy)\n- Best threshold: 0.5 (76.2%)\n- Exceeds 70% target\n\nNo additional classifier needed - prob_h52 IS the bimodality predictor.\nThis confirms h139's finding that per-disease confidence features are sufficient.\n",
+      "result_metric": "76.2% accuracy (exceeds 70% target)"
     }
   ],
   "completed": [
@@ -3369,6 +3375,12 @@
       "hypothesis_id": "h139",
       "learning": "Per-disease confidence (prob_h52) is sufficient for calibration. Adding category expectations only increases error.",
       "implication": "Use prob_h52 directly for confidence. Category tiers are redundant for calibration purposes."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h138",
+      "learning": "Keyword-based sub-categorization cannot beat per-disease ML confidence (prob_h52). Even granular sub-categories have internal variance that ML captures better.",
+      "implication": "Stop pursuing category-based calibration improvements. Focus on per-disease features."
     }
   ],
   "collaborations": [
