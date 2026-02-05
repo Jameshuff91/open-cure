@@ -44,6 +44,7 @@ MODELS_DIR = PROJECT_ROOT / "models"
 OUTPUT_DIR = PROJECT_ROOT / "data" / "deliverables"
 EMBEDDINGS_DIR = PROJECT_ROOT / "data" / "embeddings"
 MANUAL_RULES_PATH = REFERENCE_DIR / "manual_drug_rules.json"
+DRKG_PATH = PROJECT_ROOT / "data" / "raw" / "drkg" / "drkg.tsv"
 
 # Category keywords
 CATEGORY_KEYWORDS = {
@@ -183,6 +184,66 @@ def load_manual_rules(matcher: DiseaseMatcher) -> Dict[str, List[Tuple[str, str]
 
     print(f"  Manual rules: {matched} matched, {unmatched} unmatched ({len(disease_to_drugs)} diseases)")
     return dict(disease_to_drugs)
+
+
+def load_mechanism_paths() -> Tuple[Dict[str, Set[str]], Dict[str, Set[str]]]:
+    """
+    Load DRKG graph data for mechanism path analysis (h166/h225).
+
+    Returns:
+        drug_gene: drug_id -> set of gene_ids (drug targets)
+        gene_disease: gene_id -> set of disease_ids (gene-disease associations)
+    """
+    if not DRKG_PATH.exists():
+        print("  Warning: DRKG not found, mechanism paths unavailable")
+        return {}, {}
+
+    drug_gene: Dict[str, Set[str]] = defaultdict(set)
+    gene_disease: Dict[str, Set[str]] = defaultdict(set)
+
+    with open(DRKG_PATH) as f:
+        for line in f:
+            parts = line.strip().split('\t')
+            if len(parts) != 3:
+                continue
+            head, rel, tail = parts
+
+            # Drug -> Gene (target/modulation relations)
+            if head.startswith('Compound::') and tail.startswith('Gene::'):
+                if any(r in rel for r in ['target', 'CdG', 'CuG', 'GNBR::E', 'DGIDB']):
+                    drug_gene[head].add(tail)
+
+            # Gene -> Disease
+            if head.startswith('Gene::') and tail.startswith('Disease::'):
+                gene_disease[head].add(tail)
+
+    print(f"  Mechanism paths: {len(drug_gene)} drugs, {len(gene_disease)} genes with diseases")
+    return dict(drug_gene), dict(gene_disease)
+
+
+def get_mechanism_support(
+    drug_id: str,
+    disease_id: str,
+    drug_gene: Dict[str, Set[str]],
+    gene_disease: Dict[str, Set[str]],
+) -> int:
+    """
+    Count number of genes connecting drug to disease (h166).
+    Higher = more mechanism support = higher confidence.
+    """
+    # Strip drkg: prefix
+    drug_clean = drug_id.replace('drkg:', '') if drug_id.startswith('drkg:') else drug_id
+    disease_clean = disease_id.replace('drkg:', '') if disease_id.startswith('drkg:') else disease_id
+
+    if drug_clean not in drug_gene:
+        return 0
+
+    n_connecting = 0
+    for gene in drug_gene[drug_clean]:
+        if disease_clean in gene_disease.get(gene, set()):
+            n_connecting += 1
+
+    return n_connecting
 
 
 def knn_predict(
@@ -354,6 +415,9 @@ def main():
     matcher = DiseaseMatcher(fuzzy_mappings)
     manual_rules = load_manual_rules(matcher)
 
+    # Load mechanism path data for interpretability (h166/h225)
+    drug_gene, gene_disease = load_mechanism_paths()
+
     # Use all diseases as training (for production we use all available data)
     train_disease_list = [d for d in all_gt if d in emb_dict]
     train_disease_embs = np.array([emb_dict[d] for d in train_disease_list], dtype=np.float32)
@@ -394,6 +458,11 @@ def main():
             drug_name = id_to_drug_name.get(pred['drug_id'], pred['drug_id'])
             is_known = pred['drug_id'] in gt_drugs
 
+            # Get mechanism support (h225)
+            mech_support = get_mechanism_support(
+                pred['drug_id'], disease_id, drug_gene, gene_disease
+            )
+
             all_predictions.append({
                 'disease_name': disease_name,
                 'disease_id': disease_id,
@@ -407,6 +476,7 @@ def main():
                 'neighbors_with_gt': confidence['neighbors_with_gt'],
                 'is_known_indication': is_known,
                 'source': 'knn',
+                'mechanism_genes': mech_support,  # h225: number of connecting genes
             })
 
         # Inject manual rules for drugs missing from DRKG (h210)
@@ -430,6 +500,7 @@ def main():
                     'neighbors_with_gt': confidence['neighbors_with_gt'],
                     'is_known_indication': True,  # By definition (from GT)
                     'source': 'manual_rule',
+                    'mechanism_genes': 0,  # Manual rules have no DRKG mechanism data
                 })
 
     # Create DataFrame

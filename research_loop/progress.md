@@ -1,15 +1,16 @@
 # Research Loop Progress
 
-## Current Session: h210, h164, h166 (2026-02-05)
+## Current Session: h210, h164, h166, h225 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 3**
+**Hypotheses Tested: 4**
 - h210: Implement Manual Rule Injection Layer in Production Pipeline - **VALIDATED**
 - h164: Contraindication Database: Systematic Safety Filter Expansion - **VALIDATED**
 - h166: Drug-Disease Mechanism Path Tracing for Interpretability - **VALIDATED**
+- h225: Add Mechanism Support to Production Deliverable - **VALIDATED**
 
 ---
 
@@ -128,6 +129,25 @@ Immunosuppressants (tacrolimus, cyclosporine, azathioprine, sirolimus) + Infecti
 - h226: Two-Hop Mechanism Paths (Drug->Gene->Gene->Disease)
 
 **Output:** `data/analysis/h166_mechanism_path_analysis.json`
+
+---
+
+### h225: Add Mechanism Support to Production - VALIDATED
+
+**Objective:** Add mechanism_genes column to production deliverable based on h166 findings.
+
+**IMPLEMENTATION:**
+- Added `load_mechanism_paths()` to load DRKG edges
+- Added `get_mechanism_support()` to count connecting genes
+- Added `mechanism_genes` column to all predictions
+
+**RESULTS:**
+- 10,614 drugs with gene targets
+- 17,031 genes with disease associations
+- 2,938 predictions (21.9%) have mechanism support
+- 2.19x precision lift confirmed
+
+**Output:** Updated `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
 
 ---
 
