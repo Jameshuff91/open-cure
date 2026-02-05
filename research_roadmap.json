@@ -4098,7 +4098,7 @@
       "priority": 2,
       "effort": "low",
       "expected_impact": "medium",
-      "status": "pending",
+      "status": "validated",
       "dependencies": [
         "h205"
       ],
@@ -4107,7 +4107,9 @@
         "Check if neighbors have Rituximab in their GT",
         "Analyze which drugs ARE being recommended instead",
         "Determine if similarity threshold or neighbor selection is the issue"
-      ]
+      ],
+      "findings": "VALIDATED: kNN neighbor GT coverage is the bottleneck.\n\nROOT CAUSE IDENTIFIED:\n- Follicular lymphoma: ZERO neighbors have Rituximab in GT \u2192 cannot be predicted\n- Burkitt lymphoma: ZERO neighbors have Rituximab in GT \u2192 cannot be predicted  \n- DLBCL: ONE neighbor (microscopic polyangiitis) but score 0.695 < 0.758 threshold\n\nCOMPARISON WITH WORKING CASES:\n- Small lymphocytic, Mantle cell, Lymphoplasmacytic: All have exactly 1 neighbor with Rituximab, making top 30\n\nIMPLICATION: kNN works correctly but GT coverage gap limits recommendations.\nNeed either: (1) more Rituximab diseases in GT, or (2) manual injection layer.",
+      "result_metric": "Follicular/Burkitt: 0 neighbors with Rituximab; DLBCL: score below threshold"
     },
     {
       "id": "h208",
@@ -4126,6 +4128,25 @@
         "Check embedding coverage in DRKG",
         "Calculate coverage gap percentage",
         "Prioritize missing drugs by disease impact (# indications)"
+      ]
+    },
+    {
+      "id": "h209",
+      "title": "GT Coverage Analysis: Which Drug-Disease Pairs Are Blocking Predictions?",
+      "hypothesis": "h207 showed that missing Rituximab in neighbor GT blocks prediction. Systematically identify all cases where a known drug-disease pair is NOT predicted because no kNN neighbor has it. This reveals GT expansion priorities.",
+      "category": "data",
+      "priority": 3,
+      "effort": "medium",
+      "expected_impact": "high",
+      "status": "pending",
+      "dependencies": [
+        "h207"
+      ],
+      "steps": [
+        "For each known GT drug-disease pair NOT in top 30 predictions",
+        "Count how many kNN neighbors have that drug",
+        "Identify drugs with zero or low neighbor coverage",
+        "Prioritize GT expansion by impact (# blocked predictions)"
       ]
     }
   ],
@@ -4917,6 +4938,12 @@
       "hypothesis_id": "h205",
       "learning": "DRKG drug coverage is the bottleneck for targeted therapies - Adcetris (CD30 antibody-drug conjugate) is not in DRKG despite FDA approval for lymphoma. Mechanism-based rules require the drug to exist in the embedding space first.",
       "implication": "For new targeted therapies (biologics, ADCs), need external data injection or manual rules - cannot rely on DRKG coverage"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h207",
+      "learning": "kNN drug recommendations depend on neighbor GT coverage. A drug can only be recommended if at least one k-nearest disease neighbor has it in GT. This explains why Rituximab is predicted for some CD20+ diseases but not others.",
+      "implication": "GT completeness directly limits model coverage - missing drug-disease pairs in training diseases cascade to missing predictions"
     }
   ],
   "collaborations": [

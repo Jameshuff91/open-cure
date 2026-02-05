@@ -1,0 +1,52 @@
+{
+  "hypothesis": "h207",
+  "title": "Rituximab Prediction Gap Analysis",
+  "status": "validated",
+  "key_findings": {
+    "root_cause": "kNN neighbor GT coverage determines drug recommendations",
+    "follicular_lymphoma": "Zero neighbors have Rituximab - cannot be predicted",
+    "burkitt_lymphoma": "Zero neighbors have Rituximab - cannot be predicted",
+    "dlbcl": "One neighbor (microscopic polyangiitis) has Rituximab but score too low",
+    "pattern": "Diseases WHERE Rituximab IS predicted all have exactly 1 neighbor with Rituximab"
+  },
+  "actionable_insight": "Adding more Rituximab-containing diseases to GT would help, or boosting Rituximab for known CD20+ diseases manually",
+  "findings_by_disease": {
+    "follicular lymphoma": {
+      "neighbors_with_rituximab": 0,
+      "rituximab_score": 0.0,
+      "min_top30_score": 0.6947,
+      "would_make_top30": false,
+      "root_cause": "No neighbors have Rituximab in GT (coverage gap)"
+    },
+    "burkitt lymphoma": {
+      "neighbors_with_rituximab": 0,
+      "rituximab_score": 0.0,
+      "min_top30_score": 0.6943,
+      "would_make_top30": false,
+      "root_cause": "No neighbors have Rituximab in GT (coverage gap)"
+    },
+    "diffuse large b cell lymphoma dlbcl": {
+      "neighbors_with_rituximab": 1,
+      "rituximab_score": 0.695,
+      "min_top30_score": 0.758,
+      "would_make_top30": false,
+      "root_cause": "Rituximab score too low (0.695 < 0.758)"
+    },
+    "small lymphocytic lymphoma": {
+      "neighbors_with_rituximab": 1,
+      "rituximab_score": 0.61,
+      "is_predicted": true,
+      "root_cause": "Score just barely makes it into top 30"
+    },
+    "mantle cell lymphoma": {
+      "neighbors_with_rituximab": 1,
+      "rituximab_score": 0.738,
+      "is_predicted": true
+    },
+    "lymphoplasmacytic lymphoma": {
+      "neighbors_with_rituximab": 1,
+      "rituximab_score": 0.8,
+      "is_predicted": true
+    }
+  }
+}
