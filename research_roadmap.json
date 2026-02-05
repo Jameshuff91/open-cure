@@ -4593,7 +4593,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List stroke diseases and their GT drugs",
         "Check which GT drugs are NOT in stroke drug classes (antiplatelets, anticoagulants, statins)",
@@ -4602,7 +4602,9 @@
       ],
       "dependencies": [
         "h229"
-      ]
+      ],
+      "findings": "VALIDATED: Identified why drug-class prediction fails for stroke.\n\n**DRUG CLASS COVERAGE:**\n- 40/122 (32.8%) stroke drugs covered by traditional classes\n- Compare to AFib 65.6%, MI 47.9%, CAD 65.8%\n\n**ROOT CAUSE:**\nStroke treatment paradigm is BROADER than traditional drug classes:\n1. **Acute treatment:** thrombolytics, antiplatelets (covered)\n2. **Prevention:** anticoagulants, statins (covered)\n3. **BP management:** ACE inhibitors, ARBs, CCBs (NOT in stroke classes)\n4. **Post-stroke:** cognitive drugs, spasticity drugs (NOT in stroke classes)\n5. **Complications:** cerebral edema steroids (NOT in stroke classes)\n\n**WHY kNN WINS:**\nkNN captures stroke's BREADTH because stroke shares neighbors with:\n- Hypertension (finds BP drugs)\n- Dementia/Alzheimer's (finds cognitive drugs)\n- Heart disease (finds cardiac drugs)\n\n**DRUGS NOT IN CLASSES (top examples):**\n- clazosentan (3x) - cerebral vasospasm\n- dantrolene, baclofen (spasticity)\n- Various ACE inhibitors, ARBs (BP control)\n- Corticosteroids (cerebral edema)\n\n**IMPLICATION:**\nFor stroke, should NOT use drug-class prediction. Keep kNN for stroke category.\nCould expand stroke drug classes to include:\n- Antihypertensives (BP control)\n- Muscle relaxants (spasticity)\n- Corticosteroids (edema)\nBut this would be stroke-specific, not generalizable.",
+      "result_metric": "32.8% class coverage (explains kNN advantage)"
     }
   ],
   "completed": [
@@ -5495,6 +5497,12 @@
       "hypothesis_id": "h231",
       "learning": "Adding 50 CV MESH mappings improved coverage from 44.3% to 63.6%. Most common CV conditions (AFib, angina, MI, PE, stroke) now have DRKG mappings.",
       "implication": "h229/h230 CV drug-class prediction now has much broader applicability. Production predictor CV rescue rules will apply to more diseases."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h232",
+      "learning": "Stroke treatment is broader than traditional drug classes (32.8% coverage). Includes BP control, cognitive support, spasticity. kNN wins because stroke neighbors include HTN, dementia, heart disease.",
+      "implication": "Do NOT use drug-class prediction for stroke. Keep kNN. Drug-class works for diseases with well-defined drug classes (HF, AFib, MI) but not for multi-faceted conditions like stroke."
     }
   ],
   "collaborations": [
