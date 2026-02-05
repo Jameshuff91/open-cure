@@ -5212,7 +5212,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Get ATC codes for GT drugs from DrugBank",
         "Step 2: For each ATC L1 category, compute % with mechanism support",
@@ -5221,6 +5221,53 @@
         "Success criteria: Identify at least 2 categories where mechanism R@30 > 15%"
       ],
       "dependencies": [
+        "h96"
+      ],
+      "findings": "Drug Class PPI Patterns - VALIDATED. Mechanism support highly variable by disease category.\n\nRESULTS BY CATEGORY (sorted by lift):\n\n| Category       | Mech Rate | Prec w/Mech | Prec w/o | Lift   |\n|----------------|-----------|-------------|----------|--------|\n| Cardiovascular |   66.9%   |    22.6%    |   0.7%   | 33.7x  |\n| Neurological   |   58.8%   |    15.3%    |   1.1%   | 13.3x  |\n| Autoimmune     |   85.5%   |    37.6%    |   4.2%   |  8.9x  |\n| Cancer         |   80.1%   |    17.1%    |   3.6%   |  4.7x  |\n| Hematological  |   51.6%   |    16.5%    |   4.2%   |  3.9x  |\n| Dermatological |   44.5%   |    29.9%    |   8.2%   |  3.7x  |\n| Renal          |   77.1%   |    22.2%    |   6.2%   |  3.6x  |\n| Respiratory    |   58.5%   |    32.8%    |  12.5%   |  2.6x  |\n| Metabolic      |   73.3%   |    29.3%    |  11.1%   |  2.6x  |\n| Infectious     |   53.7%   |    25.2%    |  14.4%   |  1.8x  |\n\nKEY FINDINGS:\n\n1. CARDIOVASCULAR: Mechanism provides 33.7x lift - extremely discriminative\n   - With mechanism: 22.6% precision\n   - Without mechanism: only 0.7% precision\n   - Conclusion: REQUIRE mechanism support for CV predictions\n\n2. NEUROLOGICAL: 13.3x lift - mechanism is strong signal\n   - Only 1.1% precision without mechanism\n   - Drugs targeting neural pathways are well-characterized\n\n3. AUTOIMMUNE: 8.9x lift with BEST precision (37.6%)\n   - High mechanism coverage (85.5%)\n   - Immunomodulators have clear target-disease relationships\n\n4. INFECTIOUS: LOWEST lift (1.75x)\n   - Antibiotics work through pathogen-specific mechanisms\n   - Disease genes less relevant for infection treatment\n   - Don't rely on mechanism for infectious disease predictions\n\n5. HIGH MECHANISM COVERAGE (>70%):\n   - Autoimmune (85.5%), Cancer (80.1%), Renal (77.1%)\n   - Metabolic (73.3%), Ophthalmic (71.3%), Endocrine (71.3%)\n\nACTIONABLE INSIGHT:\nCreate category-specific confidence thresholds:\n- CV/Neuro: REQUIRE mechanism support (huge lift)\n- Autoimmune: Strong preference for mechanism (high precision)\n- Infectious: Mechanism optional (low lift)",
+      "result_metric": "Cardiovascular 33.7x lift, Neurological 13.3x, Autoimmune 8.9x (best precision 37.6%)"
+    },
+    {
+      "id": "h263",
+      "title": "Category-Specific Mechanism Requirements",
+      "category": "precision",
+      "rationale": "h262 showed massive lift variation by category: CV=33.7x, Neuro=13.3x, Infectious=1.8x. Can we create category-specific rules? CV/Neuro should REQUIRE mechanism support (lifts >10x), while Infectious can skip it.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Implement category-specific mechanism thresholds",
+        "Step 2: CV/Neuro: Require mechanism support",
+        "Step 3: Autoimmune/Cancer: Prefer mechanism (boost tier)",
+        "Step 4: Infectious/GI: Mechanism optional",
+        "Step 5: Evaluate precision changes",
+        "Success criteria: >50% precision improvement for CV/Neuro categories"
+      ],
+      "dependencies": [
+        "h262",
+        "h259"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h264",
+      "title": "Mechanism-Only Predictions for Cardiovascular",
+      "category": "production",
+      "rationale": "h262 showed CV without mechanism is only 0.7% precision (noise). Can we generate CV predictions using ONLY mechanism traversal? This would be a specialized pipeline for CV diseases.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract all CV diseases from predictions",
+        "Step 2: Run PPI mechanism traversal for each",
+        "Step 3: Compare: kNN vs mechanism vs hybrid for CV-only",
+        "Step 4: If mechanism R@30 > 15%, use mechanism for CV",
+        "Success criteria: Mechanism R@30 > 15% for cardiovascular diseases"
+      ],
+      "dependencies": [
+        "h262",
         "h96"
       ],
       "findings": null,
@@ -6243,6 +6290,12 @@
       "hypothesis_id": "h260",
       "learning": "Mechanism boost doesn't improve kNN R@30 because kNN already captures drug-disease relationships. Mechanism useful for PRECISION (2.62x tier lift) not RECALL. Higher mechanism weight = worse performance (noise).",
       "implication": "Keep mechanism for confidence tiers, not for re-ranking predictions"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h262",
+      "learning": "Mechanism support lift varies 20x by disease category: CV=33.7x (use mechanism), Neuro=13.3x, Autoimmune=8.9x (best precision 37.6%), Infectious=1.8x (skip mechanism). Category-specific thresholds needed.",
+      "implication": "Require mechanism for CV/Neuro predictions, prefer for Autoimmune, optional for Infectious"
     }
   ],
   "collaborations": [

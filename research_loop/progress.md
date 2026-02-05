@@ -1,97 +1,68 @@
 # Research Loop Progress
 
-## Current Session: h250, h255, h258 (2026-02-05)
+## Current Session: h96, h259, h260 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
+**Status:** In Progress
 **Hypotheses Tested: 3**
-- h250: Systematic Drug Class Safety Review for Cardiovascular - **VALIDATED**
-- h255: Antiarrhythmic Safety Review Beyond Class Ic - **VALIDATED**
-- h258: Inverse Indication Pattern Detection - **VALIDATED**
+- h96: PPI-Extended Drug Targets - **VALIDATED** (2.89x selectivity, 55% ceiling)
+- h259: PPI Mechanism Support as Confidence Tier - **VALIDATED** (2.62x precision lift)
+- h260: Hybrid kNN + Mechanism Gating - **INVALIDATED** (no R@30 improvement)
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 145 |
-| Invalidated | 50 |
+| Validated | 147 |
+| Invalidated | 51 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 34 |
-| **Total** | **258** |
+| Pending | 36 |
+| **Total** | **263** |
 
-### Session Theme: Safety Filter Enhancement
+### Session Theme: PPI Mechanism Integration
 
-**h250: CV Drug Class Safety Review**
-- Added 4 contraindication categories (non-DHP CCBs, Class Ic antiarrhythmics, ganglionic blockers, surgical dyes)
-- 91 predictions excluded (9 HIGH tier)
-- Evidence: ACC/AHA guidelines, CAST trial, PROMISE trial
+**h96: PPI-Extended Drug Targets**
+- PPI extension doubles theoretical R@30 ceiling (22% → 55%)
+- But actual gains modest (+1.43pp) due to false positive dilution
+- Key finding: 2.89x selectivity ratio (83.8% GT vs 29.0% non-GT)
+- Conclusion: Use as CONFIDENCE FILTER, not primary ranking
 
-**h255: Antiarrhythmic Safety Review**
-- Added 4 more rules (dronedarone+HF, sotalol+MI, Class Ia+MI, procainamide iatrogenic)
-- 5 predictions excluded
-- Evidence: ANDROMEDA trial, SWORD trial, TdP literature
-- Key finding: Procainamide→agranulocytosis is "inverse indication" (drug CAUSES condition)
+**h259: PPI Mechanism Support as Confidence Tier**
+- WITH mechanism: 18.9% precision, WITHOUT: 7.2%
+- 2.62x overall precision lift (p < 0.000001)
+- By tier: HIGH+MECH=30.4%, MEDIUM+MECH=17.7%, HIGH=13.5%
+- MEDIUM+MECH > HIGH - suggests tier reorganization
+- Conclusion: Add mechanism as tier modifier
 
-**h258: Inverse Indication Pattern Detection**
-- Systematic search for drugs predicted to treat conditions they cause
-- Added: Amiodarone→thyroid, NSAIDs→peptic ulcer
-- 2 additional predictions excluded
-- **Total inverse indication exclusions: 5**
+**h260: Hybrid kNN + Mechanism Gating**
+- Continuous weighting: Best alpha=0.2, +0.23pp (p=0.78, not significant)
+- Higher alpha = WORSE performance (up to -3pp)
+- Binary filter: -4.1pp (p<0.05, significant HARM)
+- Root cause: kNN already captures drug-disease relationships
+- Conclusion: Mechanism useful for PRECISION, not RECALL
 
-### Safety Filters Added This Session
+### Key Insight
 
-| Rule | Drug Class | Condition | Evidence |
-|------|------------|-----------|----------|
-| h250 | Non-DHP CCBs | Heart Failure | ACC/AHA 2022 |
-| h250 | Class Ic antiarrhythmics | Structural heart | CAST trial |
-| h250 | Ganglionic blockers | Any | Obsolete |
-| h250 | Surgical dyes | Any | Not therapeutic |
-| h255 | Dronedarone | Heart failure | ANDROMEDA trial |
-| h255 | Sotalol | Post-MI | SWORD trial |
-| h255 | Class Ia | Post-MI | TdP literature |
-| h255 | Procainamide | Agranulocytosis/lupus | Iatrogenic |
-| h258 | Amiodarone | Thyroid dysfunction | 14-18% incidence |
-| h258 | NSAIDs | Peptic ulcer | COX-1 inhibition |
+**Mechanism support serves different purposes:**
+- PRECISION: 2.62x lift when used for tier stratification (h259)
+- RECALL: No improvement when used for re-ranking (h260)
 
-### Session Impact Summary
-
-**New predictions excluded: 98**
-- h250: 91 (9 HIGH tier)
-- h255: 5 (0 HIGH tier)
-- h258: 2 (0 HIGH tier)
-
-**Total filter coverage: 307 predictions (2.3%)**
-
-### Key Learning: Inverse Indication Pattern
-
-Drugs can be predicted to treat conditions they actually CAUSE when:
-1. Both "causes" and "treats" create similar graph patterns
-2. Drug-disease associations in knowledge graphs don't distinguish direction
-3. Examples: Procainamide→agranulocytosis, Amiodarone→thyroid, NSAIDs→ulcers
-
-**Solution:** Maintain adverse effect database, cross-reference all predictions.
+PPI mechanism support should be used to identify HIGH-CONFIDENCE predictions, not to change rankings.
 
 ### Recommended Next Steps (Priority Order)
-1. **h96**: PPI-Extended Drug Targets (medium effort)
-2. **h91**: Literature Mining for zero-treatment diseases (high effort, high impact)
-3. **h159**: Category Boundary Refinement (low effort)
+1. **h261**: Pathway-Weighted PPI Scoring (medium effort) - may reduce noise
+2. **h262**: Drug Class PPI Patterns (low effort) - understand where mechanism works
+3. **h91**: Literature Mining for zero-treatment diseases (high effort, high impact)
 
 ---
 
 ## Previous Sessions
 
+### 2026-02-05 (Earlier): h250, h255, h258
+Safety filter enhancement session - see git history.
+
 ### 2026-02-05 (Earlier): h244, h248, h251, h249, h253, h252
-- SGLT2 inhibitors: 63.9% precision (BEST drug class)
-- PAH drug safety filters: 23.3% of HF predictions were HARMFUL
-- sGC stimulators: Teratogenic - pregnancy filter added
-
-See git history for detailed session notes.
-
----
-
-## Archive
-
-See previous entries in git history.
+SGLT2 inhibitors, PAH safety filters, sGC teratogenicity - see git history.
