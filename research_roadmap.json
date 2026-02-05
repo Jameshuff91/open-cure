@@ -2999,7 +2999,7 @@
       "rationale": "If drug class works for metabolic, it may work for GI (PPIs), cardiovascular (ACE/ARB), etc.",
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "category": "precision",
       "dependencies": [
@@ -3010,7 +3010,9 @@
         "Define drug class patterns for each category",
         "Test class-specific precision criteria",
         "Success: Find class criteria achieving >30% for at least one category"
-      ]
+      ],
+      "findings": "VALIDATED: Drug class rescue criteria work for multiple categories.\n\nSUCCESSFUL CRITERIA (>30% precision):\n1. Cancer - taxane + rank<=5: 40.0% precision (n=10)\n2. Cancer - alkylating + rank<=10: 36.4% precision (n=11)\n3. Ophthalmic - antibiotic + rank<=15: 62.5% precision (n=16)\n4. Ophthalmic - steroid + rank<=15: 48.0% precision (n=25)\n5. Dermatological - topical_steroid + rank<=5: 63.6% precision (n=11)\n\nFAILED CATEGORIES:\n- GI: PPIs/H2 blockers showed 0% precision (drugs not in DRKG top-30)\n- Neurological: Drug classes showed 0% precision (sparse coverage)\n- Hematological: Only 1 colony_factor matched (n too small)\n- Cardiovascular: beta_blocker + rank<=10 = 25% (close but not >30%)\n- Respiratory: bronchodilator/mucolytic showed promise but n<5\n\nPRODUCTION UPDATE:\n- Added to production_predictor.py:\n  - ALKYLATING_DRUGS, OPHTHALMIC_ANTIBIOTICS, OPHTHALMIC_STEROIDS, TOPICAL_STEROIDS\n  - Cancer alkylating rank<=10 \u2192 HIGH tier\n  - Ophthalmic antibiotic rank<=15 \u2192 GOLDEN tier (62.5%)\n  - Ophthalmic steroid rank<=15 \u2192 HIGH tier (48%)\n  - Dermatological topical_steroid rank<=5 \u2192 GOLDEN tier (63.6%)\n\nKEY INSIGHT: Drug class rescue works best when:\n1. Drug class is well-represented in DRKG\n2. Disease category has >10 evaluable diseases\n3. Drug class has clear mechanism for category (e.g., antibiotics for eye infections)\n\nCategories with sparse drug class coverage (GI, neurological) cannot be rescued this way.",
+      "result_metric": "5 successful rescue criteria: Cancer taxane 40%, Cancer alkylating 36.4%, Ophthalmic antibiotic 62.5%, Ophthalmic steroid 48%, Dermatological topical_steroid 63.6%"
     },
     {
       "id": "h151",
@@ -3062,7 +3064,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Add corticosteroid patterns to confidence_filter.py",
         "Add metabolic diseases to corticosteroid contraindicated list",
@@ -3070,6 +3072,88 @@
       ],
       "dependencies": [
         "h151"
+      ]
+    },
+    {
+      "id": "h154",
+      "title": "Cardiovascular Beta-Blocker Combined Criteria",
+      "description": "h150 showed beta_blocker + rank<=10 achieves 25% for cardiovascular. Test if adding mechanism support or higher frequency thresholds can push this over 30%.",
+      "rationale": "Beta-blockers at 25% are close to the 30% target. Additional constraints may improve precision without losing too many predictions.",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "priority": 3,
+      "category": "precision",
+      "dependencies": [
+        "h150"
+      ],
+      "steps": [
+        "Analyze beta-blocker predictions from h150",
+        "Test: beta_blocker + rank<=10 + mechanism_support",
+        "Test: beta_blocker + rank<=5",
+        "Test: beta_blocker + rank<=10 + freq>=10",
+        "Success: Find criteria achieving >30% precision"
+      ]
+    },
+    {
+      "id": "h155",
+      "title": "GI Drug Coverage Gap Analysis",
+      "description": "h150 found GI drugs (PPIs, H2 blockers) have 0% precision because they rarely appear in top-30 predictions. Investigate why and whether different drug classes work better.",
+      "rationale": "GI is a large disease category with clinical importance. Understanding why standard GI drugs fail could reveal DRKG coverage gaps or alternative prediction strategies.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 3,
+      "category": "error_analysis",
+      "dependencies": [
+        "h150"
+      ],
+      "steps": [
+        "List all GI diseases in evaluation set",
+        "For each GI disease, check what drugs ARE in top-30",
+        "Check DRKG coverage of PPIs/H2 blockers (are they in embeddings?)",
+        "Identify which drug classes DO appear in GI top-30",
+        "Success: Understand why GI fails and whether alternative classes exist"
+      ]
+    },
+    {
+      "id": "h156",
+      "title": "Combined Multi-Class Rescue Criteria",
+      "description": "h150 found multiple successful drug classes per category. Test if combining criteria (e.g., 'ophthalmic antibiotic OR steroid + rank<=15') improves overall category precision.",
+      "rationale": "Individual class criteria have high precision but low coverage. Combining classes may maintain precision while improving recall.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "priority": 2,
+      "category": "precision",
+      "dependencies": [
+        "h150"
+      ],
+      "steps": [
+        "For ophthalmic: test antibiotic OR steroid + rank<=15",
+        "For cancer: test taxane OR alkylating + rank<=10",
+        "Compute combined precision and coverage",
+        "Success: Combined criteria maintain >40% precision with 2x coverage"
+      ]
+    },
+    {
+      "id": "h157",
+      "title": "Autoimmune Drug Class Analysis",
+      "description": "Autoimmune is a Tier 1 category but h150 didn't explicitly test autoimmune-specific drug classes. Test if biologics (anti-TNF, IL inhibitors) or DMARDs show class-specific precision.",
+      "rationale": "Autoimmune diseases have well-defined drug classes (biologics, DMARDs). These may show similar precision patterns to metabolic+statins.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 3,
+      "category": "precision",
+      "dependencies": [
+        "h150"
+      ],
+      "steps": [
+        "Define drug classes: anti-TNF, IL inhibitors, JAK inhibitors, DMARDs",
+        "Evaluate class-specific precision for autoimmune diseases",
+        "Compare to generic mechanism+frequency criteria",
+        "Success: Find class criteria outperforming generic rules"
       ]
     }
   ],

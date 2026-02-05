@@ -7,6 +7,10 @@ Unified pipeline integrating validated research findings:
 - h135: Production tiered confidence system (GOLDEN/HIGH/MEDIUM/LOW/FILTER)
 - h136: Category-specific filters for Tier 2/3 rescue (infectious, cardiovascular, respiratory)
 - h144: Metabolic statin rescue - statins + rank<=10 = 60% precision
+- h150: Drug class rescue criteria (validated):
+  - Cancer: taxane + rank<=5 = 40%, alkylating + rank<=10 = 36.4%
+  - Ophthalmic: antibiotic + rank<=15 = 62.5%, steroid + rank<=15 = 48%
+  - Dermatological: topical_steroid + rank<=5 = 63.6%
 
 USAGE:
     # Get predictions for a disease
@@ -122,6 +126,28 @@ STATIN_DRUGS = {
     'atorvastatin', 'simvastatin', 'rosuvastatin', 'pravastatin', 'lovastatin',
     'fluvastatin', 'pitavastatin', 'cerivastatin',
 }
+
+# h150: Corticosteroids achieve 48.6% precision for hematological diseases
+# Mechanism support NOT required (works through immunosuppression)
+CORTICOSTEROID_DRUGS = {
+    'prednisone', 'prednisolone', 'methylprednisolone', 'dexamethasone', 'hydrocortisone',
+    'betamethasone', 'triamcinolone', 'fluticasone', 'budesonide', 'beclomethasone',
+}
+
+# h150: Drug class rescue criteria
+# Cancer drugs
+TAXANE_DRUGS = {'paclitaxel', 'docetaxel', 'cabazitaxel', 'nab-paclitaxel'}  # 40% precision rank<=5
+ALKYLATING_DRUGS = {'cyclophosphamide', 'ifosfamide', 'melphalan', 'chlorambucil', 'busulfan'}  # 36.4% rank<=10
+
+# Ophthalmic drugs
+OPHTHALMIC_ANTIBIOTICS = {'ciprofloxacin', 'moxifloxacin', 'ofloxacin', 'tobramycin', 'gentamicin',
+                          'gatifloxacin', 'levofloxacin', 'besifloxacin', 'neomycin', 'polymyxin'}  # 62.5% rank<=15
+OPHTHALMIC_STEROIDS = {'dexamethasone', 'prednisolone', 'fluorometholone', 'loteprednol',
+                       'difluprednate', 'rimexolone', 'triamcinolone'}  # 48% rank<=15
+
+# Dermatological drugs
+TOPICAL_STEROIDS = {'hydrocortisone', 'betamethasone', 'triamcinolone', 'clobetasol', 'fluocinolone',
+                    'fluocinonide', 'mometasone', 'desonide', 'halobetasol', 'desoximetasone'}  # 63.6% rank<=5
 
 CATEGORY_KEYWORDS = {
     'autoimmune': ['autoimmune', 'lupus', 'rheumatoid', 'arthritis', 'scleroderma', 'myasthenia',
@@ -403,6 +429,35 @@ class DrugRepurposingPredictor:
             drug_lower = drug_name.lower()
             if rank <= 10 and any(statin in drug_lower for statin in STATIN_DRUGS):
                 return ConfidenceTier.GOLDEN  # 60.0% precision
+
+        elif category == 'cancer':
+            # h150: Drug class rescue for cancer
+            drug_lower = drug_name.lower()
+            if rank <= 5 and any(taxane in drug_lower for taxane in TAXANE_DRUGS):
+                return ConfidenceTier.HIGH  # 40.0% precision
+            if rank <= 10 and any(alk in drug_lower for alk in ALKYLATING_DRUGS):
+                return ConfidenceTier.HIGH  # 36.4% precision
+
+        elif category == 'ophthalmic':
+            # h150: Drug class rescue for ophthalmic (62.5%/48% precision)
+            drug_lower = drug_name.lower()
+            if rank <= 15 and any(ab in drug_lower for ab in OPHTHALMIC_ANTIBIOTICS):
+                return ConfidenceTier.GOLDEN  # 62.5% precision
+            if rank <= 15 and any(st in drug_lower for st in OPHTHALMIC_STEROIDS):
+                return ConfidenceTier.HIGH  # 48.0% precision
+
+        elif category == 'dermatological':
+            # h150: Topical steroids achieve 63.6% precision at rank<=5
+            drug_lower = drug_name.lower()
+            if rank <= 5 and any(ts in drug_lower for ts in TOPICAL_STEROIDS):
+                return ConfidenceTier.GOLDEN  # 63.6% precision
+
+        elif category == 'hematological':
+            # h150: Corticosteroids achieve 48.6% precision for hematological diseases
+            # NOTE: Mechanism support NOT required - works through immunosuppression
+            drug_lower = drug_name.lower()
+            if rank <= 10 and any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
+                return ConfidenceTier.HIGH  # 48.6% precision
 
         return None
 

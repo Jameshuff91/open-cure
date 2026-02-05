@@ -1,0 +1,206 @@
+{
+  "category_results": {
+    "gastrointestinal": {
+      "n_predictions": 300,
+      "base_precision": 8.666666666666668,
+      "class_results": {
+        "other": {
+          "n": 267,
+          "hits": 24,
+          "precision": 8.98876404494382
+        },
+        "h2_blocker": {
+          "n": 12,
+          "hits": 0,
+          "precision": 0.0
+        },
+        "ppi": {
+          "n": 12,
+          "hits": 0,
+          "precision": 0.0
+        },
+        "anti_tnf": {
+          "n": 8,
+          "hits": 2,
+          "precision": 25.0
+        },
+        "antidiarrheal": {
+          "n": 1,
+          "hits": 0,
+          "precision": 0.0
+        }
+      },
+      "criteria_results": [],
+      "best_criteria": null,
+      "best_precision": 0,
+      "success": false
+    },
+    "cancer": {
+      "n_predictions": 1800,
+      "base_precision": 7.777777777777778,
+      "class_results": {
+        "checkpoint": {
+          "n": 104,
+          "hits": 20,
+          "precision": 19.230769230769234
+        },
+        "taxane": {
+          "n": 33,
+          "hits": 6,
+          "precision": 18.181818181818183
+        },
+        "other": {
+          "n": 1325,
+          "hits": 85,
+          "precision": 6.415094339622642
+        },
+        "antimetabolite": {
+          "n": 149,
+          "hits": 15,
+          "precision": 10.06711409395973
+        },
+        "platinum": {
+          "n": 71,
+          "hits": 6,
+          "precision": 8.450704225352112
+        },
+        "kinase_inhibitor": {
+          "n": 68,
+          "hits": 1,
+          "precision": 1.4705882352941175
+        },
+        "alkylating": {
+          "n": 50,
+          "hits": 7,
+          "precision": 14.000000000000002
+        }
+      },
+      "criteria_results": [
+        {
+          "criteria": "checkpoint + rank<=5",
+          "n": 51,
+          "precision": 25.49019607843137
+        },
+        {
+          "criteria": "checkpoint + rank<=10",
+          "n": 78,
+          "precision": 21.794871794871796
+        },
+        {
+          "criteria": "checkpoint + rank<=15",
+          "n": 86,
+          "precision": 22.093023255813954
+        },
+        {
+          "criteria": "taxane + rank<=5",
+          "n": 10,
+          "precision": 40.0
+        },
+        {
+          "criteria": "taxane + rank<=10",
+          "n": 11,
+          "precision": 36.36363636363637
+        },
+        {
+          "criteria": "taxane + rank<=15",
+          "n": 19,
+          "precision": 26.31578947368421
+        },
+        {
+          "criteria": "antimetabolite + rank<=5",
+          "n": 29,
+          "precision": 13.793103448275861
+        },
+        {
+          "criteria": "antimetabolite + rank<=10",
+          "n": 65,
+          "precision": 9.230769230769232
+        },
+        {
+          "criteria": "antimetabolite + rank<=15",
+          "n": 95,
+          "precision": 9.473684210526317
+        },
+        {
+          "criteria": "platinum + rank<=10",
+          "n": 13,
+          "precision": 7.6923076923076925
+        },
+        {
+          "criteria": "platinum + rank<=15",
+          "n": 28,
+          "precision": 7.142857142857142
+        },
+        {
+          "criteria": "kinase_inhibitor + rank<=10",
+          "n": 18,
+          "precision": 0.0
+        },
+        {
+          "criteria": "kinase_inhibitor + rank<=15",
+          "n": 36,
+          "precision": 0.0
+        },
+        {
+          "criteria": "alkylating + rank<=10",
+          "n": 11,
+          "precision": 36.36363636363637
+        },
+        {
+          "criteria": "alkylating + rank<=15",
+          "n": 17,
+          "precision": 35.294117647058826
+        }
+      ],
+      "best_criteria": "taxane + rank<=5",
+      "best_precision": 40.0,
+      "success": true
+    },
+    "hematological": {
+      "n_predictions": 150,
+      "base_precision": 5.333333333333334,
+      "class_results": {
+        "other": {
+          "n": 149,
+          "hits": 8,
+          "precision": 5.369127516778524
+        },
+        "colony_factor": {
+          "n": 1,
+          "hits": 0,
+          "precision": 0.0
+        }
+      },
+      "criteria_results": [],
+      "best_criteria": null,
+      "best_precision": 0,
+      "success": false
+    },
+    "neurological": {
+      "n_predictions": 150,
+      "base_precision": 0.6666666666666667,
+      "class_results": {
+        "other": {
+          "n": 142,
+          "hits": 1,
+          "precision": 0.7042253521126761
+        },
+        "cholinesterase": {
+          "n": 2,
+          "hits": 0,
+          "precision": 0.0
+        },
+        "dopaminergic": {
+          "n": 6,
+          "hits": 0,
+          "precision": 0.0
+        }
+      },
+      "criteria_results": [],
+      "best_criteria": null,
+      "best_precision": 0,
+      "success": false
+    }
+  },
+  "success": true
+}

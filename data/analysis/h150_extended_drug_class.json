@@ -1,0 +1,363 @@
+{
+  "category_results": {
+    "cardiovascular": {
+      "n_predictions": 450,
+      "base_precision": 5.555555555555555,
+      "class_results": {
+        "ace_inhibitor": {
+          "n": 12,
+          "hits": 1,
+          "precision": 8.333333333333332
+        },
+        "antiarrhythmic": {
+          "n": 26,
+          "hits": 0,
+          "precision": 0.0
+        },
+        "anticoagulant": {
+          "n": 21,
+          "hits": 2,
+          "precision": 9.523809523809524
+        },
+        "arb": {
+          "n": 27,
+          "hits": 2,
+          "precision": 7.4074074074074066
+        },
+        "beta_blocker": {
+          "n": 46,
+          "hits": 10,
+          "precision": 21.73913043478261
+        },
+        "calcium_channel": {
+          "n": 33,
+          "hits": 4,
+          "precision": 12.121212121212121
+        },
+        "diuretic": {
+          "n": 15,
+          "hits": 2,
+          "precision": 13.333333333333334
+        },
+        "nitrate": {
+          "n": 9,
+          "hits": 1,
+          "precision": 11.11111111111111
+        },
+        "other": {
+          "n": 248,
+          "hits": 2,
+          "precision": 0.8064516129032258
+        },
+        "statin": {
+          "n": 13,
+          "hits": 1,
+          "precision": 7.6923076923076925
+        }
+      },
+      "criteria_results": [
+        {
+          "criteria": "calcium_channel + rank<=5",
+          "n": 14,
+          "precision": 14.285714285714285
+        },
+        {
+          "criteria": "calcium_channel + rank<=10",
+          "n": 17,
+          "precision": 17.647058823529413
+        },
+        {
+          "criteria": "calcium_channel + rank<=15",
+          "n": 22,
+          "precision": 18.181818181818183
+        },
+        {
+          "criteria": "calcium_channel + rank<=20",
+          "n": 24,
+          "precision": 16.666666666666664
+        },
+        {
+          "criteria": "anticoagulant + rank<=5",
+          "n": 7,
+          "precision": 0.0
+        },
+        {
+          "criteria": "anticoagulant + rank<=10",
+          "n": 11,
+          "precision": 0.0
+        },
+        {
+          "criteria": "anticoagulant + rank<=15",
+          "n": 16,
+          "precision": 12.5
+        },
+        {
+          "criteria": "anticoagulant + rank<=20",
+          "n": 21,
+          "precision": 9.523809523809524
+        },
+        {
+          "criteria": "beta_blocker + rank<=5",
+          "n": 36,
+          "precision": 22.22222222222222
+        },
+        {
+          "criteria": "beta_blocker + rank<=10",
+          "n": 40,
+          "precision": 25.0
+        },
+        {
+          "criteria": "beta_blocker + rank<=15",
+          "n": 43,
+          "precision": 23.25581395348837
+        },
+        {
+          "criteria": "beta_blocker + rank<=20",
+          "n": 43,
+          "precision": 23.25581395348837
+        },
+        {
+          "criteria": "antiarrhythmic + rank<=10",
+          "n": 8,
+          "precision": 0.0
+        },
+        {
+          "criteria": "antiarrhythmic + rank<=15",
+          "n": 13,
+          "precision": 0.0
+        },
+        {
+          "criteria": "antiarrhythmic + rank<=20",
+          "n": 17,
+          "precision": 0.0
+        },
+        {
+          "criteria": "ace_inhibitor + rank<=20",
+          "n": 5,
+          "precision": 20.0
+        },
+        {
+          "criteria": "nitrate + rank<=10",
+          "n": 6,
+          "precision": 0.0
+        },
+        {
+          "criteria": "nitrate + rank<=15",
+          "n": 6,
+          "precision": 0.0
+        },
+        {
+          "criteria": "nitrate + rank<=20",
+          "n": 7,
+          "precision": 14.285714285714285
+        },
+        {
+          "criteria": "diuretic + rank<=10",
+          "n": 9,
+          "precision": 0.0
+        },
+        {
+          "criteria": "diuretic + rank<=15",
+          "n": 10,
+          "precision": 10.0
+        },
+        {
+          "criteria": "diuretic + rank<=20",
+          "n": 13,
+          "precision": 7.6923076923076925
+        },
+        {
+          "criteria": "arb + rank<=20",
+          "n": 11,
+          "precision": 0.0
+        }
+      ],
+      "best_criteria": "beta_blocker + rank<=10",
+      "best_precision": 25.0,
+      "success": false
+    },
+    "ophthalmic": {
+      "n_predictions": 300,
+      "base_precision": 16.0,
+      "class_results": {
+        "anti_vegf": {
+          "n": 9,
+          "hits": 1,
+          "precision": 11.11111111111111
+        },
+        "antibiotic": {
+          "n": 27,
+          "hits": 13,
+          "precision": 48.148148148148145
+        },
+        "immunosuppressant": {
+          "n": 13,
+          "hits": 3,
+          "precision": 23.076923076923077
+        },
+        "other": {
+          "n": 223,
+          "hits": 19,
+          "precision": 8.520179372197308
+        },
+        "steroid": {
+          "n": 28,
+          "hits": 12,
+          "precision": 42.857142857142854
+        }
+      },
+      "criteria_results": [
+        {
+          "criteria": "steroid + rank<=5",
+          "n": 25,
+          "precision": 48.0
+        },
+        {
+          "criteria": "steroid + rank<=10",
+          "n": 25,
+          "precision": 48.0
+        },
+        {
+          "criteria": "steroid + rank<=15",
+          "n": 25,
+          "precision": 48.0
+        },
+        {
+          "criteria": "steroid + rank<=20",
+          "n": 28,
+          "precision": 42.857142857142854
+        },
+        {
+          "criteria": "antibiotic + rank<=15",
+          "n": 16,
+          "precision": 62.5
+        },
+        {
+          "criteria": "antibiotic + rank<=20",
+          "n": 20,
+          "precision": 50.0
+        },
+        {
+          "criteria": "immunosuppressant + rank<=15",
+          "n": 7,
+          "precision": 42.857142857142854
+        },
+        {
+          "criteria": "immunosuppressant + rank<=20",
+          "n": 12,
+          "precision": 25.0
+        },
+        {
+          "criteria": "anti_vegf + rank<=20",
+          "n": 7,
+          "precision": 0.0
+        }
+      ],
+      "best_criteria": "antibiotic + rank<=15",
+      "best_precision": 62.5,
+      "success": true
+    },
+    "respiratory": {
+      "n_predictions": 450,
+      "base_precision": 12.0,
+      "class_results": {
+        "antihistamine": {
+          "n": 6,
+          "hits": 0,
+          "precision": 0.0
+        },
+        "bronchodilator": {
+          "n": 6,
+          "hits": 2,
+          "precision": 33.33333333333333
+        },
+        "mucolytic": {
+          "n": 6,
+          "hits": 3,
+          "precision": 50.0
+        },
+        "other": {
+          "n": 432,
+          "hits": 49,
+          "precision": 11.342592592592593
+        }
+      },
+      "criteria_results": [],
+      "best_criteria": null,
+      "best_precision": 0,
+      "success": false
+    },
+    "dermatological": {
+      "n_predictions": 450,
+      "base_precision": 16.0,
+      "class_results": {
+        "antibiotic": {
+          "n": 20,
+          "hits": 4,
+          "precision": 20.0
+        },
+        "biologic": {
+          "n": 11,
+          "hits": 4,
+          "precision": 36.36363636363637
+        },
+        "immunomodulator": {
+          "n": 10,
+          "hits": 2,
+          "precision": 20.0
+        },
+        "other": {
+          "n": 359,
+          "hits": 49,
+          "precision": 13.649025069637883
+        },
+        "topical_steroid": {
+          "n": 50,
+          "hits": 13,
+          "precision": 26.0
+        }
+      },
+      "criteria_results": [
+        {
+          "criteria": "topical_steroid + rank<=5",
+          "n": 11,
+          "precision": 63.63636363636363
+        },
+        {
+          "criteria": "topical_steroid + rank<=10",
+          "n": 36,
+          "precision": 30.555555555555557
+        },
+        {
+          "criteria": "topical_steroid + rank<=15",
+          "n": 43,
+          "precision": 30.23255813953488
+        },
+        {
+          "criteria": "topical_steroid + rank<=20",
+          "n": 46,
+          "precision": 28.26086956521739
+        },
+        {
+          "criteria": "antibiotic + rank<=20",
+          "n": 9,
+          "precision": 22.22222222222222
+        },
+        {
+          "criteria": "immunomodulator + rank<=20",
+          "n": 6,
+          "precision": 0.0
+        },
+        {
+          "criteria": "biologic + rank<=20",
+          "n": 6,
+          "precision": 33.33333333333333
+        }
+      ],
+      "best_criteria": "topical_steroid + rank<=5",
+      "best_precision": 63.63636363636363,
+      "success": true
+    }
+  },
+  "success": true
+}
