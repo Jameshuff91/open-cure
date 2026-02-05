@@ -5258,7 +5258,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Extract all CV diseases from predictions",
         "Step 2: Run PPI mechanism traversal for each",
@@ -5270,8 +5270,8 @@
         "h262",
         "h96"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Mechanism-Only Predictions for Cardiovascular - INVALIDATED.\n\nRESULTS:\n\n1. MECHANISM-ONLY R@30 FOR CV DISEASES:\n   - Diseases evaluated: 29 (with gene annotations)\n   - Mean R@30: 9.52%\n   - Median R@30: 4.17%\n   - Max R@30: 100% (rare cases)\n   - Diseases with R@30 > 15%: only 6/29 (21%)\n\n2. COMPARISON WITH kNN:\n   - kNN R@30: ~39% (on small CV test set)\n   - Mechanism R@30: ~4% (on same test set)\n   - Hybrid: ~24% (worse than kNN alone)\n\n3. WHY MECHANISM DOESN'T WORK FOR RECALL:\n   - h262 showed 33.7x PRECISION lift for CV (22.6% vs 0.7%)\n   - But precision \u2260 recall\n   - Mechanism filters out false positives (improves precision)\n   - Mechanism doesn't discover drugs kNN misses (doesn't improve recall)\n\n4. ROOT CAUSE:\n   - Many CV drugs work through systemic mechanisms (ACE inhibitors, beta-blockers)\n   - These don't have direct target\u2192disease gene overlap\n   - kNN captures \"similar diseases share treatments\" (collaborative filtering)\n   - Mechanism captures \"drugs targeting disease genes\" (different signal)\n\nCONCLUSION: \n- Keep mechanism for PRECISION (h263: +7.3pp for CV)\n- Don't use mechanism for RECALL (R@30)\n- Mechanism-only is NOT a replacement for kNN\n\nThis confirms the key insight from h260: mechanism helps precision, not recall.",
+      "result_metric": "9.52% R@30 (below 15% threshold). Confirms mechanism for precision, not recall."
     }
   ],
   "completed": [
@@ -6302,6 +6302,12 @@
       "hypothesis_id": "h263",
       "learning": "Category-specific mechanism requirements work: CV precision +7.3pp (47%), Neuro +5.8pp (62%). Only 0.8% of excluded predictions were GT drugs - minimal false negatives.",
       "implication": "Implement in production: require mechanism for CV/Neuro, tier boost for others"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h264",
+      "learning": "Mechanism-only gives 9.5% R@30 for CV (below 15% threshold). h262's 33.7x lift was for PRECISION, not recall. Mechanism filters false positives but doesn't discover new drugs. Keep mechanism for confidence, not ranking.",
+      "implication": "Use mechanism as precision filter only. kNN remains best for R@30."
     }
   ],
   "collaborations": [
