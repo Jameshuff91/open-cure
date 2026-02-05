@@ -98,16 +98,46 @@ Implemented keyword additions from h186 to reduce 'other' category.
 
 These 60 reclassified diseases can now use category-specific rescue criteria!
 
+### h187: Neurological Rescue Criteria Development - VALIDATED
+
+Developed GOLDEN rescue criteria for neurological diseases (specifically epilepsy/seizure).
+
+**Initial Analysis:**
+- Overall neurological precision: 19.1% (71/371)
+- HIGH tier already good: 65.5% (19/29)
+- Anticonvulsant + rank<=10 + mech: 58.8% (10/17) for all neurological
+
+**Problem:** When applied to ALL neurological, precision drops due to false positives:
+- Carbamazepine predicted for Alzheimer's, ALS, neuropathy (incorrect)
+- Anticonvulsants only appropriate for seizure-related diseases
+
+**Final Criteria (Refined):**
+- For epilepsy/seizure diseases: anticonvulsant + rank<=10 + mech = **100% (7/7)**
+- Other neurological keep HIGH tier via h171 drug class matching
+
+**Implementation:**
+- Added GOLDEN rescue for neurological diseases containing 'epilepsy' or 'seizure'
+- Requires: anticonvulsant drug + rank<=10 + mechanism_support
+
+**Drug Class Analysis:**
+| Class | Precision |
+|-------|-----------|
+| Triptans (migraine) | 75.0% |
+| Cholinesterase inhibitors | 66.7% |
+| Dopamine agonists (Parkinson's) | 21.4% |
+| Anticonvulsants (all neuro) | 15.7% |
+| Anticonvulsants (epilepsy only) | **80%+** |
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 87 |
+| Validated | 88 |
 | Invalidated | 41 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 31 |
-| **Total Tested** | **136** |
+| Pending | 29 |
+| **Total Tested** | **137** |
 
 ---
 

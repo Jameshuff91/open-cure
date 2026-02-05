@@ -15,6 +15,7 @@ Unified pipeline integrating validated research findings:
 - h157: Autoimmune DMARD + rank<=10 = 75.4% precision
 - h170: Selective category boosting - +2.40pp R@30 (p=0.009) for isolated categories
   - Boosts same-category neighbors 1.5x for: neurological, respiratory, metabolic, renal, hematological, immunological
+- h187: Neurological anticonvulsant rescue - anticonvulsant + rank<=10 + mech = 58.8% precision
 
 USAGE:
     # Get predictions for a disease
@@ -113,6 +114,7 @@ CATEGORY_PRECISION = {
     ("cardiovascular", "MEDIUM"): 36.4,
     ("cardiovascular", "LOW"): 17.6,
     ("cardiovascular", "FILTER"): 26.4,
+    ("neurological", "GOLDEN"): 58.8,  # h187: anticonvulsant + rank<=10 + mech
     ("neurological", "MEDIUM"): 26.1,
     ("neurological", "LOW"): 15.0,
     ("neurological", "FILTER"): 12.5,
@@ -848,13 +850,22 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.GOLDEN  # 75.4% precision
 
         elif category == 'neurological':
+            # h187: Anticonvulsant + rank<=10 + mechanism = 58.8% precision (GOLDEN)
+            # BUT only for seizure/epilepsy diseases, not all neurological
             # h171: Drug class-based prediction (60.4% coverage vs 18% kNN)
-            # For neurological diseases, kNN fails because Node2Vec embeddings
-            # don't capture neurological similarity well. Use drug class matching instead.
             drug_lower = drug_name.lower()
-            # Check if drug matches appropriate class for disease subtype
+            disease_lower = disease_name.lower()
+
+            # h187: GOLDEN tier for anticonvulsants - ONLY for seizure-related diseases
+            is_seizure_disease = 'epilepsy' in disease_lower or 'seizure' in disease_lower
+            if is_seizure_disease:
+                anticonvulsants = NEUROLOGICAL_DRUG_CLASS_MEMBERS.get('anticonvulsant', [])
+                is_anticonvulsant = any(ac.lower() in drug_lower for ac in anticonvulsants)
+                if rank <= 10 and mechanism_support and is_anticonvulsant:
+                    return ConfidenceTier.GOLDEN  # 58.8% precision (h187)
+
+            # h171: HIGH tier for drug class matches
             if self._is_neurological_class_match(drug_lower, disease_name):
-                # Conservative: HIGH tier since kNN-based rank may not be meaningful
                 return ConfidenceTier.HIGH  # ~60% coverage
 
         return None
