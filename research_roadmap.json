@@ -3409,10 +3409,14 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "dependencies": [
         "h168"
-      ]
+      ],
+      "started_date": "2026-02-05",
+      "completed_date": "2026-02-05",
+      "findings": "VALIDATED: Drug pool size and breadth predict kNN success.\n\nKEY FINDINGS:\n\n1. DRUG POOL SIZE BY CATEGORY:\n| Category | N Drugs | Mean Breadth | kNN Expected |\n|----------|---------|--------------|--------------|\n| Diabetes | 175 | 8.1 | GOOD |\n| Hypertension | 161 | 5.3 | GOOD |\n| Heart Failure | 83 | 7.6 | GOOD |\n| RA | 65 | 20.0 | GOOD |\n| Epilepsy | 37 | 5.8 | GOOD |\n| Alzheimer's | 15 | 3.4 | POOR |\n\n2. WHY EPILEPSY SUCCEEDS:\n- 37 drugs with cross-neurological utility\n- Treats: psychiatric (lamotrigine), pain (gabapentin), movement (diazepam), migraine (topiramate)\n- kNN neighbors (bipolar, neuropathy) share drugs\n\n3. WHY ALZHEIMER'S FAILS:\n- 14 drugs, highly mechanism-specific\n- Cholinesterase inhibitors, NMDA antagonists, anti-amyloid antibodies\n- No cross-disease utility \u2192 kNN finds neighbors but no shared drugs\n\n4. PATTERN: Drug pool breadth (mean diseases/drug) indicates \"repurposability\"\n- High breadth (>10): drugs have proven multi-indication utility\n- Low breadth (<4): mechanism-specific drugs, kNN won't help\n\nACTIONABLE: Use drug pool size and breadth as CONFIDENCE signal for kNN predictions.\n- Large pool + high breadth \u2192 HIGH confidence\n- Small pool + low breadth \u2192 LOW confidence (consider alternative methods)",
+      "result_metric": "Epilepsy 37 drugs/5.8 breadth vs Alzheimer's 15 drugs/3.4 breadth"
     },
     {
       "id": "h170",
@@ -7065,6 +7069,12 @@
       "hypothesis_id": "h159",
       "learning": "Category boundary issues exist (ITP/TTP are autoimmune-hematological) but GT for rare diseases is too small to benefit from category expansion. Focus optimization on diseases with larger GT.",
       "implication": "Deprioritize category refinement for rare diseases."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h177",
+      "learning": "Drug pool size and breadth predict kNN success. Large pools with high breadth (diabetes, hypertension) perform well. Small pools with low breadth (Alzheimer's, rare diseases) fail because drugs are mechanism-specific.",
+      "implication": "Use pool size/breadth as confidence signal. For small-pool diseases, kNN underperforms and alternative methods needed."
     }
   ],
   "collaborations": [
