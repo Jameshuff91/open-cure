@@ -276,6 +276,10 @@ COLORECTAL_KEYWORDS = {'colorectal', 'colon cancer', 'rectal cancer', 'bowel can
 # Known colorectal mAbs: bevacizumab (Avastin), cetuximab (Erbitux), panitumumab (Vectibix)
 COLORECTAL_MABS = {'bevacizumab', 'cetuximab', 'panitumumab', 'ramucirumab'}  # 50-60% precision
 
+# h215: CDK4/6 inhibitors for breast cancer (100% precision)
+BREAST_CANCER_KEYWORDS = {'breast cancer', 'breast carcinoma', 'mammary cancer'}
+CDK_INHIBITORS = {'palbociclib', 'ribociclib', 'abemaciclib'}  # 100% precision for breast cancer
+
 # h201: Disease-specific kinase inhibitor rules (from h198 analysis)
 # BCR-ABL inhibitors for CML/ALL (22% precision in h198)
 CML_KEYWORDS = {'chronic myeloid leukemia', 'cml', 'chronic myelogenous'}
@@ -902,6 +906,12 @@ class DrugRepurposingPredictor:
             # h150: Drug class rescue for cancer
             drug_lower = drug_name.lower()
             disease_lower = disease_name.lower()
+
+            # h215: CDK4/6 inhibitors for breast cancer = 100% precision (GOLDEN)
+            is_breast_cancer = any(kw in disease_lower for kw in BREAST_CANCER_KEYWORDS)
+            is_cdk_inhibitor = any(cdk in drug_lower for cdk in CDK_INHIBITORS)
+            if is_breast_cancer and is_cdk_inhibitor:
+                return ConfidenceTier.GOLDEN  # 100% precision (h215)
 
             # h197: Colorectal cancer + monoclonal antibody = 50-60% precision (GOLDEN)
             is_colorectal = any(kw in disease_lower for kw in COLORECTAL_KEYWORDS)

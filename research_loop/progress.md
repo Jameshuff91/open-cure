@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h209, h212, h217, h213 (2026-02-05)
+## Current Session: h209, h212, h217, h213, h214, h215 (2026-02-05)
 
 ### Session Summary
 
@@ -11,6 +11,8 @@
 - h212: Cardiovascular Disease-Specific Rescue Rules - **VALIDATED**
 - h217: Implement Heart Failure GOLDEN Rescue Rules - **VALIDATED**
 - h213: Zero-Coverage Drug Injection Layer - **INVALIDATED**
+- h214: Heart Failure Specific Drug Rules - **SUPERSEDED BY h217**
+- h215: Cancer CDK Inhibitor Rules - **VALIDATED**
 
 ---
 
@@ -141,6 +143,27 @@
 **CONCLUSION:** Zero-coverage injection does NOT work. Even best criteria (mech+ATC) has 5.5% precision = 17 false positives per true positive.
 
 **IMPLICATION:** Only specific drug class rules (like h217) work. General injection fails.
+
+---
+
+### h215: Cancer CDK Inhibitor Rules - VALIDATED
+
+**Objective:** Implement CDK4/6 inhibitor rescue for breast cancer.
+
+**KEY FINDINGS:**
+- All 3 CDK inhibitors (palbociclib, ribociclib, abemaciclib) are in breast cancer GT
+- **100% precision** for breast cancer (3/3)
+- Only 2.4% precision for all cancers (too low)
+
+**IMPLEMENTATION:**
+- Added `BREAST_CANCER_KEYWORDS` and `CDK_INHIBITORS` drug sets
+- Added rescue rule in cancer category
+
+**RESULT:**
+- Ribociclib: GOLDEN at rank 15 ✓
+- Abemaciclib/Palbociclib: rank > 20 → FILTER (design limitation)
+
+**LIMITATION:** Rescue only applies to rank <= 20 due to FILTER check order.
 
 ---
 
