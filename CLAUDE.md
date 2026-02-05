@@ -218,7 +218,17 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 - Sympathomimetics for diabetes
 - TCAs/PPIs for hypertension
 - Alpha blockers for heart failure
+- **NEW (h250/h255/h258):**
+  - Non-DHP CCBs (Verapamil/Diltiazem) + HF (ACC/AHA 2022)
+  - Class Ic/Ia antiarrhythmics + structural heart (CAST/SWORD trials)
+  - Dronedarone + HF (ANDROMEDA trial: 2.13x mortality)
+  - **Inverse indications** (drug CAUSES condition):
+    - Procainamide → agranulocytosis/leukopenia/lupus
+    - Amiodarone → thyroid dysfunction (14-18% incidence)
+    - NSAIDs → peptic ulcer (COX-1 inhibition)
+  - Ganglionic blockers (obsolete), surgical dyes (not therapeutic)
 
+**Total filter exclusions:** 307 predictions (2.3%)
 **Validation precision:** 20-25% for top predictions (batches 1+2)
 
 ## Key Validated Predictions
