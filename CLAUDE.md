@@ -176,6 +176,21 @@ vastai destroy instance <INSTANCE_ID>
 **VALIDATED:** Drug frequency (+9.4pp), Chemical similarity (+8.8pp), Mechanism support (+6.5pp), Category tier
 **Multi-Signal Ensemble (h106):** 22% precision @ top 10%. Best combo: Mechanism+Frequency = 20% precision (orthogonal, r=0.07)
 
+### Production Tiered Confidence System (h135 validated)
+
+| Tier   | Criteria | Precision | Separation |
+|--------|----------|-----------|------------|
+| GOLDEN | Tier1 + freq>=10 + mechanism | 57.7% | 9.1x vs LOW |
+| HIGH | freq>=15+mech OR rank<=5+freq>=10+mech | 20.9% | 3.3x |
+| MEDIUM | freq>=5+mech OR freq>=10 | 14.3% | 2.2x |
+| LOW | All else passing filter | 6.4% | baseline |
+| FILTER | rank>20 OR no_targets OR (freq<=2 AND no_mech) | 3.2% | excluded |
+
+**Key findings (2026-02-05):**
+- h126: XGBoost +2.07pp from interactions (freq dominant at 35%)
+- h130: Linear better for infectious/autoimmune/ophthalmic; ALL hits had Linear>XGBoost
+- h132: Tier1+freq>=15+mech = 57.9% precision (8x baseline)
+
 ## Performance Gaps & Error Patterns
 
 **Gaps:** Biologics (mAbs 17% vs small mol 32%), Antibiotics (wrong diseases), GI (5% kNN blind spot)

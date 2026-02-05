@@ -1,0 +1,50 @@
+{
+  "tier_results": {
+    "GOLDEN": {
+      "n": 104,
+      "precision": 57.692307692307686,
+      "n_hits": 60,
+      "pct_total": 0.7691169945274368
+    },
+    "HIGH": {
+      "n": 402,
+      "precision": 20.8955223880597,
+      "n_hits": 84,
+      "pct_total": 2.9729329980772072
+    },
+    "MEDIUM": {
+      "n": 2508,
+      "precision": 14.274322169059012,
+      "n_hits": 358,
+      "pct_total": 18.547552137257803
+    },
+    "LOW": {
+      "n": 4104,
+      "precision": 6.359649122807018,
+      "n_hits": 261,
+      "pct_total": 30.350539860967313
+    },
+    "FILTER": {
+      "n": 6404,
+      "precision": 3.232354778263585,
+      "n_hits": 207,
+      "pct_total": 47.35985800917024
+    }
+  },
+  "separations": {
+    "golden_low": 9.071618037135277,
+    "high_low": 3.2856407617086973,
+    "golden_filter": 17.848383500557414
+  },
+  "monotonic_decrease": true,
+  "total_predictions": 13522,
+  "total_hits": 970,
+  "success": true,
+  "tier_definitions": {
+    "GOLDEN": "Tier1 category + freq>=10 + mechanism",
+    "HIGH": "freq>=15 + mechanism OR rank<=5 + freq>=10 + mechanism",
+    "MEDIUM": "freq>=5 + mechanism OR freq>=10",
+    "LOW": "All else passing filter",
+    "FILTER": "rank>20 OR no_targets OR (freq<=2 AND no_mechanism)"
+  }
+}
