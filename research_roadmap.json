@@ -6000,7 +6000,7 @@
     {
       "id": "h298",
       "title": "Implement Mechanism-Specificity Confidence Signal",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -6011,7 +6011,9 @@
         "Step 3: For HIGHLY_REPURPOSABLE diseases, boost to HIGH confidence",
         "Step 4: Test impact on prediction tiering",
         "Success criteria: Clear separation of confidence tiers by disease type"
-      ]
+      ],
+      "findings": "VALIDATED: Mechanism-specificity confidence signal implemented in production_predictor.py.\n\nIMPLEMENTATION:\n1. Added MECHANISM_SPECIFIC_DISEASES set (53 diseases)\n2. Added HIGHLY_REPURPOSABLE_DISEASES set (45 diseases)\n3. Added _is_mechanism_specific_disease() helper function\n4. Added _is_highly_repurposable_disease() helper function\n5. In _assign_confidence_tier():\n   - Mechanism-specific diseases \u2192 capped at LOW tier (kNN will fail)\n   - Highly repurposable diseases \u2192 boosted to MEDIUM if they would otherwise be LOW\n\nTESTING:\n- ALS predictions: ALL LOW tier (correct - mechanism-specific)\n- Fabry disease predictions: ALL LOW tier (correct - mechanism-specific)\n- Lupus erythematosus predictions: HIGH tier (correct - highly repurposable)\n- Rheumatoid arthritis predictions: HIGH tier (normal category rescue)\n\nThis provides a pre-prediction confidence signal based on disease characteristics,\nnot just individual drug-disease pair features.",
+      "result_metric": "Mechanism-specific \u2192 LOW; Highly repurposable \u2192 MEDIUM boost"
     },
     {
       "id": "h299",
@@ -7194,6 +7196,12 @@
       "hypothesis_id": "h297",
       "learning": "Mechanism-specificity (breadth<3, mono>70%) predicts kNN failure. 6.6% vs 87.9% repurposable drugs in GT.",
       "implication": "Use as confidence signal. 50 mechanism-specific diseases need alternative methods, not kNN."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h298",
+      "learning": "Implemented h297 mechanism-specificity as confidence signal. 53 diseases capped at LOW, 45 boosted to MEDIUM.",
+      "implication": "Disease-level confidence signals complement drug-level signals for better calibration."
     }
   ],
   "collaborations": [

@@ -471,6 +471,51 @@ CV_EVENTS_FOR_STATIN_RULE = [
     'acute coronary syndrome', 'unstable angina',
 ]
 
+# h297: Mechanism-Specific Diseases (kNN will fail - set LOW confidence)
+# These diseases have breadth < 3 and mono_pct > 70%
+# Only 6.6% of their GT drugs are repurposable (vs 87.9% for other diseases)
+# Drugs for these diseases are mechanism-specific and don't transfer to neighbors
+MECHANISM_SPECIFIC_DISEASES = {
+    'allergy', 'bleeding episodes', 'covid-19', 'chagas disease', 'cough',
+    'fabry disease', 'familial immunoglobulin a nephropathy', 'global progressive disease',
+    'hiv-1 infection', 'human immunodeficiency virus positive', 'hunter syndrome',
+    'huntington disease', 'hypozincaemia', 'invasive meningococcal disease',
+    'japanese encephalitis', 'muscular headache', 'relapse multiple myeloma',
+    'situational hypoactive sexual desire disorder', 'viremia', 'wilson disease',
+    'acute bacterial conjunctivitis', 'allergic respiratory disease',
+    'amyotrophic lateral sclerosis', 'castration-resistant prostate carcinoma',
+    'chronic pain syndrome', 'coagulation protein disease', 'epidermolysis bullosa dystrophica',
+    'familial dupuytren contracture', 'familial chylomicronemia syndrome',
+    'glycogen storage disease ii', 'hemophilia a', 'hemophilia b',
+    'heparin-induced thrombocytopenia', 'hepatitis a', 'hereditary angioedema',
+    'interstitial cystitis', 'junctional epidermolysis bullosa', 'myelofibrosis',
+    'non-invasive bladder urothelial carcinoma', 'opioid-induced constipation',
+    'osteoarthritis, knee', 'primary biliary cholangitis 1', 'primary hyperoxaluria type 1',
+    'psoriasis vulgaris', 'schizoaffective disorder', 'skin carcinoma in situ',
+    'tardive dyskinesia', 'tenosynovial giant cell tumor', 'uterine fibroid',
+    # Additional mechanism-specific diseases (rare genetic, targeted therapies)
+    'gaucher disease', 'niemann-pick disease', 'pompe disease', 'tay-sachs disease',
+}
+
+# h297: Highly Repurposable Diseases (kNN works well - boost to HIGH confidence)
+# These diseases have breadth >= 5 and mono_pct < 40%
+# Their drugs are widely used across multiple diseases (good kNN candidates)
+HIGHLY_REPURPOSABLE_DISEASES = {
+    'aids', 'abdominal infection', 'acute pain', 'acute bacterial sinusitis',
+    'acute bronchitis', 'acute bursitis', 'acute glomerulonephritis', 'acute otitis media',
+    'acute rheumatic carditis', 'addison disease', 'advanced breast cancer',
+    'advanced renal cell carcinoma', 'angina pectoris', 'arrhythmia', 'atopic rhinitis',
+    'axial spondyloarthritis', 'b-cell chronic lymphocytic leukemia', 'back pain',
+    'bacterial sepsis', 'bone and joint infections', 'bronchospasm',
+    'carcinoma breast stage iv', 'chronic anterior uveitis', 'chronic pain',
+    'common migraine', 'corneal injury', 'crohn disease', 'cyclitis',
+    'deep venous thrombosis', 'depressed mood', 'diabetes', 'diamond-blackfan anemia',
+    'dyslipidemia', 'dysmenorrhea', 'edema', 'erosive esophagitis',
+    'erosive gastroesophageal reflux disease', 'erythroderma', 'lupus erythematosus',
+    'idiopathic nephrotic syndrome', 'pure red-cell aplasia', 'aspiration pneumonitis',
+    'trichinellosis', 'ocular cicatricial pemphigoid', 'idiopathic eosinophilic pneumonia',
+}
+
 # h274: Cancer type matching for confidence tiering (from h270 analysis)
 # Same cancer type (subtype refinement): 100% precision
 # Different cancer type (cross-repurposing): 30.6% precision
@@ -1250,6 +1295,32 @@ class DrugRepurposingPredictor:
         return self.drug_id_to_name.get(drug_id, drug_id)
 
     @staticmethod
+    def _is_mechanism_specific_disease(disease_name: str) -> bool:
+        """
+        h297: Check if disease is mechanism-specific (kNN will fail).
+
+        Mechanism-specific diseases have drugs that don't transfer from
+        similar diseases - only 6.6% of their GT drugs are repurposable.
+
+        Returns True if disease is in MECHANISM_SPECIFIC_DISEASES list.
+        """
+        disease_lower = disease_name.lower()
+        return disease_lower in MECHANISM_SPECIFIC_DISEASES
+
+    @staticmethod
+    def _is_highly_repurposable_disease(disease_name: str) -> bool:
+        """
+        h297: Check if disease is highly repurposable (kNN works well).
+
+        Highly repurposable diseases have drugs that are used across many
+        diseases - 87.9% of their GT drugs are repurposable.
+
+        Returns True if disease is in HIGHLY_REPURPOSABLE_DISEASES list.
+        """
+        disease_lower = disease_name.lower()
+        return disease_lower in HIGHLY_REPURPOSABLE_DISEASES
+
+    @staticmethod
     def categorize_disease(disease_name: str) -> str:
         """Categorize a disease by name."""
         name_lower = disease_name.lower()
@@ -1356,6 +1427,19 @@ class DrugRepurposingPredictor:
                     return ConfidenceTier.MEDIUM, True, f'comp_to_base_med_{transferability:.0f}'
                 # LOW transferability - no boost, continue to standard tier assignment
 
+        # h297: Mechanism-specific diseases should get LOW confidence (kNN will fail)
+        # These diseases have drugs that don't transfer from similar diseases
+        # Only 6.6% of their GT drugs are repurposable (vs 87.9% for others)
+        if self._is_mechanism_specific_disease(disease_name):
+            # For mechanism-specific diseases, cap confidence at LOW
+            # This overrides other tier boosts since kNN fundamentally won't work
+            return ConfidenceTier.LOW, False, 'mechanism_specific'
+
+        # h297: Highly repurposable diseases can get a confidence boost
+        # These diseases have drugs widely used across many conditions
+        # 87.9% of their GT drugs are repurposable
+        is_highly_repurposable = self._is_highly_repurposable_disease(disease_name)
+
         # h273/h276/h278: Disease hierarchy matching - boost tier for subtype refinements
         # This indicates the prediction is a subtype refinement (e.g., "psoriasis" → "plaque psoriasis")
         # 2.9x precision improvement overall (8.5% → 24.7%)
@@ -1404,6 +1488,11 @@ class DrugRepurposingPredictor:
             return ConfidenceTier.MEDIUM, False, None
         if train_frequency >= 10:
             return ConfidenceTier.MEDIUM, False, None
+
+        # h297: Highly repurposable diseases get MEDIUM instead of LOW
+        # These diseases have drugs widely used across many conditions
+        if is_highly_repurposable and (mechanism_support or train_frequency >= 5):
+            return ConfidenceTier.MEDIUM, False, 'highly_repurposable'
 
         # LOW tier
         return ConfidenceTier.LOW, False, None
