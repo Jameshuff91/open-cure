@@ -28,7 +28,7 @@ import sys
 import time
 from pathlib import Path
 from collections import defaultdict
-from typing import Dict, Set, List
+from typing import Dict, Set, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -43,6 +43,7 @@ REFERENCE_DIR = PROJECT_ROOT / "data" / "reference"
 MODELS_DIR = PROJECT_ROOT / "models"
 OUTPUT_DIR = PROJECT_ROOT / "data" / "deliverables"
 EMBEDDINGS_DIR = PROJECT_ROOT / "data" / "embeddings"
+MANUAL_RULES_PATH = REFERENCE_DIR / "manual_drug_rules.json"
 
 # Category keywords
 CATEGORY_KEYWORDS = {
@@ -150,6 +151,38 @@ def categorize_disease(name: str) -> str:
         if any(kw in name_lower for kw in keywords):
             return cat
     return 'other'
+
+
+def load_manual_rules(matcher: DiseaseMatcher) -> Dict[str, List[Tuple[str, str]]]:
+    """
+    Load manual drug rules (h206) for drugs missing from DRKG.
+    Returns dict: disease_mesh_id -> [(drug_name, indication_name), ...]
+
+    These are FDA-approved drugs with no DRKG embeddings.
+    """
+    if not MANUAL_RULES_PATH.exists():
+        print("  Warning: manual_drug_rules.json not found")
+        return {}
+
+    with open(MANUAL_RULES_PATH) as f:
+        rules_data = json.load(f)
+
+    disease_to_drugs: Dict[str, List[Tuple[str, str]]] = defaultdict(list)
+    matched = 0
+    unmatched = 0
+
+    for rule in rules_data.get('rules', []):
+        drug_name = rule['drug_name']
+        for indication in rule['indications']:
+            mesh_id = matcher.get_mesh_id(indication)
+            if mesh_id:
+                disease_to_drugs[mesh_id].append((drug_name, indication))
+                matched += 1
+            else:
+                unmatched += 1
+
+    print(f"  Manual rules: {matched} matched, {unmatched} unmatched ({len(disease_to_drugs)} diseases)")
+    return dict(disease_to_drugs)
 
 
 def knn_predict(
@@ -316,6 +349,11 @@ def main():
     all_gt, disease_names = load_ground_truth(mesh_mappings, name_to_drug_id)
     print(f"  GT: {len(all_gt)} diseases, {sum(len(v) for v in all_gt.values())} pairs")
 
+    # Load manual rules for drugs missing from DRKG (h206/h210)
+    fuzzy_mappings = load_mesh_mappings()
+    matcher = DiseaseMatcher(fuzzy_mappings)
+    manual_rules = load_manual_rules(matcher)
+
     # Use all diseases as training (for production we use all available data)
     train_disease_list = [d for d in all_gt if d in emb_dict]
     train_disease_embs = np.array([emb_dict[d] for d in train_disease_list], dtype=np.float32)
@@ -368,11 +406,42 @@ def main():
                 'pool_size': confidence['pool_size'],
                 'neighbors_with_gt': confidence['neighbors_with_gt'],
                 'is_known_indication': is_known,
+                'source': 'knn',
             })
+
+        # Inject manual rules for drugs missing from DRKG (h210)
+        # These are FDA-approved drugs that kNN cannot predict
+        if disease_id in manual_rules:
+            knn_drug_names = {id_to_drug_name.get(p['drug_id'], '').upper() for p in predictions}
+            for drug_name_manual, indication_name in manual_rules[disease_id]:
+                # Skip if already in kNN predictions
+                if drug_name_manual.upper() in knn_drug_names:
+                    continue
+                all_predictions.append({
+                    'disease_name': disease_name,
+                    'disease_id': disease_id,
+                    'drug_name': drug_name_manual,
+                    'drug_id': f'manual:{drug_name_manual}',  # No DRKG ID
+                    'knn_score': 0.0,  # No kNN score (not from kNN)
+                    'confidence_prob': 1.0,  # Known FDA-approved
+                    'confidence_tier': 'INJECTED',  # Special tier for manual rules
+                    'category': confidence['category'],
+                    'pool_size': confidence['pool_size'],
+                    'neighbors_with_gt': confidence['neighbors_with_gt'],
+                    'is_known_indication': True,  # By definition (from GT)
+                    'source': 'manual_rule',
+                })
 
     # Create DataFrame
     df = pd.DataFrame(all_predictions)
+
+    # Summary statistics
+    knn_preds = df[df['source'] == 'knn']
+    injected_preds = df[df['source'] == 'manual_rule']
+
     print(f"\nTotal predictions: {len(df)}")
+    print(f"  kNN predictions: {len(knn_preds)}")
+    print(f"  Injected predictions: {len(injected_preds)} ({injected_preds['disease_id'].nunique()} diseases)")
     print(f"Diseases: {df['disease_id'].nunique()}")
     print(f"Drugs: {df['drug_id'].nunique()}")
 
@@ -421,6 +490,11 @@ def main():
 
         # Tier summary
         tier_summary.to_excel(writer, sheet_name='Tier Summary', index=False)
+
+        # Injected predictions (drugs missing from DRKG)
+        if len(injected_preds) > 0:
+            injected_sorted = injected_preds.sort_values('disease_name')
+            injected_sorted.to_excel(writer, sheet_name='Injected (Missing DRKG)', index=False)
 
     print(f"\nSaved to {output_path}")
 

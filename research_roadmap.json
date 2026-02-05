@@ -4165,7 +4165,7 @@
       "priority": 4,
       "effort": "medium",
       "expected_impact": "medium",
-      "status": "pending",
+      "status": "validated",
       "dependencies": [
         "h206"
       ],
@@ -4174,7 +4174,9 @@
         "For each rule, add drug-disease pair to predictions if disease matches",
         "Assign HIGH tier to injected pairs (from GT)",
         "Verify injected pairs appear in final deliverable"
-      ]
+      ],
+      "findings": "Successfully implemented manual rule injection layer for drugs missing from DRKG.\n\nKEY RESULTS:\n- 45 drug-disease pairs injected from 30 FDA-approved drugs\n- 28 diseases received injections (most: psoriasis, DLBCL, multiple myeloma with 5 each)\n- +4.3% improvement in known indication coverage (1048 \u2192 1093)\n- 69.2% of manual rules successfully injected (45/65)\n\nRULE COVERAGE BREAKDOWN:\n- 16 rules: Disease name couldn't be matched to MESH ID\n- 4 rules: Matched MESH ID but disease has no embeddings\n- 45 rules: Successfully injected\n\nINJECTED DRUGS BY CATEGORY:\n- Cancer: 24 predictions (lymphomas, leukemias, solid tumors)\n- Autoimmune: 9 predictions (psoriasis, RA, NMO)\n- Hematological: 6 predictions (myeloma, hemolytic anemia)\n- Other: 3 predictions\n\nTOP INJECTED DRUGS:\n- Certolizumab (TNF inhibitor): 6 diseases\n- Epcoritamab (bispecific CD20xCD3): 3 diseases\n- Gemtuzumab (CD33 antibody): 3 diseases\n\nTIER SYSTEM:\n- New 'INJECTED' tier for manually added FDA-approved drugs\n- confidence_prob = 1.0 (known FDA-approved)\n- source = 'manual_rule' for traceability\n- Added to 'Injected (Missing DRKG)' sheet in deliverable",
+      "result_metric": "+45 known indications (+4.3%), 69.2% rule coverage"
     },
     {
       "id": "h211",
@@ -4369,6 +4371,49 @@
       ],
       "findings": "INVALIDATED: Blanket filtering of C04/C05 would be harmful.\n\nKEY FINDINGS:\n1. 62 drugs in C04/C05 classes (vasodilators/vasoprotectives)\n2. Only 4.4% of CV predictions include these drugs\n3. Many are LEGITIMATE treatments:\n   - Diltiazem for AF: HIT (rate control agent)\n   - Some steroids are multi-classified\n4. h212's \"0% precision\" was an artifact of broad analysis\n\nSPECIFIC FINDINGS:\n- Diltiazem + atrial fibrillation: TRUE POSITIVE\n- Steroids + DIC: False positive (but steroids have multiple ATC codes)\n- Pentoxifylline + pulmonary hypertension: LOW tier (not GOLDEN/HIGH)\n\nCONCLUSION:\nBlanket filtering of C04/C05 would HARM precision by removing valid predictions.\nThe ATC-based filtering approach is too coarse - drugs have multiple indications\nand ATC classifications don't capture this nuance.\n\nRECOMMENDATION:\nContinue with disease-specific drug class rules (like h217 for heart failure)\nrather than broad ATC-based filtering.",
       "result_metric": "INVALIDATED: Only 4.4% predictions affected, some are true positives"
+    },
+    {
+      "id": "h220",
+      "title": "Expand MESH Mappings for Missing Indications",
+      "rationale": "16 manual rules failed because disease names couldn't be matched to MESH IDs. Specifically:\n- Faricimab: All 5 ophthalmic indications failed\n- Marstacimab: hemophilia A/B failed\n- Multiple rare disease names need explicit mappings",
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Add explicit MESH mappings for the 16 unmatched diseases",
+        "Focus on: macular degeneration variants, hemophilia, cold agglutinin disease",
+        "Re-run injection to capture these rules"
+      ],
+      "status": "pending",
+      "priority": 4
+    },
+    {
+      "id": "h221",
+      "title": "Manual Rule Expansion: Additional Missing Biologics",
+      "rationale": "h206 identified 887 drugs missing from DRKG but manual_drug_rules.json only has 30. Could expand to capture more GT drugs, especially newer biologics approved 2020-2024.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Cross-reference full GT with DRKG drug pool",
+        "Prioritize drugs with >2 indications",
+        "Add to manual_drug_rules.json",
+        "Re-run production deliverable"
+      ],
+      "status": "pending",
+      "priority": 3
+    },
+    {
+      "id": "h222",
+      "title": "Injection Layer Quality Check: False Positives",
+      "rationale": "Currently all injected predictions are by definition true positives (from GT). But are they USEFUL? Some may be obvious (standard of care) vs. novel repurposing opportunities. Should we filter or prioritize injected predictions?",
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Analyze injected drug-disease pairs: which are first-line treatments vs. novel uses?",
+        "Check which injected drugs have clinical trial activity for their indications",
+        "Determine if 'INJECTED' tier needs sub-categorization (e.g., STANDARD_OF_CARE vs. REPURPOSING)"
+      ],
+      "status": "pending",
+      "priority": 5
     }
   ],
   "completed": [
@@ -5219,6 +5264,12 @@
       "hypothesis_id": "h219",
       "learning": "ATC-based blanket filtering is too coarse. C04/C05 includes drugs like Diltiazem that ARE valid CV treatments.",
       "implication": "Continue with specific drug-disease rules rather than ATC class filtering"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h210",
+      "learning": "Manual rule injection adds FDA-approved drugs missing from DRKG. 69% coverage with fuzzy matching. Main blockers: unmapped disease names (16) and diseases without embeddings (4).",
+      "implication": "Can improve coverage by adding explicit MESH mappings for failed disease names. Consider expanding manual rules to more missing drugs."
     }
   ],
   "collaborations": [
