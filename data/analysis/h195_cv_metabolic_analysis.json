@@ -1,0 +1,27 @@
+{
+  "hypothesis": "h195",
+  "title": "Metabolic Exception Analysis: Why CV\u2192Metabolic Works",
+  "status": "validated",
+  "finding": "CV\u2192Metabolic success is due to COMORBIDITY MANAGEMENT, not true repurposing",
+  "key_results": {
+    "statin_diabetes_entries": 6,
+    "all_fda_approved": true,
+    "reason": "Statins approved for CV risk reduction IN diabetic patients, not FOR diabetes",
+    "indication_text_evidence": "All entries mention 'multiple risk factor intervention' for atherosclerotic disease"
+  },
+  "interpretation": {
+    "true_repurposing": false,
+    "comorbidity_management": true,
+    "explanation": "Diabetes + dyslipidemia commonly co-occur. Statins treat dyslipidemia, not diabetes. The 'diabetes' indication is for CV prevention in diabetic patients, not glycemic control."
+  },
+  "precision_implications": {
+    "why_it_works": "Disease comorbidity creates shared drug pools. Diabetic patients often need statins \u2192 statins appear in 'metabolic' disease GT.",
+    "is_this_good": "Depends on use case. If goal is 'any approved drug for patient', yes. If goal is 'novel mechanism repurposing', no.",
+    "recommendation": "For novel repurposing: distinguish primary mechanism from comorbidity management"
+  },
+  "data_quality_assessment": {
+    "is_error": false,
+    "is_true_signal": "Partially - reflects real clinical practice but not novel mechanism discovery",
+    "action_needed": "None - this is how drugs are actually used"
+  }
+}

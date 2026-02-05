@@ -3846,7 +3846,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all CV\u2192metabolic predictions",
         "Check which specific drugs and diseases",
@@ -3855,7 +3855,9 @@
       ],
       "dependencies": [
         "h191"
-      ]
+      ],
+      "findings": "VALIDATED: CV\u2192Metabolic success is due to COMORBIDITY MANAGEMENT, not true mechanism-based repurposing.\n\nKEY FINDING:\n- 6 statin+diabetes entries in GT, all FDA approved\n- Indication texts: \"multiple risk factor intervention for atherosclerotic disease\"\n- Statins treat CV risk IN diabetic patients, not diabetes itself\n\nINTERPRETATION:\n- NOT a data quality issue - this reflects real clinical practice\n- NOT true repurposing - no novel mechanism discovery\n- IS comorbidity management - diabetes + dyslipidemia co-occur\n\nPRECISION IMPLICATION:\n- CV\u2192Metabolic works because diseases share risk factors and drug pools\n- This is useful for \"any approved drug\" but not for \"novel mechanism\"\n- For novel repurposing: need to distinguish primary mechanism from comorbidity",
+      "result_metric": "6 statin+diabetes entries = comorbidity management, not repurposing"
     },
     {
       "id": "h196",
@@ -4836,6 +4838,12 @@
       "hypothesis_id": "h204",
       "learning": "Lymphoma and leukemia have identical drug overlap (6%). The key insight is mechanism-based groupings: CD30+ (Hodgkin, ALCL) \u2192 Adcetris; CD20+ (B-cell NHL) \u2192 Rituximab. These can enable targeted production rules.",
       "implication": "Use mechanism-of-action matching rather than subtype overlap for hematologic cancer rules"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h195",
+      "learning": "CV\u2192Metabolic success is comorbidity management (statins for CV risk in diabetics), not true repurposing. This is real clinical practice but not novel mechanism discovery.",
+      "implication": "For novel repurposing research, distinguish primary mechanism from comorbidity management"
     }
   ],
   "collaborations": [
