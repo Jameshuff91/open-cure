@@ -302,6 +302,20 @@ TOPICAL_STEROIDS = {'hydrocortisone', 'betamethasone', 'triamcinolone', 'clobeta
 BETA_BLOCKERS = {'metoprolol', 'atenolol', 'carvedilol', 'bisoprolol', 'propranolol',
                  'labetalol', 'nebivolol', 'nadolol', 'timolol', 'esmolol', 'sotalol'}  # 33.3% rank<=5
 
+# h217: Heart failure drug classes (from h212 analysis)
+# Loop diuretics: 75% precision for heart failure (GOLDEN)
+LOOP_DIURETICS = {'furosemide', 'bumetanide', 'torsemide', 'torasemide', 'ethacrynic acid'}
+
+# Aldosterone antagonists: 50% precision for heart failure (GOLDEN)
+ALDOSTERONE_ANTAGONISTS = {'spironolactone', 'eplerenone', 'finerenone'}
+
+# ARBs: 27% precision for heart failure, 20% for hypertension (HIGH)
+ARB_DRUGS = {'losartan', 'valsartan', 'irbesartan', 'candesartan', 'telmisartan',
+             'olmesartan', 'azilsartan', 'eprosartan'}
+
+# Heart failure disease keywords
+HF_KEYWORDS = {'heart failure', 'cardiac failure', 'cardiomyopathy', 'ventricular dysfunction'}
+
 # h157: DMARDs achieve 75.4% precision for autoimmune diseases
 DMARD_DRUGS = {'methotrexate', 'sulfasalazine', 'hydroxychloroquine', 'leflunomide',
                'azathioprine', 'mycophenolate', 'cyclosporine', 'tacrolimus'}  # 75.4% rank<=10
@@ -843,11 +857,34 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.HIGH
 
         elif category == 'cardiovascular':
+            drug_lower = drug_name.lower()
+            disease_lower = disease_name.lower()
+
+            # h217: Heart failure specific GOLDEN rescue rules (from h212)
+            is_heart_failure = any(kw in disease_lower for kw in HF_KEYWORDS)
+            if is_heart_failure:
+                # Loop diuretics: 75% precision for heart failure (GOLDEN)
+                if any(diuretic in drug_lower for diuretic in LOOP_DIURETICS):
+                    return ConfidenceTier.GOLDEN  # 75% precision (h212)
+                # Aldosterone antagonists: 50% precision for heart failure (GOLDEN)
+                if any(aa in drug_lower for aa in ALDOSTERONE_ANTAGONISTS):
+                    return ConfidenceTier.GOLDEN  # 50% precision (h212)
+                # ARBs: 27% precision for heart failure (HIGH)
+                if any(arb in drug_lower for arb in ARB_DRUGS):
+                    return ConfidenceTier.HIGH  # 27% precision (h212)
+                # Beta-blockers: 21% precision for heart failure (HIGH)
+                if any(bb in drug_lower for bb in BETA_BLOCKERS):
+                    return ConfidenceTier.HIGH  # 21% precision (h212)
+
+            # h218: Hypertension + ARBs = 20% precision (HIGH)
+            if 'hypertension' in disease_lower or 'hypertensive' in disease_lower:
+                if any(arb in drug_lower for arb in ARB_DRUGS):
+                    return ConfidenceTier.HIGH  # 20% precision (h212)
+
             # h136 generic rescue
             if rank <= 5 and mechanism_support:
                 return ConfidenceTier.HIGH  # 38.2% precision
             # h154: Beta-blockers achieve 33.3% precision at rank<=5
-            drug_lower = drug_name.lower()
             if rank <= 5 and any(bb in drug_lower for bb in BETA_BLOCKERS):
                 return ConfidenceTier.HIGH  # 33.3% precision
 

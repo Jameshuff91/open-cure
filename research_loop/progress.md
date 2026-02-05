@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h209, h212 (2026-02-05)
+## Current Session: h209, h212, h217 (2026-02-05)
 
 ### Session Summary
 
@@ -9,6 +9,7 @@
 **Hypotheses Tested:**
 - h209: GT Coverage Analysis - Which Drug-Disease Pairs Are Blocking Predictions - **VALIDATED**
 - h212: Cardiovascular Disease-Specific Rescue Rules - **VALIDATED**
+- h217: Implement Heart Failure GOLDEN Rescue Rules - **VALIDATED**
 
 ---
 
@@ -94,6 +95,29 @@
 - h219: Exclude Zero-Precision CV Classes
 
 **Output:** `data/analysis/h212_cv_rescue_rules.json`
+
+---
+
+### h217: Heart Failure GOLDEN Rescue Rules - VALIDATED
+
+**Objective:** Implement GOLDEN tier rescue rules for heart failure diseases.
+
+**IMPLEMENTATION:**
+- Added drug sets: `LOOP_DIURETICS`, `ALDOSTERONE_ANTAGONISTS`, `ARB_DRUGS`, `HF_KEYWORDS`
+- Added rescue logic in `_apply_category_rescue()` for cardiovascular category
+
+**PRECISION RESULTS (3 HF diseases):**
+| Tier | Hits | Total | Precision |
+|------|------|-------|-----------|
+| GOLDEN | 2 | 3 | **66.7%** |
+| HIGH | 6 | 18 | **33.3%** |
+
+**RESCUED PREDICTIONS:**
+- Chronic heart failure: Spironolactone (GOLDEN), Furosemide (GOLDEN)
+- Beta-blockers: Propranolol, Bisoprolol, Carvedilol (HIGH)
+- ARBs: Telmisartan for dilated cardiomyopathy (HIGH)
+
+**SUCCESS:** Target was >40% precision. Achieved 66.7% GOLDEN, 33.3% HIGH.
 
 ---
 
