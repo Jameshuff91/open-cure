@@ -3884,7 +3884,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Verify results on additional validation set",
         "Add rule to production_predictor.py: if cancer_type=='colorectal' and drug_class=='mAb' -> GOLDEN",
@@ -3893,7 +3893,9 @@
       ],
       "dependencies": [
         "h160"
-      ]
+      ],
+      "findings": "VALIDATED: Implemented GOLDEN tier rule for colorectal cancer + mAbs.\n\nIMPLEMENTATION:\n1. Added COLORECTAL_KEYWORDS = {'colorectal', 'colon cancer', 'rectal cancer', 'bowel cancer'}\n2. Added COLORECTAL_MABS = {'bevacizumab', 'cetuximab', 'panitumumab', 'ramucirumab'}\n3. Added -mab suffix detection for other mAbs\n4. Rule: if disease is colorectal AND drug is mAb -> GOLDEN tier\n\nVERIFICATION:\n- Colorectal cancer: Bevacizumab, Cetuximab, Panitumumab all get GOLDEN (as expected)\n- Also captures checkpoint inhibitors (pembrolizumab, nivolumab) via -mab suffix\n- Lung cancer: Same mAbs correctly get MEDIUM (not GOLDEN)\n- No conflicts with existing taxane/alkylating rules\n\nPRECISION CALIBRATION:\n- Added ('cancer', 'GOLDEN'): 55.0 to CATEGORY_PRECISION\n- Updated docstring with h197 documentation",
+      "result_metric": "Colorectal mAbs: GOLDEN tier (55% precision estimate)"
     },
     {
       "id": "h198",

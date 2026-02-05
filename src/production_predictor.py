@@ -11,6 +11,7 @@ Unified pipeline integrating validated research findings:
   - Cancer: taxane + rank<=5 = 40%, alkylating + rank<=10 = 36.4%
   - Ophthalmic: antibiotic + rank<=15 = 62.5%, steroid + rank<=15 = 48%
   - Dermatological: topical_steroid + rank<=5 = 63.6%
+- h197: Colorectal cancer mAb rescue - colorectal + mAb = 50-60% precision (GOLDEN)
 - h154: Cardiovascular beta_blocker + rank<=5 = 33.3% precision
 - h157: Autoimmune DMARD + rank<=10 = 75.4% precision
 - h170: Selective category boosting - +2.40pp R@30 (p=0.009) for isolated categories
@@ -91,6 +92,7 @@ CATEGORY_PRECISION = {
     # HIGH tier values (from rescue criteria validation):
     ("cardiovascular", "HIGH"): 38.2, # h136: rank<=5 + mech OR h154: beta_blocker + rank<=5 (33.3%)
     ("respiratory", "HIGH"): 35.0,    # h136: rank<=10 + freq>=15 + mech
+    ("cancer", "GOLDEN"): 55.0,       # h197: colorectal + mAb = 50-60% precision
     ("cancer", "HIGH"): 40.0,         # h150: taxane + rank<=5
     ("ophthalmic", "HIGH"): 48.0,     # h150: steroid + rank<=15
     ("hematological", "HIGH"): 48.6,  # h150: corticosteroid + rank<=10
@@ -264,6 +266,12 @@ CORTICOSTEROID_DRUGS = {
 # Cancer drugs
 TAXANE_DRUGS = {'paclitaxel', 'docetaxel', 'cabazitaxel', 'nab-paclitaxel'}  # 40% precision rank<=5
 ALKYLATING_DRUGS = {'cyclophosphamide', 'ifosfamide', 'melphalan', 'chlorambucil', 'busulfan'}  # 36.4% rank<=10
+
+# h197: Colorectal cancer mAb detection
+# colorectal_cancer + monoclonal_antibody = 50-60% precision (validated h160)
+COLORECTAL_KEYWORDS = {'colorectal', 'colon cancer', 'rectal cancer', 'bowel cancer'}
+# Known colorectal mAbs: bevacizumab (Avastin), cetuximab (Erbitux), panitumumab (Vectibix)
+COLORECTAL_MABS = {'bevacizumab', 'cetuximab', 'panitumumab', 'ramucirumab'}  # 50-60% precision
 
 # Ophthalmic drugs
 OPHTHALMIC_ANTIBIOTICS = {'ciprofloxacin', 'moxifloxacin', 'ofloxacin', 'tobramycin', 'gentamicin',
@@ -841,6 +849,14 @@ class DrugRepurposingPredictor:
         elif category == 'cancer':
             # h150: Drug class rescue for cancer
             drug_lower = drug_name.lower()
+            disease_lower = disease_name.lower()
+
+            # h197: Colorectal cancer + monoclonal antibody = 50-60% precision (GOLDEN)
+            is_colorectal = any(kw in disease_lower for kw in COLORECTAL_KEYWORDS)
+            is_mab = any(mab in drug_lower for mab in COLORECTAL_MABS) or drug_lower.endswith('mab')
+            if is_colorectal and is_mab:
+                return ConfidenceTier.GOLDEN  # 50-60% precision (h160)
+
             if rank <= 5 and any(taxane in drug_lower for taxane in TAXANE_DRUGS):
                 return ConfidenceTier.HIGH  # 40.0% precision
             if rank <= 10 and any(alk in drug_lower for alk in ALKYLATING_DRUGS):
