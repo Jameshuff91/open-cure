@@ -5327,7 +5327,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Count GT entries per drug class (small mol vs biologic)",
         "Step 2: For FDA-approved biologics (pembrolizumab, nivolumab, etc.), check GT coverage",
@@ -5339,8 +5339,8 @@
         "h265",
         "h190"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "ROOT CAUSE IDENTIFIED: Biologic/cancer drug performance gap is NOT due to sparse GT\n\nKEY FINDING: Domain isolation, not data sparsity\n- mAbs: 4.4 GT/drug (same as small molecules)\n- 241 cancer drugs (55%) treat ONLY cancer diseases\n- These drugs are INVISIBLE to kNN collaborative filtering\n\nTHEORETICAL CEILING FOR CANCER:\n- 50.7% cancer GT is kNN-reachable (drugs with non-cancer uses)\n- 49.3% cancer GT is kNN-unreachable (cancer-only drugs)\n\nBY DRUG CLASS:\n- mAbs: 41.2% reachable (110/267 GT entries)\n- Kinase inhibitors: 42.1% reachable (77/183 GT entries)  \n- Chemotherapy: 57.0% reachable (106/186 GT entries)\n\nIMPLICATION: Low mAb+cancer precision (6.2%) is a fundamental kNN limitation, not fixable with more GT data.",
+      "result_metric": "49.3% cancer GT unreachable by kNN"
     },
     {
       "id": "h268",
@@ -5363,6 +5363,94 @@
       ],
       "findings": "h268 INCONCLUSIVE: Subtype-specific data not available\n\nANALYSIS ATTEMPT:\n- Tried to split autoimmune into subtypes (RA, lupus, psoriasis, MS, IBD)\n- But h163 data only has overall \"autoimmune\" category precision\n\nEXISTING FINDINGS FROM h163/h265:\n- NSAID + autoimmune = 50% (already HIGH tier via h265)\n- DMARD + autoimmune = 75.4% (already GOLDEN tier via h157)\n- Corticosteroid + autoimmune = 46.1%\n- Kinase inhibitor + autoimmune = 30.8% (surprise!)\n- Receptor fusion + autoimmune = 30.0%\n\nCONCLUSION:\nThe existing production_predictor rules are already optimal for \"autoimmune\" as a single category.\nTo determine subtype-specific preferences (e.g., RA vs psoriasis vs MS), would need:\n1. Re-run kNN with subtype classification\n2. Large enough n per subtype (many subtypes have n<10)\n\nThis is medium-high effort with uncertain benefit since current rules work well.",
       "result_metric": "NSAID=50%, DMARD=75.4%, Steroid=46.1% for autoimmune (no subtype split)"
+    },
+    {
+      "id": "h269",
+      "title": "Cancer-Specific Target-Based Scoring",
+      "category": "methodology",
+      "rationale": "h267 showed kNN fails for 49.3% of cancer GT due to domain isolation. A target/mechanism-based approach (like TxGNN uses) might work better for cancer because it doesn't rely on finding similar non-cancer diseases.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract drug targets for cancer drugs from DRKG",
+        "Step 2: Extract known cancer gene markers (oncogenes, tumor suppressors)",
+        "Step 3: Score drug-cancer pairs by target-gene overlap",
+        "Step 4: Evaluate on cancer diseases using disease-holdout",
+        "Success criteria: >30% R@30 on cancer diseases (vs kNN ceiling of 50.7%)"
+      ],
+      "dependencies": [
+        "h267"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h270",
+      "title": "Cross-Domain Bridge Drug Analysis",
+      "category": "precision",
+      "rationale": "h267 found 193 drugs treat BOTH cancer and non-cancer diseases. These 'bridge drugs' are the only cancer drugs kNN can recommend. Understanding which drugs successfully bridge domains could improve precision.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: List all 193 bridge drugs (treat both cancer and non-cancer)",
+        "Step 2: Analyze which cancer predictions for bridge drugs are correct",
+        "Step 3: Identify patterns in successful vs unsuccessful bridge predictions",
+        "Step 4: Create rules for when to trust kNN cancer predictions",
+        "Success criteria: Identify >20 high-confidence cancer predictions"
+      ],
+      "dependencies": [
+        "h267"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h271",
+      "title": "Domain-Isolated Drug Detection for Confidence Tiering",
+      "category": "precision",
+      "rationale": "h267 revealed domain-isolated drugs (cancer-only, etc.) are kNN-unreachable. Detecting this pattern could DEMOTE confidence for predictions involving domain-isolated drugs, improving precision.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Flag drugs that only appear in one disease category",
+        "Step 2: For kNN predictions, check if drug is domain-isolated",
+        "Step 3: Demote confidence tier for domain-isolated drug predictions",
+        "Step 4: Evaluate precision improvement from tiering",
+        "Success criteria: >10% precision improvement by excluding domain-isolated false positives"
+      ],
+      "dependencies": [
+        "h267"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h272",
+      "title": "GT Expansion: Add Non-Cancer Uses for Cancer Drugs",
+      "category": "data",
+      "rationale": "h267 found 241 cancer-only drugs are kNN-unreachable. If we add known non-cancer uses (e.g., Paclitaxel for coronary stents), these drugs become visible to kNN. Could improve cancer recall ceiling from 50.7% to higher.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Research non-cancer uses for top 20 cancer-only drugs",
+        "Step 2: Validate uses in literature (FDA/off-label)",
+        "Step 3: Add to expanded_ground_truth.json",
+        "Step 4: Re-evaluate kNN on cancer diseases",
+        "Success criteria: >10 new cross-domain GT entries validated"
+      ],
+      "dependencies": [
+        "h267"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -6423,6 +6511,12 @@
       "hypothesis_id": "h268",
       "learning": "Autoimmune subtype-specific analysis blocked by data structure. h163 only has aggregate autoimmune precision. Would need dedicated evaluation with subtype classification. Current rules (DMARD=75%, NSAID=50%, Steroid=46%) are already optimal for aggregate autoimmune.",
       "implication": "Further precision improvements in autoimmune require either subtype-specific evaluation or external data sources."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h267",
+      "learning": "Cancer drug kNN failures are NOT due to sparse GT but domain isolation - 241 drugs (55%) treat ONLY cancer, making them invisible to kNN. Theoretical kNN ceiling for cancer is 50.7%.",
+      "implication": "Need target-based approaches for cancer (like TxGNN) or cross-domain GT expansion"
     }
   ],
   "collaborations": [

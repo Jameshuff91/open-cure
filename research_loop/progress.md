@@ -1,64 +1,71 @@
 # Research Loop Progress
 
-## Current Session: h265 (2026-02-05)
+## Current Session: h267 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
 **Hypothesis Tested: 1**
-- h265: Drug Class-Based Tier Modifier - **VALIDATED**
+- h267: Biologic Sparse GT Root Cause Analysis - **VALIDATED**
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 151 |
+| Validated | 152 |
 | Invalidated | 52 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 37 |
-| **Total** | **269** |
+| Pending | 41 |
+| **Total** | **274** |
 
 ### KEY SESSION FINDINGS
 
-**h265: Drug Class-Based Tier Modifier - VALIDATED**
+**h267: Biologic Sparse GT Root Cause Analysis - VALIDATED**
 
-Based on h163 precision data, implemented drug class tier modifiers in `production_predictor.py`:
+**ROOT CAUSE IDENTIFIED:** Cancer drug performance gap is NOT due to sparse GT data
 
-**HIGH-PRECISION BOOSTS (added):**
-| Drug Class | Category | Precision | Tier Change |
-|------------|----------|-----------|-------------|
-| SGLT2 | cardiovascular | 71.4% | → GOLDEN |
-| Thiazolidinedione | metabolic | 66.7% | → GOLDEN |
-| NSAID | autoimmune | 50.0% | → HIGH |
-| Fluoroquinolone | respiratory | 44.4% | → HIGH |
+Initial hypothesis was that mAbs/biologics have low precision because GT is sparse.
+Analysis revealed this is FALSE:
+- mAbs: 4.4 GT entries/drug (same as small molecules)
+- The real issue is **domain isolation**
 
-**LOW-PRECISION PATTERNS (implicit demotion):**
-- mAb + cancer = 6.2% (sparse GT, not model failure)
-- Kinase inhibitor + cancer = 2.8%
-- Receptor fusion + cancer = 4.0%
+**KEY FINDING: 241 cancer drugs (55%) treat ONLY cancer diseases**
+- These drugs are INVISIBLE to kNN collaborative filtering
+- kNN requires non-cancer "anchor" diseases to recommend drugs for cancer
+- This creates a fundamental ceiling that no amount of GT data fixes
 
-**KEY INSIGHT:** Drug class modifiers improve PRECISION, not R@30.
-The value is in confidence tiering for clinical prioritization.
+**Theoretical Ceiling for Cancer:**
+| Metric | Value |
+|--------|-------|
+| Total cancer GT entries | 1,370 |
+| kNN-reachable | 695 (50.7%) |
+| kNN-unreachable | 675 (49.3%) |
+
+**By Drug Class (kNN-reachable %):**
+| Class | Reachable | Total | % |
+|-------|-----------|-------|---|
+| mAbs | 110 | 267 | 41.2% |
+| Kinase inhibitors | 77 | 183 | 42.1% |
+| Chemotherapy | 106 | 186 | 57.0% |
+
+**IMPLICATION:**
+- Low mAb+cancer precision (6.2%) is a fundamental kNN limitation
+- Same for kinase inhibitors (2.8%)
+- Cancer requires DIFFERENT methodology than kNN
+- Target/mechanism-based approaches (like TxGNN) may be better
 
 ### New Hypotheses Generated
-1. **h266**: Drug Class × Rank Interaction (precision)
-2. **h267**: Biologic Sparse GT Root Cause (error_analysis)
-3. **h268**: NSAIDs vs DMARDs for Autoimmune Subtypes (precision)
-
-### Production Changes
-Added to `src/production_predictor.py`:
-- SGLT2_INHIBITORS drug set
-- THIAZOLIDINEDIONES drug set
-- NSAID_DRUGS drug set
-- FLUOROQUINOLONE_DRUGS drug set
-- Rules in cardiovascular, metabolic, autoimmune, respiratory category rescue
+1. **h269**: Cancer-Specific Target-Based Scoring (priority 2, high impact)
+2. **h270**: Cross-Domain Bridge Drug Analysis (priority 3, medium impact)
+3. **h271**: Domain-Isolated Drug Detection for Confidence Tiering (priority 3, medium impact)
+4. **h272**: GT Expansion: Add Non-Cancer Uses for Cancer Drugs (priority 3, medium impact)
 
 ### Recommended Next Steps
-1. **h266**: Test drug class × rank interactions (low effort)
-2. **h267**: Analyze biologic GT gap (medium effort)
-3. **h91**: Literature mining for zero-shot (high effort, high impact)
+1. **h270**: Low-effort analysis of bridge drugs (can improve cancer precision)
+2. **h271**: Low-effort confidence tiering improvement
+3. **h269**: High-effort but potentially high-impact for oncology
 
 ---
 
