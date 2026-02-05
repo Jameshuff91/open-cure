@@ -1,0 +1,61 @@
+{
+  "xgboost_feature_importances": {
+    "mechanism_support": 0.19212688505649567,
+    "train_frequency": 0.45367127656936646,
+    "tier_inv": 0.20410823822021484,
+    "norm_score": 0.15009362995624542
+  },
+  "shap_importance": {
+    "train_frequency": 0.5677536129951477,
+    "norm_score": 0.390546053647995,
+    "mechanism_support": 0.31938397884368896,
+    "tier_inv": 0.2205566018819809
+  },
+  "interactions": [
+    {
+      "feature_1": "train_frequency",
+      "feature_2": "norm_score",
+      "interaction": 0.09171856939792633
+    },
+    {
+      "feature_1": "train_frequency",
+      "feature_2": "tier_inv",
+      "interaction": 0.04099567234516144
+    },
+    {
+      "feature_1": "mechanism_support",
+      "feature_2": "tier_inv",
+      "interaction": 0.03718859329819679
+    },
+    {
+      "feature_1": "mechanism_support",
+      "feature_2": "train_frequency",
+      "interaction": 0.029036708176136017
+    },
+    {
+      "feature_1": "tier_inv",
+      "feature_2": "norm_score",
+      "interaction": 0.028492730110883713
+    },
+    {
+      "feature_1": "mechanism_support",
+      "feature_2": "norm_score",
+      "interaction": 0.008231574669480324
+    }
+  ],
+  "main_effects": 1.5526678562164307,
+  "total_effects": 2.0239953994750977,
+  "interaction_contribution_pct": 23.2869873046875,
+  "top_interaction": {
+    "feature_1": "train_frequency",
+    "feature_2": "norm_score",
+    "interaction": 0.09171856939792633
+  },
+  "success": "True",
+  "interpretation": {
+    "train_frequency": "Drugs that treat many diseases in training are better predictions (polypharmacology)",
+    "norm_score": "Higher kNN similarity score = drug is common among similar diseases",
+    "tier_inv": "Some disease categories are more predictable than others",
+    "mechanism_support": "Target-gene overlap provides weak but independent signal"
+  }
+}

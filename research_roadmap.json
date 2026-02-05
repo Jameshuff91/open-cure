@@ -2399,7 +2399,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Test ensemble with [mechanism_support, train_frequency, tier_inv] only",
         "Step 2: Compare precision at top 10%/20% to 4-feature ensemble",
@@ -2508,7 +2508,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Train XGBoost on 4 features",
         "Step 2: Extract SHAP interaction values or feature importances",
@@ -2518,6 +2518,67 @@
       ],
       "dependencies": [
         "h119"
+      ],
+      "findings": "VALIDATED: Significant feature interactions identified.\n\nKEY FINDINGS:\n1. Interaction effects contribute 23.3% of XGBoost's predictive power\n2. Top interaction: train_frequency \u00d7 norm_score (38.9% of interaction contribution)\n   - Interpretation: Drugs that are BOTH frequently used AND rank highly for this disease are much better predictions than linear combination suggests\n   - This synergy makes sense: a drug appearing in many training diseases AND showing up strongly in kNN is doubly trustworthy\n   \n3. XGBoost Feature Importances (Gain):\n   - train_frequency: 45.4% (dominant)\n   - tier_inv: 20.4%\n   - mechanism_support: 19.2%\n   - norm_score: 15.0%\n\n4. SHAP Feature Importances:\n   - train_frequency: 37.9%\n   - norm_score: 26.1%\n   - mechanism_support: 21.3%\n   - tier_inv: 14.7%\n\n5. Full Interaction Ranking:\n   - train_frequency \u00d7 norm_score: 38.9%\n   - train_frequency \u00d7 tier_inv: 17.4%\n   - mechanism_support \u00d7 tier_inv: 15.8%\n   - mechanism_support \u00d7 train_frequency: 12.3%\n   - tier_inv \u00d7 norm_score: 12.1%\n   - mechanism_support \u00d7 norm_score: 3.5%\n\nIMPLICATIONS:\n1. The top freq\u00d7score interaction could be explicitly engineered as a new feature\n2. Mechanism support has limited interactions (3.5% with norm_score) - mostly adds value independently\n3. XGBoost's +2 pp over logistic regression comes ~77% from better main effect modeling and ~23% from interactions\n4. For production: XGBoost shallow model captures these synergies automatically",
+      "result_metric": "23.3% of model power from interactions; top interaction (freq\u00d7score) = 38.9%"
+    },
+    {
+      "id": "h127",
+      "title": "Explicit Frequency-Score Interaction Feature",
+      "category": "feature_engineering",
+      "rationale": "h126 showed train_frequency \u00d7 norm_score is the top interaction (38.9% of interaction contribution). Explicitly engineering this as freq \u00d7 score (or freq \u00d7 rank) for a linear model could capture XGBoost's advantage without the complexity.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Add freq_x_score = train_frequency * norm_score as explicit feature",
+        "Step 2: Train logistic regression with 5 features (4 original + interaction)",
+        "Step 3: Compare precision at top 10% vs XGBoost",
+        "Success criteria: Match XGBoost performance (~23.7%) with simpler model"
+      ],
+      "dependencies": [
+        "h126"
+      ]
+    },
+    {
+      "id": "h128",
+      "title": "High-Confidence Subset: Freq AND Score Above Median",
+      "category": "precision",
+      "rationale": "h126 showed freq\u00d7score synergy is strongest signal. Filtering to predictions where BOTH train_frequency AND norm_score are above median should yield highest-confidence subset with best precision.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Compute median train_frequency and median norm_score",
+        "Step 2: Filter predictions to those with both features above median",
+        "Step 3: Measure precision on this high-confidence subset",
+        "Step 4: Compare to baseline and XGBoost top 10%",
+        "Success criteria: >30% precision on filtered subset"
+      ],
+      "dependencies": [
+        "h126"
+      ]
+    },
+    {
+      "id": "h129",
+      "title": "Mechanism-Category Interaction Deep Dive",
+      "category": "analysis",
+      "rationale": "h126 showed mechanism_support \u00d7 tier_inv is 3rd strongest interaction (15.8%). Mechanism evidence may be more valuable for some disease categories than others. Understanding this could improve category-specific confidence thresholds.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: Split data by disease category tier",
+        "Step 2: Compute mechanism_support hit rate by tier",
+        "Step 3: Identify categories where mechanism is most predictive",
+        "Step 4: Document which categories benefit from mechanism evidence",
+        "Success criteria: Identify at least one category where mechanism has >2x predictive value"
+      ],
+      "dependencies": [
+        "h126"
       ]
     }
   ],
@@ -3021,6 +3082,12 @@
       "hypothesis_id": "h117",
       "learning": "Drug target breadth (n_targets) is an independent confidence feature: +5.58 pp precision difference, rho=0.27 with frequency. HIGH targets = 10.4% precision, LOW = 4.8%. Effect present even controlling for frequency.",
       "implication": "Add n_targets to h106 ensemble. Combined with mechanism support (orthogonal, r=0.07 from h111), this gives multiple mechanistic confidence signals."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h126",
+      "learning": "XGBoost's +2pp over logistic regression comes 77% from better main effect modeling and 23% from interactions. Top interaction is train_frequency \u00d7 norm_score (drugs that are both frequent AND rank highly are super-reliable).",
+      "implication": "Could engineer freq\u00d7score as explicit feature for linear model, but XGBoost already captures it"
     }
   ],
   "collaborations": [
