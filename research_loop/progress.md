@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h152 (2026-02-05)
+## Current Session: h152, h189 (2026-02-05)
 
 ### Session Summary
 
@@ -8,6 +8,7 @@
 **Status:** Complete
 **Hypotheses Tested:**
 - h152: ATC Code Integration for Precision - **VALIDATED** (+11.1pp mean precision)
+- h189: ATC L4 Rescue Criteria Implementation - **VALIDATED** (+383% coverage)
 
 ### h152: ATC Code Integration for Precision - VALIDATED
 
@@ -42,21 +43,44 @@ Tested whether ATC (Anatomical Therapeutic Chemical) codes can systematically im
 | Infectious | 27.2% | 23.1% | 7x more drugs |
 
 **New Hypotheses Generated:**
-- h189: ATC L4 Rescue Criteria Implementation (priority 2)
+- h189: ATC L4 Rescue Criteria Implementation (priority 2) - NOW VALIDATED
 - h190: ATC-Based Biologic Gap Analysis (priority 3)
 - h191: ATC L1 Incoherence as Novel Prediction Signal (priority 3)
 - h192: ATC-Based Drug Similarity for kNN (priority 4)
 
+### h189: ATC L4 Rescue Criteria Implementation - VALIDATED
+
+Implemented ATC L4-based rescue criteria as follow-up to h152.
+
+**Implementation:**
+- Added ATC codes H02AB (glucocorticoids), L04AX (traditional immunosuppressants) for autoimmune rescue
+- Added biologic exclusion filter (L04AB, L04AC, L04AF)
+- Implemented lazy ATCMapper loading for performance
+
+**Results:**
+| Criteria | Precision | Coverage |
+|----------|-----------|----------|
+| Manual DMARD only | 73.9% | 23 drugs |
+| ATC Traditional (H02AB, L04AX) | 77.9% | 104 drugs |
+| ATC Biologics (L04AB, L04AC, L04AF) | 14.5% | 62 drugs |
+| Combined (Manual + ATC Traditional) | 75.7% | 111 drugs |
+
+**Key achievements:**
+- **+383% coverage increase** (23 → 111 drugs)
+- **Precision maintained** at 75.7% (vs 73.9% manual)
+- **Biologics correctly excluded** - 14.5% confirms they should NOT be GOLDEN
+- **New drugs captured**: Corticosteroids, Lenalidomide
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 89 |
+| Validated | 91 |
 | Invalidated | 41 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 32 |
-| **Total Tested** | **140** |
+| Pending | 31 |
+| **Total Tested** | **142** |
 
 ### Key Session Learnings
 
@@ -64,12 +88,13 @@ Tested whether ATC (Anatomical Therapeutic Chemical) codes can systematically im
 2. **ATC explains biologic gap** - L04AB/L04AC biologics have 8-17% precision vs 77-82% for traditional drugs
 3. **Corticosteroids are critical for autoimmune** - H02AB needed in ATC mapping, not just L+M
 4. **ATC provides systematic drug classification** - No need to maintain manual lists for 90.6% of drugs
+5. **ATC rescue provides 383% coverage with precision maintained** - Implemented in production_predictor.py
 
 ### Recommended Next Steps
 
-1. **h189: ATC L4 Rescue Implementation** (priority 2) - Quick win to improve coverage
-2. **h190: ATC Biologic Gap Analysis** (priority 3) - Understand why biologics fail
-3. **h87: Drug Mechanism Clustering** (priority 3) - Cross-disease transfer via mechanisms
+1. **h190: ATC Biologic Gap Analysis** (priority 3) - Understand why biologics fail
+2. **h87: Drug Mechanism Clustering** (priority 3) - Cross-disease transfer via mechanisms
+3. **h191: ATC L1 Incoherence** (priority 3) - Investigate if ATC mismatch predicts repurposing
 
 ---
 
