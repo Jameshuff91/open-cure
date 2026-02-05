@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h104 (2026-02-04, continued)
+## Current Session: h104, h110 (2026-02-04, continued)
 
 ### Session Summary
 
@@ -8,6 +8,7 @@
 **Status:** In Progress
 **Hypotheses Tested This Session:**
 - h104: Confidence Feature - Drug Class Coherence - **INVALIDATED** (weak signal)
+- h110: ATC Incoherence as Negative Signal - **INVALIDATED** (counter-intuitive!)
 
 ### Key Findings
 
@@ -18,7 +19,12 @@
 - Correlation(coherence, is_hit): 0.065 (very weak)
 - 90.9% of predictions have ATC data
 
-**INSIGHT:** ATC class coherence is partially redundant with what kNN already captures from disease similarity. The kNN approach recommends drugs that treat similar diseases, so within-class drug similarity adds minimal additional signal.
+**h110: COUNTER-INTUITIVE RESULT - Incoherence Predicts HIGHER Precision!**
+- COHERENT (classmate treats similar): 6.69% precision (N=9543)
+- INCOHERENT (no classmate treats similar): 11.24% precision (N=2785)
+- Difference: -4.55 pp (INCOHERENT is BETTER)
+
+**INTERPRETATION:** If a drug from an "irrelevant" ATC class is ranked highly by kNN, it must be due to strong similarity signals from multiple independent sources, not class bias. This suggests cross-class drug repurposing may be more reliable than within-class extensions.
 
 **COMPARISON OF CONFIDENCE SIGNALS:**
 | Signal | Precision Diff | Status |
@@ -27,15 +33,19 @@
 | h71 Category tier | varies | **VALIDATED** |
 | h104 ATC coherence | +1.32 pp | INVALIDATED |
 | h105 Coverage strength | -0.45 pp | INVALIDATED |
+| h110 ATC incoherence | -4.55 pp (inverted) | INVALIDATED |
+
+**CONCLUSION:** ATC class information does NOT improve confidence prediction. Avoid using ATC coherence/incoherence as a confidence feature.
 
 ### New Hypotheses Added
-- h110: ATC Incoherence as Negative Signal (inverse of h104)
+- h110: ATC Incoherence as Negative Signal (tested - invalidated)
 - h111: Confidence Feature Independence Analysis
+- h112: Cross-Class Drug Discovery (why incoherent works better)
 
 ### Session Statistics
-- Hypotheses tested: 1 (h104)
-- Invalidated: 1 (h104)
-- New hypotheses added: 2 (h110, h111)
+- Hypotheses tested: 2 (h104, h110)
+- Invalidated: 2 (h104, h110)
+- New hypotheses added: 3 (h110, h111, h112)
 
 ---
 

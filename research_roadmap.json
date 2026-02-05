@@ -2068,7 +2068,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Extract all confidence features for top-30 predictions",
         "Step 2: Train logistic regression: features -> is_hit",
@@ -2185,6 +2185,28 @@
         "h97",
         "h71",
         "h104"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h112",
+      "title": "Cross-Class Drug Discovery: Why Incoherent Predictions Outperform",
+      "category": "analysis",
+      "rationale": "h110 revealed a counter-intuitive finding: drugs from ATC classes that NEVER treat similar diseases have HIGHER precision (11.24%) than drugs from coherent classes (6.69%). This suggests cross-class drug repurposing may be more reliable than within-class extensions. Investigate WHY - is it selection pressure (only strong signals overcome class mismatch), indication bias, or something else?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Sample incoherent predictions that are true positives (hits)",
+        "Step 2: Analyze what types of drugs/diseases these represent",
+        "Step 3: Identify common patterns (mechanism overlap despite class mismatch)",
+        "Step 4: Document the \"cross-class discovery\" pattern for production recommendations",
+        "Success criteria: Identify actionable pattern that explains the precision gap"
+      ],
+      "dependencies": [
+        "h110"
       ],
       "findings": null,
       "result_metric": null
