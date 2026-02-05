@@ -2810,6 +2810,55 @@
       ],
       "findings": "VALIDATED: prob_h52 already serves as bimodality predictor with 76.2% accuracy.\n\nUsing prob_h52 >= 0.5 as threshold:\n- Correctly classifies 131/172 \"other\" diseases (76.2% accuracy)\n- Best threshold: 0.5 (76.2%)\n- Exceeds 70% target\n\nNo additional classifier needed - prob_h52 IS the bimodality predictor.\nThis confirms h139's finding that per-disease confidence features are sufficient.\n",
       "result_metric": "76.2% accuracy (exceeds 70% target)"
+    },
+    {
+      "id": "h141",
+      "title": "Infectious Disease Mechanism Weighting",
+      "description": "Given 2.68x mechanism effect for infectious diseases, test specialized confidence scoring that weights mechanism higher for this category",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "validated",
+      "steps": [
+        "Step 1: For infectious disease predictions, double the mechanism weight in confidence scoring",
+        "Step 2: Compare precision to uniform weighting",
+        "Step 3: Test whether category-specific mechanism weights improve overall calibration",
+        "Success criteria: >5 pp precision improvement for infectious diseases"
+      ],
+      "findings": "SUPERSEDED by h136. Mechanism is already required in h136's best infectious filter (rank<=10 + freq>=15 + mech = 55.6%). Binary mechanism support cannot be \"weighted\" - it's already a required gate.",
+      "result_metric": "Already achieving 55.6% via h136"
+    },
+    {
+      "id": "h142",
+      "title": "prob_h52 Feature Decomposition",
+      "description": "Understand what makes prob_h52 so effective - is it pool coverage, embedding distance, or something else?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Extract the components of prob_h52 calculation (kNN pool, distances, etc.)",
+        "Step 2: Correlate each component with actual hit rate",
+        "Step 3: Identify which factors drive prob_h52 effectiveness",
+        "Step 4: Document interpretable explanation for confidence predictions",
+        "Success criteria: Explain >50% of prob_h52 variance with interpretable features"
+      ]
+    },
+    {
+      "id": "h143",
+      "title": "Zero-Hit Disease Predictor",
+      "description": "Can we predict which diseases will have 0% hit rate before running kNN? This could save compute and improve user expectations.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze features of diseases with 0% hit rate in \"other\" category",
+        "Step 2: Identify patterns (rare genetic, weak graph connectivity, few treatments)",
+        "Step 3: Create simple classifier to predict zero-hit diseases",
+        "Step 4: Evaluate precision/recall of zero-hit predictor",
+        "Success criteria: >80% precision in predicting zero-hit diseases"
+      ]
     }
   ],
   "completed": [
