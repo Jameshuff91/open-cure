@@ -80,15 +80,36 @@ Drugs generalize better when they have:
 1. More targets → more chances to match disease pathways
 2. Treat central diseases → more similar diseases in test set
 
+---
+
+## h117: Target Breadth Confidence Feature (2026-02-05, continued)
+
+### Key Findings
+
+**h117: Target Breadth as Confidence Feature - VALIDATED**
+
+| Target Level | Precision | Count |
+|--------------|-----------|-------|
+| HIGH (≥31) | 10.41% | 4,314 |
+| MEDIUM | 7.10% | 3,999 |
+| LOW (≤8) | 4.83% | 4,725 |
+| NO targets | 1.24% | 484 |
+
+**Difference: +5.58 pp (exceeds 5 pp threshold)**
+
+**Independence from Frequency:**
+- Correlation with train_frequency: ρ = 0.27 (independent, |r| < 0.3)
+- Effect persists when controlling for frequency
+
 ### Session Statistics
-- Hypotheses tested: 2 (h111, h114)
-- Validated: 2
+- Hypotheses tested: 3 (h111, h114, h117)
+- Validated: 3
 - New hypotheses added: 4 (h114, h115, h116, h117)
 
 ### Next Steps
-1. **h117**: Add target breadth as confidence feature
+1. **h112**: Cross-class drug discovery analysis (why incoherent predictions work)
 2. **h115**: Test simplified ensemble (remove redundant kNN score/rank)
-3. **h112**: Cross-class drug discovery analysis
+3. **h116**: Per-disease calibration for category tier
 
 ---
 

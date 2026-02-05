@@ -2304,7 +2304,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Add n_targets as feature in h106 ensemble",
         "Step 2: Check correlation with existing features (frequency, mechanism support)",
@@ -2314,7 +2314,9 @@
       "dependencies": [
         "h114",
         "h106"
-      ]
+      ],
+      "findings": "VALIDATED: Target breadth is a valid confidence feature (+5.58 pp).\n\nPRECISION BY TARGET BREADTH (13,038 predictions with target data):\n- HIGH targets (>=31): 10.41% precision (4,314 predictions)\n- MEDIUM targets: 7.10% precision (3,999 predictions)\n- LOW targets (<=8): 4.83% precision (4,725 predictions)\n- NO targets: 1.24% precision (484 predictions)\n\nDifference: +5.58 pp (exceeds 5 pp threshold)\n\nCORRELATION ANALYSIS:\n- n_targets vs is_hit: r = 0.039* (weak but significant)\n- n_targets vs train_frequency: rho = 0.27 (independent, |r| < 0.3)\n\nINDEPENDENCE CHECK (controlling for frequency):\n- Within HIGH-frequency drugs: HIGH targets 13.85% vs LOW targets 7.92% (\u0394 = 5.93 pp)\n- Within LOW-frequency drugs: HIGH targets 5.26% vs LOW targets 3.27% (\u0394 = 1.99 pp)\n- Effect is stronger for high-frequency drugs but present in both groups\n\nCOVERAGE: 96.4% of predictions have target data (13,038/13,522)\n\nIMPLICATION: n_targets should be added to the h106 multi-signal ensemble as an independent feature. It captures polypharmacology - drugs with more targets have more chances to hit disease pathways.",
+      "result_metric": "+5.58 pp (10.41% vs 4.83%), rho=0.27 with frequency - VALIDATED"
     }
   ],
   "completed": [
@@ -2811,6 +2813,12 @@
       "hypothesis_id": "h114",
       "learning": "High drug training frequency predicts hits due to (1) polypharmacology - more targets means more disease pathway matches, and (2) disease centrality - central diseases have more analogs in training. Drug embedding centrality does NOT matter.",
       "implication": "Target breadth (n_targets) could be added as independent confidence feature. Corticosteroids dominate high-freq because they genuinely treat many conditions."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h117",
+      "learning": "Drug target breadth (n_targets) is an independent confidence feature: +5.58 pp precision difference, rho=0.27 with frequency. HIGH targets = 10.4% precision, LOW = 4.8%. Effect present even controlling for frequency.",
+      "implication": "Add n_targets to h106 ensemble. Combined with mechanism support (orthogonal, r=0.07 from h111), this gives multiple mechanistic confidence signals."
     }
   ],
   "collaborations": [
