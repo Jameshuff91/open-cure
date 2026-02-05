@@ -1,14 +1,15 @@
 # Research Loop Progress
 
-## Current Session: h126, h121 (2026-02-05)
+## Current Session: h126, h121, h132 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
+**Status:** In Progress
 **Hypotheses Tested This Session:**
 - h126: XGBoost Feature Interaction Analysis - **VALIDATED**
 - h121: Minimal 3-Feature Ensemble - **INVALIDATED** (based on h120 findings)
+- h132: High-Frequency Drug Mechanism Targeting - **VALIDATED** (57.9% precision!)
 
 ### Key Findings
 
@@ -61,16 +62,47 @@ Proposed testing [mechanism_support, train_frequency, tier_inv] but h120 already
 
 ---
 
+**h132: High-Frequency Drug Mechanism Targeting - VALIDATED**
+
+Tested whether high-frequency drugs with mechanism support form a "golden" subset.
+
+**BEST CRITERIA DISCOVERED:**
+| Criteria                      | Precision | N     | % of Total |
+|-------------------------------|-----------|-------|------------|
+| tier1_freq>=15_mech           | 57.9%     | 95    | 0.7%       |
+| tier1_freq>=10_mech           | 57.1%     | 105   | 0.8%       |
+| tier1_freq>=5_mech            | 54.3%     | 140   | 1.0%       |
+| rank<=5_freq>=15_mech         | 34.7%     | 213   | 1.6%       |
+| freq>=15_with_mech            | 27.4%     | 478   | 3.5%       |
+
+**KEY FINDINGS:**
+1. Tier1 + freq>=15 + mechanism = 57.9% precision (8x baseline of 7.2%)
+2. Golden predictions dominated by corticosteroids for autoimmune conditions
+3. Even without tier restriction, freq>=15+mech achieves 27.4% (>25% target)
+
+**SAMPLE GOLDEN PREDICTIONS (all HITS):**
+- Prednisone -> atopic dermatitis
+- Methylprednisolone -> multiple sclerosis
+- Triamcinolone -> ulcerative colitis
+- Lidocaine -> ulcerative colitis
+
+**PRODUCTION IMPLICATION:**
+Flag Tier1+freq>=10+mech predictions as HIGH CONFIDENCE for expert review.
+
+---
+
 ### Session Statistics
-- Hypotheses tested: 2 (h126, h121)
-- Validated: 1 (h126)
+- Hypotheses tested: 3 (h126, h121, h132)
+- Validated: 2 (h126, h132)
 - Invalidated: 1 (h121)
-- New hypotheses added: 3 (h130-h132)
+- New hypotheses added: 6 (h130-h135)
 
 ### New Hypotheses Generated
-- **h130**: Linear Model Calibration Analysis - why does Linear have higher hit rate?
-- **h131**: Frequency x Score Explicit Feature Engineering - add best interaction to linear model
-- **h132**: High-Frequency Drug Mechanism Targeting - production filter for "golden" predictions
+- **h130**: Linear Model Calibration Analysis
+- **h131**: Frequency x Score Explicit Feature Engineering
+- **h133**: Non-Tier1 Category Golden Criteria
+- **h134**: Steroid Dominance Analysis in Golden Set
+- **h135**: Production Tiered Confidence System
 
 ---
 

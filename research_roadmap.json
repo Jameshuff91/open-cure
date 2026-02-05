@@ -2631,7 +2631,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Extract predictions with high frequency AND mechanism support",
         "Step 2: Analyze what makes these predictions high quality",
@@ -2641,6 +2641,68 @@
       ],
       "dependencies": [
         "h126"
+      ],
+      "findings": "VALIDATED: Multiple golden criteria exceed 25% precision target\\!\n\nBEST CRITERIA: Tier1 + Freq>=15 + Mechanism = 57.9% precision (55/95 predictions)\n- This is 8x higher than 7.2% baseline precision\n- Captures real hits: steroids for autoimmune diseases, anesthetics for dermatitis\n\nOTHER STRONG CRITERIA:\n| Criteria                      | Precision | N     | % of Total |\n|-------------------------------|-----------|-------|------------|\n| tier1_freq>=15_mech           | 57.9%     | 95    | 0.7%       |\n| tier1_freq>=10_mech           | 57.1%     | 105   | 0.8%       |\n| tier1_freq>=5_mech            | 54.3%     | 140   | 1.0%       |\n| rank<=5_freq>=15_mech         | 34.7%     | 213   | 1.6%       |\n| freq>=15_with_mech            | 27.4%     | 478   | 3.5%       |\n\nKEY INSIGHT:\nTier 1 categories (autoimmune, dermatological, psychiatric, ophthalmic) + \nhigh-frequency drugs with mechanism support are \"golden\" predictions.\n\nPRODUCTION RECOMMENDATION:\n1. Flag predictions matching tier1_freq>=10_mech as HIGH CONFIDENCE\n2. These should be prioritized for expert review\n3. 57% precision = more than half will be correct\n\nNote: The sample predictions are dominated by corticosteroids (Prednisone, Dexamethasone, etc.)\nfor autoimmune conditions - clinically sensible pattern.\n",
+      "result_metric": "Tier1+Freq>=15+Mech: 57.9% precision (8x baseline), 95 predictions"
+    },
+    {
+      "id": "h133",
+      "title": "Non-Tier1 Category Golden Criteria",
+      "category": "analysis",
+      "rationale": "h132 showed Tier1 categories (autoimmune, dermatological, psychiatric, ophthalmic) \nachieve 57.9% precision with freq>=15+mech. But these are only 0.7% of predictions.\nWhat criteria work for Tier2/Tier3 categories to find more golden predictions?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze precision by category for different criteria",
+        "Step 2: Find optimal thresholds per category",
+        "Step 3: Test category-specific golden criteria",
+        "Success criteria: Find >25% precision criteria for non-Tier1 categories"
+      ],
+      "dependencies": [
+        "h132"
+      ]
+    },
+    {
+      "id": "h134",
+      "title": "Steroid Dominance Analysis in Golden Set",
+      "category": "error_analysis",
+      "rationale": "h132 golden predictions are dominated by corticosteroids for autoimmune diseases.\nThis is clinically expected but may indicate the model is just learning \"steroids treat inflammation\".\nAre there non-steroid golden predictions with high precision?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify steroid drugs in golden set (ATC code H02)",
+        "Step 2: Compute precision for steroid vs non-steroid golden predictions",
+        "Step 3: Analyze if non-steroids are actionable novel predictions",
+        "Success criteria: Find >20% precision for non-steroid golden predictions"
+      ],
+      "dependencies": [
+        "h132"
+      ]
+    },
+    {
+      "id": "h135",
+      "title": "Production Tiered Confidence System",
+      "category": "production",
+      "rationale": "Combine h126 (XGBoost interactions), h123 (negative signals), and h132 (golden criteria) \ninto unified tiered confidence system:\n- GOLDEN (57% precision): Tier1 + freq>=10 + mechanism\n- HIGH (25-30%): freq>=15 + mechanism OR rank<=5 + freq>=10\n- MEDIUM (15-20%): freq>=10 + mechanism\n- LOW (<10%): filter out rank>20 OR no_targets",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Define tier criteria based on h123, h126, h132",
+        "Step 2: Implement tiering in production scoring",
+        "Step 3: Validate tier separation on held-out data",
+        "Step 4: Document confidence calibration per tier",
+        "Success criteria: Tier system provides >3x precision separation"
+      ],
+      "dependencies": [
+        "h123",
+        "126",
+        "h132"
       ]
     }
   ],
@@ -3162,6 +3224,12 @@
       "hypothesis_id": "h128",
       "learning": "SHAP interaction values show how a model USES interactions, not that simple threshold filtering will work. Freq\u00d7score has strong SHAP interaction but negative synergy with simple thresholds (-0.65 pp).",
       "implication": "Must use XGBoost model to capture interaction value, not heuristic filters"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h132",
+      "learning": "Tier1 categories (autoimmune, dermatological, psychiatric, ophthalmic) + freq>=15 + mechanism achieves 57.9% precision (8x baseline). Golden predictions are dominated by corticosteroids for autoimmune diseases.",
+      "implication": "Production should flag Tier1+freq>=10+mech as HIGH CONFIDENCE for expert review. Non-Tier1 categories need different criteria."
     }
   ],
   "collaborations": [
