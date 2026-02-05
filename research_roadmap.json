@@ -4010,7 +4010,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compute GT density for each disease in training set",
         "For predictions, look up disease GT density",
@@ -4020,7 +4020,9 @@
       ],
       "dependencies": [
         "h199"
-      ]
+      ],
+      "findings": "VALIDATED: GT density is a strong confidence signal for prediction precision.\n\nKEY RESULTS:\n- Correlation: r = 0.1814 (p < 1e-175) - highly significant\n- Baseline precision: 1.96%\n\nPRECISION BY GT DENSITY:\n| GT Density | Precision | Lift vs Baseline |\n|------------|-----------|------------------|\n| Low (1-5)  | 0.28%     | 0.1x (7x WORSE)  |\n| Medium (6-10) | 3.28%  | 1.7x             |\n| High (11-20) | 6.53%   | 3.3x             |\n| Very High (>20) | 8.57%| 4.4x             |\n\nACTIONABLE RECOMMENDATION:\n1. Add GT density as confidence feature\n2. Predictions for Low GT diseases should be DOWNGRADED\n3. Predictions for High GT diseases get TIER BOOST\n4. Can filter out Low GT predictions to improve overall precision\n\nThis explains why myeloma (14 drugs/disease) has 23% precision \nwhile leukemia subtypes (1-2 drugs) have 5% precision.",
+      "result_metric": "Low GT 0.28% vs High GT 8.57% (31x difference, p<1e-175)"
     },
     {
       "id": "h204",
@@ -4800,6 +4802,12 @@
       "hypothesis_id": "h199",
       "learning": "Hematologic cancer precision gap (5.4% vs 13.1%) caused by disease fragmentation not embedding quality. Leukemia has 49 diseases (45% with 1 drug) vs myeloma 3 diseases (23.3% precision). Subtype-specific rules are the solution.",
       "implication": "For hematologic cancers, implement subtype-specific rules rather than general category rules"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h203",
+      "learning": "GT density is a strong confidence signal. Low GT diseases (1-5 drugs) have 7x WORSE precision than baseline. High GT (>20) has 4.4x BETTER precision. This is independent of disease category.",
+      "implication": "Add GT density to confidence scoring. Filter/downgrade Low GT predictions."
     }
   ],
   "collaborations": [

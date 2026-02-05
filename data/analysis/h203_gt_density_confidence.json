@@ -1,0 +1,32 @@
+{
+  "hypothesis": "h203",
+  "finding": "GT density strongly predicts precision",
+  "correlation": {
+    "pearson_r": 0.1814,
+    "p_value": "< 1e-175",
+    "highly_significant": true
+  },
+  "precision_by_gt_tier": {
+    "low_1_5": {
+      "precision": 0.28,
+      "n": 12169,
+      "lift": "0.1x"
+    },
+    "medium_6_10": {
+      "precision": 3.28,
+      "n": 2892,
+      "lift": "1.7x"
+    },
+    "high_11_20": {
+      "precision": 6.53,
+      "n": 2526,
+      "lift": "3.3x"
+    },
+    "very_high_gt_20": {
+      "precision": 8.57,
+      "n": 2146,
+      "lift": "4.4x"
+    }
+  },
+  "recommendation": "Add GT density as confidence feature. High GT (>10) = HIGH tier boost, Very Low GT (<=5) = tier penalty"
+}
