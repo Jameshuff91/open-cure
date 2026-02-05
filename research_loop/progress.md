@@ -1,68 +1,72 @@
 # Research Loop Progress
 
-## Current Session: h279, h277 (2026-02-05)
+## Current Session: h279, h277, h282 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 2**
+**Status:** Complete
+**Hypotheses Tested: 3**
 - h279: Disease Specificity Scoring - **VALIDATED**
 - h277: Cross-Category Hierarchy Matching - **INVALIDATED**
+- h282: Hierarchy Depth Delta - **VALIDATED**
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 160 |
+| Validated | 161 |
 | Invalidated | 53 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 39 |
+| Pending | 38 |
 | **Total** | **284** (4 new hypotheses added)
 
 ### KEY SESSION FINDINGS
 
 #### h279: Disease Specificity Scoring - VALIDATED
 
-**Hypothesis:** Specificity direction correlates with prediction precision.
-
 | Relationship | Precision | N |
 |--------------|-----------|---|
 | Exact disease | 78.7% | 277 |
 | Generic→Specific | 19.3% | 88 |
-| Same-level different | 19.1% | 94 |
-| Within-generic different | 19.2% | 214 |
 | **Specific→Generic** | **4.1%** | 98 |
 
 **Key Finding:** Specific→Generic predictions have **4.7x LOWER precision** (15.2 pp difference).
 
-**Caveat:** Must distinguish true SUBTYPES from COMPLICATIONS - "diabetic neuropathy" is a complication, not a subtype of diabetes.
-
 #### h277: Cross-Category Hierarchy Matching - INVALIDATED
-
-**Hypothesis:** Drugs treating one category would have precision for cross-category diseases (e.g., diabetes drugs → diabetic nephropathy).
 
 | Category Match Type | Precision | N |
 |---------------------|-----------|---|
 | Within-category | 10.4% | 10,124 |
 | Cross-category match | **0.0%** | 187 |
-| Cross-category no match | 0.0% | 3,105 |
 
-**Key Finding:** Cross-category matching has **0% precision** because it's a RECALL problem, not precision.
-- 75% of diabetic nephropathy drugs also treat diabetes
-- But model predicts single-category diseases (e.g., "chronic kidney disease") instead of cross-category ones (e.g., "diabetic nephropathy")
+**Key Finding:** Cross-category is a RECALL problem, not precision. Model predicts single-category diseases instead of cross-category ones.
+
+#### h282: Hierarchy Depth Delta - VALIDATED ⭐
+
+| Delta Magnitude | Precision | N |
+|-----------------|-----------|---|
+| |delta| = 0 (same level) | **51.6%** | 440 |
+| |delta| = 1 (off by 1) | 12.0% | 125 |
+| |delta| = 2 (off by 2) | 5.4% | 37 |
+
+**Major Finding:** Same-level predictions have **39.6 pp higher precision** than off-by-1! Clear precision gradient by delta magnitude.
+
+**Actionable:** Can use delta magnitude as confidence signal:
+- |delta| = 0 → HIGH tier (51.6% precision)
+- |delta| = 1 → MEDIUM tier (12.0% precision)
+- |delta| ≥ 2 → LOW tier (5.4% precision)
 
 ### New Hypotheses Generated
 - **h280**: Complication vs Subtype Classification for Confidence
 - **h281**: Bidirectional Treatment Analysis (base disease → complications)
-- **h282**: Disease Hierarchy Depth as Confidence Signal
 - **h283**: Cross-Category Disease Recall Enhancement
 
 ### Recommended Next Steps
-1. **h280**: Distinguish complications from true subtypes (medium effort)
-2. **h193**: Combined ATC Coherence Signals (medium effort)
-3. **h91/h269**: Literature mining or cancer targeting (high effort)
+1. **Implement h282** in production_predictor.py - use delta magnitude for tiering
+2. **h280**: Distinguish complications from true subtypes (medium effort)
+3. **h193**: Combined ATC Coherence Signals (medium effort)
 
 ---
 
