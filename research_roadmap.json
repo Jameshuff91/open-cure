@@ -3905,7 +3905,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "From h160 results, extract kinase inhibitor hits vs misses",
         "Group by: drug name, cancer type, specific kinase target",
@@ -3915,7 +3915,9 @@
       ],
       "dependencies": [
         "h160"
-      ]
+      ],
+      "findings": "VALIDATED: Identified root cause of kinase inhibitor low precision.\n\nOVERALL KINASE INHIBITOR PRECISION: 2.6% (8/307)\n\nBY DRUG (only drugs with hits):\n- Imatinib: 15.8% (3/19) - BCR-ABL inhibitor\n- Ibrutinib: 7.0% (3/43) - BTK inhibitor\n- Acalabrutinib: 4.0% (1/25) - BTK inhibitor\n- Zanubrutinib: 4.0% (1/25) - BTK inhibitor\n- All others: 0% (0/195)\n\nBY CANCER TYPE:\n- Leukemia: 6.1% (5/82) - BEST\n- Lymphoma: 3.7% (2/54)\n- All others: 0%\n\nHIGH-PRECISION COMBINATIONS (>=20%):\n- leukemia + Imatinib: 22.2% (2/9) - CML, ALL\n- lymphoma + Ibrutinib: 22.2% (2/9) - lymphoplasmacytic lymphoma, SLL\n\nSPECIFIC HITS (all 8):\n1. Imatinib → CML (BCR-ABL+)\n2. Imatinib → ALL (Ph+ subset)\n3. Imatinib → mastocytosis (KIT mutation)\n4. Ibrutinib → lymphoplasmacytic lymphoma (BTK driven)\n5. Ibrutinib → lymphoplasmacytic lymphoma (BTK driven)\n6. Ibrutinib → SLL (BTK driven)\n7. Acalabrutinib → SLL (BTK driven)\n8. Zanubrutinib → SLL (BTK driven)\n\nROOT CAUSE: Kinase inhibitors are TARGET-SPECIFIC, not CANCER-GENERIC.\n- BCR-ABL inhibitors (imatinib) only work for BCR-ABL+ diseases (CML, Ph+ ALL)\n- BTK inhibitors (ibrutinib/acalabrutinib/zanubrutinib) only work for B-cell malignancies\n- Model over-predicts kinase inhibitors to all cancers because they're common in cancer training data\n\nRECOMMENDATION: Create disease-specific kinase rules in production_predictor.py:\n- CML + imatinib/nilotinib/dasatinib → HIGH tier\n- Lymphoma/CLL + ibrutinib/acalabrutinib/zanubrutinib → HIGH tier\n- Do NOT use kinase inhibitors as general cancer rescue (unlike mAbs/chemo)",
+      "result_metric": "2 high-precision combos found: CML+imatinib 22.2%, lymphoma+ibrutinib 22.2%"
     },
     {
       "id": "h199",
@@ -3955,6 +3957,25 @@
       ],
       "dependencies": [
         "h160"
+      ]
+    },
+    {
+      "id": "h201",
+      "title": "Disease-Specific Kinase Inhibitor Production Rules",
+      "category": "production",
+      "hypothesis": "h198 found kinase inhibitors are target-specific (CML+imatinib 22%, lymphoma+ibrutinib 22%). Implement disease-specific kinase rules to boost precision for confirmed target-driven combinations.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Add CML/ALL + BCR-ABL inhibitors (imatinib, nilotinib, dasatinib) -> HIGH tier",
+        "Add CLL/lymphoma + BTK inhibitors (ibrutinib, acalabrutinib, zanubrutinib) -> HIGH tier",
+        "Verify no conflicts with existing cancer rules (h197 colorectal mAb)",
+        "Test precision on validation set"
+      ],
+      "dependencies": [
+        "h198"
       ]
     }
   ],
