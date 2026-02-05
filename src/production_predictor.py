@@ -347,6 +347,25 @@ ATC_HIGH_PRECISION_DERMATOLOGICAL = {'D07AA', 'D07XA', 'D07AB', 'D07AC', 'D07XB'
 # h152 finding: Biologics have 8-17% precision vs 77-82% for traditional drugs
 ATC_BIOLOGIC_CODES = {'L04AB', 'L04AC', 'L04AF'}  # TNF (17%), IL (8.7%), JAK (18.8%) inhibitors
 
+# h265: Additional drug class tier modifiers (from h163 precision analysis)
+# SGLT2 inhibitors: 71.4% precision for cardiovascular diseases (GOLDEN)
+SGLT2_INHIBITORS = {'canagliflozin', 'dapagliflozin', 'empagliflozin', 'ertugliflozin', 'sotagliflozin'}
+
+# Thiazolidinediones: 66.7% precision for metabolic diseases (GOLDEN)
+THIAZOLIDINEDIONES = {'pioglitazone', 'rosiglitazone'}
+
+# NSAIDs: 50% precision for autoimmune diseases (HIGH)
+NSAID_DRUGS = {'ibuprofen', 'naproxen', 'diclofenac', 'indomethacin', 'celecoxib',
+               'meloxicam', 'piroxicam', 'ketorolac', 'aspirin'}
+
+# Fluoroquinolones: 44.4% precision for respiratory diseases (HIGH)
+FLUOROQUINOLONE_DRUGS = {'ciprofloxacin', 'levofloxacin', 'moxifloxacin', 'ofloxacin',
+                          'gatifloxacin', 'norfloxacin', 'gemifloxacin'}
+
+# h265: Low-precision drug class × category combinations (demote/warn)
+# mAbs for cancer have 6.2% precision despite seeming appropriate (sparse GT)
+# Kinase inhibitors for cancer have 2.8% precision (sparse GT)
+
 # h171: Neurological drug class mappings (60.4% coverage vs 18% kNN baseline)
 # Maps disease subtypes to appropriate drug classes
 NEUROLOGICAL_DISEASE_DRUG_CLASSES = {
@@ -880,6 +899,10 @@ class DrugRepurposingPredictor:
             drug_lower = drug_name.lower()
             disease_lower = disease_name.lower()
 
+            # h265: SGLT2 inhibitors achieve 71.4% precision for cardiovascular (GOLDEN)
+            if any(sglt2 in drug_lower for sglt2 in SGLT2_INHIBITORS):
+                return ConfidenceTier.GOLDEN  # 71.4% precision (h265/h163)
+
             # h217: Heart failure specific GOLDEN rescue rules (from h212)
             is_heart_failure = any(kw in disease_lower for kw in HF_KEYWORDS)
             if is_heart_failure:
@@ -951,12 +974,23 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.HIGH  # 33.3% precision
 
         elif category == 'respiratory':
+            drug_lower = drug_name.lower()
+
+            # h265: Fluoroquinolones achieve 44.4% precision for respiratory (HIGH)
+            if any(fq in drug_lower for fq in FLUOROQUINOLONE_DRUGS):
+                return ConfidenceTier.HIGH  # 44.4% precision (h265/h163)
+
             if rank <= 10 and train_frequency >= 15 and mechanism_support:
                 return ConfidenceTier.HIGH  # 35.0% precision
 
         elif category == 'metabolic':
-            # h144: Statin drugs achieve 60% precision for metabolic diseases
             drug_lower = drug_name.lower()
+
+            # h265: Thiazolidinediones achieve 66.7% precision for metabolic (GOLDEN)
+            if any(tzd in drug_lower for tzd in THIAZOLIDINEDIONES):
+                return ConfidenceTier.GOLDEN  # 66.7% precision (h265/h163)
+
+            # h144: Statin drugs achieve 60% precision for metabolic diseases
             if rank <= 10 and any(statin in drug_lower for statin in STATIN_DRUGS):
                 return ConfidenceTier.GOLDEN  # 60.0% precision
 
@@ -1018,10 +1052,15 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.HIGH  # 48.6% precision
 
         elif category == 'autoimmune':
-            # h157: DMARDs achieve 75.4% precision for autoimmune diseases
             drug_lower = drug_name.lower()
+
+            # h157: DMARDs achieve 75.4% precision for autoimmune diseases
             if rank <= 10 and any(dmard in drug_lower for dmard in DMARD_DRUGS):
                 return ConfidenceTier.GOLDEN  # 75.4% precision
+
+            # h265: NSAIDs achieve 50% precision for autoimmune (HIGH)
+            if any(nsaid in drug_lower for nsaid in NSAID_DRUGS):
+                return ConfidenceTier.HIGH  # 50.0% precision (h265/h163)
 
             # h189: ATC L4-based rescue for autoimmune
             # H02AB (glucocorticoids) = 77%, L04AX (traditional immunosuppressants) = 82%

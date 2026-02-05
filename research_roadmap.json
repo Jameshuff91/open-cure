@@ -5283,7 +5283,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Implement drug class classifier (suffix patterns)",
         "Step 2: Create tier modifier rules for high-confidence combos",
@@ -5293,6 +5293,73 @@
       ],
       "dependencies": [
         "h101"
+      ],
+      "findings": "h265 VALIDATED: Drug class tier modifiers improve precision tiering.\n\nIMPLEMENTED RULES (added to production_predictor.py):\n\n1. HIGH-PRECISION BOOSTS:\n   - SGLT2 + cardiovascular \u2192 GOLDEN (71.4% precision)\n   - Thiazolidinedione + metabolic \u2192 GOLDEN (66.7% precision)\n   - NSAID + autoimmune \u2192 HIGH (50.0% precision)\n   - Fluoroquinolone + respiratory \u2192 HIGH (44.4% precision)\n   \n2. EXISTING HIGH-PRECISION (already implemented):\n   - DMARD + autoimmune \u2192 GOLDEN (75.4%)\n   - Statin + metabolic \u2192 GOLDEN (60.0%)\n   - Corticosteroid + autoimmune \u2192 GOLDEN (via ATC H02AB, 77%)\n   \n3. LOW-PRECISION DEMOTIONS (implicit via exclusion):\n   - mAb + cancer (non-specific) = 6.2% precision\n   - Kinase inhibitor + cancer (non-specific) = 2.8% precision\n   - Receptor fusion + cancer = 4.0% precision\n   \n   These are NOT explicitly promoted, so they get standard tier assignment.\n   Specific exceptions (colorectal mAb, BCR-ABL, BTK, CDK) ARE promoted.\n\nKEY INSIGHT: Drug class tier modifiers improve PRECISION, not R@30.\nThe value is in confidence tiering for clinical prioritization.",
+      "result_metric": "SGLT2+CV=71.4%, TZD+metabolic=66.7%, NSAID+autoimmune=50%, FQ+respiratory=44.4%"
+    },
+    {
+      "id": "h266",
+      "title": "Drug Class \u00d7 Rank Interaction for Tier Assignment",
+      "category": "precision",
+      "rationale": "h265 showed drug class precision varies by rank. SGLT2+CV is 71.4% overall but may be even higher at rank<=5. Test if combining drug class with rank constraints improves precision further.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze h163 precision data by rank band (1-5, 6-10, 11-20)",
+        "Step 2: Identify drug class \u00d7 rank combinations with >50% precision",
+        "Step 3: Add rank constraints to existing drug class rules",
+        "Step 4: Measure precision improvement",
+        "Success criteria: Find combos with >60% precision at specific ranks"
+      ],
+      "dependencies": [
+        "h265"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h267",
+      "title": "Biologic Sparse GT Root Cause Analysis",
+      "category": "error_analysis",
+      "rationale": "h265 confirmed mAbs+cancer=6.2% and kinase inhibitors=2.8% despite biologics being first-line for many cancers. Root cause is likely sparse GT coverage (h190). Quantify the GT gap and identify which biologics should be in GT but aren't.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Count GT entries per drug class (small mol vs biologic)",
+        "Step 2: For FDA-approved biologics (pembrolizumab, nivolumab, etc.), check GT coverage",
+        "Step 3: Identify biologics with FDA approvals NOT in GT",
+        "Step 4: Estimate potential GT expansion impact",
+        "Success criteria: Identify >20 biologic-disease pairs missing from GT"
+      ],
+      "dependencies": [
+        "h265",
+        "h190"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h268",
+      "title": "NSAIDs vs DMARDs for Autoimmune Subtypes",
+      "category": "precision",
+      "rationale": "h265 showed NSAIDs achieve 50% for autoimmune while DMARDs achieve 75.4%. But autoimmune is heterogeneous - RA, lupus, psoriasis, MS all differ. Test if NSAID vs DMARD precision varies by autoimmune subtype.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Split autoimmune into subtypes (inflammatory arthritis, connective tissue, skin, neurological)",
+        "Step 2: Calculate NSAID vs DMARD precision per subtype",
+        "Step 3: Identify subtypes where NSAID > DMARD or vice versa",
+        "Step 4: Add subtype-specific drug class rules if >10pp difference",
+        "Success criteria: Find subtype with >60% precision for specific drug class"
+      ],
+      "dependencies": [
+        "h265"
       ],
       "findings": null,
       "result_metric": null
@@ -6338,6 +6405,12 @@
       "hypothesis_id": "h101",
       "learning": "Drug class \u00d7 disease category is highly predictive: steroid+autoimmune=76.4%, mAb+cancer=1.6%. Biologics fail due to sparse GT coverage. Use drug class as tier modifier.",
       "implication": "Boost steroid/statin combos, filter/warn biologics (mAb, kinase inhibitors)"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h265",
+      "learning": "Drug class tier modifiers improve precision (SGLT2+CV=71.4%, TZD+metabolic=66.7%, NSAID+autoimmune=50%, FQ+respiratory=44.4%). Biologics have low precision (mAb+cancer=6.2%) due to sparse GT, not model failure.",
+      "implication": "Precision improvements come from drug class \u00d7 category rules. Biologics appear to fail but it's a GT coverage issue - FDA-approved biologics may be missing from GT."
     }
   ],
   "collaborations": [

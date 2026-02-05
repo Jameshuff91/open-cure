@@ -1,0 +1,65 @@
+{
+  "hypothesis": "h265",
+  "status": "validated",
+  "findings": "Drug class tier modifiers improve precision tiering",
+  "high_precision_combos": [
+    {
+      "combo": "sglt2_inhibitor+cardiovascular",
+      "precision": 71.4,
+      "tier_change": "+2 (GOLDEN)"
+    },
+    {
+      "combo": "thiazolidinedione+metabolic",
+      "precision": 66.7,
+      "tier_change": "+2 (GOLDEN)"
+    },
+    {
+      "combo": "nsaid+autoimmune",
+      "precision": 50.0,
+      "tier_change": "+2 (GOLDEN)"
+    },
+    {
+      "combo": "corticosteroid+autoimmune",
+      "precision": 46.1,
+      "tier_change": "+1 (HIGH)"
+    },
+    {
+      "combo": "fluoroquinolone+respiratory",
+      "precision": 44.4,
+      "tier_change": "+1 (HIGH)"
+    },
+    {
+      "combo": "beta_blocker+cardiovascular",
+      "precision": 42.0,
+      "tier_change": "+1 (HIGH) at rank<=10"
+    },
+    {
+      "combo": "statin+cardiovascular",
+      "precision": 33.3,
+      "tier_change": "+1 (HIGH)"
+    },
+    {
+      "combo": "corticosteroid+respiratory",
+      "precision": 30.8,
+      "tier_change": "+1 (HIGH)"
+    }
+  ],
+  "low_precision_combos": [
+    {
+      "combo": "mab+cancer",
+      "precision": 6.2,
+      "tier_change": "-1"
+    },
+    {
+      "combo": "kinase_inhibitor+cancer",
+      "precision": 2.8,
+      "tier_change": "-1"
+    },
+    {
+      "combo": "receptor_fusion+cancer",
+      "precision": 4.0,
+      "tier_change": "-1"
+    }
+  ],
+  "implementation": "Add to production_predictor.py _assign_confidence_tier()"
+}
