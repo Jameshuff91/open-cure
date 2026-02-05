@@ -1,0 +1,54 @@
+{
+  "hypothesis": "h239",
+  "title": "Antifungal Drug Repurposing Analysis",
+  "outcome": "INVALIDATED",
+  "summary": {
+    "total_predictions": 183,
+    "gt_hits": 52,
+    "overall_precision": 28.4,
+    "original_hypothesis": "Antifungals have anti-inflammatory properties for repurposing",
+    "actual_finding": "High precision comes from CORRECT fungal indications, not repurposing"
+  },
+  "top_drugs": {
+    "Fluconazole": {
+      "precision": 80.0,
+      "count": 10,
+      "reason": "Established fungal indications"
+    },
+    "Itraconazole": {
+      "precision": 69.2,
+      "count": 13,
+      "reason": "Established fungal indications"
+    },
+    "Miconazole": {
+      "precision": 60.0,
+      "count": 5,
+      "reason": "Established fungal indications"
+    },
+    "Ketoconazole": {
+      "precision": 47.1,
+      "count": 17,
+      "reason": "Established fungal indications"
+    },
+    "Amphotericin B": {
+      "precision": 42.3,
+      "count": 26,
+      "reason": "Gold standard for invasive fungal"
+    }
+  },
+  "disease_analysis": {
+    "fungal_infections": "~80% of predictions (aspergillosis, cryptococcosis, histoplasmosis, etc.)",
+    "cancer_prophylaxis": "~10% (oropharynx cancer = fungal prophylaxis in immunocompromised)",
+    "incorrect": "~10% (tuberous sclerosis, hypothyroidism = FALSE POSITIVES)",
+    "autoimmune": "0% precision - WRONG predictions"
+  },
+  "key_findings": [
+    "Antifungal high precision is from CORRECT fungal-disease relationships, not repurposing",
+    "Model correctly learns: Fluconazole \u2192 cryptococcosis, Amphotericin B \u2192 invasive aspergillosis",
+    "Seborrheic dermatitis hits are valid: caused by Malassezia yeast",
+    "Oropharynx cancer hits: fungal prophylaxis context, not anti-cancer repurposing",
+    "Anti-inflammatory repurposing hypothesis is REFUTED",
+    "Autoimmune predictions (0% precision) are FALSE POSITIVES"
+  ],
+  "conclusion": "Original hypothesis INVALIDATED. The model correctly predicts antifungal-fungal relationships but does NOT identify anti-inflammatory repurposing opportunities."
+}

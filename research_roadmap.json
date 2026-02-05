@@ -4724,7 +4724,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Extract all antifungal predictions from HIGH confidence set",
         "Analyze disease categories (expecting inflammatory/autoimmune)",
@@ -4733,7 +4733,9 @@
       ],
       "dependencies": [
         "h134"
-      ]
+      ],
+      "findings": "INVALIDATED: Antifungal precision comes from CORRECT fungal indications, not repurposing.\n\n**PRECISION BY DRUG:**\n| Drug | Precision | Reason |\n|------|-----------|--------|\n| Fluconazole | 80.0% | Established fungal indications |\n| Itraconazole | 69.2% | Established fungal indications |\n| Miconazole | 60.0% | Established fungal indications |\n| Ketoconazole | 47.1% | Established fungal indications |\n| Amphotericin B | 42.3% | Gold standard for invasive fungal |\n\n**WHAT THE MODEL LEARNS:**\n- Fluconazole \u2192 cryptococcosis, aspergillosis, histoplasmosis (CORRECT)\n- Amphotericin B \u2192 invasive aspergillosis, fungal meningitis (CORRECT)\n- Seborrheic dermatitis \u2192 caused by Malassezia yeast (CORRECT)\n- Oropharynx cancer \u2192 fungal prophylaxis context (CORRECT)\n\n**WHAT IT GETS WRONG:**\n- Tuberous sclerosis, hypothyroidism \u2192 FALSE POSITIVES\n- Autoimmune predictions \u2192 0% precision (WRONG)\n\n**ORIGINAL HYPOTHESIS REFUTED:**\nThe hypothesis was that antifungals have anti-inflammatory properties for repurposing.\nThis is NOT supported - the predictions are all for FUNGAL infections, not inflammation.\n\n**CONCLUSION:** The model correctly predicts antifungal-fungal relationships.\nThis is expected behavior, not a novel repurposing discovery.",
+      "result_metric": "Anti-inflammatory repurposing NOT confirmed; precision from fungal indications"
     },
     {
       "id": "h240",
@@ -5874,6 +5876,12 @@
       "hypothesis_id": "h240",
       "learning": "CCBs show validated cross-category repurposing: 75% for neurological (migraine, epilepsy), 33% for renal (nephropathy). Verapamil\u2192migraine is FDA-approved - model correctly predicts this.",
       "implication": "Prioritize CCB predictions for neurological diseases in external validation"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h239",
+      "learning": "Antifungal high precision (Fluconazole 80%) comes from CORRECT fungal-disease relationships, not anti-inflammatory repurposing. Model correctly learns antifungal indications.",
+      "implication": "Antifungal predictions are accurate for fungal diseases but do not represent novel repurposing opportunities"
     }
   ],
   "collaborations": [
