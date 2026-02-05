@@ -5305,7 +5305,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Analyze h163 precision data by rank band (1-5, 6-10, 11-20)",
         "Step 2: Identify drug class \u00d7 rank combinations with >50% precision",
@@ -5316,8 +5316,8 @@
       "dependencies": [
         "h265"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h266 VALIDATED: Drug Class \u00d7 Rank Interaction Analysis\n\nANALYSIS RESULTS (from h163 data):\n1. SGLT2 + cardiovascular + rank<=10 = 100% (n=4) - confirms h265, already optimal\n2. Beta blocker + cardiovascular + rank<=10 = 42.1% (n=19) - better than rank<=5\n3. Statin + overall + rank<=5 = 38.5% - already optimal in metabolic rules\n4. NSAID + overall + rank<=5 = 40% (n=5) - small n, already covered by autoimmune rule\n\nACTIONABLE CHANGE:\n- Updated beta blocker + cardiovascular from rank<=5 (33.3%) to rank<=10 (42.1%)\n- This captures more predictions while maintaining similar precision\n- Changed in production_predictor.py\n\nKEY INSIGHT: Rank constraints interact with drug class precision. \nSome classes (SGLT2) have high precision at any rank.\nOthers (beta blocker) benefit from rank constraints to filter noise.\nThe optimal constraint is class-specific and should be tuned per drug class.",
+      "result_metric": "Beta blocker+CV: rank<=10=42.1% vs rank<=5=33.3%"
     },
     {
       "id": "h267",
@@ -6411,6 +6411,12 @@
       "hypothesis_id": "h265",
       "learning": "Drug class tier modifiers improve precision (SGLT2+CV=71.4%, TZD+metabolic=66.7%, NSAID+autoimmune=50%, FQ+respiratory=44.4%). Biologics have low precision (mAb+cancer=6.2%) due to sparse GT, not model failure.",
       "implication": "Precision improvements come from drug class \u00d7 category rules. Biologics appear to fail but it's a GT coverage issue - FDA-approved biologics may be missing from GT."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h266",
+      "learning": "Rank constraints interact with drug class precision. Beta blocker+CV improved from 33.3% (rank<=5) to 42.1% (rank<=10) by capturing more predictions. SGLT2+CV is so predictive (71-100%) that rank constraints don't matter.",
+      "implication": "Drug class rules should be tuned with class-specific rank constraints rather than uniform rank cutoffs."
     }
   ],
   "collaborations": [

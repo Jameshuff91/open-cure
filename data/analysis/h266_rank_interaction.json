@@ -1,0 +1,30 @@
+{
+  "hypothesis": "h266",
+  "title": "Drug Class \u00d7 Rank Interaction",
+  "status": "validated",
+  "findings": {
+    "sglt2_cv": {
+      "rank_overall": "71.4%",
+      "rank_10": "100.0% (n=4)",
+      "recommendation": "No change needed - already optimal"
+    },
+    "beta_blocker_cv": {
+      "rank_overall": "28.6%",
+      "rank_5": "33.3% (h154)",
+      "rank_10": "42.1% (n=19)",
+      "recommendation": "Changed from rank<=5 to rank<=10 in production_predictor.py"
+    },
+    "statin_overall": {
+      "rank_overall": "12.0%",
+      "rank_5": "38.5% (n=13)",
+      "rank_10": "20.7%",
+      "recommendation": "Current metabolic rule (rank<=10, GOLDEN) is already optimal"
+    },
+    "nsaid_overall": {
+      "rank_overall": "7.3%",
+      "rank_5": "40.0% (n=5)",
+      "recommendation": "Small n - h265's autoimmune rule is sufficient"
+    }
+  },
+  "conclusion": "Beta blocker+CV updated from rank<=5 to rank<=10. Other rules are already optimal."
+}

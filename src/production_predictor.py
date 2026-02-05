@@ -15,7 +15,7 @@ Unified pipeline integrating validated research findings:
 - h201: Disease-specific kinase rules (from h198):
   - CML/ALL + BCR-ABL inhibitors (imatinib/nilotinib/dasatinib) = 22% precision (HIGH)
   - CLL/lymphoma + BTK inhibitors (ibrutinib/acalabrutinib/zanubrutinib) = 22% precision (HIGH)
-- h154: Cardiovascular beta_blocker + rank<=5 = 33.3% precision
+- h154/h266: Cardiovascular beta_blocker + rank<=10 = 42.1% precision
 - h157: Autoimmune DMARD + rank<=10 = 75.4% precision
 - h170: Selective category boosting - +2.40pp R@30 (p=0.009) for isolated categories
   - Boosts same-category neighbors 1.5x for: neurological, respiratory, metabolic, renal, hematological, immunological
@@ -93,7 +93,7 @@ CATEGORY_PRECISION = {
     ("ophthalmic", "GOLDEN"): 62.5,   # h150: antibiotic + rank<=15
     ("dermatological", "GOLDEN"): 63.6,  # h150: topical_steroid + rank<=5
     # HIGH tier values (from rescue criteria validation):
-    ("cardiovascular", "HIGH"): 38.2, # h136: rank<=5 + mech OR h154: beta_blocker + rank<=5 (33.3%)
+    ("cardiovascular", "HIGH"): 38.2, # h136: rank<=5 + mech OR h154/h266: beta_blocker + rank<=10 (42.1%)
     ("respiratory", "HIGH"): 35.0,    # h136: rank<=10 + freq>=15 + mech
     ("cancer", "GOLDEN"): 55.0,       # h197: colorectal + mAb = 50-60% precision
     ("cancer", "HIGH"): 40.0,         # h150: taxane + rank<=5
@@ -969,9 +969,10 @@ class DrugRepurposingPredictor:
             # h136 generic rescue
             if rank <= 5 and mechanism_support:
                 return ConfidenceTier.HIGH  # 38.2% precision
-            # h154: Beta-blockers achieve 33.3% precision at rank<=5
-            if rank <= 5 and any(bb in drug_lower for bb in BETA_BLOCKERS):
-                return ConfidenceTier.HIGH  # 33.3% precision
+            # h154/h266: Beta-blockers achieve 42.1% precision at rank<=10
+            # h266 found extending from rank<=5 to rank<=10 captures more predictions
+            if rank <= 10 and any(bb in drug_lower for bb in BETA_BLOCKERS):
+                return ConfidenceTier.HIGH  # 42.1% precision (h266)
 
         elif category == 'respiratory':
             drug_lower = drug_name.lower()
