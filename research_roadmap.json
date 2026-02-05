@@ -4572,7 +4572,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List all unmatched CV diseases with GT drug counts",
         "Identify potential MESH ID matches via manual curation",
@@ -4581,7 +4581,9 @@
       ],
       "dependencies": [
         "h229"
-      ]
+      ],
+      "findings": "VALIDATED: Added 50 CV disease MESH mappings, improving coverage by 43.8%.\n\n**BEFORE h231:**\n- Matched CV diseases: 112/253 (44.3%)\n\n**AFTER h231:**\n- Matched CV diseases: 161/253 (63.6%)\n- GT drug coverage: 769/901 (85.3%)\n- **Improvement: +49 diseases (+43.8%)**\n\n**MAPPINGS ADDED:**\n- Angina variants (stable, unstable, vasospastic)\n- Atrial arrhythmias (AFib, flutter)\n- Coronary/ACS syndromes\n- Heart failure variants\n- MI/STEMI/NSTEMI\n- Pulmonary embolism, VTE, DVT\n- Stroke variants\n- Cardiac arrhythmias\n\n**REMAINING GAPS (92 diseases):**\n- Ocular hypertension (16+12 drugs) - Not CV despite keyword match\n- Heartburn (3 drugs) - Not CV\n- Various rare variants\n\n**KEY INSIGHT:** Most major CV conditions now have DRKG coverage. Remaining gaps are either:\n1. Misclassified as CV (ocular hypertension, heartburn)\n2. Rare variants with few drugs",
+      "result_metric": "+49 diseases (+43.8%), 63.6% coverage"
     },
     {
       "id": "h232",
@@ -5487,6 +5489,12 @@
       "hypothesis_id": "h230",
       "learning": "CV drug-class rescue rules achieve 59.4% HIGH tier precision. AFib and hypertension achieve 100% precision with rescue rules. MI underperforms (12.5%) - may need GT matching tuning.",
       "implication": "Production predictor now has comprehensive CV coverage. Combined with h217 (HF) and existing h154 (beta-blockers), cardiovascular predictions significantly improved."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h231",
+      "learning": "Adding 50 CV MESH mappings improved coverage from 44.3% to 63.6%. Most common CV conditions (AFib, angina, MI, PE, stroke) now have DRKG mappings.",
+      "implication": "h229/h230 CV drug-class prediction now has much broader applicability. Production predictor CV rescue rules will apply to more diseases."
     }
   ],
   "collaborations": [

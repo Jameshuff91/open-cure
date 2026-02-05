@@ -1,6 +1,97 @@
 # Research Loop Progress
 
-## Current Session: h210, h164, h166, h225 (2026-02-05)
+## Current Session: h229, h230 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested: 2**
+- h229: Drug-Class Prediction for Cardiovascular - **VALIDATED**
+- h230: Integrate Full CV Drug-Class Prediction into Production - **VALIDATED**
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 122 |
+| Invalidated | 46 |
+| Inconclusive | 8 |
+| Blocked | 18 |
+| Deprioritized | 3 |
+| Pending | 32 |
+| **Total** | **229** |
+
+### Session Key Learnings
+
+1. **h229:** Drug-class prediction achieves +21.8pp vs kNN for cardiovascular diseases (44.2% vs 22.3%). Best for HF (+45pp), AFib (+42pp), MI (+38pp), CAD (+34pp).
+2. **h230:** Integrated CV drug-class rescue rules into production_predictor.py. Achieved 59.4% HIGH tier precision. AFib and hypertension hit 100% precision.
+
+### Session Theme: Cardiovascular Drug-Class Integration
+
+This session extended the drug-class prediction approach (validated in h174 for psychiatric) to cardiovascular diseases:
+- **h229:** Validated that drug-class prediction outperforms kNN for CV diseases by +21.8pp
+- **h230:** Integrated AFib, MI, CAD rescue rules into production predictor
+- **Key drugs now rescued:** Rivaroxaban, Warfarin (AFib), Clopidogrel, Ticagrelor (MI/CAD), Nitroglycerin (CAD)
+
+---
+
+### h229: Drug-Class Prediction for Cardiovascular - VALIDATED
+
+**Objective:** Evaluate whether drug-class prediction (like h174 for psychiatric) extends to cardiovascular diseases.
+
+**KEY RESULTS:**
+| Metric | kNN | DrugClass | Diff |
+|--------|-----|-----------|------|
+| Overall CV | 22.3% | 44.2% | +21.8pp |
+| Heart failure | 12.7% | 57.7% | +45.0pp |
+| AFib | 23.9% | 65.6% | +41.7pp |
+| MI | 10.2% | 47.9% | +37.8pp |
+| CAD | 31.7% | 65.8% | +34.1pp |
+
+**DRUG CLASSES DEFINED:**
+- ACE inhibitors, ARBs, beta-blockers, CCBs, diuretics (HTN/HF)
+- Anticoagulants, DOACs (AFib)
+- Antiplatelets, statins, nitrates (MI/CAD)
+- Antiarrhythmics (arrhythmias)
+
+**NEW HYPOTHESES GENERATED:**
+- h230: Integrate Full CV Drug-Class Prediction into Production
+- h231: CV Disease DRKG Coverage Gap Analysis
+- h232: Stroke Subtype Analysis - Why kNN Wins
+
+**Output:** `data/analysis/h229_cv_drug_class_prediction.json`
+
+---
+
+### h230: Full CV Drug-Class in Production - VALIDATED
+
+**Objective:** Integrate h229's CV drug-class rules into production_predictor.py.
+
+**IMPLEMENTATION:**
+1. Added drug class constants (ANTICOAGULANT_DRUGS, ANTIPLATELET_DRUGS, NITRATE_DRUGS, etc.)
+2. Added disease keywords (AFIB_KEYWORDS, MI_KEYWORDS, CAD_KEYWORDS)
+3. Added 'atrial fibrillation', 'atrial flutter' to cardiovascular category keywords
+4. Added rescue rules in _apply_category_rescue() for AFib, MI, CAD
+
+**PRECISION RESULTS (8 CV diseases, top 20):**
+| Tier | TP | Total | Precision |
+|------|-------|-------|-----------|
+| HIGH | 19 | 32 | 59.4% |
+
+**PER-DISEASE HIGH TIER:**
+- AFib: 7/7 = 100%
+- Hypertension: 6/6 = 100%
+- CAD: 2/3 = 67%
+- MI: 1/8 = 12.5% (needs investigation)
+
+**RESCUED DRUGS:**
+- AFib: Propranolol, Verapamil, Carvedilol, Bisoprolol, Rivaroxaban, Diltiazem, Warfarin
+- MI: Clopidogrel, Vorapaxar, Pravastatin, Lovastatin
+- CAD: Propranolol, Ticagrelor, Nitroglycerin
+
+---
+
+## Previous Session: h210, h164, h166, h225 (2026-02-05)
 
 ### Session Summary
 
@@ -12,505 +103,12 @@
 - h166: Drug-Disease Mechanism Path Tracing for Interpretability - **VALIDATED**
 - h225: Add Mechanism Support to Production Deliverable - **VALIDATED**
 
-### Cumulative Statistics (2026-02-05)
-| Status | Count |
-|--------|-------|
-| Validated | 120 |
-| Invalidated | 46 |
-| Inconclusive | 8 |
-| Blocked | 18 |
-| Deprioritized | 3 |
-| Pending | 31 |
-| **Total** | **226** |
-
 ### Session Key Learnings
 
 1. **h210:** Manual rule injection adds 45 FDA-approved drug-disease pairs missing from DRKG (4.3% coverage improvement)
 2. **h164:** Systematic contraindication expansion has diminishing returns; kNN model implicitly avoids harmful patterns. Added immunosuppressant + infection rule (+10 exclusions)
 3. **h166:** Mechanism paths (drug->gene->disease) provide 2.2x precision lift. 22% of predictions have direct paths.
 4. **h225:** mechanism_genes column successfully added to production deliverable for researcher prioritization
-
-### Session Theme: Production Pipeline Enhancement
-
-This session focused on making the production deliverable more complete, safe, and interpretable:
-- **Completeness:** Manual rule injection for missing DRKG drugs
-- **Safety:** Expanded contraindication filtering
-- **Interpretability:** Mechanism path tracing with gene counts
-
-All four hypotheses validated with measurable improvements to the deliverable.
-
----
-
-### h210: Manual Rule Injection Layer - VALIDATED
-
-**Objective:** Integrate manual_drug_rules.json (h206) into the production deliverable pipeline to include FDA-approved drugs missing from DRKG.
-
-**IMPLEMENTATION:**
-- Added `load_manual_rules()` function to generate_production_deliverable.py
-- Created 'INJECTED' tier for manual rule predictions
-- Added 'Injected (Missing DRKG)' sheet to Excel output
-- Added 'source' column to distinguish kNN vs manual_rule predictions
-
-**KEY RESULTS:**
-| Metric | Value |
-|--------|-------|
-| Predictions injected | 45 |
-| Diseases receiving injections | 28 |
-| Known indication improvement | +4.3% (1048 → 1093) |
-| Manual rule coverage | 69.2% (45/65) |
-
-**INJECTION BREAKDOWN:**
-- 16 rules: Disease name couldn't be matched to MESH ID
-- 4 rules: Matched MESH ID but disease has no embeddings
-- 45 rules: Successfully injected
-
-**TOP INJECTED DRUGS:**
-| Drug | Indications | Type |
-|------|-------------|------|
-| Certolizumab | 6 | TNF inhibitor |
-| Epcoritamab | 3 | Bispecific CD20xCD3 |
-| Gemtuzumab | 3 | CD33 antibody |
-| Inotuzumab | 3 | CD22 ADC |
-| Tilmanocept | 3 | Imaging agent |
-
-**CATEGORY DISTRIBUTION:**
-- Cancer: 24 predictions (53%)
-- Autoimmune: 9 predictions (20%)
-- Hematological: 6 predictions (13%)
-- Other: 6 predictions (13%)
-
-**NEW HYPOTHESES GENERATED:**
-- h220: Expand MESH Mappings for Missing Indications (16 failed matches)
-- h221: Manual Rule Expansion (additional missing biologics)
-- h222: Injection Layer Quality Check (standard of care vs repurposing)
-
-**Output:** Updated `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
-
----
-
-### h164: Contraindication Database Expansion - VALIDATED
-
-**Objective:** Systematically expand safety filter using contraindication patterns.
-
-**ANALYSIS:**
-- Current filter: 890 lines, 25 exclusion rules
-- Already excludes 186 predictions (1.4%)
-- DrugBank vocabulary lacks contraindication data (need licensed XML)
-
-**KEY FINDING:**
-Most obvious drug-contraindicated disease combinations DON'T appear in predictions. The kNN model implicitly avoids harmful patterns.
-
-**NEW RULE ADDED:**
-Immunosuppressants (tacrolimus, cyclosporine, azathioprine, sirolimus) + Infectious diseases
-
-| Pattern | Excluded | Reason |
-|---------|----------|--------|
-| Cyclosporine + TB | 1 | Worsens infection |
-| Cyclosporine + Influenza | 1 | Worsens infection |
-| Azathioprine + Hepatitis B/C | 2 | Reactivates virus |
-| Various + CMV | 2 | Worsens infection |
-| Total new exclusions | 10 | |
-
-**EXCEPTIONS PRESERVED:**
-- Autoimmune hepatitis (azathioprine is treatment)
-- Autoimmune interstitial pneumonia
-
-**TOTAL EXCLUSIONS AFTER h164:** 196/13,461 (1.5%)
-
-**NEW HYPOTHESES:**
-- h223: DrugBank Licensed Data (blocked - need license)
-- h224: Quinolone Tendon Warning Annotation
-
----
-
-### h166: Mechanism Path Tracing - VALIDATED
-
-**Objective:** Extract drug->gene->disease paths from DRKG to explain predictions mechanistically.
-
-**KEY RESULTS:**
-| Metric | Value |
-|--------|-------|
-| Predictions with mechanism path | 2,975/13,416 (22.1%) |
-| Average connecting genes | 6.3 |
-| Precision with path | 13.6% |
-| Precision without path | 6.2% |
-| **Precision lift** | **2.2x** |
-
-**PRECISION BY CONNECTING GENES:**
-| Genes | Precision | Total |
-|-------|-----------|-------|
-| 1 | 12.7% | 1,324 |
-| 3+ | 15.7% | 1,129 |
-| 5+ | 15.8% | 689 |
-| 10+ | 14.6% | 364 |
-
-**SAMPLE MECHANISM PATHS:**
-- Propranolol -> heart failure: 9 genes (adrenergic receptors)
-- Losartan -> heart failure: 12 genes (angiotensin pathway)
-- Spironolactone -> heart failure: 3 genes (mineralocorticoid receptor)
-
-**IMPLICATION:** Mechanism paths are a valid confidence signal. Can add to production output.
-
-**NEW HYPOTHESES:**
-- h225: Add Mechanism Support to Production Deliverable
-- h226: Two-Hop Mechanism Paths (Drug->Gene->Gene->Disease)
-
-**Output:** `data/analysis/h166_mechanism_path_analysis.json`
-
----
-
-### h225: Add Mechanism Support to Production - VALIDATED
-
-**Objective:** Add mechanism_genes column to production deliverable based on h166 findings.
-
-**IMPLEMENTATION:**
-- Added `load_mechanism_paths()` to load DRKG edges
-- Added `get_mechanism_support()` to count connecting genes
-- Added `mechanism_genes` column to all predictions
-
-**RESULTS:**
-- 10,614 drugs with gene targets
-- 17,031 genes with disease associations
-- 2,938 predictions (21.9%) have mechanism support
-- 2.19x precision lift confirmed
-
-**Output:** Updated `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx`
-
----
-
-## Previous Session: h209, h212, h217, h213, h214, h215, h216, h219 (2026-02-05)
-
-### Session Summary
-
-**Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested: 8**
-- h209: GT Coverage Analysis - Which Drug-Disease Pairs Are Blocking Predictions - **VALIDATED**
-- h212: Cardiovascular Disease-Specific Rescue Rules - **VALIDATED**
-- h217: Implement Heart Failure GOLDEN Rescue Rules - **VALIDATED**
-- h213: Zero-Coverage Drug Injection Layer - **INVALIDATED**
-- h214: Heart Failure Specific Drug Rules - **SUPERSEDED BY h217**
-- h215: Cancer CDK Inhibitor Rules - **VALIDATED**
-- h216: Disease Fragmentation Impact Analysis - **INVALIDATED**
-- h219: Exclude Zero-Precision CV Classes - **INVALIDATED**
-
----
-
-### h209: GT Coverage Analysis - VALIDATED
-
-**Objective:** Systematically identify all GT drug-disease pairs NOT predicted because no kNN neighbor has them.
-
-**KEY FINDINGS:**
-- **88.1% of GT pairs ARE predicted** (2547/2891 in top-30)
-- **344 blocked pairs** (11.9%) NOT in top-30
-- **264 unique drugs** have zero neighbor coverage for at least one disease
-- **86.3% of blocked pairs have ZERO neighbors** with the drug (297/344)
-- **13.7% have exactly 1 neighbor** (47/344)
-
-**COVERAGE DISTRIBUTION:**
-| Neighbors | Count | Percent |
-|-----------|-------|---------|
-| 0 | 297 | 86.3% |
-| 1 | 47 | 13.7% |
-
-**ROOT CAUSE:** Unlike h206's DRKG embedding gap (drugs missing from DRKG entirely), here drugs HAVE embeddings but kNN can't find them because no similar diseases have them as treatments.
-
-**TOP BLOCKED DISEASE HOTSPOTS:**
-1. Chronic Heart Failure - 28 blocked drugs (diuretics, ACE inhibitors)
-2. Hypertension - 50+ blocked drugs (CCBs, ARBs, beta-blockers)
-3. Type 1 Diabetes - cardiovascular/metabolic drugs blocked
-4. Breast Cancer - CDK inhibitors (Palbociclib, Ribociclib)
-
-**TOP BLOCKED DRUGS (by count):**
-| Drug | Blocked | Zero Coverage | Total GT |
-|------|---------|---------------|----------|
-| Quinaprilat | 5 | 3 | 6 |
-| Doxazosin | 5 | 3 | 6 |
-| Ramiprilat | 4 | 2 | 4 |
-| Eplerenone | 4 | 2 | 4 |
-| Aprocitentan | 4 | 3 | 5 |
-
-**ACTIONABLE INSIGHTS:**
-1. GT expansion should prioritize drugs with high zero-coverage counts
-2. Disease-specific rules could rescue zero-coverage drugs
-3. Cardiovascular disease category has most blocking issues
-4. The 88.1% prediction rate is good given DRKG constraints
-
-**NEW HYPOTHESES GENERATED:**
-- h212: Cardiovascular Disease-Specific Rescue Rules
-- h213: Zero-Coverage Drug Injection Layer
-- h214: Heart Failure Specific Drug Rules
-- h215: Cancer CDK Inhibitor Rules
-- h216: Disease Fragmentation Impact Analysis
-
-**Output:** `data/analysis/h209_gt_coverage_analysis.json`
-
----
-
-### h212: Cardiovascular Disease-Specific Rescue Rules - VALIDATED
-
-**Objective:** Implement disease-specific rescue rules for CV diseases using ATC drug class matching.
-
-**KEY FINDINGS:**
-- **Generic CV drug rescue is TOO BROAD**: ATC 'C' for CV disease = **3.49% precision**
-- **Heart Failure specific rescue is GOLDEN-tier:**
-  - Loop diuretics (furosemide): **75.0%** precision ← GOLDEN
-  - Aldosterone antagonists (spironolactone): **50.0%** precision ← GOLDEN
-  - ARBs: **27.3%** precision ← HIGH
-- **Hypertension rescue is MEDIUM-tier:**
-  - ARBs: **20.4%** precision ← HIGH
-  - Beta-blockers/ACE inhibitors: **14%** precision ← MEDIUM
-- **Some CV classes have 0% precision:**
-  - Peripheral vasodilators: 0%
-  - Vasoprotectives: 0%
-
-**ACTIONABLE RESCUE RULES:**
-| Condition | Drug Class | Precision | Tier |
-|-----------|------------|-----------|------|
-| Heart failure | Loop diuretics | 75% | GOLDEN |
-| Heart failure | Aldosterone antagonists | 50% | GOLDEN |
-| Heart failure | ARBs | 27% | HIGH |
-| Hypertension | ARBs | 20% | HIGH |
-
-**NEW HYPOTHESES GENERATED:**
-- h217: Implement Heart Failure GOLDEN Rescue Rules
-- h218: ARB Rescue Rules for Heart Failure and Hypertension
-- h219: Exclude Zero-Precision CV Classes
-
-**Output:** `data/analysis/h212_cv_rescue_rules.json`
-
----
-
-### h217: Heart Failure GOLDEN Rescue Rules - VALIDATED
-
-**Objective:** Implement GOLDEN tier rescue rules for heart failure diseases.
-
-**IMPLEMENTATION:**
-- Added drug sets: `LOOP_DIURETICS`, `ALDOSTERONE_ANTAGONISTS`, `ARB_DRUGS`, `HF_KEYWORDS`
-- Added rescue logic in `_apply_category_rescue()` for cardiovascular category
-
-**PRECISION RESULTS (3 HF diseases):**
-| Tier | Hits | Total | Precision |
-|------|------|-------|-----------|
-| GOLDEN | 2 | 3 | **66.7%** |
-| HIGH | 6 | 18 | **33.3%** |
-
-**RESCUED PREDICTIONS:**
-- Chronic heart failure: Spironolactone (GOLDEN), Furosemide (GOLDEN)
-- Beta-blockers: Propranolol, Bisoprolol, Carvedilol (HIGH)
-- ARBs: Telmisartan for dilated cardiomyopathy (HIGH)
-
-**SUCCESS:** Target was >40% precision. Achieved 66.7% GOLDEN, 33.3% HIGH.
-
----
-
-### h213: Zero-Coverage Drug Injection Layer - INVALIDATED
-
-**Objective:** Create secondary prediction layer injecting zero-coverage drugs based on mechanism/ATC matching.
-
-**KEY FINDINGS:**
-- **1,436 zero-coverage GT pairs** (not 297 from h209 sample)
-- 38.4% have mechanism overlap, 23.9% have ATC match
-- **53.8% have NEITHER** - fundamentally unreachable
-
-**INJECTION PRECISION (50 disease simulation):**
-| Criteria | TP | FP | Precision |
-|----------|----|----|-----------|
-| mechanism_only | 171 | 26,663 | **0.6%** |
-| atc_only | 156 | 5,474 | **2.8%** |
-| both | 91 | 1,576 | **5.5%** |
-
-**CONCLUSION:** Zero-coverage injection does NOT work. Even best criteria (mech+ATC) has 5.5% precision = 17 false positives per true positive.
-
-**IMPLICATION:** Only specific drug class rules (like h217) work. General injection fails.
-
----
-
-### h215: Cancer CDK Inhibitor Rules - VALIDATED
-
-**Objective:** Implement CDK4/6 inhibitor rescue for breast cancer.
-
-**KEY FINDINGS:**
-- All 3 CDK inhibitors (palbociclib, ribociclib, abemaciclib) are in breast cancer GT
-- **100% precision** for breast cancer (3/3)
-- Only 2.4% precision for all cancers (too low)
-
-**IMPLEMENTATION:**
-- Added `BREAST_CANCER_KEYWORDS` and `CDK_INHIBITORS` drug sets
-- Added rescue rule in cancer category
-
-**RESULT:**
-- Ribociclib: GOLDEN at rank 15 ✓
-- Abemaciclib/Palbociclib: rank > 20 → FILTER (design limitation)
-
-**LIMITATION:** Rescue only applies to rank <= 20 due to FILTER check order.
-
----
-
-### Cumulative Statistics (2026-02-05)
-| Status | Count |
-|--------|-------|
-| Validated | 116 |
-| Invalidated | 46 |
-| Inconclusive | 8 |
-| Blocked | 17 |
-| Deprioritized | 3 |
-| Pending | 29 |
-| **Total** | **219** |
-
-### Session Learnings
-
-1. **h209:** 88.1% of GT pairs ARE predicted. 86.3% of blocked pairs have ZERO neighbor coverage.
-2. **h212:** Generic CV drug rescue (3.5%) fails, but HF+diuretics (75%) and HTN+ARBs (20%) work.
-3. **h217:** Specific drug class rules (HF+diuretics=GOLDEN) achieve high precision.
-4. **h213:** Zero-coverage injection FAILS - even mech+ATC only achieves 5.5% precision.
-5. **h215:** CDK inhibitors for breast cancer = 100% precision. Design limits rescue to rank <= 20.
-6. **h216:** Disease fragmentation is NOT a bug - it reflects real therapeutic differences (J=0.02-0.20).
-7. **h219:** ATC-based blanket filtering harmful - Diltiazem for AF is a true positive despite C05 class.
-
-**Key Insight:** Targeted drug class + disease subtype rules work (75-100% precision). General mechanism/ATC matching fails (<6% precision). Disease subtypes are correctly separated by kNN - merging would hurt precision. ATC class-level filtering is too coarse.
-
----
-
-## Previous Session: h205, h207, h206, h202, h208, h211 (2026-02-05)
-
-**Hypotheses Tested:**
-- h205: Lymphoma Mechanism-Based Production Rules (CD30+/CD20+) - **VALIDATED**
-- h207: Rituximab Prediction Gap Analysis - **VALIDATED**
-- h206: Manual Rule Injection for Missing DRKG Drugs - **VALIDATED**
-- h202: Subtype-Specific Leukemia Production Rules - **VALIDATED**
-- h208: DRKG Biologic Coverage Audit - **SUPERSEDED BY h206**
-- h211: TKI DRKG Coverage Check for CML - **VALIDATED**
-
----
-
-### h205: Lymphoma Mechanism-Based Production Rules - VALIDATED
-
-**Objective:** Implement mechanism-based rules matching lymphoma subtypes to appropriate targeted therapies.
-
-**ROOT CAUSE FOUND:** Adcetris NOT IN DRKG drug pool
-
-**Key Findings:**
-- Adcetris (CD30 antibody-drug conjugate) is NOT in DRKG despite FDA approval for 10 lymphoma indications
-- The model CANNOT predict Adcetris because it has no embeddings
-- CD30+ lymphomas (Hodgkin, ALCL, PTCL, CTCL): 0% precision - drugs cannot be predicted
-- CD20+ lymphomas: 10% precision - Rituximab predicted for only 3/6 diseases
-
-**Implication:** Mechanism-based rules cannot help if target drug is missing from embedding space.
-
-**Output:** `data/analysis/h205_lymphoma_mechanism_rules.json`
-
----
-
-### h207: Rituximab Prediction Gap Analysis - VALIDATED
-
-**Objective:** Why is Rituximab predicted for some CD20+ diseases but not others?
-
-**ROOT CAUSE:** kNN neighbor GT coverage
-
-**Key Findings:**
-- Follicular lymphoma: **0/20 neighbors have Rituximab in GT** → cannot be predicted
-- Burkitt lymphoma: **0/20 neighbors have Rituximab in GT** → cannot be predicted
-- DLBCL: 1/20 neighbors but score (0.695) below threshold (0.758)
-- Diseases WHERE Rituximab IS predicted all have 1+ neighbors with it in GT
-
-**Implication:** kNN works correctly but GT coverage gap limits recommendations.
-
-**Output:** `data/analysis/h207_rituximab_gap_analysis.json`
-
----
-
-### h206: Manual Rule Injection for Missing DRKG Drugs - VALIDATED
-
-**Objective:** Quantify DRKG drug coverage gap and create manual injection rules.
-
-**Key Findings:**
-- **62.5% of GT drugs have DRKG embeddings** (1480/2367)
-- **37.5% (887 drugs) are MISSING** - cannot be predicted
-- **40 biologics missing** with 75 blocked drug-disease pairs
-- **2,429 total blocked drug-disease pairs**
-
-**Top Missing Biologics:**
-1. Certolizumab (6 indications) - RA, AS, psoriasis
-2. Faricimab (5 indications) - macular degeneration
-3. Epcoritamab (4 indications) - DLBCL, FL
-4. Adcetris (10 indications) - CD30+ lymphomas
-
-**Deliverable:** Created `data/reference/manual_drug_rules.json` with 30 manual injection rules.
-
-**Output:** `data/analysis/h206_missing_drkg_drugs.json`
-
----
-
-### h202: Subtype-Specific Leukemia Production Rules - VALIDATED
-
-**Key Findings:**
-- AML: 10% precision, expected drugs found (Midostaurin, Daunorubicin)
-- CML: 6.7% precision, NO TKIs in top 30 despite all being FDA-approved
-- ALL: 6.7% precision, 1 expected drug found
-
-**Output:** `data/analysis/h202_leukemia_subtype_rules.json`
-
----
-
-### h211: TKI DRKG Coverage Check - VALIDATED
-
-**Key Finding:** All 5 TKIs (imatinib, nilotinib, dasatinib, bosutinib, ponatinib) HAVE embeddings but NOT predicted for CML.
-
-**ROOT CAUSE:** Same as h207 - kNN neighbors don't have TKIs in their GT.
-Imatinib is predicted 33 times across other diseases, but NOT for CML.
-
----
-
-### Cumulative Statistics (2026-02-05)
-| Status | Count |
-|--------|-------|
-| Validated | 110 |
-| Invalidated | 43 |
-| Inconclusive | 8 |
-| Blocked | 17 |
-| Deprioritized | 3 |
-| Pending | 30 |
-| **Total** | **211** |
-
-### Key Session Learnings
-
-1. **h205:** Adcetris missing from DRKG = fundamental coverage gap for CD30+ lymphomas
-2. **h207:** kNN neighbor GT coverage determines drug recommendations - zero coverage = zero prediction
-3. **h206:** 37.5% of GT drugs have no DRKG embeddings; newer biologics systematically absent
-4. **h202:** Leukemia subtypes have expected drugs but often not predicted due to neighbor GT gaps
-5. **h211:** TKIs have embeddings but CML's kNN neighbors don't have them in GT
-
-### Session Theme: Two Types of Coverage Gaps
-
-1. **DRKG Embedding Gap** (h205, h206): Drug has no embedding → cannot be predicted at all
-2. **kNN Neighbor GT Gap** (h207, h211): Drug has embedding but neighbors don't have it → won't be recommended
-
-Both are NOT model failures - they're data coverage issues. The kNN collaborative filtering approach works correctly given its constraints.
-
-### Recommended Next Steps
-
-1. **h210: Implement Manual Rule Injection Layer** (priority 4) - integrate manual_drug_rules.json
-2. **h209: GT Coverage Analysis** (priority 3) - identify all blocked predictions
-3. **Investigate why CML neighbors don't have TKIs** - may be disease similarity issue
-
----
-
-## Previous Session: h199, h203, h204, h195, h200 (2026-02-05)
-
-**Hypotheses Tested:**
-- h199: Solid vs Hematologic Cancer Gap Analysis - **VALIDATED**
-- h203: GT-Density Weighted Confidence Scoring - **VALIDATED**
-- h204: Lymphoma Subtype Stratification - **VALIDATED**
-- h195: Metabolic Exception Analysis - **VALIDATED**
-- h200: Brain Tumor Zero Hit Investigation - **VALIDATED**
-
-**Key Learnings:**
-- h199: Disease fragmentation causes hematologic low precision
-- h203: GT density = strong confidence signal (31x difference)
-- h204: Use mechanism-based rules (CD30+/CD20+), not subtype overlap
-- h195: CV→Metabolic is comorbidity management, not novel repurposing
-- h200: Brain tumor failure is DRKG drug coverage gap, not model failure
 
 ---
 
