@@ -1966,7 +1966,9 @@
         "Step 4: Recommend drugs with matching MoA",
         "Step 5: Evaluate on benchmark"
       ],
-      "status": "pending"
+      "status": "validated",
+      "findings": "Mechanism Class Annotation and Transfer - VALIDATED with strong precision rules.\n\nMETHODOLOGY:\n- Classified drugs by name suffix (mab, tinib, olol, pril, statin, etc.)\n- Analyzed precision by drug class and drug class \u00d7 disease category\n\nKEY RESULTS:\n\n1. BY DRUG CLASS (overall):\n   | Drug Class | Precision |\n   |------------|-----------|\n   | Beta blockers | 40.0% |\n   | Statins | 34.0% |\n   | Steroids | 32.9% |\n   | ACE inhibitors | 23.9% |\n   | Antifungal azoles | 20.8% |\n   | mAbs | 1.9% |\n   | Kinase inhibitors | 4.1% |\n   | Fusion proteins | 2.6% |\n\n2. HIGH-CONFIDENCE COMBINATIONS (>30% precision):\n   - Steroid + autoimmune: 76.4% \u2190 BEST\n   - Statin + metabolic: 68.0%\n   - Steroid + dermatological: 60.0%\n   - Steroid + respiratory: 49.2%\n   - Steroid + renal: 48.6%\n   - Other + psychiatric: 45.9%\n\n3. LOW-CONFIDENCE COMBINATIONS (<5% precision):\n   - Kinase inhibitor + cancer: 4.6%\n   - Fusion protein + other: 3.2%\n   - mAb + other: 1.9%\n   - mAb + cancer: 1.6%\n   - Kinase inhibitor + other: 1.3%\n\n4. KEY INSIGHT: Biologics fail despite seeming appropriate\n   - mAbs for cancer: 1.6% (vs 32.9% for steroids)\n   - Kinase inhibitors for cancer: 4.6%\n   - Root cause: Sparse GT coverage (h190: biologics have few GT entries)\n\nACTIONABLE RULES:\n1. BOOST: Steroid + autoimmune/derma/respiratory/renal (+2 tier)\n2. BOOST: Statin + metabolic (+2 tier)\n3. WARN/FILTER: mAb predictions (1.9% overall precision)\n4. WARN/FILTER: Kinase inhibitor predictions (4.1% overall)",
+      "result_metric": "Steroid+autoimmune=76.4%, mAb=1.9%, Kinase=4.1%"
     },
     {
       "id": "h102",
@@ -5272,6 +5274,28 @@
       ],
       "findings": "Mechanism-Only Predictions for Cardiovascular - INVALIDATED.\n\nRESULTS:\n\n1. MECHANISM-ONLY R@30 FOR CV DISEASES:\n   - Diseases evaluated: 29 (with gene annotations)\n   - Mean R@30: 9.52%\n   - Median R@30: 4.17%\n   - Max R@30: 100% (rare cases)\n   - Diseases with R@30 > 15%: only 6/29 (21%)\n\n2. COMPARISON WITH kNN:\n   - kNN R@30: ~39% (on small CV test set)\n   - Mechanism R@30: ~4% (on same test set)\n   - Hybrid: ~24% (worse than kNN alone)\n\n3. WHY MECHANISM DOESN'T WORK FOR RECALL:\n   - h262 showed 33.7x PRECISION lift for CV (22.6% vs 0.7%)\n   - But precision \u2260 recall\n   - Mechanism filters out false positives (improves precision)\n   - Mechanism doesn't discover drugs kNN misses (doesn't improve recall)\n\n4. ROOT CAUSE:\n   - Many CV drugs work through systemic mechanisms (ACE inhibitors, beta-blockers)\n   - These don't have direct target\u2192disease gene overlap\n   - kNN captures \"similar diseases share treatments\" (collaborative filtering)\n   - Mechanism captures \"drugs targeting disease genes\" (different signal)\n\nCONCLUSION: \n- Keep mechanism for PRECISION (h263: +7.3pp for CV)\n- Don't use mechanism for RECALL (R@30)\n- Mechanism-only is NOT a replacement for kNN\n\nThis confirms the key insight from h260: mechanism helps precision, not recall.",
       "result_metric": "9.52% R@30 (below 15% threshold). Confirms mechanism for precision, not recall."
+    },
+    {
+      "id": "h265",
+      "title": "Drug Class-Based Tier Modifier",
+      "category": "precision",
+      "rationale": "h101 showed steroid+autoimmune=76.4% while mAb=1.9%. Implement as tier modifier: +2 for high-precision combos, -1 or filter for biologics.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Step 1: Implement drug class classifier (suffix patterns)",
+        "Step 2: Create tier modifier rules for high-confidence combos",
+        "Step 3: Add warning/filter for low-confidence combos (mAbs, kinase inhibitors)",
+        "Step 4: Evaluate precision change",
+        "Success criteria: >50% precision for top tier with drug class modifier"
+      ],
+      "dependencies": [
+        "h101"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -6308,6 +6332,12 @@
       "hypothesis_id": "h264",
       "learning": "Mechanism-only gives 9.5% R@30 for CV (below 15% threshold). h262's 33.7x lift was for PRECISION, not recall. Mechanism filters false positives but doesn't discover new drugs. Keep mechanism for confidence, not ranking.",
       "implication": "Use mechanism as precision filter only. kNN remains best for R@30."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h101",
+      "learning": "Drug class \u00d7 disease category is highly predictive: steroid+autoimmune=76.4%, mAb+cancer=1.6%. Biologics fail due to sparse GT coverage. Use drug class as tier modifier.",
+      "implication": "Boost steroid/statin combos, filter/warn biologics (mAb, kinase inhibitors)"
     }
   ],
   "collaborations": [
