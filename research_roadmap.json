@@ -5234,7 +5234,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Implement category-specific mechanism thresholds",
         "Step 2: CV/Neuro: Require mechanism support",
@@ -5247,8 +5247,8 @@
         "h262",
         "h259"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Category-Specific Mechanism Requirements - VALIDATED with strong precision gains.\n\nRULES IMPLEMENTED:\n\n1. HIGH-LIFT CATEGORIES (>10x): REQUIRE mechanism\n   - Cardiovascular (33.7x lift): Must have PPI mechanism support\n   - Neurological (13.3x lift): Must have PPI mechanism support\n\n2. MEDIUM-LIFT (5-10x): Tier boost if has mechanism\n   - Autoimmune (8.9x): +1 tier boost\n\n3. LOWER-LIFT (<5x): Optional mechanism, +1 tier boost if present\n   - Cancer, Hematological, Dermatological, Renal, etc.\n\n4. LOW-LIFT (<2x): No mechanism requirement, no tier boost\n   - Infectious (1.8x), GI (2.2x), Ophthalmic (1.9x)\n\nRESULTS:\n\n1. EXCLUSIONS:\n   - 236 predictions excluded (CV: 149, Neuro: 87)\n   - Only 2 GT drugs excluded (0.8% of excluded)\n   - High precision gain with minimal recall loss\n\n2. CARDIOVASCULAR:\n   - Before: 450 predictions, 15.3% precision\n   - After: 301 predictions, 22.6% precision\n   - Improvement: +7.3pp (47% relative)\n\n3. NEUROLOGICAL:\n   - Before: 211 predictions, 9.5% precision\n   - After: 124 predictions, 15.3% precision\n   - Improvement: +5.8pp (62% relative)\n\n4. OVERALL NEW TIER PRECISION:\n   - GOLDEN: 32.3% (1053 predictions)\n   - HIGH: 17.8% (4188 predictions)\n   - MEDIUM: 11.3% (5458 predictions)\n   - LOW: 4.4% (2482 predictions)\n\nCONCLUSION: Category-specific mechanism requirements dramatically improve precision for CV/Neuro with minimal recall loss. Should be implemented in production.",
+      "result_metric": "CV: +7.3pp (47% improvement), Neuro: +5.8pp (62% improvement)"
     },
     {
       "id": "h264",
@@ -6296,6 +6296,12 @@
       "hypothesis_id": "h262",
       "learning": "Mechanism support lift varies 20x by disease category: CV=33.7x (use mechanism), Neuro=13.3x, Autoimmune=8.9x (best precision 37.6%), Infectious=1.8x (skip mechanism). Category-specific thresholds needed.",
       "implication": "Require mechanism for CV/Neuro predictions, prefer for Autoimmune, optional for Infectious"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h263",
+      "learning": "Category-specific mechanism requirements work: CV precision +7.3pp (47%), Neuro +5.8pp (62%). Only 0.8% of excluded predictions were GT drugs - minimal false negatives.",
+      "implication": "Implement in production: require mechanism for CV/Neuro, tier boost for others"
     }
   ],
   "collaborations": [
