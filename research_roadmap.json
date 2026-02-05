@@ -6077,7 +6077,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Add n_classmates_in_neighbors to prediction features",
         "Step 2: Flag predictions with 3-4 classmates as FILTER tier",
@@ -6087,7 +6087,11 @@
       ],
       "dependencies": [
         "h289"
-      ]
+      ],
+      "started_date": "2026-02-05",
+      "completed_date": "2026-02-05",
+      "findings": "h302 VALIDATED: 3-4 classmate zone is negative signal, but effect is modest.\n\nDETAILED CLASSMATE PRECISION:\n- 0 classmates: 3.71% (isolated)\n- 1-2 classmates: 6.91-8.18%\n- 3-4 classmates: 2.69-3.09% (WORST)\n- 5 classmates: 4.63%\n- 6 classmates: 9.68%\n- **7 classmates: 16.33%** (BEST - 2x baseline!)\n- 8+ classmates: 9.24-9.97%\n\nFILTER ANALYSIS:\n| Filter | Removed | Precision | Improvement | Hits Lost |\n|--------|---------|-----------|-------------|-----------|\n| 3-4 | 7.4% | 8.85% | +0.44 pp | 2.5% |\n| 3-5 | 11.4% | 9.05% | +0.64 pp | 4.7% |\n| <6 | 28.6% | 9.82% | +1.41 pp | 16.6% |\n| <7 | 32.5% | 9.84% | +1.43 pp | 21.1% |\n\nKEY INSIGHT: 7 classmates is the \"golden zone\" for ATC-based predictions.\nThis suggests: when many drugs from the same ATC class treat similar diseases,\nthe kNN signal is most reliable.\n\nACTIONABLE: \n- MINIMUM filter: Remove 3-4 classmates (low cost: 7.4% predictions, 2.5% hits)\n- CONSERVATIVE filter: Keep only 6+ classmates (71% coverage, +1.4 pp precision)\n- The trade-off is roughly 1 pp improvement per 10% hits lost",
+      "result_metric": "3-4 zone 2.9% precision, 7 classmates 16.3% (2x baseline)"
     },
     {
       "id": "h303",
@@ -6126,6 +6130,27 @@
         "Success criteria: Understand mechanism behind successful cross-category predictions"
       ],
       "dependencies": [
+        "h289"
+      ]
+    },
+    {
+      "id": "h305",
+      "title": "Implement n_classmates Confidence Modifier",
+      "category": "confidence",
+      "rationale": "h302 found clear precision pattern by classmate count. 7 classmates = 16.3% precision (2x baseline), 3-4 classmates = 2.9% (worst). Implement as tier modifier in production.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Add n_classmates calculation to production_predictor.py",
+        "Step 2: Implement tier modifiers: 7 classmates \u2192 boost to GOLDEN, 3-4 \u2192 demote one tier",
+        "Step 3: Run full evaluation on production predictions",
+        "Step 4: Validate precision improvements",
+        "Success criteria: Measurable precision improvement in production tiers"
+      ],
+      "dependencies": [
+        "h302",
         "h289"
       ]
     }
@@ -7308,6 +7333,12 @@
       "hypothesis_id": "h289",
       "learning": "Class uniqueness hurts precision (7.04% vs 8.94%) but for surprising reasons: unique drugs have HIGHER training frequency (need strong signal to overcome class disadvantage). U-shaped classmate effect: 3-4 classmates = worst precision (2.7-3.1%), while 1-2 and 5+ classmates = better (7-9.6%).",
       "implication": "Don't penalize unique predictions with high drug frequency. Consider penalizing 3-4 classmate zone instead."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h302",
+      "learning": "ATC classmate count shows clear precision pattern: 7 classmates = 16.33% precision (2x baseline), 3-4 classmates = 2.9% (worst). Filtering 3-4 classmates removes 7.4% predictions but only loses 2.5% of hits.",
+      "implication": "Consider n_classmates as confidence signal. Can implement as tier modifier: 7 classmates \u2192 boost, 3-4 classmates \u2192 demote."
     }
   ],
   "collaborations": [
