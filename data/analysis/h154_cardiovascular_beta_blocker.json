@@ -1,0 +1,79 @@
+{
+  "n_cv_diseases": 18,
+  "n_predictions": 450,
+  "n_beta_blocker_preds": 53,
+  "criteria_results": [
+    {
+      "criteria": "beta_blocker (all)",
+      "n": 53,
+      "hits": 9,
+      "precision": 16.9811320754717
+    },
+    {
+      "criteria": "beta_blocker + rank<=20",
+      "n": 46,
+      "hits": 8,
+      "precision": 17.391304347826086
+    },
+    {
+      "criteria": "beta_blocker + rank<=15",
+      "n": 43,
+      "hits": 8,
+      "precision": 18.6046511627907
+    },
+    {
+      "criteria": "beta_blocker + rank<=10",
+      "n": 34,
+      "hits": 8,
+      "precision": 23.52941176470588
+    },
+    {
+      "criteria": "beta_blocker + rank<=5",
+      "n": 15,
+      "hits": 5,
+      "precision": 33.33333333333333
+    },
+    {
+      "criteria": "beta_blocker + mechanism",
+      "n": 18,
+      "hits": 3,
+      "precision": 16.666666666666664
+    },
+    {
+      "criteria": "beta_blocker + rank<=10 + mechanism",
+      "n": 16,
+      "hits": 3,
+      "precision": 18.75
+    },
+    {
+      "criteria": "beta_blocker + rank<=5 + mechanism",
+      "n": 9,
+      "hits": 1,
+      "precision": 11.11111111111111
+    },
+    {
+      "criteria": "beta_blocker + rank<=10 + freq>=5",
+      "n": 0,
+      "hits": 0,
+      "precision": 0.0
+    },
+    {
+      "criteria": "beta_blocker + rank<=10 + freq>=10",
+      "n": 0,
+      "hits": 0,
+      "precision": 0.0
+    },
+    {
+      "criteria": "beta_blocker + rank<=5 + freq>=5",
+      "n": 0,
+      "hits": 0,
+      "precision": 0.0
+    }
+  ],
+  "best_over_30": {
+    "criteria": "beta_blocker + rank<=5",
+    "n": 15,
+    "precision": 33.33333333333333
+  },
+  "success": true
+}

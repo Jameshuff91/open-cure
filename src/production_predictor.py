@@ -11,6 +11,7 @@ Unified pipeline integrating validated research findings:
   - Cancer: taxane + rank<=5 = 40%, alkylating + rank<=10 = 36.4%
   - Ophthalmic: antibiotic + rank<=15 = 62.5%, steroid + rank<=15 = 48%
   - Dermatological: topical_steroid + rank<=5 = 63.6%
+- h154: Cardiovascular beta_blocker + rank<=5 = 33.3% precision
 
 USAGE:
     # Get predictions for a disease
@@ -148,6 +149,10 @@ OPHTHALMIC_STEROIDS = {'dexamethasone', 'prednisolone', 'fluorometholone', 'lote
 # Dermatological drugs
 TOPICAL_STEROIDS = {'hydrocortisone', 'betamethasone', 'triamcinolone', 'clobetasol', 'fluocinolone',
                     'fluocinonide', 'mometasone', 'desonide', 'halobetasol', 'desoximetasone'}  # 63.6% rank<=5
+
+# h154: Cardiovascular beta-blockers achieve 33.3% precision at rank<=5
+BETA_BLOCKERS = {'metoprolol', 'atenolol', 'carvedilol', 'bisoprolol', 'propranolol',
+                 'labetalol', 'nebivolol', 'nadolol', 'timolol', 'esmolol', 'sotalol'}  # 33.3% rank<=5
 
 CATEGORY_KEYWORDS = {
     'autoimmune': ['autoimmune', 'lupus', 'rheumatoid', 'arthritis', 'scleroderma', 'myasthenia',
@@ -361,6 +366,13 @@ class DrugRepurposingPredictor:
         if train_frequency <= 2 and not mechanism_support:
             return ConfidenceTier.FILTER, False, None
 
+        # h153: Corticosteroids for metabolic diseases = FILTER (contraindicated)
+        # Corticosteroids cause hyperglycemia and worsen diabetes
+        if category == 'metabolic':
+            drug_lower = drug_name.lower()
+            if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
+                return ConfidenceTier.FILTER, False, None
+
         # Apply h136/h144 category-specific rescue for Tier 2/3
         if disease_tier > 1:
             rescued_tier = self._apply_category_rescue(
@@ -417,8 +429,13 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.HIGH
 
         elif category == 'cardiovascular':
+            # h136 generic rescue
             if rank <= 5 and mechanism_support:
                 return ConfidenceTier.HIGH  # 38.2% precision
+            # h154: Beta-blockers achieve 33.3% precision at rank<=5
+            drug_lower = drug_name.lower()
+            if rank <= 5 and any(bb in drug_lower for bb in BETA_BLOCKERS):
+                return ConfidenceTier.HIGH  # 33.3% precision
 
         elif category == 'respiratory':
             if rank <= 10 and train_frequency >= 15 and mechanism_support:

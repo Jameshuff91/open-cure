@@ -236,6 +236,14 @@ METABOLIC_DISEASES = [
     "diabetic", "glycemic",
 ]
 
+# h153: Corticosteroids cause hyperglycemia - contraindicated for diabetes
+# These drugs are commonly predicted for metabolic diseases but are HARMFUL
+CORTICOSTEROID_PATTERNS = [
+    r"prednisone", r"prednisolone", r"methylprednisolone", r"dexamethasone",
+    r"hydrocortisone", r"cortisone", r"betamethasone", r"triamcinolone",
+    r"fluticasone", r"budesonide", r"beclomethasone", r"fludrocortisone",
+]
+
 # Cardiac conditions where alpha blockers are harmful
 CARDIAC_CONDITIONS = [
     "heart failure", "congestive heart failure", "cardiac failure",
@@ -604,6 +612,22 @@ def filter_prediction(
             drug_type=drug_type,
             adjusted_score=0.0,
         )
+
+    # Rule 2b (h153): Corticosteroids for metabolic diseases
+    # Corticosteroids cause hyperglycemia and worsen diabetes
+    for pattern in CORTICOSTEROID_PATTERNS:
+        if re.search(pattern, drug_lower):
+            if is_metabolic_disease(disease):
+                return FilteredPrediction(
+                    drug=drug,
+                    disease=disease,
+                    original_score=score,
+                    confidence=ConfidenceLevel.EXCLUDED,
+                    reason="Corticosteroids cause hyperglycemia - contraindicated for diabetes (HARMFUL)",
+                    drug_type=drug_type,
+                    adjusted_score=0.0,
+                )
+            break  # Only check once
 
     # Rule 3: Alpha blockers for heart failure
     if drug_type == "alpha_blocker" and is_cardiac_condition(disease):

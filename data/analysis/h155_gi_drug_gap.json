@@ -1,0 +1,41 @@
+{
+  "hypothesis": "h155",
+  "title": "GI Drug Coverage Gap Analysis",
+  "summary": "GI drugs (PPIs, H2 blockers) DO work well when applicable, but only 4/27 GI diseases in DRKG have GI-specific drugs in ground truth",
+  "key_findings": {
+    "r@30_gi_diseases": "25.4% (262/1031 GT drugs hit)",
+    "ppi_precision": "38.5% (5/13) - good precision when predicted",
+    "h2_blocker_precision": "80.0% (12/15) - excellent precision when predicted",
+    "gi_diseases_with_gi_drugs_in_gt": "4/27 (14.8%)",
+    "diseases_with_gi_drugs": [
+      "duodenal ulcer",
+      "functional gastric disease",
+      "ulcer disease",
+      "short bowel syndrome"
+    ]
+  },
+  "root_cause": "Most GI diseases (IBD, liver diseases, etc.) are treated with immunosuppressants/biologics/corticosteroids, not GI-specific drugs. The 'failure' is actually correct behavior - model predicts what works.",
+  "gi_drug_coverage": {
+    "omeprazole": "in_drkg=True, median_rank=14, in_top30=6/27",
+    "pantoprazole": "in_drkg=True, median_rank=22, in_top30=2/27",
+    "lansoprazole": "in_drkg=True, median_rank=12, in_top30=2/27",
+    "esomeprazole": "in_drkg=True, median_rank=N/A, rarely appears",
+    "rabeprazole": "in_drkg=True, median_rank=16, in_top30=3/27",
+    "ranitidine": "in_drkg=True, median_rank=7, in_top30=4/27",
+    "famotidine": "in_drkg=True, median_rank=8, in_top30=3/27",
+    "cimetidine": "in_drkg=True, median_rank=35, in_top30=5/27",
+    "nizatidine": "in_drkg=True, median_rank=12, in_top30=3/27"
+  },
+  "drugs_dominating_gi_predictions": [
+    "Dexamethasone (6/10 diseases)",
+    "Metronidazole (5/10 diseases)",
+    "Prednisolone (4/10 diseases)",
+    "Octreotide (4/10 diseases)",
+    "Clarithromycin (4/10 diseases)",
+    "Azathioprine (3/10 diseases)",
+    "Methotrexate (3/10 diseases)",
+    "Cyclosporine (3/10 diseases)"
+  ],
+  "production_recommendation": "No rescue criteria needed for GI drugs - they already have high precision (38-80%) when predicted. The low overall GI R@30 (25.4%) is due to the diverse treatment landscape, not GI drug failure.",
+  "success": true
+}

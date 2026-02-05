@@ -5,9 +5,9 @@
     "criteria_results": [
       {
         "criteria": "antibiotic + rank<=15",
-        "n": 11,
+        "n": 9,
         "hits": 2,
-        "precision": 18.181818181818183
+        "precision": 22.22222222222222
       },
       {
         "criteria": "steroid + rank<=15",
@@ -17,9 +17,9 @@
       },
       {
         "criteria": "antibiotic OR steroid + rank<=15",
-        "n": 51,
+        "n": 49,
         "hits": 16,
-        "precision": 31.372549019607842
+        "precision": 32.6530612244898
       },
       {
         "criteria": "antibiotic OR steroid + rank<=20",
@@ -29,15 +29,15 @@
       },
       {
         "criteria": "antibiotic OR steroid OR immunosuppressant + rank<=15",
-        "n": 60,
+        "n": 58,
         "hits": 19,
-        "precision": 31.666666666666664
+        "precision": 32.758620689655174
       }
     ]
   },
   "cancer": {
     "n_predictions": 1800,
-    "base_precision": 8.555555555555555,
+    "base_precision": 8.61111111111111,
     "criteria_results": [
       {
         "criteria": "taxane + rank<=5",
@@ -65,21 +65,21 @@
       },
       {
         "criteria": "taxane OR alkylating OR checkpoint + rank<=10",
-        "n": 95,
+        "n": 94,
         "hits": 24,
-        "precision": 25.263157894736842
+        "precision": 25.53191489361702
       }
     ]
   },
   "dermatological": {
     "n_predictions": 300,
-    "base_precision": 17.666666666666668,
+    "base_precision": 18.333333333333332,
     "criteria_results": [
       {
         "criteria": "topical_steroid + rank<=5",
-        "n": 11,
-        "hits": 2,
-        "precision": 18.181818181818183
+        "n": 10,
+        "hits": 1,
+        "precision": 10.0
       },
       {
         "criteria": "biologic + rank<=20",

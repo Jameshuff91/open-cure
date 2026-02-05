@@ -1,6 +1,61 @@
 # Research Loop Progress
 
-## Current Session: h144 Metabolic Disease Rescue (2026-02-05)
+## Current Session: h153/h156 Safety & Combination Criteria (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested:**
+- h153: Corticosteroid Metabolic Contraindication - **VALIDATED**
+- h156: Combined Multi-Class Rescue Criteria - **INVALIDATED**
+
+### h153: Corticosteroid Metabolic Contraindication - VALIDATED
+
+Corticosteroids (prednisone, dexamethasone, etc.) were being predicted for diabetes but they CAUSE hyperglycemia.
+
+**Implementation:**
+1. Added CORTICOSTEROID_PATTERNS to confidence_filter.py
+2. Added Rule 2b to exclude corticosteroids for metabolic diseases
+3. Added safety check in production_predictor.py to assign FILTER tier
+
+**Verification:**
+- Type 2 diabetes: No corticosteroids in predictions (properly filtered)
+- Corticosteroids still allowed for appropriate uses (hematological, inflammatory)
+
+### h156: Combined Multi-Class Rescue Criteria - INVALIDATED
+
+Tested whether combining drug classes (e.g., "antibiotic OR steroid") maintains precision while improving coverage.
+
+**Results (5-seed evaluation):**
+| Category | Combined Criteria | Precision | vs Single Class |
+|----------|------------------|-----------|-----------------|
+| Ophthalmic | antibiotic OR steroid + rank<=15 | 32.8% | -2.2 pp vs steroid |
+| Cancer | taxane OR alkylating + rank<=10 | 37.5% | -12.5 pp vs alkylating |
+| Dermatological | topical_steroid OR biologic + rank<=10 | 30.8% | +20.8 pp vs topical |
+
+**Key Finding:** Drug classes within a category are NOT equally precise. Combining them averages out the signal. Single-class criteria (alkylating=50%, steroid=35%) are more precise than combinations.
+
+### New Hypotheses Generated
+- h163: Drug Class Precision Ranking - Find hidden high-precision classes
+- h164: Contraindication Database - Systematic safety filter expansion
+- h165: Per-Disease-Category Precision Calibration
+- h166: Drug-Disease Mechanism Path Tracing
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 74 |
+| Invalidated | 40 |
+| Inconclusive | 8 |
+| Blocked | 18 |
+| Deprioritized | 2 |
+| Pending | 27 |
+| **Total Tested** | **122** |
+
+---
+
+## Previous Session: h144 Metabolic Disease Rescue (2026-02-05)
 
 ### Session Summary
 
