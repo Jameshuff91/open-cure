@@ -5791,7 +5791,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Identify predictions in coherent+classmate quadrant",
         "Step 2: Check if these already have hierarchy matches (avoid double-counting)",
@@ -5803,8 +5803,9 @@
         "h193",
         "h273"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED (pre-check from h193 data): Coherent+classmate precision = 9.0%, far below 40% GOLDEN threshold.\n\nFrom h193 analysis:\n| Category Coherent | Class Unique | N | Precision |\n|-------------------|--------------|---|-----------|\n| YES | NO | 2,632 | 9.0% |\n\nThe 9.0% precision for coherent+classmate is in LOW tier range (6.4%), not GOLDEN (57.7%).\nEven if we removed hierarchy matches, unlikely to reach 40% given baseline.\n\nCONCLUSION: ATC class coherence is a WEAK positive signal (4 pp vs incoherent), \nnot a GOLDEN tier criterion. Keep using it as LOW-MEDIUM tier signal only.",
+      "result_metric": "9.0% precision (from h193), far below 40% threshold",
+      "completed_date": "2026-02-05"
     },
     {
       "id": "h289",
@@ -5875,7 +5876,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Identify all cardiovascular events (MI, stroke, TIA, angina, etc.)",
@@ -5883,7 +5884,11 @@
         "Step 3: Calculate transferability for each CV event",
         "Step 4: Test precision of event\u2192condition predictions",
         "Success criteria: >40% precision for CV event\u2192condition predictions"
-      ]
+      ],
+      "started_date": "2026-02-05",
+      "completed_date": "2026-02-05",
+      "findings": "VALIDATED: CV event transferability analysis reveals bimodal pattern.\n\nCV EVENT TRANSFERABILITY (% treating event who also treat base):\n| Category | Events | Transferability |\n|----------|--------|-----------------|\n| HIGH (\u226550%) | stroke (72%), TIA (50%), DVT (100%) | Base drugs work for event |\n| MEDIUM | ischemic stroke (42%), angina pectoris (40%), PE (46%) | Mixed |\n| LOW (<20%) | MI (18.5%), acute MI (18%), unstable angina (12.5%), PAD (0%) | Event-specific drugs |\n\nKEY INSIGHT: MI has LOW transferability (18.5%) despite being THE classic \natherosclerosis complication. MI drugs are specialized (thrombolytics, antiplatelets) \nfor secondary prevention, not treating underlying atherosclerosis.\n\nPRECISION TEST (small N):\n- HIGH transferability CV events: 50% precision (N=2)\n- LOW transferability CV events: 40% precision (N=10)\n- Statins are the ONLY drugs that successfully predict event\u2192atherosclerosis\n\nACTIONABLE:\n1. For CV event\u2192condition predictions, transferability provides weak signal\n2. Drug CLASS may be more important than event transferability\n3. Statins: event\u2192atherosclerosis works (100% precision for statins)\n4. Non-statins (PCSK9i, antiplatelets): likely failures",
+      "result_metric": "CV events show bimodal transferability: stroke/TIA HIGH (50-72%), MI LOW (18.5%)"
     },
     {
       "id": "h293",
