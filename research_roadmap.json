@@ -2642,8 +2642,8 @@
       "dependencies": [
         "h126"
       ],
-      "findings": "VALIDATED: Multiple golden criteria exceed 25% precision target\\!\n\nBEST CRITERIA: Tier1 + Freq>=15 + Mechanism = 57.9% precision (55/95 predictions)\n- This is 8x higher than 7.2% baseline precision\n- Captures real hits: steroids for autoimmune diseases, anesthetics for dermatitis\n\nOTHER STRONG CRITERIA:\n| Criteria                      | Precision | N     | % of Total |\n|-------------------------------|-----------|-------|------------|\n| tier1_freq>=15_mech           | 57.9%     | 95    | 0.7%       |\n| tier1_freq>=10_mech           | 57.1%     | 105   | 0.8%       |\n| tier1_freq>=5_mech            | 54.3%     | 140   | 1.0%       |\n| rank<=5_freq>=15_mech         | 34.7%     | 213   | 1.6%       |\n| freq>=15_with_mech            | 27.4%     | 478   | 3.5%       |\n\nKEY INSIGHT:\nTier 1 categories (autoimmune, dermatological, psychiatric, ophthalmic) + \nhigh-frequency drugs with mechanism support are \"golden\" predictions.\n\nPRODUCTION RECOMMENDATION:\n1. Flag predictions matching tier1_freq>=10_mech as HIGH CONFIDENCE\n2. These should be prioritized for expert review\n3. 57% precision = more than half will be correct\n\nNote: The sample predictions are dominated by corticosteroids (Prednisone, Dexamethasone, etc.)\nfor autoimmune conditions - clinically sensible pattern.\n",
-      "result_metric": "Tier1+Freq>=15+Mech: 57.9% precision (8x baseline), 95 predictions"
+      "findings": "VALIDATED: Golden prediction criteria achieve 57.9% precision (far exceeding 25% target).\n\nBEST CRITERIA: Tier 1 + Frequency \u2265 15 + Mechanism Support\n- Precision: 57.9% (55/95 predictions)\n- Coverage: 1.0% of all predictions\n- These are autoimmune/dermatological/psychiatric diseases with frequent drugs that have mechanistic overlap\n\nOTHER HIGH-PRECISION CRITERIA:\n| Criteria                      | Precision | N     |\n|-------------------------------|-----------|-------|\n| Tier1 + Freq>=15 + Mech      | 57.9%     | 95    |\n| Tier1 + Freq>=10 + Mech      | 57.1%     | 105   |\n| Tier1 + Freq>=5 + Mech       | 53.9%     | 141   |\n| Rank<=5 + Freq>=15 + Mech    | 33.5%     | 221   |\n| Rank<=10 + Freq>=15 + Mech   | 33.4%     | 365   |\n| Freq>=20 + Mech              | 28.3%     | 434   |\n\nKEY INSIGHTS:\n1. Tier 1 categories (autoimmune, dermatological, psychiatric, ophthalmic) are CRITICAL for high precision\n2. Without tier 1 filter, best precision is ~28% (vs 58% with tier 1)\n3. This contrasts with h128: combining freq+score failed (-0.65 pp synergy), but freq+mech+tier succeeds (+39 pp)\n4. The difference is tier: it's a strong categorical filter, not a continuous signal\n\nPRODUCTION APPLICATION:\n- For \"golden\" high-confidence predictions: Tier 1 + Freq\u226515 + Mech \u2192 58% precision\n- For broader coverage with moderate confidence: Freq\u226515 + Mech \u2192 27.6% precision (474 preds)\n- Sample golden: Corticosteroids for autoimmune/dermatological diseases (prednisolone, hydrocortisone, etc.)",
+      "result_metric": "Tier1+Freq\u226515+Mech achieves 57.9% precision (N=95)"
     },
     {
       "id": "h133",
@@ -3230,6 +3230,12 @@
       "hypothesis_id": "h132",
       "learning": "Tier1 categories (autoimmune, dermatological, psychiatric, ophthalmic) + freq>=15 + mechanism achieves 57.9% precision (8x baseline). Golden predictions are dominated by corticosteroids for autoimmune diseases.",
       "implication": "Production should flag Tier1+freq>=10+mech as HIGH CONFIDENCE for expert review. Non-Tier1 categories need different criteria."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h132",
+      "learning": "Golden predictions exist! Tier 1 + Freq\u226515 + Mech = 57.9% precision. The key is tier 1 filter - without it, max precision is ~28%. Categorical filters (tier) outperform continuous thresholds (score).",
+      "implication": "Production system should tier predictions: GOLDEN (tier1+freq+mech), HIGH (freq+mech), MEDIUM (freq only)"
     }
   ],
   "collaborations": [
