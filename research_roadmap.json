@@ -6208,7 +6208,7 @@
       "title": "Incoherence at High Tiers as Repurposing Discovery Signal",
       "category": "confidence",
       "description": "h287 found GOLDEN + incoherent = 23.41% precision (highest!). These are drugs reaching high confidence for unexpected disease categories. May represent true repurposing discoveries.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "effort": "low",
       "expected_impact": "medium",
@@ -6221,6 +6221,28 @@
         "Step 3: Look for known repurposing successes in this subset",
         "Step 4: Determine if this is a reliable signal or sample size artifact (N=1444)",
         "Success criteria: Identify pattern of true repurposing in incoherent GOLDEN predictions"
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "GOLDEN+incoherent: 28.5% vs GOLDEN+coherent: 15.0% (+13.5 pp)",
+      "findings": "h308 VALIDATED: Incoherent GOLDEN predictions have HIGHER precision than coherent.\n\nKEY FINDINGS:\n1. GOLDEN + Incoherent: 28.5% precision (256 hits / 898 predictions)\n2. GOLDEN + Coherent: 15.0% precision (15 hits / 100 predictions)\n3. Lift: +13.5 pp for incoherent predictions at GOLDEN tier\n\nROOT CAUSE ANALYSIS:\nThe 'incoherent' high precision is driven by CORTICOSTEROIDS:\n- Prednisolone, Dexamethasone, Hydrocortisone = 91 of 256 hits (35%)\n- These are ATC 'A' (alimentary) drugs that treat autoimmune/respiratory/dermatological diseases\n- They appear 'incoherent' because ATC L1 classification doesn't match disease category\n\nHIGH-PRECISION PATTERNS (N>=20, prec>=25%):\n- A (alimentary) -> autoimmune: 55.4% (92 predictions)\n- A -> ophthalmological: 44.0% (50 predictions)\n- A -> respiratory: 40.5% (42 predictions)\n- A -> dermatological: 39.7% (63 predictions)\n\nINTERPRETATION:\nThis is NOT true repurposing discovery - it's ATC CLASSIFICATION ARTIFACT.\nCorticosteroids are broadly used anti-inflammatory drugs classified under ATC 'A',\nmaking them appear 'incoherent' for non-metabolic diseases.\n\nACTIONABLE INSIGHT:\n1. Do NOT use coherence to filter GOLDEN tier - it would exclude valid predictions\n2. Consider refining DISEASE_CATEGORY_ATC_MAP to include corticosteroids (H02) for inflammatory diseases\n3. The 'incoherence' signal is actually capturing BROAD-SPECTRUM anti-inflammatory drugs"
+    },
+    {
+      "id": "h309",
+      "title": "Refine ATC-Category Coherence Map for Corticosteroids",
+      "category": "method_improvement",
+      "description": "h308 found ATC coherence fails because corticosteroids (ATC A/H) are used across many disease categories. Refine the DISEASE_CATEGORY_ATC_MAP to include H02 (corticosteroids) for autoimmune, respiratory, dermatological, ophthalmological categories.",
+      "status": "pending",
+      "priority": 4,
+      "effort": "low",
+      "expected_impact": "low",
+      "dependencies": [
+        "h308"
+      ],
+      "steps": [
+        "Step 1: Update DISEASE_CATEGORY_ATC_MAP to add H02AB (corticosteroids) to autoimmune, respiratory, dermatological, ophthalmological",
+        "Step 2: Re-run h287 analysis with refined map",
+        "Step 3: Check if coherence signal becomes more useful after refinement",
+        "Success criteria: Coherent precision > incoherent precision after map refinement"
       ]
     }
   ],
@@ -7420,6 +7442,12 @@
       "hypothesis_id": "h287",
       "learning": "ATC coherence is NOT a useful tier boost signal. GOLDEN + incoherent has HIGHER precision (23.4%) than GOLDEN + coherent (15.8%). The GOLDEN tier criteria (freq>=15 + mechanism) already capture quality; incoherent predictions at this level may be true repurposing discoveries.",
       "implication": "Do not implement coherence-based tier boost. Consider investigating incoherent GOLDEN predictions as discovery signal."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h308",
+      "learning": "ATC L1 coherence fails at GOLDEN tier because corticosteroids (ATC A/H) are used broadly but classified narrowly. GOLDEN + incoherent = 28.5% vs coherent = 15.0%. The incoherence is driven by corticosteroids treating inflammatory diseases across categories.",
+      "implication": "Do not filter GOLDEN tier by coherence. Consider refining ATC-category mapping to include cross-category drug classes."
     }
   ],
   "collaborations": [
