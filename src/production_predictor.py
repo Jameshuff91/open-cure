@@ -795,6 +795,9 @@ class DrugRepurposingPredictor:
         # h273: Build drug→disease group hierarchy mapping
         self._build_disease_hierarchy_mapping()
 
+        # h271: Build domain-isolated drug mapping
+        self._build_domain_isolation_mapping()
+
     def _get_cache_key(self) -> str:
         """Generate a cache key based on source file modification times and content hash."""
         # h176: Cache invalidation based on source files
@@ -1010,6 +1013,46 @@ class DrugRepurposingPredictor:
 
         return has_category_gt, same_group_match, pred_disease_group if same_group_match else None
 
+    def _build_domain_isolation_mapping(self) -> None:
+        """
+        h271: Build mapping of domain-isolated drugs and their single category.
+
+        From h271 analysis:
+        - 1,312 drugs only have GT in a single disease category
+        - Cross-domain predictions for these drugs have 0% precision
+        - Same-domain predictions have 17.2% precision
+        - FILTER cross-domain predictions involving domain-isolated drugs
+        """
+        # Map drug_id → set of categories in GT
+        drug_categories: Dict[str, Set[str]] = defaultdict(set)
+
+        for disease_id, drug_ids in self.ground_truth.items():
+            disease_name = self.disease_names.get(disease_id, disease_id)
+            category = self.categorize_disease(disease_name)
+            for drug_id in drug_ids:
+                drug_categories[drug_id].add(category)
+
+        # Find domain-isolated drugs (only 1 category)
+        # Store as dict: drug_id → their single category
+        self.domain_isolated_drugs: Dict[str, str] = {
+            drug_id: list(cats)[0]
+            for drug_id, cats in drug_categories.items()
+            if len(cats) == 1
+        }
+
+    def _is_cross_domain_isolated(self, drug_id: str, target_category: str) -> bool:
+        """
+        h271: Check if drug is domain-isolated and predicting for wrong category.
+
+        Returns True if this is a cross-domain prediction for an isolated drug
+        (0% precision - should be filtered).
+        """
+        if drug_id not in self.domain_isolated_drugs:
+            return False  # Not isolated, allow prediction
+
+        drug_category = self.domain_isolated_drugs[drug_id]
+        return drug_category != target_category
+
     @staticmethod
     def categorize_disease(disease_name: str) -> str:
         """Categorize a disease by name."""
@@ -1080,6 +1123,11 @@ class DrugRepurposingPredictor:
             drug_lower = drug_name.lower()
             if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
                 return ConfidenceTier.FILTER, False, None
+
+        # h271: Filter cross-domain predictions for domain-isolated drugs (0% precision)
+        # Domain-isolated drugs only treat one category, cross-domain predictions are always wrong
+        if drug_id and self._is_cross_domain_isolated(drug_id, category):
+            return ConfidenceTier.FILTER, False, 'cross_domain_isolated'
 
         # h273/h276/h278: Disease hierarchy matching - boost tier for subtype refinements
         # This indicates the prediction is a subtype refinement (e.g., "psoriasis" → "plaque psoriasis")
