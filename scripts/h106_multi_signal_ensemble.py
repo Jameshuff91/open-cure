@@ -154,13 +154,28 @@ def load_drug_targets() -> Dict[str, Set[str]]:
 
 
 def load_disease_genes() -> Dict[str, Set[str]]:
-    """Load disease -> associated genes mapping."""
+    """Load disease -> associated genes mapping.
+
+    Handles format mismatch: file has 'MESH:xxx' keys,
+    but ground truth uses 'drkg:Disease::MESH:xxx' format.
+    Returns dict with BOTH formats for flexible lookup.
+    """
     genes_path = REFERENCE_DIR / "disease_genes.json"
     if not genes_path.exists():
         return {}
     with open(genes_path) as f:
         disease_genes = json.load(f)
-    return {k: set(v) for k, v in disease_genes.items()}
+
+    # Create dict with both key formats for compatibility
+    result = {}
+    for k, v in disease_genes.items():
+        gene_set = set(v)
+        result[k] = gene_set  # Original format: 'MESH:xxx'
+        # Also add drkg format: 'drkg:Disease::MESH:xxx'
+        if k.startswith('MESH:'):
+            drkg_key = f"drkg:Disease::{k}"
+            result[drkg_key] = gene_set
+    return result
 
 
 def categorize_disease(disease_name: str) -> str:

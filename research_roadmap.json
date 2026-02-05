@@ -2219,7 +2219,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Identify ID format mismatch in h106_multi_signal_ensemble.py",
         "Step 2: Update compute_mechanism_support() to handle both formats",
@@ -2230,8 +2230,8 @@
       "dependencies": [
         "h106"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Fixed disease ID format mismatch in h106_multi_signal_ensemble.py.\n\nBEFORE FIX:\n- Mechanism support: 0 predictions with support (data loading failure)\n- Top 10% ensemble: 22.04% precision\n- Top 20% ensemble: 17.42% precision\n\nAFTER FIX:\n- Mechanism support: 2,718 predictions (20.1%) have support\n- WITH support: 12.10% precision vs WITHOUT: 5.96% (+6.14 pp)\n- Top 10% ensemble: 22.56% precision (+0.52 pp)\n- Top 20% ensemble: 18.23% precision (+0.81 pp)\n\nFIX: Modified load_disease_genes() to return dict with BOTH key formats:\n- Original: 'MESH:xxx'\n- Added: 'drkg:Disease::MESH:xxx'\n\nMechanism support coefficient increased from 0.000 to 0.259, now properly\ncontributing to the ensemble model.",
+      "result_metric": "+0.52 pp at top 10% (22.04% \u2192 22.56%)"
     }
   ],
   "completed": [
