@@ -1,0 +1,121 @@
+{
+  "hypothesis": "h205",
+  "title": "Lymphoma Mechanism-Based Production Rules",
+  "key_findings": {
+    "adcetris_in_pool": false,
+    "rituximab_in_pool": true,
+    "cd30_diseases": 2,
+    "cd20_diseases": 6,
+    "cd30_has_target_predicted": 0,
+    "cd20_has_target_predicted": 3,
+    "cd30_precision": 0.0,
+    "cd20_precision": 10.0
+  },
+  "root_cause": {
+    "cd30_failure": "Adcetris NOT IN DRKG DRUG POOL - cannot be predicted",
+    "cd20_partial": "Rituximab in pool but not being recommended for all CD20+ diseases"
+  },
+  "disease_analysis": [
+    {
+      "disease": "small lymphocytic lymphoma",
+      "type": "CD20+",
+      "n_predictions": 30,
+      "known_hits": 7,
+      "precision": 23.333333333333332,
+      "has_rituximab": true,
+      "has_adcetris": false,
+      "current_tier": "MEDIUM"
+    },
+    {
+      "disease": "lymphoma",
+      "type": "unclassified",
+      "n_predictions": 30,
+      "known_hits": 0,
+      "precision": 0.0,
+      "has_rituximab": false,
+      "has_adcetris": false,
+      "current_tier": "MEDIUM"
+    },
+    {
+      "disease": "lowgrade b cell nonhodgkin lymphoma",
+      "type": "both",
+      "n_predictions": 30,
+      "known_hits": 4,
+      "precision": 13.333333333333334,
+      "has_rituximab": false,
+      "has_adcetris": false,
+      "current_tier": "MEDIUM"
+    },
+    {
+      "disease": "cutaneous t cell lymphoma",
+      "type": "CD30+",
+      "n_predictions": 30,
+      "known_hits": 0,
+      "precision": 0.0,
+      "has_rituximab": false,
+      "has_adcetris": false,
+      "current_tier": "LOW"
+    },
+    {
+      "disease": "mantle cell lymphoma",
+      "type": "CD20+",
+      "n_predictions": 30,
+      "known_hits": 4,
+      "precision": 13.333333333333334,
+      "has_rituximab": true,
+      "has_adcetris": false,
+      "current_tier": "MEDIUM"
+    },
+    {
+      "disease": "follicular lymphoma",
+      "type": "CD20+",
+      "n_predictions": 30,
+      "known_hits": 3,
+      "precision": 10.0,
+      "has_rituximab": false,
+      "has_adcetris": false,
+      "current_tier": "MEDIUM"
+    },
+    {
+      "disease": "burkitt lymphoma",
+      "type": "CD20+",
+      "n_predictions": 30,
+      "known_hits": 0,
+      "precision": 0.0,
+      "has_rituximab": false,
+      "has_adcetris": false,
+      "current_tier": "LOW"
+    },
+    {
+      "disease": "anaplastic large cell lymphoma",
+      "type": "CD30+",
+      "n_predictions": 30,
+      "known_hits": 0,
+      "precision": 0.0,
+      "has_rituximab": false,
+      "has_adcetris": false,
+      "current_tier": "LOW"
+    },
+    {
+      "disease": "diffuse large b cell lymphoma dlbcl",
+      "type": "CD20+",
+      "n_predictions": 30,
+      "known_hits": 2,
+      "precision": 6.666666666666667,
+      "has_rituximab": false,
+      "has_adcetris": false,
+      "current_tier": "MEDIUM"
+    },
+    {
+      "disease": "lymphoplasmacytic lymphoma",
+      "type": "CD20+",
+      "n_predictions": 30,
+      "known_hits": 2,
+      "precision": 6.666666666666667,
+      "has_rituximab": true,
+      "has_adcetris": false,
+      "current_tier": "MEDIUM"
+    }
+  ],
+  "actionable_insight": "Adcetris missing from DRKG - manual rules or external data needed"
+}

@@ -4057,7 +4057,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Define CD30+ keywords: hodgkin, anaplastic large cell, ALCL, T-cell lymphoma",
         "Define CD20+ keywords: B-cell, follicular, DLBCL, burkitt, NHL",
@@ -4067,6 +4067,65 @@
       ],
       "dependencies": [
         "h204"
+      ],
+      "findings": "VALIDATED with critical finding:\n\n1. Adcetris NOT in DRKG drug pool - the model CANNOT predict Adcetris because it lacks embeddings.\n   This is a DRKG coverage gap affecting ALL CD30+ lymphomas (Hodgkin, ALCL, PTCL, CTCL).\n   \n2. Rituximab IS in pool but only predicted for 3/6 CD20+ diseases:\n   - \u2713 Small lymphocytic lymphoma\n   - \u2713 Mantle cell lymphoma  \n   - \u2713 Lymphoplasmacytic lymphoma\n   - \u2717 Follicular lymphoma (SHOULD BE - in GT)\n   - \u2717 Burkitt lymphoma (SHOULD BE - in GT)\n   - \u2717 DLBCL (SHOULD BE - in GT)\n\n3. Current precision:\n   - CD30+ (Adcetris target): 0.0% (0/60 predictions hit)\n   - CD20+ (Rituximab target): 10.0% (18/180 predictions hit)\n   \n4. Potential improvement: If Rituximab were added to missing CD20+ diseases,\n   could improve 3 diseases from 0-10% precision to ~33% (one correct drug per 30).\n\nROOT CAUSE: DRKG drug coverage gap, not model failure. Mechanism rules cannot help\nif the target drug has no embeddings.",
+      "result_metric": "CD30+ 0%, CD20+ 10% precision; Adcetris MISSING from DRKG"
+    },
+    {
+      "id": "h206",
+      "title": "Manual Rule Injection for Missing DRKG Drugs",
+      "hypothesis": "h205 found Adcetris is missing from DRKG despite FDA approval. Create a manual rules layer that can inject known drug-disease pairs for drugs missing embeddings. Priority: Adcetris\u2192CD30+ lymphomas, other biologics missing from DRKG.",
+      "category": "production",
+      "priority": 2,
+      "effort": "medium",
+      "expected_impact": "medium",
+      "status": "pending",
+      "dependencies": [
+        "h205"
+      ],
+      "steps": [
+        "Identify all FDA-approved biologics in GT that are NOT in DRKG",
+        "Create manual lookup table for missing drug\u2192disease mappings",
+        "Implement injection layer in production pipeline",
+        "Validate that manual rules improve precision without harming recall"
+      ]
+    },
+    {
+      "id": "h207",
+      "title": "Rituximab Prediction Gap Analysis: Why Missing for Some CD20+ Diseases?",
+      "hypothesis": "Rituximab IS in the drug pool but NOT predicted for follicular lymphoma, Burkitt, and DLBCL. Investigate why: Is it due to kNN neighbor composition? Similarity scores? Other drugs dominating?",
+      "category": "error_analysis",
+      "priority": 2,
+      "effort": "low",
+      "expected_impact": "medium",
+      "status": "pending",
+      "dependencies": [
+        "h205"
+      ],
+      "steps": [
+        "Get kNN neighbors for follicular/Burkitt/DLBCL diseases",
+        "Check if neighbors have Rituximab in their GT",
+        "Analyze which drugs ARE being recommended instead",
+        "Determine if similarity threshold or neighbor selection is the issue"
+      ]
+    },
+    {
+      "id": "h208",
+      "title": "DRKG Biologic Coverage Audit",
+      "hypothesis": "Adcetris missing suggests broader biologic coverage gap. Audit ALL biologics in Every Cure GT against DRKG to quantify the gap. This affects ALL targeted therapy predictions.",
+      "category": "data",
+      "priority": 3,
+      "effort": "medium",
+      "expected_impact": "high",
+      "status": "pending",
+      "dependencies": [
+        "h205"
+      ],
+      "steps": [
+        "Extract all drugs with mab/cept suffixes from GT",
+        "Check embedding coverage in DRKG",
+        "Calculate coverage gap percentage",
+        "Prioritize missing drugs by disease impact (# indications)"
       ]
     }
   ],
@@ -4852,6 +4911,12 @@
       "hypothesis_id": "h200",
       "learning": "Brain tumor 0% precision is due to DRKG drug coverage gap, not model failure. Temozolomide and other brain-specific drugs are simply not in the knowledge graph. This is a data limitation, not algorithmic.",
       "implication": "For categories with drug coverage gaps, consider manual rules or exclusion from high-confidence tiers"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h205",
+      "learning": "DRKG drug coverage is the bottleneck for targeted therapies - Adcetris (CD30 antibody-drug conjugate) is not in DRKG despite FDA approval for lymphoma. Mechanism-based rules require the drug to exist in the embedding space first.",
+      "implication": "For new targeted therapies (biologics, ADCs), need external data injection or manual rules - cannot rely on DRKG coverage"
     }
   ],
   "collaborations": [
