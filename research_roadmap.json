@@ -3482,7 +3482,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Create disease->drug class mappings for psychiatric, cardiovascular, metabolic",
         "Test if drug-class prediction improves coverage for these categories",
@@ -3490,7 +3490,9 @@
       ],
       "dependencies": [
         "h171"
-      ]
+      ],
+      "findings": "VALIDATED: Drug-class prediction extends well to psychiatric but NOT metabolic.\n\n**PSYCHIATRIC: +7.9 pp vs kNN (57.3% vs 49.4%)**\n- 70% of diseases have drug class mappings\n- When mapped, 81.9% mean coverage\n- Best for: schizophrenia (+60pp), depression (+38pp), anxiety (+33pp), ADHD (+57pp), bipolar (+50pp)\n- kNN wins for: alcohol withdrawal (100% kNN vs 0% DC), bulimia nervosa (100% vs 0%)\n- Reason: kNN has similar disease neighbors that share treatments\n\n**METABOLIC: -11.7 pp vs kNN (20.8% vs 32.4%)**\n- Only 40% of diseases have drug class mappings\n- Many rare/enzyme diseases have no standard drug classes (storage diseases, enzyme deficiencies)\n- kNN excels for rare diseases: Zollinger-Ellison 100%, nephropathic cystinosis 100%, adrenal hyperplasia 77%\n- Drug-class wins for COMMON diseases: T2D (+37pp), obesity (+62pp), hyperlipidemia (+24pp)\n\n**COMPLEMENTARITY:**\n- Methods are complementary, not competitive\n- Use drug-class for: psychiatric, common metabolic (T2D, dyslipidemia, obesity, thyroid)\n- Use kNN for: rare metabolic, enzyme diseases, novel categories\n\n**IMPLICATIONS:**\n1. Integrate drug-class for psychiatric into production predictor\n2. For metabolic, use hybrid approach: drug-class for common diseases, kNN for rare\n3. Create disease complexity routing logic",
+      "result_metric": "Psychiatric +7.9pp, Metabolic -11.7pp (complementary)"
     },
     {
       "id": "h175",
@@ -4479,6 +4481,64 @@
       ],
       "status": "pending",
       "priority": 4
+    },
+    {
+      "id": "h227",
+      "title": "Hybrid Drug-Class/kNN Routing for Production",
+      "category": "method_improvement",
+      "rationale": "h174 showed drug-class beats kNN for common diseases but kNN beats drug-class for rare diseases. A hybrid router could use drug-class when mapping exists with >50% coverage, else fall back to kNN.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Define disease complexity/rarity criteria (GT count, disease name patterns)",
+        "Implement routing logic: drug-class for common diseases, kNN for rare",
+        "Evaluate combined approach vs pure kNN and pure drug-class",
+        "Integrate into production predictor if improvement confirmed"
+      ],
+      "dependencies": [
+        "h174",
+        "h171"
+      ]
+    },
+    {
+      "id": "h228",
+      "title": "Expand Psychiatric Drug-Class Mappings",
+      "category": "method_improvement",
+      "rationale": "h174 showed alcohol withdrawal and bulimia nervosa have 0% drug-class coverage but 100% kNN coverage. Adding these disease-specific mappings could close the gap.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Add alcohol withdrawal -> benzodiazepine, anticonvulsant, naltrexone",
+        "Add bulimia nervosa -> SSRI (fluoxetine approved)",
+        "Add conduct disorder -> antipsychotic (haloperidol, chlorpromazine)",
+        "Re-evaluate psychiatric drug-class coverage"
+      ],
+      "dependencies": [
+        "h174"
+      ]
+    },
+    {
+      "id": "h229",
+      "title": "Drug-Class Prediction for Cardiovascular",
+      "category": "method_improvement",
+      "rationale": "h174 skipped cardiovascular. CV has clear disease-drug mappings: HTN->ACE/ARB/CCB/diuretic, HF->diuretic/ACE/beta-blocker, arrhythmia->antiarrhythmic. May provide similar benefits as psychiatric.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Create CV disease->drug class mappings (HTN, HF, arrhythmia, CAD)",
+        "Define drug class members for CV drugs",
+        "Evaluate vs kNN baseline",
+        "Compare to existing h217 (HF rescue rules)"
+      ],
+      "dependencies": [
+        "h174"
+      ]
     }
   ],
   "completed": [
@@ -5347,6 +5407,12 @@
       "hypothesis_id": "h166",
       "learning": "Mechanism paths (drug->gene->disease) provide 2.2x precision lift. 22% of predictions have direct paths. More connecting genes moderately improves precision up to ~5 genes, then plateaus.",
       "implication": "Mechanism support is a valid confidence signal. Add to production output and consider in tiering. 2-hop paths may increase coverage."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h174",
+      "learning": "Drug-class prediction is COMPLEMENTARY to kNN, not superior. Works for common diseases with standard treatments (psychiatric, common metabolic) but fails for rare/enzyme diseases where kNN excels. Hybrid routing is needed.",
+      "implication": "Production predictor should route by disease complexity: drug-class for common, kNN for rare"
     }
   ],
   "collaborations": [
