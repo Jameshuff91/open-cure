@@ -1,13 +1,14 @@
 # Research Loop Progress
 
-## Current Session: h115 (2026-02-05)
+## Current Session: h115, h118 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
+**Status:** In Progress
 **Hypotheses Tested This Session:**
 - h115: Ensemble Simplification - **VALIDATED**
+- h118: Minimal 2-Feature Confidence Score - **INVALIDATED**
 
 ### Key Findings
 
@@ -33,28 +34,51 @@ Tested whether removing redundant features from the 5-feature confidence ensembl
 - Features: mechanism_support, train_frequency, tier_inv, norm_score
 - Precision: 22.04% at top 10%
 
+---
+
+**h118: Minimal 2-Feature Confidence Score - INVALIDATED**
+
+Tested if mechanism_support + train_frequency alone could match 4-feature ensemble.
+
+| Model                    | Features | Top 10% | Top 20% |
+|--------------------------|----------|---------|---------|
+| 4-feature (h115 best)    | 4        | 21.89%  | 17.83%  |
+| 2-feature (mech + freq)  | 2        | 19.38%  | 16.09%  |
+| Frequency only           | 1        | 18.79%  | 15.90%  |
+| Mechanism only           | 1        | 10.36%  | 12.24%  |
+
+**KEY FINDINGS:**
+1. 2-feature model loses -2.51 pp vs 4-feature (exceeds 2 pp tolerance)
+2. Frequency alone (18.79%) is nearly as good as 2-feature
+3. Mechanism alone (10.36%) performs poorly as standalone
+4. tier_inv and norm_score contribute ~2.5 pp to the ensemble
+
+**CONCLUSION:** 4-feature model remains the recommended production model.
+
 ### New Hypotheses Added
 - h118: Minimal 2-Feature Confidence Score
 - h119: Non-Linear Feature Interactions for Confidence
+- h120: 3-Feature Confidence Model (Remove Mechanism)
 
 ### Session Statistics
-- Hypotheses tested: 1 (h115)
+- Hypotheses tested: 2 (h115, h118)
 - Validated: 1
-- New hypotheses added: 2
+- Invalidated: 1
+- New hypotheses added: 3
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
 | Validated | 49 |
-| Invalidated | 31 |
+| Invalidated | 32 |
 | Inconclusive | 5 |
 | Blocked | 15 |
 | Pending | 17 |
-| **Total Tested** | **85** |
+| **Total Tested** | **86** |
 
 ### Next Steps
-1. **h118**: Test minimal 2-feature confidence model
-2. **h119**: Test non-linear feature interactions
+1. **h119**: Test non-linear feature interactions
+2. **h120**: Test 3-feature model (remove mechanism)
 3. **h116**: Per-disease calibration for category tier
 
 ---

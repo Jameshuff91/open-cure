@@ -1952,7 +1952,7 @@
         "Step 4: Compare to gene-based similarity",
         "Step 5: Evaluate on benchmark"
       ],
-      "status": "pending"
+      "status": "in_progress"
     },
     {
       "id": "h100",
@@ -2286,7 +2286,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Step 1: Compute per-disease hit rate from the 5-seed kNN data",
         "Step 2: Replace category tier with disease-specific historical hit rate",
@@ -2296,7 +2296,9 @@
       "dependencies": [
         "h111",
         "h71"
-      ]
+      ],
+      "findings": "INVALIDATED: Category-level calibration does NOT improve hit prediction vs coarse tiers.\n\nMETHODOLOGY:\n- Computed per-disease hit rates from training data using leave-one-out CV\n- Aggregated to category-level averages (to avoid test leakage)\n- Applied category averages to score test predictions\n\nRESULTS (13,522 predictions, 5 seeds):\n\nCORRELATION WITH HITS:\n| Signal               | r     | p-value |\n|----------------------|-------|---------|\n| Category Tier (inv)  | 0.082 | 0.0000  |\n| Calibrated Cat Rate  | 0.072 | 0.0000  |\n\nCalibrated rate is WEAKER than coarse tier (0.072 < 0.082)!\n\nCALIBRATION ERRORS (large):\n| Category      | Actual | Predicted | Error  |\n|---------------|--------|-----------|--------|\n| dermatological| 19.5%  | 60.0%     | 40.5%  |\n| infectious    | 9.9%   | 46.7%     | 36.7%  |\n| other         | 5.8%   | 37.8%     | 32.0%  |\n| respiratory   | 12.3%  | 40.6%     | 28.3%  |\n\nPRECISION BY CALIBRATION LEVEL:\n- LOW (\u226435.6%): 6.07% precision\n- HIGH (>37.8%): 11.24% precision\n- Difference: +5.17 pp\n\nKEY INSIGHT:\nTraining set hit rates don't transfer to test diseases within the same category.\nThis is because diseases vary substantially within categories.\nThe coarse tier system (autoimmune/dermatological vs cancer/metabolic) captures\nthe broad pattern as well as fine-grained calibration.\n\nCategory tier remains the appropriate confidence signal (simple and sufficient).",
+      "result_metric": "Calibrated r=0.072 < Tier r=0.082 (INVALIDATED)"
     },
     {
       "id": "h117",
@@ -2328,7 +2330,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Train ensemble with ONLY train_frequency + mechanism_support",
         "Step 2: Compare precision at top 10%/20% to 4-feature simplified ensemble",
@@ -2338,7 +2340,9 @@
       "dependencies": [
         "h115",
         "h111"
-      ]
+      ],
+      "findings": "INVALIDATED: 2-feature model (19.38%) falls below 20% threshold.\n\nEXPERIMENT RESULTS (13,522 predictions, 5 seeds):\n\n| Model                    | Features | Top 10% | Top 20% |\n|--------------------------|----------|---------|---------|\n| 4-feature (h115 best)    | 4        | 21.89%  | 17.83%  |\n| 2-feature (mech + freq)  | 2        | 19.38%  | 16.09%  |\n| Frequency only           | 1        | 18.79%  | 15.90%  |\n| Mechanism only           | 1        | 10.36%  | 12.24%  |\n\nKEY FINDINGS:\n1. 2-feature model loses -2.51 pp vs 4-feature (exceeds 2 pp tolerance)\n2. Frequency alone (18.79%) is nearly as good as 2-feature (19.38%)\n3. Mechanism alone (10.36%) performs poorly - weak standalone signal\n4. tier_inv and norm_score contribute ~2.5 pp to the ensemble\n\nFEATURE CONTRIBUTION ANALYSIS:\n- Frequency: 18.79% \u2192 primary driver of confidence\n- Combined mech+freq: 19.38% \u2192 +0.59 pp synergy from mechanism\n- 4-feature: 21.89% \u2192 tier_inv + norm_score add +2.51 pp\n\nCONCLUSION:\nThe 4-feature simplified ensemble (h115) remains the recommended production model.\nA 3-feature model (freq + tier + score) might be viable, but minimal 2-feature is insufficient.",
+      "result_metric": "2-feature: 19.38% vs 4-feature: 21.89% (-2.51 pp, below 20% threshold)"
     },
     {
       "id": "h119",
@@ -2358,6 +2362,26 @@
       ],
       "dependencies": [
         "h115"
+      ]
+    },
+    {
+      "id": "h120",
+      "title": "3-Feature Confidence Model (Remove Mechanism)",
+      "category": "optimization",
+      "rationale": "h118 showed mechanism_support only contributes +0.59 pp synergy. The 3 remaining features (train_frequency, tier_inv, norm_score) might achieve >20% precision while removing the mechanism dependency (which requires disease_genes.json and drug_targets.json data).",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Train ensemble with ONLY train_frequency + tier_inv + norm_score",
+        "Step 2: Compare precision at top 10%/20% to 4-feature model",
+        "Step 3: If within 1 pp, document as simplified production model",
+        "Success criteria: 3-feature achieves >21% precision at top 10%"
+      ],
+      "dependencies": [
+        "h115",
+        "h118"
       ]
     }
   ],
