@@ -5536,7 +5536,7 @@
       "dependencies": [
         "h273"
       ],
-      "findings": "VALIDATED: Extended hierarchy matching to GOLDEN tier for high-precision categories.\n\nImplementation:\n- Added HIERARCHY_GOLDEN_CATEGORIES = {'autoimmune', 'metabolic', 'neurological'}\n- Categories with >70% hierarchy precision get GOLDEN tier\n- Cardiovascular (38.3%) and respiratory (28.6%) stay at HIGH tier\n\nResults:\n- Autoimmune hierarchy matches: GOLDEN tier (75.9% precision)\n- Metabolic hierarchy matches: GOLDEN tier (72.1% precision)\n- Neurological hierarchy matches: GOLDEN tier (81.8% precision)\n- Cardiovascular hierarchy matches: HIGH tier (38.3% precision)\n- Respiratory hierarchy matches: HIGH tier (28.6% precision)\n\nThis properly calibrates confidence based on validated precision data.",
+      "findings": "VALIDATED: Extended hierarchy matching to GOLDEN tier for high-precision categories.\n\nImplementation:\n- Added HIERARCHY_GOLDEN_CATEGORIES = {'autoimmune', 'metabolic', 'neurological'}\n- Categories with >70% hierarchy precision get GOLDEN tier\n- Cardiovascular (38.3%) and respiratory (28.6%) stay at HIGH tier\n\nResults:\n- Autoimmune hierarchy matches: GOLDEN tier (75.9% precision)\n- Metabolic hierarchy matches: GOLDEN tier (72.1% precision)\n- Neurological hierarchy matches: GOLDEN tier (81.8% precision)\n- Cardiovascular hierarchy matches: HIGH tier (38.3% precision)\n- Respiratory hierarchy matches: HIGH tier (28.6% precision)\n\nThis properly calibrates confidence based on validated precision data.\n\nCORRECTION (h278): Full evaluation showed autoimmune is 44.7%, not 75.9%.\nRemoved autoimmune from HIERARCHY_GOLDEN_CATEGORIES.\nOnly metabolic (65.2%) and neurological (63.3%) remain GOLDEN.",
       "result_metric": "Autoimmune/Metabolic/Neurological hierarchy \u2192 GOLDEN tier"
     },
     {
@@ -5568,7 +5568,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Analyze why infectious diseases don't match hierarchy groups",
         "Step 2: Check if infectious GT diseases are in DRKG vs our hierarchy terms",
@@ -5578,8 +5578,8 @@
       "dependencies": [
         "h273"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Full evaluation corrected hierarchy tier assignments.\n\nInitial h273/h276 analysis used 10-disease samples with inflated precision.\nFull evaluation (all diseases) shows:\n- Metabolic: 65.2% \u2192 GOLDEN (remains)\n- Neurological: 63.3% \u2192 GOLDEN (remains)\n- Autoimmune: 44.7% \u2192 HIGH (CORRECTED from GOLDEN)\n- Respiratory: 40.4% \u2192 HIGH (unchanged)\n- Cardiovascular: 22.6% \u2192 HIGH (unchanged)\n- Infectious: 22.1% \u2192 HIGH (now works!)\n\nKey finding: Infectious hierarchy matching DOES work (68 matches across 18 diseases).\nThe earlier 0% was a sampling artifact.\n\nUpdated HIERARCHY_GOLDEN_CATEGORIES to only include metabolic and neurological.",
+      "result_metric": "Corrected GOLDEN \u2192 only metabolic (65%) and neurological (63%)"
     },
     {
       "id": "h279",
