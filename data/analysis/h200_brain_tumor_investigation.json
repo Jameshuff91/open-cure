@@ -1,0 +1,26 @@
+{
+  "hypothesis": "h200",
+  "title": "Brain Tumor Zero Hit Investigation",
+  "status": "validated",
+  "finding": "Brain tumor low precision is due to DRKG DRUG COVERAGE GAP, not model failure",
+  "key_results": {
+    "actual_precision": "1.8% (5/278 predictions), not 0%",
+    "root_cause": "Brain-specific drugs NOT in DRKG embeddings",
+    "temozolomide_status": "NOT IN DRKG (CHEBI:72564 missing)",
+    "brain_drug_coverage": "0% (0/47 brain tumor drugs have embeddings)"
+  },
+  "evidence": {
+    "gt_coverage": "51 brain tumor GT entries with 27 unique drugs",
+    "drkg_coverage": "Only 1063 CHEBI compounds in DRKG, Temozolomide not among them",
+    "prediction_analysis": "Model predicts generic chemo (Cisplatin, Fluorouracil) instead of brain-specific drugs"
+  },
+  "structural_issue": {
+    "description": "DRKG lacks brain tumor-specific drugs like Temozolomide, so kNN cannot recommend them",
+    "workaround_possible": false,
+    "requires": "External drug-disease data or manual rule addition"
+  },
+  "recommendation": {
+    "production": "Exclude brain tumors from confidence tiers OR add manual rules for known drugs",
+    "future": "Consider integrating additional drug databases with better brain tumor coverage"
+  }
+}

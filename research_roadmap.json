@@ -3951,7 +3951,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Check GT coverage for brain tumors (glioma, glioblastoma)",
         "Examine what drugs are predicted for brain tumors",
@@ -3961,7 +3961,9 @@
       ],
       "dependencies": [
         "h160"
-      ]
+      ],
+      "findings": "VALIDATED: Brain tumor low precision is due to DRKG DRUG COVERAGE GAP, not model failure.\n\nROOT CAUSE: Brain-specific drugs are NOT in DRKG embeddings.\n- Temozolomide (CHEBI:72564): NOT IN DRKG\n- Brain tumor drug coverage: 0/47 drugs have embeddings\n- Model can only recommend drugs that exist in its pool\n\nEVIDENCE:\n- Actual precision: 1.8% (5/278), not 0% as reported\n- 51 brain tumor GT entries with 27 unique drugs\n- DRKG has only 1063 CHEBI compounds; brain drugs not among them\n- Model predicts generic chemo (Cisplatin, Fluorouracil) instead of brain-specific\n\nRECOMMENDATION:\n1. Exclude brain tumors from high-confidence tiers\n2. OR add manual rules for known drugs (Temozolomide\u2192glioma)\n3. Future: Integrate additional drug databases with better coverage",
+      "result_metric": "0/47 brain tumor drugs in DRKG; Temozolomide missing"
     },
     {
       "id": "h201",
@@ -4844,6 +4846,12 @@
       "hypothesis_id": "h195",
       "learning": "CV\u2192Metabolic success is comorbidity management (statins for CV risk in diabetics), not true repurposing. This is real clinical practice but not novel mechanism discovery.",
       "implication": "For novel repurposing research, distinguish primary mechanism from comorbidity management"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h200",
+      "learning": "Brain tumor 0% precision is due to DRKG drug coverage gap, not model failure. Temozolomide and other brain-specific drugs are simply not in the knowledge graph. This is a data limitation, not algorithmic.",
+      "implication": "For categories with drug coverage gaps, consider manual rules or exclusion from high-confidence tiers"
     }
   ],
   "collaborations": [
