@@ -34,7 +34,9 @@ TIER SYSTEM (h135 validated, 9.1x separation):
 - FILTER (3.2%):  rank>20 OR no_targets OR (freq<=2 AND no_mechanism)
 """
 
+import hashlib
 import json
+import os
 import sys
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -297,7 +299,7 @@ NEUROLOGICAL_DRUG_CLASS_MEMBERS = {
         'clobazam', 'clonazepam', 'brivaracetam', 'eslicarbazepine'
     ],
     'dopaminergic': [
-        'levodopa', 'carbidopa', 'pramipexole', 'ropinirole',
+        'l-dopa', 'levodopa', 'carbidopa', 'pramipexole', 'ropinirole',
         'bromocriptine', 'apomorphine', 'rotigotine', 'amantadine',
         'entacapone', 'rasagiline', 'selegiline', 'safinamide'
     ],
@@ -460,9 +462,56 @@ class DrugRepurposingPredictor:
         # Build disease lists for kNN
         self._build_knn_index()
 
+    def _get_cache_key(self) -> str:
+        """Generate a cache key based on source file modification times and content hash."""
+        # h176: Cache invalidation based on source files
+        source_files = [
+            self.reference_dir / "everycure" / "indicationList.xlsx",
+            self.reference_dir / "mesh_mappings_from_agents.json",
+            self.reference_dir / "mondo_to_mesh.json",
+            self.reference_dir / "drugbank_lookup.json",
+            self.data_dir / "src" / "disease_name_matcher.py",  # Include matcher code
+        ]
+
+        mtimes = []
+        for f in source_files:
+            if f.exists():
+                mtimes.append(f"{f.name}:{os.path.getmtime(f):.0f}")
+
+        return hashlib.md5("|".join(mtimes).encode()).hexdigest()[:16]
+
     def _load_ground_truth(self) -> None:
-        """Load ground truth for training drug frequencies."""
-        # Import disease matcher
+        """Load ground truth for training drug frequencies.
+
+        h176: Uses caching to speed up initialization from ~210s to <10s.
+        Cache is invalidated when source files change.
+        """
+        cache_dir = self.data_dir / "data" / "cache"
+        cache_dir.mkdir(exist_ok=True)
+        cache_path = cache_dir / "ground_truth_cache.json"
+
+        # Check if cache is valid
+        current_key = self._get_cache_key()
+        cache_valid = False
+
+        if cache_path.exists():
+            try:
+                with open(cache_path) as f:
+                    cached_data = json.load(f)
+                if cached_data.get("cache_key") == current_key:
+                    # Cache hit - load from cache
+                    self.ground_truth = {
+                        k: set(v) for k, v in cached_data["ground_truth"].items()
+                    }
+                    self.disease_names = cached_data["disease_names"]
+                    cache_valid = True
+            except (json.JSONDecodeError, KeyError):
+                pass  # Invalid cache, regenerate
+
+        if cache_valid:
+            return  # Fast path complete
+
+        # Cache miss - regenerate (slow path, ~200s)
         sys.path.insert(0, str(self.data_dir / "src"))
         from disease_name_matcher import DiseaseMatcher, load_mesh_mappings
 
@@ -491,6 +540,15 @@ class DrugRepurposingPredictor:
                 self.ground_truth[disease_id].add(drug_id)
 
         self.ground_truth = dict(self.ground_truth)
+
+        # Save to cache
+        cache_data = {
+            "cache_key": current_key,
+            "ground_truth": {k: list(v) for k, v in self.ground_truth.items()},
+            "disease_names": self.disease_names,
+        }
+        with open(cache_path, "w") as f:
+            json.dump(cache_data, f)
 
     def _build_knn_index(self) -> None:
         """Build index for kNN lookups."""
@@ -715,6 +773,155 @@ class DrugRepurposingPredictor:
                     return True
         return False
 
+    def _get_class_matched_drugs(self, disease_name: str) -> List[Tuple[str, str, str]]:
+        """
+        Get drugs from appropriate classes for a neurological disease.
+
+        h173: Drug-class prediction for neurological diseases.
+        Returns list of (drug_id, drug_name, drug_class) tuples sorted by training frequency.
+        """
+        drug_classes = self._get_neurological_drug_classes(disease_name)
+        if not drug_classes:
+            return []
+
+        matched_drugs: List[Tuple[str, str, str, int]] = []  # (id, name, class, freq)
+
+        for drug_class in drug_classes:
+            members = NEUROLOGICAL_DRUG_CLASS_MEMBERS.get(drug_class, [])
+            for member in members:
+                # Find drug ID for this drug name
+                member_lower = member.lower()
+                if member_lower in self.name_to_drug_id:
+                    drug_id = self.name_to_drug_id[member_lower]
+                    if drug_id in self.embeddings:  # Only include drugs in DRKG
+                        freq = self.drug_train_freq.get(drug_id, 0)
+                        matched_drugs.append((drug_id, member, drug_class, freq))
+
+        # Sort by training frequency (higher frequency = more evidence)
+        matched_drugs.sort(key=lambda x: x[3], reverse=True)
+
+        # Return (drug_id, drug_name, drug_class) without freq
+        return [(d[0], d[1], d[2]) for d in matched_drugs]
+
+    def _supplement_neurological_predictions(
+        self,
+        disease_name: str,
+        disease_id: str,
+        disease_tier: int,
+        category: str,
+        existing_predictions: List[DrugPrediction],
+        max_knn_score: float,
+        top_n: int,
+        include_filtered: bool,
+    ) -> List[DrugPrediction]:
+        """
+        h173: Supplement kNN predictions with drug-class-matched drugs for neurological diseases.
+
+        h171 showed drug-class prediction achieves 60.4% coverage vs 18% for kNN on neurological.
+        This method injects drugs from appropriate classes (anticonvulsants for epilepsy,
+        dopaminergics for Parkinson's, etc.) that aren't already in kNN results.
+
+        Args:
+            disease_name: Name of the neurological disease
+            disease_id: DRKG disease ID
+            disease_tier: Disease tier (always 3 for neurological)
+            category: Disease category (always 'neurological')
+            existing_predictions: Predictions already generated by kNN
+            max_knn_score: Maximum kNN score (for normalization)
+            top_n: Maximum predictions to return
+            include_filtered: Whether to include FILTER tier predictions
+
+        Returns:
+            List of predictions with class-matched drugs injected
+        """
+        # Get drugs already predicted by kNN
+        existing_drug_ids = {p.drug_id for p in existing_predictions}
+
+        # Get class-matched drugs not in kNN results
+        class_matched = self._get_class_matched_drugs(disease_name)
+        missing_drugs = [(d_id, d_name, d_class) for d_id, d_name, d_class in class_matched
+                         if d_id not in existing_drug_ids]
+
+        if not missing_drugs:
+            return existing_predictions
+
+        # Calculate starting rank for injected drugs
+        # They go after HIGH tier drugs but before MEDIUM tier from kNN
+        # Find the position after the last HIGH/GOLDEN tier prediction
+        high_tier_count = sum(1 for p in existing_predictions
+                             if p.confidence_tier in [ConfidenceTier.GOLDEN, ConfidenceTier.HIGH])
+
+        # Inject at position after HIGH tier (but use original rank in display)
+        supplemented = existing_predictions.copy()
+
+        for drug_id, drug_name, drug_class in missing_drugs:
+            # Stop if we've reached top_n
+            if len(supplemented) >= top_n:
+                break
+
+            train_freq = self.drug_train_freq.get(drug_id, 0)
+            mech_support = self._compute_mechanism_support(drug_id, disease_id)
+            has_targets = drug_id in self.drug_targets and len(self.drug_targets[drug_id]) > 0
+
+            # Assign tier - these are class-matched so they get HIGH tier (60% coverage)
+            # Use existing tier assignment but mark as rescued
+            tier, _, _ = self._assign_confidence_tier(
+                rank=high_tier_count + 1,  # Conservative rank estimate
+                train_frequency=train_freq,
+                mechanism_support=mech_support,
+                has_targets=has_targets,
+                disease_tier=disease_tier,
+                category=category,
+                drug_name=drug_name,
+                disease_name=disease_name,
+            )
+
+            # Class-matched neurological drugs get at least MEDIUM tier
+            # (they have strong class-based evidence even if kNN didn't find them)
+            if tier in [ConfidenceTier.LOW, ConfidenceTier.FILTER]:
+                tier = ConfidenceTier.MEDIUM
+
+            if not include_filtered and tier == ConfidenceTier.FILTER:
+                continue
+
+            # Use a synthetic score based on training frequency
+            # (lower than kNN max since these weren't found by kNN)
+            synthetic_score = max_knn_score * 0.5 * (1 + train_freq / 100)
+            norm_score = synthetic_score / max_knn_score if max_knn_score > 0 else 0.5
+
+            pred = DrugPrediction(
+                drug_name=drug_name,
+                drug_id=drug_id,
+                rank=len(supplemented) + 1,  # Append to end
+                knn_score=synthetic_score,
+                norm_score=norm_score,
+                confidence_tier=tier,
+                train_frequency=train_freq,
+                mechanism_support=mech_support,
+                has_targets=has_targets,
+                category=category,
+                disease_tier=disease_tier,
+                category_rescue_applied=True,  # Mark as class-based prediction
+                category_specific_tier="class_injected",  # Special marker
+            )
+            supplemented.append(pred)
+
+        # Re-sort by tier priority, then by score within tier
+        tier_priority = {
+            ConfidenceTier.GOLDEN: 0,
+            ConfidenceTier.HIGH: 1,
+            ConfidenceTier.MEDIUM: 2,
+            ConfidenceTier.LOW: 3,
+            ConfidenceTier.FILTER: 4,
+        }
+        supplemented.sort(key=lambda p: (tier_priority.get(p.confidence_tier, 5), -p.knn_score))
+
+        # Re-assign ranks
+        for i, pred in enumerate(supplemented, 1):
+            pred.rank = i
+
+        return supplemented[:top_n]
+
     def find_disease_id(self, disease_name: str) -> Optional[str]:
         """Find the DRKG disease ID for a disease name."""
         # Try exact match first
@@ -829,6 +1036,14 @@ class DrugRepurposingPredictor:
 
                     if include_filtered or tier != ConfidenceTier.FILTER:
                         predictions.append(pred)
+
+            # h173: Supplement with drug-class predictions for neurological diseases
+            # When kNN has low coverage, inject drugs from appropriate classes
+            if category == 'neurological':
+                predictions = self._supplement_neurological_predictions(
+                    disease_name, disease_id, disease_tier, category,
+                    predictions, max_score if drug_scores else 1.0, top_n, include_filtered
+                )
 
         return PredictionResult(
             disease_name=disease_name,

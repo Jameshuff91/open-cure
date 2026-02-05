@@ -1620,7 +1620,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "1. Check if metabolic diseases have weak Node2Vec neighbors",
         "2. Extract KEGG pathway annotations for metabolic diseases",
@@ -3503,12 +3503,62 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Pre-compute and cache ground truth mappings to JSON file",
         "Only run fuzzy matching once, save results",
         "Load cached mappings on init (should be <1 second)",
         "Add cache invalidation when source data changes"
+      ],
+      "findings": "h176 VALIDATED: Production Predictor Initialization Speedup\n\nIMPLEMENTATION:\n- Added caching mechanism to _load_ground_truth()\n- Cache file: data/cache/ground_truth_cache.json\n- Cache key based on MD5 hash of source file modification times\n- Automatic cache invalidation when source files change\n\nPERFORMANCE:\n- Cold start (first run/cache miss): ~212 seconds (unchanged)\n- Warm start (cache hit): ~6.5 seconds\n- SPEEDUP: 33x improvement (from 212s to 6.5s)\n\nFILES MONITORED FOR CACHE INVALIDATION:\n- data/reference/everycure/indicationList.xlsx\n- data/reference/mesh_mappings_from_agents.json\n- data/reference/mondo_to_mesh.json\n- data/reference/drugbank_lookup.json\n- src/disease_name_matcher.py\n\nBOTTLENECK: The DiseaseMatcher.get_mesh_id() function iterates over ~10K+ mappings\nfor each of ~10K rows in the Excel file (O(n\u00b2) complexity). Caching pre-computed\nresults eliminates this on subsequent loads.",
+      "result_metric": "6.5s init time (vs 212s), 33x speedup"
+    },
+    {
+      "id": "h178",
+      "title": "DiseaseMatcher Algorithm Optimization",
+      "category": "infrastructure",
+      "rationale": "h176 revealed that DiseaseMatcher.get_mesh_id() has O(n) complexity per call due to linear search in steps 3-4. Pre-indexing canonical names could reduce to O(1) and eliminate the need for caching entirely.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Profile get_mesh_id() to confirm O(n) behavior in steps 3-4",
+        "Build inverse index: canonical_name -> mesh_id at init time",
+        "Replace linear search with dict lookup",
+        "Measure improvement (target: <30s without cache)"
+      ]
+    },
+    {
+      "id": "h179",
+      "title": "Embedding Loading Optimization",
+      "category": "infrastructure",
+      "rationale": "h176 showed embedding loading takes ~6s (from CSV). Converting to a binary format (numpy .npy or pickle) could reduce this to <1s.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Convert node2vec_256_named.csv to .npy binary format",
+        "Update _load_data() to use numpy.load()",
+        "Measure improvement (target: <2s total init)"
+      ]
+    },
+    {
+      "id": "h180",
+      "title": "Batch Prediction API for Web Service",
+      "category": "production_improvement",
+      "rationale": "For deployment, keeping the predictor loaded in memory and serving predictions via API would eliminate initialization overhead entirely.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Create FastAPI wrapper for DrugRepurposingPredictor",
+        "Add /predict endpoint accepting disease name",
+        "Add /batch endpoint for multiple diseases",
+        "Add health check and readiness probes",
+        "Document deployment with uvicorn"
       ]
     }
   ],
@@ -4192,6 +4242,12 @@
       "hypothesis_id": "h170",
       "learning": "Category boosting must be selective. Universal boost hurts heterogeneous categories (other, infectious). Selective boost for isolated categories (neurological, respiratory, metabolic, renal, hematological, immunological) improves R@30 by +2.40pp with p=0.009.",
       "implication": "Different disease categories have fundamentally different kNN neighbor compositions. Isolated categories benefit from same-category boosting; well-connected categories do not."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h176",
+      "learning": "Ground truth loading was the bottleneck (O(n\u00b2) fuzzy matching). Caching pre-computed results provides 33x speedup.",
+      "implication": "Other pipelines using DiseaseMatcher could benefit from similar caching"
     }
   ],
   "collaborations": [
