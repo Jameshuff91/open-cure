@@ -12,6 +12,9 @@ Unified pipeline integrating validated research findings:
   - Ophthalmic: antibiotic + rank<=15 = 62.5%, steroid + rank<=15 = 48%
   - Dermatological: topical_steroid + rank<=5 = 63.6%
 - h197: Colorectal cancer mAb rescue - colorectal + mAb = 50-60% precision (GOLDEN)
+- h201: Disease-specific kinase rules (from h198):
+  - CML/ALL + BCR-ABL inhibitors (imatinib/nilotinib/dasatinib) = 22% precision (HIGH)
+  - CLL/lymphoma + BTK inhibitors (ibrutinib/acalabrutinib/zanubrutinib) = 22% precision (HIGH)
 - h154: Cardiovascular beta_blocker + rank<=5 = 33.3% precision
 - h157: Autoimmune DMARD + rank<=10 = 75.4% precision
 - h170: Selective category boosting - +2.40pp R@30 (p=0.009) for isolated categories
@@ -272,6 +275,18 @@ ALKYLATING_DRUGS = {'cyclophosphamide', 'ifosfamide', 'melphalan', 'chlorambucil
 COLORECTAL_KEYWORDS = {'colorectal', 'colon cancer', 'rectal cancer', 'bowel cancer'}
 # Known colorectal mAbs: bevacizumab (Avastin), cetuximab (Erbitux), panitumumab (Vectibix)
 COLORECTAL_MABS = {'bevacizumab', 'cetuximab', 'panitumumab', 'ramucirumab'}  # 50-60% precision
+
+# h201: Disease-specific kinase inhibitor rules (from h198 analysis)
+# BCR-ABL inhibitors for CML/ALL (22% precision in h198)
+CML_KEYWORDS = {'chronic myeloid leukemia', 'cml', 'chronic myelogenous'}
+ALL_KEYWORDS = {'acute lymphoblastic leukemia', 'all', 'acute lymphocytic'}
+BCR_ABL_INHIBITORS = {'imatinib', 'nilotinib', 'dasatinib', 'ponatinib', 'bosutinib'}
+
+# BTK inhibitors for CLL/lymphoma (22% precision in h198)
+CLL_KEYWORDS = {'chronic lymphocytic leukemia', 'cll', 'small lymphocytic lymphoma', 'sll'}
+LYMPHOMA_BTK_KEYWORDS = {'lymphoplasmacytic', 'mantle cell lymphoma', 'marginal zone lymphoma',
+                         'waldenstrom', 'macroglobulinemia'}
+BTK_INHIBITORS = {'ibrutinib', 'acalabrutinib', 'zanubrutinib', 'pirtobrutinib'}
 
 # Ophthalmic drugs
 OPHTHALMIC_ANTIBIOTICS = {'ciprofloxacin', 'moxifloxacin', 'ofloxacin', 'tobramycin', 'gentamicin',
@@ -856,6 +871,20 @@ class DrugRepurposingPredictor:
             is_mab = any(mab in drug_lower for mab in COLORECTAL_MABS) or drug_lower.endswith('mab')
             if is_colorectal and is_mab:
                 return ConfidenceTier.GOLDEN  # 50-60% precision (h160)
+
+            # h201: BCR-ABL inhibitors for CML/ALL (22% precision in h198)
+            is_cml = any(kw in disease_lower for kw in CML_KEYWORDS)
+            is_all = any(kw in disease_lower for kw in ALL_KEYWORDS)
+            is_bcr_abl_inhibitor = any(drug in drug_lower for drug in BCR_ABL_INHIBITORS)
+            if (is_cml or is_all) and is_bcr_abl_inhibitor:
+                return ConfidenceTier.HIGH  # 22% precision (h198)
+
+            # h201: BTK inhibitors for CLL/lymphoma (22% precision in h198)
+            is_cll = any(kw in disease_lower for kw in CLL_KEYWORDS)
+            is_lymphoma_btk = any(kw in disease_lower for kw in LYMPHOMA_BTK_KEYWORDS)
+            is_btk_inhibitor = any(drug in drug_lower for drug in BTK_INHIBITORS)
+            if (is_cll or is_lymphoma_btk) and is_btk_inhibitor:
+                return ConfidenceTier.HIGH  # 22% precision (h198)
 
             if rank <= 5 and any(taxane in drug_lower for taxane in TAXANE_DRUGS):
                 return ConfidenceTier.HIGH  # 40.0% precision

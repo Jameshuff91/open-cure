@@ -3967,7 +3967,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add CML/ALL + BCR-ABL inhibitors (imatinib, nilotinib, dasatinib) -> HIGH tier",
         "Add CLL/lymphoma + BTK inhibitors (ibrutinib, acalabrutinib, zanubrutinib) -> HIGH tier",
@@ -3976,7 +3976,9 @@
       ],
       "dependencies": [
         "h198"
-      ]
+      ],
+      "findings": "VALIDATED: Implemented disease-specific kinase inhibitor rules.\n\nIMPLEMENTATION:\n1. BCR-ABL inhibitor rules:\n   - Keywords: CML_KEYWORDS, ALL_KEYWORDS\n   - Drugs: imatinib, nilotinib, dasatinib, ponatinib, bosutinib\n   - Tier: HIGH (22% precision from h198)\n\n2. BTK inhibitor rules:\n   - Keywords: CLL_KEYWORDS, LYMPHOMA_BTK_KEYWORDS (lymphoplasmacytic, mantle cell, etc.)\n   - Drugs: ibrutinib, acalabrutinib, zanubrutinib, pirtobrutinib\n   - Tier: HIGH (22% precision from h198)\n\nVERIFICATION:\n- CML: Imatinib gets HIGH tier (rank 3)\n- CLL: Ibrutinib, Zanubrutinib, Acalabrutinib all get HIGH tier\n- Generic 'leukemia': No kinase inhibitors in top 10 (correct - rules are specific)\n- No conflicts with h197 colorectal mAb rule (different disease types)\n\nNO NEW RULES GENERATED: This is a direct implementation of h198 findings.",
+      "result_metric": "CML+imatinib: HIGH, CLL+BTK inhibitors: HIGH - all verified"
     }
   ],
   "completed": [
