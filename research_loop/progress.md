@@ -1,27 +1,28 @@
 # Research Loop Progress
 
-## Current Session: h284, h288, h292, h159, h177 (2026-02-05)
+## Current Session: h284, h288, h292, h159, h177, h295 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 5**
+**Hypotheses Tested: 6**
 - h284: Complication Specialization Score - **VALIDATED**
 - h288: ATC Class-Supported GOLDEN Tier - **INVALIDATED**
 - h292: Cardiovascular Event Transferability - **VALIDATED**
 - h159: Category Boundary Refinement - **INCONCLUSIVE**
 - h177: Epilepsy-Specific Analysis - **VALIDATED**
+- h295: Drug Pool Size as Confidence Signal - **VALIDATED**
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 168 |
+| Validated | 169 |
 | Invalidated | 55 |
 | Inconclusive | 10 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 43 |
+| Pending | 42 |
 | **Total** | **297** (7 new hypotheses added this session)
 
 ### KEY SESSION FINDINGS
@@ -62,6 +63,16 @@ Pre-check from h193: Coherent+classmate precision = 9.0%, far below 40% GOLDEN t
 
 #### h159: Category Boundary Refinement - INCONCLUSIVE
 ITP/TTP are autoimmune-hematological but GT is tiny (2-4 drugs). Expansion would add ~1 correct prediction.
+
+#### h295: Drug Pool Size as Confidence Signal - VALIDATED
+
+| Pool Tier | Drug Count | Distribution | kNN Confidence |
+|-----------|------------|--------------|----------------|
+| RICH | ≥30 | 1% of diseases | HIGH |
+| MODERATE | 10-29 | 4% of diseases | MEDIUM |
+| SPARSE | <10 | 95% of diseases | LOW |
+
+**Key Finding:** 95% of diseases have SPARSE pools (<10 drugs). Pool size + breadth predicts kNN success (epilepsy 8.1 breadth vs Alzheimer's 3.6).
 
 ### New Hypotheses Generated
 - **h291-h297**: Transferability implementation, CV event expansion, drug pool confidence signals, statin-only CV predictions, mechanism-specific categories
