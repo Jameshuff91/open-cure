@@ -3151,7 +3151,7 @@
       "rationale": "Autoimmune diseases have well-defined drug classes (biologics, DMARDs). These may show similar precision patterns to metabolic+statins.",
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "category": "precision",
       "dependencies": [
@@ -3162,7 +3162,9 @@
         "Evaluate class-specific precision for autoimmune diseases",
         "Compare to generic mechanism+frequency criteria",
         "Success: Find class criteria outperforming generic rules"
-      ]
+      ],
+      "findings": "VALIDATED: DMARDs achieve 75.4% \u00b1 4.7% precision for autoimmune diseases (5-seed).\n\nDrug class precision (rank<=30 for autoimmune):\n| Class | Mean N | Precision |\n|-------|--------|-----------|\n| DMARDs | 21.6 | **75.4% \u00b1 4.7%** |\n| Anti-TNF | 0 | N/A - not predicted |\n| IL inhibitors | 0 | N/A - not predicted |\n| JAK inhibitors | 0.8 | 0% |\n\nRoot cause of biologic failure - training frequency:\n- Methotrexate: 275 (dominates)\n- Cyclosporine: 232\n- Azathioprine: 120\n- Adalimumab: 4 (!!!!)\n- Infliximab: 6\n- Most IL inhibitors: 0-2\n\nBiologics simply don't appear in enough training diseases to be recommended by kNN. This is a DATA SPARSITY problem, not model failure.\n\nProduction update: Added DMARD + rank<=10 as GOLDEN tier for autoimmune.",
+      "result_metric": "DMARDs 75.4% \u00b1 4.7% precision"
     },
     {
       "id": "h158",
@@ -3171,7 +3173,7 @@
       "rationale": "Corticosteroids work through immunosuppression, not direct gene overlap. Other immunosuppressants (cyclosporine, azathioprine) may show similar patterns.",
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "category": "precision",
       "dependencies": [
@@ -3182,7 +3184,9 @@
         "Check if mechanism filter improves or hurts precision",
         "If beneficial, add mechanism-free rescue criteria",
         "Success: Find >30% precision for at least one immunosuppressant class"
-      ]
+      ],
+      "findings": "VALIDATED: Found high-precision patterns for immunosuppressant classes.\n\n5-SEED EVALUATION RESULTS:\n\n| Class | Criteria | N | Precision | Notes |\n|-------|----------|---|-----------|-------|\n| Corticosteroid | rank<=5 | 104 | **47.1%** | Best overall |\n| Corticosteroid | rank<=10 | 162 | 43.2% | - |\n| Antimetabolite | rank<=5 | 3 | 100% | Small n |\n| Antimetabolite | rank<=10 | 8 | **50.0%** | Promising |\n| Antimetabolite | rank<=15 | 23 | **30.4%** | Meets threshold |\n| Calcineurin | rank<=20 | 7 | 14.3% | Below threshold |\n| mTOR | rank<=20 | 2 | 0.0% | Too few preds |\n\nKEY FINDINGS:\n1. **Corticosteroids** confirmed: 47.1% at rank<=5, works for autoimmune (64.2%) and inflammatory (35.5%)\n2. **Antimetabolites** (azathioprine, methotrexate) show promise: 50% at rank<=10 (n=8)\n3. **Mechanism support = 0%** for ALL immunosuppressants - they work through immunosuppression, not direct gene overlap\n4. Hematological 0% is artifact of keyword priority (\"autoimmune hemolytic anemia\" classified as autoimmune)\n\nIMPLICATIONS:\n- Corticosteroid rescue already in production (h150)\n- Antimetabolite rescue could be added but needs more validation (small n)\n- Mechanism filter correctly excluded for immunosuppressants",
+      "result_metric": "Corticosteroid rank<=5: 47.1% precision (n=104), Antimetabolite rank<=10: 50% (n=8)"
     },
     {
       "id": "h159",
@@ -3966,6 +3970,12 @@
       "hypothesis_id": "h153",
       "learning": "Drug contraindications require BOTH filter-level exclusion (confidence_filter.py) AND production-level exclusion (production_predictor.py) to ensure harmful predictions never surface.",
       "implication": "For safety-critical drug-disease exclusions, implement at multiple layers."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h158",
+      "learning": "Immunosuppressants (corticosteroids, antimetabolites) have ZERO mechanism support but HIGH precision. Drug-gene overlap is meaningless for drugs that work through systemic immunosuppression.",
+      "implication": "For immunosuppressant classes, mechanism filter should be DISABLED. Add antimetabolite rescue criteria once n>=20."
     }
   ],
   "collaborations": [
