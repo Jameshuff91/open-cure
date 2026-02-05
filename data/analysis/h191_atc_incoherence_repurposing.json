@@ -1,0 +1,93 @@
+{
+  "analysis": {
+    "n_coherent": 3606,
+    "n_incoherent": 2142,
+    "n_no_atc": 7774,
+    "coherent_precision": 0.11092623405435385,
+    "incoherent_precision": 0.06395891690009337,
+    "no_atc_precision": 0.05582711602778492,
+    "by_category": {
+      "autoimmune": {
+        "coherent_n": 211,
+        "incoherent_n": 116,
+        "coherent_precision": 0.38388625592417064,
+        "incoherent_precision": 0.12931034482758622
+      },
+      "cancer": {
+        "coherent_n": 1605,
+        "incoherent_n": 360,
+        "coherent_precision": 0.05482866043613707,
+        "incoherent_precision": 0.025
+      },
+      "cardiovascular": {
+        "coherent_n": 462,
+        "incoherent_n": 112,
+        "coherent_precision": 0.14935064935064934,
+        "incoherent_precision": 0.09821428571428571
+      },
+      "dermatological": {
+        "coherent_n": 260,
+        "incoherent_n": 356,
+        "coherent_precision": 0.20384615384615384,
+        "incoherent_precision": 0.08426966292134831
+      },
+      "infectious": {
+        "coherent_n": 583,
+        "incoherent_n": 291,
+        "coherent_precision": 0.10120068610634649,
+        "incoherent_precision": 0.01718213058419244
+      },
+      "metabolic": {
+        "coherent_n": 198,
+        "incoherent_n": 259,
+        "coherent_precision": 0.07575757575757576,
+        "incoherent_precision": 0.0888030888030888
+      },
+      "neurological": {
+        "coherent_n": 97,
+        "incoherent_n": 264,
+        "coherent_precision": 0.030927835051546393,
+        "incoherent_precision": 0.0
+      },
+      "psychiatric": {
+        "coherent_n": 107,
+        "incoherent_n": 11,
+        "coherent_precision": 0.037383177570093455,
+        "incoherent_precision": 0.0
+      },
+      "respiratory": {
+        "coherent_n": 83,
+        "incoherent_n": 373,
+        "coherent_precision": 0.3373493975903614,
+        "incoherent_precision": 0.11796246648793565
+      }
+    },
+    "top10_coherent_precision": 0.18518518518518517,
+    "top10_incoherent_precision": 0.11532385466034756
+  },
+  "incoherence_effect_pp": -4.696731715426049,
+  "n_incoherent_hits": 137,
+  "top_patterns": {
+    "C:cardiovascular -> metabolic": 20,
+    "J:antiinfectives_systemic -> respiratory": 19,
+    "S:sensory_organs -> respiratory": 18,
+    "H:systemic_hormonal -> respiratory": 17,
+    "D:dermatologicals -> respiratory": 13,
+    "H:systemic_hormonal -> dermatological": 12,
+    "N:nervous_system -> autoimmune": 10,
+    "D:dermatologicals -> autoimmune": 9,
+    "A:alimentary_tract_metabolism -> dermatological": 9,
+    "S:sensory_organs -> autoimmune": 8,
+    "A:alimentary_tract_metabolism -> respiratory": 8,
+    "R:respiratory -> dermatological": 8,
+    "R:respiratory -> autoimmune": 7,
+    "S:sensory_organs -> dermatological": 7,
+    "A:alimentary_tract_metabolism -> cardiovascular": 7,
+    "C:cardiovascular -> autoimmune": 6,
+    "V:various -> cancer": 6,
+    "N:nervous_system -> dermatological": 6,
+    "D:dermatologicals -> infectious": 5,
+    "J:antiinfectives_systemic -> dermatological": 4
+  },
+  "top5_incoherent_precision": 0.1103202846975089
+}

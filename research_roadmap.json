@@ -3756,7 +3756,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "category": "precision",
       "dependencies": [
         "h152",
@@ -3768,7 +3768,9 @@
         "Example: Cardiovascular drug for autoimmune - is this the repurposing signal?",
         "Test if incoherence predicts novel validated discoveries",
         "Success: Identify incoherence patterns that indicate valid repurposing"
-      ]
+      ],
+      "findings": "h191 INVALIDATED but revealed important insight.\n\nMETHODOLOGY DIFFERENCE:\n- h110 measured: \"classmate treats similar\" (within-class uniqueness)\n- h191 measured: \"ATC L1 matches disease category\" (category coherence)\n\nH191 RESULTS:\n- COHERENT precision: 11.1%\n- INCOHERENT precision: 6.4%\n- Difference: -4.7pp (coherent is BETTER, opposite of h110)\n\nRANK ANALYSIS:\n- Top-5 incoherent: 11.0% (nearly equal to all coherent: 11.1%)\n- All rank bins show coherent >= incoherent except rank 16-20\n\nKEY INSIGHT:\nh110 and h191 measure DIFFERENT things:\n1. h110: Drug is UNIQUE in its class (no classmates treat similar) \u2192 higher precision\n2. h191: Drug MATCHES expected category \u2192 higher precision\n\nCROSS-CATEGORY PATTERNS IDENTIFIED (potential repurposing):\n1. Cardiovascular \u2192 metabolic: 20 hits (statins, fibrates)\n2. Antiinfectives \u2192 respiratory: 19 hits (azithromycin, fluoroquinolones)\n3. Corticosteroids (H) \u2192 respiratory: 17 hits (methylprednisolone)\n4. SGLT2 inhibitors (A) \u2192 cardiovascular: 7 hits (empagliflozin, canagliflozin)\n\nCONCLUSION: \nATC L1 coherence predicts known relationships (+4.7pp).\nh110's within-class uniqueness predicts novel discoveries (+4.5pp).\nThese are complementary signals, not contradictory.\n",
+      "result_metric": "Coherent 11.1% > Incoherent 6.4% (-4.7pp, opposite of h110)"
     },
     {
       "id": "h192",
@@ -3788,6 +3790,67 @@
         "For new disease, find similar diseases, check ATC class consistency",
         "If disease A and B are similar and both have L04AX drugs, recommend L04AX",
         "Success: ATC-guided drug recommendations improve R@30"
+      ]
+    },
+    {
+      "id": "h193",
+      "title": "Combined ATC Coherence Signals for Discovery Prediction",
+      "category": "confidence",
+      "hypothesis": "Combine h110's within-class uniqueness with h191's category coherence. Predictions that are category-incoherent (unexpected drug class) BUT class-unique (no classmates treat similar) may be true repurposing discoveries. Test if this combined signal identifies validated discoveries.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Reproduce h110 within-class uniqueness calculation",
+        "Cross-tabulate: category coherent/incoherent x class unique/not-unique",
+        "Compute precision for each quadrant",
+        "Find: category-incoherent + class-unique predictions",
+        "Validate if these represent true repurposing",
+        "Success: Identify quadrant with >15% precision"
+      ],
+      "dependencies": [
+        "h110",
+        "h191"
+      ]
+    },
+    {
+      "id": "h194",
+      "title": "Validated Cross-Category Repurposing Database",
+      "category": "production",
+      "hypothesis": "The cross-category patterns identified in h191 (CV\u2192metabolic, steroids\u2192respiratory, SGLT2\u2192CV, antibiotics\u2192respiratory inflammation) represent known valid repurposing. Create a curated list of validated cross-category repurposing patterns that can be used as positive signals.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Document the 15+ cross-category patterns from h191 analysis",
+        "Validate each pattern against literature (PubMed search)",
+        "Create JSON file: validated_cross_category_repurposing.json",
+        "Use as positive signal in confidence scoring",
+        "Success: 10+ validated patterns"
+      ],
+      "dependencies": [
+        "h191"
+      ]
+    },
+    {
+      "id": "h195",
+      "title": "Metabolic Exception Analysis: Why CV\u2192Metabolic Works",
+      "category": "analysis",
+      "hypothesis": "Metabolic is the ONLY category where incoherent > coherent (+1.3pp). This is driven by statins/fibrates (CV drugs) treating metabolic diseases. Investigate: Is this a data quality issue (these drugs should be coded differently) or a true signal that CV\u2192metabolic is a validated repurposing pattern?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Extract all CV\u2192metabolic predictions",
+        "Check which specific drugs and diseases",
+        "Validate against FDA approvals (statins for diabetes prevention?)",
+        "Determine: data quality vs true repurposing signal"
+      ],
+      "dependencies": [
+        "h191"
       ]
     }
   ],
@@ -4519,6 +4582,12 @@
       "hypothesis_id": "h87",
       "learning": "Mechanism breadth predicts cross-disease transfer. Corticosteroids (pleiotropic) transfer to 10 categories at 45% avg; biologics (target-specific) do not transfer (<20%). This explains why ATC rescue with H02AB/L04AX works.",
       "implication": "Focus ATC rescue on broad-mechanism drugs; accept biologics as low-confidence"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h191",
+      "learning": "ATC L1 coherence (drug category matches disease category) is a DIFFERENT signal from h110's within-class uniqueness. Coherent predictions are +4.7pp better. h110's finding that 'unique = better' and h191's finding that 'coherent = better' are complementary, not contradictory.",
+      "implication": "Can combine both signals: category-incoherent + class-unique may indicate true repurposing discoveries"
     }
   ],
   "collaborations": [
