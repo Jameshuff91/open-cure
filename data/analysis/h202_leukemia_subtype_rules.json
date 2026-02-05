@@ -1,0 +1,57 @@
+{
+  "hypothesis": "h202",
+  "title": "Subtype-Specific Leukemia Production Rules",
+  "subtype_analysis": {
+    "other_leukemia": {
+      "n_diseases": 26,
+      "n_drugs": 49,
+      "n_gt_pairs": 75
+    },
+    "AML": {
+      "n_diseases": 8,
+      "n_drugs": 36,
+      "n_gt_pairs": 40
+    },
+    "CML": {
+      "n_diseases": 1,
+      "n_drugs": 15,
+      "n_gt_pairs": 16
+    },
+    "ALL": {
+      "n_diseases": 9,
+      "n_drugs": 34,
+      "n_gt_pairs": 47
+    },
+    "CLL": {
+      "n_diseases": 2,
+      "n_drugs": 19,
+      "n_gt_pairs": 20
+    }
+  },
+  "prediction_results": {
+    "CML": {
+      "n_diseases": 1,
+      "total_preds": 30,
+      "known_hits": 2,
+      "precision": 6.666666666666667
+    },
+    "ALL": {
+      "n_diseases": 1,
+      "total_preds": 30,
+      "known_hits": 2,
+      "precision": 6.666666666666667
+    },
+    "AML": {
+      "n_diseases": 1,
+      "total_preds": 30,
+      "known_hits": 3,
+      "precision": 10.0
+    },
+    "other_leukemia": {
+      "n_diseases": 4,
+      "total_preds": 120,
+      "known_hits": 2,
+      "precision": 1.6666666666666667
+    }
+  }
+}

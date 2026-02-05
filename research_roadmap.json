@@ -3994,7 +3994,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Identify key drugs for each leukemia subtype from GT",
         "Define keyword matchers for AML, CML, ALL, CLL",
@@ -4004,7 +4004,9 @@
       "dependencies": [
         "h199",
         "h201"
-      ]
+      ],
+      "findings": "VALIDATED with limited actionability.\n\nLEUKEMIA SUBTYPE ANALYSIS:\n- AML: 8 diseases, 36 drugs, 40 GT pairs - expected drugs found 8/8\n- CML: 1 disease, 15 drugs, 16 GT pairs - expected drugs found 5/5\n- ALL: 9 diseases, 34 drugs, 47 GT pairs - expected drugs found 4/7\n- CLL: 2 diseases, 19 drugs, 20 GT pairs - expected drugs found 7/7\n\nPREDICTION PERFORMANCE:\n- AML: 10.0% precision (3/30 known hits), 2 expected drugs predicted\n- CML: 6.7% precision (2/30), NO expected drugs in top 30\n- ALL: 6.7% precision (2/30), 1 expected drug predicted\n- Other leukemia: 1.7% precision (2/120)\n\nKEY FINDING: CML has ZERO TKIs (imatinib, dasatinib, etc.) in top 30 predictions.\nThis is likely another DRKG coverage gap - need to verify TKI embeddings exist.\n\nLIMITED VALUE: Subtype rules won't help if expected drugs are not in prediction pool.",
+      "result_metric": "AML 10%, CML 6.7%, ALL 6.7% precision; CML missing all TKIs"
     },
     {
       "id": "h203",
@@ -4121,7 +4123,7 @@
       "priority": 3,
       "effort": "medium",
       "expected_impact": "high",
-      "status": "pending",
+      "status": "validated",
       "dependencies": [
         "h205"
       ],
@@ -4130,7 +4132,9 @@
         "Check embedding coverage in DRKG",
         "Calculate coverage gap percentage",
         "Prioritize missing drugs by disease impact (# indications)"
-      ]
+      ],
+      "findings": "SUPERSEDED BY h206: h206 already performed complete biologic coverage audit. Found 40 biologics missing with 75 blocked pairs. See data/analysis/h206_missing_drkg_drugs.json for full analysis.",
+      "result_metric": "Completed in h206"
     },
     {
       "id": "h209",
@@ -4168,6 +4172,25 @@
         "For each rule, add drug-disease pair to predictions if disease matches",
         "Assign HIGH tier to injected pairs (from GT)",
         "Verify injected pairs appear in final deliverable"
+      ]
+    },
+    {
+      "id": "h211",
+      "title": "TKI DRKG Coverage Check for CML",
+      "hypothesis": "h202 found CML has ZERO TKIs (imatinib, nilotinib, dasatinib, bosutinib, ponatinib) in predictions despite all being in GT. Check if TKIs have DRKG embeddings or if this is another coverage gap.",
+      "category": "error_analysis",
+      "priority": 2,
+      "effort": "low",
+      "expected_impact": "medium",
+      "status": "pending",
+      "dependencies": [
+        "h202"
+      ],
+      "steps": [
+        "Check if each TKI has a DrugBank ID",
+        "Check if each TKI ID has an embedding in DRKG",
+        "If missing, add to manual_drug_rules.json",
+        "If present, investigate why not being predicted"
       ]
     }
   ],
@@ -4971,6 +4994,12 @@
       "hypothesis_id": "h206",
       "learning": "37.5% of GT drugs are missing from DRKG. For biologics specifically, 40 drugs with 75 indications have no embeddings. This is fixable with manual injection rules but represents a fundamental limitation of DRKG-based predictions.",
       "implication": "Newer biologics (approved 2020+) are systematically absent from DRKG. Need periodic GT-to-DRKG gap analysis and manual rule updates."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h202",
+      "learning": "Leukemia subtype-drug matching shows the model already has some correct predictions (AML: Midostaurin, Daunorubicin). But CML has ZERO TKIs predicted despite all 5 being in GT. Likely DRKG coverage gap for tyrosine kinase inhibitors.",
+      "implication": "Before implementing subtype rules, verify TKIs have DRKG embeddings"
     }
   ],
   "collaborations": [
