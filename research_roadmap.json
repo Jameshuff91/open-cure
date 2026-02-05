@@ -3123,7 +3123,7 @@
       "rationale": "Individual class criteria have high precision but low coverage. Combining classes may maintain precision while improving recall.",
       "expected_impact": "medium",
       "effort": "low",
-      "status": "in_progress",
+      "status": "invalidated",
       "priority": 2,
       "category": "precision",
       "dependencies": [
@@ -3134,7 +3134,9 @@
         "For cancer: test taxane OR alkylating + rank<=10",
         "Compute combined precision and coverage",
         "Success: Combined criteria maintain >40% precision with 2x coverage"
-      ]
+      ],
+      "findings": "INVALIDATED: Combining drug class criteria increases coverage but drops precision below 40%.\n\nRESULTS:\n1. Ophthalmic (antibiotic OR steroid + rank<=15):\n   - Single best: steroid + rank<=15 = 35.0% (n=40)\n   - Combined: 31.4% precision (n=51), 1.5x coverage\n   - Precision drop: 3.3 pp\n\n2. Cancer (taxane OR alkylating + rank<=10):\n   - Single best: alkylating + rank<=10 = 50.0% (n=6)\n   - Combined: 37.5% precision (n=24), 4x coverage\n   - Precision drop: 12.5 pp\n\n3. Dermatological (topical_steroid OR biologic + rank<=10):\n   - Single best: topical_steroid + rank<=5 = 18.2% (n=11)\n   - Combined: 30.8% precision (n=26), 2.4x coverage\n   - Precision IMPROVED by 12.6 pp (due to biologic addition)\n\nKEY INSIGHT: The trade-off between precision and coverage is real.\n- Adding more drug classes DILUTES precision because weaker classes pull down the average\n- Exception: Dermatological showed improvement because topical_steroid alone was weak\n- For production, keep separate criteria per drug class rather than combining\n\nRECOMMENDATION:\n- Maintain separate rescue criteria in production_predictor.py\n- Do NOT combine drug classes into OR criteria\n- Dermatological might benefit from biologic addition",
+      "result_metric": "Combined criteria drop precision below 40% target (31.4%-37.5% vs 40% target)"
     },
     {
       "id": "h157",
@@ -3214,6 +3216,46 @@
         "Stratify drugs: kinase inhibitors, mAbs, immunotherapy, chemotherapy",
         "Test precision for subtype combinations",
         "Success: Find subtype combo achieving >30% precision"
+      ]
+    },
+    {
+      "id": "h161",
+      "title": "Dermatological Biologic Rescue Extension",
+      "description": "h156 showed dermatological combined criteria IMPROVED precision (18.2%->30.8%). Test if adding biologics as GOLDEN criteria for dermatological is warranted.",
+      "rationale": "Unlike other categories, dermatological benefited from combining classes. Biologics (adalimumab, ustekinumab, etc.) may be strong predictors for skin conditions.",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "priority": 3,
+      "category": "precision",
+      "dependencies": [
+        "h156"
+      ],
+      "steps": [
+        "Analyze biologic-only precision for dermatological (from h150 data)",
+        "Test biologic + rank<=10 or rank<=15 criteria",
+        "If >40% precision, add to production_predictor.py",
+        "Success: Biologic rescue criteria achieving >40% precision"
+      ]
+    },
+    {
+      "id": "h162",
+      "title": "Precision-Coverage Trade-off Quantification",
+      "description": "h156 showed clear precision-coverage trade-off. Quantify this trade-off to determine optimal operating points for different use cases.",
+      "rationale": "Different users may want different precision/coverage trade-offs. A systematic analysis could enable configurable thresholds.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 4,
+      "category": "evaluation",
+      "dependencies": [
+        "h156"
+      ],
+      "steps": [
+        "Plot precision vs coverage curves for each category",
+        "Identify Pareto-optimal criteria combinations",
+        "Define 'high precision' (>50%) and 'balanced' (>30%) operating modes",
+        "Success: Establish clear guidance for criterion selection"
       ]
     }
   ],
