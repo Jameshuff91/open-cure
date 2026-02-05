@@ -1827,7 +1827,7 @@
       "result_metric": null
     },
     {
-      "id": "h95",
+      "id": "h101",
       "title": "Ensemble: Literature + Mechanism + TxGNN",
       "category": "ensemble",
       "rationale": "Each approach (literature mining, mechanism traversal, TxGNN) captures different signals. An ensemble might achieve better coverage and precision than any single method for zero-shot prediction.",
@@ -1848,7 +1848,7 @@
         "h93",
         "h94"
       ],
-      "findings": null,
+      "findings": "BLOCKED: h93 (mechanism traversal) invalidated (3.5% R@30). Ensemble approach needs h91 (literature) and h94 (TxGNN enhancement) to be viable.",
       "result_metric": null
     },
     {
@@ -1859,7 +1859,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Load KEGG pathway data from data/reference/pathway/",
         "Step 2: For each disease gene, get its pathway memberships",
@@ -1871,8 +1871,8 @@
       "dependencies": [
         "h93"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Pathway-level traversal achieves 3.57% \u00b1 0.24% R@30 - NO improvement over gene-level h93 (3.53%).\n\nCOVERAGE (5-seed, 2292 evaluable diseases):\n- Diseases with at least 1 reachable GT drug: 78.0% (vs h93's 41.9%)\n- GT drugs reachable via pathway: 51.3% (vs h93's 22.3%)\n\nDespite 2x better coverage, R@30 is identical. Why?\n\nPATHWAY DILUTION PROBLEM: Each pathway contains many genes, so pathway overlap is MUCH less specific than gene overlap:\n- 3,454 diseases \u00d7 11,656 drugs \u00d7 many overlapping pathways = massive candidate pool\n- True positives are drowned out by false positives with pathway matches\n- Pathway membership is necessary but not sufficient for drug efficacy\n\nKEY INSIGHT: Neither gene-level NOR pathway-level explicit graph traversal works for drug repurposing. The issue isn't granularity (genes vs pathways), it's that explicit symbolic reasoning about mechanisms doesn't capture the complex, often unknown ways drugs work.\n\nNode2Vec embeddings learn implicit patterns that explicit traversal cannot capture. The 26% kNN vs 3.5% traversal gap represents the value of learned representations over hand-coded rules.\n\nScript: scripts/h95_pathway_traversal.py",
+      "result_metric": "3.57% \u00b1 0.24% R@30 (no improvement over h93)"
     },
     {
       "id": "h96",
@@ -2443,6 +2443,12 @@
       "hypothesis_id": "h97",
       "learning": "Mechanism support (drug targeting disease genes) provides 2.1x precision improvement for kNN predictions (12.19% vs 5.72%). Only 20% of predictions have mechanism support, but these are meaningfully more reliable.",
       "implication": "Add mechanism_support as a confidence feature. Don't use as hard filter (only 20% of predictions have it), but include as a reliability signal in confidence tiering."
+    },
+    {
+      "date": "2026-02-04",
+      "hypothesis_id": "h95",
+      "learning": "Pathway-level traversal (3.57% R@30) doesn't improve on gene-level (3.53%) despite 2x better coverage (51% vs 22% of GT drugs reachable). The pathway dilution problem: more coverage = more false positives.",
+      "implication": "Explicit symbolic reasoning (genes or pathways) fundamentally fails for drug repurposing. The Node2Vec embeddings capture implicit relationships that explicit traversal cannot. The 26% kNN vs 3.5% traversal gap quantifies the value of learned representations."
     }
   ],
   "collaborations": [
