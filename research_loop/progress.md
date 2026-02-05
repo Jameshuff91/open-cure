@@ -42,11 +42,29 @@ Implemented unified production predictor integrating all validated research find
 
 **Export Results (2026-02-05):**
 - Total diseases evaluated: 448
-- Novel predictions exported: 2,384
-- FDA-approved filtered: 964
-- Safety filter exclusions: 44
+- Novel predictions exported: 2,391
+  - Truly novel (specific drugs): 1,457
+  - Broad-spectrum (corticosteroids, NSAIDs): 934
+- FDA-approved filtered: 958
+- Safety filter exclusions: 45
 
 **By Confidence Tier:**
+| Tier | Total | Truly Novel | Broad-Spectrum |
+|------|-------|-------------|----------------|
+| GOLDEN | 72 | 16 | 56 |
+| HIGH | 265 | 85 | 180 |
+| MEDIUM | 2,054 | 1,356 | 698 |
+
+**Top Truly Novel GOLDEN Predictions:**
+1. Minocycline -> bacterial meningitis (score 0.99, freq 19, mech+)
+2. Minocycline -> malaria (score 0.82, freq 19, mech+)
+3. Doxycycline/Minocycline -> CF Pseudomonas (score 0.70)
+4. Adalimumab -> SLE (score 0.44, freq 11, mech+)
+5. Corticotropin -> autoimmune hepatitis (score 0.43, freq 15, mech+)
+
+**Key Insight:** 39% of predictions are broad-spectrum drugs. The `is_broad_spectrum` flag helps collaborators prioritize truly novel predictions.
+
+**By Confidence Tier (old format for compatibility):**
 | Tier | Count | Expected Precision |
 |------|-------|-------------------|
 | GOLDEN | 72 | ~58% |

@@ -2916,7 +2916,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Search ClinicalTrials.gov for minocycline trials in each predicted indication",
         "Search PubMed for clinical evidence supporting these predictions",
@@ -2925,7 +2925,9 @@
       ],
       "dependencies": [
         "h145"
-      ]
+      ],
+      "findings": "Validated top 10 truly novel GOLDEN predictions against clinical evidence:\n\nPREDICTION VALIDATION RESULTS:\n| Prediction | Evidence Status | Notes |\n|------------|-----------------|-------|\n| Minocycline -> bacterial meningitis | PARTIAL | Prophylaxis only, not treatment |\n| Minocycline -> malaria | VALIDATED | Historical trial data, cures chloroquine-resistant P. falciparum |\n| Minocycline -> CF Pseudomonas | UNVALIDATED | No specific evidence found |\n| Doxycycline -> CF Pseudomonas | UNVALIDATED | No specific evidence found |\n| Levofloxacin -> malaria | UNVALIDATED | Need to verify |\n| Minocycline -> pneumonia | VALIDATED | Effective for Mycoplasma pneumoniae, MDR Acinetobacter |\n| Minocycline -> AIDS | INVALIDATED | RCT failed to show cognitive improvement in HIV patients |\n| Doxycycline -> AIDS | INVALIDATED | Same as minocycline - no clinical benefit |\n| Adalimumab -> SLE | **FALSE POSITIVE** | TNF inhibitors CONTRAINDICATED in SLE; can CAUSE lupus |\n| Corticotropin -> autoimmune hepatitis | PARTIAL | Used for other autoimmune conditions, limited AIH-specific data |\n\nVALIDATION RATE: 2/10 validated, 2/10 partial, 1/10 false positive, 5/10 unvalidated/failed\n\nKEY FINDING: Adalimumab -> SLE is a critical false positive. TNF inhibitors are contraindicated in SLE and can cause drug-induced lupus. This prediction reveals a model weakness - the kNN system recommends drugs based on similar autoimmune diseases without considering mechanistic contraindications.\n\nIMPLICATION: Need a mechanism-based filter to exclude predictions where drug mechanism is known to be harmful for the target disease.",
+      "result_metric": "20% validated, 10% false positive"
     },
     {
       "id": "h147",
@@ -2963,6 +2965,25 @@
       ],
       "dependencies": [
         "h145"
+      ]
+    },
+    {
+      "id": "h149",
+      "title": "Mechanistic Contraindication Filter",
+      "category": "production",
+      "rationale": "h146 revealed adalimumab -> SLE as a false positive because TNF inhibitors are contraindicated in SLE. Need to build a filter for known mechanistic contraindications where drugs can worsen diseases they share pathways with.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Research known drug class contraindications (TNF inhibitors + SLE, etc.)",
+        "Build contraindication lookup table from DrugBank or similar",
+        "Add to confidence_filter.py",
+        "Re-run export and measure reduction in false positives"
+      ],
+      "dependencies": [
+        "h146"
       ]
     }
   ],
@@ -3568,6 +3589,12 @@
       "hypothesis_id": "h145",
       "learning": "Novel prediction export reveals 39% of predictions are broad-spectrum drugs (corticosteroids, NSAIDs) likely already in clinical use. The is_broad_spectrum flag is critical for prioritizing truly novel predictions.",
       "implication": "Collaborators should focus on truly_novel predictions in the Truly Novel sheet rather than all predictions"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h146",
+      "learning": "kNN collaborative filtering can produce false positives when drugs work for similar diseases but are contraindicated for the target disease (e.g., TNF inhibitors for autoimmune diseases except SLE). Need mechanistic contraindication filtering.",
+      "implication": "Add mechanistic contraindication filters to exclude predictions like adalimumab -> SLE"
     }
   ],
   "collaborations": [
