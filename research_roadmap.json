@@ -2591,7 +2591,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Compare predictions where Linear >> XGBoost",
         "Step 2: Identify feature patterns in these predictions",
@@ -2601,7 +2601,9 @@
       ],
       "dependencies": [
         "h126"
-      ]
+      ],
+      "findings": "VALIDATED: Linear vs XGBoost show clear category-specific patterns.\n\nCATEGORY DIFFERENCES:\n| Category       | Linear Pref HR | XGB Pref HR | Winner   |\n|----------------|----------------|-------------|----------|\n| ophthalmic     | 36.7%          | 0.0%        | Linear +37pp |\n| infectious     | 25.6%          | 3.2%        | Linear +22pp |\n| autoimmune     | 34.7%          | 18.7%       | Linear +16pp |\n| respiratory    | 16.0%          | 4.0%        | Linear +12pp |\n| dermatological | 26.3%          | 33.0%       | XGBoost  |\n\nKEY INSIGHT: **ALL 968 HITS had Linear > XGBoost**\n- XGBoost ranks better at TOP-k (precision 25% vs 22%)\n- But Linear captures more actual hits\n\nFEATURE PATTERNS:\n- Linear prefers: high mechanism (0.46), high freq (15.0), high norm_score (0.72)\n- XGBoost prefers: low mechanism (0.02), low freq (3.5), low norm_score (0.26)\n\nCorrelation of (linear - xgb) with features:\n- norm_score: r=0.68 (strongest)\n- train_frequency: r=0.60\n- mechanism_support: r=0.43\n- is_hit: r=0.13 (Linear correlates with hits)\n\nHYBRID RESULTS (no improvement):\n- XGBoost: 25.00%\n- Linear: 21.89%\n- Hybrid: 24.41%\n\nPRODUCTION IMPLICATION:\nFor infectious/autoimmune/ophthalmic/respiratory diseases, Linear model\npredictions should be trusted more. For dermatological, use XGBoost.\n",
+      "result_metric": "Linear better for 7 categories (+10-37pp), XGBoost for 1; ALL hits had Linear>XGBoost"
     },
     {
       "id": "h131",
@@ -2702,6 +2704,44 @@
       "dependencies": [
         "h123",
         "126",
+        "h132"
+      ]
+    },
+    {
+      "id": "h136",
+      "title": "Tier 2/3 Category Rescue: Can Different Filters Work?",
+      "category": "precision",
+      "rationale": "h132 showed Tier 1 + freq + mech achieves 57.9% precision, but Tier 2/3 categories don't reach this level. Perhaps different filter combinations work for different tiers. E.g., cancer might need different signals than autoimmune.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze Tier 2/3 categories separately",
+        "Step 2: Test various filter combinations for each category",
+        "Step 3: Identify category-specific golden criteria",
+        "Success criteria: Find criteria achieving >30% precision for at least one Tier 2/3 category"
+      ],
+      "dependencies": [
+        "h132"
+      ]
+    },
+    {
+      "id": "h137",
+      "title": "Why Do Tier 1 Categories Succeed?",
+      "category": "analysis",
+      "rationale": "h132 showed dramatic gap: Tier 1 + filters = 58% vs Tier 2/3 + filters = ~28%. Understanding WHY Tier 1 succeeds (more drugs per disease? better mechanism coverage? more training data?) could inform approaches for other categories.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "in_progress",
+      "steps": [
+        "Step 1: Compare Tier 1 vs Tier 2/3 on: drugs per disease, mechanism coverage, train frequency distribution",
+        "Step 2: Identify structural differences in the ground truth",
+        "Step 3: Document what makes Tier 1 special",
+        "Success criteria: Identify at least 2 structural factors explaining Tier 1 success"
+      ],
+      "dependencies": [
         "h132"
       ]
     }
@@ -3236,6 +3276,12 @@
       "hypothesis_id": "h132",
       "learning": "Golden predictions exist! Tier 1 + Freq\u226515 + Mech = 57.9% precision. The key is tier 1 filter - without it, max precision is ~28%. Categorical filters (tier) outperform continuous thresholds (score).",
       "implication": "Production system should tier predictions: GOLDEN (tier1+freq+mech), HIGH (freq+mech), MEDIUM (freq only)"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h130",
+      "learning": "XGBoost ranks better at top-k but ALL actual hits had Linear > XGBoost score. Linear better for infectious (+22pp), ophthalmic (+37pp), autoimmune (+16pp). XGBoost only better for dermatological.",
+      "implication": "Use category-specific model selection: Linear for most categories, XGBoost for dermatological. Or use Linear scores as confidence filter."
     }
   ],
   "collaborations": [

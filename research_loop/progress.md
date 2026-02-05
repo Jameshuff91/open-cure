@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h126, h121, h132 (2026-02-05)
+## Current Session: h126, h121, h132, h130 (2026-02-05)
 
 ### Session Summary
 
@@ -10,6 +10,7 @@
 - h126: XGBoost Feature Interaction Analysis - **VALIDATED**
 - h121: Minimal 3-Feature Ensemble - **INVALIDATED** (based on h120 findings)
 - h132: High-Frequency Drug Mechanism Targeting - **VALIDATED** (57.9% precision!)
+- h130: Linear Model Calibration Analysis - **VALIDATED** (category-specific patterns)
 
 ### Key Findings
 
@@ -91,14 +92,37 @@ Flag Tier1+freq>=10+mech predictions as HIGH CONFIDENCE for expert review.
 
 ---
 
+**h130: Linear Model Calibration Analysis - VALIDATED**
+
+Analyzed why Linear-preferred predictions have higher hit rate than XGBoost-preferred.
+
+**CATEGORY DIFFERENCES:**
+| Category       | Linear Pref HR | XGB Pref HR | Winner   |
+|----------------|----------------|-------------|----------|
+| ophthalmic     | 36.7%          | 0.0%        | Linear +37pp |
+| infectious     | 25.6%          | 3.2%        | Linear +22pp |
+| autoimmune     | 34.7%          | 18.7%       | Linear +16pp |
+| dermatological | 26.3%          | 33.0%       | XGBoost -7pp |
+
+**KEY INSIGHT:** ALL 968 hits had Linear > XGBoost score
+- XGBoost ranks better at TOP-k (25% vs 22% precision)
+- But Linear captures more actual hits
+- Linear correlates better with hits (r=0.13 for score diff)
+
+**PRODUCTION IMPLICATION:**
+- For infectious/autoimmune/ophthalmic: trust Linear more
+- For dermatological: use XGBoost
+- Consider Linear score as confidence filter
+
+---
+
 ### Session Statistics
-- Hypotheses tested: 3 (h126, h121, h132)
-- Validated: 2 (h126, h132)
+- Hypotheses tested: 4 (h126, h121, h132, h130)
+- Validated: 3 (h126, h132, h130)
 - Invalidated: 1 (h121)
 - New hypotheses added: 6 (h130-h135)
 
 ### New Hypotheses Generated
-- **h130**: Linear Model Calibration Analysis
 - **h131**: Frequency x Score Explicit Feature Engineering
 - **h133**: Non-Tier1 Category Golden Criteria
 - **h134**: Steroid Dominance Analysis in Golden Set

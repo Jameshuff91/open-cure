@@ -1,0 +1,126 @@
+{
+  "linear_prefers": {
+    "n": 3381,
+    "hit_rate": 12.54066844128956,
+    "avg_features": {
+      "mechanism": 0.4569653948535936,
+      "frequency": 15.038450162673765,
+      "tier_inv": 0.9801833776989056,
+      "norm_score": 0.7164807319641113
+    }
+  },
+  "xgb_prefers": {
+    "n": 3377,
+    "hit_rate": 3.4942256440627775,
+    "avg_features": {
+      "mechanism": 0.01924785312407462,
+      "frequency": 3.4699437370447144,
+      "tier_inv": 0.6162274207876813,
+      "norm_score": 0.26003000140190125
+    }
+  },
+  "category_results": {
+    "other": {
+      "linear_hr": 11.966262519768055,
+      "xgb_hr": 2.320675105485232,
+      "diff": 9.645587414282822,
+      "n_linear": 1897,
+      "n_xgb": 1896
+    },
+    "cancer": {
+      "linear_hr": 7.915057915057915,
+      "xgb_hr": 3.2818532818532815,
+      "diff": 4.633204633204633,
+      "n_linear": 518,
+      "n_xgb": 518
+    },
+    "infectious": {
+      "linear_hr": 25.64102564102564,
+      "xgb_hr": 3.205128205128205,
+      "diff": 22.435897435897434,
+      "n_linear": 156,
+      "n_xgb": 156
+    },
+    "hematological": {
+      "linear_hr": 10.294117647058822,
+      "xgb_hr": 0.0,
+      "diff": 10.294117647058822,
+      "n_linear": 68,
+      "n_xgb": 68
+    },
+    "neurological": {
+      "linear_hr": 5.405405405405405,
+      "xgb_hr": 1.3333333333333335,
+      "diff": 4.072072072072071,
+      "n_linear": 74,
+      "n_xgb": 75
+    },
+    "dermatological": {
+      "linear_hr": 26.31578947368421,
+      "xgb_hr": 32.98969072164948,
+      "diff": -6.673901247965272,
+      "n_linear": 95,
+      "n_xgb": 97
+    },
+    "cardiovascular": {
+      "linear_hr": 16.76300578034682,
+      "xgb_hr": 11.695906432748536,
+      "diff": 5.067099347598283,
+      "n_linear": 173,
+      "n_xgb": 171
+    },
+    "ophthalmic": {
+      "linear_hr": 36.666666666666664,
+      "xgb_hr": 0.0,
+      "diff": 36.666666666666664,
+      "n_linear": 60,
+      "n_xgb": 60
+    },
+    "autoimmune": {
+      "linear_hr": 34.66666666666667,
+      "xgb_hr": 18.666666666666668,
+      "diff": 16.000000000000004,
+      "n_linear": 75,
+      "n_xgb": 75
+    },
+    "metabolic": {
+      "linear_hr": 8.333333333333332,
+      "xgb_hr": 9.243697478991598,
+      "diff": -0.9103641456582654,
+      "n_linear": 120,
+      "n_xgb": 119
+    },
+    "gastrointestinal": {
+      "linear_hr": 0.0,
+      "xgb_hr": 0.0,
+      "diff": 0.0,
+      "n_linear": 68,
+      "n_xgb": 68
+    },
+    "respiratory": {
+      "linear_hr": 16.0,
+      "xgb_hr": 4.0,
+      "diff": 12.0,
+      "n_linear": 75,
+      "n_xgb": 75
+    }
+  },
+  "precision_comparison": {
+    "xgb_top10": 25.0,
+    "linear_top10": 21.893491124260358,
+    "hybrid_top10": 24.40828402366864,
+    "avg_top10": 24.11242603550296
+  },
+  "correlations": {
+    "mechanism_support": 0.43187513119858667,
+    "train_frequency": 0.5981385962745683,
+    "tier_inv": 0.27238445422854474,
+    "norm_score": 0.6843901110562973,
+    "is_hit": 0.12987831845119707
+  },
+  "success": true,
+  "best_method": [
+    "XGBoost",
+    25.0
+  ]
+}
