@@ -1,0 +1,66 @@
+{
+  "base_disease_transferability": {
+    "heart failure": {
+      "avg_transferability": 75.0,
+      "n_complications": 3,
+      "n_with_data": 1
+    },
+    "atherosclerosis": {
+      "avg_transferability": 44.23333333333333,
+      "n_complications": 7,
+      "n_with_data": 6
+    },
+    "type 1 diabetes mellitus": {
+      "avg_transferability": 41.675,
+      "n_complications": 4,
+      "n_with_data": 4
+    },
+    "diabetes mellitus": {
+      "avg_transferability": 40.18333333333333,
+      "n_complications": 6,
+      "n_with_data": 6
+    },
+    "type 2 diabetes mellitus": {
+      "avg_transferability": 40.18333333333333,
+      "n_complications": 6,
+      "n_with_data": 6
+    },
+    "alcoholism": {
+      "avg_transferability": 33.3,
+      "n_complications": 5,
+      "n_with_data": 1
+    },
+    "chronic kidney disease": {
+      "avg_transferability": 32.36666666666667,
+      "n_complications": 5,
+      "n_with_data": 3
+    },
+    "diabetes": {
+      "avg_transferability": 30.1375,
+      "n_complications": 10,
+      "n_with_data": 8
+    },
+    "obesity": {
+      "avg_transferability": 16.7,
+      "n_complications": 4,
+      "n_with_data": 1
+    }
+  },
+  "tiers": {
+    "HIGH": [
+      "heart failure"
+    ],
+    "MEDIUM": [
+      "atherosclerosis",
+      "type 1 diabetes mellitus",
+      "diabetes mellitus",
+      "type 2 diabetes mellitus",
+      "alcoholism",
+      "chronic kidney disease",
+      "diabetes"
+    ],
+    "LOW": [
+      "obesity"
+    ]
+  }
+}

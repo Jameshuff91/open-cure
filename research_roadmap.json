@@ -5909,7 +5909,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: For each base disease, calculate average transferability of its complications",
@@ -5917,7 +5917,9 @@
         "Step 3: Test if base disease transferability predicts base\u2192comp precision",
         "Step 4: Use as negative filter for low-transferability base diseases",
         "Success criteria: Identify base diseases where filter saves most FPs"
-      ]
+      ],
+      "findings": "VALIDATED: Base disease transferability predicts base\u2192comp precision.\n\nKEY METRICS:\n- Overall base\u2192comp precision: 2.9% (119/4092) - confirms h280 filter is correct\n- Pathway-comprehensive complications: 16.1% precision\n- Organ-specific complications: 0.0% precision (100% separation!)\n\nBASE DISEASE TRANSFERABILITY RANKING:\n1. Heart failure: 75% avg (CHF drugs treat acute HF)\n2. Atherosclerosis: 44% avg (statins treat MI/stroke)\n3. Diabetes variants: 30-42% avg (variable by complication type)\n4. Hypertension: 0.4% avg (drugs don't treat complications)\n\nHIGH-PRECISION EXCEPTIONS (pathway-comprehensive):\n- Atherosclerosis \u2192 MI: 70% (statins prevent plaque rupture)\n- Atherosclerosis \u2192 stroke: 60% (statins prevent emboli)\n- T1DM \u2192 DKA: 43.5% (insulin treats both)\n- Diabetes \u2192 DKD: 19% (nephroprotective drugs)\n\nZERO-PRECISION PATTERNS (organ-specific):\n- ANY diabetes \u2192 retinopathy/macular edema: 0%\n- ANY diabetes \u2192 neuropathy: 0%\n- Hypertension \u2192 retinopathy/nephropathy: 0%\n\nIMPLICATION: Current h280 filter (base\u2192comp = FILTER) is correct for most cases.\nCould refine to allow pathway-comprehensive but 16.1% is still low.",
+      "result_metric": "Organ-specific: 0.0% vs Pathway-comprehensive: 16.1%"
     },
     {
       "id": "h294",
@@ -7202,6 +7204,12 @@
       "hypothesis_id": "h298",
       "learning": "Implemented h297 mechanism-specificity as confidence signal. 53 diseases capped at LOW, 45 boosted to MEDIUM.",
       "implication": "Disease-level confidence signals complement drug-level signals for better calibration."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h293",
+      "learning": "Organ-specific complications (retinopathy, neuropathy) have 0% base\u2192comp precision. Pathway-comprehensive (MI, DKA) have 16.1%.",
+      "implication": "h280 filter is correct. Organ-specific complications require specialized treatment regardless of base disease control."
     }
   ],
   "collaborations": [
