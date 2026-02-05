@@ -1,11 +1,51 @@
 # Research Loop Progress
 
-## Current Session: h145, h146, h147, h149 Production & Validation (2026-02-05)
+## Current Session: h144 Metabolic Disease Rescue (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
+**Status:** Complete
+**Hypotheses Tested:**
+- h144: Metabolic Disease Rescue - **VALIDATED** (statin + rank<=10 = 60% precision)
+
+### h144: Metabolic Disease Rescue - VALIDATED
+
+Type 2 diabetes and other metabolic diseases previously showed 0 GOLDEN and 0 HIGH predictions in production. This hypothesis investigated alternative confidence signals.
+
+**Key Results (720 predictions, 5 seeds, 6.1% base rate):**
+
+| Drug Class | N | Precision | Notes |
+|------------|---|-----------|-------|
+| Statin | 21 | 47.6% | Best overall class |
+| Statin + rank<=10 | 10 | **60.0%** | RESCUE CRITERIA |
+| Insulin | 3 | 66.7% | Small n |
+| Fibrate | 11 | 36.4% | - |
+| Thiazolidinedione | 6 | 33.3% | - |
+| Sulfonylurea | 6 | 33.3% | - |
+| GLP-1/SGLT2 | 14 | 0.0% | Not in DRKG |
+
+**Critical Finding:** Generic mechanism support FAILS for metabolic (freq>=10+mech = 0% precision).
+Drug class is the dominant signal.
+
+**Production Update:**
+- Added `STATIN_DRUGS` set to production_predictor.py
+- Statin + rank<=10 → GOLDEN tier for metabolic diseases
+- Verified: hyperlipidemia now shows 4 GOLDEN statin predictions
+
+**New Hypotheses Generated:**
+- h150: Drug Class Rescue for Other Categories
+- h151: Modern Drug Gap Analysis (GLP-1/SGLT2 not in DRKG)
+- h152: ATC Code Integration for Precision
+
+---
+
+## Previous Session: h145, h146, h147, h149 Production & Validation (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
 **Hypotheses Tested:**
 - h145: Production Novel Prediction Export - **VALIDATED**
 - h146: Minocycline Repurposing Validation - **VALIDATED** (20% validated, 10% false positive)

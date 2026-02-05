@@ -3019,7 +3019,7 @@
       "rationale": "DRKG was built from data before 2019. Modern drug classes may be systematically missing, limiting recall.",
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 2,
       "category": "error_analysis",
       "dependencies": [
@@ -3030,7 +3030,9 @@
         "Check which are in DRKG compounds",
         "Quantify coverage gap by drug class",
         "Success: Document coverage and identify categories most affected"
-      ]
+      ],
+      "findings": "Hypothesis INVALIDATED: Modern drugs ARE well-covered in DRKG.\n\nCOVERAGE ANALYSIS:\n- GLP-1 agonists: 27 indications (5/5 drugs in GT)\n- SGLT2 inhibitors: 43 indications (5/5 drugs in GT)\n- Checkpoint inhibitors: 96 indications (5/5 drugs in GT)\n- JAK inhibitors: 37 indications (5/5 drugs in GT)\n- IL-17 inhibitors: 24 indications (3/3 drugs in GT)\n- IL-23 inhibitors: 19 indications (3/3 drugs in GT)\n\nAll 23 modern drugs tested have DRKG embeddings. The original h144 finding of \"GLP-1/SGLT2 not in DRKG\" was incorrect.\n\nACTUAL ISSUE:\n1. GLP-1/SGLT2 drugs ARE correctly filtered as FDA-approved for diabetes\n2. The \"novel\" predictions for diabetes are corticosteroids (HARMFUL)\n3. Corticosteroids cause hyperglycemia - they should be contraindicated for metabolic diseases\n\nThe h144 statin rescue criteria correctly addresses this by identifying statins as appropriate for metabolic diseases. The 0% precision for GLP-1/SGLT2 in h144 was because these are already FDA-approved (not prediction failures).",
+      "result_metric": "100% coverage for modern drugs"
     },
     {
       "id": "h152",
@@ -3050,6 +3052,24 @@
         "Test ATC-based precision criteria across categories",
         "Compare ATC vs manual drug class definitions",
         "Success: ATC codes improve precision stratification"
+      ]
+    },
+    {
+      "id": "h153",
+      "title": "Corticosteroid Metabolic Contraindication",
+      "category": "production",
+      "rationale": "h151 revealed corticosteroids are being predicted for diabetes but they CAUSE hyperglycemia. Need to add contraindication filter.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Add corticosteroid patterns to confidence_filter.py",
+        "Add metabolic diseases to corticosteroid contraindicated list",
+        "Re-run export and verify reduction in harmful predictions"
+      ],
+      "dependencies": [
+        "h151"
       ]
     }
   ],

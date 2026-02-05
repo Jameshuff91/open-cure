@@ -5,7 +5,8 @@ Production Drug Repurposing Predictor
 Unified pipeline integrating validated research findings:
 - h39: kNN collaborative filtering with Node2Vec embeddings (best method)
 - h135: Production tiered confidence system (GOLDEN/HIGH/MEDIUM/LOW/FILTER)
-- h136: Category-specific filters for Tier 2/3 rescue
+- h136: Category-specific filters for Tier 2/3 rescue (infectious, cardiovascular, respiratory)
+- h144: Metabolic statin rescue - statins + rank<=10 = 60% precision
 
 USAGE:
     # Get predictions for a disease
