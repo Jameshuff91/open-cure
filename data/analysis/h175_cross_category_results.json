@@ -1,0 +1,48 @@
+{
+  "hypothesis": "h175",
+  "title": "Cross-Category Knowledge Transfer",
+  "baseline_results": [
+    40.05471017725919,
+    27.99847744159481,
+    29.881882335693216,
+    44.11719495957981,
+    39.87758726386177
+  ],
+  "h175_results": [
+    38.89730276985179,
+    25.072150127127212,
+    30.160939244652084,
+    42.362421887449315,
+    40.09910401871186
+  ],
+  "baseline_mean": 36.385970435597756,
+  "h175_mean": 35.31838360955846,
+  "improvement_pp": -1.067586826039296,
+  "p_value": 0.15431820026071053,
+  "related_categories": {
+    "dermatological": [
+      "ophthalmic"
+    ],
+    "ophthalmic": [
+      "dermatological",
+      "respiratory"
+    ],
+    "respiratory": [
+      "ophthalmic"
+    ],
+    "cardiovascular": [
+      "metabolic"
+    ],
+    "metabolic": [
+      "renal",
+      "cardiovascular"
+    ],
+    "renal": [
+      "metabolic"
+    ],
+    "infectious": [
+      "ophthalmic",
+      "respiratory"
+    ]
+  }
+}

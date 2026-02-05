@@ -3485,7 +3485,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Map related category pairs (neurological-psychiatric, autoimmune-immunological, etc.)",
         "Test boosting both same-category AND related-category neighbors",
@@ -3493,7 +3493,9 @@
       ],
       "depends_on": [
         "h170"
-      ]
+      ],
+      "findings": "h175 INVALIDATED: Cross-Category Knowledge Transfer HURTS performance\n\nEXPERIMENT: Tested boosting related-category neighbors (based on drug overlap analysis):\n- dermatological <-> ophthalmic (26.9% drug overlap)\n- respiratory <-> ophthalmic (17.2%)\n- cardiovascular <-> metabolic (15.4%)\n- metabolic <-> renal (13.6%)\n- infectious <-> ophthalmic/respiratory\n\nRESULTS:\n| Method | R@30 | Delta | p-value |\n|--------|------|-------|---------|\n| Baseline (h170 same-cat only) | 36.39% \u00b1 6.29% | - | - |\n| Same + Related boost | 35.32% \u00b1 6.59% | -1.07pp | 0.15 |\n\nALPHA SENSITIVITY: All values hurt or neutral\n- alpha=0.1: +0.23pp (noise)\n- alpha=0.2: -0.38pp\n- alpha=0.3: -1.07pp\n- alpha=0.5: -1.40pp\n\nPER-CATEGORY HARM:\n- Infectious: -13.8pp (related ophthalmic/respiratory neighbors bring wrong drugs)\n- Dermatological: -6.7pp\n\nKEY INSIGHT: Drug overlap statistics (15-27%) are NOT sufficient for knowledge transfer.\nRelated categories share some drugs, but the noise from non-shared drugs dominates.\nSame-category boosting works because diseases share MOST treatments;\nrelated-category boosting fails because they only share SOME treatments.",
+      "result_metric": "-1.07pp (not significant)"
     },
     {
       "id": "h176",
@@ -3559,6 +3561,36 @@
         "Add /batch endpoint for multiple diseases",
         "Add health check and readiness probes",
         "Document deployment with uvicorn"
+      ]
+    },
+    {
+      "id": "h181",
+      "title": "Drug-Level Cross-Category Transfer (Instead of Disease-Level)",
+      "category": "method_improvement",
+      "rationale": "h175 showed disease-level cross-category boosting fails. But what if we boost specific DRUGS that are shared between categories? E.g., if dexamethasone treats both dermatological and ophthalmic diseases, boost its score for both.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Identify drugs that treat multiple categories",
+        "For predictions, if drug treats related-category diseases, boost its score",
+        "Test vs baseline kNN"
+      ]
+    },
+    {
+      "id": "h182",
+      "title": "Category Boundary Refinement",
+      "category": "method_improvement",
+      "rationale": "h175 revealed category boundaries matter more than drug overlap suggests. The current keyword-based categorization may be suboptimal. Could data-driven clustering (based on drug overlap) create better categories?",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Cluster diseases by drug treatment overlap (Jaccard)",
+        "Compare clusters to current keyword-based categories",
+        "Test if cluster-based boosting outperforms category-based"
       ]
     }
   ],
@@ -4248,6 +4280,12 @@
       "hypothesis_id": "h176",
       "learning": "Ground truth loading was the bottleneck (O(n\u00b2) fuzzy matching). Caching pre-computed results provides 33x speedup.",
       "implication": "Other pipelines using DiseaseMatcher could benefit from similar caching"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h175",
+      "learning": "Cross-category drug overlap (15-27%) is insufficient for knowledge transfer. kNN needs near-complete drug overlap, not partial.",
+      "implication": "Focus on same-category signals rather than related categories. Category boundaries matter more than drug statistics suggest."
     }
   ],
   "collaborations": [

@@ -1,6 +1,58 @@
 # Research Loop Progress
 
-## Current Session: h176 Production Predictor Initialization Speedup (2026-02-05)
+## Current Session: h175 Cross-Category Knowledge Transfer (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested:**
+- h175: Cross-Category Knowledge Transfer - **INVALIDATED** (hurts performance)
+- h176: Production Predictor Initialization Speedup - **VALIDATED** (33x speedup)
+
+### h175: Cross-Category Knowledge Transfer - INVALIDATED
+
+Tested whether boosting related-category neighbors (based on drug overlap) improves kNN.
+
+**Related Categories Tested (by drug overlap):**
+- dermatological ↔ ophthalmic (26.9% overlap)
+- respiratory ↔ ophthalmic (17.2%)
+- cardiovascular ↔ metabolic (15.4%)
+- metabolic ↔ renal (13.6%)
+- infectious ↔ ophthalmic/respiratory
+
+**Results:**
+| Method | R@30 | Delta | p-value |
+|--------|------|-------|---------|
+| Baseline (h170 same-cat only) | 36.39% | - | - |
+| Same + Related boost | 35.32% | -1.07pp | 0.15 |
+
+**Key Finding:** All alpha values hurt or are neutral. Even 26.9% drug overlap isn't sufficient for knowledge transfer.
+
+**Per-Category Harm:**
+- Infectious: -13.8pp (related neighbors bring wrong drugs)
+- Dermatological: -6.7pp
+
+**Learning:** Category boundaries matter more than drug statistics suggest. kNN needs near-complete drug overlap (same-category), not partial (related-category).
+
+**New Hypotheses:**
+- h181: Drug-Level Cross-Category Transfer
+- h182: Category Boundary Refinement
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 83 |
+| Invalidated | 41 |
+| Inconclusive | 8 |
+| Blocked | 18 |
+| Deprioritized | 2 |
+| Pending | 30 |
+| **Total Tested** | **132** |
+
+---
+
+## Previous Session: h176 Production Predictor Initialization Speedup (2026-02-05)
 
 ### Session Summary
 
