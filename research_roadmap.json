@@ -5589,7 +5589,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Build disease specificity hierarchy (generic \u2192 specific)",
         "Step 2: Score predictions by specificity match (generic GT \u2192 specific prediction = lower confidence)",
@@ -5598,6 +5598,72 @@
       ],
       "dependencies": [
         "h273"
+      ],
+      "findings": "VALIDATED with nuanced findings.\n\n**Precision by specificity relationship:**\n| Relationship | Precision | N |\n|--------------|-----------|---|\n| Exact disease | 78.7% | 277 |\n| Generic\u2192Specific | 19.3% | 88 |\n| Same-level different | 19.1% | 94 |\n| Within-generic different | 19.2% | 214 |\n| Specific\u2192Generic | **4.1%** | 98 |\n\n**Key insight:** Specific\u2192Generic predictions (where drug treats specific subtype but we predict for generic parent) have **4.7x LOWER precision** than the reverse direction. This is a 15.2 pp difference.\n\n**Clinical interpretation:**\n- Drugs that treat specific subtypes (e.g., \"diabetic neuropathy\") don't necessarily treat the generic parent (\"diabetes\")\n- But drugs for generic conditions often work for specific subtypes (subtype refinement)\n\n**Caveats:**\n1. Original hierarchy conflated TRUE SUBTYPES with COMPLICATIONS\n2. \"Diabetic neuropathy\" is a complication, not a subtype of diabetes\n3. With properly classified subtypes only, specific\u2192generic precision increases to ~32%\n\n**Actionable:** Specific\u2192Generic predictions could be flagged as lower confidence, but the hierarchy definition matters critically.",
+      "result_metric": "Specific\u2192Generic: 4.1% precision vs Generic\u2192Specific: 19.3% (+15.2 pp)"
+    },
+    {
+      "id": "h280",
+      "title": "Complication vs Subtype Classification for Confidence",
+      "category": "precision",
+      "rationale": "h279 revealed that TRUE subtypes (plaque psoriasis\u2192psoriasis) behave differently from COMPLICATIONS (diabetic neuropathy\u2192diabetes). A drug treating a complication doesn't necessarily treat the underlying disease. Could we classify disease relationships and use this for confidence scoring?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Build ontology of complication relationships (diabetes \u2192 nephropathy/neuropathy/retinopathy)",
+        "Step 2: Distinguish from true subtype relationships (psoriasis \u2192 plaque psoriasis)",
+        "Step 3: Score predictions differently: subtype match = high confidence, complication match = lower confidence",
+        "Step 4: Evaluate precision by relationship type",
+        "Success criteria: >10 pp precision difference between subtypes and complications"
+      ],
+      "dependencies": [
+        "h279"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h281",
+      "title": "Bidirectional Treatment Analysis: Does Parent Disease Drug Work for Complications?",
+      "category": "precision",
+      "rationale": "h279 showed specific\u2192generic predictions have 4.1% precision. But what about the reverse: if a drug treats the BASE disease (diabetes), does it work for COMPLICATIONS (diabetic nephropathy)? This is a different question from subtype refinement.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify drugs with GT for base diseases (diabetes, hypertension)",
+        "Step 2: Find predictions for their complications (diabetic nephropathy, hypertensive heart disease)",
+        "Step 3: Calculate precision of base\u2192complication predictions",
+        "Step 4: Compare to subtype\u2192subtype predictions",
+        "Success criteria: Quantify if base disease drugs help complications"
+      ],
+      "dependencies": [
+        "h279"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h282",
+      "title": "Disease Hierarchy Depth as Confidence Signal",
+      "category": "precision",
+      "rationale": "h279 shows that predictions matching at EXACT level (both L1, both L2) have different precision than cross-level. Could the DEPTH of match (how many hierarchy levels up/down) correlate with precision?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Compute hierarchy depth delta for each prediction (pred_level - gt_level)",
+        "Step 2: Bucket by delta: -2, -1, 0, +1, +2",
+        "Step 3: Calculate precision for each bucket",
+        "Step 4: Determine if delta magnitude predicts precision",
+        "Success criteria: Clear precision gradient by hierarchy delta"
+      ],
+      "dependencies": [
+        "h279"
       ],
       "findings": null,
       "result_metric": null
@@ -6685,6 +6751,12 @@
       "hypothesis_id": "h273",
       "learning": "Disease hierarchy matching identifies subtype refinements with 4.5x precision lift. Autoimmune/metabolic/neurological achieve >70% precision when prediction disease matches drug's GT disease group.",
       "implication": "Use hierarchy matching as a GOLDEN tier criterion for high-precision categories"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h279",
+      "learning": "Disease specificity direction matters: Specific\u2192Generic predictions have 4.1% precision vs 19.3% for Generic\u2192Specific (4.7x difference). However, the hierarchy definition is critical - need to distinguish true subtypes from complications.",
+      "implication": "Could implement specificity-based confidence scoring, but requires careful ontological classification"
     }
   ],
   "collaborations": [

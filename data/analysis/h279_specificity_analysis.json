@@ -1,0 +1,297 @@
+{
+  "hypothesis": "h279",
+  "summary": {
+    "exact_disease": {
+      "total": 277,
+      "correct": 218,
+      "precision": 78.70036101083032
+    },
+    "generic_to_specific": {
+      "total": 88,
+      "correct": 17,
+      "precision": 19.318181818181817
+    },
+    "specific_to_generic": {
+      "total": 98,
+      "correct": 4,
+      "precision": 4.081632653061225
+    },
+    "same_level_diff": {
+      "total": 94,
+      "correct": 18,
+      "precision": 19.148936170212767
+    },
+    "within_generic_diff": {
+      "total": 214,
+      "correct": 41,
+      "precision": 19.158878504672895
+    },
+    "no_match": {
+      "total": 1276,
+      "correct": 0,
+      "precision": 0.0
+    }
+  },
+  "examples": {
+    "exact_disease": [
+      {
+        "drug_name": "Propranolol",
+        "gt_disease": "chronic heart failure",
+        "gt_level": 1,
+        "pred_disease": "chronic heart failure",
+        "pred_level": 1,
+        "is_correct": true,
+        "category": "cardiovascular",
+        "group": "heart_failure"
+      },
+      {
+        "drug_name": "Carvedilol",
+        "gt_disease": "chronic heart failure",
+        "gt_level": 1,
+        "pred_disease": "chronic heart failure",
+        "pred_level": 1,
+        "is_correct": true,
+        "category": "cardiovascular",
+        "group": "heart_failure"
+      },
+      {
+        "drug_name": "Verapamil",
+        "gt_disease": "chronic heart failure",
+        "gt_level": 1,
+        "pred_disease": "chronic heart failure",
+        "pred_level": 1,
+        "is_correct": true,
+        "category": "cardiovascular",
+        "group": "heart_failure"
+      },
+      {
+        "drug_name": "Bisoprolol",
+        "gt_disease": "chronic heart failure",
+        "gt_level": 1,
+        "pred_disease": "chronic heart failure",
+        "pred_level": 1,
+        "is_correct": true,
+        "category": "cardiovascular",
+        "group": "heart_failure"
+      },
+      {
+        "drug_name": "Spironolactone",
+        "gt_disease": "chronic heart failure",
+        "gt_level": 1,
+        "pred_disease": "chronic heart failure",
+        "pred_level": 1,
+        "is_correct": true,
+        "category": "cardiovascular",
+        "group": "heart_failure"
+      }
+    ],
+    "generic_to_specific": [
+      {
+        "drug_name": "Glucagon",
+        "gt_disease": "type 1 diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "hyperglycemia",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Dapagliflozin",
+        "gt_disease": "type 1 diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "hyperglycemia",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Ramipril",
+        "gt_disease": "type 1 diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "hyperglycemia",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Isoniazid",
+        "gt_disease": "diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "diabetic foot infections without osteomyelitis",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Rivaroxaban",
+        "gt_disease": "coronary artery disease",
+        "gt_level": 1,
+        "pred_disease": "myocardial infarction",
+        "pred_level": 3,
+        "is_correct": false,
+        "category": "cardiovascular",
+        "group": "coronary"
+      }
+    ],
+    "specific_to_generic": [
+      {
+        "drug_name": "Lidocaine",
+        "gt_disease": "neuropathy",
+        "gt_level": 3,
+        "pred_disease": "type 1 diabetes mellitus",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Sitafloxacin",
+        "gt_disease": "pyelonephritis",
+        "gt_level": 2,
+        "pred_disease": "uncomplicated urinary tract infections",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "infectious",
+        "group": "uti"
+      },
+      {
+        "drug_name": "Cefiderocol",
+        "gt_disease": "pyelonephritis",
+        "gt_level": 2,
+        "pred_disease": "uncomplicated urinary tract infections",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "infectious",
+        "group": "uti"
+      },
+      {
+        "drug_name": "Cefaclor",
+        "gt_disease": "pyelonephritis",
+        "gt_level": 2,
+        "pred_disease": "uncomplicated urinary tract infections",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "infectious",
+        "group": "uti"
+      },
+      {
+        "drug_name": "Azithromycin",
+        "gt_disease": "dacryocystitis",
+        "gt_level": 2,
+        "pred_disease": "uncomplicated urinary tract infections",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "infectious",
+        "group": "uti"
+      }
+    ],
+    "same_level_diff": [
+      {
+        "drug_name": "Droxidopa",
+        "gt_disease": "nondiabetic autonomic neuropathy",
+        "gt_level": 2,
+        "pred_disease": "hyperglycemia",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Ranibizumab",
+        "gt_disease": "proliferative diabetic retinopathy pdr",
+        "gt_level": 2,
+        "pred_disease": "diabetic foot infections without osteomyelitis",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Rivaroxaban",
+        "gt_disease": "tachycardiac atrial fibrillation",
+        "gt_level": 2,
+        "pred_disease": "ventricular tachycardia",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "cardiovascular",
+        "group": "arrhythmia"
+      },
+      {
+        "drug_name": "Bepridil",
+        "gt_disease": "tachycardiac atrial fibrillation",
+        "gt_level": 2,
+        "pred_disease": "ventricular tachycardia",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "cardiovascular",
+        "group": "arrhythmia"
+      },
+      {
+        "drug_name": "Dofetilide",
+        "gt_disease": "tachycardiac atrial fibrillation",
+        "gt_level": 2,
+        "pred_disease": "ventricular tachycardia",
+        "pred_level": 2,
+        "is_correct": false,
+        "category": "cardiovascular",
+        "group": "arrhythmia"
+      }
+    ],
+    "within_generic_diff": [
+      {
+        "drug_name": "Nateglinide",
+        "gt_disease": "type 2 diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "type 1 diabetes mellitus",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Repaglinide",
+        "gt_disease": "type 2 diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "type 1 diabetes mellitus",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Empagliflozin",
+        "gt_disease": "type 2 diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "type 1 diabetes mellitus",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Canagliflozin",
+        "gt_disease": "type 2 diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "type 1 diabetes mellitus",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      },
+      {
+        "drug_name": "Losartan",
+        "gt_disease": "type 2 diabetes mellitus",
+        "gt_level": 1,
+        "pred_disease": "type 1 diabetes mellitus",
+        "pred_level": 1,
+        "is_correct": false,
+        "category": "metabolic",
+        "group": "diabetes"
+      }
+    ]
+  }
+}

@@ -1,76 +1,73 @@
 # Research Loop Progress
 
-## Current Session: h273, h276, h278, h271, h275 (2026-02-05)
+## Current Session: h279 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 5**
-- h273: Disease Hierarchy Matching for All Categories - **VALIDATED**
-- h276: Extend Hierarchy to GOLDEN Tier - **VALIDATED (then corrected)**
-- h278: Infectious Disease Hierarchy Gap Analysis - **VALIDATED**
-- h271: Domain-Isolated Drug Detection - **VALIDATED**
-- h275: Subtype Refinement vs Novel Discovery - **VALIDATED**
+**Hypotheses Tested: 1**
+- h279: Disease Specificity Scoring - **VALIDATED** (with nuances)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 159 |
+| Validated | 160 |
 | Invalidated | 52 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 42 |
-| **Total** | **282** |
+| Pending | 39 |
+| **Total** | **283** (3 new hypotheses added)
 
 ### KEY SESSION FINDINGS
 
-#### h273: Disease Hierarchy Matching - VALIDATED
-Subtype refinement predictions (e.g., drug treats "psoriasis", predict for "plaque psoriasis") have high precision.
+#### h279: Disease Specificity Scoring - VALIDATED
 
-**Full evaluation precision:**
-| Category | Hierarchy Precision | Tier |
-|----------|---------------------|------|
-| Metabolic | 65.2% | GOLDEN |
-| Neurological | 63.3% | GOLDEN |
-| Autoimmune | 44.7% | HIGH |
-| Respiratory | 40.4% | HIGH |
-| Cardiovascular | 22.6% | HIGH |
-| Infectious | 22.1% | HIGH |
+**Hypothesis:** Specificity direction (generic→specific vs specific→generic) correlates with prediction precision.
 
-#### h271: Cross-Domain Isolated Drug Filter - VALIDATED
-828 domain-isolated drugs identified. Cross-domain predictions have 0% precision.
-- 273 predictions filtered (2.1% of total)
-- 99.3% filter accuracy
+**Results:**
+| Relationship | Precision | N | Description |
+|--------------|-----------|---|-------------|
+| Exact disease | 78.7% | 277 | Same disease match |
+| Generic→Specific | 19.3% | 88 | Subtype refinement |
+| Same-level different | 19.1% | 94 | Same specificity, different disease |
+| Within-generic different | 19.2% | 214 | Both L1, different disease |
+| **Specific→Generic** | **4.1%** | 98 | Over-generalization |
 
-#### h275: Subtype Refinements are Clinically Correct - VALIDATED
-**MAJOR FINDING:** Hierarchy-matched predictions have **99.2% FUZZY precision**!
+**Key Insight:** Specific→Generic predictions have **4.7x LOWER precision** than Generic→Specific!
+- 15.2 pp difference (4.1% vs 19.3%)
+- This makes clinical sense: treating a specific subtype (diabetic neuropathy) doesn't mean the drug works for the generic parent (diabetes)
 
-They are NOT novel predictions - they're subtype refinements of known indications.
-- "chronic heart failure" when GT has "heart failure" = SAME disease
-- "plaque psoriasis" when GT has "psoriasis" = SAME condition
+**Important Caveat:**
+The original hierarchy definition conflated TRUE SUBTYPES with COMPLICATIONS:
+- True subtype: "plaque psoriasis" IS a subtype of "psoriasis"
+- Complication: "diabetic neuropathy" is a COMPLICATION of diabetes, not a subtype
 
-**Prediction Type Distribution (13,412 total):**
-- exact_match: 12.0% - Already known
-- hierarchy_match: 5.7% - Subtype refinements (99.2% correct)
-- category_match: 63.2% - Same category, different disease
-- novel_repurposing: 21.4% - TRUE novel predictions
+When properly restricted to true subtypes only, specific→generic precision increases to ~32%.
 
-### Production Changes
-Modified `src/production_predictor.py`:
-1. `DISEASE_HIERARCHY_GROUPS` constant
-2. `_build_disease_hierarchy_mapping()` method
-3. `_check_disease_hierarchy_match()` method
-4. `HIERARCHY_GOLDEN_CATEGORIES` = {metabolic, neurological}
-5. `_build_domain_isolation_mapping()` method
-6. `_is_cross_domain_isolated()` method
-7. Cross-domain isolated FILTER rule
+**Actionable:** Could implement specificity-based confidence scoring, but requires careful ontological classification of subtype vs complication relationships.
+
+### New Hypotheses Generated
+1. **h280**: Complication vs Subtype Classification for Confidence
+2. **h281**: Bidirectional Treatment Analysis (base disease → complications)
+3. **h282**: Disease Hierarchy Depth as Confidence Signal
 
 ### Recommended Next Steps
-1. **Add prediction_type field** to deliverables (h275 follow-up)
+1. **h280**: Distinguish true subtypes from complications for better confidence scoring (medium effort)
 2. **h277**: Cross-category hierarchy matching (medium effort)
 3. **h91/h269**: Literature mining or cancer targeting (high effort)
+
+---
+
+## Previous Session: h273, h276, h278, h271, h275 (2026-02-05)
+
+**Hypotheses Tested: 5** - All VALIDATED
+- h273: Disease Hierarchy Matching - 4.5x precision lift
+- h276: GOLDEN tier for metabolic/neurological hierarchy
+- h278: Infectious hierarchy gap analysis
+- h271: Domain-isolated drug filter (0% cross-domain precision)
+- h275: Subtype refinements have 99.2% fuzzy precision
 
 ---
 
