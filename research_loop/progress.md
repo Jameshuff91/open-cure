@@ -1,16 +1,17 @@
 # Research Loop Progress
 
-## Current Session: h104, h107, h108, h106 (2026-02-04, continued)
+## Current Session: h104, h107, h108, h106, h110 (2026-02-04, continued)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
+**Status:** Complete
 **Hypotheses Tested This Session:**
-- h104: Confidence Feature - Drug Class Coherence - **INVALIDATED** (+1.2 pp < 5 pp threshold)
+- h104: Confidence Feature - Drug Class Coherence - **INVALIDATED** (+1.3 pp < 5 pp threshold)
 - h107: Rank Stability Across Seeds - **INVALIDATED** (-0.06 pp, no correlation)
 - h108: Drug Training Frequency - **VALIDATED** (+9.4 pp, strongest signal!)
-- h106: Multi-Signal Confidence Ensemble - **VALIDATED** (21.75% precision @ top 10%)
+- h106: Multi-Signal Confidence Ensemble - **VALIDATED** (22.04% precision @ top 10%)
+- h110: ATC Incoherence as Negative Signal - **INVALIDATED** (counter-intuitive!)
 
 ### Key Findings
 
@@ -53,11 +54,17 @@
 | h105 Coverage strength | -0.45 pp | INVALIDATED |
 | h110 ATC incoherence | -4.55 pp | INVALIDATED (inverted!) |
 
+**h110: ATC Incoherence - COUNTER-INTUITIVE RESULT!**
+- INCOHERENT (no classmate treats similar): 11.24% precision
+- COHERENT (classmate treats similar): 6.69% precision
+- **Incoherent predictions perform BETTER** (opposite of hypothesis)
+- Interpretation: Drugs from "irrelevant" ATC classes that rank highly must have strong kNN signal from independent sources
+
 ### Session Statistics
-- Hypotheses tested: 4 (h104, h107, h108, h106)
+- Hypotheses tested: 5 (h104, h107, h108, h106, h110)
 - Validated: 2 (h108, h106)
-- Invalidated: 2 (h104, h107)
-- New hypotheses added: 3 (h107, h108, h109)
+- Invalidated: 3 (h104, h107, h110)
+- New hypotheses added: 4 (h107, h108, h109, h110, h111, h112)
 
 ### Pending Hypotheses: 17
 

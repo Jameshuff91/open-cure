@@ -2081,8 +2081,8 @@
         "h108",
         "h71"
       ],
-      "findings": "PARTIALLY VALIDATED: Ensemble achieves 21.75% precision at top 10% threshold.\n\nRESULTS:\n- HIGH tier (top 33%): 13.42% precision (below 15% target)\n- Top 20%: 16.90% precision (exceeds 15%)\n- Top 10%: 21.75% precision (exceeds 15%)\n\nFEATURE IMPORTANCE (logistic regression coefficients):\n- train_frequency: 0.384 (STRONGEST)\n- tier_inv: 0.242\n- norm_score: 0.208\n- inv_rank: 0.209\n- mechanism_support: 0.000 (data format issue - no overlap found)\n\nCOMPARISON TO INDIVIDUAL SIGNALS:\n- Category Tier 1 alone: 20.86% precision (930 predictions)\n- Ensemble top 10%: 21.75% precision (1,352 predictions)\n- The ensemble provides ~45% MORE high-confidence predictions at similar precision\n\nKEY INSIGHTS:\n1. Drug training frequency (h108) is the strongest ensemble feature\n2. Category tier (h71) provides complementary signal\n3. Mechanism support (h97) data format needs fixing for integration\n4. More aggressive thresholding (top 10-20%) achieves target precision\n5. Ensemble improves coverage at high precision vs single features\n\nRECOMMENDATION:\nUse ensemble score with top 10-20% threshold for production.\nFix mechanism support data format to potentially improve further.",
-      "result_metric": "Top 10%: 21.75%, Top 20%: 16.90%, Top 33%: 13.42% precision"
+      "findings": "PARTIALLY VALIDATED: Ensemble achieves 22% precision at top 10% threshold.\n\nKEY RESULTS:\n- Top 10% by ensemble: 22.04% precision (exceeds 15% target)\n- Top 20% by ensemble: 17.42% precision\n- HIGH tier (top 1/3): 13.65% precision (below 15%)\n- Category Tier 1 alone: 20.75% precision\n\nISSUE: Mechanism support feature not working due to disease ID format mismatch\nbetween disease_genes.json (MESH:xxx) and ground truth (drkg:Disease::MESH:xxx).\nResult is ensemble of: drug_frequency + category_tier + kNN_score.\n\nFEATURE IMPORTANCE (logistic regression coefficients):\n1. train_frequency: 0.376 (strongest)\n2. tier_inv: 0.241\n3. inv_rank: 0.217\n4. norm_score: 0.207\n5. mechanism_support: 0.000 (data loading issue)\n\nCONCLUSION: Ensemble provides modest improvement (+1.3 pp) over Tier 1 alone.\nDrug training frequency is the strongest feature. Category tier remains very\nimportant. For production: use TOP 10% threshold for high-confidence predictions.",
+      "result_metric": "22.04% precision at top 10% threshold"
     },
     {
       "id": "h107",
@@ -2132,7 +2132,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Step 1: Load drug SMILES and compute Morgan fingerprints",
         "Step 2: For each prediction, find drugs known to treat similar diseases",
@@ -2207,6 +2207,28 @@
       ],
       "dependencies": [
         "h110"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h113",
+      "title": "Fix Mechanism Support Data Loading",
+      "category": "infrastructure",
+      "rationale": "h106 showed mechanism support feature has 0 hits due to disease ID format mismatch between disease_genes.json (MESH:xxx) and ground truth (drkg:Disease::MESH:xxx). Fixing this should improve ensemble performance since h97 showed +6.5 pp precision improvement for mechanism-supported predictions.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify ID format mismatch in h106_multi_signal_ensemble.py",
+        "Step 2: Update compute_mechanism_support() to handle both formats",
+        "Step 3: Re-run h106 ensemble with fixed mechanism support",
+        "Step 4: Measure improvement in ensemble precision",
+        "Success criteria: Ensemble precision improves by >1 pp with mechanism support"
+      ],
+      "dependencies": [
+        "h106"
       ],
       "findings": null,
       "result_metric": null
