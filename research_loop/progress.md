@@ -44,16 +44,46 @@ Measured the precision impact of h148's disease reclassification from 'other' to
 - h186: Other Category Drug Class Analysis
 - h187: Neurological Rescue Criteria Development
 
+### h186: Other Category Drug Class Analysis - VALIDATED
+
+Analyzed drug classes for the 78 diseases in 'other' category to find rescue criteria opportunities.
+
+**Key Finding:** 'Other' is too heterogeneous for rescue criteria - reclassification is better.
+
+**Drug Class Analysis (1,081 predictions, 15.8% overall precision):**
+| Drug Class | Hits/Total | Precision |
+|------------|------------|-----------|
+| Analgesics | 9/9 | 100% (pain diseases only) |
+| Corticosteroids | 37/147 | 25.2% |
+| NSAIDs | 8/34 | 23.5% |
+| Antibiotics | 40/249 | 16.1% |
+| Other | 74/622 | 11.9% |
+
+**Reclassification Opportunity:**
+57 of 78 'other' diseases can be reclassified with additional keywords:
+- infectious: +17 (q fever, syphilis, tularemia, etc.)
+- autoimmune: +6 (polyarteritis nodosa, takayasu)
+- reproductive: +5 (new category for fertility/pregnancy)
+- metabolic: +5 (thyrotoxicosis, zollinger ellison)
+- musculoskeletal: +4, cardiovascular: +4, neurological: +4
+- Others: +12 across various categories
+
+**Remaining 'other' (21 diseases):**
+True edge cases: poisonings (5), pain syndromes (2), rare genetic (5), misc (9)
+
+**New Hypotheses Generated:**
+- h188: Implement h186 Keyword Additions to Reduce Other
+
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 85 |
+| Validated | 86 |
 | Invalidated | 41 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 2 |
-| Pending | 31 |
-| **Total Tested** | **134** |
+| Pending | 32 |
+| **Total Tested** | **135** |
 
 ---
 

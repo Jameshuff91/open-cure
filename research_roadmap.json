@@ -3651,13 +3651,15 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Get all diseases in \"other\" category",
         "Analyze drug class distribution of hits vs misses",
         "Identify any drug classes with >30% precision",
         "If found, add rescue criteria for \"other\""
-      ]
+      ],
+      "findings": "Further reclassification can reduce 'other' from 78 \u2192 21 diseases.\n\nPROPOSED KEYWORD ADDITIONS:\n- infectious: +17 (q fever, syphilis, tularemia, etc.)\n- autoimmune: +6 (polyarteritis nodosa, takayasu, temporal arteritis)\n- reproductive: +5 (new category for fertility/pregnancy)\n- metabolic: +5 (thyrotoxicosis, zollinger ellison)\n- musculoskeletal: +4 (tendinitis, tenosynovitis)\n- cardiovascular: +4 (torsades de pointes, tetralogy of fallot)\n- neurological: +4 (tuberous sclerosis, periodic paralysis)\n- gastrointestinal: +3 (gingivitis, dental caries)\n- hematological: +3 (thrombophilia, osteopetrosis)\n- ophthalmic: +2 (retinoblastoma, retinopathy)\n- dermatological: +2 (pityriasis, TEN)\n- renal: +2 (proteinuria, vesicoureteral reflux)\n\nREMAINING 'OTHER' (21 diseases):\nTrue edge cases like poisonings (5), pain syndromes (2), rare genetic (5), misc (9)\n\nKEY INSIGHT: Reclassification is better than rescue criteria because 'other' is too heterogeneous for a single rescue rule.",
+      "result_metric": "78 \u2192 21 other diseases (73% reclassifiable)"
     },
     {
       "id": "h187",
@@ -3673,6 +3675,23 @@
         "Compute precision by drug class for neurological diseases",
         "Develop neurological-specific rescue criteria",
         "Test and validate"
+      ]
+    },
+    {
+      "id": "h188",
+      "title": "Implement h186 Keyword Additions to Reduce Other",
+      "category": "production",
+      "rationale": "h186 identified 57 diseases in \"other\" that can be reclassified with additional keywords. This enables rescue criteria access for those diseases.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Add proposed keywords from h186 to CATEGORY_KEYWORDS in production_predictor.py",
+        "Consider adding new \"reproductive\" category for 5 fertility/pregnancy diseases",
+        "Invalidate ground truth cache (delete data/cache/ground_truth_cache.json)",
+        "Re-run h184 precision evaluation to measure impact",
+        "Update CATEGORY_PRECISION calibration values if needed"
       ]
     }
   ],
@@ -4374,6 +4393,12 @@
       "hypothesis_id": "h148",
       "learning": "Keyword-based disease categorization can achieve 86% coverage with comprehensive patterns. Remaining \"other\" is truly cross-cutting (pain, toxicology, reproductive).",
       "implication": "Future work could add reproductive/dental/toxicology categories, but diminishing returns."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h186",
+      "learning": "Other category is too heterogeneous for rescue criteria. Reclassification enables existing rescue paths.",
+      "implication": "Add keywords to reduce other from 78 to 21. Consider new reproductive category."
     }
   ],
   "collaborations": [
