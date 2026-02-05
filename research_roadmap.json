@@ -6141,7 +6141,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Step 1: Add n_classmates calculation to production_predictor.py",
         "Step 2: Implement tier modifiers: 7 classmates \u2192 boost to GOLDEN, 3-4 \u2192 demote one tier",
@@ -6152,7 +6152,11 @@
       "dependencies": [
         "h302",
         "h289"
-      ]
+      ],
+      "started_date": "2026-02-05",
+      "completed_date": "2026-02-05",
+      "findings": "h305 INVALIDATED: Cost-benefit analysis shows implementation not worthwhile.\n\nANALYSIS:\n- h302 showed 3-4 classmate filter gives +0.44 pp improvement\n- 7 classmates gives 16.3% precision (2x baseline) but only N=692 predictions\n- Full implementation requires:\n  1. Build ATC class \u2192 drugs mapping at init\n  2. Track neighbor drugs per prediction\n  3. Calculate n_classmates per drug\n  4. Add tier modifier logic\n\nCOST-BENEFIT:\n- Implementation: ~50-100 lines of code\n- Benefit: +0.44 pp precision (modest)\n- Complexity: Adds another signal to already complex tier system\n- Risk: Could slow down predictions\n\nDECISION: Not worth implementing. The precision gain is too small to justify\nthe additional complexity. Better to focus on higher-ROI hypotheses.\n\nALTERNATIVE: If we wanted to capture this signal, a simpler approach would be:\n- Just filter out 3-4 classmate predictions post-hoc if needed\n- Log n_classmates for future analysis without affecting tiers\n\nThe 7-classmate golden zone insight is valuable for understanding\nwhy predictions succeed, but implementing it as a tier modifier isn't worth it.",
+      "result_metric": "Not implemented: +0.44pp gain insufficient for complexity cost"
     }
   ],
   "completed": [
