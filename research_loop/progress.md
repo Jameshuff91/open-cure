@@ -1,66 +1,78 @@
 # Research Loop Progress
 
-## Current Session: h226, h233, h221, h236, h238, h100 (2026-02-05)
+## Current Session: h227, h134, h241, h243, h242 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested: 6**
-- h226: Two-Hop Mechanism Paths - **INVALIDATED** (6.3% precision vs 13.3% 1-hop)
-- h233: Threshold-Based 2-Hop Paths - **VALIDATED** (marginal: >=15 achieves 10.2%)
-- h221: Manual Rule Expansion - **VALIDATED** (existing 30 rules sufficient)
-- h236: High-Indication Drug Ranking Gap - **VALIDATED** (kNN favors specialists)
-- h238: Category-Restricted kNN - **VALIDATED** (recovers generalist drugs)
-- h100: Pathway-Level Drug Matching - **INVALIDATED** (gene overlap is better)
+**Status:** In Progress
+**Hypotheses Tested: 5**
+- h227: Hybrid Drug-Class/kNN Routing - **VALIDATED** (+9.4pp hybrid vs kNN)
+- h134: Steroid Dominance Analysis in Golden Set - **VALIDATED** (non-steroids 17.7%, calcium blockers 87.5%)
+- h241: Steroid-Free Disease Categories Deep Dive - **VALIDATED** (CV/psychiatric 100% for drug classes)
+- h243: Psychiatric Contraindication Rules - **VALIDATED** (+12.6pp precision with SSRI/stimulant filters)
+- h242: Biologic Precision Rescue via Mechanism Tiers - **INVALIDATED** (no class >=20%)
 
 ### Cumulative Statistics (2026-02-05)
 | Status | Count |
 |--------|-------|
-| Validated | 130 |
-| Invalidated | 48 |
+| Validated | 134 |
+| Invalidated | 49 |
 | Inconclusive | 8 |
 | Blocked | 18 |
 | Deprioritized | 3 |
-| Pending | 30 |
-| **Total** | **238** |
+| Pending | 35 |
+| **Total** | **247** |
 
 ### Session Key Learnings
 
-1. **h226:** 2-hop PPI paths extend coverage (+37.7%) but precision drops to 6.3% (0.48x of 1-hop). PPI interactions are too non-specific.
+1. **h227:** Hybrid drug-class/kNN routing achieves 39.3% vs 29.9% pure kNN (+9.4pp). Route psychiatric to drug-class, rare diseases to kNN.
 
-2. **h233:** Higher 2-hop thresholds improve precision: >=15 paths = 10.2%, >=20 paths = 11.7%. Marginal value as secondary signal.
+2. **h134:** Model captures diverse pharmacology beyond steroids:
+   - Calcium blockers: 87.5% precision (best non-steroid)
+   - Antipsychotics: 75%
+   - Beta blockers: 69.2%
+   - ACE inhibitors: 63.6%
+   - Cardiovascular and psychiatric have NO steroids but 47-48% precision
 
-3. **h221:** Current 30 manual rules are sufficient. The gap (Aspirin, Metformin not appearing) is a kNN ranking issue, not a data gap.
+3. **h241:** Steroid-free categories (CV, psychiatric) show excellent drug class patterns:
+   - CV: Beta blockers, calcium blockers, diuretics, vasodilators all 100% precision
+   - Psychiatric: Atypical antipsychotics 90%, typical 80%
+   - ~70% of CV novel predictions are clinically plausible
+   - ~40% of psychiatric novel predictions are plausible (SSRI/stimulant issue identified)
 
-4. **h236 KEY INSIGHT:** kNN collaborative filtering favors "specialist" drugs over "generalist" drugs:
-   - Empagliflozin (9 GT diseases) → 11 predictions
-   - Metformin (123 GT diseases) → 0 predictions
+4. **h243:** Psychiatric contraindication rules improve HIGH confidence from 48.3% → 61.0% (+12.6pp):
+   - SSRI/SNRI for bipolar (mania risk)
+   - Stimulants for bipolar/schizophrenia (psychosis risk)
+   - Local anesthetics for psychiatric (no indication)
+   - 5 GT hits lost but they're adjunct uses requiring combination therapy
 
-5. **h238 SOLUTION:** Category-restricted kNN recovers generalist drugs:
-   - Metformin ranks #16 in metabolic category (vs not in top 30 globally)
-
-6. **h100:** Gene overlap is a better signal than pathway overlap:
-   - Gene: 2.36x separation, 17.9% precision at threshold >=10
-   - Pathway: 1.74x separation, 11.0% precision at threshold >=10
-
-### Session Theme: Mechanism Path Analysis and kNN Limitations
-
-**Mechanism Path Hierarchy:**
-1. Direct gene overlap (h100, h166): Best signal, 17.9% precision
-2. 1-hop mechanism paths: 13.3% precision (validated in h166)
-3. Pathway overlap (h100): Lower precision (11.0%) but higher coverage
-4. 2-hop PPI paths (h226): Poor precision (6.3%), adds noise
-
-**kNN Algorithm Insights:**
-- Favors specialist drugs over generalist drugs (h236)
-- Category-restricted kNN can recover generalists (h238)
-- Manual rules help drugs NOT in DRKG, not ranking issues (h221)
+5. **h242:** Biologic precision rescue via mechanism tiers FAILED:
+   - No mechanism class achieves >=20% precision overall
+   - But disease-specific routing COULD work (33% for RA, PsA, melanoma)
+   - Root cause: GT sparsity (58 entries for 10 biologics vs 271 for prednisone alone)
 
 ### New Hypotheses Generated
-- h234: Weighted PPI Path Scoring (pending)
-- h235: Same-Pathway 2-Hop filtering (pending)
-- h237: Indication-Weighted Drug Boosting (pending)
+- h239: Antifungal Drug Repurposing Analysis (from h134)
+- h240: Calcium Blocker Cross-Category Repurposing (from h134)
+- h244: PAH Drug Transfer to Heart Failure (from h241)
+- h245: Emerging Treatments Validation (from h241)
+- h246: Adjunct Therapy Detection for Psychiatric (from h243)
+- h247: Disease-Specific Biologic Routing (from h242)
+
+### Session Theme: Precision Optimization & Contraindication Rules
+
+**Key Patterns Discovered:**
+1. Drug-class routing beats kNN for specific categories (psychiatric +23pp, neurological +6pp)
+2. Non-steroid drug classes achieve steroid-level precision (calcium blockers 87.5%)
+3. Contraindication rules are essential for psychiatric safety (SSRIs/stimulants for bipolar)
+4. Biologics need disease-specific routing, not mechanism tiering
+
+**Production Recommendations:**
+1. Integrate psychiatric contraindication rules into confidence filter
+2. Use hybrid routing: drug-class for psychiatric/neurological, kNN for rare diseases
+3. Prioritize cardiovascular novel predictions for validation (70% clinically plausible)
+4. Consider disease-routing for biologics rather than excluding them
 
 ---
 
