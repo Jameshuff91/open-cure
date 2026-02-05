@@ -4933,7 +4933,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all sGC stimulator predictions beyond heart failure",
         "Search ClinicalTrials.gov for Riociguat in peripheral arterial disease",
@@ -4943,7 +4943,9 @@
       ],
       "dependencies": [
         "h244"
-      ]
+      ],
+      "findings": "VALIDATED: sGC stimulators show 27.3% strict / 50% lenient precision.\n\n**Validation Summary (22 predictions):**\n- FDA-approved: 2 (HF via Vericiguat, PAH via Riociguat)\n- Preclinical validated: 3 (CKD, diabetic nephropathy, proteinuria)\n- Mechanistically plausible: 5 (PVD, stroke, CAD)\n- No evidence: 12 (false positives)\n\n**CRITICAL SAFETY FINDING:**\n- Riociguat + toxemia of pregnancy = CONTRAINDICATED (teratogenic!)\n- Riociguat + kidney failure = CONTRAINDICATED (CrCl <15-30 limit)\n\n**Key Validated Cross-Category Predictions:**\n1. Chronic kidney disease - runcaciguat in clinical development\n2. Diabetic nephropathy - consistent preclinical renoprotection\n3. Proteinuria - reduced in preclinical CKD models\n\n**Key Mechanistically Plausible (need clinical trials):**\n- Peripheral arterial disease\n- Stroke/cerebrovascular disease\n- Coronary artery disease\n\n**Model Limitation:** 55% of predictions have no evidence or mechanism.",
+      "result_metric": "27.3% strict precision; 2 safety contraindications found"
     },
     {
       "id": "h250",
@@ -5003,6 +5005,24 @@
       ],
       "dependencies": [
         "h251"
+      ]
+    },
+    {
+      "id": "h253",
+      "title": "sGC Stimulator Pregnancy Safety Filter",
+      "category": "precision",
+      "rationale": "h249 found riociguat is predicted for toxemia of pregnancy, but riociguat is CONTRAINDICATED in pregnancy (teratogenic). Add explicit safety filter.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Add filter: sGC stimulators (riociguat, vericiguat) + pregnancy conditions = EXCLUDED",
+        "Include: toxemia, preeclampsia, gestational conditions",
+        "Document teratogenicity warning"
+      ],
+      "dependencies": [
+        "h249"
       ]
     }
   ],

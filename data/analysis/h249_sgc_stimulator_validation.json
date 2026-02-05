@@ -1,0 +1,121 @@
+{
+  "hypothesis": "h249",
+  "title": "sGC Stimulator Validation: Cardiovascular Predictions Beyond HF/PAH",
+  "analysis_date": "2026-02-05",
+  "precision_strict": 27.3,
+  "precision_lenient": 50.0,
+  "counts": {
+    "total_predictions": 22,
+    "validated": 6,
+    "plausible": 5,
+    "not_validated": 12
+  },
+  "validation_results": {
+    "validated": {
+      "chronic heart failure": {
+        "evidence": "Vericiguat FDA approved 2021 (VICTORIA trial)",
+        "status": "FDA_APPROVED_CLASS"
+      },
+      "pulmonary arterial hypertension": {
+        "evidence": "Riociguat FDA approved 2013 (PATENT/CHEST trials)",
+        "status": "FDA_APPROVED"
+      },
+      "chronic kidney disease": {
+        "evidence": "Preclinical renoprotection; runcaciguat in clinical development for CKD",
+        "status": "PRECLINICAL_VALIDATED"
+      },
+      "diabetic nephropathy": {
+        "evidence": "sGC stimulators show consistent renoprotective effects in preclinical models",
+        "status": "PRECLINICAL_VALIDATED"
+      },
+      "proteinuria": {
+        "evidence": "Reduced in preclinical CKD models with sGC stimulators",
+        "status": "PRECLINICAL_VALIDATED"
+      }
+    },
+    "plausible": {
+      "peripheral vascular disease": {
+        "evidence": "NO clinical trials found; sGC/cGMP pathway relevant to vascular function",
+        "status": "MECHANISM_PLAUSIBLE"
+      },
+      "peripheral arterial diseases": {
+        "evidence": "Same as PVD - mechanism plausible, no trials",
+        "status": "MECHANISM_PLAUSIBLE"
+      },
+      "stroke": {
+        "evidence": "NO clinical trials for riociguat; CY6463 in Phase II for MELAS (stroke-like)",
+        "status": "EARLY_DEVELOPMENT"
+      },
+      "ischemic cerebrovascular disorder": {
+        "evidence": "Same as stroke - mechanism plausible for neuroprotection",
+        "status": "MECHANISM_PLAUSIBLE"
+      },
+      "coronary artery disease": {
+        "evidence": "sGC pathway relevant; no dedicated CAD trials for riociguat",
+        "status": "MECHANISM_PLAUSIBLE"
+      }
+    },
+    "not_validated": {
+      "duchenne muscular dystrophy": {
+        "evidence": "NO clinical trials found; not in development for DMD",
+        "status": "NO_EVIDENCE"
+      },
+      "congenital heart disease": {
+        "evidence": "Too heterogeneous; not studied",
+        "status": "UNCLEAR"
+      },
+      "migraine with aura": {
+        "evidence": "NO evidence found",
+        "status": "NO_EVIDENCE"
+      },
+      "silicosis": {
+        "evidence": "NO evidence; fibrosis pathway unclear",
+        "status": "NO_EVIDENCE"
+      },
+      "obstructive sleep apnea": {
+        "evidence": "NO evidence found",
+        "status": "NO_EVIDENCE"
+      },
+      "toxemia of pregnancy": {
+        "evidence": "Riociguat is CONTRAINDICATED in pregnancy (teratogenic)",
+        "status": "CONTRAINDICATED"
+      },
+      "ovarian hyperstimulation syndrome": {
+        "evidence": "NO evidence; not relevant mechanism",
+        "status": "NO_EVIDENCE"
+      },
+      "von willebrand disease": {
+        "evidence": "NO evidence; different pathway",
+        "status": "NO_EVIDENCE"
+      },
+      "hypochromic anemia": {
+        "evidence": "NO evidence; different pathway",
+        "status": "NO_EVIDENCE"
+      },
+      "neuronal ceroid lipofuscinosis": {
+        "evidence": "NO evidence",
+        "status": "NO_EVIDENCE"
+      },
+      "kidney failure": {
+        "evidence": "Riociguat NOT recommended for CrCl <15-30; too advanced",
+        "status": "CONTRAINDICATED_ADVANCED"
+      },
+      "autosomal dominant polycystic kidney disease adpkd": {
+        "evidence": "NO trials for sGC stimulators in ADPKD",
+        "status": "NO_EVIDENCE"
+      }
+    }
+  },
+  "critical_safety_finding": {
+    "drug": "Riociguat",
+    "contraindication": "Pregnancy (teratogenic)",
+    "also_contraindicated": "Advanced kidney failure (CrCl <15-30)"
+  },
+  "key_findings": [
+    "sGC stimulators show 22.7% strict precision (validated) or 45.5% lenient (+ plausible)",
+    "Renal protection is validated in preclinical models (CKD, diabetic nephropathy, proteinuria)",
+    "Peripheral vascular predictions are mechanistically plausible but lack clinical trials",
+    "Toxemia of pregnancy is CONTRAINDICATED - pregnancy is a contraindication for riociguat",
+    "Many predictions (55%) have no clinical evidence or mechanism"
+  ]
+}
