@@ -5825,7 +5825,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Analyze class-unique correct predictions - what makes them work?",
         "Step 2: Analyze class-unique incorrect predictions - what's the failure mode?",
@@ -5836,8 +5836,9 @@
       "dependencies": [
         "h193"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "h289 VALIDATED: Class uniqueness analysis revealed surprising patterns.\n\nKEY FINDINGS:\n1. Unique precision: 7.04% vs Not-unique: 8.94% (1.9 pp gap confirmed)\n2. COUNTER-INTUITIVE: Unique drugs have HIGHER training frequency (9.51 vs 7.47)\n   - Unique correct hits have even higher frequency (25.02 vs 12.15)\n   - Being unique requires high drug frequency to overcome class disadvantage\n3. Narrow class breadth: Unique ATC classes treat only 43 diseases vs 87\n4. U-SHAPED classmate effect:\n   - 1 classmate: 7.0%\n   - 2 classmates: 8.3%\n   - 3-4 classmates: 2.7-3.1% (WORST!)\n   - 5+ classmates: 9.6% (BEST)\n5. Score gap (hits vs misses) is LARGER for unique (0.201 vs 0.155)\n   - Unique predictions are more discriminative when correct!\n\nINTERPRETATION:\n- Class uniqueness hurts because the drug comes from a narrow therapeutic class\n- BUT drugs that ARE unique + correct are high-confidence (strong signal required)\n- The 3-4 classmate zone is a \"dangerous middle ground\" - enough competition to dilute signal, not enough to establish pattern\n- Lidocaine dominates unique correct predictions (local anesthetic used broadly)\n\nACTIONABLE INSIGHT:\n- Don't filter out unique predictions entirely\n- Unique + high score + high drug frequency = potentially reliable signal\n- Consider 3-4 classmates as negative confidence signal",
+      "result_metric": "Unique 7.04% vs Not-unique 8.94%, U-shaped classmate effect",
+      "completed_date": "2026-02-05"
     },
     {
       "id": "h290",
@@ -6066,6 +6067,66 @@
         "Step 3: Build mapping pipeline and validate coverage",
         "Step 4: Re-evaluate h299 with mappings",
         "Success criteria: >50% coverage for both drug and disease mappings"
+      ]
+    },
+    {
+      "id": "h302",
+      "title": "3-4 Classmate Zone as Negative Confidence Signal",
+      "category": "confidence",
+      "rationale": "h289 found a U-shaped precision curve: 1-2 classmates and 5+ classmates have 7-9.6% precision, but 3-4 classmates have only 2.7-3.1%. Test if flagging this zone improves tiering.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Add n_classmates_in_neighbors to prediction features",
+        "Step 2: Flag predictions with 3-4 classmates as FILTER tier",
+        "Step 3: Evaluate precision impact on remaining predictions",
+        "Step 4: Calculate coverage vs precision trade-off",
+        "Success criteria: Remove low-precision predictions without losing many hits"
+      ],
+      "dependencies": [
+        "h289"
+      ]
+    },
+    {
+      "id": "h303",
+      "title": "High-Frequency Unique Drug Signal",
+      "category": "confidence",
+      "rationale": "h289 found unique correct predictions have 25.02 avg training frequency vs 8.34 for incorrect. Test if high-frequency unique predictions can be boosted.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Define high-frequency unique: class-unique AND train_freq > 20",
+        "Step 2: Calculate precision for this subset",
+        "Step 3: If precision > 10%, consider tier boost for this pattern",
+        "Step 4: Validate on holdout",
+        "Success criteria: Identify reliable unique drug signal"
+      ],
+      "dependencies": [
+        "h289"
+      ]
+    },
+    {
+      "id": "h304",
+      "title": "Lidocaine-Specific Pattern Analysis",
+      "category": "error_analysis",
+      "rationale": "h289 found Lidocaine dominates unique correct predictions. Investigate why this specific drug crosses categories so successfully.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: List all Lidocaine predictions and their categories",
+        "Step 2: Identify which cross-category predictions are correct",
+        "Step 3: Check if other local anesthetics have similar pattern",
+        "Step 4: Determine if this is generalizable or Lidocaine-specific",
+        "Success criteria: Understand mechanism behind successful cross-category predictions"
+      ],
+      "dependencies": [
+        "h289"
       ]
     }
   ],
@@ -7241,6 +7302,12 @@
       "hypothesis_id": "h162",
       "learning": "Precision-coverage trade-off shows no free lunch: adding tiers decreases precision. GOLDEN-only is Pareto-optimal for clinical use.",
       "implication": "For Every Cure: Use GOLDEN tier only. Exception: Autoimmune/Psychiatric can include MEDIUM (77-85% precision)."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h289",
+      "learning": "Class uniqueness hurts precision (7.04% vs 8.94%) but for surprising reasons: unique drugs have HIGHER training frequency (need strong signal to overcome class disadvantage). U-shaped classmate effect: 3-4 classmates = worst precision (2.7-3.1%), while 1-2 and 5+ classmates = better (7-9.6%).",
+      "implication": "Don't penalize unique predictions with high drug frequency. Consider penalizing 3-4 classmate zone instead."
     }
   ],
   "collaborations": [
