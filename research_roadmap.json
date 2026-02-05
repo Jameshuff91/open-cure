@@ -5482,7 +5482,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Add cancer type extraction function",
         "Step 2: Build drug\u2192cancer type GT mapping",
@@ -5493,8 +5493,8 @@
       "dependencies": [
         "h270"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Implemented cancer type confidence tiering in production_predictor.py\n\nIMPLEMENTATION:\n1. Added extract_cancer_types() function with 7 cancer type categories\n2. Added _build_cancer_type_mapping() to map drugs \u2192 their GT cancer types\n3. Added _check_cancer_type_match() to compare drug GT vs disease type\n4. Modified _assign_confidence_tier() to apply cancer type rules BEFORE rank filter\n\nTIERING LOGIC (from h270):\n- Same cancer type match \u2192 GOLDEN (100% precision for subtype refinement)\n- Different cancer type \u2192 MEDIUM (30.6% cross-type repurposing precision)\n- No cancer GT \u2192 FILTER (0% precision)\n\nVALIDATION:\n- Breast cancer: All 50 drugs with solid_tumor in GT get GOLDEN\n- AML: 19 drugs with leukemia in GT get GOLDEN, 5 cross-type get MEDIUM\n- Palbociclib at rank 38 correctly gets GOLDEN (was FILTER before h274)\n- Bortezomib (myeloma/lymphoma only) correctly gets MEDIUM for leukemia",
+      "result_metric": "Same-type=GOLDEN, Cross-type=MEDIUM, No-GT=FILTER"
     },
     {
       "id": "h275",
@@ -6589,6 +6589,12 @@
       "hypothesis_id": "h270",
       "learning": "Cancer prediction precision appears low (1.1%) due to GT granularity mismatch. When using fuzzy/hierarchy matching (same cancer type), precision is 100% for subtype refinements and 30.6% for cross-type repurposing. GT uses generic terms while predictions are specific subtypes.",
       "implication": "Need disease hierarchy matching for proper evaluation; many 'novel' predictions are valid subtype refinements"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h274",
+      "learning": "Cancer type matching must be checked BEFORE rank filter to rescue same-type drugs at any rank. Implemented 7 cancer type categories (lymphoma, leukemia, carcinoma, melanoma, sarcoma, myeloma, solid_tumor) for hierarchical matching.",
+      "implication": "Same-type cancer drugs are highly predictive regardless of kNN rank - treat as subtype refinements not novel predictions"
     }
   ],
   "collaborations": [

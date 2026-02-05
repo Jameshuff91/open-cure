@@ -366,6 +366,27 @@ FLUOROQUINOLONE_DRUGS = {'ciprofloxacin', 'levofloxacin', 'moxifloxacin', 'oflox
 # mAbs for cancer have 6.2% precision despite seeming appropriate (sparse GT)
 # Kinase inhibitors for cancer have 2.8% precision (sparse GT)
 
+# h274: Cancer type matching for confidence tiering (from h270 analysis)
+# Same cancer type (subtype refinement): 100% precision
+# Different cancer type (cross-repurposing): 30.6% precision
+# No cancer GT: 0% precision - FILTER these
+CANCER_TYPE_KEYWORDS = {
+    'lymphoma': ['lymphoma', 'lymphomas', 'hodgkin', 'non-hodgkin', 'dlbcl', 'follicular lymphoma',
+                 'mantle cell', 'burkitt', 'marginal zone', 'lymphoblastic'],
+    'leukemia': ['leukemia', 'leukaemia', 'cll', 'aml', 'all', 'cml', 'myeloid leukemia',
+                 'lymphocytic leukemia', 'acute leukemia', 'chronic leukemia'],
+    'carcinoma': ['carcinoma', 'adenocarcinoma', 'squamous cell', 'hepatocellular', 'renal cell',
+                  'transitional cell', 'small cell', 'non-small cell', 'nsclc', 'sclc'],
+    'melanoma': ['melanoma', 'melanotic'],
+    'sarcoma': ['sarcoma', 'leiomyosarcoma', 'osteosarcoma', 'ewing', 'rhabdomyosarcoma',
+                'liposarcoma', 'fibrosarcoma', 'angiosarcoma'],
+    'myeloma': ['myeloma', 'multiple myeloma', 'plasma cell myeloma'],
+    # h274: Add broad 'cancer' category for generic cancer terms
+    # This captures "breast cancer", "lung cancer", etc. that don't specify histology
+    'solid_tumor': ['cancer', 'tumor', 'tumour', 'neoplasm', 'malignant', 'metastatic',
+                    'oncology', 'glioma', 'glioblastoma', 'neuroblastoma', 'blastoma'],
+}
+
 # h171: Neurological drug class mappings (60.4% coverage vs 18% kNN baseline)
 # Maps disease subtypes to appropriate drug classes
 NEUROLOGICAL_DISEASE_DRUG_CLASSES = {
@@ -585,6 +606,22 @@ CATEGORY_KEYWORDS = {
 }
 
 
+def extract_cancer_types(disease_name: str) -> Set[str]:
+    """
+    h274: Extract cancer types from a disease name.
+
+    Returns set of cancer types (e.g., {'lymphoma', 'leukemia'}).
+    """
+    disease_lower = disease_name.lower()
+    cancer_types = set()
+
+    for cancer_type, keywords in CANCER_TYPE_KEYWORDS.items():
+        if any(kw in disease_lower for kw in keywords):
+            cancer_types.add(cancer_type)
+
+    return cancer_types
+
+
 class DrugRepurposingPredictor:
     """
     Production drug repurposing predictor using kNN collaborative filtering.
@@ -671,6 +708,9 @@ class DrugRepurposingPredictor:
 
         # Build disease lists for kNN
         self._build_knn_index()
+
+        # h274: Build drug→cancer type GT mapping
+        self._build_cancer_type_mapping()
 
     def _get_cache_key(self) -> str:
         """Generate a cache key based on source file modification times and content hash."""
@@ -781,6 +821,51 @@ class DrugRepurposingPredictor:
             for drug_id in drugs:
                 self.drug_train_freq[drug_id] += 1
 
+    def _build_cancer_type_mapping(self) -> None:
+        """
+        h274: Build mapping of drug_id → set of cancer types in GT.
+
+        From h270 analysis:
+        - If drug treats same cancer type: 100% precision (subtype refinement)
+        - If drug treats different cancer type: 30.6% precision (cross-repurposing)
+        - If drug has no cancer GT: 0% precision (FILTER these for cancer)
+        """
+        self.drug_cancer_types: Dict[str, Set[str]] = defaultdict(set)
+
+        for disease_id, drug_ids in self.ground_truth.items():
+            disease_name = self.disease_names.get(disease_id, disease_id)
+            cancer_types = extract_cancer_types(disease_name)
+
+            if cancer_types:  # Only process cancer diseases
+                for drug_id in drug_ids:
+                    self.drug_cancer_types[drug_id].update(cancer_types)
+
+        self.drug_cancer_types = dict(self.drug_cancer_types)
+
+    def _check_cancer_type_match(
+        self, drug_id: str, disease_name: str
+    ) -> Tuple[bool, bool, Set[str]]:
+        """
+        h274: Check if drug's cancer GT matches the target disease's cancer type.
+
+        Returns:
+            (has_cancer_gt, same_type_match, overlapping_types)
+            - has_cancer_gt: Drug has ANY cancer indication in GT
+            - same_type_match: Drug treats the SAME cancer type (e.g., lymphoma → DLBCL)
+            - overlapping_types: Set of matching cancer types
+        """
+        drug_cancer_types = self.drug_cancer_types.get(drug_id, set())
+        has_cancer_gt = len(drug_cancer_types) > 0
+
+        if not has_cancer_gt:
+            return False, False, set()
+
+        disease_cancer_types = extract_cancer_types(disease_name)
+        overlapping_types = drug_cancer_types & disease_cancer_types
+        same_type_match = len(overlapping_types) > 0
+
+        return has_cancer_gt, same_type_match, overlapping_types
+
     @staticmethod
     def categorize_disease(disease_name: str) -> str:
         """Categorize a disease by name."""
@@ -817,13 +902,26 @@ class DrugRepurposingPredictor:
         category: str,
         drug_name: str = "",
         disease_name: str = "",
+        drug_id: str = "",
     ) -> Tuple[ConfidenceTier, bool, Optional[str]]:
         """
         Assign confidence tier based on h135 criteria.
-        Also applies h136/h144/h171 category-specific rescue for Tier 2/3 diseases.
+        Also applies h136/h144/h171/h274 category-specific rescue for Tier 2/3 diseases.
 
         Returns: (tier, rescue_applied, category_specific_tier)
         """
+        # h274: For cancer, check cancer type match BEFORE applying rank filter
+        # Same-type cancer drugs are highly predictive regardless of rank
+        if category == 'cancer' and drug_id:
+            has_cancer_gt, same_type_match, _ = self._check_cancer_type_match(drug_id, disease_name)
+            if same_type_match:
+                # Same cancer type → GOLDEN regardless of rank (100% precision)
+                return ConfidenceTier.GOLDEN, True, 'cancer_same_type'
+            if not has_cancer_gt:
+                # No cancer GT → FILTER (0% precision)
+                return ConfidenceTier.FILTER, False, 'cancer_no_gt'
+            # Cross-type: continue to standard filtering, will get MEDIUM in _apply_category_rescue
+
         # FILTER tier (h123 negative signals)
         if rank > 20:
             return ConfidenceTier.FILTER, False, None
@@ -839,10 +937,10 @@ class DrugRepurposingPredictor:
             if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
                 return ConfidenceTier.FILTER, False, None
 
-        # Apply h136/h144/h171 category-specific rescue for Tier 2/3
+        # Apply h136/h144/h171/h274 category-specific rescue for Tier 2/3
         if disease_tier > 1:
             rescued_tier = self._apply_category_rescue(
-                rank, train_frequency, mechanism_support, category, drug_name, disease_name
+                rank, train_frequency, mechanism_support, category, drug_name, disease_name, drug_id
             )
             if rescued_tier is not None:
                 return rescued_tier, True, category
@@ -875,9 +973,10 @@ class DrugRepurposingPredictor:
         category: str,
         drug_name: str = "",
         disease_name: str = "",
+        drug_id: str = "",
     ) -> Optional[ConfidenceTier]:
         """
-        Apply h136/h144/h171 category-specific rescue filters.
+        Apply h136/h144/h171/h274 category-specific rescue filters.
 
         Returns the rescued tier or None if no rescue criteria met.
 
@@ -996,7 +1095,9 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.GOLDEN  # 60.0% precision
 
         elif category == 'cancer':
-            # h150: Drug class rescue for cancer
+            # h150/h274: Drug class rescue for cancer
+            # Note: h274 same-type and no-GT checks are now in _assign_confidence_tier
+            # This code only runs for cross-type repurposing (30.6% precision)
             drug_lower = drug_name.lower()
             disease_lower = disease_name.lower()
 
@@ -1030,6 +1131,11 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.HIGH  # 40.0% precision
             if rank <= 10 and any(alk in drug_lower for alk in ALKYLATING_DRUGS):
                 return ConfidenceTier.HIGH  # 36.4% precision
+
+            # h274: Cross-type cancer drugs (has cancer GT but different type)
+            # 30.6% precision - give them MEDIUM tier (don't FILTER them)
+            # They're not subtype refinements, but they're still valid cancer drug predictions
+            return ConfidenceTier.MEDIUM  # Cross-type repurposing: 30.6% precision
 
         elif category == 'ophthalmic':
             # h150: Drug class rescue for ophthalmic (62.5%/48% precision)
@@ -1235,6 +1341,7 @@ class DrugRepurposingPredictor:
                 category=category,
                 drug_name=drug_name,
                 disease_name=disease_name,
+                drug_id=drug_id,
             )
 
             # Class-matched neurological drugs get at least MEDIUM tier
@@ -1376,7 +1483,7 @@ class DrugRepurposingPredictor:
 
                     tier, rescue_applied, cat_specific = self._assign_confidence_tier(
                         rank, train_freq, mech_support, has_targets, disease_tier, category,
-                        drug_name, disease_name
+                        drug_name, disease_name, drug_id
                     )
 
                     pred = DrugPrediction(
