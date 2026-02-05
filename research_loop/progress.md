@@ -1,6 +1,79 @@
 # Research Loop Progress
 
-## Current Session: h184, h186, h188, h187 (2026-02-05)
+## Current Session: h152 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested:**
+- h152: ATC Code Integration for Precision - **VALIDATED** (+11.1pp mean precision)
+
+### h152: ATC Code Integration for Precision - VALIDATED
+
+Tested whether ATC (Anatomical Therapeutic Chemical) codes can systematically improve precision compared to manual drug class definitions.
+
+**Key Findings:**
+
+1. **ATC L1 matching provides +11.1pp mean precision delta** (revised mapping including H for corticosteroids)
+   - Best categories: Psychiatric +48.8pp, Dermatological +31.2pp, Cardiovascular +22.5pp
+   - Key fix: Autoimmune needed H (systemic hormonal) for corticosteroids, not just L+M
+
+2. **ATC L4 identifies high vs low precision drug subclasses:**
+   | ATC L4 Code | Class | Precision |
+   |-------------|-------|-----------|
+   | L04AX | Traditional immunosuppressants (MTX, AZA) | **82.4%** |
+   | H02AB | Glucocorticoids (prednisone, etc.) | **77.0%** |
+   | L04AB | TNF inhibitors (adalimumab, etc.) | 17.4% |
+   | L04AC | IL inhibitors (tocilizumab, etc.) | 8.7% |
+
+3. **ATC systematically explains biologic gap:**
+   - Traditional drugs (L04AX, H02AB): 77-82% precision
+   - Biologics (L04AB, L04AC, L04AF): 8-17% precision
+   - This aligns with known biologic underperformance in kNN
+
+4. **Coverage:** 90.6% of prediction drugs have ATC mappings
+
+**Comparison to Manual Drug Classes:**
+| Category | Manual Precision | ATC Precision | Coverage Ratio |
+|----------|------------------|---------------|----------------|
+| Autoimmune | 73.9% (DMARDs) | 82.4% (L04AX) | 5x more drugs |
+| Dermatological | 66.0% (steroids) | 79.4% (D07AA) | ~same |
+| Infectious | 27.2% | 23.1% | 7x more drugs |
+
+**New Hypotheses Generated:**
+- h189: ATC L4 Rescue Criteria Implementation (priority 2)
+- h190: ATC-Based Biologic Gap Analysis (priority 3)
+- h191: ATC L1 Incoherence as Novel Prediction Signal (priority 3)
+- h192: ATC-Based Drug Similarity for kNN (priority 4)
+
+### Cumulative Statistics (2026-02-05)
+| Status | Count |
+|--------|-------|
+| Validated | 89 |
+| Invalidated | 41 |
+| Inconclusive | 8 |
+| Blocked | 18 |
+| Deprioritized | 2 |
+| Pending | 32 |
+| **Total Tested** | **140** |
+
+### Key Session Learnings
+
+1. **ATC L4 can match/exceed manual precision** - L04AX (82.4%) beats manual DMARDs (73.9%)
+2. **ATC explains biologic gap** - L04AB/L04AC biologics have 8-17% precision vs 77-82% for traditional drugs
+3. **Corticosteroids are critical for autoimmune** - H02AB needed in ATC mapping, not just L+M
+4. **ATC provides systematic drug classification** - No need to maintain manual lists for 90.6% of drugs
+
+### Recommended Next Steps
+
+1. **h189: ATC L4 Rescue Implementation** (priority 2) - Quick win to improve coverage
+2. **h190: ATC Biologic Gap Analysis** (priority 3) - Understand why biologics fail
+3. **h87: Drug Mechanism Clustering** (priority 3) - Cross-disease transfer via mechanisms
+
+---
+
+## Previous Session: h184, h186, h188, h187 (2026-02-05)
 
 ### Session Summary
 

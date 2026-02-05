@@ -3021,7 +3021,7 @@
       "rationale": "ATC codes encode therapeutic category (A10=antidiabetic, C09=ACE inhibitors). May provide cleaner signal than manual class definitions.",
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "category": "precision",
       "dependencies": [
@@ -3032,7 +3032,9 @@
         "Test ATC-based precision criteria across categories",
         "Compare ATC vs manual drug class definitions",
         "Success: ATC codes improve precision stratification"
-      ]
+      ],
+      "findings": "ATC codes provide systematic precision improvement:\n1. ATC L1 matching: +11.1pp mean precision across 11/16 categories\n2. ATC L4 specificity: H02AB (glucocorticoids) 77%, L04AX (traditional immunosuppressants) 82%\n3. Biologic gap identified: L04AB (TNF) 17%, L04AC (IL) 8.7% - explains biologic underperformance\n4. Coverage: 90.6% of prediction drugs have ATC mappings\n5. Key fix: Include H (systemic hormonal) in autoimmune mapping for corticosteroids\n\nRecommendation: Hybrid approach - ATC L4 for rescue criteria, manual lists for edge cases.",
+      "result_metric": "+11.1pp mean precision (revised ATC mapping)"
     },
     {
       "id": "h153",
@@ -3700,6 +3702,87 @@
       ],
       "findings": "Successfully implemented keyword additions from h186.\n\nCHANGES:\n- Added 17 keywords to infectious (q fever, syphilis, tularemia, etc.)\n- Added 6 keywords to autoimmune (polyarteritis nodosa, takayasu, etc.)\n- Added 5 keywords to reproductive (new category)\n- Added 4 keywords to cardiovascular, neurological, musculoskeletal\n- Added 3 keywords to gastrointestinal, dermatological, hematological\n- Added 2 keywords to ophthalmic, renal\n\nRESULTS:\n- 'Other' diseases: 78 \u2192 18 (77% reduction)\n- New 'reproductive' category with 5 diseases\n- Remaining 18 are true edge cases (poisonings, rare genetic)\n\nThese 60 reclassified diseases can now use category-specific rescue criteria.",
       "result_metric": "78 \u2192 18 other diseases (77% reduction)"
+    },
+    {
+      "id": "h189",
+      "title": "ATC L4 Rescue Criteria Implementation",
+      "hypothesis": "Implementing ATC L4-based rescue criteria (H02AB, L04AX for autoimmune; D07 for dermatological) can improve GOLDEN tier precision while increasing coverage.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "category": "precision",
+      "dependencies": [
+        "h152"
+      ],
+      "steps": [
+        "Update production_predictor.py to use ATC L4 codes for rescue criteria",
+        "Add biologic exclusion filter (L04AB, L04AC, L04AF)",
+        "Test GOLDEN tier precision before/after",
+        "Validate coverage improvement",
+        "Success: GOLDEN precision maintained, coverage +20%"
+      ]
+    },
+    {
+      "id": "h190",
+      "title": "ATC-Based Biologic Gap Analysis",
+      "hypothesis": "The biologic gap (mAbs 27% vs small molecules 32%) can be better understood by analyzing ATC L4 subclasses systematically. Different biologic mechanisms (TNF vs IL vs CD vs JAK) may have different precision profiles.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "category": "error_analysis",
+      "dependencies": [
+        "h152"
+      ],
+      "steps": [
+        "Extract all biologic ATC L4 codes (L04AB TNF, L04AC IL, L04AF JAK, etc.)",
+        "Compute precision for each biologic subclass",
+        "Correlate with target mechanism and disease categories",
+        "Identify if any biologic subclass has acceptable precision",
+        "Success: Find biologic subclass with >30% precision or explain why all fail"
+      ]
+    },
+    {
+      "id": "h191",
+      "title": "ATC L1 Incoherence as Negative Filter",
+      "hypothesis": "h110 showed ATC-incoherent predictions had HIGHER precision (11.2%) than coherent (6.7%). This may indicate cross-indication potential (repurposing). Test if incoherence + other signals = valuable novel predictions.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "category": "precision",
+      "dependencies": [
+        "h152",
+        "h110"
+      ],
+      "steps": [
+        "Analyze h110 incoherent predictions in detail",
+        "Check if incoherent + high kNN score = true repurposing",
+        "Example: Cardiovascular drug for autoimmune - is this the repurposing signal?",
+        "Test if incoherence predicts novel validated discoveries",
+        "Success: Identify incoherence patterns that indicate valid repurposing"
+      ]
+    },
+    {
+      "id": "h192",
+      "title": "ATC-Based Drug Similarity for kNN",
+      "hypothesis": "kNN currently uses Node2Vec disease similarity. We could add drug-side similarity using ATC codes - drugs in same L4 class treating same diseases might share targets.",
+      "expected_impact": "low",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "category": "methodology",
+      "dependencies": [
+        "h152"
+      ],
+      "steps": [
+        "For each disease, find drugs that treat it",
+        "Group drugs by ATC L4 class",
+        "For new disease, find similar diseases, check ATC class consistency",
+        "If disease A and B are similar and both have L04AX drugs, recommend L04AX",
+        "Success: ATC-guided drug recommendations improve R@30"
+      ]
     }
   ],
   "completed": [
@@ -4406,6 +4489,12 @@
       "hypothesis_id": "h186",
       "learning": "Other category is too heterogeneous for rescue criteria. Reclassification enables existing rescue paths.",
       "implication": "Add keywords to reduce other from 78 to 21. Consider new reproductive category."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h152",
+      "learning": "ATC L4 codes systematically identify high vs low precision drug subclasses. Traditional immunosuppressants (L04AX) 82% vs biologics (L04AB/AC) 8-17%. ATC can explain biologic gap pattern.",
+      "implication": "Use ATC L4 for rescue criteria; exclude biologic ATC codes from GOLDEN tier"
     }
   ],
   "collaborations": [

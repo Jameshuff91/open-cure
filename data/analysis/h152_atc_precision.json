@@ -1,0 +1,25 @@
+{
+  "hypothesis": "h152",
+  "title": "ATC Code Integration for Precision",
+  "date": "2026-02-05",
+  "status": "VALIDATED",
+  "findings": {
+    "atc_coverage": "90.6% of prediction drugs",
+    "mean_l1_delta": "+11.1pp precision (revised mapping)",
+    "high_value_l4": {
+      "H02AB": "77.0% precision (glucocorticoids)",
+      "L04AX": "82.4% precision (methotrexate, azathioprine)"
+    },
+    "low_value_l4": {
+      "L04AB": "17.4% precision (TNF inhibitors)",
+      "L04AC": "8.7% precision (IL inhibitors)"
+    },
+    "biologic_gap_systematic": "ATC correctly identifies biologic gap via L4 codes"
+  },
+  "recommendations": [
+    "Use ATC L1 for disease-category relevance filtering (+11pp)",
+    "Use ATC L4 for high-precision rescue criteria",
+    "Exclude L04AB/L04AC (biologics) from autoimmune rescue",
+    "Maintain manual lists for drugs missing from ATC"
+  ]
+}
