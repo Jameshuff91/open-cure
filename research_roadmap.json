@@ -4783,7 +4783,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Classify biologics by mechanism (TNF-\u03b1, IL-6, IL-17, IL-23, CD20, etc.)",
         "Compute precision per mechanism type",
@@ -4793,7 +4793,9 @@
       "dependencies": [
         "h134",
         "h189"
-      ]
+      ],
+      "findings": "INVALIDATED: No mechanism class achieves >=20% precision threshold.\n\n**MECHANISM CLASS PRECISION (HIGH confidence):**\n| Mechanism | Count | Precision |\n|-----------|-------|-----------|\n| IL-17 inhibitors | 2 | 50% (too few) |\n| JAK inhibitors | 18 | 16.7% |\n| CD20 (B-cell) | 24 | 12.5% |\n| TNF inhibitors | 43 | 9.3% |\n| IL-6 inhibitors | 36 | 5.6% |\n| CTLA-4/PD-1/PD-L1 | 17 | 5.9% |\n\n**DISEASE-SPECIFIC SUCCESS:**\nFor known success diseases, precision IS acceptable:\n| Disease | Precision |\n|---------|-----------|\n| Rheumatoid arthritis | 33.3% |\n| Psoriatic arthritis | 33.3% |\n| Melanoma | 33.3% |\n| Temporal arteritis | 25.0% |\n| Psoriasis | 20.0% |\n\n**ROOT CAUSE: GT SPARSITY (not mechanism failure)**\n| Drug Type | GT Entries |\n|-----------|------------|\n| Prednisone | 271 |\n| Methotrexate | 275 |\n| Adalimumab | 4 |\n| Rituximab | 6 |\n| 10 biologics total | 58 (0.1% of GT) |\n\n**CONCLUSION:**\n- Mechanism tiering does NOT rescue biologic precision overall\n- BUT disease-specific routing COULD work (33% precision for RA, PsA, etc.)\n- Biologics ARE correct predictions for certain diseases\n- Sparse GT is the root cause, not mechanism failure",
+      "result_metric": "No mechanism class >=20%; JAK closest at 16.7%"
     },
     {
       "id": "h243",
@@ -4872,6 +4874,25 @@
       ],
       "dependencies": [
         "h243"
+      ]
+    },
+    {
+      "id": "h247",
+      "title": "Disease-Specific Biologic Routing",
+      "category": "confidence_calibration",
+      "rationale": "h242 showed overall biologic precision is low but disease-specific precision is acceptable (33% for RA, PsA, melanoma). Route biologics only to diseases where they're known to work.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Define 'biologic success' diseases: RA, PsA, Crohn's, UC, psoriasis, melanoma, vasculitis",
+        "Filter biologic predictions to only these diseases",
+        "Measure precision improvement after filtering",
+        "Success criteria: Achieve >25% precision for filtered biologic predictions"
+      ],
+      "dependencies": [
+        "h242"
       ]
     }
   ],
@@ -5831,6 +5852,12 @@
       "hypothesis_id": "h243",
       "learning": "Psychiatric contraindication rules (SSRI/stimulants for bipolar/schizophrenia) improve precision +12.6pp. Lost 5 GT hits but these are adjunct uses requiring combination therapy.",
       "implication": "Add contraindication rules to production filter; consider adjunct detection for refinement"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h242",
+      "learning": "Biologic precision is low (2.6%) due to GT sparsity not mechanism failure. Biologics have 58 GT entries vs prednisone 271. Disease-specific routing may help (33% for RA/PsA).",
+      "implication": "Consider disease-routing for biologics rather than excluding them entirely"
     }
   ],
   "collaborations": [

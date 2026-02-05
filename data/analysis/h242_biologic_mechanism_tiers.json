@@ -1,0 +1,97 @@
+{
+  "hypothesis": "h242",
+  "title": "Biologic Precision Rescue via Mechanism Tiers",
+  "outcome": "PARTIALLY_VALIDATED",
+  "summary": {
+    "overall_biologic_precision": 2.6,
+    "high_confidence_precision": 5.9,
+    "target_threshold": 20,
+    "mechanism_classes_above_threshold": 0
+  },
+  "mechanism_class_precision": {
+    "IL-17 inhibitors": {
+      "precision": 50.0,
+      "count": 2,
+      "note": "Too few predictions to be actionable"
+    },
+    "JAK inhibitors": {
+      "precision": 16.7,
+      "count": 18,
+      "note": "Close to threshold"
+    },
+    "CD20 (B-cell)": {
+      "precision": 12.5,
+      "count": 24
+    },
+    "TNF inhibitors": {
+      "precision": 9.3,
+      "count": 43
+    },
+    "IL-6 inhibitors": {
+      "precision": 5.6,
+      "count": 36
+    },
+    "CTLA-4/PD-1/PD-L1": {
+      "precision": 5.9,
+      "count": 17
+    }
+  },
+  "disease_specific_success": {
+    "rheumatoid_arthritis": {
+      "precision": 33.3,
+      "count": 6
+    },
+    "psoriatic_arthritis": {
+      "precision": 33.3,
+      "count": 6
+    },
+    "melanoma": {
+      "precision": 33.3,
+      "count": 3
+    },
+    "temporal_arteritis": {
+      "precision": 25.0,
+      "count": 4
+    },
+    "psoriasis_vulgaris": {
+      "precision": 20.0,
+      "count": 5
+    },
+    "crohns_disease": {
+      "precision": 18.2,
+      "count": 11
+    }
+  },
+  "root_cause": {
+    "finding": "GT SPARSITY - not mechanism failure",
+    "evidence": {
+      "biologics_10_drugs": {
+        "gt_entries": 58,
+        "pct": 0.1
+      },
+      "small_molecules_comparison": {
+        "prednisone": 271,
+        "methotrexate": 275,
+        "cyclosporine": 232,
+        "prednisolone": 268,
+        "adalimumab": 4,
+        "rituximab": 6
+      }
+    },
+    "explanation": "Biologics have 50x fewer GT entries than small molecules. This is expected: biologics are newer, more expensive, and less broadly prescribed."
+  },
+  "key_findings": [
+    "No mechanism class achieves >=20% precision overall",
+    "IL-17 inhibitors hit 50% but only 2 predictions (not actionable)",
+    "JAK inhibitors are closest at 16.7% (18 predictions)",
+    "For KNOWN SUCCESS DISEASES (RA, PsA, melanoma), precision reaches 33%",
+    "Root cause is GT sparsity: 10 biologics have 58 GT entries vs prednisone alone has 271",
+    "DISEASE-SPECIFIC routing may help: filter biologics to only RA, PsA, IBD, melanoma, etc."
+  ],
+  "recommendations": [
+    "Do NOT exclude biologics entirely - they ARE correct for certain diseases",
+    "Consider disease-specific biologic routing: only predict biologics for known success diseases",
+    "JAK inhibitors are borderline acceptable (16.7%) for autoimmune diseases",
+    "Checkpoint inhibitors should only be predicted for cancer"
+  ]
+}
