@@ -7650,7 +7650,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "in_progress",
+      "status": "inconclusive",
       "steps": [
         "Define GI_DISEASE_DRUG_CLASSES mapping (constipation->laxatives, liver->bile_acid, ulcer->ppi)",
         "Define GI_DRUG_CLASS_MEMBERS with specific drugs",
@@ -7715,7 +7715,7 @@
       "title": "Tighten CV Pathway Comprehensive Rule",
       "description": "h378 found cv_pathway_comprehensive has 38% precision vs 59.9% HIGH tier avg. Rule h351 may be too broad.",
       "hypothesis": "Restricting cv_pathway_comprehensive to specific drug classes (statins only?) will improve precision.",
-      "status": "in_progress",
+      "status": "inconclusive",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -7866,7 +7866,7 @@
       ]
     },
     {
-      "id": "h391",
+      "id": "h393",
       "title": "Holdout Validation of All Tier Rules (Overfitting Audit)",
       "description": "AUDIT CRITICAL: All 40+ hand-crafted tier rules were derived by analyzing the SAME ground truth used for evaluation. This is training-on-test-set. No rule has been validated on a held-out disease set. This experiment will determine whether the entire confidence tier system is real or overfitted.",
       "hypothesis": "If we split diseases 80/20, derive tier rules from the 80% training set, and evaluate tier precision on the 20% holdout, we expect significant precision drops for rules that were overfitted. Rules that hold up on holdout are genuine; rules that collapse are memorization.",
@@ -7888,7 +7888,7 @@
       "result_metric": null
     },
     {
-      "id": "h392",
+      "id": "h394",
       "title": "Fix Training Frequency Label Leakage",
       "description": "AUDIT CRITICAL: drug_train_freq is computed from ALL ground truth diseases (line 1486 of production_predictor.py), including test diseases. This means a drug's frequency count is inflated by the very disease being predicted for. Similarly, drug_to_diseases (line 1492) includes test disease mappings used in complication transfer rules. This is soft label leakage.",
       "hypothesis": "Recomputing drug_train_freq and drug_to_diseases from ONLY training diseases (excluding the test disease) will reduce measured tier precision, especially for rules that rely on frequency >= 10 or frequency >= 15 thresholds. The drop quantifies how much of the current precision is due to leakage vs genuine signal.",
@@ -7909,7 +7909,7 @@
       "result_metric": null
     },
     {
-      "id": "h393",
+      "id": "h395",
       "title": "Demote Remaining Below-Tier Rules (CV, Hematological, Cancer)",
       "description": "AUDIT MODERATE: h378 identified 5 rules still performing far below their tier average. Only infectious (h387) and thyroid (h385) were fixed. Remaining: cardiovascular HIGH (31.6% vs 55.2%), cv_pathway_comprehensive HIGH (38.0%), coronary_hierarchy HIGH (40.0%), hematological HIGH (45.8%), cancer MEDIUM (18.2% vs 31.0%). Each drags its tier precision down.",
       "hypothesis": "Demoting cardiovascular HIGH to MEDIUM, cv_pathway_comprehensive HIGH to MEDIUM, hematological HIGH to MEDIUM, and cancer MEDIUM to LOW will improve HIGH tier precision by 5-10pp and MEDIUM tier precision by 2-5pp.",
@@ -7931,9 +7931,9 @@
       "result_metric": null
     },
     {
-      "id": "h394",
+      "id": "h396",
       "title": "Resolve GOLDEN vs HIGH Tier Precision Inversion",
-      "description": "AUDIT CRITICAL: h378 measured GOLDEN at 40.7% but HIGH at 55.2%. The flagship tier has LOWER precision than HIGH. The code comments, CLAUDE.md, DEFAULT_TIER_PRECISION dict, and CATEGORY_PRECISION dict all still use stale h135 numbers (GOLDEN=57.7%, HIGH=20.9%). Any downstream consumer trusting tier labels is misled.",
+      "description": "AUDIT CRITICAL: h378 measured GOLDEN at 40.7% but HIGH at 55.2%. The flagship tier has LOWER precision than HIGH. The code comments, CLAUDE.md, DEFAULT_TIER_PRECISION dict, and CATEGORY_PRECISION dict all still use stale h135 numbers (GOLDEN=57.7%, HIGH=20.9%). Any downstream consumer trusting tier labels is misled. Depends on h395 (demoting bad rules) and h393 (holdout validation) to have clean data.",
       "hypothesis": "The inversion exists because GOLDEN has many low-precision rescue rules while HIGH is assigned more selectively. Tightening GOLDEN criteria to only include rules with >50% precision will restore correct tier ordering. This depends on h393 (demoting bad rules) and h391 (knowing which rules are genuine).",
       "status": "pending",
       "priority": 1,
@@ -7954,7 +7954,7 @@
       "result_metric": null
     },
     {
-      "id": "h395",
+      "id": "h397",
       "title": "Remove Dead Code: CV_PATHWAY_EXCLUDE and Other Unused Artifacts",
       "description": "AUDIT MODERATE: CV_PATHWAY_EXCLUDE (line 607, from h384) is defined but never referenced in _assign_confidence_tier or anywhere else. There may be other defined-but-unused constants accumulated over 385 hypotheses. Dead code creates confusion and false confidence that rules are active when they are not.",
       "hypothesis": "A systematic audit of all constants and sets defined in production_predictor.py will reveal dead code that should be either wired into the tier logic or removed.",
@@ -7975,7 +7975,7 @@
       "result_metric": null
     },
     {
-      "id": "h396",
+      "id": "h398",
       "title": "Fix CATEGORY_PRECISION Impossible Values",
       "description": "AUDIT MODERATE: CATEGORY_PRECISION dict has values violating tier ordering: psychiatric FILTER=90.0 (higher than GOLDEN), ophthalmic LOW=67.9 (higher than MEDIUM=36.1). Several entries are estimates not measurements. These incorrect values are returned by get_category_precision() to downstream users.",
       "hypothesis": "Re-measuring category-tier precision combinations with current code and 5-seed evaluation will produce correct values. Entries with tier inversions likely have small sample sizes causing noise.",
@@ -7996,7 +7996,7 @@
       "result_metric": null
     },
     {
-      "id": "h397",
+      "id": "h399",
       "title": "Rule Interaction Audit: Test Priority/Overlap Edge Cases",
       "description": "AUDIT MODERATE: _assign_confidence_tier has 15+ return paths. A drug can match multiple rules (cancer-only AND hierarchy-match, mechanism-specific AND complication-non-validated). First matching rule wins but no systematic edge case testing exists.",
       "hypothesis": "Creating a test suite for all multi-match drug-disease pairs will reveal unintended interactions where the wrong rule fires first.",
@@ -8017,7 +8017,7 @@
       "result_metric": null
     },
     {
-      "id": "h398",
+      "id": "h400",
       "title": "Deploy Category-Specific k Values (h66 Finding, Never Implemented)",
       "description": "PROMISING DIRECTION: h66 validated category-specific k values improve R@30: metabolic k=30 (+9pp), respiratory k=30 (+8pp), CV k=15 (+3pp). This was NEVER deployed to production. It represents the most validated, unimplemented model improvement - a genuine prediction quality gain, not just confidence labeling.",
       "hypothesis": "Implementing category-specific k values in production kNN will improve overall R@30 by 2-4pp. This is the first real model improvement since h39.",
@@ -8038,7 +8038,7 @@
       "result_metric": null
     },
     {
-      "id": "h399",
+      "id": "h401",
       "title": "Reassess DRKG Ceiling with Category-Specific Approaches",
       "description": "PROMISING DIRECTION: The 37% DRKG ceiling was declared after h41-h45 (ML overlays failed). But h66 found +9pp for metabolic with k=30, and other approaches remain untested: distance-weighted kNN, category-specific embeddings, non-cosine similarity metrics. Oracle ceiling is 60% with 23pp headroom.",
       "hypothesis": "Combining category-specific k (h398), distance-weighted voting, and possibly re-tuned Node2Vec hyperparameters can push R@30 above 40% without external data.",
@@ -8049,7 +8049,7 @@
       "steps": [
         "Step 1: Baseline: current kNN k=20 uniform, 5-seed R@30",
         "Step 2: Test distance-weighted kNN: weight each neighbor's drug votes by 1/distance or exp(-distance)",
-        "Step 3: Test category-specific k from h398 results",
+        "Step 3: Test category-specific k from h402 results",
         "Step 4: Test combined: category-specific k + distance weighting",
         "Step 5: Test alternative similarity metrics: Euclidean, Manhattan",
         "Step 6: If any single approach breaks 40%, test combinations",
@@ -8060,17 +8060,17 @@
       "result_metric": null
     },
     {
-      "id": "h400",
+      "id": "h402",
       "title": "Simplify Production Predictor: Prune to Top Validated Rules Only",
-      "description": "PROMISING DIRECTION: The production predictor has 3100 lines with 40+ hand-crafted rules. After h391 (holdout validation) identifies which rules are genuine vs overfitted, prune to only top-performing rules. A simpler system with 5-10 well-validated rules should perform as well or better. DEPENDS ON h391, h393.",
+      "description": "PROMISING DIRECTION: The production predictor has 3100 lines with 40+ hand-crafted rules. After h393 (holdout validation) identifies which rules are genuine vs overfitted, prune to only top-performing rules. A simpler system with 5-10 well-validated rules should perform as well or better. DEPENDS ON h393, h395.",
       "hypothesis": "Removing all rules that fail holdout validation (h391) or perform below their tier average (h378) will improve tier precision by removing noise and reduce code complexity by 50%+.",
       "status": "pending",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
       "steps": [
-        "Step 1: Wait for h391 (holdout validation) results to know which rules survive",
-        "Step 2: Rank all rules by holdout precision (from h391)",
+        "Step 1: Wait for h401 (holdout validation) results to know which rules survive",
+        "Step 2: Rank all rules by holdout precision (from h401)",
         "Step 3: Incrementally add rules in order of holdout precision, measuring cumulative tier precision",
         "Step 4: Find the point of diminishing returns (adding more rules stops helping)",
         "Step 5: Remove all rules below the cutoff",
