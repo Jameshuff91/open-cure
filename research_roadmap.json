@@ -6990,7 +6990,7 @@
       "description": "h342 found ALL cancer drug mechanisms have 0-2.5% non-cancer precision. Consider implementing broad filter for cancer drugs \u2192 non-cancer predictions.",
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "steps": [
         "Define comprehensive list of cancer-only drug classes (VEGF, MEK, BRAF, PD-1, PARP, BCL2)",
@@ -6998,7 +6998,9 @@
         "Implement filter: cancer drug + non-cancer = LOW tier (or FILTER)",
         "Evaluate impact on recall (may lose valid mTOR hits)"
       ],
-      "source": "h342 cross-activity analysis"
+      "source": "h342 cross-activity analysis",
+      "findings": "Cancer-Only Drug Filter Implementation - VALIDATED\n\nAnalysis with corrected disease categories:\n- 69 true cancer-only drugs identified (after removing ranibizumab - ophthalmic)\n- 757 total predictions from these drugs\n- 642 cancer predictions (6.5% precision)\n- 115 non-cancer predictions (0.0% precision, 0 GT hits!)\n\nTier breakdown for non-cancer predictions:\n- HIGH: 26 predictions, 0 GT hits\n- MEDIUM: 55 predictions, 0 GT hits\n- LOW: 34 predictions, 0 GT hits\n\nIMPORTANT: Discovered 8,478/13,461 predictions have stale categories in deliverables file!\nThe predictions file was generated with older category keywords that didn't include\nsarcoma/neuroblastoma. Should regenerate deliverables.\n\nImplementation:\n- Added CANCER_ONLY_DRUGS set (69 drugs across 15 classes)\n- Added _is_cancer_drug(), _is_cancer_disease(), _is_cancer_only_drug_non_cancer() methods\n- Cancer-only drug + non-cancer disease \u2192 FILTER tier (was LOW for MEK-only in h340)\n- ZERO recall loss (0 GT hits affected)",
+      "result_metric": "115 predictions \u2192 FILTER tier, 0% precision, ZERO GT loss"
     },
     {
       "id": "h347",

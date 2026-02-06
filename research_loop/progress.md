@@ -12,16 +12,17 @@
 - h237: Indication-Weighted Drug Boosting - **INVALIDATED** (signal already captured by tier system)
 - h336: Disease Name Standardization for GT Matching - **VALIDATED** (+25 GT hits from 5 synonym mappings)
 - h342: Cancer Drug Cross-Activity Patterns - **VALIDATED** (0-2.6% non-cancer precision across all mechanisms)
+- h346: Cancer-Only Drug Filter - **VALIDATED + IMPLEMENTED** (115 preds → FILTER, ZERO GT loss)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 215 |
+| Validated | 216 |
 | Invalidated | 67 |
 | Inconclusive | 13 |
 | Blocked | 21 |
 | Deprioritized | 8 |
-| Pending | 21 |
+| Pending | 23 |
 | **Total** | **345**
 
 ### KEY SESSION FINDINGS

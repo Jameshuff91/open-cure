@@ -53,6 +53,10 @@ Unified pipeline integrating validated research findings:
 - h328: Class Cohesion Analysis - Added IL inhibitors to broad class list
   - IL inhibitors have strongest cohesion effect: 3% alone vs 50% with classmates (+47 pp!)
   - Additional 62 predictions affected (7.4% HIGH, 0% MEDIUM precision)
+- h346: Cancer-Only Drug Filter (generalizes h340 MEK inhibitor filter)
+  - 69 cancer-only drugs (BRAF, PD-1, BCL2, PARP, ALK, EGFR, etc.) have 0% precision for non-cancer
+  - 115 non-cancer predictions, 0 GT hits → FILTER tier (zero recall loss)
+  - Excludes drugs with non-cancer uses: mTOR inhibitors, imatinib, ranibizumab, aflibercept
 
 USAGE:
     # Get predictions for a disease
@@ -327,6 +331,47 @@ BTK_INHIBITORS = {'ibrutinib', 'acalabrutinib', 'zanubrutinib', 'pirtobrutinib'}
 # Unlike VEGF inhibitors, MEK inhibitors have no plausible non-cancer mechanism
 MEK_INHIBITORS = {'trametinib', 'cobimetinib', 'binimetinib', 'selumetinib',
                   'mirdametinib', 'pimasertib', 'refametinib'}
+
+# h346: Cancer-only drugs - 0% precision for non-cancer predictions (115 preds, 0 GT hits)
+# These drugs have NO approved non-cancer uses and no plausible non-cancer mechanism
+# Filter: cancer-only drug + non-cancer disease = FILTER tier (prevents false positives)
+# Note: Excludes drugs with known non-cancer uses (mTOR inhibitors, imatinib, ranibizumab, etc.)
+CANCER_ONLY_DRUGS = (
+    # BRAF inhibitors (melanoma, lung cancer)
+    {'vemurafenib', 'dabrafenib', 'encorafenib'}
+    # Immunotherapy (PD-1/PD-L1/CTLA-4)
+    | {'pembrolizumab', 'nivolumab', 'ipilimumab', 'atezolizumab',
+       'durvalumab', 'avelumab', 'cemiplimab'}
+    # BCL2 inhibitors (CLL, AML)
+    | {'venetoclax', 'navitoclax'}
+    # PARP inhibitors (BRCA cancers)
+    | {'olaparib', 'rucaparib', 'niraparib', 'talazoparib'}
+    # Proteasome inhibitors (myeloma)
+    | {'bortezomib', 'carfilzomib', 'ixazomib'}
+    # HDAC inhibitors (CTCL, lymphoma)
+    | {'vorinostat', 'romidepsin', 'belinostat', 'panobinostat'}
+    # CDK inhibitors (breast cancer)
+    | {'palbociclib', 'ribociclib', 'abemaciclib'}
+    # BCR-ABL inhibitors (CML) - NOT imatinib (GIST use)
+    | {'nilotinib', 'dasatinib', 'ponatinib', 'bosutinib'}
+    # ALK inhibitors (lung cancer)
+    | {'crizotinib', 'ceritinib', 'alectinib', 'brigatinib', 'lorlatinib'}
+    # EGFR inhibitors (lung cancer)
+    | {'erlotinib', 'gefitinib', 'afatinib', 'osimertinib'}
+    # HER2 inhibitors (breast cancer)
+    | {'lapatinib', 'neratinib', 'tucatinib'}
+    # VEGFR TKIs (multiple cancers) - NOT ranibizumab/aflibercept (ophthalmic)
+    | {'sunitinib', 'sorafenib', 'pazopanib', 'axitinib', 'regorafenib',
+       'lenvatinib', 'cabozantinib', 'vandetanib', 'nintedanib'}
+    # Taxanes (multiple cancers)
+    | {'paclitaxel', 'docetaxel', 'cabazitaxel'}
+    # Platinum agents (multiple cancers)
+    | {'cisplatin', 'carboplatin', 'oxaliplatin'}
+    # Anthracyclines (multiple cancers)
+    | {'doxorubicin', 'daunorubicin', 'epirubicin', 'idarubicin'}
+    # MEK inhibitors (already in MEK_INHIBITORS set)
+    | MEK_INHIBITORS
+)
 
 # Ophthalmic drugs
 OPHTHALMIC_ANTIBIOTICS = {'ciprofloxacin', 'moxifloxacin', 'ofloxacin', 'tobramycin', 'gentamicin',
@@ -1549,9 +1594,45 @@ class DrugRepurposingPredictor:
         return disease_lower in MECHANISM_SPECIFIC_DISEASES
 
     @staticmethod
+    def _is_cancer_drug(drug_name: str) -> bool:
+        """
+        h346: Check if drug is a cancer-only drug.
+
+        These drugs have 0% precision for non-cancer predictions (115 preds, 0 GT hits).
+        They have NO approved non-cancer uses and no plausible non-cancer mechanism.
+        """
+        return drug_name.lower() in CANCER_ONLY_DRUGS
+
+    @staticmethod
+    def _is_cancer_disease(disease_name: str) -> bool:
+        """Check if disease is a cancer-related condition."""
+        cancer_keywords = ['cancer', 'carcinoma', 'tumor', 'melanoma', 'leukemia',
+                          'lymphoma', 'neoplasm', 'neurofibroma', 'glioma', 'sarcoma',
+                          'myeloma', 'blastoma', 'adenocarcinoma']
+        return any(kw in disease_name.lower() for kw in cancer_keywords)
+
+    @staticmethod
+    def _is_cancer_only_drug_non_cancer(drug_name: str, disease_name: str) -> bool:
+        """
+        h346: Check if this is a cancer-only drug predicted for non-cancer disease.
+
+        Cancer-only drugs have 0% precision for non-cancer predictions because:
+        1. They target cancer-specific pathways (BRAF, PD-1, BCL2, PARP, etc.)
+        2. All GT indications are cancer
+        3. No plausible non-cancer mechanism exists
+
+        Returns True if drug is cancer-only AND disease is NOT cancer.
+        """
+        if not DrugRepurposingPredictor._is_cancer_drug(drug_name):
+            return False
+
+        return not DrugRepurposingPredictor._is_cancer_disease(disease_name)
+
+    @staticmethod
     def _is_mek_inhibitor_non_cancer(drug_name: str, disease_name: str) -> bool:
         """
         h340: Check if this is a MEK inhibitor predicted for non-cancer disease.
+        Note: This is now redundant with h346 but kept for explicit documentation.
 
         MEK inhibitors have 0% precision for non-cancer predictions because:
         1. They target the RAS/RAF/MEK/ERK pathway specific to cancer
@@ -1560,17 +1641,8 @@ class DrugRepurposingPredictor:
 
         Returns True if drug is MEK inhibitor AND disease is NOT cancer.
         """
-        drug_lower = drug_name.lower()
-        if drug_lower not in MEK_INHIBITORS:
-            return False
-
-        # Check if disease is cancer
-        cancer_keywords = ['cancer', 'carcinoma', 'tumor', 'melanoma', 'leukemia',
-                          'lymphoma', 'neoplasm', 'neurofibroma', 'glioma', 'sarcoma', 'myeloma']
-        disease_lower = disease_name.lower()
-        is_cancer = any(kw in disease_lower for kw in cancer_keywords)
-
-        return not is_cancer
+        # h346 now covers MEK inhibitors via CANCER_ONLY_DRUGS
+        return DrugRepurposingPredictor._is_cancer_only_drug_non_cancer(drug_name, disease_name)
 
     @staticmethod
     def _is_highly_repurposable_disease(disease_name: str) -> bool:
@@ -1766,11 +1838,12 @@ class DrugRepurposingPredictor:
             # This overrides other tier boosts since kNN fundamentally won't work
             return ConfidenceTier.LOW, False, 'mechanism_specific'
 
-        # h340: MEK inhibitors for non-cancer diseases have 0% precision
-        # These drugs target RAS/RAF/MEK/ERK pathway specific to cancer
-        # 100% of their GT is cancer, non-cancer predictions are spurious
-        if self._is_mek_inhibitor_non_cancer(drug_name, disease_name):
-            return ConfidenceTier.LOW, False, 'mek_non_cancer'
+        # h346: Cancer-only drugs for non-cancer diseases have 0% precision
+        # (115 predictions, 0 GT hits across ALL tiers)
+        # These drugs have NO approved non-cancer uses (BRAF, PD-1, BCL2, PARP, etc.)
+        # This generalizes h340 (MEK inhibitors) to all cancer-only drug classes
+        if self._is_cancer_only_drug_non_cancer(drug_name, disease_name):
+            return ConfidenceTier.FILTER, False, 'cancer_only_non_cancer'
 
         # h297: Highly repurposable diseases can get a confidence boost
         # These diseases have drugs widely used across many conditions
