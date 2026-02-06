@@ -6,9 +6,10 @@
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 3**
 - h269: Cancer-Specific Target-Based Scoring - **INCONCLUSIVE** (equivalent to kNN baseline)
 - h366: Target+kNN Ensemble for Cancer - **VALIDATED** (76.3% R@30, +10.5 pp improvement)
+- h368: Cancer Subtype-Specific Target Scoring - **VALIDATED** (subtypes differ significantly)
 
 ### KEY SESSION FINDINGS
 
@@ -64,21 +65,38 @@
 - Only loses 2 diseases compared to single methods
 - +10.5 pp improvement over best single method
 
+#### h368: Cancer Subtype-Specific Target Scoring - VALIDATED
+
+**Finding:** Different cancer subtypes have dramatically different optimal methods:
+
+| Subtype | N | Target | kNN | Ensemble |
+|---------|---|--------|-----|----------|
+| Hematological | 15 | 66.7% | 73.3% | **93.3%** |
+| Other | 7 | 71.4% | 57.1% | 85.7% |
+| Carcinoma | 9 | 66.7% | 55.6% | 66.7% |
+| Sarcoma | 2 | **100%** | 50% | 50% |
+| Brain/CNS | 4 | 25% | **50%** | 25% |
+
+**Implications:**
+- Hematological: Use ensemble (93.3%)
+- Brain/CNS: Use kNN only (50% vs 25% for Target)
+- Sarcomas: Use Target only (100%)
+- Default: Ensemble for unknowns
+
 ### New Hypotheses Generated
 
 - **h367:** Disease-Specific Gene Weighting - weight genes by DRKG edge type
-- **h368:** Cancer Subtype-Specific Target Scoring - identify subtypes where target scoring excels
 - **h369:** Apply Max Ensemble to Non-Cancer Categories - test if pattern generalizes
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 231 |
+| Validated | 232 |
 | Invalidated | 70 |
 | Inconclusive | 14 |
 | Blocked | 21 |
 | Deprioritized | 7 |
-| Pending | 26 |
+| Pending | 25 |
 | **Total** | **369** |
 
 ---

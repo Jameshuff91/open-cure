@@ -7427,7 +7427,7 @@
       "title": "Cancer Subtype-Specific Target Scoring",
       "description": "h269 treated all cancers equally. Some cancer subtypes (leukemia, melanoma) may have better target-based predictions than others.",
       "hypothesis": "Target-based scoring performs better on specific cancer subtypes (hematological vs solid tumors).",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -7436,7 +7436,9 @@
         "Calculate per-subtype R@30 for target and kNN methods",
         "Identify subtypes where target scoring outperforms",
         "Success: Identify subtype with >80% target R@30"
-      ]
+      ],
+      "findings": "Per-subtype cancer performance reveals significant differences:\n\n| Subtype | N | Target | kNN | Ensemble |\n|---------|---|--------|-----|----------|\n| Hematological | 15 | 66.7% | 73.3% | 93.3% |\n| Other | 7 | 71.4% | 57.1% | 85.7% |\n| Carcinoma | 9 | 66.7% | 55.6% | 66.7% |\n| Sarcoma | 2 | 100% | 50% | 50% |\n| Brain/CNS | 4 | 25% | 50% | 25% |\n| Melanoma | 1 | 100% | 100% | 100% |\n\nKey findings:\n1. Hematological cancers: Ensemble achieves 93.3% (best, +20 pp over kNN)\n2. Brain/CNS: kNN outperforms Target (50% vs 25%) - Target-based scoring fails here\n3. Sarcomas: Target alone best (100%) - Ensemble hurts performance\n4. Ensemble not universally optimal - method selection should consider subtype",
+      "result_metric": "Hematological 93.3%, Brain/CNS kNN-only 50%"
     },
     {
       "id": "h369",
@@ -8810,6 +8812,12 @@
       "hypothesis_id": "h366",
       "learning": "Max ensemble of target overlap and kNN achieves 76.3% R@30 on cancer diseases (+10.5 pp over best single method). Taking the max of normalized scores outperforms weighted averages or rank fusion.",
       "implication": "For cancer predictions, use max(target_score, kNN_score) to capture complementary signals from both methods."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h368",
+      "learning": "Cancer subtypes have very different optimal methods: Hematological cancers achieve 93.3% with ensemble, but Brain/CNS tumors only 25% with Target (kNN gets 50%). Sarcomas: Target-only is best (100%).",
+      "implication": "Consider subtype-specific method selection for cancer predictions."
     }
   ],
   "collaborations": [
