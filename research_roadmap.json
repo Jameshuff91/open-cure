@@ -8765,7 +8765,7 @@
       "title": "Full-Data vs Holdout Precision Gap Is Actually Small (2-4pp)",
       "description": "h434 revealed the actual full\u2192holdout gap is much smaller than previously thought: GOLDEN -1.6pp, HIGH -3.6pp, MEDIUM -2.2pp, LOW -1.2pp. Previous reports of larger gaps (h402: GOLDEN -11.5pp) may have been measuring different things. Document this discrepancy and identify the source.",
       "hypothesis": "The h402 holdout numbers (52.9% GOLDEN) and the h434 holdout numbers (57.2% GOLDEN) differ because h402 may have additional structure in its holdout split or evaluation methodology.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -8774,7 +8774,9 @@
         "Identify any differences in disease selection, split method, or GT used",
         "Reconcile the two sets of holdout numbers",
         "Document the correct gap for each tier"
-      ]
+      ],
+      "findings": "Reconciled full-data vs holdout gaps across all analyses.\n\nh438 premise was a misunderstanding: h434 reported frequency deflation gaps (0-0.5pp), not total holdout gaps.\n\nCORRECT holdout gaps (from h402, most reliable):\n| Tier | Full-Data | Holdout | Gap |\n|------|-----------|---------|-----|\n| GOLDEN | 64.4% | 52.9% \u00b1 6.0% | -11.5pp |\n| HIGH | 50.8% | 50.6% \u00b1 10.4% | -0.2pp |\n| MEDIUM | 25.3% | 21.2% \u00b1 1.9% | -4.1pp |\n| LOW | 13.0% | 12.2% \u00b1 1.9% | -0.8pp |\n| FILTER | 10.8% | 7.0% \u00b1 1.5% | -3.8pp |\n\nh444 rank-bucket gaps are LARGER (10-22pp) because kNN rankings change on holdout.\n\nSources of holdout degradation by tier:\n- GOLDEN: hierarchy 1-disease groups fail holdout (h432: 18/29 groups have <=2 diseases)\n- HIGH: Very stable (-0.2pp) due to freq>=15 threshold (robust to holdout)\n- MEDIUM: Cancer same-type leakage (h447: 10.7% holdout, 25.3pp gap)\n- LOW/FILTER: Minimal leakage\n\nThe true gap is NOT uniformly small. HIGH is remarkably stable, but GOLDEN and MEDIUM have significant leakage from different sources.",
+      "result_metric": "Gaps reconciled: HIGH -0.2pp (stable), GOLDEN -11.5pp (hierarchy), MEDIUM -4.1pp (cancer)"
     },
     {
       "id": "h439",
