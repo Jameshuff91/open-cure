@@ -437,7 +437,7 @@ DMARD_DRUGS = {'methotrexate', 'sulfasalazine', 'hydroxychloroquine', 'leflunomi
 # h189: ATC L4 codes for rescue criteria (from h152 analysis)
 # High-precision drug subclasses (use for GOLDEN rescue)
 ATC_HIGH_PRECISION_AUTOIMMUNE = {'H02AB', 'L04AX'}  # Glucocorticoids (77%), Traditional immunosuppressants (82%)
-ATC_HIGH_PRECISION_DERMATOLOGICAL = {'D07AA', 'D07XA', 'D07AB', 'D07AC', 'D07XB', 'D07XC', 'H02AB'}  # Topical + systemic steroids (66-79%)
+# h397: ATC_HIGH_PRECISION_DERMATOLOGICAL removed (was dead code, never referenced)
 
 # Low-precision drug subclasses (use for FILTER/demotion)
 # h152 finding: Biologics have 8-17% precision vs 77-82% for traditional drugs
@@ -609,15 +609,7 @@ CV_COMPLICATION_KEYWORDS = {'heart failure', 'stroke', 'myocardial infarction', 
 # These have 0% precision despite being in CV_PATHWAY_COMPREHENSIVE_DRUGS
 # Antiplatelets: 0% precision (prevent events, don't treat conditions)
 # Others: various reasons for 0% precision in evaluation
-CV_PATHWAY_EXCLUDE = {
-    # Antiplatelets (all 0% precision)
-    'clopidogrel', 'ticagrelor', 'prasugrel', 'eptifibatide', 'cangrelor',
-    'plavix',  # clopidogrel brand name
-    # Anticoagulants with 0% precision
-    'enoxaparin',
-    # Other 0% precision drugs
-    'telmisartan', 'papaverine', 'colestipol', 'lovastatin', 'alteplase', 'tenecteplase'
-}
+# h397: CV_PATHWAY_EXCLUDE removed (was dead code from h384, never referenced in tier logic)
 
 # h280/h281: Complication vs Subtype relationship mapping
 # Complications are CAUSED BY the base disease (different treatment expected)
@@ -988,7 +980,7 @@ MINRANK_ENSEMBLE_CATEGORIES: set[str] = set()  # Disabled - was {'cancer', 'neur
 
 # h374: Categories where Target-only is better (gap >10% from h370)
 # NOTE: Also disabled as MinRank is not used
-TARGET_DOMINANT_CATEGORIES: set[str] = set()  # Was {'cardiovascular', 'autoimmune'}
+# h397: TARGET_DOMINANT_CATEGORIES removed (was dead code, set to empty set)
 
 # h388: Target overlap tier promotion thresholds
 # Use drug-disease target overlap to promote tier WITHOUT changing rankings.

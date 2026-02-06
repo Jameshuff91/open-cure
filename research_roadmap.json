@@ -7958,7 +7958,7 @@
       "title": "Remove Dead Code: CV_PATHWAY_EXCLUDE and Other Unused Artifacts",
       "description": "AUDIT MODERATE: CV_PATHWAY_EXCLUDE (line 607, from h384) is defined but never referenced in _assign_confidence_tier or anywhere else. There may be other defined-but-unused constants accumulated over 385 hypotheses. Dead code creates confusion and false confidence that rules are active when they are not.",
       "hypothesis": "A systematic audit of all constants and sets defined in production_predictor.py will reveal dead code that should be either wired into the tier logic or removed.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "low",
       "effort": "low",
@@ -7971,8 +7971,8 @@
         "Step 6: Run evaluation to confirm no regression from cleanup",
         "Step 7: Success criteria: All defined constants are referenced in active code paths"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Removed 3 dead constants from production_predictor.py.\n\nDead code removed:\n1. ATC_HIGH_PRECISION_DERMATOLOGICAL (line 440) - defined but never referenced\n2. CV_PATHWAY_EXCLUDE (line 612) - from h384, never wired into tier logic\n3. TARGET_DOMINANT_CATEGORIES (line 991) - set to empty set, never referenced\n\n78 total constants, 3 dead (3.8% dead code rate).\n75 constants are properly referenced in active code paths.\nReplaced with comments documenting the removal for history.",
+      "result_metric": "3 dead constants removed, 0 regression"
     },
     {
       "id": "h398",
