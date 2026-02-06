@@ -8647,7 +8647,7 @@
       "id": "h431",
       "title": "CV Disease-Specific LOW Rescue (DVT/PE/Flutter)",
       "description": "h390 found CV LOW has 19.4% overall but specific diseases are much higher: DVT 50%, PE 46%, atrial flutter 44%, edema 57%. These are diseases with well-known drug classes. Test disease-specific rescue rules for high-precision CV diseases at LOW tier.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "medium",
@@ -8656,7 +8656,9 @@
         "Test disease-specific rescue: DVT/PE + anticoagulant \u2192 MEDIUM",
         "Holdout validation",
         "Assess whether these are already partially covered by hierarchy rules"
-      ]
+      ],
+      "findings": "h390 numbers were from an older tier system. With current rules: DVT=0% (was 50%), PE=28.6% (was 46%), edema=0% (was 57%), flutter=25% (was 44%). Most high-precision diseases from h390 have been promoted to higher tiers by hierarchy rules. Only angioedema has high precision (75%, n=8) but too small for a reliable rule. Overall CV LOW precision = 11.8%, matching LOW tier average. No rescue opportunities remain.",
+      "result_metric": "CV LOW 11.8% \u2248 LOW avg, no diseases above rescue threshold"
     },
     {
       "id": "h432",
@@ -9316,7 +9318,7 @@
       "title": "Neuropathy Hierarchy Group Decomposition",
       "description": "h410 found that the neurological/neuropathy group is too heterogeneous: TTR amyloid polyneuropathy, autonomic neuropathy, and inflammatory neuropathy need completely different drugs. Consider splitting this into 2-3 sub-groups or removing the group entirely, since neuropathy drugs dont transfer well across subtypes.",
       "hypothesis": "Splitting the neuropathy hierarchy group into disease-specific sub-groups (TTR-amyloid, inflammatory, pain) would improve prediction quality for neuropathy diseases.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -9326,8 +9328,8 @@
         "If significant (>10 preds), split into sub-groups",
         "If minimal (<5 preds), leave as-is (diminishing returns)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Only 3 predictions use neuropathy hierarchy match (well below the 10-prediction threshold for decomposition). The group has 6 drugs, 4 of which are TTR-specific (tafamidis, patisiran, inotersen, vutrisiran). The group IS heterogeneous (TTR vs diabetic vs general neuropathy) but the n is too small for it to matter. Lidocaine is the only drug predicted across multiple neuropathy subtypes. Leave as-is - diminishing returns.",
+      "result_metric": "Only 3 predictions affected, below threshold for decomposition"
     },
     {
       "id": "h469",
@@ -9379,8 +9381,10 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
-      "category": "precision_improvement"
+      "status": "invalidated",
+      "category": "precision_improvement",
+      "findings": "Only 2 parathyroid diseases in GT with 1 shared drug (calcitriol). Hyperparathyroidism (cinacalcet, surgery) and hypoparathyroidism (PTH analogs, vitamin D) have fundamentally different treatments. Too few diseases and too little drug overlap for a useful hierarchy group.",
+      "result_metric": "2 diseases, 1 shared drug - below threshold"
     },
     {
       "id": "h472",
@@ -9395,8 +9399,10 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
-      "category": "precision_improvement"
+      "status": "validated",
+      "category": "precision_improvement",
+      "findings": "GOLDEN variance (\u00b113.5%) is driven by small n (19-71 predictions per seed) and high disease heterogeneity. Seed 42 = worst (47.4%) because asthma+epilepsy in holdout (hard hierarchy diseases). Seed 2024 = best (87.0%) because RA in holdout with comp_to_base getting 100%. GOLDEN > HIGH on average (62.7% vs 51.1%) but NOT statistically significant (paired t-test p=0.574). The most variable rules are autoimmune_hierarchy_RA (std=41.2%, appears in 3/5 seeds) and comp_to_base_high_87 (std=40.0%, appears in 2/5 seeds). RECOMMENDATION: Report median (57.7%) rather than mean (62.7%) for more robust GOLDEN estimate. Stratified splitting could help but adds complexity for marginal benefit given the fundamental small-n limitation.",
+      "result_metric": "GOLDEN median=57.7%, mean=62.7%\u00b113.5%, GOLDEN>HIGH not significant (p=0.574)"
     }
   ],
   "completed": [
