@@ -12399,7 +12399,7 @@
       "id": "h599",
       "title": "Obsolete Tetracycline Demotion: Demeclocycline and Oxytetracycline Predictions",
       "description": "Error analysis found demeclocycline (28.6% full-data, 40 FP) and oxytetracycline (21.2% full-data, 41 FP) are major sources of MEDIUM false positives. These are rarely-used tetracyclines with modern alternatives. Many predictions are for diseases where doxycycline (the modern equivalent) is already predicted. Could demoting predictions for these obsolete drugs improve MEDIUM precision?",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12408,7 +12408,9 @@
         "Check if diseases with these drugs also have doxycycline predictions",
         "If lower precision, implement obsolete tetracycline demotion",
         "Medical validation: are any demeclocycline/oxytetracycline predictions uniquely valuable?"
-      ]
+      ],
+      "findings": "INCONCLUSIVE: Obsolete tetracyclines (demeclocycline, oxytetracycline) have lower holdout precision than modern tetracyclines but the signal is too noisy for confident demotion.\n\nHoldout (5-seed):\n- Obsolete (demeclocycline + oxytetracycline): 23.9% \u00b1 10.8% (n=19.4/seed)\n- Modern (doxycycline + minocycline + tetracycline): 40.9% \u00b1 14.8% (n=30.6/seed)\n- All MEDIUM: 41.4% \u00b1 2.0%\n- Gap: 17.0pp\n\nProblems:\n1. n=19.4/seed is below n\u224830 threshold \u2192 unreliable\n2. Variance is enormous: 10.0% to 39.1% across seeds\n3. 23.9% is between LOW (13.4%) and MEDIUM (41.4%) \u2014 ambiguous zone\n4. These drugs have the SAME spectrum as doxycycline \u2014 lower precision is about GT coverage, not medical inaccuracy\n\nKey finding: 95-96% of obsolete tetracycline diseases are ALSO covered by doxycycline MEDIUM predictions. These add redundancy, not new information. But they're not clearly LOW-quality.\n\nDecision: Keep at MEDIUM. The loss in precision is real but not enough to justify demotion given the small sample size and high variance.",
+      "result_metric": "Obsolete tet 23.9% \u00b1 10.8% vs modern 40.9% \u2014 inconclusive (n too small)"
     },
     {
       "id": "h600",

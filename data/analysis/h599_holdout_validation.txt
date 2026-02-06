@@ -1,0 +1,46 @@
+Loading predictor...
+Diseases: 455
+
+SEED 42 (1/5)
+  Obsolete tet: 39.1% (9/23)
+  Modern tet: 51.4% (19/37)
+  All MEDIUM: 40.5% (104/257)
+
+SEED 123 (2/5)
+  Obsolete tet: 15.8% (3/19)
+  Modern tet: 37.5% (12/32)
+  All MEDIUM: 41.3% (131/317)
+
+SEED 456 (3/5)
+  Obsolete tet: 10.0% (2/20)
+  Modern tet: 21.1% (8/38)
+  All MEDIUM: 38.7% (136/351)
+
+SEED 789 (4/5)
+  Obsolete tet: 33.3% (7/21)
+  Modern tet: 63.0% (17/27)
+  All MEDIUM: 44.9% (170/379)
+
+SEED 2024 (5/5)
+  Obsolete tet: 21.4% (3/14)
+  Modern tet: 31.6% (6/19)
+  All MEDIUM: 41.5% (120/289)
+
+============================================================
+AGGREGATE (5 seeds)
+============================================================
+
+Obsolete tetracyclines (demeclocycline + oxytetracycline):
+  Holdout: 23.9% ± 10.8%
+  Mean n/seed: 19.4
+
+Modern tetracyclines (doxycycline + minocycline + tetracycline):
+  Holdout: 40.9% ± 14.8%
+  Mean n/seed: 30.6
+
+All MEDIUM:
+  Holdout: 41.4% ± 2.0%
+
+Gap (modern - obsolete): 17.0pp
+
+Conclusion: Obsolete tetracyclines significantly below MEDIUM avg → POTENTIAL DEMOTE
