@@ -3483,7 +3483,8 @@ class DrugRepurposingPredictor:
                             and target_overlap >= TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM
                             # h462: Block LOW→MEDIUM for categories with poor MEDIUM holdout
                             # h485: Block cancer (cross-type overlap=0.3% holdout, n=197)
-                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer'}
+                            # h505: Block cardiovascular (13.6% holdout < LOW avg 14.8%, n=13/seed)
+                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer', 'cardiovascular'}
                             # h488: Block rescue of incoherent demotions (3.6% holdout)
                             and cat_specific != 'incoherent_demotion'):
                         tier = ConfidenceTier.MEDIUM

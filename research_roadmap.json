@@ -10033,10 +10033,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h490"
-      ]
+      ],
+      "findings": "CV target_overlap_promotion rescues 56 predictions from LOW\u2192MEDIUM, but at 13.6% holdout\nthis is BELOW the LOW tier average (14.8%). These should not be in MEDIUM.\n\nFull-data: 56 predictions, mostly for myocardial ischemia (14), atherosclerotic CVD (8),\natherosclerosis (4), DIC (4), peripheral arterial (4).\n\nAction: Added 'cardiovascular' to the blocked categories for target_overlap LOW\u2192MEDIUM promotion.\n56 predictions moved MEDIUM\u2192LOW. This is consistent with h490's CV standard demotion rationale.",
+      "result_metric": "56 CV target_overlap predictions MEDIUM\u2192LOW. 13.6% holdout < 14.8% LOW avg."
     },
     {
       "id": "h506",
