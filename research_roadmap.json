@@ -10730,7 +10730,7 @@
       "title": "Anti-TNF Paradoxical Autoimmunity: Comprehensive Audit",
       "description": "h408 literature validation revealed adalimumab INDUCES SLE, MG, and worsens MS. This is a CLASS EFFECT of TNF inhibitors. Audit ALL anti-TNF predictions (adalimumab, etanercept, infliximab, golimumab, certolizumab) across ALL autoimmune diseases for potential paradoxical autoimmune induction. TNF inhibitors can induce: lupus, vasculitis, psoriasis (paradoxical), demyelination, sarcoidosis, ILD. Some of these (like psoriasis) are diseases the drugs also TREAT \u2014 need to distinguish.",
       "hypothesis": "Anti-TNF biologics have additional inverse indication pairs beyond SLE/MG/MS that should be filtered",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -10742,8 +10742,8 @@
         "Distinguish treatment vs induction (psoriasis is BOTH treated and induced by anti-TNF)",
         "Add confirmed inverse indications to filter"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Comprehensive anti-TNF paradoxical autoimmunity audit based on VigiBase, FAERS, and literature review.\n\nSTRONG EVIDENCE (class effects, added to ALL anti-TNF drugs):\n- Autoimmune hepatitis: 389 VigiBase cases (infliximab 50.1% > adalimumab > etanercept)\n- Sarcoidosis: 90+ cases (predominantly etanercept), 71/90 resolve on discontinuation\n- Vasculitis: 113 cases (leukocytoclastic), etanercept 59 > infliximab 47 > adalimumab 5\n\nMODERATE EVIDENCE (added for adalimumab only):\n- Polymyositis: 20 cases, 91% developed ANA+, safety precaution\n- Lichen planus: 21 cases lichenoid reactions + 11 oral LP\n\nNOT FILTERED (correctly left in):\n- GVHD: Anti-TNF TREATS GVHD (not paradoxical)\n- GCA/temporal arteritis: Failed RCT (ineffective, not harmful)\n- TEN: Anti-TNF TREATS TEN (86.8% response, infliximab especially)\n- Eczema: Already LOW tier (broad_class_isolated). Paradoxical but managed with topicals.\n\nTOTAL ADDED:\n- adalimumab: +5 inverse indication pairs (AIH, sarcoidosis, vasculitis, polymyositis, lichen planus)\n- etanercept: +3 (AIH, sarcoidosis, vasculitis)\n- infliximab: +3 (AIH, sarcoidosis, vasculitis)\n- golimumab: +4 (SLE, MS, AIH, sarcoidosis) \u2014 first time adding any golimumab filters\n\nIMPACT: 5 predictions moved to FILTER (2 GOLDEN, 2 MEDIUM, 1 LOW). Holdout unchanged.",
+      "result_metric": "15 new anti-TNF inverse indication pairs, 5 predictions GOLDEN/MEDIUM/LOW \u2192 FILTER"
     },
     {
       "id": "h545",
@@ -12675,6 +12675,12 @@
       "hypothesis_id": "h546",
       "learning": "Drug-target/disease-gene overlap is a strong within-tier holdout signal (+11.4pp MEDIUM novel) but NOT sufficient for tier promotion (27.1% << HIGH 58.9%). Partially circular with kNN (same DRKG edges). Strongest for gene-poor diseases (+16.7pp). Implemented as annotation column.",
       "implication": "Gene overlap is useful for human review and experimental prioritization, but adds limited ML value due to circularity with kNN. Future work: test with EXTERNAL gene databases (DisGeNET) that aren't in DRKG."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h544",
+      "learning": "Anti-TNF paradoxical autoimmunity is a CLASS EFFECT: all agents (adalimumab, etanercept, infliximab, golimumab) can induce SLE, MS, autoimmune hepatitis, sarcoidosis, vasculitis. Drug-specific effects exist too (adalimumab\u2192polymyositis/lichen planus). Etanercept has highest sarcoidosis/vasculitis risk, infliximab has highest AIH risk. Anti-TNF can paradoxically both TREAT and INDUCE eczema, but eczema is manageable with topicals.",
+      "implication": "Every anti-TNF prediction for autoimmune conditions should be scrutinized. Some diseases (GVHD, TEN) are correctly TREATED by anti-TNF despite being autoimmune/immune-mediated."
     }
   ],
   "collaborations": [

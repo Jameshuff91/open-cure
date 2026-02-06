@@ -1,6 +1,31 @@
 # Research Loop Progress
 
-## Current Session: h408+h546 - Ryland Brief + Gene Overlap Signal (2026-02-06)
+## Current Session: h408+h546+h544 - Ryland Brief + Gene Overlap + Anti-TNF Audit (2026-02-06)
+
+### h544: Anti-TNF Paradoxical Autoimmunity Audit — VALIDATED
+
+Literature review + VigiBase analysis of anti-TNF paradoxical effects:
+
+**Class effects (all anti-TNF agents):**
+| Condition | Evidence | Cases |
+|-----------|----------|-------|
+| Autoimmune hepatitis | STRONG | 389 VigiBase |
+| Sarcoidosis | STRONG | 90+ cases |
+| Vasculitis | STRONG | 113 cases |
+| SLE | STRONG | 12,080 FAERS (h408) |
+| MS/demyelination | STRONG | FDA warning |
+
+**Drug-specific (adalimumab):**
+- Polymyositis: 20 cases (MODERATE)
+- Lichen planus: 21 cases (MODERATE)
+
+**NOT paradoxical (correctly left in):** GVHD (treated by anti-TNF), TEN (86.8% response to anti-TNF), GCA (failed RCT, not harmful)
+
+**Impact:** 15 new inverse indication pairs, 5 predictions → FILTER (2 GOLDEN + 2 MEDIUM + 1 LOW). Holdout unchanged.
+
+---
+
+## Previous Session: h408+h546 - Ryland Brief + Gene Overlap Signal (2026-02-06)
 
 ### h546: Drug-Target/Disease-Gene Overlap as Confidence Signal — VALIDATED
 

@@ -27,15 +27,15 @@
       ]
     },
     "MEDIUM": {
-      "full_precision": 42.3,
+      "full_precision": 42.4,
       "holdout_mean": 30.3,
       "holdout_std": 2.5,
-      "delta": -12.0,
+      "delta": -12.1,
       "seed_values": [
         29.0,
         31.5,
         26.9,
-        34.2,
+        34.3,
         29.7
       ]
     },
@@ -45,10 +45,10 @@
       "holdout_std": 2.7,
       "delta": -6.7,
       "seed_values": [
-        16.8,
-        14.6,
+        16.9,
+        14.7,
         16.6,
-        20.5,
+        20.6,
         12.4
       ]
     },
@@ -69,22 +69,22 @@
   "rule_comparison": {
     "inverse_indication": {
       "tier": "FILTER",
-      "full_precision": 14.4,
-      "full_n": 132,
-      "holdout_mean": 10.4,
-      "holdout_std": 9.8,
-      "delta": -4.0,
-      "mean_n": 21.2,
+      "full_precision": 13.6,
+      "full_n": 140,
+      "holdout_mean": 9.1,
+      "holdout_std": 8.8,
+      "delta": -4.5,
+      "mean_n": 23.8,
       "status": "GENUINE"
     },
     "default": {
       "tier": "FILTER",
-      "full_precision": 20.7,
-      "full_n": 8350,
+      "full_precision": 20.8,
+      "full_n": 8345,
       "holdout_mean": 13.3,
       "holdout_std": 0.9,
-      "delta": -7.4,
-      "mean_n": 1738.4,
+      "delta": -7.5,
+      "mean_n": 1736.4,
       "status": "degraded"
     },
     "complication_non_validated": {
@@ -479,13 +479,13 @@
     },
     "broad_class_isolated": {
       "tier": "LOW",
-      "full_precision": 25.3,
-      "full_n": 75,
-      "holdout_mean": 11.0,
+      "full_precision": 26.4,
+      "full_n": 72,
+      "holdout_mean": 11.2,
       "holdout_std": 8.0,
-      "delta": -14.3,
-      "mean_n": 14.6,
-      "status": "degraded"
+      "delta": -15.2,
+      "mean_n": 14.0,
+      "status": "OVERFITTED?"
     },
     "cancer_targeted_therapy": {
       "tier": "LOW",
@@ -682,6 +682,7 @@
     "autoimmune_hierarchy_spondylitis",
     "autoimmune_hierarchy_lupus",
     "respiratory_hierarchy_asthma",
+    "broad_class_isolated",
     "cancer_targeted_therapy",
     "immunological_medium_demotion",
     "cv_pathway_comprehensive",
@@ -695,8 +696,8 @@
     "tier_ordering_correct": true,
     "n_rules_tested": 60,
     "n_genuine": 10,
-    "n_overfitted": 19,
-    "n_degraded": 14,
+    "n_overfitted": 20,
+    "n_degraded": 13,
     "n_small_sample": 17
   }
 }

@@ -848,23 +848,46 @@ INVERSE_INDICATION_PAIRS = {
     # Especially dangerous in hereditary angioedema (already bradykinin-mediated)
     'benazepril': {'angioedema', 'hereditary angioedema'},
     'quinapril': {'angioedema'},
-    # h408: Anti-TNF biologics INDUCE autoimmune conditions
-    # Adalimumab/etanercept/infliximab → SLE: 12,080 FAERS reports of TNF-inhibitor-induced lupus
-    #   >90% serious outcomes including death. Median onset 7+ months. Well-documented class effect.
-    # Adalimumab → MG: Case reports of adalimumab-induced myasthenia gravis (after 18mo RA treatment)
-    # Adalimumab → MS: Paradoxical demyelination — anti-TNF WORSENS MS (FDA black box warning)
+    # h408+h544: Anti-TNF biologics INDUCE paradoxical autoimmune conditions
+    # CLASS EFFECTS (all anti-TNF agents):
+    #   SLE: 12,080 FAERS reports, >90% serious, median onset 7+ months
+    #   MS/demyelination: Paradoxical demyelination, FDA warning
+    #   Autoimmune hepatitis: 389 cases in VigiBase, infliximab > adalimumab > etanercept
+    #   Sarcoidosis: 90+ cases, predominantly etanercept, 71/90 resolve on discontinuation
+    #   Vasculitis: 113 cases (leukocytoclastic), mean 36 months on treatment
+    # DRUG-SPECIFIC:
+    #   Adalimumab → MG: Case reports of adalimumab-induced myasthenia gravis
+    #   Adalimumab → polymyositis: 20 cases, 91% ANA+, safety precaution
+    #   Adalimumab → lichen planus: 21 cases lichenoid reactions + 11 oral LP
     'adalimumab': {
         'systemic lupus erythematosus',
         'systemic myasthenia gravis',
         'multiple sclerosis',
+        'autoimmune hepatitis',  # h544: 389 VigiBase cases
+        'symptomatic sarcoidosis',  # h544: 90+ cases paradoxical sarcoidosis
+        'vasculitis',  # h544: 113 cases leukocytoclastic vasculitis
+        'polymyositis',  # h544: 20 cases, safety precaution
+        'lichen planus',  # h544: 21 cases lichenoid reactions
     },
     'etanercept': {
         'systemic lupus erythematosus',
         'multiple sclerosis',
+        'autoimmune hepatitis',  # h544: VigiBase class effect
+        'symptomatic sarcoidosis',  # h544: most common anti-TNF for sarcoidosis
+        'vasculitis',  # h544: 59/113 cases were etanercept
     },
     'infliximab': {
         'systemic lupus erythematosus',
         'multiple sclerosis',
+        'autoimmune hepatitis',  # h544: 50.1% of 389 cases were infliximab
+        'symptomatic sarcoidosis',  # h544: class effect
+        'vasculitis',  # h544: 47/113 cases were infliximab
+    },
+    'golimumab': {
+        'systemic lupus erythematosus',  # h544: class effect
+        'multiple sclerosis',  # h544: class effect
+        'autoimmune hepatitis',  # h544: class effect
+        'symptomatic sarcoidosis',  # h544: class effect
     },
     # h537: Statins CAUSE diabetes (2024 Lancet IPD meta-analysis: 10-36% increase in new-onset
     # diabetes, dose-dependent). Predicting statins as diabetes TREATMENT is inverse indication.
