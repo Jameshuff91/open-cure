@@ -1,0 +1,316 @@
+{
+  "autoimmune_spondylitis": {
+    "n_gt_diseases": 1,
+    "disease": "ankylosing spondylitis",
+    "n_drugs": 28,
+    "variants": [
+      "axial spondyloarthritis",
+      "non-radiographic axial spondyloarthritis"
+    ],
+    "drug_classes": "NSAIDs (aceclofenac, celecoxib, piroxicam), TNFi (adalimumab, etanercept, golimumab, infliximab), IL-17i (bimekizumab, brodalumab, ixekizumab, secukinumab), JAKi (tofacitinib, upadacitinib), steroids (betamethasone, dexamethasone, prednisolone)",
+    "guideline_match": "CONFIRMED",
+    "reason": "NSAIDs are first-line for all axial SpA; TNFi/IL-17i are guideline-recommended for both AS and nr-axSpA (2019 ACR/SAA guidelines). Same drug classes used across all axial spondyloarthritis subtypes.",
+    "would_transfer": true,
+    "reference": "Ward MM et al. 2019 ACR/SAA guidelines for axial spondyloarthritis"
+  },
+  "autoimmune_multiple_sclerosis": {
+    "n_gt_diseases": 1,
+    "disease": "multiple sclerosis",
+    "n_drugs": 33,
+    "variants": [
+      "relapsing MS",
+      "progressive MS",
+      "RRMS",
+      "PPMS",
+      "SPMS"
+    ],
+    "drug_classes": "DMTs: alemtuzumab, cladribine, dimethyl fumarate, fingolimod, glatiramer, interferon beta, natalizumab, ocrelizumab, ofatumumab, ozanimod, siponimod, teriflunomide; Symptom: baclofen, dalfampridine, dantrolene; Other: rituximab, mitoxantrone",
+    "guideline_match": "PARTIAL",
+    "reason": "Most DMTs (fingolimod, natalizumab, ocrelizumab) ARE used across MS subtypes. However, some are subtype-specific: siponimod (SPMS only), ocrelizumab (PPMS only). Symptomatic drugs (baclofen for spasticity) transfer. Overall most drugs transfer but some are subtype-restricted.",
+    "would_transfer": true,
+    "notes": "Despite subtype specificity, the HIERARCHY is valid because MS variants overlap therapeutically. The 0% holdout is structural (only 1 disease in GT).",
+    "reference": "AAN Practice Guideline 2018; Thompson AJ et al. Lancet 2018"
+  },
+  "autoimmune_lupus": {
+    "n_gt_diseases": 3,
+    "disease": "SLE, obstructive sleep apnea, excessive daytime sleepiness",
+    "n_drugs": 20,
+    "variants": [
+      "lupus nephritis",
+      "cutaneous lupus",
+      "discoid lupus"
+    ],
+    "drug_classes": "SLE drugs: anifrolumab, azathioprine, belimumab, hydroxychloroquine, mycophenolate, prednisolone, voclosporin; Sleep: modafinil, armodafinil, solriamfetol, tirzepatide",
+    "guideline_match": "PARTIAL",
+    "reason": "SLE drugs (HCQ, belimumab, anifrolumab, azathioprine) are genuinely used across lupus subtypes. BUT the matching has a FALSE MATCH: \"excessive daytime sleepiness associated with idiopathic hypersomnia\" and \"obstructive sleep apnea\" matched via \"lupus\" substring but are NOT lupus diseases. This is a string-matching bug.",
+    "would_transfer": true,
+    "bug": "Sleep disorder drugs (modafinil, armodafinil) are false matches - not lupus drugs",
+    "reference": "Fanouriakis A et al. Ann Rheum Dis 2019 (EULAR guidelines for SLE)"
+  },
+  "autoimmune_scleroderma": {
+    "n_gt_diseases": 2,
+    "disease": "scleroderma + SSc-ILD",
+    "n_drugs": 5,
+    "variants": [
+      "diffuse scleroderma",
+      "limited scleroderma"
+    ],
+    "drug_classes": "Nintedanib (antifibrotic), tocilizumab (IL-6i), bosentan (ERA), methylprednisolone (steroid), rituximab (anti-CD20)",
+    "guideline_match": "CONFIRMED",
+    "reason": "All drugs are guideline-recommended for scleroderma subtypes. Nintedanib is approved for SSc-ILD (SENSCIS trial). Tocilizumab for SSc-ILD (faSScinate trial). Bosentan for digital ulcers. Rituximab and methylprednisolone for severe disease.",
+    "would_transfer": true,
+    "reference": "Kowal-Bielecka O et al. Ann Rheum Dis 2017 (EULAR/EUSTAR guidelines)"
+  },
+  "respiratory_asthma": {
+    "n_gt_diseases": 1,
+    "disease": "bronchial asthma",
+    "n_drugs": 31,
+    "variants": [
+      "exercise-induced asthma",
+      "reactive airway"
+    ],
+    "drug_classes": "ICS (beclomethasone, budesonide, ciclesonide, fluticasone, mometasone), LABA (formoterol, salmeterol), LAMA (tiotropium), Biologics (benralizumab, dupilumab, mepolizumab, omalizumab, tezepelumab), LTRA (montelukast, zafirlukast), rescue (epinephrine, albuterol)",
+    "guideline_match": "CONFIRMED",
+    "reason": "All drug classes are GINA guideline-recommended. ICS are first-line for all asthma variants. LABAs/LAMAs for moderate-severe. Biologics for severe eosinophilic/allergic. These drugs transfer perfectly across asthma subtypes.",
+    "would_transfer": true,
+    "reference": "GINA 2023 Global Strategy for Asthma Management"
+  },
+  "respiratory_copd": {
+    "n_gt_diseases": 1,
+    "disease": "COPD",
+    "n_drugs": 12,
+    "variants": [
+      "emphysema"
+    ],
+    "drug_classes": "LAMA (aclidinium, revefenacin, umeclidinium), LABA (arformoterol, formoterol, indacaterol, olodaterol), PDE4i (roflumilast), biologic (dupilumab, mepolizumab), respiratory stimulant (doxapram)",
+    "guideline_match": "CONFIRMED",
+    "reason": "All drug classes are GOLD guideline-recommended for COPD. LAMA/LABA are first-line. PDE4i for frequent exacerbations. Biologics for eosinophilic COPD. Emphysema IS COPD so hierarchy transfer is trivially correct.",
+    "would_transfer": true,
+    "reference": "GOLD 2023 Report"
+  },
+  "respiratory_pulmonary_fibrosis": {
+    "n_gt_diseases": 3,
+    "disease": "CF respiratory infection + SSc-ILD + IPF",
+    "n_drugs": 12,
+    "variants": [
+      "ILD",
+      "IPF"
+    ],
+    "drug_classes": "CF: antibiotics (azithromycin, aztreonam, ciprofloxacin, tobramycin, colistimethate), mucolytics (acetylcysteine), supplements; IPF/SSc-ILD: nintedanib, tocilizumab",
+    "guideline_match": "PARTIAL",
+    "reason": "FALSE MATCH: \"respiratory infection caused by pseudomonas aeruginosa in cystic fibrosis\" matched via \"fibrosis\" substring. CF antibiotics have NOTHING to do with pulmonary fibrosis treatment. Nintedanib IS correct for IPF. This hierarchy group has a SERIOUS string-matching contamination.",
+    "would_transfer": false,
+    "bug": "CF respiratory infection matched \"fibrosis\" - completely wrong disease class",
+    "reference": "Raghu G et al. ATS/ERS/JRS/ALAT 2022 IPF guidelines"
+  },
+  "neurological_epilepsy": {
+    "n_gt_diseases": 1,
+    "disease": "epilepsy",
+    "n_drugs": 17,
+    "variants": [
+      "seizure",
+      "partial seizure",
+      "generalized seizure",
+      "status epilepticus"
+    ],
+    "drug_classes": "AEDs: brivaracetam, carbamazepine, cenobamate, felbamate, gabapentin, lacosamide, lamotrigine, levetiracetam, oxcarbazepine, perampanel, pregabalin, topiramate, zonisamide; Rescue: diazepam, fosphenytoin, midazolam",
+    "guideline_match": "CONFIRMED",
+    "reason": "All listed drugs are well-established AEDs (anti-epileptic drugs) used across seizure types. AED therapy is the cornerstone for ALL epilepsy subtypes. Drugs like levetiracetam, lamotrigine, carbamazepine are broad-spectrum AEDs used for partial and generalized seizures.",
+    "would_transfer": true,
+    "reference": "Kanner AM et al. Epilepsia 2018; NICE NG217"
+  },
+  "neurological_parkinsons": {
+    "n_gt_diseases": 1,
+    "disease": "Parkinson's disease",
+    "n_drugs": 19,
+    "variants": [
+      "parkinsonism",
+      "tremor"
+    ],
+    "drug_classes": "Dopaminergic: amantadine, apomorphine, bromocriptine, carbidopa, entacapone, levodopa, pramipexole, rasagiline, ropinirole, rotigotine, safinamide, selegiline; COMT: opicapone; A2A: istradefylline; Other: pergolide, piribedil, droxidopa",
+    "guideline_match": "CONFIRMED",
+    "reason": "All drugs are established PD medications. Levodopa/carbidopa is first-line. Dopamine agonists, MAO-B inhibitors, COMT inhibitors are all guideline-recommended. These would transfer to parkinsonism variants (drug-induced and vascular parkinsonism partially treated with same agents).",
+    "would_transfer": true,
+    "notes": "Pergolide was withdrawn (ergot risk) but was historically a PD drug.",
+    "reference": "AAN Quality Standards 2021; NICE NG71"
+  },
+  "neurological_alzheimers": {
+    "n_gt_diseases": 1,
+    "disease": "Alzheimer's disease",
+    "n_drugs": 4,
+    "variants": [
+      "dementia",
+      "cognitive impairment",
+      "memory loss"
+    ],
+    "drug_classes": "ChEI (donepezil, rivastigmine), anti-amyloid (lecanemab), PET tracer (flortaucipir)",
+    "guideline_match": "CONFIRMED",
+    "reason": "Donepezil and rivastigmine are guideline-recommended for ALL dementia subtypes (Alzheimer, vascular, Lewy body). Lecanemab is AD-specific. Flortaucipir is a diagnostic agent, not therapeutic. Overall, the core drugs (ChEIs) transfer to dementia/cognitive impairment variants.",
+    "would_transfer": true,
+    "notes": "Lecanemab is AD-specific, but ChEIs are broad-spectrum dementia drugs.",
+    "reference": "AAN 2021; Cummings J et al. Alzheimers Res Ther 2023"
+  },
+  "neurological_migraine": {
+    "n_gt_diseases": 1,
+    "disease": "migraine with aura",
+    "n_drugs": 9,
+    "variants": [
+      "chronic migraine",
+      "episodic migraine",
+      "headache",
+      "cluster headache"
+    ],
+    "drug_classes": "Triptans (almotriptan, eletriptan, rizatriptan, zolmitriptan), CGRP (rimegepant, ubrogepant, lasmiditan), NSAIDs (celecoxib, meloxicam)",
+    "guideline_match": "CONFIRMED",
+    "reason": "Triptans are first-line acute treatment for ALL migraine types. CGRPi are approved for both acute and preventive migraine treatment. NSAIDs are first-step treatment. These transfer across migraine subtypes (with/without aura, chronic, episodic). Note: triptans are NOT recommended for cluster headache (different mechanism).",
+    "would_transfer": true,
+    "notes": "Minor concern: cluster headache is in variants but triptans only partially effective there.",
+    "reference": "AAN/AHS 2021 Migraine Treatment Guideline"
+  },
+  "neurological_neuropathy": {
+    "n_gt_diseases": 4,
+    "disease": "Various neuropathies",
+    "n_drugs": 6,
+    "variants": [
+      "peripheral neuropathy",
+      "diabetic neuropathy",
+      "polyneuropathy"
+    ],
+    "drug_classes": "Droxidopa (autonomic), lidocaine (pain), IVIG, inotersen/patisiran (TTR), tafamidis (TTR)",
+    "guideline_match": "PARTIAL",
+    "reason": "Neuropathy drugs are VERY heterogeneous. Inotersen/patisiran are specific to TTR amyloid polyneuropathy. IVIG is for inflammatory neuropathies (CIDP, MMN). Droxidopa for orthostatic hypotension. Lidocaine for neuropathic pain. These do NOT transfer well across neuropathy subtypes because each has different etiology.",
+    "would_transfer": false,
+    "notes": "Neuropathy is too heterogeneous for meaningful hierarchy matching. Diabetic neuropathy drugs (gabapentin, duloxetine) are not in this GT.",
+    "reference": "Various - neuropathy guidelines are disease-specific"
+  },
+  "cardiovascular_coronary": {
+    "n_gt_diseases": 5,
+    "disease": "MI, CAD, angina, ACS",
+    "n_drugs": 79,
+    "variants": [
+      "angina",
+      "ischemic heart disease",
+      "acute coronary syndrome"
+    ],
+    "drug_classes": "Statins, ACEi, ARBs, beta-blockers, antiplatelets (clopidogrel, prasugrel, ticagrelor), anticoagulants, nitrates, CCBs",
+    "guideline_match": "CONFIRMED",
+    "reason": "All these drug classes are guideline-recommended across the coronary disease spectrum. Statins + ACEi + antiplatelet therapy is standard for CAD, MI, and ACS. Beta-blockers for post-MI. Nitrates for angina. Strong therapeutic overlap across all coronary subtypes.",
+    "would_transfer": true,
+    "reference": "ACC/AHA Chest Pain Guidelines 2021; ESC Chronic Coronary Syndromes 2019"
+  },
+  "cardiovascular_atherosclerosis": {
+    "n_gt_diseases": 2,
+    "disease": "atherosclerosis + PAD",
+    "n_drugs": 7,
+    "variants": [
+      "arteriosclerosis",
+      "arterial disease"
+    ],
+    "drug_classes": "Statins (pravastatin, rosuvastatin), beta-blocker (atenolol), antiplatelet (clopidogrel), PCSK9i (evolocumab), ARB (telmisartan), PAR-1 antagonist (vorapaxar)",
+    "guideline_match": "CONFIRMED",
+    "reason": "All drugs target shared atherosclerotic pathology. Statins are first-line for atherosclerosis prevention. Antiplatelets for PAD. PCSK9i for refractory hyperlipidemia. These transfer across atherosclerotic disease variants.",
+    "would_transfer": true,
+    "reference": "ACC/AHA Cardiovascular Prevention 2019; Gerhard-Herman MD et al. PAD Guidelines 2017"
+  },
+  "cardiovascular_heart_failure": {
+    "n_gt_diseases": 3,
+    "disease": "CHF + TTR cardiomyopathy + DCM",
+    "n_drugs": 57,
+    "variants": [
+      "congestive heart failure",
+      "cardiomyopathy"
+    ],
+    "drug_classes": "GDMT: ACEi/ARB/ARNI, beta-blockers, MRAs, SGLT2i, diuretics, hydralazine/ISDN; Device-adjacent: ivabradine; TTR: tafamidis analog, dexrazoxane",
+    "guideline_match": "CONFIRMED",
+    "reason": "HF drugs form the \"four pillars\" (ARNI/ACEi, BB, MRA, SGLT2i) which ARE used across HF subtypes (HFrEF, HFmrEF). However, cardiomyopathy of TTR amyloidosis is treated differently (tafamidis). The 0% holdout at HIGH with n=2 is likely because these 2 predictions are rare cardiomyopathy drugs that dont generalize to standard HF.",
+    "would_transfer": true,
+    "notes": "0% HIGH holdout with only n=2 predictions is just bad luck, not a bad rule.",
+    "reference": "ACC/AHA/HFSA HF Guidelines 2022"
+  },
+  "infectious_sepsis": {
+    "n_gt_diseases": 1,
+    "disease": "sepsis",
+    "n_drugs": 7,
+    "variants": [
+      "bacterial sepsis",
+      "septicemia",
+      "septic shock"
+    ],
+    "drug_classes": "Antibiotics: ciprofloxacin, daptomycin, gentamicin, linezolid, pazufloxacin, vancomycin; Vasopressor: vasopressin",
+    "guideline_match": "CONFIRMED",
+    "reason": "These are all established empiric sepsis antibiotics (broad-spectrum coverage) plus vasopressin for septic shock. They would transfer to all sepsis subtypes (bacterial sepsis, septic shock, septicemia) which are the same disease spectrum.",
+    "would_transfer": true,
+    "reference": "Surviving Sepsis Campaign 2021 Guidelines"
+  },
+  "infectious_skin_infection": {
+    "n_gt_diseases": 2,
+    "disease": "impetigo + bacterial skin infections",
+    "n_drugs": 7,
+    "variants": [
+      "cellulitis",
+      "wound infection",
+      "abscess"
+    ],
+    "drug_classes": "Topical: mupirocin, retapamulin, ozenoxacin, chlorhexidine; Systemic: cefuroxime, levofloxacin, doxycycline",
+    "guideline_match": "CONFIRMED",
+    "reason": "These are standard skin/soft tissue infection antibiotics. Mupirocin is first-line topical for impetigo. Cefuroxime/doxycycline for cellulitis. These transfer well across skin infection variants (cellulitis, wound infection, abscess).",
+    "would_transfer": true,
+    "reference": "IDSA SSTI Guidelines 2014; Stevens DL et al. CID"
+  },
+  "infectious_respiratory_infection": {
+    "n_gt_diseases": 3,
+    "disease": "chronic bronchitis + CF respiratory + tracheobronchitis",
+    "n_drugs": 36,
+    "variants": [
+      "upper respiratory infection",
+      "lower respiratory infection"
+    ],
+    "drug_classes": "LAMA/LABA (aclidinium, arformoterol, etc.), antibiotics (azithromycin, cephalosporins, fluoroquinolones), mucolytic (acetylcysteine)",
+    "guideline_match": "PARTIAL",
+    "reason": "This group mixes COPD medications (LAMA/LABA from chronic bronchitis) with acute respiratory infection antibiotics. Chronic bronchitis drugs like aclidinium would NOT transfer to acute respiratory infections. The group is heterogeneous.",
+    "would_transfer": false,
+    "notes": "Chronic bronchitis is better classified as COPD, not infectious."
+  },
+  "infectious_uti": {
+    "n_gt_diseases": 6,
+    "disease": "Complicated UTI + pyelonephritis + cystitis + others",
+    "n_drugs": 45,
+    "variants": [
+      "recurrent UTI",
+      "chronic UTI"
+    ],
+    "drug_classes": "Antibiotics: cephalosporins (cefadroxil-cefiderocol), fluoroquinolones (ciprofloxacin, levofloxacin), carbapenems (ertapenem, meropenem), aminoglycosides (gentamicin, tobramycin), penicillins (ampicillin, piperacillin), nitrofurantoin, trimethoprim, methenamine",
+    "guideline_match": "PARTIAL",
+    "reason": "Core UTI antibiotics DO transfer across UTI subtypes. However, cholecystitis and dacryocystitis are FALSE MATCHES (matched via \"cystitis\" substring). Interstitial cystitis (dimethyl sulfoxide) is a different disease entirely. The group has good core but significant string-matching contamination.",
+    "would_transfer": true,
+    "bug": "cholecystitis, dacryocystitis, interstitial cystitis are false matches",
+    "notes": "Core UTI drugs would transfer. Edge cases are matching bugs."
+  },
+  "metabolic_obesity": {
+    "n_gt_diseases": 1,
+    "disease": "obesity",
+    "n_drugs": 8,
+    "variants": [
+      "overweight",
+      "weight management"
+    ],
+    "drug_classes": "GLP-1 RA (liraglutide, semaglutide, tirzepatide), lipase inhibitors (orlistat, cetilistat), appetite suppressant (phendimetrazine), MC4R agonist (setmelanotide)",
+    "guideline_match": "CONFIRMED",
+    "reason": "All drugs are FDA-approved anti-obesity medications. GLP-1 RAs are first-line for obesity. These would transfer to \"overweight\" and \"weight management\" which are the same clinical spectrum.",
+    "would_transfer": true,
+    "reference": "AGA Clinical Practice Guideline on Obesity 2022"
+  },
+  "metabolic_gout": {
+    "n_gt_diseases": 0,
+    "disease": "N/A",
+    "n_drugs": 0,
+    "variants": [
+      "hyperuricemia",
+      "uric acid"
+    ],
+    "drug_classes": "N/A",
+    "guideline_match": "N/A",
+    "reason": "No GT diseases match. Group exists but has no impact.",
+    "would_transfer": false
+  }
+}

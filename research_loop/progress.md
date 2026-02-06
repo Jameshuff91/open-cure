@@ -1,6 +1,70 @@
 # Research Loop Progress
 
-## Current Session: h462, h463, h466, h464, h465 (2026-02-06)
+## Current Session: h410 (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h410: Literature Validation of 1-Disease Hierarchy Rules - **VALIDATED**
+
+### h410: Literature Validation of Small Hierarchy Rules - VALIDATED
+
+**Objective:** Validate whether hierarchy rules with <=3 GT diseases encode genuine medical knowledge or are memorization artifacts.
+
+**Method:** Literature review of 20 small hierarchy groups against treatment guidelines (GINA, GOLD, ACR, AAN, ACC/AHA, IDSA, etc.)
+
+**Results:**
+- 14/20 CONFIRMED by treatment guidelines (70%)
+- 5/20 PARTIAL (heterogeneous groups or string-matching contamination)
+- 0/20 pure memorization
+- 1/20 N/A (gout - no GT diseases)
+
+**CRITICAL FINDING: 3 String-Matching Bugs Discovered and Fixed:**
+1. `'sle'` in lupus variants matched `'sleep'`/`'sleepiness'` → obstructive sleep apnea, hypersomnia falsely in lupus group
+2. `'cystitis'` in UTI matched cholecystitis, dacryocystitis, interstitial cystitis (not UTIs)
+3. bare `'fibrosis'` in pulmonary_fibrosis matched `'cystic fibrosis'` (different disease)
+4. `'bronchitis'` in respiratory_infection matched `'chronic bronchitis'` (which is COPD, not infectious)
+
+**Fixes Applied:**
+- Removed `'sle'` from lupus variants (too short, causes false positives)
+- Removed bare `'fibrosis'` from pulmonary_fibrosis variants
+- Added `HIERARCHY_EXCLUSIONS` dict for remaining false matches (cystitis, bronchitis, cystic fibrosis)
+- Updated both `_build_disease_hierarchy_mapping()` and `_check_disease_hierarchy_match()` to use exclusions
+- Fixed same bug in `scripts/h402_rule_precision_audit_v2.py`
+
+**Impact (5-seed holdout validated):**
+| Tier | Before | After | Δ |
+|------|--------|-------|---|
+| GOLDEN | 52.9% ± 6.0% | 53.9% ± 7.1% | +1.0pp (noise) |
+| HIGH | 50.6% ± 10.4% | 49.9% ± 8.2% | -0.7pp (noise) |
+| **MEDIUM** | **21.2% ± 1.9%** | **22.3% ± 2.0%** | **+1.1pp** |
+| LOW | 12.2% ± 1.9% | 12.0% ± 1.8% | -0.2pp (noise) |
+| FILTER | 7.0% ± 1.5% | 6.9% ± 1.6% | -0.1pp (noise) |
+
+271 low-quality predictions moved from MEDIUM to LOW. Total predictions preserved (13,472).
+
+**Key Conclusions:**
+1. **Hierarchy rules = genuine medical knowledge** - 14/20 confirmed by clinical guidelines
+2. **0% holdout = structural absence** (confirmed by h432: small groups have 87% precision)
+3. **Substring matching is fragile** - 3 bugs found with short variant strings
+4. **HIERARCHY_EXCLUSIONS pattern** - reusable for preventing future false matches
+5. **MEDIUM +1.1pp** is a genuine data quality improvement from fixing contamination
+
+### New Hypotheses Generated
+- h467: Systematic Substring Matching Audit for All Hierarchy Variants (Priority 4, low effort)
+- h468: Neuropathy Hierarchy Group Decomposition (Priority 5, low effort)
+- h469: Word-Boundary-Aware Hierarchy Matching (Priority 4, medium effort)
+
+### Recommended Next Steps
+1. **h467:** Systematic audit of ALL variant substrings (Priority 4, low effort) - may find more bugs
+2. **h469:** Word-boundary matching (Priority 4, medium effort) - systematic fix vs manual exclusions
+3. **h461:** Sparse neighborhood disease classification (Priority 5, low effort)
+
+---
+
+## Previous Session: h462, h463, h466, h464, h465 (2026-02-06)
 
 ### Session Summary
 

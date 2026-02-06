@@ -21,6 +21,7 @@ from production_predictor import (
     ConfidenceTier,
     extract_cancer_types,
     DISEASE_HIERARCHY_GROUPS,
+    HIERARCHY_EXCLUSIONS,
 )
 
 
@@ -62,6 +63,10 @@ def recompute_gt_structures(predictor, train_disease_ids):
                 new_cancer[drug_id].update(cancer_types)
             if category in DISEASE_HIERARCHY_GROUPS:
                 for group_name, keywords in DISEASE_HIERARCHY_GROUPS[category].items():
+                    # h410: Apply exclusion list
+                    exclusions = HIERARCHY_EXCLUSIONS.get((category, group_name), [])
+                    if any(excl in disease_name.lower() for excl in exclusions):
+                        continue
                     if any(kw in disease_name.lower() for kw in keywords):
                         new_groups[drug_id].add((category, group_name))
 

@@ -145,16 +145,23 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462)
+### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410)
 
-**Tier System (h462 updated 2026-02-06):**
-- GOLDEN: 59.2% full / 52.9% ± 6.0% holdout
-- HIGH: 49.2% full / 50.6% ± 10.4% holdout
-- MEDIUM: 26.7% full / ~23% holdout (h462: +1.4pp from category demotions)
-- LOW: 10.9% full / 12.2% ± 1.9% holdout
-- FILTER: 10.4% full / 7.0% ± 1.5% holdout
+**Tier System (h410 updated 2026-02-06):**
+- GOLDEN: 64.6% full / 53.9% ± 7.1% holdout
+- HIGH: 51.8% full / 49.9% ± 8.2% holdout
+- MEDIUM: 26.1% full / 22.3% ± 2.0% holdout (h410: +1.1pp from bug fixes)
+- LOW: 13.1% full / 12.0% ± 1.8% holdout
+- FILTER: 10.7% full / 6.9% ± 1.6% holdout
 
-**h462/h463 (LATEST):** Category-specific MEDIUM demotions. 3 categories demoted MEDIUM→LOW:
+**h410 (LATEST):** Literature validation + string-matching bug fixes. 3 bugs found:
+  - 'sle' matched 'sleep/sleepiness' (not lupus) → removed from variants
+  - 'cystitis' matched cholecystitis/dacryocystitis → HIERARCHY_EXCLUSIONS added
+  - bare 'fibrosis' matched 'cystic fibrosis' → removed from variants
+  Result: MEDIUM +1.1pp holdout, 271 predictions moved MEDIUM→LOW
+  14/20 hierarchy rules CONFIRMED by treatment guidelines.
+
+**h462/h463:** Category-specific MEDIUM demotions. 3 categories demoted MEDIUM→LOW:
   - Immunological: 2.5% holdout (36pp overfitting gap, self-referential kNN, h465)
   - Neurological: 10.2% holdout
   - Reproductive: 0.0% holdout

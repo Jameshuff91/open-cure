@@ -826,8 +826,9 @@ DISEASE_HIERARCHY_GROUPS = {
         'multiple_sclerosis': ['multiple sclerosis', 'relapsing multiple sclerosis', 'remitting multiple sclerosis',
                                'progressive multiple sclerosis', 'primary progressive multiple sclerosis',
                                'secondary progressive multiple sclerosis', 'relapsing-remitting multiple sclerosis'],
+        # h410: Removed 'sle' - too short, matches 'sleep', 'sleepiness' (false positives)
         'lupus': ['lupus', 'systemic lupus erythematosus', 'discoid lupus', 'lupus nephritis',
-                  'membranous lupus nephritis', 'cutaneous lupus', 'sle'],
+                  'membranous lupus nephritis', 'cutaneous lupus'],
         'colitis': ['colitis', 'ulcerative colitis', 'chronic ulcerative colitis', 'pediatric ulcerative colitis',
                     'crohns disease', 'crohn disease', 'crohn colitis', 'inflammatory bowel disease'],
         'scleroderma': ['scleroderma', 'systemic sclerosis', 'systemic sclerosis associated interstitial lung disease',
@@ -840,6 +841,7 @@ DISEASE_HIERARCHY_GROUPS = {
         'pneumonia': ['pneumonia', 'bronchopneumonia', 'community-acquired pneumonia', 'hospital-acquired pneumonia',
                       'streptococcal pneumonia', 'pneumococcal pneumonia', 'bacterial pneumonia', 'aspiration pneumonia'],
         # h387: hepatitis REMOVED - 0% precision (viral diseases don't work with hierarchy)
+        # h410: Keep 'cystitis' but use HIERARCHY_EXCLUSIONS to block cholecystitis/dacryocystitis/interstitial cystitis
         'uti': ['urinary tract infection', 'uti', 'complicated urinary tract infection', 'uncomplicated uti',
                 'recurrent uti', 'chronic urinary tract infection', 'pyelonephritis', 'cystitis'],
         'sepsis': ['sepsis', 'bacterial sepsis', 'septicemia', 'blood stream infection', 'severe sepsis', 'septic shock'],
@@ -883,8 +885,22 @@ DISEASE_HIERARCHY_GROUPS = {
     'respiratory': {
         'asthma': ['asthma', 'asthmatic', 'bronchospasm', 'reactive airway', 'exercise-induced asthma'],
         'copd': ['copd', 'chronic obstructive', 'emphysema'],
-        'pulmonary_fibrosis': ['fibrosis', 'pulmonary fibrosis', 'idiopathic pulmonary fibrosis', 'interstitial lung'],
+        # h410: Removed bare 'fibrosis' - matches 'cystic fibrosis' (CF is not pulmonary fibrosis)
+        'pulmonary_fibrosis': ['pulmonary fibrosis', 'idiopathic pulmonary fibrosis', 'interstitial lung'],
     },
+}
+
+# h410: Known false-match exclusions for hierarchy substring matching.
+# These disease name substrings should NEVER match the specified hierarchy group,
+# even though they contain a matching variant substring.
+HIERARCHY_EXCLUSIONS: Dict[Tuple[str, str], list[str]] = {
+    # 'cystitis' in UTI group matches cholecystitis (gallbladder), dacryocystitis (tear duct),
+    # interstitial cystitis (bladder pain syndrome - not infectious)
+    ('infectious', 'uti'): ['cholecystitis', 'dacryocystitis', 'interstitial cystitis'],
+    # 'bronchitis' in respiratory_infection matches chronic bronchitis (which is COPD, not infection)
+    ('infectious', 'respiratory_infection'): ['chronic bronchitis'],
+    # 'cystic fibrosis' is not pulmonary fibrosis
+    ('respiratory', 'pulmonary_fibrosis'): ['cystic fibrosis'],
 }
 
 # h171: Neurological drug class mappings (60.4% coverage vs 18% kNN baseline)
@@ -1763,6 +1779,10 @@ class DrugRepurposingPredictor:
             # Check each category's disease groups
             for category, groups in DISEASE_HIERARCHY_GROUPS.items():
                 for group_name, variants in groups.items():
+                    # h410: Check exclusion list before matching
+                    exclusions = HIERARCHY_EXCLUSIONS.get((category, group_name), [])
+                    if any(excl in disease_lower for excl in exclusions):
+                        continue
                     if any(variant in disease_lower or disease_lower in variant
                            for variant in variants):
                         for drug_id in drug_ids:
@@ -1794,6 +1814,10 @@ class DrugRepurposingPredictor:
         disease_lower = disease_name.lower()
         pred_disease_group = None
         for group_name, variants in DISEASE_HIERARCHY_GROUPS[category].items():
+            # h410: Check exclusion list before matching
+            exclusions = HIERARCHY_EXCLUSIONS.get((category, group_name), [])
+            if any(excl in disease_lower for excl in exclusions):
+                continue
             if any(variant in disease_lower or disease_lower in variant
                    for variant in variants):
                 pred_disease_group = group_name

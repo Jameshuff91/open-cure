@@ -8270,7 +8270,7 @@
       "title": "Literature Validation of 1-Disease Hierarchy Rules",
       "description": "h393 revealed 15+ hierarchy rules that cannot be holdout-validated because they have only 1-3 diseases. Examples: UTI (75%), MS (77%), lupus (86%), asthma (70%), spondylitis (80%). These rules have HIGH full-data precision but zero holdout evidence. Literature validation (PubMed/ClinicalTrials.gov) could confirm whether these are genuine medical knowledge or memorization.",
       "hypothesis": "For each 1-disease hierarchy rule, check if the drug classes identified by the rule match established treatment guidelines. If >=80% of rule predictions match guideline-recommended drugs, the rule is genuine despite being untestable on holdout.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8282,8 +8282,8 @@
         "Step 5: Score each rule as confirmed/partial/unconfirmed",
         "Step 6: Recommend demoting unconfirmed rules and keeping confirmed ones"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Literature validation of 20 small hierarchy rules (<=3 GT diseases each):\n- 14/20 CONFIRMED by treatment guidelines (genuine medical knowledge)\n- 5/20 PARTIAL (heterogeneous groups or string-matching contamination)\n- 0/20 pure memorization\n- 1/20 N/A (gout - no GT diseases)\n\nCRITICAL FINDING: 3 string-matching bugs discovered and fixed:\n1. 'sle' in lupus variants matched 'sleep/sleepiness' (obstructive sleep apnea, hypersomnia)\n2. 'cystitis' in UTI matched cholecystitis/dacryocystitis/interstitial cystitis\n3. bare 'fibrosis' in pulmonary_fibrosis matched 'cystic fibrosis'\n4. 'bronchitis' in respiratory_infection matched 'chronic bronchitis' (which is COPD)\n\nFIXES: Removed 'sle' from lupus variants, removed bare 'fibrosis' from pulmonary_fibrosis,\nadded HIERARCHY_EXCLUSIONS dict for remaining false matches.\n\nIMPACT (holdout-validated):\n- MEDIUM: +1.1pp holdout (22.3% from 21.2%), +0.8pp full-data\n- 271 low-quality predictions moved from MEDIUM to LOW\n- GOLDEN/HIGH/FILTER: within noise\n\nCONCLUSION: Small hierarchy rules encode GENUINE medical knowledge (confirmed by h432: 87% precision).\n0% holdout is structural absence, not overfitting. The main improvement was fixing substring bugs.",
+      "result_metric": "MEDIUM holdout +1.1pp (22.3% from 21.2%); 3 string-matching bugs fixed"
     },
     {
       "id": "h411",
@@ -9168,7 +9168,7 @@
       "title": "Split HIGH Tier into HIGH-Hierarchy and HIGH-Default for Better Calibration",
       "description": "h458 showed hierarchy-matched HIGH has 30.9% holdout precision (n=246) and non-hierarchy HIGH has 23.4% (n=197). These have very different properties: hierarchy is rank-independent, non-hierarchy is rank-dependent. Splitting into two sub-tiers would improve calibration accuracy.",
       "hypothesis": "Splitting HIGH into HIGH-H (hierarchy) and HIGH-D (default) provides better-calibrated precision estimates.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -9287,6 +9287,62 @@
       ],
       "findings": "VALIDATED: Added category_holdout_precision column to DrugPrediction and deliverable.\n\nImplementation:\n1. CATEGORY_MEDIUM_HOLDOUT_PRECISION constant with 18 categories (from h462 5-seed holdout)\n2. get_category_holdout_precision() function: MEDIUM returns category-specific, other tiers return default\n3. category_holdout_precision field on DrugPrediction (set in all 3 constructors)\n4. Deliverable now has 19 columns (was 18)\n\nKey values (MEDIUM holdout precision by category):\n- Psychiatric: 45.7% (highest)\n- Renal: 43.5% (high variance)\n- Musculoskeletal: 29.8%\n- Autoimmune/CV/Respiratory: ~26%\n- Cancer: 19.1% (most reliable, low variance)\n- Immunological: 2.5% (demoted to LOW)\n\nDeliverable regenerated: 14,150 predictions across 473 diseases.",
       "result_metric": "19 columns in deliverable (was 18). Category-specific MEDIUM precision ranges from 0-45.7%."
+    },
+    {
+      "id": "h467",
+      "title": "Systematic Substring Matching Audit for All Hierarchy Variants",
+      "description": "h410 found 3 critical substring bugs (sle\u2192sleep, cystitis\u2192cholecystitis, fibrosis\u2192cystic fibrosis). There may be MORE false matches lurking in other variant lists. Systematically check every variant in DISEASE_HIERARCHY_GROUPS against all GT disease names to find additional false matches.",
+      "hypothesis": "There are additional substring false matches beyond the 3 found in h410 that contaminate hierarchy group precision.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For every hierarchy variant, find ALL GT diseases that match",
+        "Flag any disease where the match seems semantically wrong (e.g., variant too short, matched in middle of unrelated word)",
+        "Quantify false-match rate per group",
+        "Add exclusions for any new false matches found",
+        "Re-run holdout validation"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h468",
+      "title": "Neuropathy Hierarchy Group Decomposition",
+      "description": "h410 found that the neurological/neuropathy group is too heterogeneous: TTR amyloid polyneuropathy, autonomic neuropathy, and inflammatory neuropathy need completely different drugs. Consider splitting this into 2-3 sub-groups or removing the group entirely, since neuropathy drugs dont transfer well across subtypes.",
+      "hypothesis": "Splitting the neuropathy hierarchy group into disease-specific sub-groups (TTR-amyloid, inflammatory, pain) would improve prediction quality for neuropathy diseases.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Analyze neuropathy group predictions: which drugs are predicted for which diseases",
+        "Check how many predictions use neuropathy hierarchy match",
+        "If significant (>10 preds), split into sub-groups",
+        "If minimal (<5 preds), leave as-is (diminishing returns)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h469",
+      "title": "Word-Boundary-Aware Hierarchy Matching",
+      "description": "The current substring matching (variant in disease_lower) causes false positives when short variants match within longer words (sle\u2192sleep, tb\u2192diabetes). Implement word-boundary-aware matching using regex or token-based comparison to prevent ALL such false matches systematically, rather than relying on manual exclusion lists.",
+      "hypothesis": "Switching from substring matching to word-boundary-aware matching would eliminate false hierarchy matches without needing manual exclusion lists, potentially finding more contamination than the 3 bugs h410 identified.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Inventory all short variants (<=4 chars) that could cause word-boundary issues",
+        "Implement word-boundary regex matching (\\bvariant\\b)",
+        "Compare old vs new matching: which diseases gain/lose matches",
+        "Run holdout validation to measure impact",
+        "If positive, replace substring matching globally"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -10888,6 +10944,12 @@
       "hypothesis_id": "h464",
       "learning": "10 psychiatric diseases is insufficient for category-specific promotion (2 per holdout seed, extreme variance). Need >=50 diseases for n>=10 per seed and statistical power. Mechanism support is universal for psychiatric MEDIUM (no filtering power).",
       "implication": "Category-specific tier promotions require >=50 diseases. For small categories, use category_holdout_precision annotation instead of tier changes."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h410",
+      "learning": "Hierarchy rules encode genuine medical knowledge (14/20 confirmed by guidelines, 0 memorization). But substring matching is fragile: 3 bugs found where short variants (sle, cystitis, fibrosis) matched wrong diseases. HIERARCHY_EXCLUSIONS dict added to prevent false matches. Impact: MEDIUM +1.1pp holdout.",
+      "implication": "Always audit substring matches for false positives, especially with short variant strings. Consider word-boundary matching (h469)."
     }
   ],
   "collaborations": [

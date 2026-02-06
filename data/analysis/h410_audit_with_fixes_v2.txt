@@ -1,0 +1,189 @@
+Loading predictor...
+Total diseases: 455
+
+=== PHASE 1: Full-data (after h402 demotions) ===
+
+Tier precision:
+  GOLDEN: 122/189 = 64.6%
+  HIGH: 289/558 = 51.8%
+  MEDIUM: 937/3593 = 26.1%
+  LOW: 356/2721 = 13.1%
+  FILTER: 686/6411 = 10.7%
+
+Rules by (rule, tier):
+  (autoimmune_hierarchy_spondylitis, GOLDEN): 2/2 = 100.0%
+  (autoimmune_hierarchy_lupus, GOLDEN): 8/8 = 100.0%
+  (respiratory_hierarchy_asthma, GOLDEN): 4/4 = 100.0%
+  (respiratory_hierarchy_copd, GOLDEN): 2/2 = 100.0%
+  (autoimmune_hierarchy_rheumatoid_arthritis, GOLDEN): 21/22 = 95.5%
+  (cardiovascular_hierarchy_hypertension, GOLDEN): 11/12 = 91.7%
+  (autoimmune_hierarchy_colitis, GOLDEN): 8/10 = 80.0%
+  (autoimmune_hierarchy_multiple_sclerosis, GOLDEN): 5/7 = 71.4%
+  (cardiovascular_hierarchy_arrhythmia, GOLDEN): 2/3 = 66.7%
+  (comp_to_base_high_87, GOLDEN): 4/7 = 57.1%
+  (metabolic_hierarchy_lipid, GOLDEN): 35/65 = 53.8%
+  (infectious_hierarchy_tuberculosis, GOLDEN): 2/4 = 50.0%
+  (neurological_hierarchy_epilepsy, GOLDEN): 8/16 = 50.0%
+  (neurological_hierarchy_alzheimers, GOLDEN): 1/2 = 50.0%
+  (neurological_hierarchy_neuropathy, GOLDEN): 1/2 = 50.0%
+  (metabolic_hierarchy_obesity, GOLDEN): 3/7 = 42.9%
+  (statin_cv_event, GOLDEN): 2/5 = 40.0%
+  (metabolic_hierarchy_thyroid, GOLDEN): 2/5 = 40.0%
+  (cardiovascular_hierarchy_coronary, GOLDEN): 1/3 = 33.3%
+  (cardiovascular, GOLDEN): 0/2 = 0.0%
+  (cancer, GOLDEN): 0/1 = 0.0%
+  (neurological, HIGH): 4/4 = 100.0%
+  (gastrointestinal, HIGH): 1/1 = 100.0%
+  (cancer, HIGH): 2/2 = 100.0%
+  (infectious_hierarchy_respiratory_infection, HIGH): 5/6 = 83.3%
+  (cardiovascular_hierarchy_arrhythmia, HIGH): 34/43 = 79.1%
+  (autoimmune_hierarchy_spondylitis, HIGH): 14/18 = 77.8%
+  (autoimmune_hierarchy_rheumatoid_arthritis, HIGH): 41/54 = 75.9%
+  (infectious_hierarchy_uti, HIGH): 12/16 = 75.0%
+  (autoimmune_hierarchy_multiple_sclerosis, HIGH): 5/7 = 71.4%
+  (autoimmune_hierarchy_lupus, HIGH): 4/6 = 66.7%
+  (autoimmune_hierarchy_colitis, HIGH): 16/24 = 66.7%
+  (respiratory_hierarchy_copd, HIGH): 4/6 = 66.7%
+  (infectious_hierarchy_tuberculosis, HIGH): 20/31 = 64.5%
+  (respiratory_hierarchy_asthma, HIGH): 10/16 = 62.5%
+  (incoherent_demotion, HIGH): 52/104 = 50.0%
+  (infectious_hierarchy_sepsis, HIGH): 2/4 = 50.0%
+  (autoimmune_hierarchy_scleroderma, HIGH): 1/2 = 50.0%
+  (respiratory, HIGH): 4/10 = 40.0%
+  (metabolic_hierarchy_diabetes, HIGH): 25/73 = 34.2%
+  (cardiovascular_hierarchy_hypertension, HIGH): 7/21 = 33.3%
+  (cardiovascular, HIGH): 5/15 = 33.3%
+  (cardiovascular_hierarchy_coronary, HIGH): 10/30 = 33.3%
+  (comp_to_base_high_87, HIGH): 3/15 = 20.0%
+  (cardiovascular_hierarchy_atherosclerosis, HIGH): 1/6 = 16.7%
+  (metabolic_hierarchy_thyroid, HIGH): 6/36 = 16.7%
+  (reproductive, HIGH): 1/6 = 16.7%
+  (cardiovascular_hierarchy_heart_failure, HIGH): 0/2 = 0.0%
+  (target_overlap_promotion, MEDIUM): 114/230 = 49.6%
+  (respiratory, MEDIUM): 4/9 = 44.4%
+  (infectious_hierarchy_pneumonia, MEDIUM): 8/22 = 36.4%
+  (cv_pathway_comprehensive, MEDIUM): 38/105 = 36.2%
+  (mechanism_specific, MEDIUM): 5/14 = 35.7%
+  (hematological, MEDIUM): 28/93 = 30.1%
+  (highly_repurposable, MEDIUM): 3/10 = 30.0%
+  (cardiovascular, MEDIUM): 6/21 = 28.6%
+  (cancer_same_type, MEDIUM): 280/1088 = 25.7%
+  (standard, MEDIUM): 387/1619 = 23.9%
+  (incoherent_demotion, MEDIUM): 35/153 = 22.9%
+  (cancer, MEDIUM): 26/188 = 13.8%
+  (metabolic, MEDIUM): 3/37 = 8.1%
+  (neurological_hierarchy_parkinsons, MEDIUM): 0/2 = 0.0%
+  (neurological_hierarchy_migraine, MEDIUM): 0/2 = 0.0%
+  (immunological_medium_demotion, LOW): 15/70 = 21.4%
+  (standard, LOW): 262/1796 = 14.6%
+  (reproductive_medium_demotion, LOW): 5/42 = 11.9%
+  (gastrointestinal_medium_demotion, LOW): 32/300 = 10.7%
+  (neurological_medium_demotion, LOW): 15/146 = 10.3%
+  (broad_class_isolated, LOW): 11/108 = 10.2%
+  (mechanism_specific, LOW): 6/89 = 6.7%
+  (cancer, LOW): 10/170 = 5.9%
+  (cancer_only_non_cancer, FILTER): 3/19 = 15.8%
+  (base_to_complication, FILTER): 5/32 = 15.6%
+  (complication_non_validated, FILTER): 10/74 = 13.5%
+  (standard, FILTER): 623/5705 = 10.9%
+  (cross_domain_isolated, FILTER): 30/280 = 10.7%
+  (cancer_no_gt, FILTER): 15/301 = 5.0%
+
+================================================================================
+=== PHASE 2: Holdout Validation (5-seed) ===
+  Seed 42...
+  Seed 123...
+  Seed 456...
+  Seed 789...
+  Seed 2024...
+
+================================================================================
+=== HOLDOUT SUMMARY ===
+  GOLDEN: 53.9% ± 7.1%
+  HIGH: 49.9% ± 8.2%
+  MEDIUM: 22.3% ± 2.0%
+  LOW: 12.0% ± 1.8%
+  FILTER: 6.9% ± 1.6%
+
+========================================================================================================================
+Rule                                               Tier         Full      n    Holdout     ±      Δ
+========================================================================================================================
+  autoimmune_hierarchy_spondylitis                 GOLDEN     100.0%     2       0.0%   0.0 -100.0
+  autoimmune_hierarchy_lupus                       GOLDEN     100.0%     8       0.0%   0.0 -100.0
+  respiratory_hierarchy_asthma                     GOLDEN     100.0%     4       0.0%   0.0 -100.0
+  respiratory_hierarchy_copd                       GOLDEN     100.0%     2       0.0%   0.0 -100.0
+  autoimmune_hierarchy_rheumatoid_arthritis        GOLDEN      95.5%    22     100.0%   0.0  +4.5
+  cardiovascular_hierarchy_hypertension            GOLDEN      91.7%    12      90.0%  10.0  -1.7
+  autoimmune_hierarchy_colitis                     GOLDEN      80.0%    10     100.0%   0.0 +20.0
+  autoimmune_hierarchy_multiple_sclerosis          GOLDEN      71.4%     7       0.0%   0.0 -71.4
+  cardiovascular_hierarchy_arrhythmia              GOLDEN      66.7%     3      50.0%   0.0 -16.7
+  comp_to_base_high_87                             GOLDEN      57.1%     7      53.3%  37.7  -3.8
+  metabolic_hierarchy_lipid                        GOLDEN      53.8%    65      52.3%   2.3  -1.6
+  infectious_hierarchy_tuberculosis                GOLDEN      50.0%     4      66.7%  47.1 +16.7
+  neurological_hierarchy_epilepsy                  GOLDEN      50.0%    16       0.0%   0.0 -50.0
+  neurological_hierarchy_alzheimers                GOLDEN      50.0%     2       0.0%   0.0 -50.0
+  neurological_hierarchy_neuropathy                GOLDEN      50.0%     2       0.0%   0.0 -50.0
+  metabolic_hierarchy_obesity                      GOLDEN      42.9%     7       0.0%   0.0 -42.9
+  statin_cv_event                                  GOLDEN      40.0%     5       0.0%   0.0 -40.0
+  metabolic_hierarchy_thyroid                      GOLDEN      40.0%     5      50.0%   0.0 +10.0
+  cardiovascular_hierarchy_coronary                GOLDEN      33.3%     3       0.0%   0.0 -33.3
+  cardiovascular                                   GOLDEN       0.0%     2       6.2%  10.8  +6.2
+  cancer                                           GOLDEN       0.0%     1       0.0%   0.0  +0.0
+  neurological                                     HIGH       100.0%     4       0.0%   0.0 -100.0
+  gastrointestinal                                 HIGH       100.0%     1     100.0%   0.0  +0.0
+  cancer                                           HIGH       100.0%     2      83.3%  16.7 -16.7
+  infectious_hierarchy_respiratory_infection       HIGH        83.3%     6       0.0%   0.0 -83.3
+  cardiovascular_hierarchy_arrhythmia              HIGH        79.1%    43      78.6%   0.0  -0.5
+  autoimmune_hierarchy_spondylitis                 HIGH        77.8%    18       0.0%   0.0 -77.8
+  autoimmune_hierarchy_rheumatoid_arthritis        HIGH        75.9%    54      64.4%   4.4 -11.6
+  infectious_hierarchy_uti                         HIGH        75.0%    16       0.0%   0.0 -75.0
+  autoimmune_hierarchy_multiple_sclerosis          HIGH        71.4%     7       0.0%   0.0 -71.4
+  autoimmune_hierarchy_lupus                       HIGH        66.7%     6       0.0%   0.0 -66.7
+  autoimmune_hierarchy_colitis                     HIGH        66.7%    24      50.0%   0.0 -16.7
+  respiratory_hierarchy_copd                       HIGH        66.7%     6       0.0%   0.0 -66.7
+  infectious_hierarchy_tuberculosis                HIGH        64.5%    31      29.3%  22.5 -35.2
+  respiratory_hierarchy_asthma                     HIGH        62.5%    16       0.0%   0.0 -62.5
+  incoherent_demotion                              HIGH        50.0%   104      54.8%   8.8  +4.8
+  infectious_hierarchy_sepsis                      HIGH        50.0%     4       0.0%   0.0 -50.0
+  autoimmune_hierarchy_scleroderma                 HIGH        50.0%     2       0.0%   0.0 -50.0
+  respiratory                                      HIGH        40.0%    10      28.8%  23.1 -11.2
+  metabolic_hierarchy_diabetes                     HIGH        34.2%    73      24.7%  20.5  -9.5
+  cardiovascular_hierarchy_hypertension            HIGH        33.3%    21      80.0%  20.0 +46.7
+  cardiovascular                                   HIGH        33.3%    15      36.7%  33.0  +3.3
+  cardiovascular_hierarchy_coronary                HIGH        33.3%    30       0.0%   0.0 -33.3
+  comp_to_base_high_87                             HIGH        20.0%    15      27.8%  39.3  +7.8
+  cardiovascular_hierarchy_atherosclerosis         HIGH        16.7%     6       0.0%   0.0 -16.7
+  metabolic_hierarchy_thyroid                      HIGH        16.7%    36       0.0%   0.0 -16.7
+  reproductive                                     HIGH        16.7%     6       0.0%   0.0 -16.7
+  cardiovascular_hierarchy_heart_failure           HIGH         0.0%     2       0.0%   0.0  +0.0
+  target_overlap_promotion                         MEDIUM      49.6%   230      33.1%  10.8 -16.5
+  respiratory                                      MEDIUM      44.4%     9      39.5%   9.1  -5.0
+  infectious_hierarchy_pneumonia                   MEDIUM      36.4%    22       6.7%   9.4 -29.7
+  cv_pathway_comprehensive                         MEDIUM      36.2%   105      26.0%   4.9 -10.2
+  mechanism_specific                               MEDIUM      35.7%    14      16.1%  16.2 -19.6
+  hematological                                    MEDIUM      30.1%    93      17.3%  13.7 -12.8
+  highly_repurposable                              MEDIUM      30.0%    10      41.6%  32.4 +11.6
+  cardiovascular                                   MEDIUM      28.6%    21      27.5%   7.5  -1.1
+  cancer_same_type                                 MEDIUM      25.7%  1088      20.1%   4.9  -5.7
+  standard                                         MEDIUM      23.9%  1619      21.4%   1.7  -2.5
+  incoherent_demotion                              MEDIUM      22.9%   153      28.4%   5.9  +5.5
+  cancer                                           MEDIUM      13.8%   188      15.6%   4.6  +1.8
+  metabolic                                        MEDIUM       8.1%    37       9.7%  12.1  +1.6
+  neurological_hierarchy_parkinsons                MEDIUM       0.0%     2       0.0%   0.0  +0.0
+  neurological_hierarchy_migraine                  MEDIUM       0.0%     2       0.0%   0.0  +0.0
+  immunological_medium_demotion                    LOW         21.4%    70       0.0%   0.0 -21.4
+  standard                                         LOW         14.6%  1796      14.0%   1.9  -0.6
+  reproductive_medium_demotion                     LOW         11.9%    42       0.0%   0.0 -11.9
+  gastrointestinal_medium_demotion                 LOW         10.7%   300      11.2%   3.6  +0.6
+  neurological_medium_demotion                     LOW         10.3%   146       8.6%   3.6  -1.7
+  broad_class_isolated                             LOW         10.2%   108       6.0%   4.1  -4.2
+  mechanism_specific                               LOW          6.7%    89       3.2%   3.7  -3.6
+  cancer                                           LOW          5.9%   170       8.3%   6.2  +2.4
+  cancer_only_non_cancer                           FILTER      15.8%    19       5.0%  10.0 -10.8
+  base_to_complication                             FILTER      15.6%    32       0.0%   0.0 -15.6
+  complication_non_validated                       FILTER      13.5%    74       1.9%   3.8 -11.6
+  standard                                         FILTER      10.9%  5705       6.9%   1.5  -4.0
+  cross_domain_isolated                            FILTER      10.7%   280      11.1%   5.3  +0.4
+  cancer_no_gt                                     FILTER       5.0%   301       5.1%   4.5  +0.1
+
+Saved to /Users/jimhuff/github/open-cure/data/analysis/h402_rule_audit_v2.json
