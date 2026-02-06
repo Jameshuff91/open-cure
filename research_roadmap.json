@@ -10984,13 +10984,14 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Cross-tabulate fluoroquinolone predictions by infectious sub-type",
         "Identify spectrum mismatches (e.g., fluoroquinolone\u2192fungal)",
         "Compute holdout for matched vs mismatched",
         "Implement if gap is significant"
-      ]
+      ],
+      "findings": "Partially obsoleted by h560: antimicrobial-pathogen mismatch filter already catches fluoroquinolone\u2192fungal/parasitic. Remaining FQ\u2192gram-positive bacterial mismatches require gram-stain level classification which is higher effort than warranted for marginal impact."
     },
     {
       "id": "h559",
