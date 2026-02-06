@@ -4480,8 +4480,9 @@
         "Add 'tendon_risk_warning' field to predictions",
         "Don't exclude but flag for clinical review"
       ],
-      "status": "pending",
-      "priority": 5
+      "status": "deprioritized",
+      "priority": 5,
+      "findings": "h224 DEPRIORITIZED: Clinical annotation, not prediction quality\n\nANALYSIS:\n- 508 quinolone predictions total\n- Overall precision: 9.6% (49/508)\n- Respiratory quinolones: 44.4% precision (already HIGH tier via h265)\n- Fluoroquinolones already handled in production_predictor.py\n\nTENDON RUPTURE WARNING:\n- This is a clinical safety annotation, not a prediction quality metric\n- FDA black box warning applies regardless of prediction accuracy\n- Would need to be added to deliverable Excel file, not predictor logic\n\nRECOMMENDATION:\n- If clinical annotations are needed, add as post-processing step\n- Current focus should remain on prediction accuracy\n- Tendon warning could be added to Excel output in future phase\n\nNOT IMPLEMENTED: Out of scope for current research focus on precision"
     },
     {
       "id": "h225",
