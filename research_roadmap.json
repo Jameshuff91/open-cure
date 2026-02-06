@@ -9633,7 +9633,9 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending"
+      "status": "validated",
+      "findings": "h485: Target Overlap Promotion False Positive Rate - VALIDATED (opposite of expected!)\n\nMAIN FINDING: Target overlap promotion is the 3rd best MEDIUM rule (35.9% holdout), NOT a false positive generator.\nh483 sample of 2 was too small (min n\u224830 for evaluation).\n\nHOLDOUT PRECISION (5-seed) for MEDIUM rules:\n  cv_pathway_comprehensive:   72.9% \u00b1 19.2% (BEST)\n  atc_coherent_respiratory:   60.3% \u00b1 35.3% (n=7 too small)\n  target_overlap_promotion:   35.9% \u00b1 12.5% (3rd BEST, n=37)\n  cancer_same_type:           34.9% \u00b1 3.4%  (n=247)\n  atc_coherent_cardiovascular:31.8% \u00b1 19.4%\n  standard:                   21.3% \u00b1 5.7%  (baseline)\n  cancer:                      0.3% \u00b1 0.7%  (n=40, ESSENTIALLY ZERO!)\n  incoherent_demotion:         3.6% \u00b1 6.2%  (n=12, noise)\n\nCRITICAL FINDING: 'cancer' rule at MEDIUM = 0.3% holdout (197 predictions!).\nThese are cancer cross-type drugs promoted from LOW\u2192MEDIUM by target overlap.\nCancer cross-type has 0.9% precision at LOW (h395) and overlap promotion doesn't help.\n\nFIX: Added 'cancer' to target_overlap_promotion blocked categories.\nImpact: 183 predictions MEDIUM\u2192LOW, MEDIUM precision +1.4pp (27.5% \u2192 28.9%).\nHIGH precision +1.3pp, GOLDEN +0.5pp from upstream redistribution.\nOnly 1 GT prediction affected (negligible loss).\n",
+      "result_metric": "Target overlap 35.9% holdout (3rd best rule). Cancer cross-type blocked: MEDIUM +1.4pp."
     },
     {
       "id": "h486",
@@ -11314,6 +11316,12 @@
       "hypothesis_id": "h476",
       "learning": "Corticosteroid iatrogenic filter was incomplete: cortisone/mometasone/fludrocortisone missing from CORTICOSTEROID_DRUGS. Pancreatitis is a dual case (steroids cause drug-induced pancreatitis but treat autoimmune pancreatitis). Generic pancreatitis \u2192 FILTER is correct since autoimmune pancreatitis is a specific subtype.",
       "implication": "When adding drugs to reference sets, verify completeness. Drug classes often have members that were missed in initial curation. Dual-use drugs (cause and treat related conditions) need careful handling."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h485",
+      "learning": "Target overlap promotion is actually the 3rd best MEDIUM rule (35.9% holdout), contradicting h483's small sample. However, cancer cross-type overlap promotion has 0.3% holdout - blocking cancer from promotion yields MEDIUM +1.4pp. Lesson: always validate rules with holdout, not small literature samples.",
+      "implication": "Rule evaluation requires holdout precision (n\u224830+), not literature validation of 2-3 examples. cancer cross-type overlap promotion was the single largest source of noise in MEDIUM tier."
     }
   ],
   "collaborations": [

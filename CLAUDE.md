@@ -147,21 +147,21 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480)
 
-**Tier System (h482 updated 2026-02-06):**
-- GOLDEN: 64.4% full / 62.7% ± 13.5% holdout (median 57.7%, h472: GOLDEN>HIGH not significant p=0.574)
-- HIGH: 55.6% full / 51.1% ± 6.5% holdout
-- MEDIUM: 27.7% full / 23.3% ± 3.3% holdout
-- LOW: 12.2% full / 10.6% ± 1.6% holdout
-- FILTER: 11.4% full / 8.1% ± 1.0% holdout
+**Tier System (h485 updated 2026-02-06):**
+- GOLDEN: 64.6% full / ~62% holdout
+- HIGH: 57.2% full / ~51% holdout
+- MEDIUM: 28.9% full / ~24% holdout (h485: +1.4pp from cancer cross-type block)
+- LOW: 11.6% full / ~10% holdout
+- FILTER: 11.2% full / ~8% holdout
 
-**h483 (LATEST):** MEDIUM novel prediction literature validation (top 25).
-  - MEDIUM novels: 52% clinical support (40% GT gaps, 12% promising, 8% HARMFUL)
-  - 2 new HARMFUL: verapamil→cardiac arrest (precipitates in WPW/VT), metronidazole→myopia (causes it)
-  - Methimazole→parathyroid diseases added (thyroid drug, no parathyroid rationale)
-  - 'standard' rule is most reliable (7/7 GT_GAP); target_overlap_promotion has highest FP rate
-  - Total inverse-indication predictions now: 29 (26 from h480/h482 + 4 from h483 - 1 overlap)
-  - Complete literature validation comparison:
-    GOLDEN 75% support / HIGH 65% / MEDIUM 52% (monotonic decrease, as expected)
+**h485 (LATEST):** Target overlap promotion audit + cancer cross-type demotion.
+  - Target overlap = 3rd best MEDIUM rule (35.9% holdout, genuine)
+  - Cancer cross-type overlap = 0.3% holdout → blocked: MEDIUM +1.4pp, HIGH +1.3pp
+  - h476: Added pancreatitis/cushing to steroid iatrogenic + 3 missing steroids
+
+**h483:** MEDIUM novel prediction literature validation (top 25).
+  - 52% clinical support (40% GT gaps, 12% promising, 8% HARMFUL)
+  - 2 HARMFUL found: verapamil→cardiac arrest, metronidazole→myopia. 29 inverse indications total.
 
 **h473/h480:** Literature validation of GOLDEN/HIGH novel predictions + inverse-indication safety fix.
   - GOLDEN novels: 75% clinical support (55% GT gaps, 20% promising, 0% harmful)

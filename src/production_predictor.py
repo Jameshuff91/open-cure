@@ -3416,7 +3416,8 @@ class DrugRepurposingPredictor:
                     elif (tier == ConfidenceTier.LOW
                             and target_overlap >= TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM
                             # h462: Block LOW→MEDIUM for categories with poor MEDIUM holdout
-                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological'}):
+                            # h485: Block cancer (cross-type overlap=0.3% holdout, n=197)
+                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer'}):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 
