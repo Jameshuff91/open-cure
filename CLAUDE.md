@@ -147,14 +147,15 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h486 update, 2026-02-06):**
-- GOLDEN: 69.9% ± 17.9% holdout (287 predictions)
-- HIGH: 57.3% ± 8.1% holdout (835 predictions)
-- MEDIUM: 28.8% ± 2.6% holdout (3004 predictions)
-- LOW: 15.6% ± 2.6% holdout (2702 predictions)
-- FILTER: 10.5% ± 1.4% holdout (7322 predictions)
+**Tier System (h540 update, 2026-02-06):**
+- GOLDEN: 69.9% ± 17.9% holdout (285 predictions)
+- HIGH: 58.8% ± 6.2% holdout (791 predictions)
+- MEDIUM: 30.2% ± 2.4% holdout (2656 predictions)
+- LOW: 16.2% ± 2.7% holdout (3140 predictions)
+- FILTER: 10.3% ± 1.4% holdout (7278 predictions)
+- **h537:** Deliverable quality audit: 58% validated, 88% reasonable (top 50 GOLDEN/HIGH). Added statin→diabetes inverse indication (12 preds → FILTER).
+- **h540:** Local anesthetic procedural artifact demotion: bupivacaine→LOW always, lidocaine→LOW except neuro/CV/derm/psych. 132 preds demoted. HIGH +0.3pp.
 - **h520:** Corticosteroid SOC promotion: 333 MEDIUM→HIGH for autoimmune/dermatological/respiratory/ophthalmic. HIGH +2.3pp, MEDIUM +1.2pp.
-- **h522:** Hematological corticosteroid demotion: 123 MEDIUM→LOW. MEDIUM +0.2pp, LOW +0.5pp.
 - **h486:** SIDER adverse effect mining: 47 new inverse indication pairs (55 drugs, 124 total). 105 predictions → FILTER, 93.3% precision.
 - **h526:** Inverse indication taxonomy (10 mechanism classes). +10 new pairs (SSRIs→bipolar, estrogens→cancer, ACEi→angioedema). Bug fix: moved inverse_indication before cancer_same_type. Total: 63 drugs, 135 pairs.
 - **h529:** GT quality audit: removed 19 false DRKG-derived GT entries (drug CAUSES disease). 14 Every Cure errors flagged.
