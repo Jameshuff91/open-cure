@@ -9854,8 +9854,10 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
-      "category": "safety"
+      "status": "validated",
+      "category": "safety",
+      "findings": "h496 VALIDATED: DHP CCB safety check. Most DHP CCB predictions already FILTER (30/38). Felodipine\u2192CHF at MEDIUM is a GT pair (V-HeFT III: safe). Amlodipine\u2192DCM already FILTER. No predictions for aortic stenosis/hypotension/shock. No action needed.",
+      "result_metric": "No harmful DHP CCB predictions found outside FILTER tier."
     },
     {
       "id": "h497",
@@ -9871,8 +9873,10 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "in_progress",
-      "category": "precision"
+      "status": "validated",
+      "category": "precision",
+      "findings": "h497 VALIDATED: GOLDEN Standard vs Hierarchy Holdout Validation\n\nStandard GOLDEN (freq>=10 + mechanism + tier1) holdout: 62.2% \u00b1 31.3% (n=26/seed)\nHierarchy GOLDEN holdout: 70.3% \u00b1 19.1% (n=19/seed)\nDifference: +8.1pp (NOT significant, t=1.01, p>0.35)\n\nExcluding seed 42 outlier (0/4 standard): standard 77.7% vs hierarchy 78.6% (+0.9pp)\n\nDECISION: No demotion needed. Standard GOLDEN holdout (62.2%) exceeds HIGH avg (60.8%).\nFull-data gap (standard 55.7% vs hierarchy 89.5%) is mostly hierarchy overfitting.\n\nKey finding: kNN has non-deterministic tie-breaking between process invocations.",
+      "result_metric": "Standard GOLDEN 62.2% \u00b1 31.3% holdout (NOT significantly different from hierarchy 70.3%)"
     },
     {
       "id": "h497",
@@ -9938,6 +9942,57 @@
       ],
       "findings": "h500: Checked with corrected GT. No categories qualify for HIGH promotion. Renal (64%, n=5.8/seed) and musculoskeletal (55.6%, n=11.2/seed) too small n. Dermatological (48.4%, n=55) below 50% threshold. Quick validation, no code changes needed.",
       "result_metric": "No promotions warranted. Dermatological closest at 48.4%."
+    },
+    {
+      "id": "h501",
+      "title": "kNN Tie-Breaking Determinism: Fix Non-Reproducible Predictions",
+      "description": "h497 discovered that kNN predictions vary between process invocations due to non-deterministic tie-breaking when drugs have identical cosine similarity scores. This causes ~100 predictions to flip between GOLDEN and non-GOLDEN tiers across runs. Investigate the root cause (numpy float ordering, dict insertion order, argsort stability) and fix to ensure 100% reproducible predictions. This is a production quality issue.",
+      "steps": [
+        "Identify the kNN scoring function and how ties are broken",
+        "Count how many drugs have tied scores per disease",
+        "Add a deterministic tiebreaker (e.g., drug_id alphabetical)",
+        "Verify predictions are identical across 3+ runs",
+        "Regenerate deliverable with deterministic predictions"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "validated",
+      "category": "production",
+      "findings": "h501 VALIDATED: kNN Tie-Breaking Determinism Fix\n\nRoot cause: sorted(drug_scores.items(), key=lambda x: x[1], reverse=True) relied on dict insertion \norder for tied scores. Python hash randomization (PYTHONHASHSEED) causes dict iteration order to \nvary between processes, leading to ~100 predictions flipping tiers across runs.\n\nFix: Added drug_id as secondary sort key: sorted(..., key=lambda x: (-x[1], x[0]))\nApplied to 4 sort operations in predict():\n1. Standard kNN ranking (line 3433)\n2. kNN fallback when MinRank has no target data (line 3429)\n3. MinRank fusion sorting (line 3420)\n4. Supplemented prediction sorting (2 instances)\n\nVerification: 3 independent Python processes produce identical predictions:\n- Hash: 970d4f6e16b8c82dc5dd438466117732 (5-disease sample, 100 predictions)\n- Tier counts: GOLDEN=286, HIGH=507, MEDIUM=3566, LOW=2341, FILTER=6922\n- All identical across 3 runs\n\nImpact: Zero precision change (same predictions, just deterministic ordering).\nProduction quality improvement: 100% reproducible predictions.",
+      "result_metric": "Deterministic predictions: 3/3 processes identical (hash match)"
+    },
+    {
+      "id": "h502",
+      "title": "GOLDEN Full-Data vs Holdout Gap: Hierarchy Overfitting Quantification",
+      "description": "h497 revealed hierarchy GOLDEN has 89.5% full-data but only 70.3% holdout (19.2pp gap), while standard GOLDEN has 55.7% full-data and 62.2% holdout (REVERSE -6.5pp gap). The hierarchy gap suggests hierarchy matching is partially overfitted - drugs match hierarchy groups because they treat the SAME diseases used to define the groups. Standard GOLDEN paradoxically has a reverse gap because the full-data denominator includes more false positives that get correctly filtered on holdout when disease is held out. Quantify this precisely and check whether hierarchy full-data precision should be derated in the deliverable.",
+      "steps": [
+        "Compare hierarchy GOLDEN full-data precision with and without the matched disease",
+        "Check if hierarchy rules are primarily single-disease matches",
+        "Compute leave-one-disease-out precision for hierarchy GOLDEN",
+        "Determine if deliverable should report holdout-adjusted precision for hierarchy rules"
+      ],
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "category": "precision"
+    },
+    {
+      "id": "h503",
+      "title": "Seed 42 Failure Mode: Why Does One Seed Have 0% Standard GOLDEN?",
+      "description": "In h497, seed 42 had only 4 standard GOLDEN predictions on holdout (vs 26-36 for other seeds), and all 4 were misses. This extreme outlier drove high variance (\u00b131.3%). Investigate: which diseases are in seed 42's holdout? Do they lack tier-1 diseases that produce standard GOLDEN? Is there a structural pattern where some 20% holdout splits are 'unlucky'? Understanding this could improve variance estimation.",
+      "steps": [
+        "List seed 42's holdout diseases and their tiers",
+        "Compare tier distribution across seeds",
+        "Check if specific high-GOLDEN diseases cluster in certain seeds",
+        "Determine if stratified sampling by disease tier would reduce variance"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "category": "meta"
     }
   ],
   "completed": [
@@ -11629,6 +11684,18 @@
       "hypothesis_id": "h478",
       "learning": "expanded_ground_truth.json was missing 1503 drug-disease pairs from the production predictor's GT (built from Every Cure Excel via fuzzy matching). This caused ALL holdout precision numbers to be pessimistic by ~7-8pp for HIGH/MEDIUM. After syncing, holdout: GOLDEN 67%, HIGH 61%, MEDIUM 31%, LOW 15%, FILTER 10%.",
       "implication": "Always keep expanded GT in sync with production GT. When GT source data changes, re-sync before running holdout evaluation. Full-data precision is now much higher than holdout (22pp gap for GOLDEN) - use holdout as authoritative."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h497",
+      "learning": "Standard GOLDEN (62.2% holdout) and Hierarchy GOLDEN (70.3% holdout) are NOT significantly different (p>0.35). Full-data gap (standard 55.7% vs hierarchy 89.5%) is mostly hierarchy overfitting. No demotion needed.",
+      "implication": "GOLDEN tier is well-justified for both rule types. Hierarchy full-data precision is inflated."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h501",
+      "learning": "kNN predictions were non-deterministic across Python processes due to dict iteration order for tied scores. Fixed with drug_id tiebreaker.",
+      "implication": "Always use a deterministic tiebreaker when sorting by float scores. Python dict ordering is process-dependent."
     }
   ],
   "collaborations": [

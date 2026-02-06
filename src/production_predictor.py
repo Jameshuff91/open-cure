@@ -3167,7 +3167,8 @@ class DrugRepurposingPredictor:
             ConfidenceTier.LOW: 3,
             ConfidenceTier.FILTER: 4,
         }
-        supplemented.sort(key=lambda p: (tier_priority.get(p.confidence_tier, 5), -p.knn_score))
+        # h501: Added drug_id as tiebreaker for deterministic ordering
+        supplemented.sort(key=lambda p: (tier_priority.get(p.confidence_tier, 5), -p.knn_score, p.drug_id))
 
         # Re-assign ranks
         for i, pred in enumerate(supplemented, 1):
@@ -3317,7 +3318,8 @@ class DrugRepurposingPredictor:
             ConfidenceTier.LOW: 3,
             ConfidenceTier.FILTER: 4,
         }
-        supplemented.sort(key=lambda p: (tier_priority.get(p.confidence_tier, 5), -p.knn_score))
+        # h501: Added drug_id as tiebreaker for deterministic ordering
+        supplemented.sort(key=lambda p: (tier_priority.get(p.confidence_tier, 5), -p.knn_score, p.drug_id))
 
         # Re-assign ranks
         for i, pred in enumerate(supplemented, 1):
@@ -3417,20 +3419,23 @@ class DrugRepurposingPredictor:
                         # Apply MinRank fusion
                         fused = self._minrank_fusion(drug_scores, target_scores)
                         # Sort by min_rank first, then by combined_score for ties
+                        # h501: Added drug_id as final tiebreaker for determinism
                         sorted_drugs = sorted(
                             fused.items(),
-                            key=lambda x: (x[1][1], -x[1][0])  # (min_rank asc, combined_score desc)
+                            key=lambda x: (x[1][1], -x[1][0], x[0])  # (min_rank asc, score desc, drug_id asc)
                         )
                         # Extract (drug_id, combined_score) for top_n
                         sorted_drugs = [(drug_id, info[0]) for drug_id, info in sorted_drugs[:top_n]]
                         max_score = 1.0  # Already normalized
                     else:
                         # No target data - fall back to kNN only
-                        sorted_drugs = sorted(drug_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
+                        # h501: Use drug_id as tiebreaker for deterministic ranking
+                        sorted_drugs = sorted(drug_scores.items(), key=lambda x: (-x[1], x[0]))[:top_n]
                         max_score = sorted_drugs[0][1] if sorted_drugs else 1.0
                 else:
                     # Standard kNN ranking
-                    sorted_drugs = sorted(drug_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
+                    # h501: Use drug_id as tiebreaker for deterministic ranking across processes
+                    sorted_drugs = sorted(drug_scores.items(), key=lambda x: (-x[1], x[0]))[:top_n]
                     max_score = sorted_drugs[0][1] if sorted_drugs else 1.0
 
                 # h405/h439: Compute TransE top-30 once per disease for
