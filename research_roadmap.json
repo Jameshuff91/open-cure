@@ -3896,7 +3896,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Compute gene Jaccard for all disease pairs",
         "Create hybrid similarity: alpha*embedding_sim + (1-alpha)*gene_jaccard",
@@ -3905,7 +3905,10 @@
       ],
       "dependencies": [
         "h124"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "findings": "h196 INVALIDATED: Prior research (h41, h124) already established this won't work.\n\nPRIOR FINDINGS:\n1. h124: Gene Jaccard has only r=0.03 correlation with embedding similarity (negligible)\n2. h41: Gene overlap HURTS kNN performance:\n   - Node2Vec alone: 36.76% \u00b1 5.86% R@30\n   - Gene Jaccard alone: 23.20% \u00b1 2.68% R@30 (-13.56 pp!)\n   - Combined N2V + gene: 37.35% \u00b1 5.77% (+0.59 pp, negligible)\n\nWHY GENE OVERLAP DOESN'T HELP:\n1. Disease-gene associations are sparse (many diseases have few/no associated genes)\n2. Gene overlap captures biological pathway similarity, but kNN already captures this\n   through treatment overlap (drugs with similar mechanisms treat similar diseases)\n3. Node2Vec embeddings learn TREATMENT EDGES as their primary signal (h124)\n4. Adding gene overlap adds noise without adding complementary information\n\nCONCLUSION:\nGene-augmented disease similarity would not improve kNN.\n- At best: negligible +0.6 pp improvement (h41 combined result)\n- At worst: significant harm if gene weight is high\n- NOT WORTH IMPLEMENTING - prior results are definitive.",
+      "result_metric": "Gene overlap: r=0.03, -13.56 pp when used alone, +0.6 pp combined (negligible)"
     },
     {
       "id": "h197",
@@ -6601,12 +6604,74 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Step 1: Analyze all statin-alone predictions",
         "Step 2: Check disease categories where statins-alone succeed",
         "Step 3: Test if statin+isolation -> tier boost is warranted",
         "Success criteria: Identify if statin isolation pattern is reliable (>35% precision)"
+      ],
+      "dependencies": [
+        "h307"
+      ],
+      "completed_date": "2026-02-05",
+      "findings": "h327 INCONCLUSIVE: Sample size too small for reliable pattern.\n\nANALYSIS:\n- Total statin-alone predictions: 8 (too small for statistical significance)\n- Statin-alone: 3/8 = 37.5% precision\n- Statin with-classmates: 22/75 = 29.3% precision\n- Difference: +8.2 pp\n\nBY TIER (alone):\n- HIGH: 2/3 = 66.7%\n- MEDIUM: 1/5 = 20.0%\n\nSPECIFIC PREDICTIONS:\n- Lovastatin \u2192 hypothyroidism: HIT\n- Lovastatin \u2192 coronary atherosclerosis: HIT\n- Pravastatin \u2192 myocardial infarction: HIT\n- 5 misses across endocrine, cancer, other categories\n\nCONCLUSION:\nThe +8.2 pp difference (37.5% vs 29.3%) might be noise due to tiny sample size (n=8).\nCannot recommend implementing a statin isolation boost with only 8 data points.\n\nNOTE: This is unlike the broad class demotion rule (h326) which had 212 samples.\nWith only 8 samples, even a 2-3 hit difference changes precision by 25-37%.\n\nRECOMMENDATION:\n- Do NOT implement statin isolation boost\n- If more statin predictions become available, revisit this hypothesis",
+      "result_metric": "37.5% alone vs 29.3% with classmates, but n=8 too small"
+    },
+    {
+      "id": "h328",
+      "title": "Class Cohesion Boost for Multi-Drug Predictions",
+      "category": "confidence",
+      "rationale": "h307 found class cohesion (multiple drugs from same class predicted) is a POSITIVE signal. Currently only used for demotion (h326). Test if class cohesion should BOOST tier for non-broad classes.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each drug class (not just broad classes), calculate precision when 1, 2, 3+ classmates predicted",
+        "Step 2: Identify classes where 2+ classmates = higher precision",
+        "Step 3: Test tier boost: if drug has 2+ classmates predicted, boost MEDIUM\u2192HIGH",
+        "Success criteria: Identify at least 3 classes where cohesion boost is warranted (>10 pp improvement)"
+      ],
+      "dependencies": [
+        "h307",
+        "h326"
+      ]
+    },
+    {
+      "id": "h329",
+      "title": "Drug Class Width Analysis",
+      "category": "error_analysis",
+      "rationale": "h307 found broad classes (many diseases) have isolation as bad signal, but statins (narrow class) have isolation as good signal. Quantify 'class width' (diseases treated) and correlate with isolation signal quality.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: For each drug class, calculate average GT diseases per drug (class width)",
+        "Step 2: Correlate class width with isolation precision gap",
+        "Step 3: Test if class width threshold predicts whether isolation is good/bad signal",
+        "Success criteria: Identify class width threshold that separates isolation good vs bad (r > 0.5)"
+      ],
+      "dependencies": [
+        "h307",
+        "h327"
+      ]
+    },
+    {
+      "id": "h330",
+      "title": "Formulation-Specific Prediction Analysis",
+      "category": "error_analysis",
+      "rationale": "h307 Lidocaine analysis revealed many combination products (lidocaine/menthol, lidocaine/hydrocortisone). Do combination products have different prediction patterns than single-agent drugs?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify combination products in GT (contain '/')",
+        "Step 2: Compare precision for combination vs single-agent predictions",
+        "Step 3: Check if combination products are being missed by current predictions",
+        "Success criteria: Identify if combination products need special handling"
       ],
       "dependencies": [
         "h307"
