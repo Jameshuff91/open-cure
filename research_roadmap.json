@@ -6761,7 +6761,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Analyze which incoherent ATC codes perform best for renal diseases",
         "Step 2: Identify specific drug classes driving the inversion",
@@ -6771,7 +6771,10 @@
       ],
       "dependencies": [
         "h315"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "A class (steroids) 30.8% vs C class 5.6% - expected ATC wrong",
+      "findings": "h334 VALIDATED: Renal Disease Incoherence Explained\n\nQUESTION: Why does renal have INVERTED coherence? (incoherent 12.8% > coherent 5.6%)\n\nANSWER: The expected ATC for renal (C = cardiovascular) is TOO NARROW!\n\nRENAL PREDICTIONS BY ATC (210 total):\n| ATC | Total | Hits | Precision | Coherent? |\n|-----|-------|------|-----------|-----------|\n| C   | 54    | 3    | 5.6%      | YES       |\n| A   | 39    | 12   | 30.8%     | NO        |\n| H   | 8     | 3    | 37.5%     | NO        |\n| N   | 12    | 2    | 16.7%     | NO        |\n| D   | 16    | 2    | 12.5%     | NO        |\n\nWHY A CLASS BEATS C CLASS FOR RENAL:\n\n1. NEPHROTIC SYNDROME (main renal disease)\n   - First-line treatment: corticosteroids (prednisone, prednisolone)\n   - These are ATC class A (alimentary) or H (systemic hormones)\n   - NOT ATC class C (cardiovascular)!\n   - 12 A class hits: prednisone, prednisolone, dexamethasone for nephrotic\n\n2. CONGENITAL ADRENAL HYPERPLASIA\n   - Treatment: hydrocortisone replacement\n   - Also A class (alimentary tract corticosteroids)\n\n3. C CLASS DRUGS (ACE-I, ARBs)\n   - Used for CKD/diabetic nephropathy (slows progression)\n   - But these indications are CHRONIC MANAGEMENT, not \"treatment\"\n   - GT may not have as many of these pairs\n\nCONCLUSION:\nRenal disease category has WRONG expected ATC:\n- Current: C (cardiovascular)\n- Should also include: A (corticosteroids), H (hormones)\n\nRECOMMENDATION:\nUpdate DISEASE_CATEGORY_ATC_MAP for renal:\n  'renal': {'C', 'A', 'H'}  # Add corticosteroids for nephrotic/CAH\n\nNote: This is a real biological insight - not all renal diseases are treated with\nCV drugs. Immunological/autoimmune renal diseases (nephrotic) use steroids."
     },
     {
       "id": "h335",

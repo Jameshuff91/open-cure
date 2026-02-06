@@ -916,7 +916,7 @@ DISEASE_CATEGORY_ATC_MAP: Dict[str, Set[str]] = {
     'respiratory': {'R', 'H', 'A'},  # Added H, A (corticosteroids for asthma/inflammation)
     'gastrointestinal': {'A'},
     'hematological': {'B', 'L', 'H', 'A'},  # Added H, A (corticosteroids for blood disorders)
-    'renal': {'C'},
+    'renal': {'C', 'A', 'H'},  # h334: Added A, H for corticosteroids (nephrotic, CAH)
     'musculoskeletal': {'M', 'H', 'A'},  # Added H, A (corticosteroids for inflammation)
     'genetic': {'H', 'A'},  # For genetic disorders treated with corticosteroids
     'immunological': {'L', 'H', 'A'},  # Immunomodulators and corticosteroids
