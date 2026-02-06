@@ -1,31 +1,73 @@
 # Research Loop Progress
 
-## Current Session: h318, h319 (2026-02-05)
+## Current Session: h307, h326 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 9**
-- h318: Antibiotic FILTER for Non-Infectious Diseases - **VALIDATED** (+180 filtered, 0 hits lost)
-- h319: Comprehensive Low-Precision ATC Filter (Batch 2) - **VALIDATED** (+703 filtered, 0 hits lost)
-- h320/h321/h322: Class-specific filters - **VALIDATED** (subsumed by h319)
-- h323: Cohort Analysis of kNN Success Predictors - **VALIDATED** (AUC=0.649, bimodal)
-- h324: Endocrine Tier Promotion - **INCONCLUSIVE** (n=4 too small)
-- h325: Cancer Tier Promotion - **INVALIDATED** (68.6% vs 93.8% Tier 1 min)
-- h313: Coherence Degree - **DEPRIORITIZED** (needs infrastructure)
-- h317: HIGH_PRECISION_MISMATCHES Refinement - **VALIDATED** (+5 patterns)
+**Hypotheses Tested: 3**
+- h307: Lidocaine-Specific Boosting Analysis - **VALIDATED** (discovered broader pattern)
+- h304: Lidocaine-Specific Pattern Analysis - **VALIDATED** (via h307)
+- h326: Broad Class Isolation Demotion Rule - **VALIDATED** (151 demoted, 0% HIGH tier cleaned)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 192 |
+| Validated | 195 |
 | Invalidated | 64 |
 | Inconclusive | 11 |
 | Blocked | 21 |
 | Deprioritized | 4 |
 | Pending | 33 |
-| **Total** | **325**
+| **Total** | **328**
+
+### KEY SESSION FINDINGS
+
+#### h307/h304: Lidocaine Pattern → Broad Class Isolation - VALIDATED
+
+**Original Hypothesis:** Lidocaine dominates unique correct predictions (21/44 hits). Is this pattern reliable?
+
+**Key Discovery:** Lidocaine-specific boosting NOT warranted (13.3% precision is below average).
+BUT: A broader pattern was discovered: **CLASS COHESION is a positive signal**.
+
+**Findings:**
+- Lidocaine alone (no Bupivacaine): 2.1% precision
+- Lidocaine with Bupivacaine: 17.9% precision (+15.8 pp!)
+
+**Generalized to all "broad" drug classes:**
+| Class | Alone | With Classmates | Difference |
+|-------|-------|-----------------|------------|
+| TNF Inhibitors | 3.4% | 27.3% | **+23.8 pp** |
+| Local Anesthetics | 1.8% | 15.0% | **+13.2 pp** |
+| Corticosteroids | 0.0% | 12.6% | **+12.6 pp** |
+| NSAIDs | 2.4% | 7.1% | **+4.7 pp** |
+| Statins (EXCEPTION) | 37.5% | 29.3% | **-8.2 pp** |
+
+**Insight:** When a drug from a "broad therapeutic class" is predicted ALONE (no classmates),
+it's likely noise. Class cohesion = multiple drugs from same class recommended = positive signal.
+
+#### h326: Broad Class Isolation Demotion - VALIDATED
+
+**Implementation:** Added to production_predictor.py:
+1. `BROAD_THERAPEUTIC_CLASSES`: anesthetics, steroids, TNFi, NSAIDs
+2. `_is_broad_class_isolated()`: checks if drug has no classmates predicted
+3. Post-processing: demotes isolated broad-class drugs HIGH→LOW, MEDIUM→LOW
+
+**Impact:**
+- 151 predictions demoted from HIGH/MEDIUM to LOW
+- HIGH tier: 36 predictions with 0% precision → ALL correctly demoted
+- MEDIUM tier: 115 predictions with 3.48% precision → below baseline
+- Combined precision: 2.65%
+
+**Result:** HIGH tier now cleaner - 0% precision predictions removed.
+
+### New Hypotheses Added
+- h327: Statin Isolation Boost Analysis (statins are EXCEPTION - alone is better)
+
+---
+
+## Previous Session: h318, h319 (2026-02-05)
 
 ### KEY SESSION FINDINGS
 

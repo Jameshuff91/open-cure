@@ -1,0 +1,61 @@
+{
+  "hypothesis": "h307 - Lidocaine-Specific Boosting Analysis",
+  "date": "2026-02-05",
+  "findings": {
+    "lidocaine_gt_diseases": 125,
+    "lidocaine_predictions": 165,
+    "lidocaine_precision_exact": 13.3,
+    "lidocaine_precision_fuzzy": 26.7,
+    "key_insight": "Lidocaine alone = 2.1% precision, with Bupivacaine = 17.9%"
+  },
+  "generalized_finding": {
+    "rule": "Drug predicted ALONE (no classmates from same therapeutic class) has much lower precision than with classmates",
+    "affected_classes": {
+      "local_anesthetics": {
+        "alone": 1.8,
+        "with_classmates": 15.0,
+        "diff": 13.2
+      },
+      "corticosteroids": {
+        "alone": 0.0,
+        "with_classmates": 12.6,
+        "diff": 12.6
+      },
+      "tnf_inhibitors": {
+        "alone": 3.4,
+        "with_classmates": 27.3,
+        "diff": 23.8
+      },
+      "nsaids": {
+        "alone": 2.4,
+        "with_classmates": 7.1,
+        "diff": 4.7
+      }
+    },
+    "exception": "statins - alone is BETTER (37.5% vs 29.3%)"
+  },
+  "implementation_impact": {
+    "predictions_demoted": 212,
+    "hits_lost": 4,
+    "demoted_precision": 1.9,
+    "by_tier": {
+      "HIGH": {
+        "total": 36,
+        "hits": 0,
+        "precision": 0.0
+      },
+      "MEDIUM": {
+        "total": 116,
+        "hits": 4,
+        "precision": 3.4
+      },
+      "LOW": {
+        "total": 60,
+        "hits": 0,
+        "precision": 0.0
+      }
+    }
+  },
+  "conclusion": "Lidocaine-specific boosting NOT warranted. Instead, BROAD CLASS ISOLATION DEMOTION is warranted: drugs from broad therapeutic classes (anesthetics, steroids, TNFi, NSAIDs) predicted alone should be demoted due to 1.9% precision.",
+  "action": "Add BROAD_CLASS_ISOLATION_DEMOTION rule to production_predictor.py"
+}

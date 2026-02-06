@@ -45,6 +45,11 @@ Unified pipeline integrating validated research findings:
   - B→respiratory (30%), N→autoimmune (29%), C→autoimmune (27%)
   - N→dermatological (14%), C→genetic (12%)
   - These "incoherent" pairs have HIGHER precision than coherent baseline (11.7%)
+- h326: Broad Class Isolation Demotion (from h307 Lidocaine analysis)
+  - Drugs from "broad" classes (anesthetics, steroids, TNFi, NSAIDs) predicted alone have 1.9% precision
+  - vs 12.7% when classmates are also predicted for same disease
+  - HIGH tier has 0% precision for isolated broad-class drugs → demote to LOW
+  - 212 predictions affected, 4 hits (only MEDIUM tier, no HIGH hits lost)
 
 USAGE:
     # Get predictions for a disease
@@ -387,6 +392,30 @@ FLUOROQUINOLONE_DRUGS = {'ciprofloxacin', 'levofloxacin', 'moxifloxacin', 'oflox
 # h265: Low-precision drug class × category combinations (demote/warn)
 # mAbs for cancer have 6.2% precision despite seeming appropriate (sparse GT)
 # Kinase inhibitors for cancer have 2.8% precision (sparse GT)
+
+# h326: Broad therapeutic class isolation detection
+# When a drug from a "broad" class (treats many conditions) is predicted ALONE
+# (no other drugs from same class predicted for the disease), precision is very low.
+# h307 findings:
+#   - Local anesthetics: 1.8% alone vs 15.0% with classmates (+13.2 pp)
+#   - Corticosteroids: 0.0% alone vs 12.6% with classmates (+12.6 pp)
+#   - TNF Inhibitors: 3.4% alone vs 27.3% with classmates (+23.8 pp)
+#   - NSAIDs: 2.4% alone vs 7.1% with classmates (+4.7 pp)
+# EXCEPTION: Statins - alone is BETTER (37.5% vs 29.3%)
+LOCAL_ANESTHETICS = {'lidocaine', 'bupivacaine', 'ropivacaine', 'prilocaine',
+                     'tetracaine', 'mepivacaine', 'articaine', 'levobupivacaine'}
+TNF_INHIBITORS = {'adalimumab', 'infliximab', 'etanercept', 'golimumab',
+                  'certolizumab', 'certolizumab pegol'}
+
+# Broad therapeutic classes where ISOLATION = bad signal (1.9% precision overall)
+# These are classes that treat many conditions; if kNN only recommends ONE,
+# it's likely noise rather than a real signal.
+BROAD_THERAPEUTIC_CLASSES: Dict[str, Set[str]] = {
+    'local_anesthetics': LOCAL_ANESTHETICS,
+    'corticosteroids': CORTICOSTEROID_DRUGS,
+    'tnf_inhibitors': TNF_INHIBITORS,
+    'nsaids': NSAID_DRUGS,
+}
 
 # h280/h281: Complication vs Subtype relationship mapping
 # Complications are CAUSED BY the base disease (different treatment expected)
@@ -1342,6 +1371,55 @@ class DrugRepurposingPredictor:
         drug_category = self.domain_isolated_drugs[drug_id]
         return drug_category != target_category
 
+    def _is_broad_class_isolated(
+        self,
+        drug_name: str,
+        disease_name: str,
+        all_predictions_for_disease: Optional[Set[str]] = None,
+    ) -> bool:
+        """
+        h326: Check if drug is from broad therapeutic class but predicted alone.
+
+        When a drug from a broad class (anesthetics, steroids, TNFi, NSAIDs) is
+        predicted alone (no classmates), precision is only 1.9% (vs 12.7% with classmates).
+
+        Args:
+            drug_name: The drug being predicted
+            disease_name: The disease being predicted for (used to get co-predictions)
+            all_predictions_for_disease: Optional set of all drug names predicted for this disease
+
+        Returns:
+            True if drug is from broad class AND has no classmates predicted (should demote/filter)
+        """
+        drug_lower = drug_name.lower()
+
+        # Find which broad class this drug belongs to (if any)
+        drug_class = None
+        for class_name, class_drugs in BROAD_THERAPEUTIC_CLASSES.items():
+            if any(cd in drug_lower for cd in class_drugs):
+                drug_class = class_name
+                break
+
+        if drug_class is None:
+            return False  # Not in a broad class, allow prediction
+
+        # If we don't have co-predictions, we can't check isolation
+        # This happens during single-drug calls; will be checked at batch level
+        if all_predictions_for_disease is None:
+            return False
+
+        # Check if any classmates are also predicted for this disease
+        class_drugs = BROAD_THERAPEUTIC_CLASSES[drug_class]
+        for other_drug in all_predictions_for_disease:
+            other_lower = other_drug.lower()
+            if other_lower == drug_lower:
+                continue  # Skip self
+            if any(cd in other_lower for cd in class_drugs):
+                return False  # Found a classmate, not isolated
+
+        # Drug is from broad class but isolated (no classmates) → bad signal
+        return True
+
     def _is_base_to_complication(self, drug_id: str, predicted_disease: str) -> bool:
         """
         h280/h281: Check if prediction is a base→complication pattern (0% precision).
@@ -2275,6 +2353,20 @@ class DrugRepurposingPredictor:
                     disease_name, disease_id, disease_tier, category,
                     predictions, max_score if drug_scores else 1.0, top_n, include_filtered
                 )
+
+            # h326: Demote broad-class-isolated predictions (1.9% precision when alone vs 12.7% with classmates)
+            # For drugs from broad classes (anesthetics, steroids, TNFi, NSAIDs), check if any classmates
+            # are also predicted. If not, demote HIGH→LOW, MEDIUM→LOW (FILTER would drop too many)
+            all_drug_names = {p.drug_name for p in predictions}
+            for pred in predictions:
+                if self._is_broad_class_isolated(pred.drug_name, disease_name, all_drug_names):
+                    # Demote by 2 tiers (HIGH→LOW, MEDIUM→LOW) - h326 finding: 0% precision for HIGH
+                    if pred.confidence_tier == ConfidenceTier.HIGH:
+                        pred.confidence_tier = ConfidenceTier.LOW
+                        pred.category_specific_tier = 'broad_class_isolated'
+                    elif pred.confidence_tier == ConfidenceTier.MEDIUM:
+                        pred.confidence_tier = ConfidenceTier.LOW
+                        pred.category_specific_tier = 'broad_class_isolated'
 
         return PredictionResult(
             disease_name=disease_name,
