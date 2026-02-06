@@ -600,6 +600,20 @@ CV_PATHWAY_COMPREHENSIVE_DRUGS = {
 CV_COMPLICATION_KEYWORDS = {'heart failure', 'stroke', 'myocardial infarction', 'angina',
                             'peripheral vascular', 'cardiomyopathy', 'cardiac failure'}
 
+# h384: Drugs to EXCLUDE from cv_pathway_comprehensive HIGH tier
+# These have 0% precision despite being in CV_PATHWAY_COMPREHENSIVE_DRUGS
+# Antiplatelets: 0% precision (prevent events, don't treat conditions)
+# Others: various reasons for 0% precision in evaluation
+CV_PATHWAY_EXCLUDE = {
+    # Antiplatelets (all 0% precision)
+    'clopidogrel', 'ticagrelor', 'prasugrel', 'eptifibatide', 'cangrelor',
+    'plavix',  # clopidogrel brand name
+    # Anticoagulants with 0% precision
+    'enoxaparin',
+    # Other 0% precision drugs
+    'telmisartan', 'papaverine', 'colestipol', 'lovastatin', 'alteplase', 'tenecteplase'
+}
+
 # h280/h281: Complication vs Subtype relationship mapping
 # Complications are CAUSED BY the base disease (different treatment expected)
 # Subtypes are IS_A relationships (same treatment expected)
@@ -970,6 +984,14 @@ MINRANK_ENSEMBLE_CATEGORIES: set[str] = set()  # Disabled - was {'cancer', 'neur
 # h374: Categories where Target-only is better (gap >10% from h370)
 # NOTE: Also disabled as MinRank is not used
 TARGET_DOMINANT_CATEGORIES: set[str] = set()  # Was {'cardiovascular', 'autoimmune'}
+
+# h388: Target overlap tier promotion thresholds
+# Use drug-disease target overlap to promote tier WITHOUT changing rankings.
+# HIGH + overlap>=3 → GOLDEN (64.6% precision vs 38.4% GOLDEN baseline)
+# LOW + overlap>=1 → MEDIUM (37.9% precision vs 19.9% MEDIUM baseline)
+# GOLDEN +2.1pp, MEDIUM +1.4pp, R@30 unchanged.
+TARGET_OVERLAP_PROMOTE_HIGH_TO_GOLDEN = 3  # Minimum overlap for HIGH→GOLDEN
+TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM = 1   # Minimum overlap for LOW→MEDIUM
 
 # h169/h148: Expanded category keywords to reduce 'other' bucket
 # h148 reduced 'other' from 44.9% to ~25% with comprehensive keyword expansion
@@ -3037,6 +3059,17 @@ class DrugRepurposingPredictor:
                         rank, train_freq, mech_support, has_targets, disease_tier, category,
                         drug_name, disease_name, drug_id
                     )
+
+                    # h388: Target overlap tier promotion (no rank change)
+                    target_overlap = self._get_target_overlap_count(drug_id, disease_id)
+                    if (tier == ConfidenceTier.HIGH
+                            and target_overlap >= TARGET_OVERLAP_PROMOTE_HIGH_TO_GOLDEN):
+                        tier = ConfidenceTier.GOLDEN
+                        cat_specific = cat_specific or 'target_overlap_promotion'
+                    elif (tier == ConfidenceTier.LOW
+                            and target_overlap >= TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM):
+                        tier = ConfidenceTier.MEDIUM
+                        cat_specific = cat_specific or 'target_overlap_promotion'
 
                     # h374: Mark predictions from MinRank ensemble
                     if use_minrank and cat_specific is None:

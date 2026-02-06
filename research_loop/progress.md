@@ -1,6 +1,47 @@
 # Research Loop Progress
 
-## Current Session: h376, h378, h386, h387, h385 (2026-02-05)
+## Current Session: h381, h388 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested: 2**
+- h381: Category-Specific Ensemble Routing - **INVALIDATED**
+- h388: Target Overlap Tier Promotion - **VALIDATED** (GOLDEN +2.2pp, MEDIUM +1.5pp)
+
+### h381: Category-Specific Ensemble Routing - INVALIDATED
+
+**Hypothesis:** Apply MinRank ensemble only to autoimmune/metabolic/cancer categories.
+
+**Findings:**
+- Raw LOO: +1.5pp overall (aggressive routing rescues 11 diseases, hurts 4)
+- Production context: -2.9pp (tier rules already capture the same signal)
+- Confirms h374: ensemble is redundant in production context
+
+**Key Learning:** Never evaluate rank-changing interventions with raw LOO alone. Production tier rules capture the same signal, and rank changes disrupt tier assignment.
+
+### h388: Target Overlap Tier Promotion - VALIDATED
+
+**Hypothesis:** Use target overlap to PROMOTE tier (adjust confidence) without changing rankings.
+
+**Rules Implemented in production_predictor.py:**
+1. HIGH + overlap≥3 → GOLDEN (64.6% promoted precision vs 38.4% baseline)
+2. LOW + overlap≥1 → MEDIUM (37.9% promoted precision vs 19.8% baseline)
+
+**Results:**
+- R@30: 79.2% → 79.2% (UNCHANGED)
+- GOLDEN: 38.4% → 40.6% (+2.2 pp)
+- MEDIUM: 19.8% → 21.3% (+1.5 pp)
+
+### Recommended Next Steps
+1. h379: Within-Tier Ranking Optimization (low effort, pending)
+2. h391: MEDIUM Tier Overlap Anomaly (why does overlap hurt MEDIUM?)
+3. h390: Production Tier Rule Coverage Analysis
+
+---
+
+## Previous Session: h376, h378, h386, h387, h385 (2026-02-05)
 
 ### Session Summary
 

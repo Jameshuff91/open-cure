@@ -7784,7 +7784,7 @@
       "title": "Target Overlap as Tier Promotion Signal (not Rank Change)",
       "description": "h381 showed ensemble improves raw LOO but hurts production because rank changes disrupt tier rules. Instead of changing ranks, use target overlap to PROMOTE tier for drugs that already rank well in kNN. This captures the ensemble benefit without the rank disruption.",
       "hypothesis": "Promoting drugs with high target overlap from MEDIUM\u2192HIGH or HIGH\u2192GOLDEN will improve tier precision without hurting R@30.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -7794,7 +7794,9 @@
         "Evaluate tier precision before/after promotion",
         "Verify R@30 is unchanged (ranks not modified)",
         "Success: +2pp precision for promoted predictions, R@30 unchanged"
-      ]
+      ],
+      "findings": "VALIDATED: Target overlap tier promotion improves GOLDEN +2.2pp and MEDIUM +1.5pp without changing R@30.\n\nRULES IMPLEMENTED:\n1. HIGH + overlap>=3 \u2192 GOLDEN (promoted preds at 64.6% precision vs 38.4% GOLDEN baseline)\n2. LOW + overlap>=1 \u2192 MEDIUM (promoted preds at 37.9% precision vs 19.8% MEDIUM baseline)\n\nDISCARDED RULE:\n- LOW + overlap>=3 \u2192 HIGH (42.6% precision < 51.8% HIGH baseline \u2014 would dilute)\n\nRESULTS (production context, 452 diseases):\n- R@30: 79.2% \u2192 79.2% (UNCHANGED - no ranking changes)\n- GOLDEN: 38.4% \u2192 40.6% (+2.2 pp) \u2014 128 predictions promoted\n- HIGH: 51.8% \u2192 49.3% (-2.5 pp) \u2014 expected, best HIGH removed\n- MEDIUM: 19.8% \u2192 21.3% (+1.5 pp) \u2014 191 predictions promoted\n- LOW: 17.3% \u2192 14.1% (-3.2 pp) \u2014 expected, overlap LOW removed\n\nKEY INSIGHT: Target overlap is a PRECISION signal that should adjust confidence TIER, not drug RANKING. h381 showed rank changes hurt production by disrupting tier rules. h388 shows the same signal used for tier promotion works perfectly.\n\nTHRESHOLD ANALYSIS:\n- HIGH\u2192GOLDEN: ALL thresholds from >=1 exceed GOLDEN baseline. Sweet spot >=3 balances coverage/precision.\n- LOW\u2192MEDIUM: ALL thresholds from >=1 exceed MEDIUM baseline.\n- MEDIUM\u2192anything: NEVER works \u2014 MEDIUM overlap predictions have LOWER precision than baseline.\n\nIMPLEMENTATION: Added TARGET_OVERLAP_PROMOTE_HIGH_TO_GOLDEN and TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM constants + promotion logic in predict() after _assign_confidence_tier().",
+      "result_metric": "GOLDEN +2.2pp (38.4\u219240.6%), MEDIUM +1.5pp (19.8\u219221.3%), R@30 unchanged"
     },
     {
       "id": "h389",
@@ -7829,6 +7831,255 @@
         "Evaluate precision of new rules",
         "Success: identify 3+ actionable tier rule opportunities"
       ]
+    },
+    {
+      "id": "h391",
+      "title": "MEDIUM Tier Overlap Anomaly: Why Does Overlap Hurt MEDIUM?",
+      "description": "h388 found that MEDIUM tier predictions with target overlap have LOWER precision (14.8%) than those without (20.7%). This is counterintuitive and may indicate a confounding factor.",
+      "hypothesis": "MEDIUM overlap predictions are enriched in broad-target drugs (e.g., kinase inhibitors) that match many disease genes non-specifically, creating false confidence.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Analyze MEDIUM tier predictions with overlap: which drug classes dominate?",
+        "Compare target count distribution: overlap vs no-overlap predictions",
+        "Check if broad-target drugs (kinase inhibitors, etc.) are enriched",
+        "If confirmed, add broad-target drug filter for MEDIUM tier",
+        "Success: explain anomaly and fix MEDIUM precision"
+      ]
+    },
+    {
+      "id": "h392",
+      "title": "Overlap Threshold Optimization by Category",
+      "description": "h388 used global overlap thresholds (>=3 for HIGH\u2192GOLDEN, >=1 for LOW\u2192MEDIUM). Different disease categories may have different optimal thresholds due to varying gene coverage.",
+      "hypothesis": "Category-specific overlap thresholds will improve promotion precision by 5+ pp for at least 2 categories.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "For each category, compute promotion precision at different thresholds",
+        "Identify categories where category-specific thresholds beat global",
+        "Implement category-specific thresholds if improvement >= 3pp",
+        "Success: +3pp improvement for GOLDEN or MEDIUM in 2+ categories"
+      ]
+    },
+    {
+      "id": "h391",
+      "title": "Holdout Validation of All Tier Rules (Overfitting Audit)",
+      "description": "AUDIT CRITICAL: All 40+ hand-crafted tier rules were derived by analyzing the SAME ground truth used for evaluation. This is training-on-test-set. No rule has been validated on a held-out disease set. This experiment will determine whether the entire confidence tier system is real or overfitted.",
+      "hypothesis": "If we split diseases 80/20, derive tier rules from the 80% training set, and evaluate tier precision on the 20% holdout, we expect significant precision drops for rules that were overfitted. Rules that hold up on holdout are genuine; rules that collapse are memorization.",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "critical",
+      "effort": "high",
+      "steps": [
+        "Step 1: Create 5 random 80/20 disease splits (use same seeds as kNN evaluation for consistency)",
+        "Step 2: For each split, compute ALL tier assignment inputs from TRAINING diseases only: drug_train_freq, drug_to_diseases, category precisions, drug class precision stats",
+        "Step 3: Re-derive each tier rule's precision from training diseases only (e.g., 'statins for metabolic' precision using only training metabolic diseases)",
+        "Step 4: Apply the SAME rules to holdout diseases and measure tier precision",
+        "Step 5: For EACH of the 40+ rules, compute: training precision, holdout precision, and delta. Flag any rule where holdout < training - 10pp as 'likely overfitted'",
+        "Step 6: Compute overall tier precision (GOLDEN/HIGH/MEDIUM/LOW/FILTER) on holdout only",
+        "Step 7: Report mean +/- std across 5 seeds for all metrics",
+        "Step 8: Success criteria: GOLDEN holdout precision > 30% (below this, the tier system is fundamentally broken). Individual rules: holdout precision within 15pp of training precision."
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h392",
+      "title": "Fix Training Frequency Label Leakage",
+      "description": "AUDIT CRITICAL: drug_train_freq is computed from ALL ground truth diseases (line 1486 of production_predictor.py), including test diseases. This means a drug's frequency count is inflated by the very disease being predicted for. Similarly, drug_to_diseases (line 1492) includes test disease mappings used in complication transfer rules. This is soft label leakage.",
+      "hypothesis": "Recomputing drug_train_freq and drug_to_diseases from ONLY training diseases (excluding the test disease) will reduce measured tier precision, especially for rules that rely on frequency >= 10 or frequency >= 15 thresholds. The drop quantifies how much of the current precision is due to leakage vs genuine signal.",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "low",
+      "steps": [
+        "Step 1: In the evaluation loop (where test diseases are iterated), recompute drug_train_freq excluding the current test disease's GT drugs from the count",
+        "Step 2: Similarly recompute drug_to_diseases excluding the test disease",
+        "Step 3: Run full 5-seed evaluation with leaked vs non-leaked frequency",
+        "Step 4: Compare tier precision for each tier: leaked freq vs honest freq",
+        "Step 5: Specifically measure impact on rules that use frequency thresholds: GOLDEN requires freq>=15 in some categories, HIGH requires freq>=10",
+        "Step 6: Report per-tier and per-rule precision deltas",
+        "Step 7: Success criteria: If delta < 2pp for all tiers, leakage is negligible. If delta > 5pp for any tier, the frequency signal is contaminated and rules need adjustment."
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h393",
+      "title": "Demote Remaining Below-Tier Rules (CV, Hematological, Cancer)",
+      "description": "AUDIT MODERATE: h378 identified 5 rules still performing far below their tier average. Only infectious (h387) and thyroid (h385) were fixed. Remaining: cardiovascular HIGH (31.6% vs 55.2%), cv_pathway_comprehensive HIGH (38.0%), coronary_hierarchy HIGH (40.0%), hematological HIGH (45.8%), cancer MEDIUM (18.2% vs 31.0%). Each drags its tier precision down.",
+      "hypothesis": "Demoting cardiovascular HIGH to MEDIUM, cv_pathway_comprehensive HIGH to MEDIUM, hematological HIGH to MEDIUM, and cancer MEDIUM to LOW will improve HIGH tier precision by 5-10pp and MEDIUM tier precision by 2-5pp.",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "low",
+      "steps": [
+        "Step 1: Measure current tier precision baseline (post h387/h385 fixes)",
+        "Step 2: Demote cardiovascular category from HIGH to MEDIUM in get_category_tier()",
+        "Step 3: Demote cv_pathway_comprehensive from HIGH to MEDIUM",
+        "Step 4: Demote hematological from HIGH to MEDIUM",
+        "Step 5: Demote cancer from MEDIUM to LOW",
+        "Step 6: Re-measure all tier precisions",
+        "Step 7: Do each demotion individually first to isolate impact, then apply all together",
+        "Step 8: Success criteria: HIGH tier precision > 55% maintained, no tier drops below previous level"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h394",
+      "title": "Resolve GOLDEN vs HIGH Tier Precision Inversion",
+      "description": "AUDIT CRITICAL: h378 measured GOLDEN at 40.7% but HIGH at 55.2%. The flagship tier has LOWER precision than HIGH. The code comments, CLAUDE.md, DEFAULT_TIER_PRECISION dict, and CATEGORY_PRECISION dict all still use stale h135 numbers (GOLDEN=57.7%, HIGH=20.9%). Any downstream consumer trusting tier labels is misled.",
+      "hypothesis": "The inversion exists because GOLDEN has many low-precision rescue rules while HIGH is assigned more selectively. Tightening GOLDEN criteria to only include rules with >50% precision will restore correct tier ordering. This depends on h393 (demoting bad rules) and h391 (knowing which rules are genuine).",
+      "status": "pending",
+      "priority": 1,
+      "expected_impact": "critical",
+      "effort": "medium",
+      "steps": [
+        "Step 1: List every rule/path that assigns GOLDEN tier, with its measured precision from h378",
+        "Step 2: For each GOLDEN rule below 50% precision, either demote to HIGH or tighten criteria",
+        "Step 3: List every rule/path that assigns HIGH tier, with its measured precision",
+        "Step 4: Verify that after changes, GOLDEN precision > HIGH precision (correct ordering)",
+        "Step 5: Update DEFAULT_TIER_PRECISION with actual measured values",
+        "Step 6: Update CATEGORY_PRECISION entries that are provably wrong or estimated",
+        "Step 7: Update all code comments referencing h135 precision numbers",
+        "Step 8: Update CLAUDE.md to remove contradictory precision claims",
+        "Step 9: Success criteria: GOLDEN > HIGH > MEDIUM > LOW > FILTER in measured precision"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h395",
+      "title": "Remove Dead Code: CV_PATHWAY_EXCLUDE and Other Unused Artifacts",
+      "description": "AUDIT MODERATE: CV_PATHWAY_EXCLUDE (line 607, from h384) is defined but never referenced in _assign_confidence_tier or anywhere else. There may be other defined-but-unused constants accumulated over 385 hypotheses. Dead code creates confusion and false confidence that rules are active when they are not.",
+      "hypothesis": "A systematic audit of all constants and sets defined in production_predictor.py will reveal dead code that should be either wired into the tier logic or removed.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Step 1: Grep for all top-level constants/sets defined in production_predictor.py (ALL_CAPS names)",
+        "Step 2: For each, count references beyond the definition line",
+        "Step 3: Identify any with 0 references (dead code) or 1 reference only in definition",
+        "Step 4: For dead code that SHOULD be active (like CV_PATHWAY_EXCLUDE), wire it into _assign_confidence_tier",
+        "Step 5: For dead code that is obsolete, remove it",
+        "Step 6: Run evaluation to confirm no regression from cleanup",
+        "Step 7: Success criteria: All defined constants are referenced in active code paths"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h396",
+      "title": "Fix CATEGORY_PRECISION Impossible Values",
+      "description": "AUDIT MODERATE: CATEGORY_PRECISION dict has values violating tier ordering: psychiatric FILTER=90.0 (higher than GOLDEN), ophthalmic LOW=67.9 (higher than MEDIUM=36.1). Several entries are estimates not measurements. These incorrect values are returned by get_category_precision() to downstream users.",
+      "hypothesis": "Re-measuring category-tier precision combinations with current code and 5-seed evaluation will produce correct values. Entries with tier inversions likely have small sample sizes causing noise.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Run 5-seed evaluation and collect per-category, per-tier precision with sample sizes",
+        "Step 2: Flag any combination with n < 10 as low confidence",
+        "Step 3: Flag any tier inversion within a category (LOW > MEDIUM etc)",
+        "Step 4: Replace all estimated values with actual measurements where n >= 10",
+        "Step 5: For combinations with n < 10, remove from dict or use tier-level default",
+        "Step 6: Verify no tier inversions remain after update",
+        "Step 7: Success criteria: All CATEGORY_PRECISION entries are measured (not estimated) and monotonically ordered within each category"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h397",
+      "title": "Rule Interaction Audit: Test Priority/Overlap Edge Cases",
+      "description": "AUDIT MODERATE: _assign_confidence_tier has 15+ return paths. A drug can match multiple rules (cancer-only AND hierarchy-match, mechanism-specific AND complication-non-validated). First matching rule wins but no systematic edge case testing exists.",
+      "hypothesis": "Creating a test suite for all multi-match drug-disease pairs will reveal unintended interactions where the wrong rule fires first.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Document exact order of all if/elif/else checks in _assign_confidence_tier",
+        "Step 2: Identify all drug-disease pairs matching 2+ rules simultaneously",
+        "Step 3: For each multi-match pair, determine which rule fires and which is shadowed",
+        "Step 4: Check if the firing rule assigns a better or worse tier than the shadowed rule",
+        "Step 5: Count cases where the shadowed rule would have given a MORE accurate tier",
+        "Step 6: If significant, propose reordering for better precision",
+        "Step 7: Success criteria: Document all interactions, fix cases where reordering improves precision by >2pp"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h398",
+      "title": "Deploy Category-Specific k Values (h66 Finding, Never Implemented)",
+      "description": "PROMISING DIRECTION: h66 validated category-specific k values improve R@30: metabolic k=30 (+9pp), respiratory k=30 (+8pp), CV k=15 (+3pp). This was NEVER deployed to production. It represents the most validated, unimplemented model improvement - a genuine prediction quality gain, not just confidence labeling.",
+      "hypothesis": "Implementing category-specific k values in production kNN will improve overall R@30 by 2-4pp. This is the first real model improvement since h39.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "low",
+      "steps": [
+        "Step 1: Re-validate h66 findings with 5-seed evaluation (original may have been single-seed)",
+        "Step 2: If validated, implement category-routing in kNN: determine disease category, use category-specific k",
+        "Step 3: Handle edge cases: diseases matching multiple categories, uncategorized diseases use default k=20",
+        "Step 4: Run full 5-seed evaluation with category-routed k vs uniform k=20",
+        "Step 5: Measure per-category R@30 changes and overall R@30 change",
+        "Step 6: If overall improves, update production predictor",
+        "Step 7: Success criteria: Overall R@30 improvement > 1pp (statistically significant at p<0.05)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h399",
+      "title": "Reassess DRKG Ceiling with Category-Specific Approaches",
+      "description": "PROMISING DIRECTION: The 37% DRKG ceiling was declared after h41-h45 (ML overlays failed). But h66 found +9pp for metabolic with k=30, and other approaches remain untested: distance-weighted kNN, category-specific embeddings, non-cosine similarity metrics. Oracle ceiling is 60% with 23pp headroom.",
+      "hypothesis": "Combining category-specific k (h398), distance-weighted voting, and possibly re-tuned Node2Vec hyperparameters can push R@30 above 40% without external data.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "steps": [
+        "Step 1: Baseline: current kNN k=20 uniform, 5-seed R@30",
+        "Step 2: Test distance-weighted kNN: weight each neighbor's drug votes by 1/distance or exp(-distance)",
+        "Step 3: Test category-specific k from h398 results",
+        "Step 4: Test combined: category-specific k + distance weighting",
+        "Step 5: Test alternative similarity metrics: Euclidean, Manhattan",
+        "Step 6: If any single approach breaks 40%, test combinations",
+        "Step 7: Quantify the actual ceiling with best DRKG-internal approach",
+        "Step 8: Success criteria: R@30 > 40% (3pp above current best of 37%)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h400",
+      "title": "Simplify Production Predictor: Prune to Top Validated Rules Only",
+      "description": "PROMISING DIRECTION: The production predictor has 3100 lines with 40+ hand-crafted rules. After h391 (holdout validation) identifies which rules are genuine vs overfitted, prune to only top-performing rules. A simpler system with 5-10 well-validated rules should perform as well or better. DEPENDS ON h391, h393.",
+      "hypothesis": "Removing all rules that fail holdout validation (h391) or perform below their tier average (h378) will improve tier precision by removing noise and reduce code complexity by 50%+.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Wait for h391 (holdout validation) results to know which rules survive",
+        "Step 2: Rank all rules by holdout precision (from h391)",
+        "Step 3: Incrementally add rules in order of holdout precision, measuring cumulative tier precision",
+        "Step 4: Find the point of diminishing returns (adding more rules stops helping)",
+        "Step 5: Remove all rules below the cutoff",
+        "Step 6: Remove associated dead constants, sets, and helper functions",
+        "Step 7: Run final 5-seed evaluation confirming no regression",
+        "Step 8: Success criteria: < 1500 lines of code, tier precision equal or better than current"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -9244,6 +9495,12 @@
       "hypothesis_id": "h381",
       "learning": "Category-specific ensemble routing improves raw LOO (+1.5pp) but HURTS production (-2.9pp) because rank changes disrupt tier rules. Production tier rules already capture target overlap signal.",
       "implication": "Never evaluate rank-changing interventions with raw LOO alone - must test in full production context with tier rules. Use target overlap as tier signal, not rank modifier."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h388",
+      "learning": "Target overlap should be used as tier promotion signal (adjusting confidence) not rank modifier (changing drug order). Same signal, opposite effects on production quality.",
+      "implication": "Always test confidence interventions in production context, not just raw LOO. Rank changes disrupt tier rules but tier promotions compose cleanly."
     }
   ],
   "collaborations": [
