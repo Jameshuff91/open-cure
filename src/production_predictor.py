@@ -156,18 +156,16 @@ CATEGORY_PRECISION = {
     ("endocrine", "MEDIUM"): 24.0,    # n=25
     ("endocrine", "LOW"): 25.0,       # n=12 (inversion, small n)
     ("endocrine", "FILTER"): 19.6,    # n=51
-    # Gastrointestinal
+    # Gastrointestinal (h462/h463: MEDIUM demoted to LOW)
     ("gastrointestinal", "HIGH"): 31.4,   # n=35
-    ("gastrointestinal", "MEDIUM"): 12.3, # n=122
-    ("gastrointestinal", "LOW"): 9.3,     # n=54
+    ("gastrointestinal", "LOW"): 9.3,     # n=54 (includes former MEDIUM)
     ("gastrointestinal", "FILTER"): 10.8, # n=509
     # Hematological
     ("hematological", "MEDIUM"): 20.5,  # n=215
     ("hematological", "LOW"): 6.5,      # n=93
     ("hematological", "FILTER"): 5.4,   # n=349
-    # Immunological
-    ("immunological", "MEDIUM"): 35.3,  # n=34
-    ("immunological", "LOW"): 9.1,      # n=22
+    # Immunological (h462: MEDIUM demoted to LOW; 2.5% holdout = massive overfitting)
+    ("immunological", "LOW"): 9.1,      # n=22 (includes former MEDIUM)
     ("immunological", "FILTER"): 16.0,  # n=94
     # Infectious
     ("infectious", "HIGH"): 53.7,     # n=95
@@ -184,10 +182,9 @@ CATEGORY_PRECISION = {
     ("musculoskeletal", "MEDIUM"): 38.9,  # n=54
     ("musculoskeletal", "LOW"): 9.7,      # n=31
     ("musculoskeletal", "FILTER"): 0.9,   # n=117
-    # Neurological
+    # Neurological (h462: MEDIUM demoted to LOW; 10.2% holdout)
     ("neurological", "GOLDEN"): 50.0,  # n=20
-    ("neurological", "MEDIUM"): 18.6,  # n=43
-    ("neurological", "LOW"): 9.2,      # n=76
+    ("neurological", "LOW"): 9.2,      # n=76 (includes former MEDIUM)
     ("neurological", "FILTER"): 5.9,   # n=576
     # Ophthalmic
     ("ophthalmic", "GOLDEN"): 50.0,   # n=12
@@ -206,9 +203,8 @@ CATEGORY_PRECISION = {
     ("renal", "MEDIUM"): 23.1,        # n=39
     ("renal", "LOW"): 15.2,           # n=46
     ("renal", "FILTER"): 17.0,        # n=212
-    # Reproductive
-    ("reproductive", "MEDIUM"): 5.0,   # n=20
-    ("reproductive", "LOW"): 17.4,     # n=23 (inversion, small n)
+    # Reproductive (h462: MEDIUM demoted to LOW; 0.0% holdout)
+    ("reproductive", "LOW"): 17.4,     # n=23 (includes former MEDIUM; inversion, small n)
     ("reproductive", "FILTER"): 4.0,   # n=101
     # Respiratory
     ("respiratory", "HIGH"): 48.8,    # n=41
@@ -2453,6 +2449,17 @@ class DrugRepurposingPredictor:
             return ConfidenceTier.HIGH, False, None
 
         # MEDIUM tier
+        # h462/h463: Category-specific MEDIUM demotions (holdout-validated)
+        # Categories where MEDIUM holdout precision is at or below LOW tier (12.2%):
+        # - GI: 10.9% full-data as LOW; kNN finds wrong drug classes
+        # - Immunological: 2.5% ± 3.5% holdout (38.9% full-data = massive overfitting, n=5 diseases)
+        # - Reproductive: 0.0% holdout (4.5% full-data, n=5 diseases)
+        # - Neurological: 10.2% ± 11.1% holdout (15.7% full-data, n=24 diseases)
+        # Category-specific rescue rules (h380 GI, hierarchy) still promote valid drugs to HIGH.
+        MEDIUM_DEMOTED_CATEGORIES = {'gastrointestinal', 'immunological', 'reproductive', 'neurological'}
+        if category in MEDIUM_DEMOTED_CATEGORIES:
+            return ConfidenceTier.LOW, False, f'{category}_medium_demotion'
+
         if train_frequency >= 5 and mechanism_support:
             return ConfidenceTier.MEDIUM, False, None
         if train_frequency >= 10:
@@ -3262,7 +3269,9 @@ class DrugRepurposingPredictor:
                             and cat_specific in TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES):
                         tier = ConfidenceTier.GOLDEN
                     elif (tier == ConfidenceTier.LOW
-                            and target_overlap >= TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM):
+                            and target_overlap >= TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM
+                            # h462: Block LOW→MEDIUM for categories with poor MEDIUM holdout
+                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological'}):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 

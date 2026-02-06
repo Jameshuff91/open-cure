@@ -1,6 +1,69 @@
 # Research Loop Progress
 
-## Current Session: h453, h456, h457, h458, h450 (2026-02-06)
+## Current Session: h462, h463 (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 2**
+- h462: Category-Specific MEDIUM→HIGH Promotion for Renal/Musculoskeletal - **PARTIALLY VALIDATED**
+- h463: GI MEDIUM Demotion to LOW - **VALIDATED**
+
+### h462: Category-Specific MEDIUM Promotion/Demotion - PARTIALLY VALIDATED
+
+Comprehensive 5-seed holdout validation of MEDIUM tier precision by disease category.
+
+**No categories qualify for HIGH promotion:**
+| Category | Full-Data | Holdout | ±std | Decision |
+|----------|-----------|---------|------|----------|
+| Psychiatric | 54.8% | 45.7% | 5.4 | KEEP (close but below 50.8%) |
+| Renal | 31.4% | 43.5% | 25.2 | KEEP (extreme variance) |
+| GI | 22.9% | 31.8% | 17.9 | KEEP (already demoted by h463) |
+| Musculoskeletal | 33.3% | 29.8% | 13.5 | KEEP |
+
+**Three categories demoted MEDIUM→LOW:**
+| Category | Full-Data | Holdout | ±std | Overfitting Gap | n_diseases |
+|----------|-----------|---------|------|-----------------|------------|
+| Immunological | 38.9% | 2.5% | 3.5 | **36.4pp** | 5 |
+| Neurological | 15.7% | 10.2% | 11.1 | 5.5pp | 24 |
+| Reproductive | 4.5% | 0.0% | 0.0 | 4.5pp | 5 |
+
+**Impact:**
+- MEDIUM precision: 25.3% → 26.7% full-data (+1.4pp)
+- 113 predictions moved from MEDIUM to LOW (3% of MEDIUM)
+- Immunological = most overfitted MEDIUM category (36pp gap from 5 diseases)
+
+**Implementation:**
+- Added `MEDIUM_DEMOTED_CATEGORIES` set in `_assign_confidence_tier()`
+- Updated target overlap promotion guard to exclude demoted categories
+- Removed stale CATEGORY_PRECISION entries for demoted category MEDIUM tiers
+
+### h463: GI MEDIUM Demotion - VALIDATED
+- GI-as-LOW has 10.9% full-data precision (matches LOW tier avg)
+- Prior "0% holdout" claim was inaccurate but demotion still justified
+- Only 3 residual GI MEDIUM predictions survive via incoherent_demotion path
+
+### Key Conclusions
+
+1. **Small-n categories are massively overfitted:** Immunological (5 diseases) has 36pp full-to-holdout gap
+2. **Psychiatric is the strongest MEDIUM category** (45.7% holdout) but still 5pp below HIGH threshold
+3. **Category-specific precision varies enormously** even within same tier (0-47% holdout for MEDIUM)
+4. **Prior h462 claims about renal/musculoskeletal promotion were overoptimistic** based on too few seeds
+
+### New Hypotheses Generated
+- h464: Psychiatric MEDIUM→HIGH Promotion with Additional Evidence (Priority 4)
+- h465: Immunological Category Deep Dive - Why 36pp Overfitting Gap? (Priority 5)
+- h466: Category-Specific Holdout Precision as Deliverable Column (Priority 4)
+
+### Recommended Next Steps
+1. **h466:** Add category holdout precision to deliverable (Priority 4, low effort)
+2. **h464:** Investigate psychiatric HIGH promotion (Priority 4, medium effort)
+3. **h410:** Literature validation of 1-disease hierarchy rules (Priority 3, medium effort)
+
+---
+
+## Previous Session: h453, h456, h457, h458, h450 (2026-02-06)
 
 ### Session Summary
 
