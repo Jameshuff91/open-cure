@@ -9798,8 +9798,10 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
-      "category": "literature_validation"
+      "status": "validated",
+      "category": "literature_validation",
+      "findings": "h493 VALIDATED: Respiratory ATC Coherent Literature Validation\n\nValidated all 27 respiratory ATC coherent novel predictions (without mechanism):\n\nResults:\n  NO_EVIDENCE: 13 (48%) - antihistamines/mAbs for wrong respiratory diseases\n  WEAK: 7 (26%) - NAC for silicosis/empyema/HP, limited evidence\n  PROMISING: 3 (11%) - intranasal steroids for OSA (RCT evidence), steroids for HP\n  GT_GAP: 2 (7%) - ICS for chronic bronchitis/COPD (guideline-recommended)\n  HARMFUL: 2 (7%) - corticosteroids for IPF (ATS/ERS 2022 recommends against)\n\nSAFETY FIX: 8 corticosteroid\u2192IPF predictions moved to FILTER:\n  - Prednisolone, Mometasone, Fluticasone, Methylprednisolone (MEDIUM\u2192FILTER)\n  - Prednisone, Dexamethasone, Hydrocortisone (HIGH\u2192FILTER)\n  - Cortisone (MEDIUM\u2192FILTER)\n  ATS/ERS/JRS/ALAT 2022: recommend against corticosteroid monotherapy for stable IPF.\n  PANTHER-IPF trial (NEJM 2012): prednisone+azathioprine+NAC increased mortality.\n\nOverall respiratory ATC coherent without mechanism: 7% GT_GAP + 11% PROMISING = 18% support.\nThis is MUCH lower than other ATC coherent categories (psychiatric 35%, infectious 19%).\nRespiratory ATC coherent without mechanism is near-noise level.\n\nImpact: HIGH 514\u2192504 (-10), MEDIUM -5 from IPF filter. FILTER +15.",
+      "result_metric": "18% clinical support. 8 harmful corticosteroid\u2192IPF predictions filtered."
     },
     {
       "id": "h494",
@@ -9927,13 +9929,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compute GOLDEN vs HIGH significance with new numbers",
         "Check if MEDIUM rules with >40% holdout should be promoted to HIGH",
         "Assess if tier thresholds should change",
         "Run full sensitivity analysis on tier boundaries"
-      ]
+      ],
+      "findings": "h500: Checked with corrected GT. No categories qualify for HIGH promotion. Renal (64%, n=5.8/seed) and musculoskeletal (55.6%, n=11.2/seed) too small n. Dermatological (48.4%, n=55) below 50% threshold. Quick validation, no code changes needed.",
+      "result_metric": "No promotions warranted. Dermatological closest at 48.4%."
     }
   ],
   "completed": [

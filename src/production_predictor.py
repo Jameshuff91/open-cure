@@ -713,6 +713,17 @@ INVERSE_INDICATION_PAIRS = {
     # h479: Minocycline CAUSES urticaria as adverse effect (case reports: acute severe urticaria
     # developing 3-28 days after initiation, can recur >12 months after discontinuation)
     'minocycline': {'urticaria'},
+    # h493: Corticosteroids contraindicated in stable IPF (ATS/ERS/JRS/ALAT 2022)
+    # PANTHER-IPF trial (NEJM 2012): prednisone+azathioprine+NAC INCREASED mortality
+    # Standard of care is pirfenidone/nintedanib, NOT corticosteroids
+    'prednisolone': {'idiopathic pulmonary fibrosis'},
+    'prednisone': {'idiopathic pulmonary fibrosis'},
+    'methylprednisolone': {'idiopathic pulmonary fibrosis'},
+    'dexamethasone': {'idiopathic pulmonary fibrosis'},
+    'hydrocortisone': {'idiopathic pulmonary fibrosis'},
+    'mometasone': {'idiopathic pulmonary fibrosis'},
+    'fluticasone': {'idiopathic pulmonary fibrosis'},
+    'cortisone': {'idiopathic pulmonary fibrosis'},
 }
 
 # h280/h281: Complication vs Subtype relationship mapping
