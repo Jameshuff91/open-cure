@@ -642,7 +642,7 @@ CV_COMPLICATION_KEYWORDS = {'heart failure', 'stroke', 'myocardial infarction', 
 INVERSE_INDICATION_PAIRS = {
     # Thyroid: anti-thyroid drugs → hypothyroidism (they CAUSE hypothyroidism)
     'propylthiouracil': {'hypothyroidism', 'congenital hypothyroidism'},
-    'methimazole': {'hypothyroidism', 'congenital hypothyroidism'},
+    'methimazole': {'hypothyroidism', 'congenital hypothyroidism', 'primary hyperparathyroidism', 'hypoparathyroidism'},
     # Thyroid: thyroid hormones → hyperthyroidism (they CAUSE/worsen hyperthyroidism)
     'levothyroxine': {'hyperthyroidism'},
     'liothyronine': {'hyperthyroidism'},
@@ -665,6 +665,11 @@ INVERSE_INDICATION_PAIRS = {
     # h482: Insulin sensitizers → hypoglycemia (can cause hypoglycemia)
     'rosiglitazone': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
     'pioglitazone': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    # h483: Metronidazole → myopia (CAUSES transient myopia as adverse effect, JAMA case report)
+    'metronidazole': {'myopia'},
+    # h483: Verapamil → cardiac arrest (CAN PRECIPITATE cardiac arrest in WPW/VT; not a treatment)
+    # IV verapamil is CONTRAINDICATED in ventricular tachycardia per ACLS guidelines
+    'verapamil': {'cardiac arrest'},
 }
 
 # h280/h281: Complication vs Subtype relationship mapping

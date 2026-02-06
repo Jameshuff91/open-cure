@@ -1,6 +1,72 @@
 # Research Loop Progress
 
-## Current Session: h473, h480 - Literature Validation + Safety Fix (2026-02-06)
+## Current Session: h483 - MEDIUM Novel Literature Validation (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h483: MEDIUM Novel Prediction Literature Validation - **VALIDATED** (52% clinical support, 8% harmful)
+
+### h483: MEDIUM Novel Prediction Literature Validation - VALIDATED
+
+**Objective:** Validate top 25 diverse MEDIUM novel predictions against clinical literature.
+
+**Method:** Web search of PubMed, FDA labels, clinical guidelines for each drug-disease pair.
+
+**Results (top 25 diverse MEDIUM novels):**
+| Category | Count | % |
+|----------|-------|---|
+| GT_GAP (drug already used) | 10 | 40% |
+| PROMISING (clinical evidence) | 3 | 12% |
+| WEAK (limited evidence) | 6 | 24% |
+| NO_EVIDENCE | 4 | 16% |
+| HARMFUL | 2 | 8% |
+
+**Tier comparison (now complete):**
+| Metric | GOLDEN | HIGH | MEDIUM |
+|--------|--------|------|--------|
+| GT_GAP | 55% | 35% | 40% |
+| PROMISING | 20% | 30% | 12% |
+| WEAK | 15% | 25% | 24% |
+| NO_EVIDENCE | 5% | 0% | 16% |
+| HARMFUL | 0% | 10% | 8% |
+| Total Support | 75% | 65% | 52% |
+
+**HARMFUL predictions found and FIXED:**
+1. **Verapamil → cardiac arrest**: IV verapamil CAN PRECIPITATE cardiac arrest in WPW/VT patients. CONTRAINDICATED per ACLS guidelines. Not a treatment for cardiac arrest.
+2. **Metronidazole → myopia**: Metronidazole CAUSES transient myopia as adverse effect (JAMA case report). This is a drug-induced condition, not a treatment target.
+
+**Additional finding:**
+3. **Methimazole → parathyroid diseases**: Methimazole targets thyroperoxidase (thyroid-specific). No mechanism for treating primary hyperparathyroidism or hypoparathyroidism. These are parathyroid (not thyroid) conditions.
+
+**Key patterns by tier rule:**
+- `standard` rule: 7/7 GT_GAP (100%) - most reliable MEDIUM rule
+- `cancer_same_type`: 2/2 WEAK (historical evidence only)
+- `target_overlap_promotion`: 1/2 WEAK, 1/2 NO_EVIDENCE - highest false positive rate
+- `atc_coherent_*` rules: mixed (3 GT_GAP, 3 PROMISING, 2 NO_EVIDENCE, 1 HARMFUL)
+
+**Implementation:** Added 3 new entries to INVERSE_INDICATION_PAIRS:
+- metronidazole → {myopia}
+- verapamil → {cardiac arrest}
+- methimazole expanded to include {hyperparathyroidism, hypoparathyroidism}
+Deliverable regenerated: 4 predictions moved to FILTER.
+
+### New Hypotheses Generated
+- h484: Systematic CCB Cardiac Arrest Audit (Priority 5)
+- h485: Target Overlap Promotion False Positive Rate (Priority 4)
+- h486: Drug-Induced Disease Filter via SIDER Database (Priority 3)
+- h487: ATC Coherent Rule False Positive Analysis (Priority 4)
+
+### Recommended Next Steps
+1. **h486:** Systematic SIDER-based inverse indication mining (Priority 3, high effort, high impact)
+2. **h485:** Target overlap promotion audit (Priority 4, medium effort)
+3. **h487:** ATC coherent rule false positive analysis (Priority 4, medium effort)
+
+---
+
+## Previous Session: h473, h480 - Literature Validation + Safety Fix (2026-02-06)
 
 ### Session Summary
 

@@ -9492,7 +9492,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "category": "data_quality"
     },
     {
@@ -9598,8 +9598,71 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
-      "category": "validation"
+      "status": "validated",
+      "category": "validation",
+      "findings": "MEDIUM Novel Prediction Literature Validation (top 25 diverse predictions):\n\nClassification:\n- GT_GAP: 10/25 (40%) - Drug already used for disease, missing from GT\n- PROMISING: 3/25 (12%) - Clinical evidence supports use\n- WEAK: 6/25 (24%) - Limited or historical evidence only\n- NO_EVIDENCE: 4/25 (16%) - No clinical rationale\n- HARMFUL: 2/25 (8%) - Drug can cause/worsen the condition\n\nClinical support (GT_GAP + PROMISING): 52% (vs GOLDEN 75%, HIGH 65%)\n\nHARMFUL predictions found and FIXED:\n1. Verapamil \u2192 cardiac arrest: IV verapamil CAN PRECIPITATE cardiac arrest in WPW/VT. Contraindicated per ACLS.\n2. Metronidazole \u2192 myopia: Metronidazole CAUSES transient myopia as adverse effect (JAMA case report).\n\nAdditional finding - Methimazole \u2192 parathyroid diseases:\n- Methimazole is anti-thyroid, no mechanism for parathyroid diseases\n- Added hyperparathyroidism/hypoparathyroidism to inverse_indication\n\nTier comparison:\n| Metric | GOLDEN | HIGH | MEDIUM |\n| GT_GAP | 55% | 35% | 40% |\n| PROMISING | 20% | 30% | 12% |\n| WEAK | 15% | 25% | 24% |\n| NO_EVIDENCE | 5% | 0% | 16% |\n| HARMFUL | 0% | 10% | 8% |\n\nKey patterns by tier rule:\n- 'standard' rule: 7/7 GT_GAP (100%) - best performing rule\n- 'cancer_same_type': 2/2 WEAK - historical/limited evidence\n- 'target_overlap_promotion': 1 WEAK + 1 NO_EVIDENCE - high false positive rate\n- 'atc_coherent_*': mixed (3 GT_GAP, 3 PROMISING, 2 NO_EVIDENCE, 1 HARMFUL)\n\nImplemented: Added metronidazole\u2192myopia, verapamil\u2192cardiac arrest, methimazole\u2192parathyroid to INVERSE_INDICATION_PAIRS.\nDeliverable regenerated: 4 predictions moved to FILTER.\n",
+      "result_metric": "52% clinical support (vs 75% GOLDEN, 65% HIGH). 2 HARMFUL found and fixed."
+    },
+    {
+      "id": "h484",
+      "title": "Systematic CCB Cardiac Arrest Audit",
+      "description": "h483 found verapamil\u2192cardiac arrest is harmful. Other calcium channel blockers (diltiazem, nifedipine) may also have cardiac arrest predictions that are problematic. Non-DHP CCBs (verapamil, diltiazem) can precipitate cardiac arrest in certain settings. Audit all CCB predictions for cardiac arrest, heart failure, and other conditions where CCBs are contraindicated.",
+      "steps": [
+        "List all CCB predictions for cardiac arrest in deliverable",
+        "Check each against clinical evidence (ACC/AHA guidelines)",
+        "Add problematic pairs to INVERSE_INDICATION_PAIRS",
+        "Check if existing non-DHP CCB + HF filter (h258) already covers these"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending"
+    },
+    {
+      "id": "h485",
+      "title": "Target Overlap Promotion False Positive Rate",
+      "description": "h483 found that target_overlap_promotion has a high false positive rate: 1/2 WEAK, 1/2 NO_EVIDENCE in the sample. Methimazole\u2192hyperparathyroidism was promoted via target overlap despite no mechanistic rationale (thyroperoxidase targets have no parathyroid relevance). Audit all target_overlap_promotion predictions to quantify false positive rate and identify whether the shared targets are biologically relevant or coincidental.",
+      "steps": [
+        "Extract all target_overlap_promotion predictions from deliverable",
+        "Sample 20 diverse predictions for literature validation",
+        "Compute holdout precision for target_overlap_promotion vs standard rule",
+        "If precision < MEDIUM avg, consider tightening the overlap threshold"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending"
+    },
+    {
+      "id": "h486",
+      "title": "Drug-Induced Disease Filter: Systematic Adverse Effect Mining",
+      "description": "h480 found 10 inverse-indication predictions, h482 found 18 more, h483 found 4 more. All were from metabolic, thyroid, and cardiovascular domains. There may be more inverse-indication predictions lurking in other domains (e.g., drug-induced parkinsonism, drug-induced lupus, drug-induced hepatotoxicity). Systematically mine known drug adverse effects from FDA labels or SIDER database to identify all predictions where the drug is known to CAUSE the predicted disease.",
+      "steps": [
+        "Download SIDER (Side Effect Resource) drug-adverse effect database",
+        "Map SIDER drug IDs to our DrugBank IDs",
+        "Cross-reference deliverable predictions with SIDER adverse effects",
+        "Identify predictions where drug causes predicted disease",
+        "Add confirmed inverse indications to INVERSE_INDICATION_PAIRS"
+      ],
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 3,
+      "status": "pending"
+    },
+    {
+      "id": "h487",
+      "title": "ATC Coherent Rule False Positive Analysis",
+      "description": "h483 found mixed quality in atc_coherent_* rules: 3 GT_GAP, 3 PROMISING, 2 NO_EVIDENCE, 1 HARMFUL in the sample. The atc_coherent_ophthalmic rule promoted metronidazole\u2192myopia (harmful) because metronidazole treats ophthalmic infections but myopia is not an infection. ATC coherence matches drug category to disease category but does not check whether the drug MECHANISM is appropriate for the specific disease. Test if adding mechanism verification to ATC coherent rules reduces false positives.",
+      "steps": [
+        "Extract all atc_coherent_* predictions and their holdout precision",
+        "Compare precision with and without mechanism_support",
+        "If non-mechanism ATC coherent < MEDIUM avg, consider requiring mechanism",
+        "Validate sample of non-mechanism ATC coherent predictions via literature"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending"
     }
   ],
   "completed": [
@@ -11237,6 +11300,12 @@
       "hypothesis_id": "h482",
       "learning": "Only metabolic hierarchy groups (thyroid, diabetes) have inverse-indication issues. Root cause: hierarchy matches by organ system keyword, not drug mechanism. 26 total harmful predictions removed. Autoimmune/CV/infectious/neurological/respiratory hierarchies are clean.",
       "implication": "Inverse-indication check should be standard for any NEW hierarchy group added. Only metabolic groups need opposite-condition checking."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h483",
+      "learning": "MEDIUM tier has 52% clinical support (GT_GAP 40% + PROMISING 12%), 8% HARMFUL, 16% NO_EVIDENCE. Standard rule has 100% GT_GAP rate (7/7). Target overlap promotion and ATC coherent rules have highest false positive rates. Metronidazole\u2192myopia and verapamil\u2192cardiac arrest are new inverse indications.",
+      "implication": "Standard rule predictions are the most reliable in MEDIUM tier. Target overlap promotion needs audit. Literature validation should continue for cancer_same_type and ATC coherent rules. SIDER database could systematically identify inverse indications."
     }
   ],
   "collaborations": [

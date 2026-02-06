@@ -1,0 +1,276 @@
+{
+  "hypothesis": "h483",
+  "title": "MEDIUM Novel Prediction Literature Validation",
+  "n_validated": 25,
+  "summary": {
+    "GT_GAP": 10,
+    "PROMISING": 3,
+    "WEAK": 6,
+    "NO_EVIDENCE": 4,
+    "HARMFUL": 2
+  },
+  "harmful_predictions": [
+    {
+      "drug": "Verapamil",
+      "disease": "cardiac arrest",
+      "evidence": "Verapamil CAN PRECIPITATE cardiac arrest in WPW and VT patients. IV verapamil is CONTRAINDICATED in ventricular tachycardia. While theoretical myocardial protection exists, clinical evidence shows it CAUSES cardiac arrest more than treats it."
+    },
+    {
+      "drug": "Metronidazole",
+      "disease": "myopia",
+      "evidence": "Metronidazole CAUSES transient myopia as an adverse effect (JAMA case report). It is NOT a treatment for myopia. No clinical evidence for treating myopia. This is an INVERSE INDICATION - drug causes the condition."
+    }
+  ],
+  "predictions": [
+    {
+      "rank": 1,
+      "drug": "Levofloxacin",
+      "disease": "helicobacter pylori infection",
+      "category": "infectious",
+      "rule": "standard",
+      "status": "GT_GAP",
+      "evidence": "Strong RCT evidence. Levofloxacin-based triple therapy is STANDARD second-line H. pylori eradication (Lancet Gastro 2022, NEJM). 70-92.5% eradication rates.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Bleomycin",
+      "disease": "lung cancer",
+      "category": "cancer",
+      "rule": "cancer_same_type",
+      "status": "WEAK",
+      "evidence": "Bleomycin is used for squamous cell carcinomas (head/neck), testicular cancer, lymphomas - NOT standard for primary lung cancer. Bleomycin-induced pulmonary fibrosis is a known toxicity. Limited/historical use only.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Verapamil",
+      "disease": "cardiac arrest",
+      "category": "cardiovascular",
+      "rule": "cardiovascular",
+      "status": "HARMFUL",
+      "evidence": "Verapamil CAN PRECIPITATE cardiac arrest in WPW and VT patients. IV verapamil is CONTRAINDICATED in ventricular tachycardia. While theoretical myocardial protection exists, clinical evidence shows it CAUSES cardiac arrest more than treats it.",
+      "harmful": true
+    },
+    {
+      "rank": 1,
+      "drug": "Amphotericin B",
+      "disease": "chromomycosis",
+      "category": "infectious",
+      "rule": "standard",
+      "status": "GT_GAP",
+      "evidence": "Well-established treatment. Amphotericin B used for severe chromomycosis (PubMed, WHO). DAT therapy (debridement + intralesional amphotericin B + oral terbinafine) is current approach. Multiple RCTs and case series.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Doxycycline",
+      "disease": "blepharitis",
+      "category": "dermatological",
+      "rule": "standard",
+      "status": "GT_GAP",
+      "evidence": "Standard clinical use. Oral doxycycline is RECOMMENDED for posterior blepharitis and MGD. Low-dose (40mg/day) has RCT evidence. JAMA Ophthalmology 2022 RCT.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Rivaroxaban",
+      "disease": "ischemic cerebrovascular disorder",
+      "category": "cardiovascular",
+      "rule": "atc_coherent_cardiovascular",
+      "status": "GT_GAP",
+      "evidence": "Rivaroxaban + aspirin REDUCES ischemic stroke by ~50% (COMPASS trial, NEJM). Approved for stroke prevention in AF. Extensive RCT evidence.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Gentamicin",
+      "disease": "osteomyelitis",
+      "category": "infectious",
+      "rule": "standard",
+      "status": "GT_GAP",
+      "evidence": "Standard treatment. Gentamicin-PMMA beads are STANDARD local therapy for chronic osteomyelitis. 90.4% success rate in 405-case series. Multiple RCTs.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Lovastatin",
+      "disease": "fabry disease",
+      "category": "metabolic",
+      "rule": "mechanism_specific",
+      "status": "NO_EVIDENCE",
+      "evidence": "No clinical evidence for lovastatin treating Fabry disease. Current treatments: ERT (agalsidase), chaperone therapy (migalastat), gene therapy. Lovastatin has no known mechanism for treating lysosomal storage deficiency.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Propranolol",
+      "disease": "simple open angle glaucoma",
+      "category": "ophthalmic",
+      "rule": "standard",
+      "status": "GT_GAP",
+      "evidence": "Clinical evidence from 1970s-80s. Propranolol (oral 160mg/d and 0.5% drops) effectively lowers IOP. Clinical trial: lasting IOP reduction in 11/22 patients. Timolol (beta-blocker) is standard glaucoma therapy - propranolol is predecessor.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Minocycline",
+      "disease": "early lyme disease erythema migrans",
+      "category": "dermatological",
+      "rule": "standard",
+      "status": "GT_GAP",
+      "evidence": "3-week minocycline equals penicillin for EM treatment (96.5% cure rate). All patients completing course were symptom-free at 1 year. Anti-inflammatory + antimicrobial effects. Standard alternative to doxycycline.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Fluorouracil",
+      "disease": "renal carcinoma",
+      "category": "cancer",
+      "rule": "cancer_same_type",
+      "status": "WEAK",
+      "evidence": "5-FU has been used historically for RCC (6-43% response rates with interferon combinations). However, RCC is generally resistant to chemotherapy. Current standard: targeted therapy (sunitinib, nivolumab). 5-FU is NOT current standard.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Calcitriol",
+      "disease": "osteogenesis imperfecta",
+      "category": "musculoskeletal",
+      "rule": "atc_coherent_musculoskeletal",
+      "status": "PROMISING",
+      "evidence": "Calcitriol (0.25 \u00b5g daily) is used as part of complex OI treatment to decrease fractures and improve BMD. Less effective than bisphosphonates alone but recommended as adjunctive therapy. Evidence in clinical guidelines.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Pembrolizumab",
+      "disease": "osteosarcoma",
+      "category": "cancer",
+      "rule": "cancer",
+      "status": "WEAK",
+      "evidence": "Phase 2 trials show POOR efficacy: 5% response rate (SARC028), 0/12 met primary endpoint. Osteosarcoma shows primary resistance to PD-1/PD-L1 checkpoint inhibition. Not standard of care.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Clopidogrel",
+      "disease": "cerebral infarction",
+      "category": "cardiovascular",
+      "rule": "cardiovascular",
+      "status": "GT_GAP",
+      "evidence": "STANDARD treatment. Clopidogrel + aspirin dual antiplatelet is RECOMMENDED for acute minor stroke (CHANCE trial, POINT trial, both NEJM). CAPRIE trial established clopidogrel for secondary stroke prevention.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Carglumic Acid",
+      "disease": "urea cycle disorders involving deficiencies of argininosuccinic acid synthetase",
+      "category": "metabolic",
+      "rule": "target_overlap_promotion",
+      "status": "WEAK",
+      "evidence": "Carglumic acid is approved for NAGS deficiency, not ASS deficiency specifically. May have utility in acute hyperammonemia of other UCDs but NOT approved/standard for ASS deficiency. Standard: phenylbutyrate + arginine supplementation.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Aflibercept",
+      "disease": "autoimmune pulmonary alveolar proteinosis",
+      "category": "autoimmune",
+      "rule": "atc_coherent_autoimmune",
+      "status": "NO_EVIDENCE",
+      "evidence": "No clinical evidence. Aflibercept (VEGF inhibitor) is for wet AMD and cancer. aPAP is treated with whole-lung lavage, GM-CSF, rituximab. No mechanistic rationale.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Salicylic acid",
+      "disease": "ichthyosis",
+      "category": "dermatological",
+      "rule": "atc_coherent_dermatological",
+      "status": "GT_GAP",
+      "evidence": "Standard keratolytic treatment. 6% salicylic acid gel (Keralyt) is specifically used for ichthyosis vulgaris, X-linked ichthyosis, lamellar ichthyosis. In clinical guidelines and dermatology textbooks.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Paroxetine",
+      "disease": "hyperactive children with conduct disorders",
+      "category": "psychiatric",
+      "rule": "atc_coherent_psychiatric",
+      "status": "NO_EVIDENCE",
+      "evidence": "RCT shows paroxetine had NO effect on ADHD (dextroamphetamine effective). SSRIs not recommended for ADHD. Only useful for comorbid anxiety. NOT standard for hyperactivity/conduct disorder.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Cyanocobalamin",
+      "disease": "sickle cell anemia",
+      "category": "hematological",
+      "rule": "atc_coherent_hematological",
+      "status": "PROMISING",
+      "evidence": "27-43.5% of SCD patients have B12 deficiency due to rapid RBC turnover. Treatment with B12 achieves significant symptomatic improvement. Clinical recommendation: incorporate B12 supplementation alongside standard folate therapy. Not disease-modifying but clinically supportive.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Metronidazole",
+      "disease": "myopia",
+      "category": "ophthalmic",
+      "rule": "atc_coherent_ophthalmic",
+      "status": "HARMFUL",
+      "evidence": "Metronidazole CAUSES transient myopia as an adverse effect (JAMA case report). It is NOT a treatment for myopia. No clinical evidence for treating myopia. This is an INVERSE INDICATION - drug causes the condition.",
+      "harmful": true
+    },
+    {
+      "rank": 1,
+      "drug": "Hydrocortisone",
+      "disease": "severe malignant osteopetrosis",
+      "category": "hematological",
+      "rule": "hematological",
+      "status": "WEAK",
+      "evidence": "Limited evidence. Case reports show steroid use may cause disease regression in infantile osteopetrosis. However, consensus guidelines say 'lack of evidence to support routine use of steroids'. Bone marrow transplant is curative treatment.",
+      "harmful": false
+    },
+    {
+      "rank": 1,
+      "drug": "Tetracycline",
+      "disease": "keratoconjunctivitis",
+      "category": "ophthalmic",
+      "rule": "standard",
+      "status": "GT_GAP",
+      "evidence": "Established treatment. Oral tetracycline produces long-lasting remission of phlyctenular keratoconjunctivitis. Tetracycline eye ointment 1% recommended for bacterial conjunctivitis. Multiple published series.",
+      "harmful": false
+    },
+    {
+      "rank": 2,
+      "drug": "Ketoconazole",
+      "disease": "central precocious puberty",
+      "category": "endocrine",
+      "rule": "atc_coherent_endocrine",
+      "status": "PROMISING",
+      "evidence": "Clinical evidence. Ketoconazole blocks steroid biosynthesis, reduces testosterone in precocious puberty. Used for gonadotropin-independent PP unresponsive to GnRH analogues. Used in McCune-Albright syndrome. Multiple clinical series.",
+      "harmful": false
+    },
+    {
+      "rank": 2,
+      "drug": "Methimazole",
+      "disease": "primary hyperparathyroidism",
+      "category": "metabolic",
+      "rule": "target_overlap_promotion",
+      "status": "NO_EVIDENCE",
+      "evidence": "Methimazole is anti-thyroid, treats hypERthyroidism. Primary hyperparathyroidism is a DIFFERENT gland (parathyroid). No mechanistic rationale. Standard PHPT treatments: surgery, cinacalcet, bisphosphonates. This is a HIERARCHY FALSE MATCH (thyroid/parathyroid confusion).",
+      "harmful": false
+    },
+    {
+      "rank": 2,
+      "drug": "Acetylcysteine",
+      "disease": "empyema",
+      "category": "respiratory",
+      "rule": "atc_coherent_respiratory",
+      "status": "WEAK",
+      "evidence": "NAC is mucolytic for respiratory conditions (COPD, pneumonia, bronchitis). No specific evidence for empyema treatment. Empyema requires antibiotics + drainage. NAC could theoretically help with viscous pleural fluid but no clinical data.",
+      "harmful": false
+    }
+  ]
+}

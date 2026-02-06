@@ -154,7 +154,16 @@ vastai destroy instance <INSTANCE_ID>
 - LOW: 12.2% full / 10.6% ± 1.6% holdout
 - FILTER: 11.4% full / 8.1% ± 1.0% holdout
 
-**h473/h480 (LATEST):** Literature validation of GOLDEN/HIGH novel predictions + inverse-indication safety fix.
+**h483 (LATEST):** MEDIUM novel prediction literature validation (top 25).
+  - MEDIUM novels: 52% clinical support (40% GT gaps, 12% promising, 8% HARMFUL)
+  - 2 new HARMFUL: verapamil→cardiac arrest (precipitates in WPW/VT), metronidazole→myopia (causes it)
+  - Methimazole→parathyroid diseases added (thyroid drug, no parathyroid rationale)
+  - 'standard' rule is most reliable (7/7 GT_GAP); target_overlap_promotion has highest FP rate
+  - Total inverse-indication predictions now: 29 (26 from h480/h482 + 4 from h483 - 1 overlap)
+  - Complete literature validation comparison:
+    GOLDEN 75% support / HIGH 65% / MEDIUM 52% (monotonic decrease, as expected)
+
+**h473/h480:** Literature validation of GOLDEN/HIGH novel predictions + inverse-indication safety fix.
   - GOLDEN novels: 75% clinical support (55% GT gaps, 20% promising, 0% harmful)
   - HIGH novels: 65% clinical support (35% GT gaps, 30% promising, 10% HARMFUL)
   - Found 26 inverse-indication predictions (drug causes predicted disease):
@@ -163,18 +172,9 @@ vastai destroy instance <INSTANCE_ID>
   - Implemented INVERSE_INDICATION_PAIRS filter: 26 predictions → FILTER (HIGH +1.8pp)
   - GT incompleteness (corticosteroids 37%, lipid drugs 27%) is main source of "novel" predictions
 
-**h469:** Parathyroid false match fix + holdout script bug fix.
-  - Added 'parathyroid' to thyroid HIERARCHY_EXCLUSIONS (9/21 false drugs removed)
-  - Fixed h393 holdout script: recompute_gt_structures was NOT using HIERARCHY_EXCLUSIONS
-  - GOLDEN +8.8pp mostly from holdout script fix (exclusions now applied during recomputation)
-  - Word-boundary regex NOT suitable for medical terms (breaks compound words)
+**h469:** Parathyroid false match fix + holdout script bug (GOLDEN +8.8pp). Word-boundary regex NOT suitable for medical terms.
 
-**h410:** Literature validation + string-matching bug fixes. 3 bugs found:
-  - 'sle' matched 'sleep/sleepiness' (not lupus) → removed from variants
-  - 'cystitis' matched cholecystitis/dacryocystitis → HIERARCHY_EXCLUSIONS added
-  - bare 'fibrosis' matched 'cystic fibrosis' → removed from variants
-  Result: MEDIUM +1.1pp holdout, 271 predictions moved MEDIUM→LOW
-  14/20 hierarchy rules CONFIRMED by treatment guidelines.
+**h410:** 3 string-matching bugs fixed ('sle'→sleep, 'cystitis'→cholecystitis, 'fibrosis'→cystic fibrosis). MEDIUM +1.1pp, 14/20 rules CONFIRMED.
 
 **h462/h463:** Category-specific MEDIUM demotions. 3 categories demoted MEDIUM→LOW:
   - Immunological: 2.5% holdout (36pp overfitting gap, self-referential kNN, h465)
