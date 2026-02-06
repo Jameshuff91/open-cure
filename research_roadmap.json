@@ -9995,8 +9995,10 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
-      "category": "meta"
+      "status": "validated",
+      "category": "meta",
+      "findings": "Seed 42 failure mode is caused by unlucky disease composition:\n\n1. Seed 42 holdout has LOWEST mean GT (5.2 vs 7.5-7.7 for other seeds)\n2. Only 8 GOLDEN-capable diseases in holdout (vs 11-16 for others)\n3. Of those 8, epilepsy (88% self-ref) and myopia (100%) are highly self-referential\n4. Seed 42 has FEWEST autoimmune diseases (3, vs 8-10) - best-performing category\n5. Seed 42 has MOST infectious diseases (22, vs 13-18) - hardest category\n\nThis is pure sampling variance. No fix needed.\nStratified sampling by category would reduce variance but add complexity for marginal benefit.\n\nKey lesson: 5-seed evaluation with 91 holdout diseases each has significant variance (~\u00b120% GOLDEN).\nWould need 10+ seeds or stratified splitting for tighter confidence intervals.",
+      "result_metric": "Seed 42 mean GT=5.2 (lowest), 8 GOLDEN diseases (fewest). Sampling variance, no fix needed."
     },
     {
       "id": "h504",
@@ -11804,6 +11806,12 @@
       "hypothesis_id": "h504",
       "learning": "31.6% of diseases are 100% self-referential in kNN. This is structural: their drugs are not shared with ANY neighbor. MEDIUM holdout drops from 40.8% (<50% self-ref) to 13.3% (100% self-ref). Not actionable as a demotion because self-ref requires GT knowledge.",
       "implication": "kNN has a structural floor for ~144 diseases. External data needed for these diseases. Self-referentiality is the dominant source of full-to-holdout gap."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h503",
+      "learning": "Seed 42 poor performance is sampling variance: fewest autoimmune (3), most infectious (22), lowest mean GT (5.2). 5-seed evaluation has \u00b120% GOLDEN variance. Stratified splitting would help but adds complexity.",
+      "implication": "Report results as mean\u00b1std across seeds. Individual seed outliers are expected with n=91 holdout diseases."
     }
   ],
   "collaborations": [
