@@ -1,0 +1,237 @@
+{
+  "hypothesis": "h583",
+  "n_diseases": 312,
+  "correlations": {
+    "emb_sim_vs_holdout": -0.177,
+    "drug_jaccard_vs_holdout": 0.398,
+    "paradigm_mismatch_vs_holdout": -0.388,
+    "gt_in_top30_vs_holdout": 0.123,
+    "mismatch_vs_self_ref": 0.032,
+    "partial_r_mismatch_ctrl_gt_size": -0.303,
+    "partial_r_mismatch_ctrl_selfref": -0.408,
+    "r_mismatch_nonsr_only": -0.383,
+    "r_jaccard_nonsr_only": 0.315
+  },
+  "per_disease": [
+    {
+      "disease_id": "drkg:Disease::MESH:D003550",
+      "name": "respiratory infection caused by pseudomonas aeruginosa in cystic fibrosis",
+      "gt_size": 177,
+      "holdout_precision": 16.7,
+      "self_ref_pct": 40.0,
+      "mean_emb_sim": 0.6010381042957306,
+      "mean_drug_jaccard": 0.044862966688211985,
+      "mismatch_score": 0.5561751376075186,
+      "gt_in_top30_frac": 0.0903954802259887
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013167",
+      "name": "ankylosing spondylitis",
+      "gt_size": 69,
+      "holdout_precision": 63.3,
+      "self_ref_pct": 10.714285714285714,
+      "mean_emb_sim": 0.37321446388959884,
+      "mean_drug_jaccard": 0.10924175597260385,
+      "mismatch_score": 0.263972707916995,
+      "gt_in_top30_frac": 0.2753623188405797
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006086",
+      "name": "graft versus host disease gvhd",
+      "gt_size": 52,
+      "holdout_precision": 6.7,
+      "self_ref_pct": 33.33333333333333,
+      "mean_emb_sim": 0.7336408644914627,
+      "mean_drug_jaccard": 0.14899600096953988,
+      "mismatch_score": 0.5846448635219228,
+      "gt_in_top30_frac": 0.3076923076923077
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017497",
+      "name": "hidradenitis suppurativa",
+      "gt_size": 17,
+      "holdout_precision": 0.0,
+      "self_ref_pct": 66.66666666666666,
+      "mean_emb_sim": 0.7038882344961166,
+      "mean_drug_jaccard": 0.02609599975506577,
+      "mismatch_score": 0.6777922347410508,
+      "gt_in_top30_frac": 0.11764705882352941
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001171",
+      "name": "polyarticularcourse juvenile idiopathic arthritis",
+      "gt_size": 62,
+      "holdout_precision": 10.0,
+      "self_ref_pct": 64.28571428571429,
+      "mean_emb_sim": 0.7378927946090699,
+      "mean_drug_jaccard": 0.1463869741154216,
+      "mismatch_score": 0.5915058204936483,
+      "gt_in_top30_frac": 0.3064516129032258
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011565",
+      "name": "psoriasis vulgaris",
+      "gt_size": 204,
+      "holdout_precision": 16.7,
+      "self_ref_pct": 64.28571428571429,
+      "mean_emb_sim": 0.3438276380300522,
+      "mean_drug_jaccard": 0.028654340545565114,
+      "mismatch_score": 0.3151732974844871,
+      "gt_in_top30_frac": 0.10294117647058823
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015535",
+      "name": "psoriatic arthritis",
+      "gt_size": 55,
+      "holdout_precision": 46.7,
+      "self_ref_pct": 50.0,
+      "mean_emb_sim": 0.3434696927666664,
+      "mean_drug_jaccard": 0.11238628345094173,
+      "mismatch_score": 0.23108340931572466,
+      "gt_in_top30_frac": 0.32727272727272727
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017511",
+      "name": "pyoderma gangrenosum",
+      "gt_size": 31,
+      "holdout_precision": 0.0,
+      "self_ref_pct": 50.0,
+      "mean_emb_sim": 0.790937727689743,
+      "mean_drug_jaccard": 0.17342464293565973,
+      "mismatch_score": 0.6175130847540833,
+      "gt_in_top30_frac": 0.4838709677419355
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001172",
+      "name": "rheumatoid arthritis",
+      "gt_size": 367,
+      "holdout_precision": 93.3,
+      "self_ref_pct": 18.181818181818183,
+      "mean_emb_sim": 0.3312012940645218,
+      "mean_drug_jaccard": 0.050178349866222514,
+      "mismatch_score": 0.2810229441982993,
+      "gt_in_top30_frac": 0.07901907356948229
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011629",
+      "name": "central precocious puberty",
+      "gt_size": 6,
+      "holdout_precision": 0.0,
+      "self_ref_pct": 100.0,
+      "mean_emb_sim": 0.7177513122558594,
+      "mean_drug_jaccard": 0.014267676767676768,
+      "mismatch_score": 0.7034836354881826,
+      "gt_in_top30_frac": 0.16666666666666666
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010146",
+      "name": "pain",
+      "gt_size": 369,
+      "holdout_precision": 23.3,
+      "self_ref_pct": 76.66666666666667,
+      "mean_emb_sim": 0.4114459604024887,
+      "mean_drug_jaccard": 0.02468661495733917,
+      "mismatch_score": 0.38675934544514956,
+      "gt_in_top30_frac": 0.05962059620596206
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009503",
+      "name": "congenitalidiopathic neutropenia",
+      "gt_size": 87,
+      "holdout_precision": 0.0,
+      "self_ref_pct": 100.0,
+      "mean_emb_sim": 0.6717094361782074,
+      "mean_drug_jaccard": 0.06147727206180564,
+      "mismatch_score": 0.6102321641164018,
+      "gt_in_top30_frac": 0.1839080459770115
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054198",
+      "name": "acute lymphoblastic leukemia",
+      "gt_size": 112,
+      "holdout_precision": 3.3,
+      "self_ref_pct": 75.0,
+      "mean_emb_sim": 0.6041470676660537,
+      "mean_drug_jaccard": 0.08499675408272224,
+      "mismatch_score": 0.5191503135833315,
+      "gt_in_top30_frac": 0.1875
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013964",
+      "name": "unresectable thyroid cancer",
+      "gt_size": 84,
+      "holdout_precision": 4.4,
+      "self_ref_pct": 72.72727272727273,
+      "mean_emb_sim": 0.44459776729345324,
+      "mean_drug_jaccard": 0.043798489197917304,
+      "mismatch_score": 0.40079927809553595,
+      "gt_in_top30_frac": 0.16666666666666666
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006467",
+      "name": "acquired hemophilia a",
+      "gt_size": 24,
+      "holdout_precision": 0.0,
+      "self_ref_pct": 100.0,
+      "mean_emb_sim": 0.6860027402639389,
+      "mean_drug_jaccard": 0.05646815983366367,
+      "mismatch_score": 0.6295345804302752,
+      "gt_in_top30_frac": 0.20833333333333334
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D056587",
+      "name": "familial cold autoinflammatory syndrome",
+      "gt_size": 6,
+      "holdout_precision": 0.0,
+      "self_ref_pct": 100.0,
+      "mean_emb_sim": 0.6671420276165009,
+      "mean_drug_jaccard": 0.0018518518518518517,
+      "mismatch_score": 0.665290175764649,
+      "gt_in_top30_frac": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017074",
+      "name": "common variable immunodeficiency disease",
+      "gt_size": 2,
+      "holdout_precision": 3.3,
+      "self_ref_pct": 100.0,
+      "mean_emb_sim": 0.627699077129364,
+      "mean_drug_jaccard": 0.005,
+      "mismatch_score": 0.622699077129364,
+      "gt_in_top30_frac": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003922",
+      "name": "type 1 diabetes mellitus",
+      "gt_size": 96,
+      "holdout_precision": 35.0,
+      "self_ref_pct": 51.42857142857142,
+      "mean_emb_sim": 0.36821607649326327,
+      "mean_drug_jaccard": 0.020100363322055306,
+      "mismatch_score": 0.348115713171208,
+      "gt_in_top30_frac": 0.0625
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006105",
+      "name": "chronic granulomatous disease",
+      "gt_size": 9,
+      "holdout_precision": 0.0,
+      "self_ref_pct": 100.0,
+      "mean_emb_sim": 0.8260310053825378,
+      "mean_drug_jaccard": 0.11955712163710705,
+      "mismatch_score": 0.7064738837454307,
+      "gt_in_top30_frac": 0.5555555555555556
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020790",
+      "name": "central diabetes insipidus",
+      "gt_size": 10,
+      "holdout_precision": 0.0,
+      "self_ref_pct": 100.0,
+      "mean_emb_sim": 0.6852762341499329,
+      "mean_drug_jaccard": 0.014408924408924407,
+      "mismatch_score": 0.6708673097410085,
+      "gt_in_top30_frac": 0.1
+    }
+  ]
+}

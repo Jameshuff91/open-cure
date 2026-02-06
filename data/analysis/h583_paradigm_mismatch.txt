@@ -1,0 +1,47 @@
+Diseases for analysis: 312
+Processing 0/312...
+Processing 50/312...
+Processing 100/312...
+Processing 150/312...
+Processing 200/312...
+Processing 250/312...
+Processing 300/312...
+
+Computed results for 312 diseases
+
+================================================================================
+CORRELATION WITH HOLDOUT PRECISION
+================================================================================
+  Mean embedding sim:   r = -0.177
+  Mean drug Jaccard:    r = 0.398
+  Paradigm mismatch:    r = -0.388
+  GT in kNN top-30:     r = 0.123
+  Mismatch vs self-ref: r = 0.032
+
+  PARTIAL correlations (controlling for GT size):
+  Paradigm mismatch:    partial r = -0.303
+  Mean drug Jaccard:    partial r = 0.428
+
+================================================================================
+PARADIGM MISMATCH QUARTILE ANALYSIS
+================================================================================
+Mismatch quartiles: [0.54263715 0.62050231 0.66805021]
+  Q1 (lowest mismatch)          : n= 78 holdout= 15.7% self_ref= 50.7% GT=131.3 jaccard=0.0688
+  Q2                            : n= 78 holdout=  7.5% self_ref= 51.6% GT= 33.9 jaccard=0.0735
+  Q3                            : n= 78 holdout=  5.4% self_ref= 56.5% GT= 18.1 jaccard=0.0648
+  Q4 (highest mismatch)         : n= 78 holdout=  3.9% self_ref= 53.4% GT= 15.7 jaccard=0.0514
+
+  Partial r (mismatch vs holdout, controlling for self-ref): -0.408
+
+================================================================================
+NON-SELF-REF DISEASES ONLY (n=213)
+================================================================================
+  Mismatch vs holdout: r = -0.383
+  Jaccard vs holdout:  r = 0.315
+  Q1 (lowest mismatch)          : n= 54 holdout= 19.3% GT=152.2
+  Q2                            : n= 53 holdout= 11.7% GT= 43.1
+  Q3                            : n= 53 holdout=  9.5% GT= 25.0
+  Q4 (highest mismatch)         : n= 53 holdout=  6.4% GT= 20.1
+
+Results saved to data/analysis/h583_paradigm_mismatch.json
+Done!

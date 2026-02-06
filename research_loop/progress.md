@@ -81,8 +81,31 @@ For <50% self-ref: MEDIUM = 44.0% — exceeds 40% target significantly.
 - h584: Deliverable non-self-ref precision annotation (P5, low)
 - h585: Self-referentiality threshold optimization (P5, low)
 
+### h583: Treatment Paradigm Mismatch Detection — VALIDATED (novel independent signal)
+
+Paradigm mismatch = mean_embedding_sim - mean_drug_Jaccard (high = diseases near in embedding but far in drug space).
+
+**Key Results:**
+| Signal | r (all) | Partial r (ctrl GT) | Partial r (ctrl self-ref) |
+|--------|---------|--------------------|--------------------------|
+| Drug Jaccard | +0.398 | +0.428 | — |
+| Paradigm mismatch | -0.388 | -0.303 | -0.408 |
+| Embedding sim | -0.177 | — | — |
+| Mismatch vs self-ref | +0.032 | — | — |
+
+**Critical: NOT a self-referentiality proxy (r=0.032).** This is an INDEPENDENT signal.
+
+**Quartile analysis (all diseases):** Q1=15.7%, Q2=7.5%, Q3=5.4%, Q4=3.9% holdout.
+**Non-self-ref only:** Q1=19.3% vs Q4=6.4%. Signal persists after removing self-ref.
+
+**Limitation:** Drug Jaccard requires GT knowledge → circular at prediction time. Valid as annotation only.
+
+### New Hypotheses Generated (2)
+- h586: GT-free paradigm mismatch via DRKG edges (P4, medium)
+- h587: Paradigm mismatch deliverable annotation (P5, low)
+
 ### Recommended Next Steps
-1. **h583**: Paradigm mismatch as quality signal (novel metric from h571 findings)
+1. **h586**: GT-free paradigm mismatch approximation (if DRKG edges proxy drug Jaccard, we have a novel non-circular signal)
 2. **h580**: Drug class expansion for islands (high effort, new predictions)
 3. **h584**: Add corrected precision to deliverable metadata
 

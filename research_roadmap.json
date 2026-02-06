@@ -12089,10 +12089,12 @@
         "Compare with self_referential_pct as quality signal",
         "If informative, add as deliverable annotation"
       ],
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
-      "effort": "medium"
+      "effort": "medium",
+      "findings": "Paradigm mismatch (embedding sim - drug Jaccard) predicts holdout precision: r=-0.388 (all), r=-0.383 (non-self-ref only). NOT a self-ref proxy (r=0.032 with self-ref). Partial r=-0.408 after controlling for self-ref. Drug Jaccard is the dominant component (r=0.428 partial, controlling for GT size). Q1 (lowest mismatch) = 15.7% holdout vs Q4 = 3.9%. CIRCULAR at prediction time (requires GT). Valid as annotation, not for novel diseases.",
+      "result_metric": "r=-0.388 (all diseases), r=-0.383 (non-self-ref only)"
     },
     {
       "id": "h584",
@@ -12117,6 +12119,36 @@
         "Plot precision vs self-ref threshold curve",
         "Identify the optimal reporting cutoff",
         "Check if partial self-ref diseases have intermediate quality"
+      ],
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low"
+    },
+    {
+      "id": "h586",
+      "title": "GT-Free Paradigm Mismatch: Can We Approximate Drug Jaccard Without GT?",
+      "description": "h583 found paradigm mismatch is a strong holdout predictor (r=-0.388) but requires GT. Can we approximate drug Jaccard using DRKG edge types instead of GT? If disease A and disease B share many DRKG edges (gene associations, phenotypes), they likely share drugs too. Test if DRKG-based similarity proxies drug Jaccard.",
+      "steps": [
+        "Compute disease-disease similarity using DRKG edges (non-treatment edges only)",
+        "Test correlation between DRKG similarity and drug Jaccard",
+        "If correlated, test DRKG-based mismatch vs holdout",
+        "Compare with GT-based mismatch for quality"
+      ],
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium"
+    },
+    {
+      "id": "h587",
+      "title": "Paradigm Mismatch as Tier Modifier: Disease-Quality-Weighted Holdout",
+      "description": "h583 showed diseases in Q1 (low mismatch) have 15.7% holdout vs Q4 (high mismatch) 3.9%. Could paradigm mismatch be used as a disease-level quality weight? Predictions for low-mismatch diseases should count more than high-mismatch. Add paradigm_mismatch_quartile annotation to deliverable.",
+      "steps": [
+        "Compute paradigm mismatch for all 455 diseases",
+        "Add paradigm_mismatch_score and quartile to deliverable",
+        "Document the holdout-validated quality gradient",
+        "No tier promotion (GT-dependent), annotation only"
       ],
       "status": "pending",
       "priority": 5,
@@ -14090,6 +14122,12 @@
       "hypothesis_id": "h581",
       "learning": "Self-referential diseases (31.6% of diseases, 100% self-ref) drag holdout precision down by 3-5pp across all tiers. True non-self-ref MEDIUM precision is 40.5% (not 37.6%), achieving the 40% target deemed unachievable in h561. For <50% self-ref diseases, MEDIUM reaches 44.0%. Self-ref diseases contribute 29% of LOW and 34% of FILTER predictions with minimal hits, inflating the denominator.",
       "implication": "Report corrected precision alongside uncorrected for accurate quality assessment. The system is better than previously thought for discoverable diseases."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h583",
+      "learning": "Paradigm mismatch (embedding sim - drug Jaccard with kNN neighbors) predicts holdout precision independently of self-referentiality (r=0.032 with self-ref) and GT size. Drug Jaccard (partial r=0.428 controlling for GT size) is the key component. BUT the signal is GT-dependent (circular at prediction time). Valid as annotation but cannot be used for novel disease predictions.",
+      "implication": "Need GT-free proxy for drug Jaccard. DRKG edge-based similarity might approximate it. Paradigm mismatch quartile can annotate disease prediction reliability in deliverable."
     }
   ],
   "collaborations": [
