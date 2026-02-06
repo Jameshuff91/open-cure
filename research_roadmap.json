@@ -5138,7 +5138,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Identify drugs with different IV vs oral safety profiles",
         "Review: dobutamine, dopamine, levosimendan",
@@ -5148,7 +5148,9 @@
       ],
       "dependencies": [
         "h250"
-      ]
+      ],
+      "findings": "h257 INVALIDATED: IV vs oral formulation distinction has no impact on current predictions.\n\nANALYSIS:\nChecked 6 drugs where IV vs oral safety profiles differ significantly:\n1. Verapamil: Already filtered for HF/cardiac arrest (correct - both IV and oral contraindicated in HFrEF)\n2. Diltiazem: Already filtered for HF/VT/MI/cardiac arrest (correct)\n3. Dobutamine: 1 prediction (chronic HF) already FILTER via standard rules (not inverse indication)\n4. Dopamine: NOT in predictions\n5. Milrinone: Only VT predictions (already FILTER). No chronic HF predictions.\n6. Nifedipine: Already filtered for ACS (correct - short-acting nifedipine dangerous)\n\nCONCLUSION:\n- No predictions need formulation-based adjustment\n- Current inverse indication filters are appropriately conservative\n- IV inotropes (dobutamine/dopamine/levosimendan) are either not predicted or already FILTER\n- The model doesn't predict IV drugs for acute conditions (these aren't kNN-discoverable)",
+      "result_metric": "0 predictions need formulation adjustment"
     },
     {
       "id": "h258",
