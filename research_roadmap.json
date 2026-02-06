@@ -10529,6 +10529,37 @@
       ],
       "findings": "h531 INVALIDATED: No TCA/MAOI \u2192 bipolar predictions exist to filter.\n\nChecked 10 TCAs (amitriptyline, nortriptyline, imipramine, desipramine, clomipramine, \ndoxepin, trimipramine, protriptyline, amoxapine, maprotiline), 7 MAOIs (phenelzine, \ntranylcypromine, isocarboxazid, selegiline, rasagiline, safinamide, moclobemide), and \n7 other antidepressants (mirtazapine, trazodone, nefazodone, vilazodone, vortioxetine, \nbupropion, lithium).\n\nNONE have bipolar disorder predictions in the deliverable.\n\nMost TCAs are not in predictions at all (amitriptyline, nortriptyline, imipramine, etc. \nare absent). MAOIs like selegiline/rasagiline are present but focused on neurological \ndiseases (their Parkinson's indications), not psychiatric.\n\nThe h526 SSRI/SNRI filters (fluoxetine, sertraline, escitalopram, venlafaxine, duloxetine, \nparoxetine) are sufficient \u2014 no additional antidepressant classes need filtering for bipolar.\n\nNo mania/hypomania disease predictions exist at all (search artifact: 'mania' in \n'leishmaniasis' was a false positive).",
       "result_metric": "0 additional antidepressant\u2192bipolar predictions to filter"
+    },
+    {
+      "id": "h532",
+      "title": "Every Cure GT Error Report: Flag 14 Incorrect Indication Entries",
+      "description": "h529 found 14 Every Cure GT entries that are inverse indications (drug CAUSES disease). These include: ACEi\u2192angioedema (adverse effect), estrogens\u2192breast cancer (contraindication), liothyronine\u2192hyperthyroidism (physiological opposite). Creating a formal error report for Every Cure could improve their data quality and ours.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Compile list of 14 EC entries with evidence for each being incorrect",
+        "Classify by error type: adverse effect as indication, contraindication as indication, disease name mismatch",
+        "Format as deliverable/report for Every Cure team",
+        "Note: 5 are clearly incorrect, 8 are disease name mismatches, 1 borderline"
+      ]
+    },
+    {
+      "id": "h533",
+      "title": "FILTER Tier Precision Audit: Are We Over-Filtering Good Predictions?",
+      "description": "FILTER tier has 10.3% holdout precision with 7331 predictions. This means ~755 correct predictions are being filtered. Are there identifiable sub-populations within FILTER that have significantly higher precision? Could rescue some to LOW or MEDIUM. Particular focus: rank 21-30 predictions that also have TransE consilience or hierarchy matches.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Stratify FILTER predictions by rule (standard, inverse_indication, cross_domain, etc.)",
+        "Check holdout precision for each sub-rule",
+        "Identify FILTER sub-populations with >15% holdout (LOW-level)",
+        "Test if TransE consilience + FILTER \u2192 should be LOW/MEDIUM",
+        "Note: rank>20 rescue has been tried 7 times and failed (CLOSED)"
+      ]
     }
   ],
   "completed": [

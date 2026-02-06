@@ -1,15 +1,16 @@
 # Research Loop Progress
 
-## Current Session: h526/h529/h531 - Inverse Indication Taxonomy + GT Audit (2026-02-06)
+## Current Session: h526/h529/h531/h257 - Inverse Indication Taxonomy + GT Audit (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 3**
-- h526: Drug-Induced Disease Classes: Systematic Taxonomy - **VALIDATED**
+**Hypotheses Tested: 4**
+- h526: Drug-Induced Disease Classes: Systematic Taxonomy - **VALIDATED** (+10 new pairs, ordering bug fix)
 - h529: GT Quality Audit: Remove Inverse Indication GT Entries - **VALIDATED** (-19 false GT pairs)
 - h531: TCA/MAOI → Bipolar Extension - **INVALIDATED** (no predictions to filter)
+- h257: IV vs Oral Formulation Safety Distinction - **INVALIDATED** (no impact on predictions)
 
 ### Key Findings
 
@@ -60,14 +61,16 @@ Source: adverse effect/warning mentions confused with indications in data curati
 - Checked 24 antidepressants (10 TCAs, 7 MAOIs, 7 others)
 - None have bipolar disorder predictions — SSRIs/SNRIs already fully covered
 
-### New Hypotheses Generated (3)
+### New Hypotheses Generated (5)
 - h529: GT quality audit (P4, completed)
 - h530: Automatic inverse indication classifier (P5, high)
 - h531: TCA/MAOI → bipolar expansion (P5, completed - invalidated)
+- h532: Every Cure GT error report for 14 incorrect entries (P5, low)
+- h533: FILTER tier precision audit for rescue opportunities (P4, medium)
 
 ### Recommended Next Steps
 1. **h408**: Ryland collaboration prep (Feb 10 deadline approaching)
-2. **h257**: IV vs oral formulation safety distinction (medium effort)
+2. **h533**: FILTER tier precision audit — ~755 correct predictions may be recoverable
 3. **h530**: Automatic inverse indication classifier (high effort, longer term)
 
 ---
