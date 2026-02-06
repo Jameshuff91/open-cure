@@ -1,19 +1,22 @@
 # Research Loop Progress
 
-## Current Session: h469, h470, h472, h468, h471, h431, h460 (2026-02-06)
+## Current Session: h469-h474 + cleanup (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 7**
+**Status:** Complete
+**Hypotheses Tested: 10**
 - h469: Word-Boundary-Aware Hierarchy Matching - **VALIDATED** (parathyroid fix + holdout script bug)
 - h470: Holdout Script Consistency Audit - **VALIDATED** (2 reusable scripts fixed)
 - h472: GOLDEN Variance Reduction - **VALIDATED** (small-n + disease heterogeneity)
+- h459: Category-Adjusted Rank Calibration for MEDIUM - **VALIDATED** (6pp MAE, 3/8 monotonic)
+- h474: FILTER Tier Precision Deep Dive - **VALIDATED** (all FILTER holdout = 4-6%)
 - h468: Neuropathy Hierarchy Group Decomposition - **INVALIDATED** (only 3 predictions)
 - h471: Parathyroid Group - **INVALIDATED** (2 diseases, 1 shared drug)
 - h431: CV Disease-Specific LOW Rescue - **INVALIDATED** (h390 numbers stale)
 - h460: Split HIGH into Hierarchy vs Default - **INVALIDATED** (already in tier_rule column)
+- Deliverable regenerated with parathyroid fix (14,150 predictions)
 
 ### h469: Word-Boundary-Aware Hierarchy Matching - VALIDATED
 
@@ -58,10 +61,36 @@ Recommend reporting median (57.7%) over mean (62.7%).
 - h471: Parathyroid Hierarchy Group (tested, invalidated)
 - h472: GOLDEN Variance Reduction (tested, validated)
 
+### h459: Category-Adjusted Rank Calibration for MEDIUM - VALIDATED
+
+MEDIUM rank calibration varies significantly by category (overall MAE = 5.9pp):
+- 3 categories monotonic: autoimmune (+19.4pp gradient), hematological (+17.4pp), cancer (+6.1pp)
+- 5 categories non-monotonic: CV, dermatological, infectious, psychiatric, respiratory
+- Cancer is systematically undercalibrated (actual < overall prediction)
+- Autoimmune is systematically overcalibrated (actual > overall prediction)
+Not implemented as separate calibration - category_holdout_precision already provides this info.
+
+### h474: FILTER Tier Precision Deep Dive - VALIDATED
+
+FILTER tier (51% of deliverable, 7,231 predictions) is correctly calibrated:
+- Full-data FILTER rank 1-5 appears 36.2% (low-freq drugs) - MISLEADING
+- **Holdout ALL FILTER = 4-6%**: R1-5 low-freq-no-mech = 6.1%, R6-20 = 4.0%, R21+ = 4.5%
+- Root cause: freq=1-2 drugs get high rank BECAUSE their only GT disease is a kNN neighbor
+- On holdout, that GT disease disappears, precision collapses
+- FILTER should be KEPT with low-confidence warning (no rescue opportunities)
+
+### Key Takeaways from Session
+
+1. **Holdout script bug was significant**: fixing HIERARCHY_EXCLUSIONS in recompute improved GOLDEN by +8.8pp
+2. **GOLDEN>HIGH not significant** (p=0.574): recommend reporting median (57.7%) over mean (62.7%)
+3. **FILTER is genuine**: full-data FILTER precision is inflated by self-referential leakage
+4. **Medical terminology breaks word-boundary regex**: compound words are the norm, not the exception
+5. **Diminishing returns**: many remaining hypotheses affect <10 predictions or <1pp precision
+
 ### Recommended Next Steps
-1. **h401:** Reassess DRKG Ceiling with Category-Specific Approaches (Priority 3, high effort)
-2. **h257:** IV vs Oral Formulation Safety Distinction (Priority 4, medium effort)
-3. **h459:** Category-Adjusted Rank Calibration for MEDIUM (Priority 5, medium effort)
+1. **h473:** Novel Prediction Literature Validation (Priority 3, medium effort) - highest value add
+2. **h475:** Corticosteroid Novel Prediction Triage (Priority 4, low effort) - quick validation
+3. **h401:** Reassess DRKG Ceiling (Priority 3, high effort) - if seeking recall improvement
 
 ---
 
