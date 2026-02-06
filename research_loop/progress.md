@@ -81,10 +81,26 @@
 - h482: Systematic Inverse-Indication Audit (Priority 4)
 - h483: MEDIUM Novel Prediction Literature Validation (Priority 4)
 
+### h482: Systematic Inverse-Indication Audit - VALIDATED
+
+**Objective:** Audit all 25 hierarchy groups for inverse-indication patterns.
+
+**Result:** Only 2 groups have issues (both metabolic):
+- metabolic_hierarchy_thyroid (fixed by h480)
+- metabolic_hierarchy_diabetes (NEW - fixed by h482)
+
+**Diabetes hierarchy issues:** 18 additional harmful predictions found:
+- Sulfonylureas, meglitinides, insulin, insulin sensitizers → hypoglycemia (CAUSE it)
+- Vasopressin → hyperglycemia (no glucose-lowering effect)
+- Diabetes insipidus false hierarchy match (different disease)
+
+**Impact:** HIGH precision 53.8% → 55.6% (+1.8pp), 0 GT loss
+**Audit complete:** All 23 other hierarchy groups are clean.
+
 ### Recommended Next Steps
-1. **h482:** Systematic inverse-indication audit across all hierarchy rules (medium effort, safety-critical)
-2. **h477:** GT expansion for corticosteroids (medium effort, high impact on GT gap reduction)
-3. **h483:** MEDIUM novel validation (medium effort, completes the tier validation picture)
+1. **h477:** GT expansion for corticosteroids (medium effort, high impact on GT gap reduction)
+2. **h483:** MEDIUM novel validation (medium effort, completes the tier validation picture)
+3. **h401:** Reassess DRKG ceiling with category-specific approaches (high effort)
 
 ---
 

@@ -1,0 +1,78 @@
+h482: Systematic Inverse-Indication Audit Across All Hierarchy Rules
+=====================================================================
+Date: 2026-02-06
+
+METHOD:
+1. Extracted all hierarchy rule predictions from deliverable
+2. Checked each hierarchy group for diseases that are "opposites" (hypo/hyper)
+3. Verified which drugs treat one condition but are predicted for the opposite
+4. Added diabetes insipidus exclusion from diabetes hierarchy
+
+HIERARCHY GROUPS AUDITED: 25
+GROUPS WITH INVERSE PAIRS FOUND: 2
+  1. metabolic_hierarchy_thyroid (already fixed by h480)
+  2. metabolic_hierarchy_diabetes (NEW - fixed by h482)
+
+GROUPS WITHOUT INVERSE ISSUES: 23
+  - All autoimmune groups: no opposite conditions
+  - All cardiovascular groups: no opposite conditions
+  - All infectious groups: no opposite conditions
+  - All neurological groups: no opposite conditions
+  - All respiratory groups: no opposite conditions
+  - metabolic_hierarchy_lipid: no opposites
+  - metabolic_hierarchy_obesity: no opposites
+
+DIABETES HIERARCHY INVERSE PATTERNS FOUND:
+================================================================
+
+1. Sulfonylureas → hypoglycemia (CAUSE hypoglycemia by stimulating insulin):
+   - Glipizide → hypoglycemia, hyperinsulinemic hypoglycemia
+   - Glimepiride → hypoglycemia, hyperinsulinemic hypoglycemia
+   - Tolazamide → hypoglycemia
+
+2. Meglitinides → hypoglycemia (CAUSE hypoglycemia by stimulating insulin):
+   - Nateglinide → hypoglycemia, hyperinsulinemic hypoglycemia
+   - Repaglinide → hypoglycemia, hyperinsulinemic hypoglycemia
+
+3. Insulin → hypoglycemia (CAUSES hypoglycemia):
+   - Insulin human → hypoglycemia, hyperinsulinemic hypoglycemia
+   - Insulin lispro → hypoglycemia
+
+4. Insulin sensitizers → hypoglycemia (can contribute to hypoglycemia):
+   - Rosiglitazone → hypoglycemia, hyperinsulinemic hypoglycemia
+   - Pioglitazone → hypoglycemia, hyperinsulinemic hypoglycemia
+
+5. Diazoxide → central diabetes insipidus (unrelated disease):
+   - Diazoxide → hyperglycemia, DKA (already in h480)
+   - Diazoxide → central diabetes insipidus (diazoxide has no role in DI)
+
+6. Vasopressin → hyperglycemia:
+   - Vasopressin treats diabetes insipidus, has no glucose-lowering effect
+
+DIABETES INSIPIDUS FALSE HIERARCHY MATCH:
+================================================================
+Diabetes insipidus (DI) is a COMPLETELY DIFFERENT disease from diabetes mellitus (DM).
+- DI: ADH deficiency → excessive thirst/urination (treated with desmopressin)
+- DM: Insulin deficiency/resistance → hyperglycemia
+
+The word "diabetes" caused false hierarchy matching.
+Fix: Added 'diabetes insipidus' to HIERARCHY_EXCLUSIONS for ('metabolic', 'diabetes')
+
+TOTAL IMPACT:
+================================================================
+- 18 NEW predictions demoted HIGH → FILTER (all novel, 0 GT loss)
+- Combined with h480 (8 predictions): total 26 inverse-indication predictions → FILTER
+- HIGH precision: 53.8% → 55.6% (+1.8pp)
+- GOLDEN precision: 64.2% → 64.4% (+0.2pp)
+- MEDIUM precision: 27.6% → 27.7% (+0.1pp)
+
+NOTE: D-glucose → hypoglycemia is CORRECT (D-glucose treats hypoglycemia) - kept in HIGH.
+NOTE: D-glucose → hyperglycemia is already FILTER with known=True (GT quirk, not our issue).
+
+CONCLUSION:
+================================================================
+1. Only metabolic hierarchy groups have inverse-indication issues (thyroid + diabetes)
+2. Root cause: hierarchy matches by organ system, not by drug mechanism
+3. 26 total harmful predictions removed with zero GT loss
+4. HIGH tier most improved (+1.8pp from removing false predictions)
+5. No further hierarchy groups at risk - audit is COMPLETE

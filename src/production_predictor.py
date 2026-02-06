@@ -647,12 +647,24 @@ INVERSE_INDICATION_PAIRS = {
     'levothyroxine': {'hyperthyroidism'},
     'liothyronine': {'hyperthyroidism'},
     # Diabetes: hyperglycemia-causing drugs → hyperglycemia/DKA
-    'diazoxide': {'hyperglycemia', 'diabetic ketoacidosis'},
-    # Diabetes: glucose → hyperglycemia
-    'd-glucose': {'hyperglycemia'},
-    'glucose': {'hyperglycemia'},
+    'diazoxide': {'hyperglycemia', 'diabetic ketoacidosis', 'central diabetes insipidus'},
     # Diabetes: glucagon → hyperglycemia (raises blood sugar)
     'glucagon': {'hyperglycemia'},
+    # Diabetes: vasopressin → hyperglycemia (not a glucose-lowering drug)
+    'vasopressin': {'hyperglycemia'},
+    # h482: Sulfonylureas/insulin → hypoglycemia (they CAUSE hypoglycemia)
+    # These drugs lower blood sugar; predicting them for hypoglycemia is inverse
+    'glipizide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    'glimepiride': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    'glyburide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    'tolazamide': {'hypoglycemia'},
+    'nateglinide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    'repaglinide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    'insulin lispro': {'hypoglycemia'},
+    'insulin human': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    # h482: Insulin sensitizers → hypoglycemia (can cause hypoglycemia)
+    'rosiglitazone': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    'pioglitazone': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
 }
 
 # h280/h281: Complication vs Subtype relationship mapping
@@ -925,7 +937,8 @@ HIERARCHY_EXCLUSIONS: Dict[Tuple[str, str], list[str]] = {
     # h467: 'pneumonia' matches autoimmune interstitial pneumonia (not infectious)
     ('infectious', 'pneumonia'): ['interstitial pneumonia'],
     # h467: 'diabetic' matches 'nondiabetic' and 'diabetic foot infections' (infection, not metabolic)
-    ('metabolic', 'diabetes'): ['nondiabetic', 'diabetic foot'],
+    # h482: 'diabetes' matches 'diabetes insipidus' (completely different disease - ADH deficiency)
+    ('metabolic', 'diabetes'): ['nondiabetic', 'diabetic foot', 'diabetes insipidus'],
     # h467: 'thyroid' matches 'thyroid cancer' (cancer, not metabolic)
     # h469: 'thyroid' matches 'parathyroid' (parathyroid gland ≠ thyroid gland, different organ)
     ('metabolic', 'thyroid'): ['thyroid cancer', 'parathyroid'],

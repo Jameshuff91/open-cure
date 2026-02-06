@@ -147,19 +147,20 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480)
 
-**Tier System (h480 updated 2026-02-06):**
-- GOLDEN: 64.2% full / 62.7% ± 13.5% holdout (median 57.7%, h472: GOLDEN>HIGH not significant p=0.574)
-- HIGH: 53.8% full / 51.1% ± 6.5% holdout
-- MEDIUM: 27.6% full / 23.3% ± 3.3% holdout
-- LOW: 12.4% full / 10.6% ± 1.6% holdout
-- FILTER: 11.3% full / 8.1% ± 1.0% holdout
+**Tier System (h482 updated 2026-02-06):**
+- GOLDEN: 64.4% full / 62.7% ± 13.5% holdout (median 57.7%, h472: GOLDEN>HIGH not significant p=0.574)
+- HIGH: 55.6% full / 51.1% ± 6.5% holdout
+- MEDIUM: 27.7% full / 23.3% ± 3.3% holdout
+- LOW: 12.2% full / 10.6% ± 1.6% holdout
+- FILTER: 11.4% full / 8.1% ± 1.0% holdout
 
 **h473/h480 (LATEST):** Literature validation of GOLDEN/HIGH novel predictions + inverse-indication safety fix.
   - GOLDEN novels: 75% clinical support (55% GT gaps, 20% promising, 0% harmful)
   - HIGH novels: 65% clinical support (35% GT gaps, 30% promising, 10% HARMFUL)
-  - Found 10 inverse-indication predictions (drug causes predicted disease):
-    anti-thyroid drugs→hypothyroidism, thyroid hormone→hyperthyroidism, diazoxide→hyperglycemia
-  - Implemented INVERSE_INDICATION_PAIRS filter: 8 predictions demoted to FILTER
+  - Found 26 inverse-indication predictions (drug causes predicted disease):
+    anti-thyroid→hypothyroidism, thyroid hormone→hyperthyroidism, sulfonylureas/insulin→hypoglycemia
+  - h482: Expanded to all diabetes hierarchy inverses + diabetes insipidus false match
+  - Implemented INVERSE_INDICATION_PAIRS filter: 26 predictions → FILTER (HIGH +1.8pp)
   - GT incompleteness (corticosteroids 37%, lipid drugs 27%) is main source of "novel" predictions
 
 **h469:** Parathyroid false match fix + holdout script bug fix.

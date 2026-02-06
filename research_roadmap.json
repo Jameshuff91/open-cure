@@ -9579,8 +9579,10 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
-      "category": "safety"
+      "status": "validated",
+      "category": "safety",
+      "findings": "Systematic audit of all 25 hierarchy groups for inverse-indication patterns.\n\nRESULT: Only 2 groups have inverse issues (both metabolic):\n1. metabolic_hierarchy_thyroid (fixed by h480): hypo/hyperthyroidism\n2. metabolic_hierarchy_diabetes (NEW, fixed by h482): hypo/hyperglycemia + diabetes insipidus\n\nDIABETES HIERARCHY ISSUES FOUND:\n- Sulfonylureas (glipizide, glimepiride, tolazamide) \u2192 hypoglycemia: HARMFUL\n- Meglitinides (nateglinide, repaglinide) \u2192 hypoglycemia: HARMFUL\n- Insulin (human, lispro) \u2192 hypoglycemia: HARMFUL\n- Insulin sensitizers (rosiglitazone, pioglitazone) \u2192 hypoglycemia: HARMFUL\n- Vasopressin \u2192 hyperglycemia: no glucose-lowering effect\n- Diazoxide \u2192 central diabetes insipidus: unrelated disease\n- 'diabetes insipidus' false hierarchy match: added to HIERARCHY_EXCLUSIONS\n\nIMPACT:\n- 18 NEW predictions demoted HIGH \u2192 FILTER (0 GT loss)\n- Combined with h480: 26 total inverse-indication predictions \u2192 FILTER\n- HIGH precision: 53.8% \u2192 55.6% (+1.8pp)\n- Audit COMPLETE: no other hierarchy groups have inverse issues\n\nALL 23 OTHER GROUPS CLEAN: autoimmune, cardiovascular, infectious, neurological, respiratory hierarchy groups have no opposite conditions.",
+      "result_metric": "18 additional harmful HIGH predictions \u2192 FILTER; HIGH +1.8pp"
     },
     {
       "id": "h483",
@@ -11229,6 +11231,12 @@
       "hypothesis_id": "h480",
       "learning": "HIGH novel validation: 65% clinical support (35% GT gap, 30% promising, 25% weak, 10% HARMFUL). Found 10 inverse-indication predictions: anti-thyroid drugs\u2192hypothyroidism, thyroid hormones\u2192hyperthyroidism, diazoxide\u2192hyperglycemia. Hierarchy rules don't account for opposite conditions in same organ system. Implemented INVERSE_INDICATION_PAIRS filter.",
       "implication": "Literature validation catches safety issues that holdout cannot. Hierarchy rules need systematic audit for inverse patterns. Every tier should be literature-validated."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h482",
+      "learning": "Only metabolic hierarchy groups (thyroid, diabetes) have inverse-indication issues. Root cause: hierarchy matches by organ system keyword, not drug mechanism. 26 total harmful predictions removed. Autoimmune/CV/infectious/neurological/respiratory hierarchies are clean.",
+      "implication": "Inverse-indication check should be standard for any NEW hierarchy group added. Only metabolic groups need opposite-condition checking."
     }
   ],
   "collaborations": [
