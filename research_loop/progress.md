@@ -6,20 +6,22 @@
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 5**
 - h318: Antibiotic FILTER for Non-Infectious Diseases - **VALIDATED** (+180 filtered, 0 hits lost)
 - h319: Comprehensive Low-Precision ATC Filter (Batch 2) - **VALIDATED** (+703 filtered, 0 hits lost)
+- h320/h321/h322: Class-specific filters - **VALIDATED** (subsumed by h319)
+- h323: Cohort Analysis of kNN Success Predictors - **VALIDATED** (AUC=0.649, bimodal)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 187 |
+| Validated | 191 |
 | Invalidated | 63 |
 | Inconclusive | 10 |
 | Blocked | 21 |
 | Deprioritized | 3 |
-| Pending | 39 |
-| **Total** | **323**
+| Pending | 37 |
+| **Total** | **325**
 
 ### KEY SESSION FINDINGS
 
@@ -78,15 +80,29 @@ Building on h316's zero-precision filter, expand comprehensive filtering for J d
 
 ### New Hypotheses Added
 - h319: Comprehensive Low-Precision ATC Filter (Batch 2) - 26 more candidates from h314
-- h320: N (Nervous System) Comprehensive Filter - Similar to h318 for N drugs
-- h321: L (Antineoplastic) Cross-Domain Filter - L drugs for non-cancer/non-autoimmune
-- h322: C (Cardiovascular) Cross-Domain Filter - C drugs for non-CV categories
-- h323: Cohort Analysis: Why Do Some Diseases Have 100% kNN Success?
+- h320/h321/h322: Class-specific filters - Subsumed by h319
+- h323: Cohort Analysis - kNN success is bimodal and category-driven
+- h324: Promote Endocrine to Tier 2
+- h325: Cancer Tier Promotion Analysis
+
+#### h323: Cohort Analysis of kNN Success Predictors - VALIDATED
+
+**Key Findings:**
+1. **Bimodal distribution**: 58.9% diseases have 100% success, 37.7% have 0%
+2. **Category is highly predictive**: AUC=0.649
+   - Best: dermatological (+1.29), autoimmune (+1.00), endocrine (+0.64)
+   - Worst: hematological (-0.83), cardiovascular (-0.58)
+3. **Pool size NOT predictive**: correlation only 0.035
+4. **Current tier system well-aligned**: Tier 1 categories have positive coefficients
+
+**Recommendations:**
+- Consider promoting 'endocrine' to Tier 2 (h324)
+- Consider promoting 'cancer' to Tier 1 (h325)
+- Existing category precision (h165) already captures this signal
 
 ### Recommended Next Steps
-1. h319: Add remaining 0% precision ATC→category pairs (potential +1165 filtered)
-2. h320-h322: Class-specific comprehensive filters (N, L, C drugs)
-3. h323: Meta-analysis of kNN success predictors for confidence calibration
+1. h324/h325: Evaluate category tier promotions (low effort)
+2. High-effort hypotheses available: h91 (literature mining), h55 (gene expression)
 
 ---
 

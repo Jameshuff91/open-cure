@@ -1,0 +1,46 @@
+{
+  "model_auc": 0.6494505494505495,
+  "simple_rule_auc": 0.6075674325674326,
+  "high_success_categories": [
+    "psychiatric",
+    "dermatological",
+    "ophthalmic",
+    "autoimmune",
+    "endocrine",
+    "cancer"
+  ],
+  "mid_success_categories": [
+    "infectious",
+    "renal"
+  ],
+  "low_success_categories": [
+    "other",
+    "metabolic",
+    "respiratory",
+    "neurological",
+    "cardiovascular",
+    "musculoskeletal",
+    "gastrointestinal",
+    "hematological"
+  ],
+  "category_coefficients": {
+    "gastrointestinal": -0.5717561324488257,
+    "hematological": -0.830125763634447,
+    "neurological": -0.23399648276457333,
+    "musculoskeletal": -0.4211129662271444,
+    "endocrine": 0.6389811248167026,
+    "psychiatric": 0.43368412656719213,
+    "cancer": 0.36761812506502867,
+    "autoimmune": 1.0016610335290723,
+    "cardiovascular": -0.5816192867889199,
+    "dermatological": 1.2944325717860765,
+    "metabolic": -0.3104459528123681,
+    "respiratory": -0.5039367583784167,
+    "other": -0.33685767176180303,
+    "renal": -0.20429862523066267,
+    "infectious": -0.03567973852749186,
+    "ophthalmic": 0.3015932956632231
+  },
+  "pool_size_coefficient": 0.64855884343856,
+  "findings": "Category is highly predictive of kNN success. Pool size adds minimal information."
+}

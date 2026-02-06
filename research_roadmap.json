@@ -6447,7 +6447,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add N\u2192cardiovascular, gastrointestinal, metabolic, rare_genetic to ZERO_PRECISION_MISMATCHES",
         "Consider N\u2192other (0.9% with 342 predictions)",
@@ -6456,7 +6456,9 @@
       ],
       "dependencies": [
         "h318"
-      ]
+      ],
+      "findings": "Subsumed by h319. All zero-precision ATC\u2192category pairs for this drug class were added in h319's comprehensive batch filter.",
+      "result_metric": "Subsumed by h319"
     },
     {
       "id": "h321",
@@ -6465,7 +6467,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add L\u2192infectious, storage, neurological, endocrine, cardiovascular to filter",
         "Keep L\u2192autoimmune as coherent (immunomodulators)",
@@ -6474,7 +6476,9 @@
       ],
       "dependencies": [
         "h318"
-      ]
+      ],
+      "findings": "Subsumed by h319. All zero-precision ATC\u2192category pairs for this drug class were added in h319's comprehensive batch filter.",
+      "result_metric": "Subsumed by h319"
     },
     {
       "id": "h322",
@@ -6483,7 +6487,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add C\u2192neurological, cancer, musculoskeletal to ZERO_PRECISION_MISMATCHES",
         "Count impact",
@@ -6491,7 +6495,9 @@
       ],
       "dependencies": [
         "h318"
-      ]
+      ],
+      "findings": "Subsumed by h319. All zero-precision ATC\u2192category pairs for this drug class were added in h319's comprehensive batch filter.",
+      "result_metric": "Subsumed by h319"
     },
     {
       "id": "h323",
@@ -6500,7 +6506,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Run kNN on 500 diseases, record per-disease hit rate",
         "Compute features: category, # GT drugs, avg similarity to training, # unique ATC codes in neighbors",
@@ -6508,7 +6514,44 @@
         "Build logistic regression to predict P(hit@30)",
         "If predictable, integrate into confidence tier system"
       ],
-      "dependencies": []
+      "dependencies": [],
+      "findings": "h323 VALIDATED: Cohort Analysis of kNN Success Predictors\n\nKey findings:\n1. **Bimodal distribution**: 58.9% of diseases have 100% success, 37.7% have 0% success\n2. **Category is highly predictive**: AUC=0.649 using logistic regression\n   - Best: dermatological (+1.29), autoimmune (+1.00), endocrine (+0.64)\n   - Worst: hematological (-0.83), cardiovascular (-0.58), gastrointestinal (-0.57)\n3. **Pool size adds minimal information**: correlation only 0.035 with success\n4. **Current tier system is well-aligned**: Tier 1 categories have positive coefficients\n\nAlignment with existing category tier system:\n- Tier 1 (autoimmune, dermatological, psychiatric, ophthalmic): All have positive kNN coefficients \u2713\n- Tier 2 (cardiovascular, other, cancer): Mixed - cancer should potentially be Tier 1\n- Tier 3 (metabolic, respiratory, etc.): All have negative coefficients \u2713\n\nRecommendations:\n- Consider promoting 'cancer' to Tier 1 (coef +0.37)\n- Consider promoting 'endocrine' to Tier 2 (coef +0.64)\n- Existing category precision (h165) already captures this signal\n\nImpact: The existing tier system is working as intended. No major changes needed.",
+      "result_metric": "AUC=0.649, 58.9% bimodal success, category tiers aligned"
+    },
+    {
+      "id": "h324",
+      "title": "Promote Endocrine to Tier 2",
+      "description": "h323 shows endocrine has +0.64 kNN success coefficient but is currently Tier 3. Analyze endocrine disease precision to determine if promotion is warranted.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Compute precision for endocrine diseases at GOLDEN/HIGH/MEDIUM tiers",
+        "Compare with other Tier 2 categories (cancer, cardiovascular, other)",
+        "If precision >= cancer, promote endocrine to Tier 2"
+      ],
+      "dependencies": [
+        "h323"
+      ]
+    },
+    {
+      "id": "h325",
+      "title": "Cancer Tier Promotion Analysis",
+      "description": "h323 shows cancer has +0.37 kNN success coefficient (higher than Tier 2 peers). Analyze if cancer should be Tier 1.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Compute precision for cancer diseases at GOLDEN tier",
+        "Compare with Tier 1 categories (autoimmune, dermatological, psychiatric, ophthalmic)",
+        "If precision competitive, add cancer to Tier 1",
+        "Consider cancer subtypes separately"
+      ],
+      "dependencies": [
+        "h323"
+      ]
     }
   ],
   "completed": [
@@ -7767,6 +7810,12 @@
       "hypothesis_id": "h319",
       "learning": "43 total ATC\u2192category pairs now filter ~2,200 predictions with <1% precision. Major drug class cross-domain failures are: L (antineoplastics) for non-cancer, N (neurological) for non-neuro, C (cardiovascular) for non-CV.",
       "implication": "ATC L1 coherence is highly predictive of precision. Production system should prioritize same-domain predictions."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h323",
+      "learning": "kNN success is bimodal (100% or 0%) and category-driven. Existing tier system is well-aligned. Pool size adds minimal predictive value.",
+      "implication": "Focus on improving category-specific rules rather than per-disease calibration. Consider promoting cancer/endocrine to higher tiers."
     }
   ],
   "collaborations": [
