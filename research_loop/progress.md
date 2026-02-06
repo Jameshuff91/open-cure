@@ -6,9 +6,13 @@
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 6**
 - h486: Drug-Induced Disease Filter: Systematic Adverse Effect Mining - **VALIDATED**
 - h525: SIDER Indication-Based GT Expansion - **VALIDATED** (+51 GT pairs, HIGH +1.2pp)
+- h527: Corticosteroid Iatrogenic Audit - **VALIDATED** (0 unfiltered, already comprehensive)
+- h528: NSAID Iatrogenic Audit - **VALIDATED** (+1 celecoxib→ischemic stroke)
+- h519: CV Pathway-Comprehensive Re-evaluation - **VALIDATED** (40.8% holdout, MEDIUM confirmed)
+- h523: Anticoagulant SOC Signal - **INCONCLUSIVE** (n=10/seed too small)
 
 ### Key Findings
 

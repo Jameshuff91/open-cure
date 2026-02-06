@@ -10293,10 +10293,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h492"
-      ]
+      ],
+      "findings": "cv_pathway_comprehensive re-evaluated in h525 holdout run:\n- Full-data: 69.2%\n- Holdout: 40.8% \u00b1 9.3% (n=16/seed, n_total=104)\n- Still well above MEDIUM average (28.8%), confirming MEDIUM tier is correct\n- Large full-to-holdout gap (28.4pp) is expected due to self-referentiality in CV drugs\n- No tier change needed.",
+      "result_metric": "40.8% \u00b1 9.3% holdout, MEDIUM confirmed"
     },
     {
       "id": "h520",
@@ -10369,10 +10371,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "inconclusive",
       "depends_on": [
         "h520"
-      ]
+      ],
+      "findings": "Anticoagulant LOW tier: 48 predictions total (n\u224810/seed), almost all cardiovascular.\nPredictions are medically plausible (DVT, PE, ACS, stroke, etc.) but n is too small for \nreliable holdout evaluation (our minimum is n\u224830). Cannot confirm or deny promotion.",
+      "result_metric": "n=48 total (10/seed), too small for reliable holdout"
     },
     {
       "id": "h524",
