@@ -8080,6 +8080,72 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h403",
+      "title": "Edge2Vec: Edge-Type-Aware Embeddings for DRKG",
+      "description": "LITERATURE-INFORMED: Vanilla Node2Vec treats all 107 DRKG edge types equally. Edge2Vec (and similar heterogeneous graph methods) use edge-type-aware random walks, weighting transitions by edge type. Since DRKG is highly heterogeneous (gene-gene, drug-gene, drug-disease, disease-gene, etc.), this could capture richer structural patterns. May break the 37% DRKG ceiling without external data. Ref: edge2vec paper, KG review in Briefings in Bioinformatics 2024.",
+      "hypothesis": "Replacing Node2Vec with Edge2Vec (edge-type-aware random walks) on DRKG will produce embeddings that better capture heterogeneous relationships, improving kNN R@30 by 3-8pp over vanilla Node2Vec (currently 37%).",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "steps": [
+        "Step 1: Research Edge2Vec implementation (pip install or GitHub). Verify it handles DRKG's 107 edge types.",
+        "Step 2: Prepare DRKG in Edge2Vec format (node pairs + edge types)",
+        "Step 3: Train Edge2Vec embeddings with same dimensions (256) as current Node2Vec for fair comparison",
+        "Step 4: Run honest evaluation: remove treatment edges, retrain embeddings, 5-seed disease holdout",
+        "Step 5: Compare kNN k=20 R@30: Edge2Vec vs Node2Vec (current 26.06% honest, 36.59% with treatment edges)",
+        "Step 6: If improved, test category-specific k values (h400) with Edge2Vec embeddings",
+        "Step 7: May require GPU for training on full DRKG - use Vast.ai if needed",
+        "Step 8: Success criteria: R@30 > 30% honest (4pp improvement over current 26%)"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h404",
+      "title": "LINCS L1000 Transcriptional Signature Integration",
+      "description": "LITERATURE-INFORMED: AMVL (2025) achieved SOTA by integrating CMap/LINCS L1000 chemical-induced transcriptional profiles with KG embeddings. LINCS L1000 contains gene expression signatures for ~20K compounds across cell lines. Drug-drug similarity based on transcriptional signatures captures mechanism-of-action similarity that KG structure misses. Data is freely available via LINCS API (lincscloud.org) or GEO (GSE92742, GSE70138). This is the most promising external data source identified in literature review. Supersedes h92.",
+      "hypothesis": "Computing drug similarity from LINCS L1000 transcriptional signatures and using it as an additional signal (either as kNN feature or separate similarity metric for ensemble) will improve R@30 by 3-5pp, especially for drugs with weak KG connectivity (biologics, novel mechanisms).",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "steps": [
+        "Step 1: Download LINCS L1000 Level 5 data (moderated z-scores) from GEO (GSE92742 for Phase I, GSE70138 for Phase II). These are ~3GB compressed.",
+        "Step 2: Map LINCS perturbagen IDs to DrugBank IDs (via PubChem CID or drug name matching)",
+        "Step 3: For each drug pair, compute transcriptional similarity (cosine of L1000 signature vectors)",
+        "Step 4: Build drug-drug similarity matrix from L1000 signatures",
+        "Step 5: Test as kNN feature: for each candidate drug, compute max L1000 similarity to known treatments (like chemical similarity boost)",
+        "Step 6: Test as ensemble signal: separate kNN using L1000 drug similarity instead of Node2Vec disease similarity",
+        "Step 7: Coverage analysis: what % of our prediction drugs have L1000 data?",
+        "Step 8: Success criteria: R@30 improvement > 2pp with L1000 integration"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h405",
+      "title": "Multi-Method Consilience Ensemble (TransE + kNN + Chemical)",
+      "description": "LITERATURE-INFORMED: PMC 2024 paper showed combining 7 KG completion methods via intersection voting achieved 0.979 MRR and 80% human validation. We already have multiple scoring methods (kNN, TransE, chemical similarity, ATC, pathway) but only use kNN with feature boosts. A proper ensemble via rank voting could improve both recall and precision. The consilience principle: predictions agreed upon by multiple independent methods are more likely true.",
+      "hypothesis": "Using rank-based voting across kNN, TransE, and chemical similarity (3 independent methods) will identify a high-confidence subset of predictions with precision >60%, even if overall R@30 doesn't improve. The intersection of top-30 from each method should have much higher precision than any single method.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Generate full drug rankings from each method independently: (a) kNN collaborative filtering, (b) TransE cosine similarity, (c) Chemical fingerprint similarity to known treatments",
+        "Step 2: For each disease, compute rank-based voting: average rank across methods, or count methods where drug appears in top-30",
+        "Step 3: Measure R@30 for consensus predictions (drugs in top-30 of 2+ methods)",
+        "Step 4: Measure precision of consensus vs individual methods",
+        "Step 5: Analyze which disease categories benefit most from ensemble",
+        "Step 6: Compare to current single-method kNN with feature boosts",
+        "Step 7: If precision improves, integrate as a new confidence signal in tier assignment",
+        "Step 8: Success criteria: Consensus predictions (top-30 in 2+ methods) achieve >50% precision"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
