@@ -4545,7 +4545,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add alcohol withdrawal -> benzodiazepine, anticonvulsant, naltrexone",
         "Add bulimia nervosa -> SSRI (fluoxetine approved)",
@@ -4554,7 +4554,9 @@
       ],
       "dependencies": [
         "h174"
-      ]
+      ],
+      "findings": "h228 VALIDATED: Psychiatric keywords already present, kNN coverage is the issue\n\nANALYSIS:\n- Keywords (bulimia, alcohol withdrawal, hyperactive) ARE in CATEGORY_KEYWORDS\n- Predictions exist but were categorized as 'other' (stale predictions file)\n- 90 predictions for target diseases but only 1/90 = 1.1% precision\n\nKEY FINDING: The issue is NOT keywords but kNN coverage:\n- Diazepam IS predicted for conduct disorders but NOT for alcohol withdrawal\n- Haloperidol IS predicted but NOT for conduct disorder\n- The correct drug-disease pairs aren't in the kNN neighborhood\n\nGT DRUGS for target conditions:\n- diazepam/oxazepam/clorazepic \u2192 alcohol withdrawal\n- fluoxetine \u2192 bulimia nervosa (only HIT)\n- haloperidol/chlorpromazine \u2192 conduct disorders\n\nkNN LIMITATION: These drugs ARE predicted, just for WRONG diseases\n- Diazepam predicted for 49 diseases, but not alcohol withdrawal\n- kNN learns from DRKG graph, which may not have these specific edges\n\nCONCLUSION: Keywords are correct. Low precision is due to kNN coverage, not categorization.\nNo changes needed to production_predictor.py.",
+      "result_metric": "1/90 = 1.1% precision - kNN coverage issue, not keyword issue"
     },
     {
       "id": "h229",
