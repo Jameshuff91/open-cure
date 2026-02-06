@@ -1,15 +1,17 @@
 # Research Loop Progress
 
-## Current Session: h453, h456, h457 (2026-02-06)
+## Current Session: h453, h456, h457, h458, h450 (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 3**
+**Hypotheses Tested: 5**
 - h453: External-Signal-Only Within-Tier Ranking - **INVALIDATED** (no external signal adds >0pp to kNN rank)
 - h456: Train Frequency as Disease-Level Difficulty Predictor - **INVALIDATED** (confounded by category)
 - h457: Within-Tier Rank Calibration Curve - **VALIDATED** (MEDIUM monotonic, HIGH broken)
+- h458: HIGH Tier Rank Instability Diagnosis - **VALIDATED** (hierarchy rescue causes non-monotonicity)
+- h450: Weighted kNN by Neighborhood Stability Score - **INVALIDATED** (direction varies by tier)
 
 ### h453: External-Signal-Only Within-Tier Ranking - INVALIDATED
 
@@ -52,17 +54,41 @@ Updated RANK_BUCKET_PRECISION constants with new holdout-validated values.
 3. **Rank calibration varies drastically by tier:** MEDIUM=reliable, HIGH=broken, LOW=reversed (h457)
 4. **Collider bias is fundamental:** tier assignment conditions on rank + signals, making them anti-correlated within tiers
 
+### h458: HIGH Tier Rank Instability Diagnosis - VALIDATED
+
+Hierarchy rescue rules promote drugs at ALL rank positions, creating non-monotonic rank calibration.
+- Hierarchy HIGH: flat ~31% precision across all rank buckets (hierarchy IS the signal)
+- Non-hierarchy HIGH: clean gradient 31.3% → 10.7% (rank IS the signal)
+- R16-20 precision spike (38.1%) explained by hierarchy rescue at high ranks
+
+### h450: Weighted kNN by Neighborhood Stability Score - INVALIDATED
+
+Mean neighbor similarity is NOT a useful meta-confidence signal.
+- LOW-similarity diseases have HIGHER precision in most tiers (GOLDEN, HIGH, FILTER)
+- LOW-sim diseases are "island diseases" with unique signatures, rescued by hierarchy rules
+- MEDIUM inverts: HIGH-sim Q1=26.0% > LOW-sim Q4=13.4%, but not significant within-category
+- The tier system already compensates for neighborhood quality
+
+### Key Conclusions from This Session
+
+1. **Within-tier ranking is SOLVED:** kNN rank is optimal, no external signal improves it (h453)
+2. **Collider effect is real and fundamental:** Tier assignment makes rank and signals anti-correlated within tiers (h453)
+3. **Category confounding is pervasive:** Mean drug frequency (h456) and mean neighbor similarity (h450) are both confounded by category
+4. **MEDIUM rank calibration is reliable:** monotonic on holdout, 20.5% → 9.2% across rank buckets (h457)
+5. **HIGH rank calibration is broken:** hierarchy rescue at all ranks, not rank-dependent (h458)
+6. **Sparse neighborhoods ≠ unreliable:** Low-sim diseases actually get BETTER predictions via hierarchy rescue (h450)
+
 ### New Hypotheses Generated
 - h455: Collider Bias Decomposition (Priority 5)
-- h456: Train Frequency as Disease Difficulty (tested, invalidated)
-- h457: Rank Calibration Curve (tested, validated)
-- h458: HIGH Tier Rank Instability Diagnosis (Priority 4)
+- h458: HIGH Rank Instability (tested, validated)
 - h459: Category-Adjusted Rank Calibration (Priority 5)
+- h460: Split HIGH into Hierarchy vs Default (Priority 5)
+- h461: Sparse Neighborhood Disease Classification (Priority 5)
 
 ### Recommended Next Steps
-1. **h458:** Diagnose which hierarchy rules cause HIGH tier rank distortion (Priority 4, low effort)
-2. **h450:** Weighted kNN by Neighborhood Stability Score (Priority 4, medium effort)
-3. **h410:** Literature Validation of 1-Disease Hierarchy Rules (Priority 3, medium effort)
+1. **h410:** Literature Validation of 1-Disease Hierarchy Rules (Priority 3, medium effort)
+2. **h373:** Weighted Rank Fusion by Method Confidence (Priority 4, medium effort)
+3. **h367:** Disease-Specific Gene Weighting (Priority 4, medium effort)
 
 ---
 

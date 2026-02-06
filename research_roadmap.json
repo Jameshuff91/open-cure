@@ -8982,7 +8982,7 @@
       "title": "Weighted kNN by Neighborhood Stability Score",
       "description": "h436 showed subsampling hurts. h437 showed neighbor stability correlates with tier precision (+10-13pp for stable neighborhoods). Instead of bootstrapping, use the known stability signal: for each drug prediction, weight its score by the MEAN COSINE SIMILARITY of the disease to its k neighbors. High mean similarity = stable neighborhood = more reliable ranking. This is a meta-confidence signal, not a ranking change.",
       "hypothesis": "Diseases with higher mean neighbor similarity will have more reliable predictions. Weighting predictions by mean neighbor similarity will improve tier precision without changing rankings.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8992,7 +8992,9 @@
         "Compare GT hit rates between groups (full-data and holdout)",
         "If significant gap (>10pp), use as meta-confidence for tier adjustment",
         "Run holdout validation"
-      ]
+      ],
+      "findings": "Mean neighbor similarity is NOT a useful meta-confidence signal. The direction of the signal varies by tier and is largely confounded by disease characteristics.\n\nFull-data per-tier precision by disease mean_sim quartile:\n- GOLDEN: Q4 (lowest sim) = 85.1% vs Q1 (highest sim) = 61.2% (LOW sim better!)\n- HIGH: Q4 = 60.5% vs Q1 = 0.0% \n- MEDIUM: Q4 = 39.0% vs Q1 = 27.3% (LOW sim better on full-data)\n- FILTER: Q4 = 24.8% vs Q1 = 6.1%\n\nHoldout (5-seed):\n- GOLDEN: Q4=63.9% > Q1=56.3% (gap -7.6pp, low-sim diseases better)\n- HIGH: Q4=31.1% >> Q1=1.0% (gap -30.1pp, low-sim diseases MUCH better)\n- MEDIUM: Q1=26.0% > Q4=13.4% (gap +12.7pp, high-sim diseases better \u2014 INVERTS!)\n- LOW: Q4=8.5% > Q1=5.5% (gap -3.0pp, low-sim better)\n- FILTER: Q4=8.5% > Q1=3.1% (gap -5.3pp, low-sim better)\n\nWithin-category control (MEDIUM): +4.4 \u00b1 5.2pp (not significant after controlling for category)\n\nWHY LOW SIMILARITY DISEASES HAVE HIGHER PRECISION (most tiers):\n- Low-sim diseases are in sparse regions of embedding space (few similar diseases)\n- These tend to be specific diseases with unique drug signatures\n- Hierarchy rescue rules (h273) are DESIGNED for specific disease groups\n- These diseases get hierarchy matches \u2192 HIGH/GOLDEN promotion \u2192 high precision\n- Meanwhile, high-sim diseases are in dense clusters where predictions are less specific\n\nThe hypothesis was based on the assumption that dense neighborhoods = more reliable predictions. The DATA shows the opposite: sparse neighborhoods get better RESCUED predictions because the hierarchy rules catch them. The kNN predictions may be less reliable, but the tier system compensates.\n\nConclusion: Mean neighbor similarity cannot be used as meta-confidence because its direction depends on tier assignment, which is the mechanism that converts unreliable kNN predictions into reliable hierarchy-based predictions.",
+      "result_metric": "HIGH: Q4>Q1 by -30.1pp. MEDIUM: Q1>Q4 by +12.7pp (but not significant within-category). Direction varies by tier."
     },
     {
       "id": "h451",
@@ -9173,6 +9175,22 @@
         "For hierarchy: report uniform precision (31%)",
         "For non-hierarchy: report rank-based precision (31% \u2192 11%)",
         "Evaluate: does this help clinician decision-making?"
+      ]
+    },
+    {
+      "id": "h461",
+      "title": "Sparse Neighborhood Disease Classification",
+      "description": "h450 showed diseases with LOW mean neighbor similarity get HIGHER precision in GOLDEN/HIGH tiers because hierarchy rules rescue them. These are \"island diseases\" with unique drug signatures. Investigate: what characterizes these diseases? Are they rare diseases, niche therapeutic areas, or just diseases with few similar conditions? This understanding could guide which diseases are good candidates for repurposing vs which need novel approaches.",
+      "hypothesis": "Low-similarity diseases are enriched for rare/orphan diseases and specific therapeutic niches, explaining their higher precision from hierarchy rescue.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Identify Q4 (lowest similarity) diseases",
+        "Characterize: rare vs common, category distribution, GT drug count",
+        "Compare Q4 characteristics to Q1 (highest similarity)",
+        "Check if rarity/specificity explains the hierarchy rescue advantage"
       ]
     }
   ],
@@ -10757,6 +10775,12 @@
       "hypothesis_id": "h458",
       "learning": "HIGH tier rank distortion is caused by hierarchy rescue rules that promote drugs at ALL rank positions. Hierarchy-matched drugs have ~31% precision regardless of rank (hierarchy IS the signal). Non-hierarchy HIGH predictions have clean rank gradient (31% \u2192 11%). Rank calibration only meaningful for non-hierarchy HIGH predictions.",
       "implication": "For HIGH tier, present overall precision (31%) not rank-based calibration. Hierarchy match is binary, not graded by rank."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h450",
+      "learning": "Mean neighbor similarity is NOT a useful meta-confidence signal. Low-similarity diseases actually have HIGHER precision in GOLDEN/HIGH/FILTER because they are specific diseases rescued by hierarchy rules. The tier system COMPENSATES for kNN unreliability in sparse neighborhoods. Direction of the signal varies by tier.",
+      "implication": "Do not use neighborhood density/similarity as meta-confidence. The tier system already accounts for neighborhood quality through its hierarchy and rescue rules."
     }
   ],
   "collaborations": [
