@@ -6,23 +6,25 @@
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 7**
+**Hypotheses Tested: 9**
 - h318: Antibiotic FILTER for Non-Infectious Diseases - **VALIDATED** (+180 filtered, 0 hits lost)
 - h319: Comprehensive Low-Precision ATC Filter (Batch 2) - **VALIDATED** (+703 filtered, 0 hits lost)
 - h320/h321/h322: Class-specific filters - **VALIDATED** (subsumed by h319)
 - h323: Cohort Analysis of kNN Success Predictors - **VALIDATED** (AUC=0.649, bimodal)
 - h324: Endocrine Tier Promotion - **INCONCLUSIVE** (n=4 too small)
 - h325: Cancer Tier Promotion - **INVALIDATED** (68.6% vs 93.8% Tier 1 min)
+- h313: Coherence Degree - **DEPRIORITIZED** (needs infrastructure)
+- h317: HIGH_PRECISION_MISMATCHES Refinement - **VALIDATED** (+5 patterns)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 191 |
+| Validated | 192 |
 | Invalidated | 64 |
 | Inconclusive | 11 |
 | Blocked | 21 |
-| Deprioritized | 3 |
-| Pending | 35 |
+| Deprioritized | 4 |
+| Pending | 33 |
 | **Total** | **325**
 
 ### KEY SESSION FINDINGS

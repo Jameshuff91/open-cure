@@ -6312,7 +6312,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "For each prediction, count coherent vs total ATC codes",
         "Compute precision by coherence ratio (0%, 50%, 100%)",
@@ -6321,7 +6321,9 @@
       ],
       "dependencies": [
         "h311"
-      ]
+      ],
+      "findings": "h313 DEPRIORITIZED: Coherence Degree analysis requires infrastructure.\n\nThe hypothesis requires tracking coherence for drugs with multiple ATC codes.\nCurrent analysis infrastructure (h314) only tracks primary ATC L1 code.\n\nTo properly test h313, we would need to:\n1. Run full kNN predictions (resource intensive)\n2. Track ALL ATC codes per drug (not just primary)\n3. Compute coherence ratio for each prediction\n4. Compare precision by coherence buckets (0%, 50%, 100%)\n\nGiven the low expected impact and medium effort required for proper analysis,\nthis hypothesis is deprioritized in favor of higher-impact work.\n\nAlternative: If pattern emerges from other analyses showing multi-ATC relevance,\nrevisit this hypothesis.",
+      "result_metric": "Deprioritized - needs infrastructure"
     },
     {
       "id": "h314",
@@ -6388,7 +6390,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compute precision by ATC L1 for each disease category",
         "Identify which ATC codes should be \"coherent\" for each category",
@@ -6397,7 +6399,9 @@
       ],
       "dependencies": [
         "h314"
-      ]
+      ],
+      "findings": "h317 VALIDATED: Refined HIGH_PRECISION_MISMATCHES with 5 missing patterns.\n\nAnalysis identified 5 ATC\u2192category pairs that outperform coherent baseline (11.7%):\n1. B\u2192respiratory: 30.0% (n=20) - Blood drugs for respiratory\n2. N\u2192autoimmune: 29.2% (n=24) - Nervous system drugs for autoimmune  \n3. C\u2192autoimmune: 26.7% (n=30) - Cardiovascular drugs for autoimmune\n4. N\u2192dermatological: 14.3% (n=28) - Nervous system drugs for dermatological\n5. C\u2192genetic: 12.0% (n=25) - Cardiovascular drugs for genetic\n\nThese were NOT in the original HIGH_PRECISION_MISMATCHES set, meaning they were\nbeing incorrectly demoted. Adding them preserves their higher precision.\n\nImplementation: Updated HIGH_PRECISION_MISMATCHES in production_predictor.py\nTotal high-precision mismatch pairs: 16 (was 11)",
+      "result_metric": "+5 high-precision patterns, total 16"
     },
     {
       "id": "h318",

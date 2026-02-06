@@ -41,6 +41,10 @@ Unified pipeline integrating validated research findings:
   - Added 22 additional 0% precision ATC→category pairs
   - Includes: C/N drugs for non-CV/non-neuro, L for non-cancer/non-autoimmune, etc.
   - Filters additional 703 predictions with 0% precision (0 hits lost)
+- h317: Refine HIGH_PRECISION_MISMATCHES with 5 missing patterns
+  - B→respiratory (30%), N→autoimmune (29%), C→autoimmune (27%)
+  - N→dermatological (14%), C→genetic (12%)
+  - These "incoherent" pairs have HIGHER precision than coherent baseline (11.7%)
 
 USAGE:
     # Get predictions for a disease
@@ -887,7 +891,15 @@ DISEASE_CATEGORY_ATC_MAP: Dict[str, Set[str]] = {
 # h314/h316: ATC Mismatch-Specific Rules
 # Some "incoherent" predictions actually have HIGHER precision than coherent baseline (11.7%)
 # HIGH-PRECISION MISMATCHES - don't demote these (precision > coherent baseline):
+# h317: Added 5 missing high-precision patterns
 HIGH_PRECISION_MISMATCHES: Dict[Tuple[str, str], float] = {
+    # h317: New additions (>coherent baseline)
+    ('B', 'respiratory'): 30.0,      # Blood drugs for respiratory (30%!)
+    ('N', 'autoimmune'): 29.2,       # Nervous system drugs for autoimmune
+    ('C', 'autoimmune'): 26.7,       # Cardiovascular drugs for autoimmune
+    ('N', 'dermatological'): 14.3,   # Nervous system drugs for dermatological
+    ('C', 'genetic'): 12.0,          # Cardiovascular drugs for genetic
+    # Original h314 set
     ('D', 'respiratory'): 27.5,      # Dermatological drugs for respiratory
     ('A', 'ophthalmological'): 26.5, # Alimentary drugs for ophthalmic
     ('A', 'ophthalmic'): 26.5,       # Same for alternate spelling
