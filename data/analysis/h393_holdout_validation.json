@@ -27,42 +27,42 @@
       ]
     },
     "MEDIUM": {
-      "full_precision": 47.0,
-      "holdout_mean": 34.2,
-      "holdout_std": 2.7,
-      "delta": -12.8,
+      "full_precision": 49.1,
+      "holdout_mean": 35.8,
+      "holdout_std": 2.8,
+      "delta": -13.3,
       "seed_values": [
-        31.6,
-        35.1,
-        30.6,
-        37.8,
-        36.1
+        33.2,
+        36.0,
+        32.2,
+        39.2,
+        38.6
       ]
     },
     "LOW": {
-      "full_precision": 22.7,
-      "holdout_mean": 16.0,
-      "holdout_std": 2.5,
-      "delta": -6.7,
+      "full_precision": 22.0,
+      "holdout_mean": 15.5,
+      "holdout_std": 2.4,
+      "delta": -6.5,
       "seed_values": [
-        17.0,
-        14.7,
-        16.0,
-        19.9,
-        12.4
+        16.5,
+        14.5,
+        15.3,
+        19.3,
+        12.0
       ]
     },
     "FILTER": {
-      "full_precision": 17.1,
-      "holdout_mean": 10.4,
+      "full_precision": 17.2,
+      "holdout_mean": 10.6,
       "holdout_std": 1.3,
-      "delta": -6.7,
+      "delta": -6.6,
       "seed_values": [
         8.4,
         10.8,
-        9.7,
-        11.1,
-        12.2
+        9.9,
+        11.4,
+        12.3
       ]
     }
   },
@@ -79,12 +79,12 @@
     },
     "default": {
       "tier": "FILTER",
-      "full_precision": 20.8,
-      "full_n": 7801,
-      "holdout_mean": 13.5,
-      "holdout_std": 1.1,
-      "delta": -7.3,
-      "mean_n": 1632.8,
+      "full_precision": 21.3,
+      "full_n": 7584,
+      "holdout_mean": 13.8,
+      "holdout_std": 1.0,
+      "delta": -7.5,
+      "mean_n": 1582.8,
       "status": "degraded"
     },
     "complication_non_validated": {
@@ -119,12 +119,12 @@
     },
     "cancer_no_gt": {
       "tier": "FILTER",
-      "full_precision": 5.8,
-      "full_n": 308,
-      "holdout_mean": 7.1,
-      "holdout_std": 3.8,
-      "delta": 1.3,
-      "mean_n": 71.2,
+      "full_precision": 7.0,
+      "full_n": 356,
+      "holdout_mean": 6.9,
+      "holdout_std": 4.0,
+      "delta": -0.1,
+      "mean_n": 76.6,
       "status": "GENUINE"
     },
     "corticosteroid_iatrogenic": {
@@ -229,12 +229,12 @@
     },
     "incoherent_demotion": {
       "tier": "HIGH",
-      "full_precision": 40.9,
-      "full_n": 215,
-      "holdout_mean": 58.1,
-      "holdout_std": 6.2,
-      "delta": 17.2,
-      "mean_n": 60.2,
+      "full_precision": 41.5,
+      "full_n": 212,
+      "holdout_mean": 58.4,
+      "holdout_std": 6.4,
+      "delta": 16.9,
+      "mean_n": 59.8,
       "status": "GENUINE"
     },
     "cardiovascular_hierarchy_hypertension": {
@@ -489,32 +489,32 @@
     },
     "default_no_mech_high_rank": {
       "tier": "LOW",
-      "full_precision": 22.3,
-      "full_n": 341,
-      "holdout_mean": 15.6,
-      "holdout_std": 4.8,
-      "delta": -6.7,
-      "mean_n": 53.6,
+      "full_precision": 23.5,
+      "full_n": 319,
+      "holdout_mean": 17.1,
+      "holdout_std": 5.2,
+      "delta": -6.4,
+      "mean_n": 48.0,
       "status": "degraded"
     },
     "broad_class_isolated": {
       "tier": "LOW",
       "full_precision": 29.4,
       "full_n": 51,
-      "holdout_mean": 16.3,
-      "holdout_std": 11.1,
-      "delta": -13.1,
-      "mean_n": 9.4,
+      "holdout_mean": 17.1,
+      "holdout_std": 12.4,
+      "delta": -12.3,
+      "mean_n": 9.2,
       "status": "degraded"
     },
     "cancer_targeted_therapy": {
       "tier": "LOW",
-      "full_precision": 37.9,
-      "full_n": 243,
-      "holdout_mean": 12.5,
-      "holdout_std": 5.2,
-      "delta": -25.4,
-      "mean_n": 32.0,
+      "full_precision": 39.7,
+      "full_n": 232,
+      "holdout_mean": 13.1,
+      "holdout_std": 5.6,
+      "delta": -26.6,
+      "mean_n": 30.4,
       "status": "OVERFITTED?"
     },
     "neurological_medium_demotion": {
@@ -549,12 +549,22 @@
     },
     "cancer": {
       "tier": "LOW",
-      "full_precision": 10.7,
-      "full_n": 346,
-      "holdout_mean": 14.3,
-      "holdout_std": 2.7,
-      "delta": 3.6,
-      "mean_n": 74.4,
+      "full_precision": 10.0,
+      "full_n": 340,
+      "holdout_mean": 14.2,
+      "holdout_std": 2.6,
+      "delta": 4.2,
+      "mean_n": 73.2,
+      "status": "GENUINE"
+    },
+    "antimicrobial_pathogen_mismatch": {
+      "tier": "LOW",
+      "full_precision": 3.1,
+      "full_n": 287,
+      "holdout_mean": 2.6,
+      "holdout_std": 2.3,
+      "delta": -0.5,
+      "mean_n": 68.8,
       "status": "GENUINE"
     },
     "immunological_medium_demotion": {
@@ -566,16 +576,6 @@
       "delta": -20.3,
       "mean_n": 19.0,
       "status": "OVERFITTED?"
-    },
-    "antibiotic_viral_mismatch": {
-      "tier": "LOW",
-      "full_precision": 2.9,
-      "full_n": 35,
-      "holdout_mean": 5.0,
-      "holdout_std": 10.0,
-      "delta": 2.1,
-      "mean_n": 8.4,
-      "status": "GENUINE"
     },
     "hematological_corticosteroid_demotion": {
       "tier": "LOW",
@@ -639,22 +639,22 @@
     },
     "target_overlap_promotion": {
       "tier": "MEDIUM",
-      "full_precision": 61.8,
-      "full_n": 199,
-      "holdout_mean": 46.2,
-      "holdout_std": 4.9,
-      "delta": -15.6,
-      "mean_n": 44.2,
+      "full_precision": 62.4,
+      "full_n": 197,
+      "holdout_mean": 46.3,
+      "holdout_std": 4.8,
+      "delta": -16.1,
+      "mean_n": 44.0,
       "status": "OVERFITTED?"
     },
     "cancer_same_type": {
       "tier": "MEDIUM",
-      "full_precision": 47.4,
-      "full_n": 846,
-      "holdout_mean": 27.9,
-      "holdout_std": 4.5,
-      "delta": -19.5,
-      "mean_n": 125.0,
+      "full_precision": 49.6,
+      "full_n": 807,
+      "holdout_mean": 29.4,
+      "holdout_std": 4.9,
+      "delta": -20.2,
+      "mean_n": 118.4,
       "status": "OVERFITTED?"
     },
     "cardiovascular": {

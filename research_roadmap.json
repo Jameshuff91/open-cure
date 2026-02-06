@@ -11013,14 +11013,16 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Build drug\u2192antifungal/antibacterial/antiviral classification",
         "Build disease\u2192fungal/bacterial/viral classification from infectious disease names",
         "Cross-reference predictions for mismatches",
         "Measure holdout precision for mismatched vs matched predictions",
         "Implement demotion if mismatch holdout < LOW average"
-      ]
+      ],
+      "findings": "Antimicrobial-pathogen mismatch filter: 0% holdout precision across 5 seeds (132 total mismatch predictions, 0 hits).\nExpanded h556's antibiotic\u2192viral filter to comprehensive antimicrobial mismatch detection:\n- antibacterial\u2192fungal (7.4/seed), antibacterial\u2192parasitic (8.0/seed), antibacterial\u2192viral (3.0/seed)\n- antifungal\u2192parasitic (4.8/seed), antifungal\u2192viral (0.8/seed), antifungal\u2192bacterial (0.6/seed)\n- antiparasitic\u2192viral (0.2/seed)\nDual-activity drugs properly handled: metronidazole (antibacterial+antiparasitic), sulfadiazine, doxycycline, tetracycline, amphotericin B.\n10 legitimate cross-pathogen pairs excluded (e.g., amphotericin B\u2192leishmaniasis, doxycycline\u2192malaria).\nBug found: target_overlap_promotion was rescuing 11 mismatches MEDIUM\u2192LOW\u2192MEDIUM. Fixed by blocking.\n~30 MEDIUM predictions demoted to LOW. MEDIUM holdout: 34.9%\u219235.8% (+0.9pp).",
+      "result_metric": "MEDIUM +0.9pp (34.9%\u219235.8%), 0% mismatch holdout"
     },
     {
       "id": "h561",
@@ -11088,6 +11090,51 @@
       ],
       "findings": "Deliverable regenerated with h557+h562 fixes. 14150 predictions (280 GOLDEN, 757 HIGH, 2162 MEDIUM, 3550 LOW, 7401 FILTER). Includes gene_overlap_count, transe_consilience, literature_status columns. Deliverable counts slightly higher than holdout evaluator (473 vs 455 diseases).",
       "result_metric": "Deliverable regenerated with current tier system"
+    },
+    {
+      "id": "h565",
+      "title": "Antifungal\u2192Parasitic Specificity: Are Azole Antifungals Active Against Leishmania?",
+      "description": "h560 excluded ketoconazole\u2192leishmaniasis and itraconazole\u2192Chagas as \"legitimate cross-uses\". But the evidence for azole antifungals against parasites is weak (in-vitro only). A stricter classification might demote these too. Need literature validation of azole anti-parasitic activity.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Search PubMed for azole antifungal activity against Leishmania, Trypanosoma, Toxoplasma",
+        "Check whether any azole has FDA/WHO approval for parasitic infections",
+        "If evidence is weak, reclassify as mismatches and measure impact"
+      ]
+    },
+    {
+      "id": "h566",
+      "title": "Infectious MEDIUM Target Overlap Quality: Are Overlap-Rescued Predictions Valid?",
+      "description": "h560 found that 11 antimicrobial mismatch predictions were being rescued by target_overlap LOW\u2192MEDIUM promotion. This suggests target_overlap may rescue other low-quality infectious predictions. Audit all infectious target_overlap_promotion predictions for medical validity.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "List all infectious predictions with target_overlap_promotion rule",
+        "Check holdout precision vs non-infectious target_overlap",
+        "Validate a sample against medical literature",
+        "Consider blocking infectious target_overlap promotion if precision is poor"
+      ]
+    },
+    {
+      "id": "h567",
+      "title": "Comprehensive Drug Class \u00d7 Disease Type Matrix for All Categories",
+      "description": "h560 demonstrated that drug class \u2192 pathogen type mismatch is a strong filter for infectious diseases (0% holdout). Could similar drug-class \u00d7 disease-subtype mismatches exist in other categories? E.g., antihypertensives for neurological diseases, or antiepileptics for cardiac diseases. Build a systematic cross-tabulation.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Build ATC drug class taxonomy for top 200 drugs in predictions",
+        "Build disease subtype taxonomy for top categories",
+        "Cross-tabulate holdout precision by drug-class \u00d7 disease-subtype",
+        "Identify zero-precision mismatches across all categories",
+        "Implement demotion rules for validated mismatches"
+      ]
     }
   ],
   "completed": [
@@ -12977,6 +13024,12 @@
       "hypothesis_id": "h562",
       "learning": "Short abbreviation keywords (ALL, CLL, AML, CML) in substring matching cause false positives. 'all' matches 'small', 'fallopian', 'allergic'. Always use word boundary matching for keywords <=4 chars. This bug affected 8 diseases and 39 cancer_same_type predictions.",
       "implication": "Audit all substring matching in the codebase for short keyword false positives. Use regex word boundaries for abbreviations."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h560",
+      "learning": "Antimicrobial-pathogen mismatch is a clean 0% holdout signal. Drug class \u00d7 pathogen type is a strong biological rule. Dual-activity drugs (metronidazole, doxycycline, amphotericin B) must be handled carefully. Target_overlap promotion can rescue predictions that should stay demoted \u2014 always check for leakage paths.",
+      "implication": "Look for similar drug-class \u00d7 disease-subtype mismatches in other categories. Always check if target_overlap or other promotion paths override demotions."
     }
   ],
   "collaborations": [

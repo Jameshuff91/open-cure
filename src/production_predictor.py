@@ -2777,32 +2777,113 @@ class DrugRepurposingPredictor:
                 # Lidocaine in non-therapeutic category → procedural artifact
                 return ConfidenceTier.LOW, False, 'local_anesthetic_procedural'
 
-        # h556: Antibiotic → viral disease demotion
-        # Antibiotics (ATC J class) cannot treat viral infections (influenza, herpesvirus,
-        # HIV, hepatitis, smallpox, CMV, etc.). kNN co-prescription artifacts inflate scores.
-        # Full-data: 3.3% (1/30), holdout: 5.0% ± 10.0% (5.8/seed). Demote to LOW.
+        # h556/h560: Antimicrobial-pathogen mismatch demotion
+        # Antimicrobial drugs predicted for wrong pathogen type have 0% holdout (h560).
+        # h556 original: antibiotic→viral only. h560 expanded to all cross-pathogen mismatches.
+        # Dual-activity drugs excluded (e.g., metronidazole treats bacteria AND parasites).
+        # Holdout: mismatch 0.0% ± 0.0% (n=26.4/seed) vs matched 27.8% ± 4.8%.
         if category == 'infectious':
-            ANTIBIOTIC_CLASSES = {
-                'tetracycline', 'doxycycline', 'minocycline', 'demeclocycline', 'oxytetracycline', 'tigecycline',
+            # Drug antimicrobial activity sets (what pathogen types they can treat)
+            _DUAL_ACTIVITY = {
+                'metronidazole': {'antibacterial', 'antiparasitic'},
+                'sulfadiazine': {'antibacterial', 'antiparasitic'},
+                'doxycycline': {'antibacterial', 'antiparasitic'},
+                'tetracycline': {'antibacterial', 'antiparasitic'},
+                'amphotericin b': {'antifungal', 'antiparasitic'},
+            }
+            _ANTIBACTERIAL_DRUGS = {
                 'erythromycin', 'azithromycin', 'clarithromycin',
                 'ciprofloxacin', 'levofloxacin', 'moxifloxacin', 'ofloxacin', 'norfloxacin', 'gemifloxacin',
-                'gentamicin', 'tobramycin', 'amikacin', 'vancomycin', 'clindamycin', 'metronidazole',
-                'trimethoprim', 'sulfamethoxazole', 'nitrofurantoin', 'linezolid', 'daptomycin',
-                'amoxicillin', 'ampicillin', 'penicillin', 'piperacillin', 'cephalexin',
-                'ceftriaxone', 'cefazolin', 'cefepime', 'ceftazidime', 'meropenem', 'imipenem', 'ertapenem',
+                'gatifloxacin', 'garenoxacin', 'sitafloxacin',
+                'gentamicin', 'tobramycin', 'amikacin', 'streptomycin',
+                'vancomycin', 'clindamycin', 'trimethoprim', 'sulfamethoxazole', 'nitrofurantoin',
+                'linezolid', 'daptomycin',
+                'amoxicillin', 'ampicillin', 'penicillin', 'piperacillin',
+                'cephalexin', 'ceftriaxone', 'cefazolin', 'cefepime', 'ceftazidime',
+                'cefuroxime', 'cefaclor', 'cefadroxil', 'cefdinir', 'cefditoren',
+                'cefotaxime', 'ceftizoxime',
+                'meropenem', 'imipenem', 'ertapenem', 'aztreonam',
                 'colistin', 'polymyxin', 'fosfomycin', 'chloramphenicol',
+                'cycloserine', 'bedaquiline', 'tigecycline',
+                'demeclocycline', 'oxytetracycline', 'minocycline',
             }
-            VIRAL_DISEASE_KEYWORDS = [
+            _ANTIFUNGAL_DRUGS = {
+                'fluconazole', 'itraconazole', 'ketoconazole', 'voriconazole',
+                'posaconazole', 'caspofungin', 'micafungin', 'anidulafungin',
+                'clotrimazole', 'miconazole', 'econazole', 'terbinafine', 'nystatin',
+                'griseofulvin', 'flucytosine',
+            }
+            _ANTIPARASITIC_DRUGS = {
+                'chloroquine', 'hydroxychloroquine', 'mefloquine', 'primaquine', 'tafenoquine',
+                'quinine', 'artesunate', 'artemether', 'lumefantrine',
+                'ivermectin', 'albendazole', 'mebendazole', 'praziquantel',
+                'pyrimethamine', 'atovaquone', 'pentamidine',
+                'miltefosine', 'suramin', 'nifurtimox', 'benznidazole',
+                'diethylcarbamazine', 'trimetrexate',
+            }
+            # Legitimate cross-pathogen pairs (drug has known activity against this pathogen)
+            _LEGITIMATE_CROSS_PAIRS = {
+                ('pyrimethamine', 'acquired immunodeficiency syndrome aids'),
+                ('trimetrexate', 'acquired immunodeficiency syndrome aids'),
+                ('azithromycin', 'congenital toxoplasmosis'),
+                ('itraconazole', 'chagas disease american trypanosomiasis'),
+                ('itraconazole', 'cutaneous leishmaniasis caused by leishmania braziliensis'),
+                ('ketoconazole', 'chagas disease american trypanosomiasis'),
+                ('ketoconazole', 'cutaneous leishmaniasis caused by leishmania braziliensis'),
+                ('ketoconazole', 'visceral leishmaniasis caused by leishmania donovani'),
+                ('demeclocycline', 'malaria'),
+                ('oxytetracycline', 'malaria'),
+            }
+            # Disease → pathogen type
+            _VIRAL_KEYWORDS = [
                 'influenza', 'respiratory syncytial', 'rsv', 'covid', 'sars',
                 'herpes simplex', 'hsv', 'varicella', 'zoster', 'shingles',
                 'cytomegalovirus', 'cmv', 'hiv', 'aids', 'hepatitis',
                 'measles', 'mumps', 'rubella', 'dengue', 'ebola', 'rabies',
                 'viral', 'smallpox', 'adenovirus', 'norovirus', 'rotavirus',
+                'poliomyelitis', 'japanese encephalitis',
             ]
-            is_antibiotic = any(ab in drug_lower for ab in ANTIBIOTIC_CLASSES)
-            is_viral_disease = any(vk in disease_lower for vk in VIRAL_DISEASE_KEYWORDS)
-            if is_antibiotic and is_viral_disease:
-                return ConfidenceTier.LOW, False, 'antibiotic_viral_mismatch'
+            _FUNGAL_KEYWORDS = [
+                'aspergillosis', 'candidiasis', 'candida', 'cryptococcal', 'cryptococcosis',
+                'coccidioidomycosis', 'histoplasmosis', 'fusariosis', 'zygomycosis',
+                'chromomycosis', 'sporotrichosis', 'mycetoma', 'ringworm', 'tinea',
+                'fungal',
+            ]
+            _PARASITIC_KEYWORDS = [
+                'malaria', 'leishmaniasis', 'leishmania', 'chagas', 'trypanosomiasis',
+                'toxoplasmosis', 'schistosomiasis', 'onchocerciasis', 'trichomoniasis',
+                'amebiasis', 'scabies',
+            ]
+
+            # Determine drug's antimicrobial activities
+            drug_activities = _DUAL_ACTIVITY.get(drug_lower)
+            if not drug_activities:
+                if drug_lower in _ANTIBACTERIAL_DRUGS:
+                    drug_activities = {'antibacterial'}
+                elif drug_lower in _ANTIFUNGAL_DRUGS:
+                    drug_activities = {'antifungal'}
+                elif drug_lower in _ANTIPARASITIC_DRUGS:
+                    drug_activities = {'antiparasitic'}
+
+            if drug_activities:
+                # Determine disease pathogen type
+                is_viral = any(vk in disease_lower for vk in _VIRAL_KEYWORDS)
+                is_fungal = any(fk in disease_lower for fk in _FUNGAL_KEYWORDS)
+                is_parasitic = any(pk in disease_lower for pk in _PARASITIC_KEYWORDS)
+
+                # Check for mismatch (drug doesn't cover the pathogen type)
+                needed_activity = None
+                if is_viral:
+                    needed_activity = 'antiviral'
+                elif is_fungal:
+                    needed_activity = 'antifungal'
+                elif is_parasitic:
+                    needed_activity = 'antiparasitic'
+
+                if needed_activity and needed_activity not in drug_activities:
+                    # Check legitimate exceptions
+                    if (drug_lower, disease_lower) not in _LEGITIMATE_CROSS_PAIRS:
+                        return ConfidenceTier.LOW, False, 'antimicrobial_pathogen_mismatch'
 
         # h274/h396: For cancer, check cancer type match BEFORE applying rank filter
         # h393 holdout validation: cancer_same_type has 24.5% full-data, 19.2% holdout precision
@@ -3863,7 +3944,9 @@ class DrugRepurposingPredictor:
                             # h553: Block hematological (25% ± 43% holdout, n=1.2/seed — too tiny, default=0%)
                             and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer', 'cardiovascular', 'hematological'}
                             # h488: Block rescue of incoherent demotions (3.6% holdout)
-                            and cat_specific != 'incoherent_demotion'):
+                            and cat_specific != 'incoherent_demotion'
+                            # h560: Block rescue of antimicrobial-pathogen mismatches (0% holdout)
+                            and cat_specific != 'antimicrobial_pathogen_mismatch'):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 

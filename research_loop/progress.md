@@ -1,6 +1,63 @@
 # Research Loop Progress
 
-## Current Session: h557 - Corticosteroid→Infectious Demotion (2026-02-06)
+## Current Session: h560 - Antimicrobial-Pathogen Mismatch Filter (2026-02-06)
+
+### h560: Antimicrobial-Pathogen Mismatch Filter — VALIDATED
+
+Extended h556's antibiotic→viral filter to comprehensive antimicrobial-pathogen mismatch detection.
+
+**Key Finding:** 0.0% holdout precision for ALL antimicrobial-pathogen mismatches across 5 seeds (132 total mismatches, 0 hits). Matched predictions = 27.8% ± 4.8%.
+
+**Mismatch Types Detected:**
+| Mismatch Type | n/seed | Notes |
+|---------------|--------|-------|
+| antibacterial → parasitic | 8.0 | Cephalosporins/FQs for malaria/toxo/leish |
+| antibacterial → fungal | 7.4 | FQs/macrolides for candidiasis/aspergillosis |
+| antifungal → parasitic | 4.8 | Azoles/echinocandins for schistosomiasis/Chagas |
+| antibacterial → viral | 3.0 | Already partially covered by h556 |
+| antifungal → viral | 0.8 | Amphotericin B for hepatitis C |
+| Other | 2.4 | Mixed |
+
+**Dual-Activity Drug Handling:**
+- Metronidazole: antibacterial + antiparasitic (treats trichomoniasis, amebiasis)
+- Doxycycline/tetracycline: antibacterial + antiparasitic (malaria prophylaxis)
+- Amphotericin B: antifungal + antiparasitic (leishmaniasis first-line)
+- Sulfadiazine: antibacterial + antiparasitic (toxoplasmosis first-line)
+
+**10 Legitimate Cross-Pathogen Pairs Excluded** (e.g., doxycycline→malaria, amphotericin B→leishmaniasis, ketoconazole→Chagas)
+
+**Bug Found:** Target overlap promotion was rescuing 11 mismatch predictions from LOW back to MEDIUM. Fixed by adding `antimicrobial_pathogen_mismatch` to the target_overlap block list.
+
+**Implementation:**
+- Replaced h556's `antibiotic_viral_mismatch` with comprehensive `antimicrobial_pathogen_mismatch` rule
+- Drug classification: antibacterial (48 drugs), antifungal (15), antiparasitic (20), dual-activity (5)
+- Disease classification: viral (14 keywords), fungal (15 keywords), parasitic (11 keywords)
+- ~30 MEDIUM predictions demoted to LOW, 292 total predictions tagged
+
+**Holdout Impact:**
+| Tier | Before (h562) | After (h560) | Delta |
+|------|--------------|-------------|-------|
+| GOLDEN | 69.9% ± 17.9% | 69.9% ± 17.9% | 0.0pp |
+| HIGH | 59.5% ± 6.2% | 59.5% ± 6.2% | 0.0pp |
+| **MEDIUM** | **34.9% ± 3.1%** | **35.8% ± 2.8%** | **+0.9pp** |
+| LOW | 16.0% ± 2.5% | 15.5% ± 2.4% | -0.5pp |
+| FILTER | 10.4% ± 1.3% | 10.6% ± 1.3% | +0.2pp |
+
+**Cumulative MEDIUM improvement since h553:** +5.7pp (30.1% → 35.8%)
+
+**New Hypotheses Generated (3):**
+- h565: Azole antifungal anti-parasitic activity validation (P5, low)
+- h566: Infectious target_overlap quality audit (P5, medium)
+- h567: Drug class × disease type matrix for all categories (P4, high)
+
+**Recommended Next Steps:**
+1. **h567**: Systematic drug-class × disease-subtype mismatch scan across all categories
+2. **h559**: CS→infectious HIGH TB hierarchy review
+3. **h563**: LA procedural MEDIUM→HIGH promotion
+
+---
+
+## Previous Session: h557 - Corticosteroid→Infectious Demotion (2026-02-06)
 
 ### h557: Corticosteroid→Infectious Disease Selective Demotion — VALIDATED
 
