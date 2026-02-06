@@ -7729,7 +7729,7 @@
       "title": "Demote Thyroid Hierarchy to HIGH",
       "description": "h378 found metabolic_hierarchy_thyroid has 20.6% precision vs 35.8% GOLDEN avg. Should be HIGH.",
       "hypothesis": "Demoting thyroid hierarchy from GOLDEN to HIGH will improve GOLDEN tier precision.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -7737,7 +7737,9 @@
         "Change metabolic_hierarchy_thyroid to return HIGH instead of GOLDEN",
         "Evaluate impact on GOLDEN tier precision",
         "Success: GOLDEN precision increases"
-      ]
+      ],
+      "findings": "VALIDATED: Demoted thyroid hierarchy from GOLDEN to HIGH.\n\nIMPLEMENTATION:\nAdded HIERARCHY_DEMOTE_TO_HIGH = {'thyroid'} check before GOLDEN assignment.\n\nIMPACT:\n| Tier | Before | After | Delta |\n|------|--------|-------|-------|\n| GOLDEN | 40.4% | 40.7% | +0.3pp |\n| HIGH | 58.1% | 55.2% | -2.9pp |\n| MEDIUM | 30.9% | 31.0% | +0.1pp |\n\nANALYSIS:\n- GOLDEN improved slightly (+0.3pp) by removing 20.6% precision thyroid predictions\n- HIGH decreased (-2.9pp) because thyroid predictions moved here\n- Net effect: Correct tier assignment (thyroid was misclassified as GOLDEN)\n\nThis is a correctness fix even though the net precision change is small.\nThyroid predictions at 20.6% should NOT be in GOLDEN tier (40.7% avg).",
+      "result_metric": "GOLDEN +0.3pp (40.4% \u2192 40.7%), HIGH -2.9pp"
     },
     {
       "id": "h386",

@@ -2196,12 +2196,17 @@ class DrugRepurposingPredictor:
         # - Cardiovascular: 22.6% → HIGH
         # - Infectious: 22.1% → HIGH
         HIERARCHY_GOLDEN_CATEGORIES = {'metabolic', 'neurological'}
+        # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
+        HIERARCHY_DEMOTE_TO_HIGH = {'thyroid'}
 
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(
                 drug_id, disease_name, category
             )
             if same_group_match:
+                # h385: Check if this specific group should be demoted to HIGH
+                if matching_group in HIERARCHY_DEMOTE_TO_HIGH:
+                    return ConfidenceTier.HIGH, True, f'{category}_hierarchy_{matching_group}'
                 # h276: Use GOLDEN for high-precision categories (>70%), HIGH otherwise
                 if category in HIERARCHY_GOLDEN_CATEGORIES:
                     return ConfidenceTier.GOLDEN, True, f'{category}_hierarchy_{matching_group}'
