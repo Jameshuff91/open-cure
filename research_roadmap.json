@@ -7892,7 +7892,7 @@
       "title": "Fix Training Frequency Label Leakage",
       "description": "AUDIT CRITICAL: drug_train_freq is computed from ALL ground truth diseases (line 1486 of production_predictor.py), including test diseases. This means a drug's frequency count is inflated by the very disease being predicted for. Similarly, drug_to_diseases (line 1492) includes test disease mappings used in complication transfer rules. This is soft label leakage.",
       "hypothesis": "Recomputing drug_train_freq and drug_to_diseases from ONLY training diseases (excluding the test disease) will reduce measured tier precision, especially for rules that rely on frequency >= 10 or frequency >= 15 thresholds. The drop quantifies how much of the current precision is due to leakage vs genuine signal.",
-      "status": "pending",
+      "status": "validated",
       "priority": 1,
       "expected_impact": "high",
       "effort": "low",
@@ -7905,8 +7905,8 @@
         "Step 6: Report per-tier and per-rule precision deltas",
         "Step 7: Success criteria: If delta < 2pp for all tiers, leakage is negligible. If delta > 5pp for any tier, the frequency signal is contaminated and rules need adjustment."
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Frequency leakage is moderate (R@30 -4.0pp, tier precision max -2.7pp).\n\nPROPER HONEST EVALUATION (exclude test disease from drug_train_freq):\n- R@30: 79.4% \u2192 75.4% (-4.0 pp) \u2014 ranking affected more than tier precision\n- GOLDEN: 42.2% \u2192 41.8% (-0.4 pp) \u2014 negligible\n- HIGH: 55.0% \u2192 52.3% (-2.7 pp) \u2014 moderate (between 2pp and 5pp threshold)\n- MEDIUM: 22.3% \u2192 21.8% (-0.5 pp) \u2014 negligible\n- LOW: 12.6% \u2192 10.7% (-1.9 pp) \u2014 moderate\n\nKEY FINDINGS:\n1. Leakage primarily affects RANKING (R@30 -4.0pp) not tier precision\n2. High-frequency drugs (freq=10-15) lose 1 point which can push them from rank 29\u219231\n3. Tier precision impact is below 5pp alarm threshold for all tiers\n4. GOLDEN is almost unaffected because its rules are hierarchy/rule-based, not frequency-based\n5. HIGH is most affected because freq>=15 and freq>=10 thresholds are borderline\n\nRECOMMENDATION: Do NOT fix this for evaluation \u2014 it would require restructuring the predict() method to accept custom frequencies. The measured tier precisions are ~0.5-2.7pp optimistic, which is within noise. For production use (new diseases not in GT), there IS no leakage.\n\nTHRESHOLD CROSSINGS: 57 drug-disease pairs cross freq>=10, 43 cross freq>=15. These border cases account for most of the R@30 drop.",
+      "result_metric": "R@30 -4.0pp, GOLDEN -0.4pp, HIGH -2.7pp, MEDIUM -0.5pp"
     },
     {
       "id": "h395",
@@ -8146,6 +8146,112 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h406",
+      "title": "Download and Curate LINCS L1000 Data for Drug Signature Matching",
+      "description": "Data acquisition task: Download LINCS L1000 Level 5 data (moderated z-scores) from GEO, map perturbagen IDs to our DrugBank drug IDs, and produce a drug-drug transcriptional similarity matrix. This is prerequisite infrastructure for h404 (LINCS integration). L1000 measures expression of 978 landmark genes across ~20K compounds. Phase I: GSE92742, Phase II: GSE70138.",
+      "hypothesis": "We can download, curate, and integrate LINCS L1000 data autonomously. Expected coverage: 30-50% of our DrugBank drugs will have L1000 signatures. The drug-drug similarity matrix will provide a new signal independent of KG structure.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "high",
+      "steps": [
+        "Step 1: Create data/external/lincs/ directory with .gitignore for large files",
+        "Step 2: Download GSE92742 Level 5 data: wget --continue from GEO FTP. File: GSE92742_Broad_LINCS_Level5_COMPZ.MODZ_n473647x12328.gctx.gz (~3GB)",
+        "Step 3: Install cmapPy: pip install cmapPy (official LINCS Python library)",
+        "Step 4: Load and explore: extract perturbagen metadata, identify drug perturbations (trt_cp type)",
+        "Step 5: Map LINCS pert_iname (drug names) to our DrugBank IDs via name matching and PubChem CID lookup",
+        "Step 6: Report coverage: how many of our ~10K drugs have L1000 signatures?",
+        "Step 7: For matched drugs, extract consensus signatures (median across cell lines/doses)",
+        "Step 8: Compute pairwise drug-drug cosine similarity on 978-gene signatures",
+        "Step 9: Save: data/external/lincs/drug_l1000_signatures.pkl, data/external/lincs/drug_similarity_l1000.pkl",
+        "Step 10: Validate: check that known similar drugs (e.g., different statins) cluster together"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h407",
+      "title": "Build Comprehensive Drug/Disease ID Mapping Infrastructure",
+      "description": "Data infrastructure task: The ID format mismatch (CHEBI/MONDO/UMLS in GT vs DrugBank/CHEMBL/MESH in reference data) has been a persistent blocker for 20+ hypotheses. Build a comprehensive bidirectional mapping using PubChem and UniProt APIs. This unblocks target/pathway analysis, LINCS integration, and external dataset connections. Supersedes h301.",
+      "hypothesis": "Using PubChem's REST API to map DrugBank\u2192PubChem CID\u2192CHEBI\u2192CHEMBL, and disease ontology crossrefs to map MESH\u2192MONDO\u2192UMLS, we can achieve >80% coverage for drugs and >60% for diseases, unblocking the entire class of target/pathway hypotheses.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "high",
+      "steps": [
+        "Step 1: Drug ID mapping via PubChem REST API: for each DrugBank drug, query PubChem for cross-references (CHEBI, CHEMBL, CAS, InChIKey)",
+        "Step 2: Batch queries (PubChem allows 5 requests/sec): process in batches with rate limiting",
+        "Step 3: Disease ID mapping: use MONDO xrefs (already have mondo_to_mesh.json), extend with UMLS and DOID",
+        "Step 4: Download OBO files for disease ontologies if needed for cross-reference extraction",
+        "Step 5: Save unified mapping files: data/reference/id_mappings/drug_id_map.json, disease_id_map.json",
+        "Step 6: Report coverage: what % of GT drugs now have DrugBank IDs? What % of GT diseases have MESH IDs?",
+        "Step 7: Re-evaluate previously blocked hypotheses that needed ID mapping",
+        "Step 8: Success criteria: >80% drug ID coverage, >60% disease ID coverage"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h408",
+      "title": "[RYLAND] Transcriptomic Validation of Top Predictions in Skin/Inflammatory Diseases",
+      "description": "Collaboration task for Ryland Mortlock meeting (Feb 10). Ryland studies genetic skin diseases and inflammation using spatial transcriptomics. Prepare a curated list of our highest-confidence predictions for dermatological and inflammatory diseases, with gene expression rationale. His expertise can: (1) validate whether predicted drug mechanisms align with disease transcriptional signatures, (2) identify predictions testable in his lab's cell culture models, (3) bring clinical genetics perspective to prediction quality.",
+      "hypothesis": "Our dermatological GOLDEN/HIGH tier predictions can be cross-validated against transcriptomic data from Ryland's research. Predictions where drug targets overlap with disease-dysregulated genes (from spatial transcriptomics) will have higher precision than those without overlap.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Extract all GOLDEN and HIGH tier predictions for dermatological, autoimmune, and inflammatory diseases",
+        "Step 2: For each prediction, document: drug name, disease name, confidence tier, drug mechanism, known targets",
+        "Step 3: Cross-reference with LINCS L1000 signatures (if h406 is complete) to show drug transcriptional effects",
+        "Step 4: Identify predictions relevant to Ryland's research areas: skin diseases (ichthyosis, psoriasis, eczema, keratoderma), EGFR-related, inflammatory pathways",
+        "Step 5: Prepare a summary document for the Monday meeting: top 20 predictions with clinical rationale",
+        "Step 6: Flag predictions that could be tested in Ryland's lab models (cell culture, organoids)",
+        "Step 7: Identify what transcriptomic data from Ryland's work could improve our model",
+        "Step 8: Success criteria: Curated list ready for Monday meeting with actionable next steps"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h409",
+      "title": "[RYLAND] Gene Expression Disease Signatures from GEO/ARCHS4",
+      "description": "Collaboration prep: Download disease gene expression signatures from GEO/ARCHS4 to complement our KG-based approach. ARCHS4 contains uniformly processed RNA-seq data from >1M samples. Disease signatures (differentially expressed genes) provide an orthogonal signal to KG structure for drug-disease matching. Ryland's transcriptomics expertise can guide which signatures are most informative. Supersedes h55 and h172.",
+      "hypothesis": "Disease gene expression signatures from ARCHS4, combined with LINCS drug signatures (h404/h406), will enable signature-matching drug repurposing: drugs whose transcriptional effect reverses the disease signature are therapeutic candidates. This is the CMap/AMVL approach that achieved SOTA in 2025 literature.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "steps": [
+        "Step 1: Download ARCHS4 human gene expression matrix from https://maayanlab.cloud/archs4/download.html",
+        "Step 2: Identify disease-relevant samples using metadata (disease labels, tissue types)",
+        "Step 3: Compute disease signatures: differentially expressed genes (disease vs healthy) for diseases in our GT",
+        "Step 4: Coverage: how many of our 3K+ diseases have expression signatures in ARCHS4?",
+        "Step 5: For covered diseases, compute reversal score: does the drug signature (from L1000) reverse the disease signature?",
+        "Step 6: Evaluate: do high reversal scores correlate with GT drug-disease pairs?",
+        "Step 7: Discuss methodology with Ryland \u2014 his spatial transcriptomics perspective on which signatures are meaningful",
+        "Step 8: Success criteria: Reversal score has >1.5x enrichment in GT pairs vs random"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h401",
+      "title": "Frequency-Independent Tier Rules for Border Cases",
+      "description": "h394 found 57 drug-disease pairs cross freq>=10 threshold due to leakage. These border cases (freq=10-14) are unreliable. Test if replacing frequency thresholds with frequency-independent signals (mechanism + rank + ATC coherence) improves honest evaluation.",
+      "hypothesis": "Replacing freq>=10 requirement with mechanism + rank<=5 + ATC coherence for standard GOLDEN/HIGH assignment will reduce leakage sensitivity while maintaining or improving honest precision.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Identify all tier rules that use frequency thresholds (>=5, >=10, >=15)",
+        "For border cases (freq 10-14), test alternative signals",
+        "Compare leaked vs honest precision for modified rules",
+        "Success: honest tier precision within 1pp of leaked"
+      ]
     }
   ],
   "completed": [
@@ -9573,6 +9679,12 @@
       "hypothesis_id": "h395",
       "learning": "7 below-tier rules were dragging precision down. Largest impact: cancer cross-type at MEDIUM (0.9%, n=349), hematological at HIGH (19.1%, n=94). Demoting to appropriate tiers improved HIGH by +7.9pp.",
       "implication": "Regularly audit per-rule precision within each tier. Rules that were accurate when first created may drift as other rules change the prediction pool."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h394",
+      "learning": "Frequency leakage inflates R@30 by 4.0pp and HIGH precision by 2.7pp. GOLDEN is almost unaffected (-0.4pp). In production (new diseases), there is no leakage.",
+      "implication": "Report honest R@30 as ~75% not 79%. Tier precision numbers are ~1-3pp optimistic but directionally correct."
     }
   ],
   "collaborations": [

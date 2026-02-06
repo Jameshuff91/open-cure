@@ -85,6 +85,81 @@ vastai destroy instance <INSTANCE_ID>
 - Log the instance ID, cost, and duration in your findings
 - If balance is insufficient, note it in findings and mark hypothesis as blocked
 
+## External Data Acquisition
+
+You are authorized to download, curate, cleanse, and integrate publicly available datasets. Do not wait for human intervention — if a dataset is public, go get it.
+
+### Approved Public Data Sources
+
+| Dataset | URL / Method | Format | Store In |
+|---------|-------------|--------|----------|
+| **LINCS L1000 Phase I** | `wget https://ftp.ncbi.nlm.nih.gov/geo/series/GSE92nnn/GSE92742/suppl/` | HDF5 (~3GB) | `data/external/lincs/` |
+| **LINCS L1000 Phase II** | `wget https://ftp.ncbi.nlm.nih.gov/geo/series/GSE70nnn/GSE70138/suppl/` | HDF5 | `data/external/lincs/` |
+| **Edge2Vec** | `pip install edge2vec` or `git clone https://github.com/RoyZhengGao/edge2vec` | Python package | N/A (installed) |
+| **PharMeBINet** | Download from Zenodo (search "PharMeBINet") | TSV/CSV | `data/external/pharmebinet/` |
+| **PubChem** | REST API: `https://pubchem.ncbi.nlm.nih.gov/rest/pug/` | JSON | `data/reference/pubchem/` |
+| **ClinicalTrials.gov** | API: `https://clinicaltrials.gov/api/v2/studies` | JSON | API calls (no storage needed) |
+| **GEO/ARCHS4** | `https://maayanlab.cloud/archs4/download.html` | HDF5 | `data/external/archs4/` |
+| **UniProt** | REST API: `https://rest.uniprot.org/` | JSON | `data/reference/uniprot/` |
+| **KEGG** | REST API: `https://rest.kegg.jp/` | Text | Already using |
+
+### Data Acquisition Protocol
+
+When a hypothesis requires external data:
+
+1. **Check if already downloaded**: Look in `data/external/` and `data/reference/` first
+2. **Download to correct location**: Use `data/external/<source_name>/` for new datasets
+3. **Add .gitignore**: Large files (>50MB) must be gitignored. Create `data/external/<source>/.gitignore` with `*` and `!.gitignore`
+4. **Curate and clean**:
+   - Map IDs to our format (DrugBank drug IDs, MESH disease IDs where possible)
+   - Document ID mapping coverage (what % of our drugs/diseases are covered?)
+   - Remove duplicates, handle missing values, normalize formats
+   - Save processed version as JSON or pickle alongside raw data
+5. **Integration script**: Save to `scripts/integrate_<source>.py` with clear documentation
+6. **Log coverage stats** in hypothesis findings: how many of our 10K+ drugs and 3K+ diseases are covered?
+
+### ID Mapping (Critical Blocker)
+
+Our system uses mixed IDs. When integrating external data, you will need to map between:
+- **Drugs**: DrugBank IDs ↔ PubChem CID ↔ CHEMBL ↔ CHEBI ↔ drug names
+- **Diseases**: MESH IDs ↔ MONDO ↔ UMLS ↔ disease names
+- **Genes**: Entrez Gene IDs ↔ UniProt ↔ HGNC symbols
+
+Use `data/reference/drugbank_lookup.json` and `data/reference/disease_ontology_mapping.json` as starting points. If coverage is <50%, build a broader mapping using PubChem/UniProt APIs and save to `data/reference/id_mappings/`.
+
+### Large Downloads
+
+For datasets >1GB:
+- Use `wget` with `--continue` flag (resume on failure)
+- Run downloads with `nohup` to survive disconnections
+- Verify checksums if available
+- Consider downloading on Vast.ai GPU instance if local disk is constrained
+
+## Collaboration: Ryland Mortlock (Yale, Meeting Monday Feb 10)
+
+We are partnering with Ryland Mortlock, an MD-PhD student at Yale (Genetics dept, Choate lab). His expertise:
+- **Spatial transcriptomics** and single-cell RNA sequencing
+- **Genomics** and gene expression analysis (R, Python)
+- **Genetic skin diseases** — inflammation mechanisms, EGFR signaling
+- **Published**: PNAS, Nature Computational Science, Cell Stem Cell, JID, BJD
+- **Nucleate Activator 2026** participant (biotech startup program)
+
+### What Ryland Brings
+- Wet-lab validation capabilities (can test predictions in cell models)
+- Transcriptomic data analysis (LINCS, GEO, ARCHS4 expertise)
+- Clinical genetics perspective (which predictions are clinically meaningful?)
+- Access to Yale computational resources and expertise
+
+### Prep Work for Monday Meeting
+When working on hypotheses, flag any findings that would benefit from Ryland's expertise:
+- Gene expression signatures that need transcriptomic validation
+- Predictions for genetic/dermatological diseases (his specialty area)
+- ID mapping problems that genomics databases could solve
+- Predictions that could be tested in cell culture models
+- Any results where a geneticist's interpretation would add value
+
+Tag relevant findings with `[RYLAND]` in the hypothesis findings field.
+
 ## Success Metrics
 - Primary: Per-drug Recall@30 on held-out diseases
 - Secondary: Precision of top-100 predictions (via external validation)
