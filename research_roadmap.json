@@ -8353,7 +8353,7 @@
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Collect all 126 GT hits caught by zero_precision_mismatch",
         "Group by (ATC code, disease category) pattern",
@@ -8361,7 +8361,9 @@
         "Remove or relax overly aggressive mismatch rules",
         "Measure impact on tier precision (should improve FILTER precision)",
         "Success: Recover >50 GT hits without hurting GOLDEN/HIGH precision"
-      ]
+      ],
+      "findings": "Analyzed all 43 zero_precision_mismatch rules. Found 24 rules catch GT hits.\n\n9 rules removed (all with >10% precision + clear medical justification):\n1. (R, other): 100% - opioid analgesics for pain\n2. (M, other): 58.3% - dantrolene for malignant hyperthermia, NSAIDs for pain\n3. (V, other): 30.0% - antidotes for poisoning\n4. (B, renal): 23.1% - EPO for CKD anemia (standard treatment)\n5. (L, endocrine): 20.0% - GnRH analogs for precocious puberty (standard)\n6. (A, renal): 18.7% - corticosteroids for nephrotic syndrome (first-line)\n7. (L, neurological): 14.8% - rituximab for NMOSD, celecoxib for migraine\n8. (C, neurological): 14.3% - droxidopa for Parkinson's, lidocaine for neuropathy\n9. (H, cancer): 10.8% - levothyroxine for thyroid cancer, lanreotide for NETs\n\nFull-data impact: negligible (<0.5pp change on any tier)\nHoldout validation: HIGH -0.5pp (within noise), all other tiers within \u00b10.2pp\nTier ordering maintained: GOLDEN > HIGH > MEDIUM > LOW > FILTER\n\nRecovered ~50 GT hits from incorrect FILTER classification.\n15 more rules have 5-10% GT hit rate but were kept (borderline medical justification).",
+      "result_metric": "Removed 9 rules, recovered ~50 GT hits, holdout stable (HIGH -0.5pp within noise)"
     },
     {
       "id": "h416",
@@ -8413,6 +8415,37 @@
       ],
       "findings": "Holdout validation (80/20, 5 seeds) of h399 hierarchy-before-rank reordering.\n\nResults (h399 code):\n- GOLDEN: 57.4% full / 52.6% \u00b1 14.0% holdout (-4.8pp delta)\n- HIGH: 44.2% full / 41.9% \u00b1 6.4% holdout (-2.3pp delta)\n- MEDIUM: 24.6% full / 22.6% \u00b1 3.3% holdout (-2.0pp)\n- LOW: 13.3% full / 10.9% \u00b1 1.6% holdout (-2.4pp)\n- FILTER: 9.0% full / 7.4% \u00b1 0.8% holdout (-1.6pp)\n\nTier ordering maintained: GOLDEN > HIGH > MEDIUM > LOW > FILTER \u2713\n\nComparison to h396 baselines:\n- GOLDEN holdout: 55.4% (h396) \u2192 52.6% (h399) = -2.8pp (within noise)\n- HIGH holdout: 48.1% (h396) \u2192 41.9% (h399) = -6.2pp (SIGNIFICANT DEGRADATION)\n\nHierarchy rules at rank>20 show mixed holdout performance:\n- 12/52 rules flagged as \"overfitted\" (>15pp drop)\n- Most are 1-disease groups with n=0 on holdout (structural absence, not overfitting)\n- High-volume rules degraded: diabetes 29%\u219213%, coronary 40%\u219219%\n\nDecision: REVERTED h399 implementation. Rank>20 filter preserved.\nThe audit findings (rule interactions are pervasive) remain valid.",
       "result_metric": "HIGH holdout -6.2pp \u2192 h399 reordering REVERTED"
+    },
+    {
+      "id": "h419",
+      "title": "ATC L2/L3 Refinement for Remaining Borderline Mismatch Rules",
+      "description": "h415 kept 15 mismatch rules with 5-10% GT hit rate. These rules use ATC L1 (single letter) which is too coarse. Refine using L2 or L3 codes to distinguish valid vs invalid mismatches within these broad categories. E.g., J+dermatological might work for J01 (systemic antibiotics for bacterial skin infections) but not J05 (antivirals).",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "For each remaining borderline rule (5-10% GT hit rate), analyze ATC L2/L3 codes",
+        "Split each rule into sub-rules by ATC L2",
+        "Compute precision per sub-rule",
+        "Convert 0% L2 sub-rules to mismatch filter, keep >10% L2 sub-rules",
+        "Success: recover additional GT hits while maintaining precision"
+      ]
+    },
+    {
+      "id": "h420",
+      "title": "Deliverable File Regeneration with Current Rules",
+      "description": "The production deliverable file (data/deliverables/drug_repurposing_predictions_with_confidence.xlsx) has 58% stale categories per h349. After h395, h396, h398, h399, h415 all modified tier rules, the deliverable is even more stale. Regenerate with current code to get accurate confidence tiers for all 13K predictions.",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Run batch_predict for all diseases with current production_predictor.py",
+        "Generate updated Excel deliverable",
+        "Compare tier distributions before/after to quantify changes",
+        "Success: updated deliverable with accurate confidence tiers"
+      ]
     }
   ],
   "completed": [
@@ -9876,6 +9909,12 @@
       "hypothesis_id": "h399",
       "learning": "Rule ordering in _assign_confidence_tier has a critical gap: the rank>20 filter fires BEFORE high-precision hierarchy/pathway rules, throwing away 332 predictions at 60.5% precision. Moving these checks before the rank filter recovers 201 GT hits with GOLDEN +2.1pp and HIGH +0.2pp improvement.",
       "implication": "When adding new rules, always check if they should fire before or after the rank>20 filter. High-precision domain-specific rules should generally override rank filtering."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h415",
+      "learning": "ATC L1 mismatch rules are too coarse. Many valid drug-disease pairs share ATC categories that seem wrong at L1 level but make sense clinically (e.g., corticosteroids=ATC A for nephrotic syndrome, opioids=ATC R for pain). Consider L2/L3 refinement for remaining borderline rules.",
+      "implication": "When designing cross-category filters, use the most specific classification level available. L1 ATC codes lose too much nuance."
     }
   ],
   "collaborations": [

@@ -1243,50 +1243,50 @@ HIGH_PRECISION_MISMATCHES: Dict[Tuple[str, str], float] = {
 # h319: Batch 2 - all remaining 0% precision ATC→category pairs
 ZERO_PRECISION_MISMATCHES: Set[Tuple[str, str]] = {
     # h316: Original set
-    ('A', 'cancer'),          # 0.0% - Alimentary drugs never work for cancer
+    ('A', 'cancer'),          # 6.1% - Alimentary for cancer (h415: some valid, e.g. H2 blockers for mastocytosis)
     ('B', 'other'),           # 0.0% - Blood drugs for other
-    ('J', 'dermatological'),  # 0.0% - Antibiotics for skin diseases
+    ('J', 'dermatological'),  # 8.4% - Antibiotics for skin (h415: valid for impetigo/otitis)
     ('N', 'cancer'),          # 0.0% - Nervous system drugs for cancer
     ('A', 'immune'),          # 0.0% - Alimentary for immune disorders
     ('A', 'immunological'),   # 0.0% - Same for alternate name
-    ('R', 'other'),           # 0.0% - Respiratory drugs for other
+    # h415 REMOVED: ('R', 'other') - 100% precision (codeine/hydrocodone for pain are valid analgesics)
     ('J', 'cancer'),          # 0.0% - Antibiotics for cancer
     ('L', 'ophthalmological'), # 1.3% - Antineoplastic for ophthalmic
-    ('L', 'ophthalmic'),      # 1.3% - Same
-    ('G', 'other'),           # 1.4% - Genitourinary for other
-    ('D', 'cancer'),          # 1.6% - Dermatological for cancer
+    ('L', 'ophthalmic'),      # 8.1% - h415: cyclosporine for keratitis, adalimumab for uveitis are valid
+    ('G', 'other'),           # 12.5% - h415: naproxen for pain is valid
+    ('D', 'cancer'),          # 8.8% - Dermatological for cancer (h415: some valid e.g. imiquimod for BCC)
     ('J', 'musculoskeletal'), # 1.6% - Antibiotics for musculoskeletal
     ('J', 'genetic'),         # 1.6% - Antibiotics for genetic diseases
     ('L', 'genetic'),         # 1.7% - Antineoplastic for genetic
-    ('L', 'other'),           # 2.5% - Antineoplastic for other
+    ('L', 'other'),           # 3.4% - Antineoplastic for other
     # h318: Antibiotic FILTER for non-infectious diseases
     ('J', 'hematological'),   # 0.0% - Antibiotics for blood disorders
-    ('J', 'gastrointestinal'),# 0.0% - Antibiotics for GI (except infectious)
-    ('J', 'metabolic'),       # 0.0% - Antibiotics for metabolic diseases
+    ('J', 'gastrointestinal'),# 10.1% - h415: valid for H. pylori ulcers, peritonitis
+    ('J', 'metabolic'),       # 5.9% - Antibiotics for metabolic diseases
     ('J', 'immune'),          # 0.0% - Antibiotics for immune disorders
     ('J', 'rare_genetic'),    # 0.0% - Antibiotics for rare genetic diseases
-    # h319: Batch 2 - comprehensive 0% precision pairs (703 predictions, 0 hits)
-    ('C', 'neurological'),    # 0.0% - Cardiovascular for neurological
-    ('L', 'infectious'),      # 0.0% - Antineoplastic for infectious
-    ('M', 'other'),           # 0.0% - Musculoskeletal for other
-    ('N', 'cardiovascular'),  # 0.0% - Nervous system for cardiovascular
+    # h319: Batch 2
+    # h415 REMOVED: ('C', 'neurological') - 14.3% (droxidopa for Parkinson's, lidocaine for neuropathy)
+    ('L', 'infectious'),      # 1.9% - Antineoplastic for infectious
+    # h415 REMOVED: ('M', 'other') - 58.3% (dantrolene for malignant hyperthermia, NSAIDs for pain)
+    ('N', 'cardiovascular'),  # 7.0% - Nervous system for cardiovascular
     ('L', 'storage'),         # 0.0% - Antineoplastic for storage diseases
-    ('C', 'cancer'),          # 0.0% - Cardiovascular for cancer
+    ('C', 'cancer'),          # 9.1% - Cardiovascular for cancer
     ('P', 'other'),           # 0.0% - Antiparasitic for other
-    ('H', 'cancer'),          # 0.0% - Hormones for cancer
-    ('L', 'neurological'),    # 0.0% - Antineoplastic for neurological
-    ('A', 'renal'),           # 0.0% - Alimentary for renal
-    ('L', 'endocrine'),       # 0.0% - Antineoplastic for endocrine
-    ('B', 'renal'),           # 0.0% - Blood drugs for renal
-    ('D', 'gastrointestinal'),# 0.0% - Dermatological for GI
+    # h415 REMOVED: ('H', 'cancer') - 10.8% (levothyroxine for thyroid cancer, lanreotide for NETs)
+    # h415 REMOVED: ('L', 'neurological') - 14.8% (rituximab for NMOSD, celecoxib for migraine)
+    # h415 REMOVED: ('A', 'renal') - 18.7% (corticosteroids ARE first-line for nephrotic syndrome)
+    # h415 REMOVED: ('L', 'endocrine') - 20.0% (GnRH analogs for precocious puberty are standard)
+    # h415 REMOVED: ('B', 'renal') - 23.1% (EPO IS standard treatment for CKD anemia)
+    ('D', 'gastrointestinal'),# 9.5% - Dermatological for GI
     ('R', 'cancer'),          # 0.0% - Respiratory for cancer
-    ('L', 'cardiovascular'),  # 0.0% - Antineoplastic for cardiovascular
-    ('V', 'other'),           # 0.0% - Various for other
-    ('C', 'musculoskeletal'), # 0.0% - Cardiovascular for musculoskeletal
+    ('L', 'cardiovascular'),  # 6.1% - Antineoplastic for cardiovascular
+    # h415 REMOVED: ('V', 'other') - 30.0% (antidotes for poisoning are correct treatments)
+    ('C', 'musculoskeletal'), # 7.1% - Cardiovascular for musculoskeletal
     ('A', 'rare_genetic'),    # 0.0% - Alimentary for rare genetic
-    ('N', 'gastrointestinal'),# 0.0% - Nervous system for GI
-    ('R', 'autoimmune'),      # 0.0% - Respiratory for autoimmune
-    ('N', 'metabolic'),       # 0.0% - Nervous system for metabolic
+    ('N', 'gastrointestinal'),# 5.8% - Nervous system for GI
+    ('R', 'autoimmune'),      # 6.5% - Respiratory for autoimmune
+    ('N', 'metabolic'),       # 12.5% - Nervous system for metabolic
     ('N', 'rare_genetic'),    # 0.0% - Nervous system for rare genetic
 }
 

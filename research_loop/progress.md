@@ -1,14 +1,15 @@
 # Research Loop Progress
 
-## Current Session: h399, h418 (2026-02-05)
+## Current Session: h399, h418, h415 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 3**
 - h399: Rule Interaction Audit - **VALIDATED** (findings valid, implementation REVERTED)
 - h418: Holdout Validation of h399 - **VALIDATED** (showed fix fails holdout)
+- h415: Zero-Precision ATC Mismatch Refinement - **VALIDATED** (removed 9 rules, holdout stable)
 
 ### h399: Rule Interaction Audit - VALIDATED
 
@@ -63,10 +64,23 @@ Hierarchy rules at rank>20 don't generalize. Many are 1-disease groups.
 
 **Key Learning:** Full-data precision can be misleading for rule changes. Always validate with holdout before deploying.
 
+### h415: Zero-Precision ATC Mismatch Refinement - VALIDATED
+
+Removed 9 mismatch rules with >10% GT hit rate + clear medical justification:
+1. (R, other): 100% - opioids for pain
+2. (M, other): 58.3% - dantrolene for malignant hyperthermia
+3. (V, other): 30.0% - antidotes for poisoning
+4. (B, renal): 23.1% - EPO for CKD anemia
+5. (A, renal): 18.7% - corticosteroids for nephrotic syndrome
+6-9. Various with 10-20% precision and clear clinical justification
+
+Holdout validation: HIGH -0.5pp (within noise), GOLDEN -4.0pp (within std=15.2%).
+Tier ordering maintained. All tiers within noise of h396 baselines.
+
 ### Recommended Next Steps
-1. **h415:** Zero-precision mismatch refinement - Priority 3 (recover 126 GT hits)
-2. **h417:** Rank 21-30 coverage gap - Priority 3 (selective, holdout-validated rescues)
-3. **h402:** Simplify Production Predictor - Priority 3 (prune to top validated rules)
+1. **h420:** Deliverable file regeneration - Priority 2, low effort
+2. **h417:** Rank 21-30 coverage gap - Priority 3
+3. **h402:** Simplify Production Predictor - Priority 3
 
 ---
 
