@@ -6722,7 +6722,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Identify oncology drug classes: alkylating, antimetabolites, topoisomerase, targeted kinase inhibitors",
         "Step 2: Calculate isolation gap for each class",
@@ -6732,7 +6732,9 @@
       ],
       "dependencies": [
         "h329"
-      ]
+      ],
+      "findings": "h332 VALIDATED + IMPLEMENTED: Cancer-Selective Drug Class Analysis\n\nHYPOTHESIS: Cancer drugs generally show isolation=positive (like platinum agents)\n\nRESULT: HYPOTHESIS INVALIDATED - Pattern is NOT general to cancer drugs\n\nFINDINGS:\n\nISOLATION HELPS (gap > +5 pp):\n- Platinum agents only: +7.3 pp (already validated in h331)\n\nCOHESION HELPS (gap < -5 pp):\n- mTOR inhibitors: -7.4 pp (isolated 1.4% vs non-isolated 8.8%)\n- Alkylating agents: -5.6 pp (isolated 0% vs non-isolated 5.6%)\n\nNEUTRAL:\n- Antimetabolites, Taxanes, Topoisomerase, Targeted kinase, PARP, Proteasome\n\nKEY INSIGHT:\nPattern is NOT \"cancer drugs show isolation=positive\"\nRather: \"mechanism specificity\" predicts isolation signal\n- Platinum: highly cancer-selective \u2192 isolation helps\n- mTOR: broad use (immunosuppression + cancer) \u2192 cohesion helps\n- Alkylating (cyclophosphamide): cancer + autoimmune \u2192 cohesion helps\n\nIMPLEMENTATION:\nAdded to BROAD_THERAPEUTIC_CLASSES:\n- mtor_inhibitors: 7 isolated HIGH at 0% precision\n- alkylating_agents: 2 isolated HIGH at 0% precision, 20 isolated MEDIUM at 0%\n\nIMPACT:\n- 9 HIGH tier predictions demoted (all 0% precision)\n- 49 MEDIUM tier predictions demoted\n- Improves HIGH tier cleanliness",
+      "result_metric": "mTOR -7.4pp gap, Alkylating -5.6pp gap added to broad classes"
     },
     {
       "id": "h333",

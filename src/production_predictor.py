@@ -413,6 +413,16 @@ TNF_INHIBITORS = {'adalimumab', 'infliximab', 'etanercept', 'golimumab',
 IL_INHIBITORS = {'tocilizumab', 'secukinumab', 'ixekizumab', 'ustekinumab', 'guselkumab',
                  'risankizumab', 'tildrakizumab', 'anakinra', 'canakinumab', 'brodalumab'}
 
+# h332: mTOR inhibitors - 7.4 pp gap, isolated 1.4% vs non-isolated 8.8%
+# Used in both immunosuppression (transplant) and cancer - cohesion is positive signal
+MTOR_INHIBITORS = {'sirolimus', 'temsirolimus', 'everolimus', 'rapamycin'}
+
+# h332: Alkylating agents - 5.6 pp gap, isolated 0% vs non-isolated 5.6%
+# Cyclophosphamide used in cancer + autoimmune (lupus, vasculitis) - cohesion is positive signal
+ALKYLATING_AGENTS = {'cyclophosphamide', 'ifosfamide', 'melphalan', 'chlorambucil',
+                     'busulfan', 'carmustine', 'lomustine', 'dacarbazine',
+                     'temozolomide', 'bendamustine'}
+
 # Broad therapeutic classes where ISOLATION = bad signal (1.9% precision overall)
 # These are classes that treat many conditions; if kNN only recommends ONE,
 # it's likely noise rather than a real signal.
@@ -423,6 +433,8 @@ BROAD_THERAPEUTIC_CLASSES: Dict[str, Set[str]] = {
     'tnf_inhibitors': TNF_INHIBITORS,
     'nsaids': NSAID_DRUGS,
     'il_inhibitors': IL_INHIBITORS,  # h328: +47 pp cohesion effect
+    'mtor_inhibitors': MTOR_INHIBITORS,  # h332: isolated 0% HIGH, 1.4% overall
+    'alkylating_agents': ALKYLATING_AGENTS,  # h332: isolated 0% HIGH, 0% MEDIUM
 }
 
 # h280/h281: Complication vs Subtype relationship mapping
