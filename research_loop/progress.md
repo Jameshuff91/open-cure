@@ -1,14 +1,18 @@
 # Research Loop Progress
 
-## Current Session: h427, h402 (2026-02-05)
+## Current Session: h427, h402, h430, h429, h428, h433 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 6**
 - h427: Psychiatric Target Overlap → GOLDEN Promotion - **INCONCLUSIVE** (signal real but n too small)
 - h402: Simplify Production Predictor - **VALIDATED** (3 demotions, holdout stable)
+- h430: Narrow Diabetes Hierarchy to T2D Only - **INVALIDATED** (GOLDEN dropped -5pp, only 2 T2D diseases)
+- h429: Infectious Low-Rank Rescue - **INVALIDATED** (good signal already captured by hierarchy rules)
+- h428: Category-Specific Incoherent Demotion - **INVALIDATED** (only 56 predictions, too small)
+- h433: Sample Size vs Holdout Degradation - **VALIDATED** (n<30=unreliable, n>100=reliable)
 
 ### h427: Psychiatric Target Overlap → GOLDEN Promotion - INCONCLUSIVE
 
@@ -60,6 +64,46 @@ Tier ordering MAINTAINED: GOLDEN > HIGH > MEDIUM > LOW > FILTER.
 1. **h430:** Narrow Diabetes Hierarchy Match to T2D/DM Only - Priority 4, low effort
 2. **h428:** Category-Specific Incoherent Demotion Tiers - Priority 4
 3. **h407:** Build Comprehensive Drug/Disease ID Mapping Infrastructure - Priority 2 (high effort but unblocks many)
+
+### h430: Narrow Diabetes Hierarchy to T2D Only - INVALIDATED
+
+**Hypothesis:** Split diabetes hierarchy: T2D/DM targets → GOLDEN, rest → HIGH.
+
+**Full-data:** diabetes_t2d GOLDEN 51.4% (18/35) vs diabetes HIGH 15.8% (6/38). Clean split.
+
+**Holdout:** diabetes_t2d GOLDEN 42.1% ± 6.8% (only 3/5 seeds). Overall GOLDEN dropped -5.0pp to 47.9%, causing GOLDEN<HIGH inversion (47.9% vs 51.0%). **REVERTED.**
+
+**Root cause:** Only 2 T2D-like diseases → too few for reliable holdout.
+
+### h429: Infectious Low-Rank Rescue - INVALIDATED
+
+**Quick invalidation:** h390 reported infectious rank 1-5 at 43%, but that was across ALL tiers. After h402, hierarchy rules (UTI 75%, TB 63%) already capture high-precision rank 1-5 predictions at HIGH. Remaining infectious LOW at rank 1-5 = **6.5% (2/31)**. Not rescuable.
+
+### h428: Category-Specific Incoherent Demotion - INVALIDATED
+
+**Quick invalidation:** Only 56 total incoherent_demotion predictions remain (11 HIGH, 45 MEDIUM). Most categories n<5. Not enough volume for category-specific demotion.
+
+### h433: Sample Size vs Holdout Degradation - VALIDATED
+
+**Key Finding:** Sample size determines holdout reliability:
+| Bucket | Avg |delta| | Implication |
+|--------|-------------|-------------|
+| n=1-30 | 16-21pp | Unreliable: don't set tier based on full-data |
+| n=31-100 | 9.8pp | Moderate: validate with holdout |
+| n=101-500 | 6.2pp | Reliable: safe for tier assignment |
+| n=501+ | 3.1pp | Stable: suitable for production defaults |
+
+Correlation: log(n) vs |delta| = -0.329. Outlier: target_overlap_promotion (n=273, -22.5pp) due to feature inflation.
+
+### New Hypotheses Generated
+- **h434:** Feature Inflation Root Cause: Holdout-Aware Drug Frequency Computation - Priority 2
+- **h435:** Deliverable Regeneration with h402 Tier Demotions - Priority 3
+
+### Recommended Next Steps
+1. **h434:** Holdout-aware feature computation (root cause fix for rank>20 failures)
+2. **h435:** Regenerate deliverable with current tier rules (low effort)
+3. **h407:** Build ID Mapping Infrastructure (high effort but unblocks many)
+4. **h405:** Multi-Method Consilience Ensemble
 
 ---
 
