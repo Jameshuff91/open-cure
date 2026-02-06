@@ -1,14 +1,15 @@
 # Research Loop Progress
 
-## Current Session: h410, h467 (2026-02-06)
+## Current Session: h410, h467, h461 (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 3**
 - h410: Literature Validation of 1-Disease Hierarchy Rules - **VALIDATED**
 - h467: Systematic Substring Matching Audit - **VALIDATED**
+- h461: Sparse Neighborhood Disease Classification - **INVALIDATED**
 
 ### h410: Literature Validation of Small Hierarchy Rules - VALIDATED
 

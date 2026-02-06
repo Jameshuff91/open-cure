@@ -9185,7 +9185,7 @@
       "title": "Sparse Neighborhood Disease Classification",
       "description": "h450 showed diseases with LOW mean neighbor similarity get HIGHER precision in GOLDEN/HIGH tiers because hierarchy rules rescue them. These are \"island diseases\" with unique drug signatures. Investigate: what characterizes these diseases? Are they rare diseases, niche therapeutic areas, or just diseases with few similar conditions? This understanding could guide which diseases are good candidates for repurposing vs which need novel approaches.",
       "hypothesis": "Low-similarity diseases are enriched for rare/orphan diseases and specific therapeutic niches, explaining their higher precision from hierarchy rescue.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -9194,7 +9194,9 @@
         "Characterize: rare vs common, category distribution, GT drug count",
         "Compare Q4 characteristics to Q1 (highest similarity)",
         "Check if rarity/specificity explains the hierarchy rescue advantage"
-      ]
+      ],
+      "findings": "Hypothesis INVALIDATED: Sparse neighborhoods contain COMMON diseases, not rare.\n\nKey findings:\n1. Q1 (sparse, sim=0.47): Common diseases with unique drug profiles (hypertension 79 drugs, RA 55, T2D 48).\n   Mean GT drugs: 13.3. Hierarchy coverage: 40%.\n2. Q4 (dense, sim=0.81): Niche infectious diseases sharing antibiotics (syphilis, brucellosis, tularemia).\n   Mean GT drugs: 4.8. Hierarchy coverage: 5%. Infectious 42%.\n3. Correlation: sim vs n_drugs = -0.395 (p<0.0001). More drugs \u2192 more unique \u2192 lower similarity.\n4. Hierarchy rescue explanation: Q1 gets higher GOLDEN/HIGH precision because hierarchy rules cover common\n   diseases with established drug knowledge. This is expected behavior, not a system flaw.\n\nConclusion: Sparse neighborhoods are diseases with unique drug signatures (usually common, well-treated\ndiseases). Dense neighborhoods are diseases that share antibiotics or similar treatment profiles.\nNo system changes recommended.",
+      "result_metric": "Sparse=common (sim=-0.395 vs n_drugs, p<0.0001); no changes needed"
     },
     {
       "id": "h462",
@@ -10956,6 +10958,12 @@
       "hypothesis_id": "h467",
       "learning": "5 additional substring bugs found: 'tia'\u2192'interstitial' (16 false drugs), 'pneumonia'\u2192autoimmune pneumonia, 'diabetic'\u2192'nondiabetic', 'diabetic'\u2192foot infections, 'thyroid'\u2192cancer. All short variants <=3 chars are now removed or excluded. Also found 7 category mismatches that are medically expected (not bugs).",
       "implication": "Hierarchy exclusion list is now comprehensive. No more short-variant bugs expected. Consider h469 (word-boundary matching) only if new variants are added in the future."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h461",
+      "learning": "Low-similarity diseases are COMMON diseases with unique drug profiles (hypertension, RA, diabetes), not rare diseases. Dense neighborhoods are niche infectious diseases sharing antibiotics. Correlation sim vs n_drugs = -0.395. Hierarchy coverage is 40% for sparse Q1 vs 5% for dense Q4.",
+      "implication": "Sparse/dense neighborhood distinction provides no actionable signal. Hierarchy rescue for sparse diseases is expected and correct."
     }
   ],
   "collaborations": [
