@@ -1,0 +1,90 @@
+======================================================================
+h442: kNN Score Margin as Confidence Signal
+======================================================================
+Diseases with GT and embeddings: 455
+
+======================================================================
+PART 1: Score Margin Distribution
+======================================================================
+
+Diseases with valid margins: 455
+Margin distribution:
+  Min:    0.000000
+  Q1:     0.000000
+  Median: 0.000000
+  Q3:     0.002010
+  Max:    0.226154
+  Mean:   0.006231
+  Std:    0.022467
+
+Quartile boundaries: Q1<0.000000, Q2<0.000000, Q3<0.002010, Q4>=0.002010
+
+======================================================================
+PART 2: Tier Precision by Margin Quartile (Full Data)
+======================================================================
+
+Tier              Q1_low            Q2            Q3       Q4_high   Q4-Q1 gap
+GOLDEN          0.0%(  0)      0.0%(  0)     68.9%(135)     92.3%( 52)     +92.3pp
+HIGH            0.0%(  0)      0.0%(  0)     58.5%(366)     56.6%(205)     +56.6pp
+MEDIUM          0.0%(  0)      0.0%(  0)     26.0%(2843)     26.0%(1076)     +26.0pp
+LOW             0.0%(  0)      0.0%(  0)     14.2%(1872)     19.5%(600)     +19.5pp
+FILTER          0.0%(  0)      0.0%(  0)     12.0%(4996)     11.8%(1477)     +11.8pp
+
+======================================================================
+PART 3: Margin Correlations
+======================================================================
+
+Margin vs R@30 correlation: -0.040
+Entropy vs R@30 correlation: -0.149
+Mean neighbor sim vs R@30 correlation: 0.080
+N_drugs vs R@30 correlation: -0.370
+Score ratio (20/1) vs R@30 correlation: -0.187
+
+======================================================================
+PART 4: Holdout Validation (5-seed)
+======================================================================
+
+--- Seed 42 ---
+  GOLDEN high-margin: 33.3% (7/21) | low-margin: 0.0% (0/0) | gap: +33.3pp
+  HIGH high-margin: 13.2% (9/68) | low-margin: 0.0% (0/0) | gap: +13.2pp
+  MEDIUM high-margin: 16.6% (98/592) | low-margin: 0.0% (0/0) | gap: +16.6pp
+  LOW high-margin: 5.9% (35/590) | low-margin: 0.0% (0/0) | gap: +5.9pp
+  FILTER high-margin: 3.8% (55/1455) | low-margin: 0.0% (0/0) | gap: +3.8pp
+
+--- Seed 123 ---
+  GOLDEN high-margin: 60.6% (20/33) | low-margin: 0.0% (0/0) | gap: +60.6pp
+  HIGH high-margin: 43.9% (43/98) | low-margin: 0.0% (0/0) | gap: +43.9pp
+  MEDIUM high-margin: 15.8% (117/742) | low-margin: 0.0% (0/0) | gap: +15.8pp
+  LOW high-margin: 5.2% (25/484) | low-margin: 0.0% (0/0) | gap: +5.2pp
+  FILTER high-margin: 5.0% (69/1371) | low-margin: 0.0% (0/0) | gap: +5.0pp
+
+--- Seed 456 ---
+  GOLDEN high-margin: 57.7% (15/26) | low-margin: 0.0% (0/0) | gap: +57.7pp
+  HIGH high-margin: 36.8% (32/87) | low-margin: 0.0% (0/0) | gap: +36.8pp
+  MEDIUM high-margin: 14.0% (109/778) | low-margin: 0.0% (0/0) | gap: +14.0pp
+  LOW high-margin: 8.1% (39/483) | low-margin: 0.0% (0/0) | gap: +8.1pp
+  FILTER high-margin: 3.8% (51/1342) | low-margin: 0.0% (0/0) | gap: +3.8pp
+
+--- Seed 789 ---
+  GOLDEN high-margin: 62.5% (5/8) | low-margin: 0.0% (0/0) | gap: +62.5pp
+  HIGH high-margin: 43.2% (32/74) | low-margin: 0.0% (0/0) | gap: +43.2pp
+  MEDIUM high-margin: 19.5% (148/758) | low-margin: 0.0% (0/0) | gap: +19.5pp
+  LOW high-margin: 6.9% (39/566) | low-margin: 0.0% (0/0) | gap: +6.9pp
+  FILTER high-margin: 3.3% (44/1319) | low-margin: 0.0% (0/0) | gap: +3.3pp
+
+--- Seed 2024 ---
+  GOLDEN high-margin: 81.0% (17/21) | low-margin: 0.0% (0/0) | gap: +81.0pp
+  HIGH high-margin: 39.2% (49/125) | low-margin: 0.0% (0/0) | gap: +39.2pp
+  MEDIUM high-margin: 12.1% (85/703) | low-margin: 0.0% (0/0) | gap: +12.1pp
+  LOW high-margin: 4.2% (20/478) | low-margin: 0.0% (0/0) | gap: +4.2pp
+  FILTER high-margin: 5.6% (78/1400) | low-margin: 0.0% (0/0) | gap: +5.6pp
+
+--- Holdout Summary (5-seed mean ± std) ---
+  Tier        High-Low Margin Gap
+  GOLDEN        +59.0 ±  15.2pp
+  HIGH          +35.3 ±  11.3pp
+  MEDIUM        +15.6 ±   2.5pp
+  LOW            +6.0 ±   1.3pp
+  FILTER         +4.3 ±   0.8pp
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h442_score_margin.json

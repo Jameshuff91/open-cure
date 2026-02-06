@@ -1,0 +1,1003 @@
+{
+  "hypothesis": "h444",
+  "title": "Sub-Tier Precision Reporting",
+  "full_data": {
+    "GOLDEN": {
+      "n": 188,
+      "gt": 141,
+      "overall_precision": 75.0,
+      "rank_buckets": {
+        "rank_1_5": {
+          "n": 80,
+          "gt": 65,
+          "precision": 81.25
+        },
+        "rank_6_10": {
+          "n": 46,
+          "gt": 36,
+          "precision": 78.26
+        },
+        "rank_11_15": {
+          "n": 39,
+          "gt": 23,
+          "precision": 58.97
+        },
+        "rank_16_20": {
+          "n": 23,
+          "gt": 17,
+          "precision": 73.91
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "n": 80,
+          "gt": 65,
+          "precision": 81.25
+        },
+        "top_10": {
+          "n": 126,
+          "gt": 101,
+          "precision": 80.16
+        },
+        "top_15": {
+          "n": 165,
+          "gt": 124,
+          "precision": 75.15
+        },
+        "top_20": {
+          "n": 188,
+          "gt": 141,
+          "precision": 75.0
+        }
+      },
+      "transe_rank_buckets": {
+        "rank_1_5": {
+          "with_transe": {
+            "n": 8,
+            "precision": 100.0
+          },
+          "without_transe": {
+            "n": 72,
+            "precision": 79.17
+          },
+          "gap": 20.83
+        },
+        "rank_6_10": {
+          "with_transe": {
+            "n": 6,
+            "precision": 100.0
+          },
+          "without_transe": {
+            "n": 40,
+            "precision": 75.0
+          },
+          "gap": 25.0
+        },
+        "rank_11_15": {
+          "with_transe": {
+            "n": 5,
+            "precision": 40.0
+          },
+          "without_transe": {
+            "n": 34,
+            "precision": 61.76
+          },
+          "gap": -21.76
+        },
+        "rank_16_20": {
+          "with_transe": {
+            "n": 1,
+            "precision": 100.0
+          },
+          "without_transe": {
+            "n": 22,
+            "precision": 72.73
+          },
+          "gap": 27.27
+        }
+      }
+    },
+    "HIGH": {
+      "n": 569,
+      "gt": 328,
+      "overall_precision": 57.64,
+      "rank_buckets": {
+        "rank_1_5": {
+          "n": 186,
+          "gt": 112,
+          "precision": 60.22
+        },
+        "rank_6_10": {
+          "n": 171,
+          "gt": 92,
+          "precision": 53.8
+        },
+        "rank_11_15": {
+          "n": 114,
+          "gt": 63,
+          "precision": 55.26
+        },
+        "rank_16_20": {
+          "n": 98,
+          "gt": 61,
+          "precision": 62.24
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "n": 186,
+          "gt": 112,
+          "precision": 60.22
+        },
+        "top_10": {
+          "n": 357,
+          "gt": 204,
+          "precision": 57.14
+        },
+        "top_15": {
+          "n": 471,
+          "gt": 267,
+          "precision": 56.69
+        },
+        "top_20": {
+          "n": 569,
+          "gt": 328,
+          "precision": 57.64
+        }
+      },
+      "transe_rank_buckets": {
+        "rank_1_5": {
+          "with_transe": {
+            "n": 21,
+            "precision": 52.38
+          },
+          "without_transe": {
+            "n": 165,
+            "precision": 61.21
+          },
+          "gap": -8.83
+        },
+        "rank_6_10": {
+          "with_transe": {
+            "n": 20,
+            "precision": 50.0
+          },
+          "without_transe": {
+            "n": 151,
+            "precision": 54.3
+          },
+          "gap": -4.3
+        },
+        "rank_11_15": {
+          "with_transe": {
+            "n": 9,
+            "precision": 33.33
+          },
+          "without_transe": {
+            "n": 105,
+            "precision": 57.14
+          },
+          "gap": -23.81
+        },
+        "rank_16_20": {
+          "with_transe": {
+            "n": 6,
+            "precision": 66.67
+          },
+          "without_transe": {
+            "n": 92,
+            "precision": 61.96
+          },
+          "gap": 4.71
+        }
+      }
+    },
+    "MEDIUM": {
+      "n": 3894,
+      "gt": 1017,
+      "overall_precision": 26.12,
+      "rank_buckets": {
+        "rank_1_5": {
+          "n": 1223,
+          "gt": 447,
+          "precision": 36.55
+        },
+        "rank_6_10": {
+          "n": 1044,
+          "gt": 256,
+          "precision": 24.52
+        },
+        "rank_11_15": {
+          "n": 718,
+          "gt": 160,
+          "precision": 22.28
+        },
+        "rank_16_20": {
+          "n": 592,
+          "gt": 108,
+          "precision": 18.24
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "n": 1223,
+          "gt": 447,
+          "precision": 36.55
+        },
+        "top_10": {
+          "n": 2267,
+          "gt": 703,
+          "precision": 31.01
+        },
+        "top_15": {
+          "n": 2985,
+          "gt": 863,
+          "precision": 28.91
+        },
+        "top_20": {
+          "n": 3577,
+          "gt": 971,
+          "precision": 27.15
+        }
+      },
+      "transe_rank_buckets": {
+        "rank_1_5": {
+          "with_transe": {
+            "n": 176,
+            "precision": 31.82
+          },
+          "without_transe": {
+            "n": 1047,
+            "precision": 37.34
+          },
+          "gap": -5.53
+        },
+        "rank_6_10": {
+          "with_transe": {
+            "n": 129,
+            "precision": 20.16
+          },
+          "without_transe": {
+            "n": 915,
+            "precision": 25.14
+          },
+          "gap": -4.98
+        },
+        "rank_11_15": {
+          "with_transe": {
+            "n": 45,
+            "precision": 8.89
+          },
+          "without_transe": {
+            "n": 673,
+            "precision": 23.18
+          },
+          "gap": -14.29
+        },
+        "rank_16_20": {
+          "with_transe": {
+            "n": 47,
+            "precision": 10.64
+          },
+          "without_transe": {
+            "n": 545,
+            "precision": 18.9
+          },
+          "gap": -8.26
+        }
+      }
+    },
+    "LOW": {
+      "n": 2479,
+      "gt": 382,
+      "overall_precision": 15.41,
+      "rank_buckets": {
+        "rank_1_5": {
+          "n": 494,
+          "gt": 122,
+          "precision": 24.7
+        },
+        "rank_6_10": {
+          "n": 536,
+          "gt": 83,
+          "precision": 15.49
+        },
+        "rank_11_15": {
+          "n": 696,
+          "gt": 107,
+          "precision": 15.37
+        },
+        "rank_16_20": {
+          "n": 743,
+          "gt": 70,
+          "precision": 9.42
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "n": 494,
+          "gt": 122,
+          "precision": 24.7
+        },
+        "top_10": {
+          "n": 1030,
+          "gt": 205,
+          "precision": 19.9
+        },
+        "top_15": {
+          "n": 1726,
+          "gt": 312,
+          "precision": 18.08
+        },
+        "top_20": {
+          "n": 2469,
+          "gt": 382,
+          "precision": 15.47
+        }
+      },
+      "transe_rank_buckets": {
+        "rank_1_5": {
+          "with_transe": {
+            "n": 35,
+            "precision": 11.43
+          },
+          "without_transe": {
+            "n": 459,
+            "precision": 25.71
+          },
+          "gap": -14.28
+        },
+        "rank_6_10": {
+          "with_transe": {
+            "n": 58,
+            "precision": 22.41
+          },
+          "without_transe": {
+            "n": 478,
+            "precision": 14.64
+          },
+          "gap": 7.77
+        },
+        "rank_11_15": {
+          "with_transe": {
+            "n": 58,
+            "precision": 8.62
+          },
+          "without_transe": {
+            "n": 638,
+            "precision": 15.99
+          },
+          "gap": -7.37
+        },
+        "rank_16_20": {
+          "with_transe": {
+            "n": 69,
+            "precision": 2.9
+          },
+          "without_transe": {
+            "n": 674,
+            "precision": 10.09
+          },
+          "gap": -7.19
+        }
+      }
+    },
+    "FILTER": {
+      "n": 6492,
+      "gt": 777,
+      "overall_precision": 11.97,
+      "rank_buckets": {
+        "rank_1_5": {
+          "n": 292,
+          "gt": 81,
+          "precision": 27.74
+        },
+        "rank_6_10": {
+          "n": 478,
+          "gt": 106,
+          "precision": 22.18
+        },
+        "rank_11_15": {
+          "n": 708,
+          "gt": 109,
+          "precision": 15.4
+        },
+        "rank_16_20": {
+          "n": 819,
+          "gt": 91,
+          "precision": 11.11
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "n": 292,
+          "gt": 81,
+          "precision": 27.74
+        },
+        "top_10": {
+          "n": 770,
+          "gt": 187,
+          "precision": 24.29
+        },
+        "top_15": {
+          "n": 1478,
+          "gt": 296,
+          "precision": 20.03
+        },
+        "top_20": {
+          "n": 2297,
+          "gt": 387,
+          "precision": 16.85
+        }
+      },
+      "transe_rank_buckets": {
+        "rank_1_5": {
+          "with_transe": {
+            "n": 22,
+            "precision": 13.64
+          },
+          "without_transe": {
+            "n": 270,
+            "precision": 28.89
+          },
+          "gap": -15.25
+        },
+        "rank_6_10": {
+          "with_transe": {
+            "n": 28,
+            "precision": 10.71
+          },
+          "without_transe": {
+            "n": 450,
+            "precision": 22.89
+          },
+          "gap": -12.17
+        },
+        "rank_11_15": {
+          "with_transe": {
+            "n": 43,
+            "precision": 6.98
+          },
+          "without_transe": {
+            "n": 665,
+            "precision": 15.94
+          },
+          "gap": -8.96
+        },
+        "rank_16_20": {
+          "with_transe": {
+            "n": 34,
+            "precision": 2.94
+          },
+          "without_transe": {
+            "n": 785,
+            "precision": 11.46
+          },
+          "gap": -8.52
+        }
+      }
+    }
+  },
+  "holdout_summary": {
+    "GOLDEN": {
+      "buckets": {
+        "rank_1_5": {
+          "holdout_mean": 73.03,
+          "holdout_std": 23.24,
+          "full_data": 81.25,
+          "values": [
+            33.33,
+            81.82,
+            87.5,
+            100.0,
+            62.5
+          ]
+        },
+        "rank_6_10": {
+          "holdout_mean": 52.06,
+          "holdout_std": 29.83,
+          "full_data": 78.26,
+          "values": [
+            50.0,
+            71.43,
+            50.0,
+            0.0,
+            88.89
+          ]
+        },
+        "rank_11_15": {
+          "holdout_mean": 55.67,
+          "holdout_std": 26.78,
+          "full_data": 58.97,
+          "values": [
+            50.0,
+            41.67,
+            20.0,
+            66.67,
+            100.0
+          ]
+        },
+        "rank_16_20": {
+          "holdout_mean": 44.76,
+          "holdout_std": 34.71,
+          "full_data": 73.91,
+          "values": [
+            16.67,
+            50.0,
+            57.14,
+            0.0,
+            100.0
+          ]
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "holdout_mean": 73.03,
+          "holdout_std": 23.24,
+          "full_data": 81.25,
+          "values": [
+            33.33,
+            81.82,
+            87.5,
+            100.0,
+            62.5
+          ]
+        },
+        "top_10": {
+          "holdout_mean": 73.47,
+          "holdout_std": 18.69,
+          "full_data": 80.16,
+          "values": [
+            41.67,
+            77.78,
+            71.43,
+            100.0,
+            76.47
+          ]
+        },
+        "top_15": {
+          "holdout_mean": 63.99,
+          "holdout_std": 12.84,
+          "full_data": 75.15,
+          "values": [
+            43.75,
+            63.33,
+            57.89,
+            75.0,
+            80.0
+          ]
+        },
+        "top_20": {
+          "holdout_mean": 55.97,
+          "holdout_std": 15.84,
+          "full_data": 75.0,
+          "values": [
+            36.36,
+            61.11,
+            57.69,
+            42.86,
+            81.82
+          ]
+        }
+      },
+      "holdout_monotonic": false,
+      "holdout_gap_1_5_vs_16_20": 28.27
+    },
+    "HIGH": {
+      "buckets": {
+        "rank_1_5": {
+          "holdout_mean": 43.03,
+          "holdout_std": 11.79,
+          "full_data": 60.22,
+          "values": [
+            21.74,
+            52.94,
+            44.12,
+            54.84,
+            41.51
+          ]
+        },
+        "rank_6_10": {
+          "holdout_mean": 39.64,
+          "holdout_std": 10.98,
+          "full_data": 53.8,
+          "values": [
+            18.18,
+            48.15,
+            43.33,
+            41.67,
+            46.88
+          ]
+        },
+        "rank_11_15": {
+          "holdout_mean": 20.38,
+          "holdout_std": 10.26,
+          "full_data": 55.26,
+          "values": [
+            0.0,
+            27.27,
+            23.53,
+            25.0,
+            26.09
+          ]
+        },
+        "rank_16_20": {
+          "holdout_mean": 21.01,
+          "holdout_std": 14.75,
+          "full_data": 62.24,
+          "values": [
+            0.0,
+            42.86,
+            16.67,
+            14.29,
+            31.25
+          ]
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "holdout_mean": 43.03,
+          "holdout_std": 11.79,
+          "full_data": 60.22,
+          "values": [
+            21.74,
+            52.94,
+            44.12,
+            54.84,
+            41.51
+          ]
+        },
+        "top_10": {
+          "holdout_mean": 41.44,
+          "holdout_std": 11.1,
+          "full_data": 57.14,
+          "values": [
+            20.0,
+            50.82,
+            43.75,
+            49.09,
+            43.53
+          ]
+        },
+        "top_15": {
+          "holdout_mean": 36.84,
+          "holdout_std": 10.89,
+          "full_data": 56.69,
+          "values": [
+            15.52,
+            44.58,
+            39.51,
+            44.78,
+            39.81
+          ]
+        },
+        "top_20": {
+          "holdout_mean": 35.26,
+          "holdout_std": 11.15,
+          "full_data": 57.64,
+          "values": [
+            13.43,
+            44.33,
+            37.93,
+            41.89,
+            38.71
+          ]
+        }
+      },
+      "holdout_monotonic": false,
+      "holdout_gap_1_5_vs_16_20": 22.02
+    },
+    "MEDIUM": {
+      "buckets": {
+        "rank_1_5": {
+          "holdout_mean": 21.73,
+          "holdout_std": 5.65,
+          "full_data": 36.55,
+          "values": [
+            26.48,
+            20.48,
+            18.34,
+            29.55,
+            13.81
+          ]
+        },
+        "rank_6_10": {
+          "holdout_mean": 18.07,
+          "holdout_std": 3.98,
+          "full_data": 24.52,
+          "values": [
+            15.85,
+            19.07,
+            18.48,
+            24.5,
+            12.44
+          ]
+        },
+        "rank_11_15": {
+          "holdout_mean": 10.67,
+          "holdout_std": 1.07,
+          "full_data": 22.28,
+          "values": [
+            10.64,
+            10.66,
+            9.03,
+            12.41,
+            10.61
+          ]
+        },
+        "rank_16_20": {
+          "holdout_mean": 8.12,
+          "holdout_std": 3.92,
+          "full_data": 18.24,
+          "values": [
+            3.61,
+            12.7,
+            8.94,
+            3.51,
+            11.83
+          ]
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "holdout_mean": 21.73,
+          "holdout_std": 5.65,
+          "full_data": 36.55,
+          "values": [
+            26.48,
+            20.48,
+            18.34,
+            29.55,
+            13.81
+          ]
+        },
+        "top_10": {
+          "holdout_mean": 20.13,
+          "holdout_std": 4.6,
+          "full_data": 31.01,
+          "values": [
+            21.93,
+            19.86,
+            18.41,
+            27.29,
+            13.18
+          ]
+        },
+        "top_15": {
+          "holdout_mean": 17.96,
+          "holdout_std": 3.69,
+          "full_data": 28.91,
+          "values": [
+            19.71,
+            17.88,
+            15.97,
+            23.65,
+            12.59
+          ]
+        },
+        "top_20": {
+          "holdout_mean": 16.38,
+          "holdout_std": 2.65,
+          "full_data": 27.15,
+          "values": [
+            17.32,
+            16.93,
+            14.76,
+            20.4,
+            12.48
+          ]
+        }
+      },
+      "holdout_monotonic": true,
+      "holdout_gap_1_5_vs_16_20": 13.61
+    },
+    "LOW": {
+      "buckets": {
+        "rank_1_5": {
+          "holdout_mean": 7.95,
+          "holdout_std": 3.75,
+          "full_data": 24.7,
+          "values": [
+            12.7,
+            5.32,
+            8.04,
+            11.21,
+            2.47
+          ]
+        },
+        "rank_6_10": {
+          "holdout_mean": 5.58,
+          "holdout_std": 1.52,
+          "full_data": 15.49,
+          "values": [
+            5.3,
+            5.83,
+            7.08,
+            6.87,
+            2.83
+          ]
+        },
+        "rank_11_15": {
+          "holdout_mean": 5.78,
+          "holdout_std": 1.46,
+          "full_data": 15.37,
+          "values": [
+            3.01,
+            5.71,
+            7.2,
+            6.45,
+            6.52
+          ]
+        },
+        "rank_16_20": {
+          "holdout_mean": 5.36,
+          "holdout_std": 1.72,
+          "full_data": 9.42,
+          "values": [
+            4.86,
+            3.94,
+            8.66,
+            4.07,
+            5.26
+          ]
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "holdout_mean": 7.95,
+          "holdout_std": 3.75,
+          "full_data": 24.7,
+          "values": [
+            12.7,
+            5.32,
+            8.04,
+            11.21,
+            2.47
+          ]
+        },
+        "top_10": {
+          "holdout_mean": 6.68,
+          "holdout_std": 2.32,
+          "full_data": 19.9,
+          "values": [
+            8.66,
+            5.61,
+            7.56,
+            8.91,
+            2.67
+          ]
+        },
+        "top_15": {
+          "holdout_mean": 6.38,
+          "holdout_std": 1.3,
+          "full_data": 18.08,
+          "values": [
+            6.55,
+            5.65,
+            7.43,
+            7.96,
+            4.31
+          ]
+        },
+        "top_20": {
+          "holdout_mean": 6.1,
+          "holdout_std": 1.12,
+          "full_data": 15.47,
+          "values": [
+            6.13,
+            5.2,
+            7.76,
+            6.79,
+            4.61
+          ]
+        }
+      },
+      "holdout_monotonic": false,
+      "holdout_gap_1_5_vs_16_20": 2.59
+    },
+    "FILTER": {
+      "buckets": {
+        "rank_1_5": {
+          "holdout_mean": 6.12,
+          "holdout_std": 5.52,
+          "full_data": 27.74,
+          "values": [
+            4.94,
+            0.0,
+            2.78,
+            6.67,
+            16.22
+          ]
+        },
+        "rank_6_10": {
+          "holdout_mean": 6.19,
+          "holdout_std": 2.89,
+          "full_data": 22.18,
+          "values": [
+            4.46,
+            1.87,
+            6.32,
+            8.0,
+            10.28
+          ]
+        },
+        "rank_11_15": {
+          "holdout_mean": 3.54,
+          "holdout_std": 0.9,
+          "full_data": 15.4,
+          "values": [
+            4.49,
+            2.52,
+            4.58,
+            3.57,
+            2.52
+          ]
+        },
+        "rank_16_20": {
+          "holdout_mean": 2.89,
+          "holdout_std": 1.76,
+          "full_data": 11.11,
+          "values": [
+            3.29,
+            6.04,
+            1.04,
+            2.52,
+            1.56
+          ]
+        }
+      },
+      "cumulative": {
+        "top_5": {
+          "holdout_mean": 6.12,
+          "holdout_std": 5.52,
+          "full_data": 27.74,
+          "values": [
+            4.94,
+            0.0,
+            2.78,
+            6.67,
+            16.22
+          ]
+        },
+        "top_10": {
+          "holdout_mean": 6.16,
+          "holdout_std": 3.85,
+          "full_data": 24.29,
+          "values": [
+            4.66,
+            1.15,
+            4.79,
+            7.5,
+            12.71
+          ]
+        },
+        "top_15": {
+          "holdout_mean": 4.94,
+          "holdout_std": 1.98,
+          "full_data": 20.03,
+          "values": [
+            4.58,
+            1.8,
+            4.69,
+            5.67,
+            7.94
+          ]
+        },
+        "top_20": {
+          "holdout_mean": 4.19,
+          "holdout_std": 0.87,
+          "full_data": 16.85,
+          "values": [
+            4.11,
+            3.3,
+            3.32,
+            4.58,
+            5.64
+          ]
+        }
+      },
+      "holdout_monotonic": false,
+      "holdout_gap_1_5_vs_16_20": 3.23
+    }
+  }
+}

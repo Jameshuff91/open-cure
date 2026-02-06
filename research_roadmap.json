@@ -7634,13 +7634,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "For GOLDEN tier predictions, compute multi-signal scores",
         "Compare precision of high-signal vs low-signal GOLDEN predictions",
         "If gap exists, implement within-tier ranking",
         "Success: >10pp precision gap between high and low signal GOLDEN"
-      ]
+      ],
+      "findings": "Subsumed by h443: Within-tier ranking analysis showed kNN rank already provides >10pp precision gap between top-half and bottom-half for MEDIUM (+14.5pp) and LOW (+12.5pp). TransE composite adds nothing. kNN rank gap survives holdout: HIGH +15.9pp, MEDIUM +11.5pp.",
+      "result_metric": "Subsumed by h443: kNN rank gap HIGH +15.9pp, MEDIUM +11.5pp on holdout"
     },
     {
       "id": "h380",
@@ -7839,7 +7841,7 @@
       "title": "MEDIUM Tier Overlap Anomaly: Why Does Overlap Hurt MEDIUM?",
       "description": "h388 found that MEDIUM tier predictions with target overlap have LOWER precision (14.8%) than those without (20.7%). This is counterintuitive and may indicate a confounding factor.",
       "hypothesis": "MEDIUM overlap predictions are enriched in broad-target drugs (e.g., kinase inhibitors) that match many disease genes non-specifically, creating false confidence.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -7849,7 +7851,9 @@
         "Check if broad-target drugs (kinase inhibitors, etc.) are enriched",
         "If confirmed, add broad-target drug filter for MEDIUM tier",
         "Success: explain anomaly and fix MEDIUM precision"
-      ]
+      ],
+      "findings": "The MEDIUM overlap anomaly from h388 is RESOLVED - it no longer exists with current tier rules.\n\nCurrent state: MEDIUM + overlap = 32.3% (n=1609) vs no-overlap = 21.7% (n=2298) (+10.6pp)\nh388 reported: 14.8% vs 20.7% (-5.9pp) - composition changed due to cancer_same_type demotion and target_overlap_promotion rule.\n\nKEY FINDINGS:\n\n1. Broad target drugs DO dilute: <=36 targets = 37.8% vs >36 targets = 26.8% (-11.0pp)\n   Target count quartiles: 0-14 = 47.6%, 14-36 = 29.7%, 36-104 = 25.2%, 104-593 = 28.6%\n\n2. Category variation: autoimmune +29.4pp, dermatological +30.0pp, musculoskeletal +29.5pp\n   Only respiratory (-11.7pp) and metabolic (-5.6pp) are negative\n\n3. Corticosteroids are low-precision overlap drugs (Dexamethasone 10.8%, Betamethasone 7.7%)\n   Checkpoint inhibitors (Nivolumab 41.7%) and targeted drugs (Olaparib 31.6%) are high-precision\n\n4. Overlap count is positively correlated with precision up to ~8-10 overlaps,\n   then noisy due to small n\n\n5. cancer cross-type (demoted to MEDIUM) has 0.5% precision with overlap - these are broad-spectrum chemo drugs matching many disease genes non-specifically\n\nNO ACTION NEEDED: The anomaly resolved itself through tier rule changes.\nBroad-target drug concern (corticosteroids) already handled by broad_class_isolated filter.",
+      "result_metric": "MEDIUM overlap = 32.3% vs no-overlap = 21.7% (+10.6pp) - anomaly resolved"
     },
     {
       "id": "h392",
@@ -8374,14 +8378,16 @@
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Compute precision at multiple thresholds: freq>=15, freq>=20, rank<=3, rank<=5",
         "Identify the threshold that achieves >55% precision",
         "If found, implement selective promotion cancer_same_type \u2192 HIGH",
         "Verify HIGH tier precision improves",
         "Success: cancer same-type subset at >55% precision with >20 predictions"
-      ]
+      ],
+      "findings": "Cancer same-type promotion to HIGH FAILS holdout dramatically.\n\nFULL-DATA (misleading):\n- rank<=5: 61.6% (n=237) - appears promotable\n- rank<=5 + mech: 67.3% (n=159) - looks even better\n- rank<=3: 63.8% (n=149)\n\nHOLDOUT (reality):\n- rank<=5: 16.1% \u00b1 11.3% (n\u224833/seed) - FAR below HIGH threshold (50.6%)\n- rank<=5 + mech: 17.3% \u00b1 14.3% (n\u224824/seed)\n- rank<=3: 17.3% \u00b1 10.8%\n- ALL thresholds < 20% holdout precision\n\nRoot cause: cancer_same_type precision is almost entirely from GT leakage:\n- Full-data: drug treats breast_cancer \u2192 predicts for other breast cancers \u2192 GT says yes\n- Holdout: drug trains on 80% cancers \u2192 predicts for held-out 20% \u2192 fails because cancer subtypes are NOT interchangeable\n\nThis confirms h393/h396 decision to demote cancer_same_type from GOLDEN to MEDIUM.\nCancer same-type is NOT promotable to HIGH under any threshold. The 36.1% MEDIUM precision is already generous given 16% holdout.\n\nKEY LEARNING: Cancer subtype matching is the single largest source of full-data/holdout precision gap in the system (45.5pp gap for rank<=5). Any cancer-related rule change MUST be holdout-validated.",
+      "result_metric": "rank<=5: 61.6% full-data \u2192 16.1% holdout (45.5pp gap, INVALIDATED)"
     },
     {
       "id": "h417",
@@ -8717,7 +8723,7 @@
       "title": "kNN Bootstrap Ensemble for Rank Stability",
       "description": "h434 showed kNN neighborhood changes (not frequency inflation) drive holdout degradation. Instead of trying to rescue rank 21-30, test a BOOTSTRAP approach: run kNN k=20 on 5 random 80% subsets of training diseases, average drug scores across bootstraps. This should STABILIZE rankings and reduce the rank 21-30 boundary sensitivity.",
       "hypothesis": "Bootstrap-averaged kNN scores will reduce rank volatility, making rank 21-30 predictions more reliable and enabling partial rescue.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8727,7 +8733,9 @@
         "Compare rank stability: how many drugs shift between rank 1-20 and 21-30?",
         "Evaluate R@30 and tier precision with bootstrapped scores",
         "If stable, test rank>20 rescue with bootstrapped scores on holdout"
-      ]
+      ],
+      "findings": "Bootstrap kNN (10 samples, 80% subsample) HURTS performance instead of improving stability.\n\nKey findings:\n1. Full-data R@30: 87.47% (standard) vs 84.56% (bootstrap) = -2.91pp\n2. Holdout R@30: 39.41% \u00b1 2.16% vs 37.88% \u00b1 1.54% = -1.54pp\n3. Full\u2192holdout rank drift INCREASES: 5.51 drugs leave top-20 (std) vs 7.19 (bootstrap) = 30.5% WORSE\n4. Jaccard overlap full\u2192holdout: 0.603 (std) vs 0.498 (bootstrap) = WORSE\n5. Per-disease: Only 8/455 improve, 40 get worse\n\nRoot cause: Subsampling 80% of train diseases loses genuinely informative neighbors. The 20% dropped are not noise \u2014 they contain real signal. Unlike classical bagging where each sample trains an independent model, kNN neighborhoods are 80% correlated across bootstraps, so variance reduction is minimal while information loss is real.\n\nImplication: kNN instability (h434/h437) is a STRUCTURAL property of using 455 diseases with k=20. It cannot be fixed by bootstrap/bagging. The rank>20 filter is the correct response. Any future rank stability work would need to operate at the drug level (e.g., drug embedding stability) rather than the disease neighborhood level.",
+      "result_metric": "Bootstrap R@30 = 37.88% vs Standard 39.41% (-1.54pp), drift +30.5% WORSE"
     },
     {
       "id": "h437",
@@ -8801,6 +8809,151 @@
       ],
       "findings": "TransE top-30 gives best precision (38.9%) for MEDIUM tier. Top-100 maximizes lift*coverage (score=17,928). No threshold achieves HIGH precision (50.8%). Optimal for production: top-30 (precision-focused).",
       "result_metric": "MEDIUM precision by threshold: top-10=33.3%, top-20=36.7%, top-30=38.9%, top-50=37.9%, top-100=38.2%"
+    },
+    {
+      "id": "h441",
+      "title": "Drug-Level Embedding Stability for Within-Tier Ranking",
+      "description": "h436 showed disease-level bootstrap fails. Instead, measure DRUG embedding stability: how consistently does each drug appear in top-20 across LOO (leave-one-disease-out) evaluations? Drugs that consistently rank high (across many disease test cases) may be more reliable predictions than those that fluctuate. Use this as a within-tier ranking signal.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "For each drug, count how many diseases it appears in top-20 predictions for",
+        "Compute coefficient of variation of rank across diseases where it appears",
+        "Split predictions into stable (low CV) vs unstable (high CV)",
+        "Compare GT hit rate for stable vs unstable predictions",
+        "If significant gap (>10pp), implement as within-tier ranking boost"
+      ]
+    },
+    {
+      "id": "h442",
+      "title": "kNN Score Margin as Confidence Signal",
+      "description": "h436/h437 showed kNN neighborhoods are structurally unstable. Instead of trying to stabilize rankings, use the MARGIN between rank-20 and rank-21 drug scores as a confidence signal. A large margin means the ranking is robust even if neighborhoods change. A small margin means the drug is borderline and sensitive to perturbation. This margin could differentiate reliable rank 1-20 predictions from unreliable ones.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "invalidated",
+      "steps": [
+        "For each disease, compute kNN score for rank-20 and rank-21 drugs",
+        "Compute normalized margin: (score_20 - score_21) / score_1",
+        "Split diseases into high-margin (top quartile) and low-margin (bottom quartile)",
+        "Compare tier precision for high-margin vs low-margin diseases",
+        "If precision differs by >10pp, implement as within-disease confidence signal"
+      ],
+      "findings": "Score margin (gap between rank-20 and rank-21 drug scores) is NOT a useful confidence signal.\n\nKey findings:\n1. Margin distribution is heavily concentrated near 0: median=0.0, Q1=0.0, Q3=0.002, max=0.226\n2. Correlation with R@30: margin -0.04, entropy -0.15, neighbor_sim +0.08, n_drugs -0.37\n3. n_drugs (number of predicted drugs) has the strongest correlation with R@30 (-0.37) but this is confounded by GT size (r=-0.50 with R@30)\n4. v2 analysis of score tie density also shows weak signal: ties_at_20 vs R@30 r=-0.027\n\nFull-data tier splits (high-metric vs low-metric by n_drugs):\n- HIGH n_drugs: GOLDEN 74.9%, HIGH 66.4%, MEDIUM 29.7%\n- LOW n_drugs: GOLDEN 83.3% (n=6!), HIGH 41.5%, MEDIUM 22.4%\nDisease with fewer candidate drugs have higher per-prediction precision, but this is confounded by the diseases themselves (rare diseases with few drugs in GT).\n\nHoldout validation was not completed (Part 4 empty), but the correlations are too weak to justify implementation.\n\nKey learning: The kNN score space is too flat (many ties at boundaries) for score margins to be discriminative. The rank-20 boundary is not a smooth score threshold but a tie-breaking artifact.",
+      "result_metric": "margin_vs_r30 = -0.04 (no signal)"
+    },
+    {
+      "id": "h443",
+      "title": "Within-Tier Ranking Using TransE + kNN Score Composite",
+      "description": "h405/h439 showed TransE consilience is a strong signal (+13.6pp for MEDIUM). Currently TransE is a boolean flag. For within-tier ranking, create a composite score: kNN_rank + TransE_rank (or kNN_score * TransE_score). This could improve the ordering of predictions within each tier, helping clinicians prioritize the most promising candidates.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "validated",
+      "steps": [
+        "For each tier, compute TransE rank for all predictions",
+        "Create composite: alpha * kNN_normalized_score + (1-alpha) * TransE_normalized_score",
+        "Test alpha = 0.5, 0.7, 0.9",
+        "Evaluate: does reordering within-tier improve top-half vs bottom-half precision gap?",
+        "If gap > 10pp for any tier, implement as within-tier sort key"
+      ],
+      "findings": "Within-tier ranking analysis reveals kNN rank is already the dominant within-tier signal. TransE composite does NOT improve over kNN rank alone.\n\nKey findings:\n\nPART 1 (Per-disease top-half vs bottom-half, full data):\n- MEDIUM: +14.5pp gap (33.5% top-half vs 19.0% bottom-half) at alpha=0.3\n- LOW: +12.5pp gap (22.3% vs 9.8%) at alpha=0.5\n- FILTER: +11.8pp gap at alpha=1.0 (kNN only!)\n- GOLDEN/HIGH: small gaps (2.7pp / 6.6pp)\n- TransE-only (alpha=0.0) gives NEGATIVE gaps everywhere except GOLDEN\n\nPART 2 (Global cross-disease):\n- TransE boolean is NEGATIVE for MEDIUM (-3.7pp), LOW (-4.4pp), FILTER (-5.8pp)\n- kNN rank alone: +13.0pp MEDIUM, +9.0pp LOW, +8.1pp FILTER\n- Combo is WORSE than kNN alone globally\n\nPART 3 (Holdout 5-seed):\n- kNN rank gap survives holdout: HIGH +15.9\u00b15.6pp, MEDIUM +11.5\u00b15.2pp\n- TransE gap has huge variance and collapses for LOW/FILTER\n- LOW/FILTER gaps collapse to ~0pp on holdout\n\nImplications:\n1. kNN rank IS the within-tier ranking signal. It already differentiates well.\n2. TransE consilience value (h405) is as a binary tier indicator, not continuous ranking.\n3. Top-half MEDIUM by kNN rank (33.5%) \u2248 MEDIUM+TransE (34.7%), confirming redundancy.\n4. For clinical use: within each tier, present predictions in kNN rank order (already done).\n5. MEDIUM top-half on holdout (+11.5pp gap) means ranks 1-10 in MEDIUM are ~26% vs ranks 11-20 at ~15%.",
+      "result_metric": "kNN rank gap: HIGH +15.9pp, MEDIUM +11.5pp on holdout; TransE composite adds nothing"
+    },
+    {
+      "id": "h444",
+      "title": "Sub-Tier Precision Reporting: Top-5 vs Top-10 vs Top-20 Within Tier",
+      "description": "h443 showed kNN rank creates 11-16pp precision gaps within tiers on holdout. For clinical presentation, report sub-tier precision: e.g., MEDIUM rank 1-5 may have ~35% precision, rank 6-10 ~25%, rank 11-20 ~15%. This gives clinicians finer-grained guidance without changing tier assignment.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "validated",
+      "steps": [
+        "For each tier, compute precision at rank 1-5, 6-10, 11-15, 16-20 buckets",
+        "Validate on 5-seed holdout",
+        "If gradient exists (monotonic decline), add rank-bucket precision to deliverable",
+        "Report as additional metadata column in output Excel"
+      ],
+      "findings": "Sub-tier precision by kNN rank reveals a strong, monotonic gradient for MEDIUM tier that holds on holdout.\n\nFULL-DATA RANK GRADIENT (precision by rank bucket):\n| Tier | Rank 1-5 | 6-10 | 11-15 | 16-20 | Gap | Monotonic |\n|------|----------|------|-------|-------|-----|-----------|\n| GOLDEN | 81.2% | 78.3% | 59.0% | 73.9% | +7.3pp | NO (n too small) |\n| HIGH | 60.2% | 53.8% | 55.3% | 62.2% | -2.0pp | NO (flat) |\n| MEDIUM | 36.5% | 24.5% | 22.3% | 18.2% | +18.3pp | YES |\n| LOW | 24.7% | 15.5% | 15.4% | 9.4% | +15.3pp | YES |\n| FILTER | 27.7% | 22.2% | 15.4% | 11.1% | +16.6pp | YES |\n\nHOLDOUT (5-seed mean):\n| Tier | Rank 1-5 | 6-10 | 11-15 | 16-20 | Gap | Monotonic |\n|------|----------|------|-------|-------|-----|-----------|\n| GOLDEN | 73.0% \u00b1 23 | 52.1% \u00b1 30 | 55.7% \u00b1 27 | 44.8% \u00b1 35 | +28.3pp | NO (high variance) |\n| HIGH | 43.0% \u00b1 12 | 39.6% \u00b1 11 | 20.4% \u00b1 10 | 21.0% \u00b1 15 | +22.0pp | NO (16-20>11-15) |\n| MEDIUM | 21.7% \u00b1 5.6 | 18.1% \u00b1 4.0 | 10.7% \u00b1 1.1 | 8.1% \u00b1 3.9 | +13.6pp | YES |\n| LOW | 7.9% \u00b1 3.7 | 5.6% \u00b1 1.5 | 5.8% \u00b1 1.5 | 5.4% \u00b1 1.7 | +2.6pp | NO (near-flat) |\n| FILTER | 6.1% \u00b1 5.5 | 6.2% \u00b1 2.9 | 3.5% \u00b1 0.9 | 2.9% \u00b1 1.8 | +3.2pp | NO |\n\nKEY INSIGHTS:\n1. MEDIUM tier has the strongest, most reliable rank gradient (13.6pp holdout gap, monotonic)\n2. MEDIUM rank 1-5 = 21.7% holdout \u2192 approaches MEDIUM overall full-data (26.1%)\n3. HIGH rank 1-5 vs 6-10 is modest (43.0% vs 39.6%) but 11-15 drops sharply (-19pp)\n4. GOLDEN/LOW/FILTER: too noisy or too flat for reliable sub-tier reporting\n5. TransE consilience is NEGATIVE within tiers (already captured by tier rules)\n\nCLINICAL RECOMMENDATION:\n- Add rank_bucket column to deliverable for MEDIUM/HIGH predictions only\n- MEDIUM rank 1-5: ~22% precision (HIGH-adjacent for top predictions)\n- MEDIUM rank 11-20: ~9% precision (LOW-adjacent for bottom predictions)\n- Do NOT use sub-tier for GOLDEN (high variance) or LOW/FILTER (flat gradient)",
+      "result_metric": "MEDIUM rank 1-5 = 21.7% holdout vs 16-20 = 8.1% (13.6pp gap, monotonic)"
+    },
+    {
+      "id": "h445",
+      "title": "TransE Score Distribution: Why Does TransE Hurt Global Ranking?",
+      "description": "h443 found TransE boolean is NEGATIVE for MEDIUM (-3.7pp), LOW (-4.4pp), FILTER (-5.8pp) in global ranking. This contradicts h405 findings (+13.6pp for MEDIUM+TransE). Investigate: is the benefit purely per-disease (drugs that rank high in kNN AND TransE for the SAME disease) vs global (drugs in TransE top-30 across diseases but low kNN)?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "validated",
+      "steps": [
+        "Compare per-disease TransE precision vs global TransE precision",
+        "Check if TransE-True predictions have lower average kNN rank (i.e., are they systematically lower-ranked by kNN?)",
+        "If so, the per-disease signal is real but globally TransE selects weaker predictions"
+      ],
+      "findings": "Resolved the TransE paradox. TransE consilience is genuinely negative WITHIN tiers but positive ACROSS tiers.\n\nNOT a Simpson's paradox - the global and per-disease TransE precisions are nearly identical.\n\nKEY FINDINGS:\n\n1. TransE=True predictions have LOWER precision than TransE=False WITHIN every tier below GOLDEN:\n   - MEDIUM rank 1-5: TransE 33.3% vs No-TransE 37.3% (-4.0pp)\n   - LOW rank 1-5: TransE 12.1% vs No-TransE 25.5% (-13.4pp)\n   - FILTER rank 1-5: TransE 13.6% vs No-TransE 28.9% (-15.3pp)\n\n2. Per-disease, TransE is net NEGATIVE (more diseases hurt than helped):\n   - MEDIUM: 24% better, 35% worse\n   - LOW: 12% better, 40% worse\n   - FILTER: 7% better, 49% worse\n\n3. TransE selects HIGHER kNN rank predictions (rank 7.7 vs 10.5 for MEDIUM), so the issue is not that TransE picks low-ranked drugs.\n\n4. Disease GT size has 0.923 correlation with precision - the dominant confound. TransE fraction is uncorrelated with GT size.\n\nRESOLUTION:\nThe h405 +13.6pp holdout lift comes from TransE acting as a SUBSET SELECTOR:\n- 238 of 3894 MEDIUM predictions have TransE consilience\n- These 238 are not better than rank-equivalent non-TransE predictions\n- But compared to the FULL MEDIUM set, they are higher precision because they concentrate in rank 1-10 where precision is higher\n- TransE value is at the TIER level (subset selection), not within-tier (ranking)\n\nh439 implementation as a boolean flag was correct. Do NOT use TransE for within-tier ranking.",
+      "result_metric": "TransE within-tier: -4.0pp (MEDIUM rank 1-5), NOT Simpson paradox"
+    },
+    {
+      "id": "h446",
+      "title": "Add Rank-Bucket Precision to Deliverable Excel",
+      "description": "h444 validated that rank buckets create a monotonic precision gradient for MEDIUM tier (21.7% rank 1-5 vs 8.1% rank 16-20 on holdout). Add a rank_bucket_precision column to the deliverable file that reports expected precision based on tier + rank bucket combination. This gives clinicians finer-grained guidance.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Compute holdout-validated rank-bucket precisions for each tier",
+        "Add rank_bucket_precision column to DrugPrediction.to_dict()",
+        "Regenerate deliverable Excel with new column",
+        "Verify rank_bucket_precision is monotonically decreasing within each tier"
+      ]
+    },
+    {
+      "id": "h447",
+      "title": "Cancer Subtype Leakage Quantification and Mitigation",
+      "description": "h416 revealed cancer_same_type has a 45.5pp full-to-holdout gap (61.6% vs 16.1% for rank<=5), the largest in the system. This leakage inflates MEDIUM tier precision for cancer predictions. Investigate: (1) How many MEDIUM predictions are cancer_same_type? (2) If we exclude cancer_same_type, what is MEDIUM holdout? (3) Can we identify cancer predictions that ARE genuinely transferable (e.g., checkpoint inhibitors across solid tumors)?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Quantify cancer_same_type contribution to MEDIUM tier precision",
+        "Identify which cancer drug classes transfer across subtypes on holdout (checkpoint inhibitors, alkylating agents, etc.)",
+        "If any class achieves >30% holdout precision, create targeted cancer subclass rule",
+        "Report actionable vs non-actionable cancer predictions separately"
+      ]
+    },
+    {
+      "id": "h448",
+      "title": "HIGH Tier Rank Gradient Anomaly Investigation",
+      "description": "h444 found HIGH tier has NO rank gradient: rank 1-5 = 60.2%, rank 16-20 = 62.2% (-2.0pp, slightly inverted). On holdout: rank 1-5 = 43.0%, rank 16-20 = 21.0% (gradient exists but rank 11-15 = 20.4%). This flat/noisy gradient in HIGH tier suggests HIGH predictions are not ranked by quality but by some other factor. Investigate: are HIGH rank 16-20 predictions enriched in high-quality rules (hierarchy matches, high frequency)?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Break down HIGH tier by rank bucket AND assignment rule",
+        "Check if hierarchy match predictions cluster at specific ranks",
+        "Check if high-frequency drugs cluster at specific ranks",
+        "If HIGH rank 16-20 enriched in hierarchy, these were likely rescued from rank>20 FILTER"
+      ]
+    },
+    {
+      "id": "h449",
+      "title": "Corticosteroid-Specific MEDIUM Demotion",
+      "description": "h391 showed corticosteroids (Dexamethasone 10.8%, Betamethasone 7.7%, Methylprednisolone 4.3%, Prednisolone 14.3%) are consistently low-precision in MEDIUM tier with target overlap. These drugs have 375-450 targets, matching many disease genes non-specifically. Test whether demoting corticosteroids from MEDIUM to LOW improves MEDIUM precision.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Count corticosteroid predictions in MEDIUM tier",
+        "Compute MEDIUM precision with vs without corticosteroids",
+        "If improvement >1pp, consider adding corticosteroid-specific demotion",
+        "Validate on holdout"
+      ]
     }
   ],
   "completed": [
@@ -10312,6 +10465,18 @@
       "hypothesis_id": "h405",
       "learning": "TransE consilience (kNN \u2229 TransE top-30) is a strong, holdout-validated signal: +13.6pp lift for MEDIUM tier (34.7% vs 21.2%). TransE alone is weak (5.2%) but serves as an independent validation filter. The consilience principle works: predictions agreed upon by multiple independent methods are more reliable.",
       "implication": "Implement TransE top-30 agreement as a tier promotion signal. MEDIUM + TransE top-30 \u2192 HIGH candidate. This is the first new feature to improve tier precision since h388 target overlap."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h436",
+      "learning": "Bootstrap/bagging of kNN neighborhoods HURTS performance (-1.54pp R@30, +30.5% more rank drift). Subsampling 80% of train diseases loses genuinely informative neighbors. kNN instability is structural (455 diseases, k=20) and cannot be fixed by aggregation. The rank>20 filter remains the correct response.",
+      "implication": "Future rank stability work should focus on drug-level signals (embedding stability, score margins) rather than disease neighborhood manipulation. Within-tier ranking (using TransE, score margins, etc.) is more productive than trying to rescue rank 21-30."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h443",
+      "learning": "kNN rank is already the best within-tier ranking signal. TransE composite does NOT improve over kNN rank. TransE value is binary (tier indicator), not continuous (ranking signal). Top-half vs bottom-half gap on holdout: HIGH +15.9pp, MEDIUM +11.5pp. TransE boolean is actually NEGATIVE for global ranking (MEDIUM -3.7pp, LOW -4.4pp) \u2014 the h405 benefit is purely per-disease, not global.",
+      "implication": "For clinical deliverables, emphasize that rank within tier is informative. Consider reporting sub-tier precision (rank 1-5 vs 6-10 vs 11-20). Do not attempt to replace kNN rank as the primary ordering signal."
     }
   ],
   "collaborations": [

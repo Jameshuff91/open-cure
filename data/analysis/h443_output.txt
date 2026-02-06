@@ -1,0 +1,168 @@
+======================================================================
+h443: Within-Tier Ranking Using TransE + kNN Composite
+======================================================================
+
+Loading predictor...
+Loaded in 0.1s
+Diseases with GT and embeddings: 455
+
+======================================================================
+PART 1: Full-Data Within-Tier Ranking
+======================================================================
+Alpha values: [0.0, 0.3, 0.5, 0.7, 0.9, 1.0]
+(alpha=1.0 = kNN only, alpha=0.0 = TransE only)
+Completed in 11.0s
+
+--- GOLDEN (n=188, GT=141, prec=75.0%, TransE coverage=100%) ---
+  Alpha     Top-half prec  Bot-half prec      Gap
+  0.0              75.3%         74.7%    +0.5pp
+  0.3              76.3%         73.7%    +2.7pp
+  0.5              76.3%         73.7%    +2.7pp
+  0.7              76.3%         73.7%    +2.7pp
+  0.9              76.3%         73.7%    +2.7pp
+  1.0              76.3%         73.7%    +2.7pp
+
+--- HIGH (n=566, GT=326, prec=57.6%, TransE coverage=100%) ---
+  Alpha     Top-half prec  Bot-half prec      Gap
+  0.0              55.2%         59.9%    -4.7pp
+  0.3              60.9%         54.4%    +6.6pp
+  0.5              60.2%         55.0%    +5.2pp
+  0.7              60.2%         55.0%    +5.2pp
+  0.9              60.6%         54.7%    +5.9pp
+  1.0              60.6%         54.7%    +5.9pp
+
+--- MEDIUM (n=3907, GT=1017, prec=26.0%, TransE coverage=100%) ---
+  Alpha     Top-half prec  Bot-half prec      Gap
+  0.0              25.8%         26.3%    -0.5pp
+  0.3              33.5%         19.0%   +14.5pp
+  0.5              33.6%         19.0%   +14.6pp
+  0.7              33.5%         19.1%   +14.4pp
+  0.9              33.5%         19.0%   +14.5pp
+  1.0              33.6%         18.9%   +14.7pp
+
+--- LOW (n=2457, GT=384, prec=15.6%, TransE coverage=100%) ---
+  Alpha     Top-half prec  Bot-half prec      Gap
+  0.0              15.4%         15.8%    -0.4pp
+  0.3              21.8%         10.1%   +11.7pp
+  0.5              22.3%          9.8%   +12.5pp
+  0.7              22.4%          9.7%   +12.7pp
+  0.9              22.3%          9.8%   +12.5pp
+  1.0              22.2%          9.8%   +12.4pp
+
+--- FILTER (n=6504, GT=777, prec=11.9%, TransE coverage=100%) ---
+  Alpha     Top-half prec  Bot-half prec      Gap
+  0.0              10.7%         13.1%    -2.5pp
+  0.3              15.9%          8.2%    +7.7pp
+  0.5              16.8%          7.4%    +9.3pp
+  0.7              17.5%          6.7%   +10.8pp
+  0.9              17.9%          6.3%   +11.6pp
+  1.0              18.0%          6.2%   +11.8pp
+
+======================================================================
+PART 2: Global (Cross-Disease) Within-Tier Ranking
+======================================================================
+(Instead of per-disease halves, rank ALL predictions in tier globally)
+
+--- GOLDEN (n=188, GT=141, prec=75.0%) ---
+  TransE=True:  85.0% (n=20)
+  TransE=False: 73.8% (n=168)
+  TransE gap:   +11.2pp
+  kNN rank top-half:    80.9%
+  kNN rank bottom-half: 69.1%
+  kNN rank gap:         +11.7pp
+  Combo (TransE>kNN) top-half:    81.9%
+  Combo (TransE>kNN) bottom-half: 68.1%
+  Combo gap:                      +13.8pp
+
+--- HIGH (n=566, GT=326, prec=57.6%) ---
+  TransE=True:  50.9% (n=55)
+  TransE=False: 58.3% (n=511)
+  TransE gap:   -7.4pp
+  kNN rank top-half:    59.0%
+  kNN rank bottom-half: 56.2%
+  kNN rank gap:         +2.8pp
+  Combo (TransE>kNN) top-half:    56.9%
+  Combo (TransE>kNN) bottom-half: 58.3%
+  Combo gap:                      -1.4pp
+
+--- MEDIUM (n=3907, GT=1017, prec=26.0%) ---
+  TransE=True:  22.7% (n=410)
+  TransE=False: 26.4% (n=3497)
+  TransE gap:   -3.7pp
+  kNN rank top-half:    32.5%
+  kNN rank bottom-half: 19.5%
+  kNN rank gap:         +13.0pp
+  Combo (TransE>kNN) top-half:    30.9%
+  Combo (TransE>kNN) bottom-half: 21.2%
+  Combo gap:                      +9.7pp
+
+--- LOW (n=2457, GT=384, prec=15.6%) ---
+  TransE=True:  11.6% (n=207)
+  TransE=False: 16.0% (n=2250)
+  TransE gap:   -4.4pp
+  kNN rank top-half:    20.1%
+  kNN rank bottom-half: 11.1%
+  kNN rank gap:         +9.0pp
+  Combo (TransE>kNN) top-half:    19.2%
+  Combo (TransE>kNN) bottom-half: 12.0%
+  Combo gap:                      +7.2pp
+
+--- FILTER (n=6504, GT=777, prec=11.9%) ---
+  TransE=True:  6.4% (n=373)
+  TransE=False: 12.3% (n=6131)
+  TransE gap:   -5.8pp
+  kNN rank top-half:    16.0%
+  kNN rank bottom-half: 7.9%
+  kNN rank gap:         +8.1pp
+  Combo (TransE>kNN) top-half:    15.3%
+  Combo (TransE>kNN) bottom-half: 8.6%
+  Combo gap:                      +6.7pp
+
+======================================================================
+PART 3: Holdout Validation (5-seed)
+======================================================================
+
+--- Seed 42 ---
+  GOLDEN: prec=31.8%, TransE gap=+71.4pp, kNN gap=+9.1pp, Combo gap=+9.1pp
+  HIGH: prec=14.1%, TransE gap=-14.9pp, kNN gap=+17.3pp, Combo gap=+17.3pp
+  MEDIUM: prec=16.4%, TransE gap=+3.2pp, kNN gap=+15.3pp, Combo gap=+15.3pp
+  LOW: prec=6.3%, TransE gap=+3.4pp, kNN gap=+5.1pp, Combo gap=+5.8pp
+  FILTER: prec=3.8%, TransE gap=-1.4pp, kNN gap=+0.1pp, Combo gap=+0.1pp
+
+--- Seed 123 ---
+  GOLDEN: prec=52.8%, TransE gap=+50.0pp, kNN gap=+61.1pp, Combo gap=+61.1pp
+  HIGH: prec=43.9%, TransE gap=+3.8pp, kNN gap=+18.4pp, Combo gap=+14.3pp
+  MEDIUM: prec=15.8%, TransE gap=+4.3pp, kNN gap=+9.5pp, Combo gap=+8.9pp
+  LOW: prec=5.2%, TransE gap=-3.8pp, kNN gap=+2.1pp, Combo gap=+0.4pp
+  FILTER: prec=4.9%, TransE gap=-0.7pp, kNN gap=-1.2pp, Combo gap=-1.5pp
+
+--- Seed 456 ---
+  GOLDEN: prec=57.7%, TransE gap=+45.8pp, kNN gap=+38.5pp, Combo gap=+38.5pp
+  HIGH: prec=38.4%, TransE gap=-2.3pp, kNN gap=+16.3pp, Combo gap=+20.9pp
+  MEDIUM: prec=14.3%, TransE gap=+10.1pp, kNN gap=+10.4pp, Combo gap=+10.4pp
+  LOW: prec=8.5%, TransE gap=-1.4pp, kNN gap=-2.0pp, Combo gap=-1.2pp
+  FILTER: prec=3.8%, TransE gap=+1.2pp, kNN gap=-0.7pp, Combo gap=-1.3pp
+
+--- Seed 789 ---
+  GOLDEN: prec=44.4%, TransE gap=+62.5pp, kNN gap=+55.0pp, Combo gap=+55.0pp
+  HIGH: prec=41.7%, TransE gap=+9.7pp, kNN gap=+22.2pp, Combo gap=+27.8pp
+  MEDIUM: prec=19.7%, TransE gap=+14.0pp, kNN gap=+18.7pp, Combo gap=+18.1pp
+  LOW: prec=6.8%, TransE gap=-1.6pp, kNN gap=+5.2pp, Combo gap=+3.1pp
+  FILTER: prec=3.6%, TransE gap=+2.0pp, kNN gap=+0.9pp, Combo gap=+1.5pp
+
+--- Seed 2024 ---
+  GOLDEN: prec=81.0%, TransE gap=-16.7pp, kNN gap=-20.9pp, Combo gap=-40.0pp
+  HIGH: prec=39.2%, TransE gap=+16.1pp, kNN gap=+5.4pp, Combo gap=+8.6pp
+  MEDIUM: prec=12.3%, TransE gap=-2.2pp, kNN gap=+3.5pp, Combo gap=+2.9pp
+  LOW: prec=4.4%, TransE gap=+4.7pp, kNN gap=+0.4pp, Combo gap=-1.3pp
+  FILTER: prec=5.5%, TransE gap=-2.1pp, kNN gap=+0.1pp, Combo gap=+0.1pp
+
+--- Holdout Summary (5-seed mean ± std) ---
+  Tier           TransE Gap   kNN Rank Gap      Combo Gap
+  GOLDEN       +42.6±31.0pp   +28.6±30.6pp   +24.7±37.0pp
+  HIGH          +2.5±10.6pp   +15.9± 5.6pp   +17.8± 6.4pp
+  MEDIUM        +5.9± 5.6pp   +11.5± 5.2pp   +11.1± 5.3pp
+  LOW           +0.3± 3.3pp    +2.2± 2.8pp    +1.4± 2.7pp
+  FILTER        -0.2± 1.5pp    -0.1± 0.7pp    -0.2± 1.1pp
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h443_within_tier_ranking.json
