@@ -8482,7 +8482,7 @@
       "title": "Expand Top-N from 30 to 50 with Target Overlap Rescue",
       "description": "h417 showed target_overlap>=3 at rank 21-30 has 23.6% holdout precision (above MEDIUM avg 20.9%). The current top_n=30 hard limit means we never see predictions at rank 31-50. If overlap>=3 continues to be a strong signal beyond rank 30, expanding top_n and applying the overlap rescue could yield more high-quality predictions without hurting tier precision. The key insight: target overlap is a drug-level feature that generalizes better than hierarchy groups.",
       "hypothesis": "Predictions at rank 31-50 with target_overlap>=3 will have >20% precision, making them worth including as MEDIUM tier predictions.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8492,7 +8492,9 @@
         "Measure precision by rank bucket (31-40, 41-50) for overlap>=3",
         "Run holdout validation",
         "Success: >20% holdout precision for overlap>=3 at rank 31-50"
-      ]
+      ],
+      "findings": "Rank 31-50 predictions are too low-precision for rescue, even with target overlap.\n\nFull-Data Precision by Rank (no overlap filter):\n- rank 1-5: 36.6% \u2192 rank 21-30: 9.6% \u2192 rank 31-40: 4.1% \u2192 rank 41-50: 3.2%\n\nFull-Data with overlap>=3:\n- rank 1-5: 61.3% \u2192 rank 21-30: 21.0% \u2192 rank 31-40: 8.8% \u2192 rank 41-50: 8.8%\n\nHoldout (5-seed) with overlap>=3:\n- rank 1-5: 27.4% \u00b1 9.6% \u2192 rank 21-30: 10.7% \u00b1 3.0% \u2192 rank 31-40: 4.4% \u00b1 1.3% \u2192 rank 41-50: 8.3% \u00b1 2.6%\n\nALL rank 31-50 holdout precisions are below 10%, far from the 20% MEDIUM threshold.\n\nIMPORTANT FINDING: Target overlap IS a valid (non-circular) signal at all ranks, providing ~2x lift even at rank 31-50. But the base precision at rank 31-50 is too low (3-4%) for even a 2x lift to reach MEDIUM levels.\n\nCoverage: 80% of rank 31-50 predictions have zero target overlap. Only ~627 predictions (20%) have overlap>=1.\n\nAlso noteworthy: rank 21-30 overlap>=3 holdout precision = 10.7%, which is better than the 4.5% overall rank 21-30 but still below MEDIUM (20%). This confirms h399/h418: rank>20 cannot be rescued.",
+      "result_metric": "Rank 31-40 overlap>=3: 4.4% \u00b1 1.3% holdout (threshold was >20%); rank 41-50: 8.3% \u00b1 2.6%"
     },
     {
       "id": "h423",
@@ -10598,6 +10600,12 @@
       "hypothesis_id": "h441",
       "learning": "Drug rank stability (CV across diseases) is entirely circular with GT: stable-rank drugs are stable BECAUSE they appear in every neighbor's GT, which is the evaluation GT. Full-data: 97.2% for Q1 vs 17.6% for Q4. Holdout: REVERSES to 7.4% vs 9.4%. Any kNN-derived drug metric is confounded by GT overlap.",
       "implication": "Do NOT use drug-level kNN metrics (rank CV, appearance frequency, rank spread) for within-tier ranking. These are all circular. Valid within-tier signals must come from EXTERNAL sources: TransE, target overlap, mechanism support, literature."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h422",
+      "learning": "Target overlap provides ~2x precision lift at all ranks (non-circular signal) but rank 31-50 base precision is too low (3-4%) for rescue. Even overlap>=5 only reaches 9.4% at rank 41-50. Top-30 hard limit is correct. Combined with h399/h418/h423/h434/h436/h451: rank>20 filter is definitively validated from 7 angles.",
+      "implication": "The rank>20 filter is now EXHAUSTIVELY validated (7 independent approaches all confirm). Close this research direction permanently. Focus future work on WITHIN rank 1-20 precision improvement or external data integration."
     }
   ],
   "collaborations": [
