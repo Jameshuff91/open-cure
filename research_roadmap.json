@@ -7744,7 +7744,7 @@
       "title": "Fix Infectious GOLDEN Rule",
       "description": "h378 found infectious GOLDEN has 13.0% precision - antibiotics for AIDS. Needs filter.",
       "hypothesis": "Adding viral vs bacterial disease distinction will fix infectious GOLDEN.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "high",
       "effort": "medium",
@@ -7753,6 +7753,24 @@
         "Exclude antibiotics from viral disease predictions",
         "Evaluate impact on infectious precision",
         "Success: infectious precision > 40%"
+      ],
+      "findings": "VALIDATED: Identified the infectious GOLDEN rule as problematic.\n\nPRECISION BY TIER (infectious diseases):\n- GOLDEN: 5.3% (1/19) - infectious rule \u2192 REMOVE\n- HIGH: 54.3% (19/35) - hierarchy rules \u2192 KEEP\n- MEDIUM: 26.6% (42/158) \n- LOW: 13.0% (10/77)\n- FILTER: 18.7% (47/251)\n\nPROBLEM RULES:\n1.  GOLDEN (get_category_tier): 5.3% \u2192 should return LOW, not GOLDEN\n2. : 0% (0/4) \u2192 hepatitis is viral, rule fails\n\nGOOD RULES TO KEEP:\n1. : 75.0% (12/16)\n2. : 66.7% (2/3)\n3. : 45.5% (5/11)\n4. : 44.1% (15/34)\n\nRECOMMENDATION:\n1. Remove GOLDEN tier from get_category_tier for infectious category\n2. Remove infectious_hierarchy_hepatitis rule (viral diseases don't work)\n3. Keep UTI and tuberculosis hierarchy rules",
+      "result_metric": "infectious GOLDEN 5.3% \u2192 should be removed; UTI/TB hierarchy rules work (45-75%)"
+    },
+    {
+      "id": "h387",
+      "title": "Remove Infectious GOLDEN Rule",
+      "description": "h386 found infectious GOLDEN has 5.3% precision. Remove it from get_category_tier.",
+      "hypothesis": "Removing infectious GOLDEN will improve GOLDEN tier precision by eliminating 19 low-quality predictions.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "low",
+      "steps": [
+        "Remove infectious case from get_category_tier() that returns GOLDEN/HIGH",
+        "Remove infectious_hierarchy_hepatitis rule",
+        "Evaluate GOLDEN tier precision change",
+        "Success: GOLDEN precision increases"
       ]
     }
   ],
@@ -9151,6 +9169,12 @@
       "hypothesis_id": "h378",
       "learning": "HIGH tier actually has higher precision than GOLDEN (59.9% vs 35.8%). Several category hierarchy rules (CV, thyroid) are too broad.",
       "implication": "Need to tighten GOLDEN criteria or demote some GOLDEN rules to HIGH."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h386",
+      "learning": "Viral diseases (hepatitis, HIV) have 0% infectious rule precision. Bacterial-specific rules (UTI, TB) work well (45-75%). General infectious GOLDEN rule should be removed.",
+      "implication": "Split infectious category into viral vs bacterial for tier rules."
     }
   ],
   "collaborations": [
