@@ -1,15 +1,16 @@
 # Research Loop Progress
 
-## Current Session: h376, h378, h386 (2026-02-05)
+## Current Session: h376, h378, h386, h387 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 3**
+**Status:** Complete
+**Hypotheses Tested: 4**
 - h376: Ensemble Coverage Analysis - **VALIDATED**
 - h378: Tier Precision Analysis - **VALIDATED**
 - h386: Fix Infectious GOLDEN Rule - **VALIDATED**
+- h387: Remove Infectious GOLDEN Rule - **VALIDATED** (+4.6pp GOLDEN precision)
 
 ### h386: Fix Infectious GOLDEN Rule - VALIDATED
 
@@ -36,6 +37,22 @@ Analyzed infectious disease predictions by tier and rule:
 3. ATC coherent: 44.1% precision
 
 **Recommendation:** Remove GOLDEN tier from get_category_tier for infectious category. Keep specific bacterial disease hierarchies (UTI, TB).
+
+### h387: Remove Infectious GOLDEN Rule - VALIDATED
+
+**Implementation:**
+1. Removed infectious GOLDEN/HIGH case from get_category_tier()
+2. Removed 'hepatitis' and 'hiv' from DISEASE_HIERARCHY_GROUPS (viral = 0% precision)
+3. Kept bacterial groups: UTI, tuberculosis, pneumonia, sepsis, skin_infection, respiratory_infection
+
+**Impact on Tier Precision:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 35.8% | 40.4% | **+4.6pp** |
+| HIGH | 59.9% | 58.1% | -1.8pp |
+| MEDIUM | 30.0% | 30.9% | +0.9pp |
+
+**Success:** GOLDEN tier precision improved by +4.6 pp.
 
 ### h378: Tier Precision Analysis - VALIDATED
 
@@ -84,12 +101,12 @@ Analyzed infectious disease predictions by tier and rule:
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 239 |
+| Validated | 240 |
 | Invalidated | 71 |
 | Inconclusive | 14 |
 | Blocked | 21 |
 | Deprioritized | 7 |
-| Pending | 33 |
+| Pending | 32 |
 | **Total** | **385** |
 
 ---
