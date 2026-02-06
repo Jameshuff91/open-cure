@@ -8000,7 +8000,7 @@
       "title": "Rule Interaction Audit: Test Priority/Overlap Edge Cases",
       "description": "AUDIT MODERATE: _assign_confidence_tier has 15+ return paths. A drug can match multiple rules (cancer-only AND hierarchy-match, mechanism-specific AND complication-non-validated). First matching rule wins but no systematic edge case testing exists.",
       "hypothesis": "Creating a test suite for all multi-match drug-disease pairs will reveal unintended interactions where the wrong rule fires first.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8013,8 +8013,8 @@
         "Step 6: If significant, propose reordering for better precision",
         "Step 7: Success criteria: Document all interactions, fix cases where reordering improves precision by >2pp"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Rule interaction audit of _assign_confidence_tier (15+ return paths, 13622 predictions).\n\nKey Findings:\n1. 88.2% of predictions match 2+ rules (12014/13622) - rule interactions are pervasive\n2. rank>20 filter shadowed 332 hierarchy-matched predictions with 60.5% precision (201 GT hits)\n3. CV pathway-comprehensive at rank>20 had 44.6% precision (25/56 GT)\n4. cancer_same_type shadows standard HIGH (48.1% precision, n=79) - marginal impact\n5. zero_precision_mismatch catches 126 GT hits - may be too aggressive (deferred)\n6. mechanism_specific cap at LOW is appropriate (14.5% precision)\n\nImplementation:\n- Moved hierarchy match check BEFORE rank>20 filter (capped at HIGH for rank>20)\n- Moved CV pathway-comprehensive check BEFORE rank>20 filter\n\nImpact on tier precision:\n- GOLDEN: 61.8% \u2192 63.9% (+2.1pp) \u2014 improved via h388 overlap promotions from newly-HIGH\n- HIGH: 54.6% \u2192 54.8% (+0.2pp) \u2014 stable despite 323 added predictions\n- MEDIUM: 26.4% \u2192 26.2% (-0.2pp) \u2014 negligible\n- LOW: 12.2% \u2192 12.7% (+0.5pp) \u2014 stable\n- FILTER: 12.2% \u2192 9.6% (-2.6pp) \u2014 expected, removed high-precision predictions\n- R@30: 79.1% (unchanged)\n\nThe change recovers 201 GT hits from FILTER without hurting any tier precision.",
+      "result_metric": "GOLDEN +2.1pp, HIGH +0.2pp, R@30 unchanged (79.1%)"
     },
     {
       "id": "h400",
@@ -8345,6 +8345,72 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h415",
+      "title": "Zero-Precision ATC Mismatch Refinement: Reduce False Positives",
+      "description": "h399 found zero_precision_mismatch catches 126 GT hits (e.g., corticosteroids for nephrotic syndrome, cyclosporine for conjunctivitis). These are valid drug-disease pairs incorrectly filtered because the ATC code doesn't match the disease category. Analyze which specific ATC mismatch rules have GT hits and refine or remove them.",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Collect all 126 GT hits caught by zero_precision_mismatch",
+        "Group by (ATC code, disease category) pattern",
+        "Identify specific mismatch rules with >5% GT hit rate",
+        "Remove or relax overly aggressive mismatch rules",
+        "Measure impact on tier precision (should improve FILTER precision)",
+        "Success: Recover >50 GT hits without hurting GOLDEN/HIGH precision"
+      ]
+    },
+    {
+      "id": "h416",
+      "title": "Cancer Same-Type with HIGH Criteria \u2192 Conditional HIGH Promotion",
+      "description": "h399 found 79 cancer_same_type predictions that also meet standard HIGH criteria (freq>=15+mech or rank<=5+freq>=10+mech). These have 48.1% precision (38/79 GT), well above MEDIUM avg (26.2%). However, promoting all to HIGH only gains +0.8pp on HIGH (from 54.6% to 55.4%). Test whether a more selective subset (e.g., freq>=15 AND rank<=3) achieves higher precision.",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Compute precision at multiple thresholds: freq>=15, freq>=20, rank<=3, rank<=5",
+        "Identify the threshold that achieves >55% precision",
+        "If found, implement selective promotion cancer_same_type \u2192 HIGH",
+        "Verify HIGH tier precision improves",
+        "Success: cancer same-type subset at >55% precision with >20 predictions"
+      ]
+    },
+    {
+      "id": "h417",
+      "title": "Rank 21-30 Rule Coverage Gap Analysis",
+      "description": "h399 showed hierarchy matches at rank 21-30 have very high precision. But hierarchy only covers specific disease groups. What about rank 21-30 predictions that DON'T match hierarchy rules? Are there other high-precision signals (e.g., drug frequency, mechanism support, ATC coherence) that could rescue more predictions from FILTER?",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Collect all FILTER predictions at rank 21-30",
+        "Remove the ones now rescued by hierarchy/cv_pathway (h399)",
+        "Among remaining FILTER predictions, compute precision by: freq>=10, mech=True, atc_coherent",
+        "Identify feature combinations with >25% precision",
+        "If found, implement additional rank>20 rescue rules",
+        "Success: identify >50 additional rescuable predictions at >25% precision"
+      ]
+    },
+    {
+      "id": "h418",
+      "title": "Holdout Validation of h399 Hierarchy-Before-Rank Reordering",
+      "description": "h399 moved hierarchy checks before rank>20 filter, improving GOLDEN +2.1pp and HIGH +0.2pp on full data. Need to verify this holds on holdout (80/20 split, 5 seeds) to confirm the improvement is genuine and not overfitted.",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Run 80/20 holdout split across 5 random seeds",
+        "Compute tier precision on holdout for current (h399) code",
+        "Compare to pre-h399 holdout baselines from h393",
+        "Focus on GOLDEN and HIGH tier stability",
+        "Success: holdout shows GOLDEN/HIGH retained or improved vs h393 baselines"
+      ]
     }
   ],
   "completed": [
@@ -9802,6 +9868,12 @@
       "hypothesis_id": "h411",
       "learning": "Target overlap promotions are genuine. HIGH\u2192GOLDEN (78.5%, n=93) is very strong. LOW\u2192MEDIUM drops -12.6pp on holdout but remains 13.3pp above tier average. Some circularity expected since drug-disease treatment edges create target overlap.",
       "implication": "Do not remove overlap promotions. For future rules using drug-disease similarity signals, expect ~10-15pp holdout degradation from partial circularity."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h399",
+      "learning": "Rule ordering in _assign_confidence_tier has a critical gap: the rank>20 filter fires BEFORE high-precision hierarchy/pathway rules, throwing away 332 predictions at 60.5% precision. Moving these checks before the rank filter recovers 201 GT hits with GOLDEN +2.1pp and HIGH +0.2pp improvement.",
+      "implication": "When adding new rules, always check if they should fire before or after the rank>20 filter. High-precision domain-specific rules should generally override rank filtering."
     }
   ],
   "collaborations": [

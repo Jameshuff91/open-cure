@@ -1,6 +1,57 @@
 # Research Loop Progress
 
-## Current Session: h393, h396 (2026-02-05)
+## Current Session: h399 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h399: Rule Interaction Audit - **VALIDATED**
+
+### h399: Rule Interaction Audit - VALIDATED
+
+**Hypothesis:** The _assign_confidence_tier method has 15+ return paths. A drug can match multiple rules but only the first fires. Systematically audit all interactions to find cases where rule ordering is suboptimal.
+
+**Key Findings:**
+1. **88.2% of predictions match 2+ rules** (12,014/13,622) - interactions are pervasive
+2. **rank>20 filter shadows 332 hierarchy-matched predictions** with 60.5% precision (201 GT hits!)
+   - hierarchy_rheumatoid_arthritis: 92.1% precision at rank 21-30
+   - hierarchy_colitis: 100% precision at rank 21-30
+   - hierarchy_hypertension: 81.8% precision at rank 21-30
+   - hierarchy_multiple_sclerosis: 100% precision at rank 21-30
+3. **CV pathway-comprehensive at rank>20**: 44.6% precision (25/56 GT)
+4. **zero_precision_mismatch catches 126 GT hits** - potentially too aggressive (h415 for follow-up)
+5. **mechanism_specific cap at LOW is appropriate** (14.5% precision)
+6. **cancer_same_type → HIGH**: marginal +0.8pp, deferred (h416)
+
+**Implementation: Moved hierarchy + CV pathway checks BEFORE rank>20 filter**
+
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 61.8% | 63.9% | **+2.1pp** |
+| HIGH | 54.6% | 54.8% | +0.2pp |
+| MEDIUM | 26.4% | 26.2% | -0.2pp |
+| LOW | 12.2% | 12.7% | +0.5pp |
+| FILTER | 12.2% | 9.6% | -2.6pp |
+| R@30 | 79.1% | 79.1% | unchanged |
+
+**GOLDEN improvement explained:** h388 target overlap promotions now find HIGH predictions (from hierarchy rescue) and promote some to GOLDEN (90% precision on the 30 new GOLDEN predictions).
+
+### New Hypotheses Generated
+- **h415:** Zero-Precision ATC Mismatch Refinement (126 GT hits caught) - Priority 3
+- **h416:** Cancer Same-Type + HIGH Criteria Promotion - Priority 4
+- **h417:** Rank 21-30 Rule Coverage Gap Analysis - Priority 3
+- **h418:** Holdout Validation of h399 Changes - Priority 2
+
+### Recommended Next Steps
+1. **h418:** Holdout validation of h399 changes - Priority 2 (verify on holdout)
+2. **h415:** Zero-precision mismatch refinement - Priority 3 (recover 126 GT hits)
+3. **h417:** Rank 21-30 coverage gap - Priority 3 (find more rescuable FILTER predictions)
+
+---
+
+## Previous Session: h393, h396 (2026-02-05)
 
 ### Session Summary
 
