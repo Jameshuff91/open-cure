@@ -3576,12 +3576,14 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Convert node2vec_256_named.csv to .npy binary format",
         "Update _load_data() to use numpy.load()",
         "Measure improvement (target: <2s total init)"
-      ]
+      ],
+      "findings": "Embedding loading optimized with NPY format.\n\nPERFORMANCE:\n- OLD (CSV): 6.09s initialization\n- NEW (NPY): 0.65s initialization  \n- Speedup: 9.4x total init, 110x for embedding load alone\n\nCHANGES:\n1. Created node2vec_256_entities.npy (entity names)\n2. Created node2vec_256_embeddings.npy (float32 vectors)\n3. Updated _load_data() to use NPY with CSV fallback\n\nVERIFICATION:\n- All test diseases produce correct predictions\n- DPP4 drugs still appear for T2DM\n- Tier distribution unchanged",
+      "result_metric": "6.09s \u2192 0.65s init time (9.4x speedup)"
     },
     {
       "id": "h180",

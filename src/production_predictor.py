@@ -1218,14 +1218,27 @@ class DrugRepurposingPredictor:
 
     def _load_data(self) -> None:
         """Load all required data files."""
-        # Load Node2Vec embeddings
-        embeddings_path = self.embeddings_dir / "node2vec_256_named.csv"
-        df = pd.read_csv(embeddings_path)
-        dim_cols = [c for c in df.columns if c.startswith("dim_")]
-        self.embeddings: Dict[str, np.ndarray] = {}
-        for _, row in df.iterrows():
-            entity = f"drkg:{row['entity']}"
-            self.embeddings[entity] = row[dim_cols].values.astype(np.float32)
+        # Load Node2Vec embeddings (h179: use NPY for 110x speedup)
+        entities_path = self.embeddings_dir / "node2vec_256_entities.npy"
+        embeddings_path = self.embeddings_dir / "node2vec_256_embeddings.npy"
+
+        if entities_path.exists() and embeddings_path.exists():
+            # Fast path: load from NPY
+            entities = np.load(entities_path, allow_pickle=True)
+            embeddings_arr = np.load(embeddings_path)
+            self.embeddings: Dict[str, np.ndarray] = {
+                f"drkg:{entity}": embeddings_arr[i]
+                for i, entity in enumerate(entities)
+            }
+        else:
+            # Fallback: load from CSV (slower)
+            csv_path = self.embeddings_dir / "node2vec_256_named.csv"
+            df = pd.read_csv(csv_path)
+            dim_cols = [c for c in df.columns if c.startswith("dim_")]
+            self.embeddings = {}
+            for _, row in df.iterrows():
+                entity = f"drkg:{row['entity']}"
+                self.embeddings[entity] = row[dim_cols].values.astype(np.float32)
 
         # Load DrugBank lookup
         with open(self.reference_dir / "drugbank_lookup.json") as f:
