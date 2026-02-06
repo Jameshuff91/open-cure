@@ -5952,7 +5952,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Categorize complications by organ system",
@@ -5960,7 +5960,9 @@
         "Step 3: Test if organ-specific drugs have higher precision for that organ's complications",
         "Step 4: Use organ matching as confidence signal",
         "Success criteria: Organ-matched predictions >30% vs <10% precision"
-      ]
+      ],
+      "findings": "INVALIDATED: Organ-specific drug affinity does NOT predict novel complication success.\n\nINITIAL RESULT (APPEARED POSITIVE):\n- Drugs with GT organ affinity: 24.9% precision (169/679)\n- Drugs without GT organ affinity: 0.2% precision (2/854)\n- Gap: +24.7 pp\n\nCIRCULARITY CHECK (REVEALS TRUE SIGNAL):\n- Circular predictions (drug\u2192same disease): 100% precision (163/163)\n- NOVEL predictions (drug\u2192different disease, same organ): 1.2% precision (6/516)\n\nBREAKDOWN BY ORGAN:\n| Organ | Novel Precision | N |\n|-------|-----------------|---|\n| CV | 0.6% | 346 |\n| Renal | 2.1% | 48 |\n| Ocular | 0.0% | 45 |\n| Neuro | 4.4%* | 68 |\n* Neuro hits are neurodermatitis (skin), classification error\n\nKEY INSIGHT: Organ affinity only predicts when the prediction IS the affinity source.\nTransfer to different diseases in the same organ (e.g., heart failure \u2192 MI, glaucoma \u2192 retinopathy) has ~1% precision.\n\nThis confirms h280/h293: complication transfer works only via pathway-comprehensive mechanisms (statins\u2192MI) not via organ proximity.\n\nCONCLUSION: Do NOT use organ matching as a confidence signal. The only valid signal is exact disease match or disease subtyping (h273/h276/h278).",
+      "result_metric": "1.2% novel organ precision (confirms h280/h293)"
     },
     {
       "id": "h295",
@@ -7070,6 +7072,67 @@
       "source": "h346 exclusion rationale",
       "findings": "Imatinib GIST-Specific Filter Analysis - VALIDATED (No filter needed)\n\nImatinib GT indications (19 entries):\n- CML, ALL, AML (hematological malignancies)\n- GIST (gastrointestinal stromal tumor)\n- Mastocytosis, hypereosinophilic syndrome\n- Dermatofibrosarcoma protuberans\n\nImatinib predictions: 34 total\n- Precision: 5.9% (2/34 GT hits)\n- HIGH: 25% (1/4)\n- MEDIUM: 5.6% (1/18)\n- LOW: 0% (0/12)\n\nGT hits found:\n1. acute lymphoblastic leukemia (MEDIUM) \u2713\n2. dermatofibrosarcoma protuberans (HIGH) \u2713\n\nMost predictions are for hematological/cancer diseases which is appropriate.\nOnly a few truly inappropriate predictions (smallpox, retinitis, glaucoma).\n\nConclusion: Imatinib precision (5.9%) is comparable to other cancer drugs (6.5%).\nPredictions stay in the right disease domain. NO filter needed - current tier\nsystem handles it appropriately (inappropriate predictions go to LOW tier).",
       "result_metric": "5.9% precision (2/34 GT), appropriate domain, no filter needed"
+    },
+    {
+      "id": "h351",
+      "title": "Pathway-Comprehensive Drug Class Identification",
+      "description": "Identify drug classes that treat underlying pathophysiology (like statins for CV) vs symptom-only treatments. h296 showed statins=100% for CV events, non-statins=0%. What other drug classes have this property?",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Review h296 statin findings in detail",
+        "Step 2: Identify candidate drug classes (metformin for metabolic? ACEi for renal?)",
+        "Step 3: For each class, calculate precision for related complications",
+        "Step 4: Build PATHWAY_COMPREHENSIVE_CLASSES set for production predictor",
+        "Success criteria: Find 2+ drug classes with >50% precision for complication transfer"
+      ],
+      "dependencies": [
+        "h294",
+        "h296"
+      ]
+    },
+    {
+      "id": "h352",
+      "title": "Disease Mechanism Overlap as Transfer Predictor",
+      "description": "h294 found organ proximity fails. Alternative: diseases that share MECHANISMS (not just organs) may have valid drug transfer. E.g., inflammatory diseases share IL-6/TNF pathways.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Build disease-to-mechanism mapping from DRKG",
+        "Step 2: Identify disease pairs with >50% mechanism overlap",
+        "Step 3: Calculate precision for drug transfer between mechanism-related diseases",
+        "Step 4: Compare to random disease pairs",
+        "Success criteria: Mechanism overlap >10 pp better than random"
+      ],
+      "dependencies": [
+        "h294"
+      ]
+    },
+    {
+      "id": "h353",
+      "title": "Complication-Specific Drug Class Filter",
+      "description": "h294 showed 0% precision for most organ\u2192complication predictions. Create explicit filter: for complication diseases (retinopathy, neuropathy, etc.), only allow drugs from specific validated classes.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Define COMPLICATION_DISEASES set (retinopathy, nephropathy, etc.)",
+        "Step 2: For each complication, identify GT-validated drug classes",
+        "Step 3: Create filter: FILTER tier if drug not in validated class for that complication",
+        "Step 4: Measure impact on precision",
+        "Success criteria: Filter 50+ predictions with <5% loss"
+      ],
+      "dependencies": [
+        "h294"
+      ]
     }
   ],
   "completed": [
@@ -8371,6 +8434,12 @@
       "hypothesis_id": "h342/h343/h237",
       "learning": "Cancer drug cross-activity patterns: ALL mechanisms show 0-2.6% non-cancer precision. kNN predicts by disease similarity, not drug mechanism. High-indication drugs (steroids, antibiotics) are noise in LOW tier, signal in HIGH tier.",
       "implication": "Consider cancer drug filter; avoid indication-count boosting; kNN fundamentally limited for mechanism-based repurposing"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h294",
+      "learning": "Organ proximity does NOT predict drug transferability. Within-organ novel predictions have 1.2% precision. Only pathway-comprehensive mechanisms (like statins for CV) transfer reliably.",
+      "implication": "Do not use organ matching as confidence signal. Focus on identifying pathway-comprehensive drug classes."
     }
   ],
   "collaborations": [
