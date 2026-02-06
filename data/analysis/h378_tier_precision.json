@@ -1,0 +1,1132 @@
+{
+  "n_diseases": 200,
+  "tier_summary": {
+    "HIGH": {
+      "hits": 352,
+      "misses": 236,
+      "total": 588,
+      "precision": 59.9
+    },
+    "FILTER": {
+      "hits": 471,
+      "misses": 2155,
+      "total": 2626,
+      "precision": 17.9
+    },
+    "MEDIUM": {
+      "hits": 310,
+      "misses": 725,
+      "total": 1035,
+      "precision": 30.0
+    },
+    "LOW": {
+      "hits": 291,
+      "misses": 922,
+      "total": 1213,
+      "precision": 24.0
+    },
+    "GOLDEN": {
+      "hits": 146,
+      "misses": 262,
+      "total": 408,
+      "precision": 35.8
+    }
+  },
+  "rule_details": [
+    {
+      "rule": "complication_non_validated",
+      "tier": "FILTER",
+      "hits": 3,
+      "misses": 3,
+      "total": 6,
+      "precision": 50.0,
+      "examples": [
+        {
+          "disease": "nephrotic syndrome",
+          "drug": "Furosemide",
+          "is_hit": true
+        },
+        {
+          "disease": "nephrotic syndrome",
+          "drug": "Dapagliflozin",
+          "is_hit": false
+        },
+        {
+          "disease": "nephrotic syndrome",
+          "drug": "Chlorothiazide",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "default",
+      "tier": "FILTER",
+      "hits": 1001,
+      "misses": 3574,
+      "total": 4575,
+      "precision": 21.9,
+      "examples": [
+        {
+          "disease": "chronic heart failure",
+          "drug": "Dobutamine",
+          "is_hit": true
+        },
+        {
+          "disease": "chronic heart failure",
+          "drug": "Digoxin",
+          "is_hit": true
+        },
+        {
+          "disease": "chronic heart failure",
+          "drug": "Dronedarone",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "cancer_no_gt",
+      "tier": "FILTER",
+      "hits": 5,
+      "misses": 18,
+      "total": 23,
+      "precision": 21.7,
+      "examples": [
+        {
+          "disease": "systemic mastocytosis with associated hematological neoplasm",
+          "drug": "Amphotericin B",
+          "is_hit": true
+        },
+        {
+          "disease": "systemic mastocytosis with associated hematological neoplasm",
+          "drug": "Mepolizumab",
+          "is_hit": false
+        },
+        {
+          "disease": "systemic mastocytosis with associated hematological neoplasm",
+          "drug": "Gentamicin",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "cross_domain_isolated",
+      "tier": "FILTER",
+      "hits": 18,
+      "misses": 98,
+      "total": 116,
+      "precision": 15.5,
+      "examples": [
+        {
+          "disease": "diabetic foot infections of the skin and soft tissue",
+          "drug": "Sirolimus",
+          "is_hit": false
+        },
+        {
+          "disease": "malignant hyperthermia",
+          "drug": "Carbamazepine",
+          "is_hit": false
+        },
+        {
+          "disease": "malignant hyperthermia",
+          "drug": "Landiolol",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "base_to_complication",
+      "tier": "FILTER",
+      "hits": 0,
+      "misses": 8,
+      "total": 8,
+      "precision": 0.0,
+      "examples": [
+        {
+          "disease": "diabetic foot infections of the skin and soft tissue",
+          "drug": "Isoniazid",
+          "is_hit": false
+        },
+        {
+          "disease": "diabetic ketoacidosis",
+          "drug": "Glimepiride",
+          "is_hit": false
+        },
+        {
+          "disease": "diabetic ketoacidosis",
+          "drug": "Glipizide",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "statin_cv_event",
+      "tier": "GOLDEN",
+      "hits": 2,
+      "misses": 2,
+      "total": 4,
+      "precision": 50.0,
+      "examples": [
+        {
+          "disease": "atherosclerosis",
+          "drug": "Rosuvastatin",
+          "is_hit": true
+        },
+        {
+          "disease": "atherosclerosis",
+          "drug": "Lovastatin",
+          "is_hit": false
+        },
+        {
+          "disease": "atherosclerosis",
+          "drug": "Pravastatin",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "neurological_hierarchy_epilepsy",
+      "tier": "GOLDEN",
+      "hits": 8,
+      "misses": 8,
+      "total": 16,
+      "precision": 50.0,
+      "examples": [
+        {
+          "disease": "epilepsy",
+          "drug": "Carbamazepine",
+          "is_hit": true
+        },
+        {
+          "disease": "epilepsy",
+          "drug": "Diazepam",
+          "is_hit": true
+        },
+        {
+          "disease": "epilepsy",
+          "drug": "Zonisamide",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "neurological_hierarchy_alzheimers",
+      "tier": "GOLDEN",
+      "hits": 1,
+      "misses": 1,
+      "total": 2,
+      "precision": 50.0,
+      "examples": [
+        {
+          "disease": "alzheimers disease",
+          "drug": "Rivastigmine",
+          "is_hit": false
+        },
+        {
+          "disease": "alzheimers disease",
+          "drug": "Donepezil",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "metabolic_hierarchy_lipid",
+      "tier": "GOLDEN",
+      "hits": 15,
+      "misses": 17,
+      "total": 32,
+      "precision": 46.9,
+      "examples": [
+        {
+          "disease": "hyperlipidemia",
+          "drug": "Lovastatin",
+          "is_hit": true
+        },
+        {
+          "disease": "hyperlipidemia",
+          "drug": "Gemfibrozil",
+          "is_hit": true
+        },
+        {
+          "disease": "hyperlipidemia",
+          "drug": "Rosuvastatin",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "metabolic_hierarchy_diabetes",
+      "tier": "GOLDEN",
+      "hits": 20,
+      "misses": 24,
+      "total": 44,
+      "precision": 45.5,
+      "examples": [
+        {
+          "disease": "type 1 diabetes mellitus",
+          "drug": "Glucagon",
+          "is_hit": false
+        },
+        {
+          "disease": "type 1 diabetes mellitus",
+          "drug": "Liraglutide",
+          "is_hit": false
+        },
+        {
+          "disease": "type 1 diabetes mellitus",
+          "drug": "Sitagliptin",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "cancer_same_type",
+      "tier": "GOLDEN",
+      "hits": 91,
+      "misses": 157,
+      "total": 248,
+      "precision": 36.7,
+      "examples": [
+        {
+          "disease": "breast cancer",
+          "drug": "Doxorubicin",
+          "is_hit": true
+        },
+        {
+          "disease": "breast cancer",
+          "drug": "Cyclophosphamide",
+          "is_hit": true
+        },
+        {
+          "disease": "breast cancer",
+          "drug": "Pembrolizumab",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "metabolic_hierarchy_thyroid",
+      "tier": "GOLDEN",
+      "hits": 7,
+      "misses": 27,
+      "total": 34,
+      "precision": 20.6,
+      "examples": [
+        {
+          "disease": "hypothyroidism",
+          "drug": "Liothyronine",
+          "is_hit": true
+        },
+        {
+          "disease": "hypothyroidism",
+          "drug": "Lovastatin",
+          "is_hit": false
+        },
+        {
+          "disease": "hypothyroidism",
+          "drug": "Levothyroxine",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "infectious",
+      "tier": "GOLDEN",
+      "hits": 3,
+      "misses": 20,
+      "total": 23,
+      "precision": 13.0,
+      "examples": [
+        {
+          "disease": "acquired immunodeficiency syndrome aids",
+          "drug": "Minocycline",
+          "is_hit": false
+        },
+        {
+          "disease": "acquired immunodeficiency syndrome aids",
+          "drug": "Doxycycline",
+          "is_hit": false
+        },
+        {
+          "disease": "acquired immunodeficiency syndrome aids",
+          "drug": "Prednisolone",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "metabolic",
+      "tier": "GOLDEN",
+      "hits": 0,
+      "misses": 5,
+      "total": 5,
+      "precision": 0.0,
+      "examples": [
+        {
+          "disease": "thyrotoxicosis",
+          "drug": "Pioglitazone",
+          "is_hit": false
+        },
+        {
+          "disease": "thyrotoxicosis",
+          "drug": "Rosiglitazone",
+          "is_hit": false
+        },
+        {
+          "disease": "multinodular goiter",
+          "drug": "Pioglitazone",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "neurological_hierarchy_parkinsons",
+      "tier": "GOLDEN",
+      "hits": 0,
+      "misses": 2,
+      "total": 2,
+      "precision": 0.0,
+      "examples": [
+        {
+          "disease": "parkinsons disease",
+          "drug": "Droxidopa",
+          "is_hit": false
+        },
+        {
+          "disease": "parkinsons disease",
+          "drug": "Bromocriptine",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "neurological",
+      "tier": "HIGH",
+      "hits": 4,
+      "misses": 0,
+      "total": 4,
+      "precision": 100.0,
+      "examples": [
+        {
+          "disease": "narcolepsy",
+          "drug": "Modafinil",
+          "is_hit": true
+        },
+        {
+          "disease": "narcolepsy",
+          "drug": "Pitolisant",
+          "is_hit": true
+        },
+        {
+          "disease": "trigeminal neuralgia",
+          "drug": "Carbamazepine",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "gastrointestinal",
+      "tier": "HIGH",
+      "hits": 1,
+      "misses": 0,
+      "total": 1,
+      "precision": 100.0,
+      "examples": [
+        {
+          "disease": "chronic peptic ulcer disease",
+          "drug": "Famotidine",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "autoimmune_hierarchy_rheumatoid_arthritis",
+      "tier": "HIGH",
+      "hits": 51,
+      "misses": 7,
+      "total": 58,
+      "precision": 87.9,
+      "examples": [
+        {
+          "disease": "osteoarthritis",
+          "drug": "Hydrocortisone",
+          "is_hit": true
+        },
+        {
+          "disease": "osteoarthritis",
+          "drug": "Triamcinolone",
+          "is_hit": true
+        },
+        {
+          "disease": "osteoarthritis",
+          "drug": "Prednisolone",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "autoimmune_hierarchy_lupus",
+      "tier": "HIGH",
+      "hits": 12,
+      "misses": 2,
+      "total": 14,
+      "precision": 85.7,
+      "examples": [
+        {
+          "disease": "systemic lupus erythematosus",
+          "drug": "Methylprednisolone",
+          "is_hit": true
+        },
+        {
+          "disease": "systemic lupus erythematosus",
+          "drug": "Dexamethasone",
+          "is_hit": true
+        },
+        {
+          "disease": "systemic lupus erythematosus",
+          "drug": "Prednisolone",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "autoimmune_hierarchy_spondylitis",
+      "tier": "HIGH",
+      "hits": 16,
+      "misses": 4,
+      "total": 20,
+      "precision": 80.0,
+      "examples": [
+        {
+          "disease": "ankylosing spondylitis",
+          "drug": "Prednisolone",
+          "is_hit": true
+        },
+        {
+          "disease": "ankylosing spondylitis",
+          "drug": "Hydrocortisone",
+          "is_hit": true
+        },
+        {
+          "disease": "ankylosing spondylitis",
+          "drug": "Methylprednisolone",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "cardiovascular_hierarchy_arrhythmia",
+      "tier": "HIGH",
+      "hits": 37,
+      "misses": 10,
+      "total": 47,
+      "precision": 78.7,
+      "examples": [
+        {
+          "disease": "ventricular tachycardia",
+          "drug": "Propranolol",
+          "is_hit": true
+        },
+        {
+          "disease": "ventricular tachycardia",
+          "drug": "Ibutilide",
+          "is_hit": false
+        },
+        {
+          "disease": "ventricular tachycardia",
+          "drug": "Landiolol",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "infectious_hierarchy_uti",
+      "tier": "HIGH",
+      "hits": 12,
+      "misses": 4,
+      "total": 16,
+      "precision": 75.0,
+      "examples": [
+        {
+          "disease": "complicated urinary tract infections",
+          "drug": "Minocycline",
+          "is_hit": true
+        },
+        {
+          "disease": "complicated urinary tract infections",
+          "drug": "Doxycycline",
+          "is_hit": true
+        },
+        {
+          "disease": "complicated urinary tract infections",
+          "drug": "Levofloxacin",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "respiratory_hierarchy_copd",
+      "tier": "HIGH",
+      "hits": 6,
+      "misses": 2,
+      "total": 8,
+      "precision": 75.0,
+      "examples": [
+        {
+          "disease": "chronic obstructive pulmonary disease",
+          "drug": "Dupilumab",
+          "is_hit": false
+        },
+        {
+          "disease": "chronic obstructive pulmonary disease",
+          "drug": "Mepolizumab",
+          "is_hit": false
+        },
+        {
+          "disease": "chronic obstructive pulmonary disease",
+          "drug": "Tiotropium",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "autoimmune_hierarchy_multiple_sclerosis",
+      "tier": "HIGH",
+      "hits": 10,
+      "misses": 4,
+      "total": 14,
+      "precision": 71.4,
+      "examples": [
+        {
+          "disease": "multiple sclerosis",
+          "drug": "Methylprednisolone",
+          "is_hit": true
+        },
+        {
+          "disease": "multiple sclerosis",
+          "drug": "Prednisone",
+          "is_hit": true
+        },
+        {
+          "disease": "multiple sclerosis",
+          "drug": "Hydrocortisone",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "respiratory_hierarchy_asthma",
+      "tier": "HIGH",
+      "hits": 14,
+      "misses": 6,
+      "total": 20,
+      "precision": 70.0,
+      "examples": [
+        {
+          "disease": "bronchial asthma",
+          "drug": "Prednisolone",
+          "is_hit": true
+        },
+        {
+          "disease": "bronchial asthma",
+          "drug": "Mometasone",
+          "is_hit": false
+        },
+        {
+          "disease": "bronchial asthma",
+          "drug": "Fluticasone",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "infectious_hierarchy_pneumonia",
+      "tier": "HIGH",
+      "hits": 7,
+      "misses": 3,
+      "total": 10,
+      "precision": 70.0,
+      "examples": [
+        {
+          "disease": "pneumonia",
+          "drug": "Gentamicin",
+          "is_hit": false
+        },
+        {
+          "disease": "pneumonia",
+          "drug": "Azithromycin",
+          "is_hit": true
+        },
+        {
+          "disease": "pneumonia",
+          "drug": "Sitafloxacin",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "autoimmune_hierarchy_colitis",
+      "tier": "HIGH",
+      "hits": 24,
+      "misses": 11,
+      "total": 35,
+      "precision": 68.6,
+      "examples": [
+        {
+          "disease": "ulcerative colitis",
+          "drug": "Methylprednisolone",
+          "is_hit": true
+        },
+        {
+          "disease": "ulcerative colitis",
+          "drug": "Dexamethasone",
+          "is_hit": true
+        },
+        {
+          "disease": "ulcerative colitis",
+          "drug": "Azathioprine",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "cardiovascular_hierarchy_hypertension",
+      "tier": "HIGH",
+      "hits": 17,
+      "misses": 11,
+      "total": 28,
+      "precision": 60.7,
+      "examples": [
+        {
+          "disease": "hypertension",
+          "drug": "Verapamil",
+          "is_hit": true
+        },
+        {
+          "disease": "hypertension",
+          "drug": "Hydrochlorothiazide",
+          "is_hit": true
+        },
+        {
+          "disease": "hypertension",
+          "drug": "Telmisartan",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "comp_to_base_high_87",
+      "tier": "HIGH",
+      "hits": 7,
+      "misses": 5,
+      "total": 12,
+      "precision": 58.3,
+      "examples": [
+        {
+          "disease": "type 1 diabetes mellitus",
+          "drug": "Glipizide",
+          "is_hit": false
+        },
+        {
+          "disease": "type 1 diabetes mellitus",
+          "drug": "Insulin human",
+          "is_hit": true
+        },
+        {
+          "disease": "type 1 diabetes mellitus",
+          "drug": "Rosiglitazone",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "infectious_hierarchy_tuberculosis",
+      "tier": "HIGH",
+      "hits": 14,
+      "misses": 10,
+      "total": 24,
+      "precision": 58.3,
+      "examples": [
+        {
+          "disease": "tuberculosis",
+          "drug": "Dexamethasone",
+          "is_hit": true
+        },
+        {
+          "disease": "tuberculosis",
+          "drug": "Levofloxacin",
+          "is_hit": false
+        },
+        {
+          "disease": "tuberculosis",
+          "drug": "Triamcinolone",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "infectious_hierarchy_hiv",
+      "tier": "HIGH",
+      "hits": 2,
+      "misses": 2,
+      "total": 4,
+      "precision": 50.0,
+      "examples": [
+        {
+          "disease": "acquired immunodeficiency syndrome aids",
+          "drug": "Valganciclovir",
+          "is_hit": false
+        },
+        {
+          "disease": "acquired immunodeficiency syndrome aids",
+          "drug": "Cidofovir",
+          "is_hit": false
+        },
+        {
+          "disease": "acquired immunodeficiency syndrome aids",
+          "drug": "Ganciclovir",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "respiratory",
+      "tier": "HIGH",
+      "hits": 5,
+      "misses": 5,
+      "total": 10,
+      "precision": 50.0,
+      "examples": [
+        {
+          "disease": "chronic bronchitis",
+          "drug": "Levofloxacin",
+          "is_hit": false
+        },
+        {
+          "disease": "chronic bronchitis",
+          "drug": "Ofloxacin",
+          "is_hit": true
+        },
+        {
+          "disease": "seasonal allergic rhinitis",
+          "drug": "Prednisolone",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "incoherent_demotion",
+      "tier": "HIGH",
+      "hits": 57,
+      "misses": 60,
+      "total": 117,
+      "precision": 48.7,
+      "examples": [
+        {
+          "disease": "nephrotic syndrome",
+          "drug": "Prednisone",
+          "is_hit": true
+        },
+        {
+          "disease": "nephrotic syndrome",
+          "drug": "Methylprednisolone",
+          "is_hit": true
+        },
+        {
+          "disease": "nephrotic syndrome",
+          "drug": "Hydrocortisone",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "hematological",
+      "tier": "HIGH",
+      "hits": 22,
+      "misses": 26,
+      "total": 48,
+      "precision": 45.8,
+      "examples": [
+        {
+          "disease": "anemia",
+          "drug": "Methylprednisolone",
+          "is_hit": true
+        },
+        {
+          "disease": "anemia",
+          "drug": "Hydrocortisone",
+          "is_hit": true
+        },
+        {
+          "disease": "anemia",
+          "drug": "Prednisolone",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "cardiovascular_hierarchy_coronary",
+      "tier": "HIGH",
+      "hits": 8,
+      "misses": 12,
+      "total": 20,
+      "precision": 40.0,
+      "examples": [
+        {
+          "disease": "coronary artery disease",
+          "drug": "Clopidogrel",
+          "is_hit": false
+        },
+        {
+          "disease": "coronary artery disease",
+          "drug": "Ticagrelor",
+          "is_hit": false
+        },
+        {
+          "disease": "coronary artery disease",
+          "drug": "Propranolol",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "cv_pathway_comprehensive",
+      "tier": "HIGH",
+      "hits": 38,
+      "misses": 62,
+      "total": 100,
+      "precision": 38.0,
+      "examples": [
+        {
+          "disease": "chronic heart failure",
+          "drug": "Verapamil",
+          "is_hit": true
+        },
+        {
+          "disease": "chronic heart failure",
+          "drug": "Propranolol",
+          "is_hit": true
+        },
+        {
+          "disease": "chronic heart failure",
+          "drug": "Carvedilol",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "reproductive",
+      "tier": "HIGH",
+      "hits": 1,
+      "misses": 2,
+      "total": 3,
+      "precision": 33.3,
+      "examples": [
+        {
+          "disease": "hypoestrogenism due to primary ovarian failure",
+          "drug": "Estradiol",
+          "is_hit": true
+        },
+        {
+          "disease": "hypoestrogenism due to primary ovarian failure",
+          "drug": "Conjugated Estrogens",
+          "is_hit": false
+        },
+        {
+          "disease": "hypoestrogenism due to primary ovarian failure",
+          "drug": "Estropipate",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "cardiovascular",
+      "tier": "HIGH",
+      "hits": 6,
+      "misses": 13,
+      "total": 19,
+      "precision": 31.6,
+      "examples": [
+        {
+          "disease": "atherosclerosis",
+          "drug": "Alirocumab",
+          "is_hit": false
+        },
+        {
+          "disease": "atrial flutter",
+          "drug": "Propranolol",
+          "is_hit": false
+        },
+        {
+          "disease": "atrial flutter",
+          "drug": "Verapamil",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "infectious_hierarchy_hepatitis",
+      "tier": "HIGH",
+      "hits": 1,
+      "misses": 4,
+      "total": 5,
+      "precision": 20.0,
+      "examples": [
+        {
+          "disease": "hepatitis b",
+          "drug": "Azathioprine",
+          "is_hit": false
+        },
+        {
+          "disease": "chronic hepatitis c",
+          "drug": "Azathioprine",
+          "is_hit": false
+        },
+        {
+          "disease": "chronic hepatitis c",
+          "drug": "Eltrombopag",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "cardiovascular_hierarchy_atherosclerosis",
+      "tier": "HIGH",
+      "hits": 1,
+      "misses": 5,
+      "total": 6,
+      "precision": 16.7,
+      "examples": [
+        {
+          "disease": "atherosclerosis",
+          "drug": "Clopidogrel",
+          "is_hit": false
+        },
+        {
+          "disease": "atherosclerosis",
+          "drug": "Evolocumab",
+          "is_hit": true
+        },
+        {
+          "disease": "atherosclerosis",
+          "drug": "Atenolol",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "cardiovascular_hierarchy_heart_failure",
+      "tier": "HIGH",
+      "hits": 0,
+      "misses": 1,
+      "total": 1,
+      "precision": 0.0,
+      "examples": [
+        {
+          "disease": "chronic heart failure",
+          "drug": "Canagliflozin",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "mechanism_specific",
+      "tier": "LOW",
+      "hits": 9,
+      "misses": 7,
+      "total": 16,
+      "precision": 56.2,
+      "examples": [
+        {
+          "disease": "psoriasis vulgaris",
+          "drug": "Salicylic acid",
+          "is_hit": true
+        },
+        {
+          "disease": "psoriasis vulgaris",
+          "drug": "Betamethasone",
+          "is_hit": true
+        },
+        {
+          "disease": "psoriasis vulgaris",
+          "drug": "Adalimumab",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "broad_class_isolated",
+      "tier": "LOW",
+      "hits": 5,
+      "misses": 28,
+      "total": 33,
+      "precision": 15.2,
+      "examples": [
+        {
+          "disease": "nephrotic syndrome",
+          "drug": "Cyclophosphamide",
+          "is_hit": false
+        },
+        {
+          "disease": "ischemic stroke",
+          "drug": "Celecoxib",
+          "is_hit": false
+        },
+        {
+          "disease": "multiple sclerosis",
+          "drug": "Adalimumab",
+          "is_hit": false
+        }
+      ]
+    },
+    {
+      "rule": "highly_repurposable",
+      "tier": "MEDIUM",
+      "hits": 3,
+      "misses": 3,
+      "total": 6,
+      "precision": 50.0,
+      "examples": [
+        {
+          "disease": "edema",
+          "drug": "Spironolactone",
+          "is_hit": true
+        },
+        {
+          "disease": "edema",
+          "drug": "Hydrochlorothiazide",
+          "is_hit": true
+        },
+        {
+          "disease": "edema",
+          "drug": "Triamterene",
+          "is_hit": true
+        }
+      ]
+    },
+    {
+      "rule": "cancer",
+      "tier": "MEDIUM",
+      "hits": 6,
+      "misses": 27,
+      "total": 33,
+      "precision": 18.2,
+      "examples": [
+        {
+          "disease": "systemic mastocytosis with associated hematological neoplasm",
+          "drug": "Prednisolone",
+          "is_hit": false
+        },
+        {
+          "disease": "systemic mastocytosis with associated hematological neoplasm",
+          "drug": "Ibrutinib",
+          "is_hit": false
+        },
+        {
+          "disease": "systemic mastocytosis with associated hematological neoplasm",
+          "drug": "Human immunoglobulin G",
+          "is_hit": false
+        }
+      ]
+    }
+  ]
+}

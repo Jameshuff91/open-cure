@@ -7615,14 +7615,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Generate predictions with rule attribution (cat_specific_tier)",
         "Calculate precision for each rule source",
         "Identify rules with precision significantly below tier average",
         "Propose rule modifications or removals",
         "Success: +1pp precision improvement for at least one tier"
-      ]
+      ],
+      "findings": "VALIDATED: Identified 8 rules with precision >10pp below tier average.\n\nTIER-LEVEL PRECISION (baseline):\n- GOLDEN: 35.8% (146/408)\n- HIGH: 59.9% (352/588)\n- MEDIUM: 30.0% (310/1035)\n- LOW: 24.0% (291/1213)\n- FILTER: 17.9% (471/2626)\n\nPROBLEM RULES (>10pp below tier avg, n>=10):\n\n1. cardiovascular (HIGH): 31.6% vs 59.9% (-28.3pp, n=19)\n   - Issue: General CV category too lenient\n\n2. infectious (GOLDEN): 13.0% vs 35.8% (-22.8pp, n=23)\n   - Issue: Antibiotics predicted for AIDS\n\n3. cv_pathway_comprehensive (HIGH): 38.0% vs 59.9% (-21.9pp, n=100)\n   - h351 rule needs tightening\n\n4. cardiovascular_hierarchy_coronary (HIGH): 40.0% vs 59.9% (-19.9pp, n=20)\n   - Antiplatelets not in GT for CAD\n\n5. metabolic_hierarchy_thyroid (GOLDEN): 20.6% vs 35.8% (-15.2pp, n=34)\n   - Thyroid hierarchy too broad (predicts statins for thyroid)\n\n6. hematological (HIGH): 45.8% vs 59.9% (-14.1pp, n=48)\n   - Steroids for anemia\n\n7. cancer (MEDIUM): 18.2% vs 30.0% (-11.8pp, n=33)\n   - Cross-type cancer predictions poor\n\n8. incoherent_demotion (HIGH): 48.7% vs 59.9% (-11.2pp, n=117)\n   - Demotion may be too lenient\n\nUNEXPECTED: HIGH tier has HIGHER precision than GOLDEN (59.9% vs 35.8%).\nThis suggests GOLDEN rules may be too broad or have data quality issues.",
+      "result_metric": "8 problem rules identified, GOLDEN 35.8% < HIGH 59.9%"
     },
     {
       "id": "h379",
@@ -7704,6 +7706,53 @@
         "Compare target overlap quality for CV vs autoimmune",
         "Identify if CV harm is from specific drug classes",
         "Success: explain CV ensemble harm mechanism"
+      ]
+    },
+    {
+      "id": "h384",
+      "title": "Tighten CV Pathway Comprehensive Rule",
+      "description": "h378 found cv_pathway_comprehensive has 38% precision vs 59.9% HIGH tier avg. Rule h351 may be too broad.",
+      "hypothesis": "Restricting cv_pathway_comprehensive to specific drug classes (statins only?) will improve precision.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Analyze which drug classes contribute to cv_pathway_comprehensive misses",
+        "Test restricting to statins/ACEi/ARBs only",
+        "Evaluate precision change",
+        "Success: +10pp precision for cv_pathway_comprehensive"
+      ]
+    },
+    {
+      "id": "h385",
+      "title": "Demote Thyroid Hierarchy to HIGH",
+      "description": "h378 found metabolic_hierarchy_thyroid has 20.6% precision vs 35.8% GOLDEN avg. Should be HIGH.",
+      "hypothesis": "Demoting thyroid hierarchy from GOLDEN to HIGH will improve GOLDEN tier precision.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Change metabolic_hierarchy_thyroid to return HIGH instead of GOLDEN",
+        "Evaluate impact on GOLDEN tier precision",
+        "Success: GOLDEN precision increases"
+      ]
+    },
+    {
+      "id": "h386",
+      "title": "Fix Infectious GOLDEN Rule",
+      "description": "h378 found infectious GOLDEN has 13.0% precision - antibiotics for AIDS. Needs filter.",
+      "hypothesis": "Adding viral vs bacterial disease distinction will fix infectious GOLDEN.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Identify viral diseases in GT (HIV, hepatitis, etc.)",
+        "Exclude antibiotics from viral disease predictions",
+        "Evaluate impact on infectious precision",
+        "Success: infectious precision > 40%"
       ]
     }
   ],
@@ -9096,6 +9145,12 @@
       "hypothesis_id": "h376",
       "learning": "MinRank ensemble only helps categories where Target and kNN have similar performance. When kNN dominates, ensemble hurts by mixing noise from weaker Target method.",
       "implication": "Apply ensemble selectively to autoimmune/metabolic/cancer only. This reinforces h369/h370/h374."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h378",
+      "learning": "HIGH tier actually has higher precision than GOLDEN (59.9% vs 35.8%). Several category hierarchy rules (CV, thyroid) are too broad.",
+      "implication": "Need to tighten GOLDEN criteria or demote some GOLDEN rules to HIGH."
     }
   ],
   "collaborations": [
