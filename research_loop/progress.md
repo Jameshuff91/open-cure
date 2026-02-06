@@ -1,13 +1,14 @@
 # Research Loop Progress
 
-## Current Session: h537 - Deliverable Quality Audit (2026-02-06)
+## Current Session: h537+h540 - Deliverable Quality Audit + LA Demotion (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 1**
+**Hypotheses Tested: 2**
 - h537: Deliverable Quality Audit: Sample-Based Validation of Top 50 - **VALIDATED**
+- h540: Local Anesthetic Non-Pain Demotion - **VALIDATED** (HIGH +0.3pp, 132 predictions demoted)
 
 ### Key Findings
 
@@ -46,10 +47,26 @@ Negligible — statin filter affects too few predictions to move tier averages.
 - h542: MEDIUM tier quality audit round 2 (P5, medium)
 - h543: Corticosteroid prediction saturation analysis (P5, low)
 
+#### 4. h540: Local Anesthetic Demotion (VALIDATED)
+- Bupivacaine: demoted to LOW for ALL categories (no systemic therapeutic use)
+- Lidocaine: demoted to LOW for non-therapeutic categories (neurological/CV/dermatological/psychiatric preserved)
+- 132 predictions moved GOLDEN/HIGH/MEDIUM → LOW
+- HIGH: 58.5% → 58.8% (+0.3pp holdout), MEDIUM: 30.0% → 30.2% (+0.2pp)
+- `local_anesthetic_procedural` rule: 28.6% ± 4.9% holdout (GENUINE)
+
+### Current Tier Performance (h540)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 69.9% ± 17.9% | 285 |
+| HIGH | 58.8% ± 6.2% | 791 |
+| MEDIUM | 30.2% ± 2.4% | 2656 |
+| LOW | 16.2% ± 2.7% | 3140 |
+| FILTER | 10.3% ± 1.4% | 7278 |
+
 ### Recommended Next Steps
-1. **h540**: Local anesthetic procedural artifact filter — 27 GOLDEN/HIGH false positives
-2. **h408**: Ryland collaboration prep (approaching deadline)
-3. **h542**: MEDIUM tier quality audit
+1. **h408**: Ryland collaboration prep (approaching deadline)
+2. **h542**: MEDIUM tier quality audit
+3. **h543**: Corticosteroid saturation analysis
 
 ---
 

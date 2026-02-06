@@ -2686,6 +2686,23 @@ class DrugRepurposingPredictor:
                 if any(inv_d in disease_lower for inv_d in inv_diseases):
                     return ConfidenceTier.FILTER, False, 'inverse_indication'
 
+        # h540: Local anesthetic procedural artifact demotion
+        # Lidocaine/bupivacaine appear in disease contexts due to PROCEDURAL use
+        # (joint injections, biopsies, nerve blocks) not therapeutic treatment.
+        # KG edges from co-occurrence inflate kNN scores for non-pain diseases.
+        # Bupivacaine: demote to LOW for ALL categories (no systemic therapeutic use)
+        # Lidocaine: demote to LOW except neurological (neuropathic pain),
+        #   cardiovascular (Class Ib antiarrhythmic), dermatological (topical),
+        #   psychiatric (IV lidocaine for depression has some evidence)
+        if any(la in drug_lower for la in LOCAL_ANESTHETICS):
+            la_therapeutic_categories = {'neurological', 'cardiovascular', 'dermatological', 'psychiatric'}
+            if 'bupivacaine' in drug_lower:
+                # Bupivacaine has NO systemic therapeutic use — always procedural
+                return ConfidenceTier.LOW, False, 'local_anesthetic_procedural'
+            elif category not in la_therapeutic_categories:
+                # Lidocaine in non-therapeutic category → procedural artifact
+                return ConfidenceTier.LOW, False, 'local_anesthetic_procedural'
+
         # h274/h396: For cancer, check cancer type match BEFORE applying rank filter
         # h393 holdout validation: cancer_same_type has 24.5% full-data, 19.2% holdout precision
         # This is MEDIUM-level, not GOLDEN. Demoted from GOLDEN→MEDIUM by h396.

@@ -10666,13 +10666,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Define 'pain-related' disease categories where LA drugs are therapeutic",
         "Check holdout impact of demoting LA + non-pain to LOW/FILTER",
         "Verify no legitimate LA indications are harmed (arrhythmia, neuropathic pain)",
         "Implement targeted demotion in _assign_confidence_tier"
-      ]
+      ],
+      "findings": "Implemented local anesthetic procedural artifact demotion:\n- Bupivacaine: demoted to LOW for ALL categories (no systemic therapeutic use)\n- Lidocaine: demoted to LOW for non-therapeutic categories (keeps neurological/cardiovascular/dermatological/psychiatric)\n- 132 predictions moved from GOLDEN/HIGH/MEDIUM \u2192 LOW (2+37+93)\n- Holdout: HIGH +0.3pp (58.5\u219258.8%), MEDIUM +0.2pp, LOW +0.7pp (all improved)\n- local_anesthetic_procedural rule: 28.6% \u00b1 4.9% holdout, marked GENUINE\n- Note: ~16 'known indications' for LA drugs are themselves GT artifacts from DRKG\n- Key insight: KG procedural co-occurrence inflates kNN scores for non-therapeutic drugs",
+      "result_metric": "HIGH +0.3pp, MEDIUM +0.2pp, all tiers improved"
     },
     {
       "id": "h541",
@@ -12529,6 +12531,12 @@
       "hypothesis_id": "h537",
       "learning": "Literature audit of top 50 GOLDEN/HIGH novel predictions: 58% strongly validated, 88% reasonable. GOLDEN 100% reasonable, HIGH 80%. Three error patterns: local anesthetic procedural artifacts (27/29 HIGH), wrong antibiotic spectrum (5 predictions), statin\u2192diabetes inverse indication (5 predictions). Added statin\u2192diabetes to inverse indication filter.",
       "implication": "Deliverable quality is high. Largest improvement: filter local anesthetic procedural artifacts from GOLDEN/HIGH (h540). Antibiotic spectrum is minor issue."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h540",
+      "learning": "Local anesthetic (lidocaine/bupivacaine) predictions in non-pain disease categories are procedural artifacts from KG co-occurrence. Demoting to LOW improved all tiers (HIGH +0.3pp, MEDIUM +0.2pp). 132 predictions moved. GT itself has ~16 false LA indications from DRKG.",
+      "implication": "KG procedural co-occurrence is a systematic bias. Consider auditing other drug classes with primarily procedural use (contrast agents, surgical drugs, etc.)."
     }
   ],
   "collaborations": [
