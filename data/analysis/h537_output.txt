@@ -1,0 +1,99 @@
+
+=================================================================
+h537: Deliverable Quality Audit - Top 50 GOLDEN/HIGH Predictions
+=================================================================
+
+METHODOLOGY:
+- Selected 50 novel (non-known-indication) predictions from GOLDEN (20) and HIGH (30) tiers
+- Diversity sampling: non-corticosteroid priority, category balance, unique drugs
+- Validated each against PubMed, ClinicalTrials.gov, FDA approvals, and clinical guidelines
+- Classified as: VALIDATED (strong evidence), PLAUSIBLE (mechanistic rationale), IMPLAUSIBLE (wrong/harmful)
+
+=================================================================
+RESULTS
+=================================================================
+
+Overall Classification:
+  VALIDATED:   29/50 (58%) - Strong clinical evidence, FDA-approved, or RCT-supported
+  PLAUSIBLE:   15/50 (30%) - Mechanistic rationale, some clinical evidence, not standard
+  IMPLAUSIBLE:  6/50 (12%) - Wrong indication, drug CAUSES disease, or procedural confusion
+
+By Tier:
+  GOLDEN: 13/20 validated (65%), 7/20 plausible (35%), 0/20 implausible (0%)
+  HIGH:   16/30 validated (53%), 8/30 plausible (27%), 6/30 implausible (20%)
+
+GOLDEN Tier Quality: EXCELLENT
+  - 100% of GOLDEN novel predictions are reasonable (validated + plausible)
+  - 65% have strong clinical evidence (FDA-approved or RCT-supported)
+  - No harmful or implausible predictions in GOLDEN tier
+
+HIGH Tier Quality: GOOD with fixable issues
+  - 80% are reasonable predictions
+  - 20% are implausible, driven by 3 specific error patterns (see below)
+
+=================================================================
+SYSTEMATIC ERROR PATTERNS (6 implausible predictions)
+=================================================================
+
+PATTERN 1: Local Anesthetic Procedural Confusion (2/6)
+  #26: Lidocaine → polyarticular JIA (used for joint injection anesthesia)
+  #30: Bupivacaine → temporal arteritis (used for biopsy anesthesia)
+  Impact: 27 of 29 LA GOLDEN/HIGH predictions are procedural artifacts
+  Root cause: KG edges from procedure co-occurrence, not therapeutic use
+  
+PATTERN 2: Wrong Antibiotic Spectrum (3/6)
+  #31: Erythromycin → bacterial meningitis (poor BBB penetration)
+  #33: Minocycline → bacterial meningitis (wrong pathogen spectrum)
+  #38: Doxycycline → Pseudomonas CF (Pseudomonas inherently resistant)
+  Root cause: Model predicts correct drug CLASS but wrong specific drug-pathogen match
+  
+PATTERN 3: Drug CAUSES Disease / Inverse Indication (1/6)
+  #44: Lovastatin → type 2 diabetes (statins increase diabetes risk, Lancet 2024)
+  Root cause: Not caught by existing inverse indication filters
+  FIX APPLIED: Added all 7 statins → diabetes/hyperglycemia to INVERSE_INDICATION_PAIRS
+
+=================================================================
+ACTIONABLE IMPROVEMENTS
+=================================================================
+
+1. STATIN→DIABETES FILTER (IMPLEMENTED)
+   - Added lovastatin/simvastatin/atorvastatin/rosuvastatin/pravastatin/fluvastatin/pitavastatin
+     → {type 2 diabetes mellitus, diabetes mellitus, hyperglycemia}
+   - 5 predictions moved to FILTER (4 HIGH, 1 MEDIUM)
+   - Evidence: 2024 Lancet meta-analysis (123,940 patients, 19 RCTs): 10-36% increase
+   
+2. LOCAL ANESTHETIC ANNOTATION (NOT IMPLEMENTED - hypothesis generated)
+   - 27 GOLDEN/HIGH lidocaine/bupivacaine predictions are procedural artifacts
+   - NOT safe to blanket-filter (238 GT pairs exist, many for pain indications)
+   - Need targeted approach: filter LA for non-pain disease categories
+   - Generated h540 for this investigation
+   
+3. ANTIBIOTIC SPECTRUM MATCHING (NOT IMPLEMENTED - hypothesis generated)
+   - Model doesn't distinguish Gram-positive vs Gram-negative coverage
+   - Low impact on tier precision (only 5 predictions affected)
+   - Generated h541 for drug-pathogen spectrum annotation
+
+=================================================================
+HOLDOUT IMPACT
+=================================================================
+
+Tier     | Previous  | After h537 | Delta
+GOLDEN   | 69.9%     | 69.9%      | 0.0pp (unchanged)
+HIGH     | 58.5%     | 58.5%      | 0.0pp (5 predictions too few to move average)
+MEDIUM   | 28.8%     | 30.0%      | +1.2pp (within noise)
+LOW      | 15.6%     | 15.5%      | -0.1pp (unchanged)
+FILTER   | 10.3%     | 10.3%      | 0.0pp (unchanged)
+
+Statin→diabetes filter correctly removes 5 harmful predictions from HIGH/MEDIUM
+with negligible impact on tier averages.
+
+=================================================================
+KEY INSIGHT: DELIVERABLE QUALITY IS HIGH
+=================================================================
+
+The audit validates that our confidence tier system is working well:
+- GOLDEN: 100% reasonable, 65% strongly validated
+- HIGH: 80% reasonable, 53% strongly validated
+- The 12% implausible rate is driven by 3 fixable error patterns
+- The most impactful fix (local anesthetic procedural artifacts) affects
+  27 GOLDEN/HIGH predictions and should be addressed

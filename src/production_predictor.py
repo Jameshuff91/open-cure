@@ -430,6 +430,27 @@ CANCER_ONLY_DRUGS = (
     | MEK_INHIBITORS
 )
 
+# h538: Cancer targeted therapy drugs (kinase inhibitors + immunotherapy)
+# These are mutation-specific and DON'T transfer across cancer subtypes via kNN.
+# Holdout precision: kinase 9.6%, immunotherapy 18.3% vs cytotoxic 53%.
+# cancer_same_type predictions with these drugs should be demoted MEDIUM → LOW.
+CANCER_TARGETED_THERAPY = (
+    # Kinase inhibitors (mutation-specific, don't generalize across cancer subtypes)
+    {'imatinib', 'dasatinib', 'nilotinib', 'sunitinib', 'sorafenib',
+     'erlotinib', 'gefitinib', 'lapatinib', 'crizotinib', 'ruxolitinib',
+     'ibrutinib', 'palbociclib', 'ribociclib', 'lenvatinib', 'regorafenib',
+     'axitinib', 'pazopanib', 'vemurafenib', 'dabrafenib', 'trametinib',
+     'cobimetinib', 'osimertinib', 'afatinib', 'cabozantinib', 'ponatinib',
+     'bosutinib', 'vandetanib', 'fedratinib', 'gilteritinib', 'midostaurin',
+     'entrectinib', 'larotrectinib', 'capmatinib', 'tepotinib', 'tucatinib',
+     'neratinib', 'lorlatinib', 'alectinib', 'brigatinib', 'ceritinib',
+     'encorafenib', 'binimetinib', 'futibatinib', 'infigratinib',
+     'pemigatinib', 'erdafitinib', 'abemaciclib'}
+    # Immunotherapy (PD-1/PD-L1/CTLA-4 — tumor-specific immune activation)
+    | {'nivolumab', 'pembrolizumab', 'atezolizumab', 'ipilimumab',
+       'durvalumab', 'avelumab', 'tremelimumab', 'cemiplimab'}
+)
+
 # Ophthalmic drugs
 OPHTHALMIC_ANTIBIOTICS = {'ciprofloxacin', 'moxifloxacin', 'ofloxacin', 'tobramycin', 'gentamicin',
                           'gatifloxacin', 'levofloxacin', 'besifloxacin', 'neomycin', 'polymyxin'}  # 62.5% rank<=15
@@ -827,6 +848,17 @@ INVERSE_INDICATION_PAIRS = {
     # Especially dangerous in hereditary angioedema (already bradykinin-mediated)
     'benazepril': {'angioedema', 'hereditary angioedema'},
     'quinapril': {'angioedema'},
+    # h537: Statins CAUSE diabetes (2024 Lancet IPD meta-analysis: 10-36% increase in new-onset
+    # diabetes, dose-dependent). Predicting statins as diabetes TREATMENT is inverse indication.
+    # Note: diabetic complications (nephropathy, neuropathy) excluded — statins may help those.
+    # Note: diabetes insipidus excluded — unrelated (ADH pathway, not glucose).
+    'lovastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    'simvastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    'atorvastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    'rosuvastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    'pravastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    'fluvastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    'pitavastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
 }
 
 # h481: Drug class → disease category standard-of-care mappings
@@ -2660,6 +2692,11 @@ class DrugRepurposingPredictor:
         if category == 'cancer' and drug_id:
             has_cancer_gt, same_type_match, _ = self._check_cancer_type_match(drug_id, disease_name)
             if same_type_match:
+                # h538: Targeted therapy (kinase inhibitors + immunotherapy) has 12.6% holdout
+                # vs cytotoxic 53%. They don't transfer across cancer subtypes via kNN.
+                # Demote targeted therapy cancer_same_type MEDIUM → LOW.
+                if any(t in drug_lower for t in CANCER_TARGETED_THERAPY):
+                    return ConfidenceTier.LOW, False, 'cancer_targeted_therapy'
                 # h396: Demoted from GOLDEN to MEDIUM (24.5% full, 19.2% holdout)
                 # cancer_same_type was 57% of GOLDEN predictions, dragging GOLDEN below HIGH
                 return ConfidenceTier.MEDIUM, True, 'cancer_same_type'

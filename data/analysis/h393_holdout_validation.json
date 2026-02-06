@@ -14,77 +14,77 @@
       ]
     },
     "HIGH": {
-      "full_precision": 66.5,
+      "full_precision": 66.6,
       "holdout_mean": 58.5,
-      "holdout_std": 6.9,
-      "delta": -8.0,
+      "holdout_std": 7.1,
+      "delta": -8.1,
       "seed_values": [
         49.4,
-        59.2,
-        70.2,
+        59.0,
+        70.7,
         59.3,
         54.3
       ]
     },
     "MEDIUM": {
-      "full_precision": 41.2,
-      "holdout_mean": 28.8,
-      "holdout_std": 2.6,
-      "delta": -12.4,
+      "full_precision": 41.5,
+      "holdout_mean": 30.0,
+      "holdout_std": 2.8,
+      "delta": -11.5,
       "seed_values": [
-        28.2,
-        29.0,
-        26.3,
-        33.6,
-        26.8
+        28.7,
+        30.5,
+        27.0,
+        35.1,
+        28.7
       ]
     },
     "LOW": {
-      "full_precision": 21.6,
-      "holdout_mean": 15.6,
-      "holdout_std": 2.6,
-      "delta": -6.0,
+      "full_precision": 22.7,
+      "holdout_mean": 15.5,
+      "holdout_std": 2.7,
+      "delta": -7.2,
       "seed_values": [
-        16.8,
+        16.7,
         13.9,
-        15.9,
+        15.8,
         19.6,
-        11.9
+        11.5
       ]
     },
     "FILTER": {
-      "full_precision": 16.8,
+      "full_precision": 16.9,
       "holdout_mean": 10.3,
       "holdout_std": 1.4,
-      "delta": -6.5,
+      "delta": -6.6,
       "seed_values": [
         8.1,
         10.7,
         9.5,
         10.9,
-        12.1
+        12.2
       ]
     }
   },
   "rule_comparison": {
     "inverse_indication": {
       "tier": "FILTER",
-      "full_precision": 10.3,
-      "full_n": 116,
-      "holdout_mean": 8.7,
+      "full_precision": 14.8,
+      "full_n": 128,
+      "holdout_mean": 11.2,
       "holdout_std": 10.7,
-      "delta": -1.6,
-      "mean_n": 19.0,
+      "delta": -3.6,
+      "mean_n": 20.4,
       "status": "GENUINE"
     },
     "default": {
       "tier": "FILTER",
       "full_precision": 20.8,
-      "full_n": 8533,
+      "full_n": 8528,
       "holdout_mean": 13.7,
       "holdout_std": 1.0,
       "delta": -7.1,
-      "mean_n": 1780.2,
+      "mean_n": 1779.8,
       "status": "degraded"
     },
     "complication_non_validated": {
@@ -249,12 +249,12 @@
     },
     "metabolic_hierarchy_diabetes": {
       "tier": "HIGH",
-      "full_precision": 83.7,
-      "full_n": 49,
-      "holdout_mean": 48.7,
+      "full_precision": 88.1,
+      "full_n": 42,
+      "holdout_mean": 48.5,
       "holdout_std": 40.9,
-      "delta": -35.0,
-      "mean_n": 6.0,
+      "delta": -39.6,
+      "mean_n": 4.7,
       "status": "OVERFITTED?"
     },
     "autoimmune_hierarchy_multiple_sclerosis": {
@@ -477,6 +477,16 @@
       "mean_n": 16.8,
       "status": "degraded"
     },
+    "cancer_targeted_therapy": {
+      "tier": "LOW",
+      "full_precision": 37.9,
+      "full_n": 243,
+      "holdout_mean": 12.5,
+      "holdout_std": 5.2,
+      "delta": -25.4,
+      "mean_n": 32.0,
+      "status": "OVERFITTED?"
+    },
     "neurological_medium_demotion": {
       "tier": "LOW",
       "full_precision": 18.1,
@@ -579,12 +589,12 @@
     },
     "cancer_same_type": {
       "tier": "MEDIUM",
-      "full_precision": 45.1,
-      "full_n": 1127,
-      "holdout_mean": 24.8,
-      "holdout_std": 4.0,
-      "delta": -20.3,
-      "mean_n": 162.8,
+      "full_precision": 47.1,
+      "full_n": 884,
+      "holdout_mean": 27.9,
+      "holdout_std": 4.8,
+      "delta": -19.2,
+      "mean_n": 130.8,
       "status": "OVERFITTED?"
     },
     "cardiovascular": {
@@ -614,7 +624,7 @@
       "holdout_mean": 8.3,
       "holdout_std": 14.4,
       "delta": -7.8,
-      "mean_n": 4.5,
+      "mean_n": 4.2,
       "status": "degraded"
     },
     "neurological_hierarchy_parkinsons": {
@@ -662,6 +672,7 @@
     "autoimmune_hierarchy_spondylitis",
     "autoimmune_hierarchy_lupus",
     "respiratory_hierarchy_asthma",
+    "cancer_targeted_therapy",
     "immunological_medium_demotion",
     "cv_pathway_comprehensive",
     "target_overlap_promotion",
@@ -672,9 +683,9 @@
     "golden_holdout_precision": 69.9,
     "golden_pass": true,
     "tier_ordering_correct": true,
-    "n_rules_tested": 58,
+    "n_rules_tested": 59,
     "n_genuine": 8,
-    "n_overfitted": 18,
+    "n_overfitted": 19,
     "n_degraded": 15,
     "n_small_sample": 17
   }

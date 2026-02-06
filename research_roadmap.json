@@ -10335,10 +10335,12 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "depends_on": [
         "h520"
-      ]
+      ],
+      "findings": "Cytotoxic cancer drug classes show high holdout precision in MEDIUM:\n- Anthracyclines: 73.1% \u00b1 20.0% (8/seed) \u2014 small n\n- Taxanes: 71.2% \u00b1 14.7% (6/seed) \u2014 small n\n- Antimetabolites: 47.7% \u00b1 10.7% (23/seed) \u2014 moderate n\n- Platinum: 35.9% \u00b1 7.6% (6/seed)\n- Kinase inhibitors: 9.6% \u00b1 6.2% (11/seed)\n\nHowever, promoting cytotoxic drugs MEDIUM \u2192 HIGH HURTS both tiers:\n- Promoted predictions: 53.0% \u00b1 7.7% holdout (43/seed)\n- HIGH drops -1.4pp (58.5 \u2192 57.1%) because 53% < 58.5%\n- MEDIUM drops -2.5pp (28.8 \u2192 26.3%) because removing best MEDIUM preds\n\nCONCLUSION: Cancer drugs are correctly placed in MEDIUM. The cancer_same_type MEDIUM assignment is well-calibrated. No promotion warranted.\n\nScientific insight: Traditional cytotoxic chemo (anthracyclines, taxanes, antimetabolites) transfers better across cancer subtypes than targeted therapy (kinase inhibitors, immunotherapy).",
+      "result_metric": "Cytotoxic MEDIUM holdout: 53.0% \u00b1 7.7%. Promotion \u2192 HIGH -1.4pp, MEDIUM -2.5pp. NOT RECOMMENDED."
     },
     {
       "id": "h522",
@@ -10615,7 +10617,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract top 50 GOLDEN + HIGH predictions from deliverable",
         "For each: search ClinicalTrials.gov for active/completed trials",
@@ -10623,6 +10625,98 @@
         "Classify as: validated (trial/evidence), plausible (mechanistic rationale), implausible (no evidence or contradicting)",
         "Compute real-world precision estimate",
         "Identify any systematic errors (e.g., disease name mismatches, drug-disease confusion)"
+      ],
+      "findings": "Audited top 50 GOLDEN/HIGH novel predictions against PubMed/ClinicalTrials.gov/FDA:\n- Overall: 29/50 (58%) VALIDATED, 15/50 (30%) PLAUSIBLE, 6/50 (12%) IMPLAUSIBLE\n- GOLDEN: 100% reasonable (65% validated, 35% plausible, 0% implausible)\n- HIGH: 80% reasonable (53% validated, 27% plausible, 20% implausible)\n- 3 error patterns: (1) local anesthetic procedural confusion (2/6), (2) wrong antibiotic spectrum (3/6), (3) statin\u2192diabetes inverse indication (1/6)\n- Fix applied: added 7 statins \u2192 diabetes/hyperglycemia to INVERSE_INDICATION_PAIRS\n- 27 GOLDEN/HIGH lidocaine/bupivacaine predictions are procedural artifacts (highest-impact fix opportunity)",
+      "result_metric": "58% validated, 88% reasonable (validated+plausible), 12% implausible"
+    },
+    {
+      "id": "h538",
+      "title": "Cancer Targeted Therapy Demotion: Kinase Inhibitors + Immunotherapy MEDIUM \u2192 LOW",
+      "hypothesis": "h521 showed kinase inhibitors (9.6% holdout) and immunotherapy (18.3% holdout) dramatically underperform in cancer MEDIUM vs cytotoxic drugs (53%). These targeted therapies are mutation-specific and DON'T transfer across cancer subtypes via kNN. Demoting them to LOW could improve MEDIUM by ~1-2pp.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "in_progress",
+      "steps": [
+        "Identify all kinase inhibitor and immunotherapy predictions in MEDIUM tier",
+        "Verify holdout precision is significantly below MEDIUM average",
+        "Simulate MEDIUM \u2192 LOW demotion impact on both tiers",
+        "Check for false positive drug matching (some kinase inhibitors have non-cancer uses)",
+        "If validated, implement demotion rule in production_predictor.py"
+      ]
+    },
+    {
+      "id": "h539",
+      "title": "Cancer Drug Class Annotation: Add Cytotoxic vs Targeted Classification to Deliverable",
+      "hypothesis": "The stark precision difference between cytotoxic (53%) and targeted (10-18%) cancer drugs within MEDIUM tier is useful information for clinicians reviewing predictions. Annotating each cancer prediction with drug class would help prioritize review.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Add cancer_drug_class column to deliverable for cancer MEDIUM predictions",
+        "Classifications: cytotoxic (anthracycline/taxane/antimetabolite/platinum/alkylating/vinca), targeted (kinase_inhibitor/immunotherapy), other",
+        "Add holdout precision annotation per class"
+      ]
+    },
+    {
+      "id": "h540",
+      "title": "Local Anesthetic Non-Pain Demotion: Filter Procedural Artifacts",
+      "hypothesis": "27 of 29 GOLDEN/HIGH lidocaine/bupivacaine predictions are procedural artifacts (drug used for procedure anesthesia, not disease treatment). Filtering LA predictions for non-pain disease categories would remove ~27 false GOLDEN/HIGH predictions. Need to preserve 238 legitimate GT pairs (pain, neuropathy, arrhythmia).",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Define 'pain-related' disease categories where LA drugs are therapeutic",
+        "Check holdout impact of demoting LA + non-pain to LOW/FILTER",
+        "Verify no legitimate LA indications are harmed (arrhythmia, neuropathic pain)",
+        "Implement targeted demotion in _assign_confidence_tier"
+      ]
+    },
+    {
+      "id": "h541",
+      "title": "Antibiotic Spectrum Annotation: Flag Gram-Positive vs Gram-Negative Mismatches",
+      "hypothesis": "The model predicts correct antibiotic CLASS but wrong drug-pathogen match (e.g., erythromycin for meningitis, doxycycline for Pseudomonas). Annotating predictions with antibiotic spectrum compatibility would improve deliverable quality. Low tier-level impact (only ~5 HIGH predictions affected).",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Map antibiotics to spectrum (Gram+, Gram-, atypical, anaerobe)",
+        "Map infectious diseases to typical pathogens",
+        "Flag spectrum mismatches in deliverable",
+        "Check if any HIGH/GOLDEN predictions should be demoted"
+      ]
+    },
+    {
+      "id": "h542",
+      "title": "Deliverable Quality Audit Round 2: MEDIUM Tier Top 50",
+      "hypothesis": "h537 validated GOLDEN/HIGH quality. MEDIUM tier has 28.8% holdout precision \u2014 a similar literature audit of top 50 MEDIUM predictions would reveal whether the 'plausible' fraction is similar or if MEDIUM has different error patterns.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Extract top 50 MEDIUM novel predictions (diverse sample)",
+        "Validate each against PubMed/ClinicalTrials.gov",
+        "Compare error patterns with GOLDEN/HIGH audit",
+        "Identify MEDIUM-specific systematic errors"
+      ]
+    },
+    {
+      "id": "h543",
+      "title": "Corticosteroid Prediction Saturation: Are Top Predictions Over-Represented?",
+      "hypothesis": "Top GOLDEN predictions are dominated by corticosteroids (9/20 in top 20). While medically plausible, this reduces diversity of the deliverable. Analysis of drug class distribution across tiers could identify if corticosteroid promotion (h520) over-saturated upper tiers.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Count drug class distribution in GOLDEN and HIGH tiers",
+        "Compare with MEDIUM for corticosteroid representation",
+        "Assess if corticosteroid dominance masks other drug discoveries",
+        "Consider diversification annotation for deliverable users"
       ]
     }
   ],
@@ -12423,6 +12517,18 @@
       "hypothesis_id": "h533",
       "learning": "FILTER tier is well-calibrated. rank>20 = 80% of FILTER, no category rescue works. TransE consilience provides +6.3pp holdout within FILTER but only 16.3% total (= LOW level, not worth promoting). Full-data TransE shows no signal; only holdout differentiates.",
       "implication": "FILTER tier boundary is robust. Future improvements must come from improving the underlying kNN model, not from reclassifying existing FILTER predictions."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h521",
+      "learning": "Cancer drug MEDIUM tier is well-calibrated. Cytotoxic drugs (anthracyclines 73%, taxanes 71%, antimetabolites 48%) have higher precision than targeted therapy (kinase inhibitors 10%), but at 53% overall they fall BETWEEN MEDIUM (28.8%) and HIGH (58.5%). Promoting would dilute HIGH. They are in the correct tier.",
+      "implication": "Do NOT attempt cancer drug sub-stratification for tier promotion. The cancer_same_type MEDIUM rule is optimal. Focus on targeted therapy demotions if anything (kinase_inhibitors at 9.6% could be LOW)."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h537",
+      "learning": "Literature audit of top 50 GOLDEN/HIGH novel predictions: 58% strongly validated, 88% reasonable. GOLDEN 100% reasonable, HIGH 80%. Three error patterns: local anesthetic procedural artifacts (27/29 HIGH), wrong antibiotic spectrum (5 predictions), statin\u2192diabetes inverse indication (5 predictions). Added statin\u2192diabetes to inverse indication filter.",
+      "implication": "Deliverable quality is high. Largest improvement: filter local anesthetic procedural artifacts from GOLDEN/HIGH (h540). Antibiotic spectrum is minor issue."
     }
   ],
   "collaborations": [
