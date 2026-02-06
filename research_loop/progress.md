@@ -1,6 +1,66 @@
 # Research Loop Progress
 
-## Current Session: h486 + h525 - SIDER Mining + GT Expansion (2026-02-06)
+## Current Session: h526 - Drug-Induced Disease Classes Taxonomy (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h526: Drug-Induced Disease Classes: Systematic Taxonomy - **VALIDATED**
+
+### Key Findings
+
+#### 1. Mechanism Taxonomy (10 classes, 135 pairs total)
+Classified all inverse indication pairs into systematic mechanism classes:
+- Cardiac toxicity (34): CCBs, Class Ic/III antiarrhythmics
+- Metabolic disruption (28): Glucose-lowering drugs → hypoglycemia
+- Steroid AEs (26): Glaucoma, osteoporosis, pancreatitis, TB, IPF
+- Hormonal disruption (12): Thyroid, vitamin D, GnRH
+- Immune-mediated (10): TEN/SLE/EM from NSAIDs, azathioprine
+- Organ toxicity (7): Hepato/nephro/gonadotoxic
+- Procarcinogenic (2→4): Estrogen → cancer
+- CNS effects (2→7): SSRI/SNRI mania
+- Vascular (2): COX-2 → stroke
+- Bradykinin (0→3): ACEi → angioedema (NEW)
+
+#### 2. Ten New Inverse Indication Pairs Implemented
+- SSRIs/SNRIs → bipolar (5): fluoxetine, sertraline, escitalopram, venlafaxine, duloxetine
+- Conjugated estrogens → breast/endometrial cancer (2): WHI carcinogenicity
+- ACEi → angioedema (3): benazepril, quinapril (bradykinin class effect)
+- Total: 55→63 drugs, 124→135 pairs
+
+#### 3. Bug Fix: Inverse Indication Ordering
+Moved inverse_indication check BEFORE cancer_same_type in _assign_confidence_tier.
+Previously conjugated estrogens→breast cancer was getting MEDIUM (cancer_same_type)
+instead of FILTER (inverse_indication). Safety filters must always come first.
+
+#### 4. GT Quality Finding: 38 Erroneous GT Entries
+38 GT entries are inverse indications (drug CAUSES the disease):
+- conjugated estrogens → breast cancer (WHI: causes breast cancer)
+- benazepril/quinapril → angioedema (ACEi cause angioedema)
+- flecainide → cardiac arrest/MI/HF (CAST trial: 2.5x mortality)
+- corticosteroids → osteoporosis/TB/IPF
+Source: adverse effect/warning mentions confused with indications in data curation.
+
+#### 5. Impact
+- 7 MEDIUM → FILTER, 2 LOW → FILTER
+- Holdout: unchanged (too few predictions to measure)
+- Safety: 10 harmful predictions now correctly filtered
+
+### New Hypotheses Generated (3)
+- h529: GT quality audit - remove inverse indication GT entries (P4, medium)
+- h530: Automatic inverse indication classifier (P5, high)
+- h531: TCA/MAOI → bipolar expansion (P5, low)
+
+### Recommended Next Steps
+1. **h529**: Audit and clean 38 erroneous GT entries (reduces full↔holdout gap)
+2. **h531**: Quick check for TCA/MAOI → bipolar predictions
+3. **h408**: Ryland collaboration prep (Feb 10 deadline approaching)
+
+---
+
+## Previous Session: h486 + h525 - SIDER Mining + GT Expansion (2026-02-06)
 
 ### Session Summary
 

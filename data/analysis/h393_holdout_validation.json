@@ -36,7 +36,7 @@
         29.0,
         26.3,
         33.6,
-        26.7
+        26.8
       ]
     },
     "LOW": {
@@ -54,13 +54,13 @@
     },
     "FILTER": {
       "full_precision": 17.0,
-      "holdout_mean": 10.6,
+      "holdout_mean": 10.5,
       "holdout_std": 1.4,
-      "delta": -6.4,
+      "delta": -6.5,
       "seed_values": [
         8.3,
         10.9,
-        9.9,
+        9.8,
         11.3,
         12.4
       ]
@@ -69,22 +69,22 @@
   "rule_comparison": {
     "inverse_indication": {
       "tier": "FILTER",
-      "full_precision": 23.6,
-      "full_n": 72,
-      "holdout_mean": 36.3,
-      "holdout_std": 15.3,
-      "delta": 12.7,
-      "mean_n": 10.6,
+      "full_precision": 24.1,
+      "full_n": 116,
+      "holdout_mean": 32.8,
+      "holdout_std": 16.3,
+      "delta": 8.7,
+      "mean_n": 19.0,
       "status": "GENUINE"
     },
     "default": {
       "tier": "FILTER",
       "full_precision": 20.8,
-      "full_n": 8551,
-      "holdout_mean": 13.8,
-      "holdout_std": 1.1,
-      "delta": -7.0,
-      "mean_n": 1784.6,
+      "full_n": 8533,
+      "holdout_mean": 13.7,
+      "holdout_std": 1.0,
+      "delta": -7.1,
+      "mean_n": 1780.2,
       "status": "degraded"
     },
     "complication_non_validated": {
@@ -129,13 +129,13 @@
     },
     "corticosteroid_iatrogenic": {
       "tier": "FILTER",
-      "full_precision": 16.7,
-      "full_n": 24,
-      "holdout_mean": 37.9,
-      "holdout_std": 37.8,
-      "delta": 21.2,
-      "mean_n": 6.5,
-      "status": "GENUINE"
+      "full_precision": 22.2,
+      "full_n": 9,
+      "holdout_mean": 39.6,
+      "holdout_std": 37.0,
+      "delta": 17.4,
+      "mean_n": 2.2,
+      "status": "small-n"
     },
     "cancer_only_non_cancer": {
       "tier": "FILTER",
@@ -469,11 +469,11 @@
     },
     "broad_class_isolated": {
       "tier": "LOW",
-      "full_precision": 22.6,
-      "full_n": 84,
+      "full_precision": 21.7,
+      "full_n": 83,
       "holdout_mean": 7.6,
       "holdout_std": 5.3,
-      "delta": -15.0,
+      "delta": -14.1,
       "mean_n": 16.8,
       "status": "degraded"
     },
@@ -489,11 +489,11 @@
     },
     "cardiovascular_medium_demotion": {
       "tier": "LOW",
-      "full_precision": 26.2,
-      "full_n": 325,
+      "full_precision": 25.7,
+      "full_n": 323,
       "holdout_mean": 24.9,
       "holdout_std": 19.5,
-      "delta": -1.3,
+      "delta": -0.8,
       "mean_n": 70.6,
       "status": "GENUINE"
     },
@@ -569,22 +569,22 @@
     },
     "target_overlap_promotion": {
       "tier": "MEDIUM",
-      "full_precision": 60.1,
-      "full_n": 213,
-      "holdout_mean": 44.9,
-      "holdout_std": 3.7,
-      "delta": -15.2,
-      "mean_n": 45.6,
+      "full_precision": 60.8,
+      "full_n": 209,
+      "holdout_mean": 45.3,
+      "holdout_std": 3.6,
+      "delta": -15.5,
+      "mean_n": 45.2,
       "status": "OVERFITTED?"
     },
     "cancer_same_type": {
       "tier": "MEDIUM",
-      "full_precision": 45.0,
-      "full_n": 1131,
+      "full_precision": 45.1,
+      "full_n": 1127,
       "holdout_mean": 24.8,
-      "holdout_std": 4.1,
-      "delta": -20.2,
-      "mean_n": 163.0,
+      "holdout_std": 4.0,
+      "delta": -20.3,
+      "mean_n": 162.8,
       "status": "OVERFITTED?"
     },
     "cardiovascular": {
@@ -673,9 +673,9 @@
     "golden_pass": true,
     "tier_ordering_correct": true,
     "n_rules_tested": 58,
-    "n_genuine": 9,
+    "n_genuine": 8,
     "n_overfitted": 18,
     "n_degraded": 15,
-    "n_small_sample": 16
+    "n_small_sample": 17
   }
 }

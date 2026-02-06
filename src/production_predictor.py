@@ -788,6 +788,15 @@ INVERSE_INDICATION_PAIRS = {
     'estradiol': {'endometrial cancer', 'uterine cancer', 'hereditary angioedema'},
     # h486: Paroxetine triggers mania in bipolar (all SSRIs can, paroxetine well-documented)
     'paroxetine': {'bipolar disorder'},
+    # h526: SSRI/SNRI class effect — all trigger mania in bipolar patients
+    # APA guidelines: antidepressant monotherapy contraindicated in bipolar
+    # Risk: tricyclics > SNRIs > SSRIs, but ALL carry clinically significant risk
+    'fluoxetine': {'bipolar disorder'},
+    'sertraline': {'bipolar disorder'},
+    'escitalopram': {'bipolar disorder'},
+    # h526: SNRIs — higher mania induction risk than SSRIs
+    'venlafaxine': {'bipolar disorder'},
+    'duloxetine': {'bipolar disorder'},
     # h486: Paricalcitol (vitamin D analog) suppresses PTH → hypoparathyroidism
     'paricalcitol': {'hypoparathyroidism'},
     # h486: Erythromycin causes erythema multiforme
@@ -809,6 +818,15 @@ INVERSE_INDICATION_PAIRS = {
     'nafarelin': {'ovarian hyperstimulation syndrome'},
     # h486: Everolimus causes acute pancreatitis
     'everolimus': {'pancreatitis'},
+    # h526: Conjugated estrogens — same carcinogenic mechanism as estradiol
+    # WHI trial: HR 1.24 for breast cancer, 2-10x endometrial cancer risk
+    # IARC Group 1 carcinogen (estrogen-progestogen combinations)
+    'conjugated estrogens': {'breast cancer', 'endometrial cancer'},
+    # h526: ACE inhibitors → angioedema (bradykinin accumulation class effect)
+    # ACEi block bradykinin degradation → can cause life-threatening angioedema
+    # Especially dangerous in hereditary angioedema (already bradykinin-mediated)
+    'benazepril': {'angioedema', 'hereditary angioedema'},
+    'quinapril': {'angioedema'},
 }
 
 # h481: Drug class → disease category standard-of-care mappings
@@ -2627,6 +2645,15 @@ class DrugRepurposingPredictor:
 
         Returns: (tier, rescue_applied, category_specific_tier)
         """
+        # h526: Check inverse indications FIRST (safety-critical)
+        # Must precede all positive tier assignments (cancer_same_type, hierarchy, etc.)
+        drug_lower = drug_name.lower()
+        disease_lower = disease_name.lower()
+        for inv_drug, inv_diseases in INVERSE_INDICATION_PAIRS.items():
+            if inv_drug in drug_lower:
+                if any(inv_d in disease_lower for inv_d in inv_diseases):
+                    return ConfidenceTier.FILTER, False, 'inverse_indication'
+
         # h274/h396: For cancer, check cancer type match BEFORE applying rank filter
         # h393 holdout validation: cancer_same_type has 24.5% full-data, 19.2% holdout precision
         # This is MEDIUM-level, not GOLDEN. Demoted from GOLDEN→MEDIUM by h396.
@@ -2666,25 +2693,16 @@ class DrugRepurposingPredictor:
         # - GI: pancreatitis (h476 - steroids cause drug-induced pancreatitis; they
         #   treat autoimmune pancreatitis but generic "pancreatitis" is not autoimmune)
         # - Endocrine: Cushing syndrome (h476 - exogenous steroids ARE the cause)
-        drug_lower = drug_name.lower()
         if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
             if category == 'metabolic':
                 return ConfidenceTier.FILTER, False, None
-            disease_lower = disease_name.lower()
             steroid_iatrogenic = ['rosacea', 'osteoporosis', 'avascular necrosis',
                                   'glaucoma', 'cataract', 'pancreatitis', 'cushing']
             if any(iatrogen in disease_lower for iatrogen in steroid_iatrogenic):
                 return ConfidenceTier.FILTER, False, 'corticosteroid_iatrogenic'
 
-        # h480: Filter inverse-indication predictions (HARMFUL)
-        # Drugs that treat condition A predicted for the OPPOSITE of A
-        # Examples: anti-thyroid drugs→hypothyroidism, thyroid hormone→hyperthyroidism
-        #           diazoxide→hyperglycemia (it CAUSES hyperglycemia)
-        disease_lower = disease_name.lower()
-        for inv_drug, inv_diseases in INVERSE_INDICATION_PAIRS.items():
-            if inv_drug in drug_lower:
-                if any(inv_d in disease_lower for inv_d in inv_diseases):
-                    return ConfidenceTier.FILTER, False, 'inverse_indication'
+        # h480/h526: Inverse indication check moved to top of function (before cancer_same_type)
+        # to ensure safety-critical filters take precedence over all positive tier assignments
 
         # h271: Filter cross-domain predictions for domain-isolated drugs (0% precision)
         # Domain-isolated drugs only treat one category, cross-domain predictions are always wrong

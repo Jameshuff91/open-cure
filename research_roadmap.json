@@ -10430,10 +10430,12 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h486"
-      ]
+      ],
+      "findings": "h526 VALIDATED: Drug-Induced Disease Classes - Systematic Taxonomy of Iatrogenic Predictions\n\nTAXONOMY: Classified all 125 inverse indication pairs into 10 mechanism classes:\n1. Cardiac toxicity (34 pairs): CCBs, Class Ic/III antiarrhythmics\n2. Metabolic disruption (28 pairs): Glucose-lowering drugs \u2192 hypoglycemia\n3. Steroid adverse effects (26 pairs): Glaucoma, osteoporosis, pancreatitis, TB, IPF\n4. Hormonal disruption (12 pairs): Thyroid drugs, vitamin D analogs, GnRH\n5. Immune-mediated toxicity (10 pairs): TEN/SLE/EM from NSAIDs, azathioprine\n6. Organ toxicity (7 pairs): Hepato/nephro/gonadotoxic\n7. Procarcinogenic (2 pairs): Estrogen \u2192 cancer\n8. CNS effects (2 pairs): SSRI mania, anticonvulsant dyskinesia\n9. Vascular toxicity (2 pairs): COX-2 \u2192 stroke\n10. Bradykinin accumulation (0\u21923 pairs): ACEi \u2192 angioedema (NEW)\n\nEXPANSIONS IMPLEMENTED (10 new pairs, 8 new drugs):\n- SSRIs/SNRIs \u2192 bipolar disorder (5): fluoxetine, sertraline, escitalopram, venlafaxine, duloxetine\n- Conjugated estrogens \u2192 breast/endometrial cancer (2): WHI trial carcinogenicity\n- ACEi \u2192 angioedema (3): benazepril (2 diseases), quinapril (1 disease)\n\nREJECTED: Statins\u2192diabetes (benefit>risk), antiarrhythmics\u2192cardiac (they treat arrhythmias),\nbromocriptine\u2192dyskinesia (DA agonists treat movement disorders)\n\nBUG FIX: Moved inverse_indication check BEFORE cancer_same_type in _assign_confidence_tier.\nPreviously, cancer drugs with inverse indications were getting MEDIUM (cancer_same_type) \ninstead of FILTER (inverse_indication). Conjugated estrogens\u2192breast/endometrial cancer \nwere incorrectly MEDIUM.\n\nGT QUALITY FINDING: 38 GT entries are actually inverse indications (drug CAUSES disease).\nExamples: conjugated estrogens\u2192breast cancer, benazepril\u2192angioedema, flecainide\u2192cardiac arrest.\nSource: likely adverse effect/warning mentions confused with indications in data curation.\nInverse indication filter correctly overrides these erroneous GT entries.\n\nIMPACT:\n- 7 MEDIUM \u2192 FILTER, 2 LOW \u2192 FILTER (+9 FILTER, total 7331 vs 7322)\n- Holdout: unchanged (too few predictions affected)\n- Safety: 10 harmful predictions now correctly filtered\n- Total inverse indication system: 63 drugs, 135 pairs",
+      "result_metric": "+10 new inverse pairs, ordering bug fixed, 38 GT quality issues found"
     },
     {
       "id": "h527",
@@ -10474,6 +10476,53 @@
       ],
       "findings": "Systematic NSAID iatrogenic audit found 1 unfiltered prediction: Celecoxib\u2192ischemic stroke (LOW).\n\nAdded 'ischemic stroke' to celecoxib inverse indications (already had 'ischemic cerebrovascular disorder' \nbut 'ischemic stroke' is a separate disease entry in our dataset).\n\nAll other NSAID iatrogenic concerns (renal failure, hyperkalemia, asthma, GI bleeding, MI, HF) \neither have no NSAID predictions in top-30 or are already handled by other filter rules.",
       "result_metric": "+1 celecoxib\u2192ischemic stroke filter"
+    },
+    {
+      "id": "h529",
+      "title": "GT Quality Audit: Remove Inverse Indication Entries from Expanded GT",
+      "description": "h526 found 38 GT entries that are inverse indications (drug CAUSES disease). These inflate full-data precision and confuse evaluation. Systematically audit and remove them from expanded_ground_truth.json. This could improve the full-data vs holdout gap by removing known-bad GT entries.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "List all 38 GT inverse indication conflicts from h526",
+        "Verify each against Every Cure GT vs expanded GT (which source?)",
+        "For DRKG-derived entries: safe to remove (DRKG association \u2260 treatment)",
+        "For Every Cure entries: flag but do NOT remove (upstream data issue)",
+        "Measure full-data vs holdout gap change after removal"
+      ]
+    },
+    {
+      "id": "h530",
+      "title": "Drug-Induced Disease Prediction Model: Predict Which Predictions Are Inverse",
+      "description": "h526 showed that inverse indications follow predictable patterns (same drug class, same mechanism). Instead of manual curation, train a classifier that uses drug class + disease category + SIDER AE data to automatically flag potential inverse indications. Could scale beyond manually curated pairs.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Feature engineering: drug ATC class, disease category, SIDER AE overlap",
+        "Labels: existing 135 inverse pairs as positives, all non-inverse predictions as negatives",
+        "Train logistic regression (interpretable) on drug-disease features",
+        "Evaluate: how many new inverse indications does it find?",
+        "Validate top predictions with medical literature"
+      ]
+    },
+    {
+      "id": "h531",
+      "title": "Antidepressant Bipolar Safety Annotation: Extend to TCAs and Other Classes",
+      "description": "h526 filtered SSRIs/SNRIs for bipolar. TCAs have HIGHER mania induction risk (Leverich 2006). Also MAOIs. Check if any TCA/MAOI \u2192 bipolar predictions exist and need filtering. Additionally, annotate all antidepressant\u2192bipolar predictions with mania risk level.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "List all TCAs, MAOIs, and atypical antidepressants in predictions",
+        "Check for bipolar disorder predictions",
+        "If found, add to inverse indication pairs",
+        "Annotate mania risk tier in deliverable (high/medium/low)"
+      ]
     }
   ],
   "completed": [
@@ -12255,6 +12304,12 @@
       "hypothesis_id": "h525",
       "learning": "SIDER indications are ~66% noise even for NLP_indication labels. Only exact name matching + manual medical audit produces reliable GT expansion. Most noise is from comorbidity mentions in clinical trial descriptions (e.g., drugs for diabetes patients also mention hypertension, ACS, etc.).",
       "implication": "Automated GT expansion from SIDER requires strict filtering. Best approach: NLP_indication only + exact matching + medical audit. ~1/3 candidates are genuine."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h526",
+      "learning": "Inverse indication filter ordering matters: safety-critical checks must precede all positive tier assignments. Cancer_same_type was bypassing inverse_indication check. 38 GT entries are actually inverse indications (drug CAUSES disease).",
+      "implication": "Always place safety filters at the TOP of _assign_confidence_tier. GT quality issues can be masked by inverse indication filters."
     }
   ],
   "collaborations": [

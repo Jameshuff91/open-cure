@@ -1,0 +1,115 @@
+{
+  "hypothesis": "h526",
+  "title": "Drug-Induced Disease Classes: Systematic Taxonomy of Iatrogenic Predictions",
+  "mechanism_taxonomy": {
+    "metabolic_disruption": {
+      "count": 28,
+      "description": "Glucose-lowering drugs causing hypoglycemia (sulfonylureas, insulin, TZDs, SGLT2i)",
+      "expansion_found": false,
+      "reason": "DPP-4i/GLP-1a don't have hypoglycemia predictions"
+    },
+    "cardiac_toxicity": {
+      "count": 34,
+      "description": "Proarrhythmic/negative inotrope drugs (CCBs, Class Ic, Class III)",
+      "expansion_found": false,
+      "reason": "Other antiarrhythmics (sotalol/quinidine/adenosine) treat arrhythmias - not inverse"
+    },
+    "steroid_adverse_effects": {
+      "count": 26,
+      "description": "Corticosteroid-specific AEs (glaucoma, osteoporosis, pancreatitis, TB, IPF)",
+      "expansion_found": false,
+      "reason": "Already comprehensive from h476/h486/h527"
+    },
+    "hormonal_disruption": {
+      "count": 12,
+      "description": "Thyroid drugs, vitamin D analogs, GnRH agonists",
+      "expansion_found": false,
+      "reason": "Drug classes already covered"
+    },
+    "immune_mediated_toxicity": {
+      "count": 10,
+      "description": "TEN/SLE/EM (NSAIDs, azathioprine, erythromycin, minocycline)",
+      "expansion_found": false,
+      "reason": "Known TEN drugs (allopurinol, phenytoin, lamotrigine) don't have TEN predictions"
+    },
+    "organ_toxicity": {
+      "count": 7,
+      "description": "Hepatotoxic, nephrotoxic, gonadotoxic, pulmonotoxic",
+      "expansion_found": false,
+      "reason": "Drug-specific, no class generalization available"
+    },
+    "cns_effects": {
+      "count": 2,
+      "description": "Mania induction, dyskinesia",
+      "expansion_found": true,
+      "new_pairs": [
+        "fluoxetine\u2192bipolar",
+        "sertraline\u2192bipolar",
+        "venlafaxine\u2192bipolar",
+        "duloxetine\u2192bipolar",
+        "escitalopram\u2192bipolar"
+      ],
+      "reason": "All SSRIs/SNRIs cause mania in bipolar - class effect"
+    },
+    "procarcinogenic": {
+      "count": 2,
+      "description": "Estrogens \u2192 endometrial/uterine/breast cancer",
+      "expansion_found": true,
+      "new_pairs": [
+        "conjugated estrogens\u2192breast cancer",
+        "conjugated estrogens\u2192endometrial cancer"
+      ],
+      "reason": "Same carcinogenic mechanism as estradiol (WHI trial)"
+    },
+    "vascular_toxicity": {
+      "count": 2,
+      "description": "COX-2 class effect (stroke)",
+      "expansion_found": false,
+      "reason": "Other NSAIDs don't have vascular disease predictions"
+    },
+    "bradykinin_accumulation": {
+      "count": 0,
+      "description": "ACEi \u2192 angioedema (new class identified)",
+      "expansion_found": true,
+      "new_pairs": [
+        "benazepril\u2192angioedema",
+        "benazepril\u2192hereditary angioedema",
+        "quinapril\u2192angioedema"
+      ],
+      "reason": "ACEi cause angioedema via bradykinin accumulation"
+    }
+  },
+  "new_pairs_implemented": 10,
+  "new_drugs_added": 8,
+  "impact": {
+    "medium_to_filter": 6,
+    "low_to_filter": 2,
+    "already_filter": 2,
+    "total_predictions_affected": 10
+  },
+  "gt_quality_finding": {
+    "description": "38 GT entries are actually inverse indications (drug CAUSES disease)",
+    "count": 38,
+    "examples": [
+      "conjugated estrogens \u2192 breast cancer (WHI: estrogens cause breast cancer)",
+      "benazepril/quinapril \u2192 angioedema (ACEi cause angioedema)",
+      "flecainide \u2192 cardiac arrest/MI/HF (CAST trial: 2.5x mortality)",
+      "diltiazem \u2192 HF/cardiac arrest/VT (non-DHP CCB contraindication)",
+      "prednisone \u2192 osteoporosis/TB/IPF (steroid adverse effects)"
+    ],
+    "action": "Inverse indication filter correctly overrides erroneous GT entries"
+  },
+  "rejected_expansions": {
+    "statins_diabetes": "Benefit outweighs risk - statins recommended for all diabetic patients",
+    "antiarrhythmics_cardiac": "Sotalol/quinidine/adenosine TREAT arrhythmias, not inverse",
+    "bromocriptine_dyskinesia": "DA agonists treat, not cause, movement disorders",
+    "dopamine_drugs_filter": "Already FILTER tier, no metric impact"
+  },
+  "holdout_results": {
+    "GOLDEN": "69.9% \u00b1 17.9% (unchanged)",
+    "HIGH": "58.5% \u00b1 6.9% (unchanged)",
+    "MEDIUM": "28.8% \u00b1 2.6% (unchanged - too few predictions affected)",
+    "LOW": "15.6% \u00b1 2.6% (unchanged)",
+    "FILTER": "10.6% \u00b1 1.4% (unchanged)"
+  }
+}
