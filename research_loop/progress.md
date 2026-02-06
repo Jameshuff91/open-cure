@@ -1,6 +1,32 @@
 # Research Loop Progress
 
-## Current Session: h408 - Ryland Collaboration Brief + Anti-TNF Safety Filter (2026-02-06)
+## Current Session: h408+h546 - Ryland Brief + Gene Overlap Signal (2026-02-06)
+
+### h546: Drug-Target/Disease-Gene Overlap as Confidence Signal — VALIDATED
+
+Gene overlap (shared genes between drug targets and disease-associated genes) is a strong
+holdout-validated signal within every tier:
+
+| Tier | Overlap | No Overlap | Delta |
+|------|---------|------------|-------|
+| GOLDEN | 81.7% | 72.0% | +9.7pp |
+| HIGH | 71.9% | 61.5% | +10.4pp |
+| **MEDIUM** | **57.0%** | **36.6%** | **+20.3pp** |
+| LOW | 30.9% | 19.5% | +11.4pp |
+| FILTER | 26.6% | 14.1% | +12.5pp |
+
+**Confound analysis**: Signal partially inflated by known indication bias (40.9% vs 24.1%)
+and disease gene count. After controlling for NOVEL-only:
+- MEDIUM novel overlap: 27.1% vs 15.7% (+11.4pp) — signal persists
+- Category-controlled: +5.9pp to +21.5pp — persists everywhere
+- Gene-poor diseases: +16.7pp (strongest for diseases with <50 genes)
+
+**NOT promotable**: MEDIUM novel overlap (27.1%) << HIGH (58.9%). Partially circular with kNN.
+**Implemented**: `gene_overlap_count` annotation column in deliverable.
+
+---
+
+## Previous Session: h408 - Ryland Collaboration Brief + Anti-TNF Safety Filter (2026-02-06)
 
 ### Session Summary
 

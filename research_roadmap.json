@@ -10769,7 +10769,7 @@
       "title": "Drug-Target/Disease-Gene Overlap as Confidence Signal",
       "description": "h408 computed drug-target/disease-gene overlap for 407 skin/autoimmune predictions. 93/407 had overlap. If overlap correlates with holdout precision, it could be used as a confidence signal for tier assignment or annotation. Etanercept\u2192SLE had 9 shared genes (Fc receptors + complement) \u2014 the strongest molecular support.",
       "hypothesis": "Predictions with drug-target/disease-gene overlap have higher holdout precision than those without, controlling for tier",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -10780,8 +10780,8 @@
         "Check if overlap predicts precision after controlling for tier, category, and other signals",
         "If validated, implement as annotation or tier adjustment"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Gene overlap is a STRONG holdout-validated signal within every tier:\n- GOLDEN: +9.7pp (81.7% overlap vs 72.0% no-overlap)\n- HIGH: +10.4pp (71.9% vs 61.5%)\n- MEDIUM: +20.3pp (57.0% vs 36.6%)\n- LOW: +11.4pp (30.9% vs 19.5%)\n- FILTER: +12.5pp (26.6% vs 14.1%)\n\nCONFOUND ANALYSIS (critical):\n- Known indication bias: 40.9% of overlap are known vs 24.1% no-overlap\n- Disease gene count: overlap diseases have 561 mean genes vs 56 for no-overlap\n- Novel-only MEDIUM: +11.4pp (27.1% vs 15.7%) \u2014 signal persists but weaker\n- Category-controlled: +5.9pp to +21.5pp within categories \u2014 persists everywhere\n- Gene-poor diseases: +16.7pp (stronger for diseases with <50 genes)\n\nNOT promotable: MEDIUM novel overlap = 27.1% << HIGH 58.9%. Signal partially circular with kNN (same DRKG graph edges). \n\nIMPLEMENTED: gene_overlap_count annotation column in deliverable. Useful for:\n- Explicit molecular mechanism for human review\n- Prioritizing predictions for experimental validation\n- Stronger signal for gene-poor diseases (most useful for collaborators like Ryland)",
+      "result_metric": "+11.4pp MEDIUM novel holdout lift (overlap vs no-overlap), implemented as annotation"
     },
     {
       "id": "h547",
@@ -10797,6 +10797,40 @@
         "Design a class-level prediction format (one row per drug class per disease)",
         "Create alternative deliverable view with class grouping",
         "Compare presentation: drug-level vs class-level for clarity"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h548",
+      "title": "Gene-Poor Disease kNN Quality: Does Self-Referentiality Correlate with Disease Gene Count?",
+      "description": "h546 showed gene overlap signal is STRONGEST for diseases with few known genes (+16.7pp vs +4.6pp for gene-rich). h504 showed 31.6% of diseases are 100% self-referential, mostly due to small GT (OR=8.6x). If gene-poor diseases also tend to be self-referential, the overlap signal may be capturing GT size rather than molecular mechanism. Conversely, if gene-poor + overlap predicts holdout precision independently of self-referentiality, we have a genuinely useful annotation.",
+      "hypothesis": "Gene-poor diseases are MORE self-referential, and gene overlap quality partially captures GT size rather than mechanism",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Cross-tabulate disease gene count vs self-referential percentage",
+        "Check if gene overlap signal persists after controlling for GT size",
+        "Determine if gene overlap is a proxy for GT completeness or genuine mechanism signal"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h549",
+      "title": "Gene Overlap Specificity: Are High-Overlap Predictions Better Than Low-Overlap?",
+      "description": "h546 tested binary overlap (>0 vs 0). But overlap ranges from 1 to 215 genes. Does MORE overlap predict BETTER precision? Or is any overlap (even 1 gene) sufficient? If the signal saturates at overlap=1, it suggests gene overlap is a proxy for 'having drug-gene and disease-gene data in DRKG' rather than a mechanistic signal proportional to molecular overlap.",
+      "hypothesis": "Higher gene overlap count predicts higher holdout precision (dose-response), not just binary presence",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Bucket predictions by overlap count (0, 1-2, 3-10, 11+)",
+        "Compute holdout precision for each bucket within MEDIUM tier",
+        "Check for dose-response relationship"
       ],
       "findings": null,
       "result_metric": null
@@ -12635,6 +12669,12 @@
       "hypothesis_id": "h408",
       "learning": "86% of novel GOLDEN/HIGH skin/autoimmune predictions are corticosteroids \u2014 clinically valid but not novel. Only 14% are mechanistically specific (anti-TNF, anti-CD20, immunosuppressants). For collaboration value, focus on non-corticosteroid predictions.",
       "implication": "Deliverable utility is diluted by corticosteroid dominance. Consider class-level grouping (h547) to highlight genuinely novel predictions."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h546",
+      "learning": "Drug-target/disease-gene overlap is a strong within-tier holdout signal (+11.4pp MEDIUM novel) but NOT sufficient for tier promotion (27.1% << HIGH 58.9%). Partially circular with kNN (same DRKG edges). Strongest for gene-poor diseases (+16.7pp). Implemented as annotation column.",
+      "implication": "Gene overlap is useful for human review and experimental prioritization, but adds limited ML value due to circularity with kNN. Future work: test with EXTERNAL gene databases (DisGeNET) that aren't in DRKG."
     }
   ],
   "collaborations": [

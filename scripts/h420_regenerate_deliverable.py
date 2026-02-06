@@ -26,6 +26,41 @@ except ImportError:
     print("WARNING: openpyxl not installed, will save as CSV instead")
 
 
+def load_gene_overlap_data() -> tuple:
+    """Load drug target and disease gene data for overlap computation.
+
+    Returns (drug_targets, disease_genes) dicts.
+    """
+    base = Path(__file__).parent.parent / "data" / "reference"
+    drug_targets: Dict[str, list] = {}
+    disease_genes: Dict[str, list] = {}
+
+    dt_path = base / "drug_targets.json"
+    if dt_path.exists():
+        with open(dt_path) as f:
+            drug_targets = json.load(f)
+        print(f"Loaded drug targets: {len(drug_targets)} drugs")
+
+    dg_path = base / "disease_genes.json"
+    if dg_path.exists():
+        with open(dg_path) as f:
+            disease_genes = json.load(f)
+        print(f"Loaded disease genes: {len(disease_genes)} diseases")
+
+    return drug_targets, disease_genes
+
+
+def compute_gene_overlap(drug_id: str, disease_id: str,
+                         drug_targets: Dict[str, list],
+                         disease_genes: Dict[str, list]) -> int:
+    """Count shared genes between drug targets and disease-associated genes."""
+    db_id = drug_id.replace('drkg:Compound::', '')
+    mesh_id = disease_id.replace('drkg:Disease::', '')
+    drug_genes = set(str(g) for g in drug_targets.get(db_id, []))
+    dis_genes = set(str(g) for g in disease_genes.get(mesh_id, []))
+    return len(drug_genes & dis_genes)
+
+
 def load_self_referential_data() -> Dict[str, Dict]:
     """Load h504 self-referential analysis data.
 
@@ -68,6 +103,9 @@ def main():
     # h517: Load self-referential annotations
     self_ref_data = load_self_referential_data()
 
+    # h546: Load gene overlap data
+    drug_targets, disease_genes_data = load_gene_overlap_data()
+
     # Get all diseases with embeddings
     all_diseases = [d for d in predictor.embeddings if d in predictor.disease_names]
     print(f"Diseases with embeddings: {len(all_diseases)}")
@@ -102,6 +140,11 @@ def main():
             self_ref_pct = sr_info.get("self_referential_pct", "")
             therapeutic_island = sr_info.get("therapeutic_island", False)
 
+            # h546: Gene overlap annotation
+            gene_overlap = compute_gene_overlap(
+                pred.drug_id, disease_id, drug_targets, disease_genes_data
+            )
+
             all_predictions.append({
                 'disease_name': disease_name,
                 'disease_id': disease_id,
@@ -126,6 +169,7 @@ def main():
                 'soc_drug_class': soc_class or '',
                 'self_referential_pct': self_ref_pct,
                 'therapeutic_island': therapeutic_island,
+                'gene_overlap_count': gene_overlap,
             })
 
             tier_counts[pred.confidence_tier.value] += 1
