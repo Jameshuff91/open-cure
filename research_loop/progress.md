@@ -1,27 +1,28 @@
 # Research Loop Progress
 
-## Current Session: h337, h338, h272, h178 (2026-02-05)
+## Current Session: h337, h338, h272, h178, h340 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 4**
+**Hypotheses Tested: 5**
 - h337: ACE Inhibitor Broad Class Analysis - **INCONCLUSIVE** (opposite pattern to statins, but tiny sample)
 - h338: NRTI HBV Cross-Activity Boost - **INVALIDATED** (already in GT, nothing to boost)
 - h272: GT Expansion: Cancer Drug Repurposing - **VALIDATED** (Bevacizumab → PsA literature confirmed)
 - h178: DiseaseMatcher Performance Optimization - **DEPRIORITIZED** (0.02ms/lookup, not needed)
+- h340: MEK Inhibitor Non-Cancer Filter - **VALIDATED + IMPLEMENTED** (0% precision → LOW tier)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 208 |
+| Validated | 209 |
 | Invalidated | 65 |
 | Inconclusive | 13 |
 | Blocked | 21 |
 | Deprioritized | 8 |
-| Pending | 28 |
-| **Total** | **343**
+| Pending | 31 |
+| **Total** | **347**
 
 ### KEY SESSION FINDINGS
 
@@ -68,10 +69,41 @@
 **Mechanism:** VEGF inhibition - VEGF elevated in psoriatic joints
 
 **Other findings:**
-- Trametinib → hypothyroidism: INVERSE INDICATION (MEK inhibitors cause thyroid dysfunction)
+- Trametinib → hypothyroidism: Actually NOT inverse indication (hypothyroidism not a known side effect)
 - Sunitinib → TSC: Not supported (mTOR inhibitors are standard)
 
 **New hypotheses generated:** h339-h342 (anti-VEGF repurposing, MEK inverse detection)
+
+#### h340: MEK Inhibitor Non-Cancer Filter - VALIDATED + IMPLEMENTED
+
+**Question:** Why do MEK inhibitors have 0% precision for non-cancer predictions?
+
+**Analysis:**
+- MEK inhibitors in predictions: Trametinib (15), Selumetinib (21)
+- Total predictions: 36
+- GT hits: 0
+- Precision: **0.0%** across ALL tiers
+
+**GT Analysis:**
+- 100% of MEK inhibitor GT indications are cancer
+- Trametinib: melanoma, thyroid carcinoma, lung cancer, glioma
+- Selumetinib: neurofibromatosis, plexiform neurofibroma
+
+**Non-cancer predictions (24 total):**
+- HIGH: 3 (Trametinib→hypothyroidism, Selumetinib→hyperparathyroidism/hypoparathyroidism)
+- MEDIUM: 9
+- LOW: 12
+
+**Literature check:** NO evidence found for:
+- Trametinib → hypothyroidism (hypothyroidism NOT a known side effect of MEK inhibitors)
+- Selumetinib → parathyroid disorders
+
+**Implementation:**
+- Added MEK_INHIBITORS set to production_predictor.py
+- Added `_is_mek_inhibitor_non_cancer()` check
+- Non-cancer MEK predictions now capped at LOW tier
+
+**Impact:** 3 HIGH + 9 MEDIUM → LOW, 0% precision improvement
 
 ---
 
