@@ -1,6 +1,93 @@
 # Research Loop Progress
 
-## Current Session: h563/h567/h572 - Promotion/Mismatch/Coherence Analysis (2026-02-06)
+## Current Session: h576/h577/h579 - LOW Promotion + CS Artifact + Novel Precision (2026-02-06)
+
+### h576: LOW Tier Promotion Analysis — INVALIDATED
+
+Comprehensive analysis of 3,733 LOW predictions to identify promotion candidates.
+
+**Holdout by tier_rule (5-seed):**
+| Rule | Holdout% | n/seed | Notes |
+|------|----------|--------|-------|
+| incoherent_demotion | 44.2% ± 14.0% | 34 | Driven by CS→TB artifact |
+| cardiovascular_medium_demotion | 25.1% ± 19.4% | 69 | Too variable |
+| local_anesthetic_procedural | 23.8% ± 5.9% | 52 | Stable but below MEDIUM |
+| hematological_corticosteroid_demotion | 23.7% ± 21.5% | 24 | High variance |
+| default | 18.5% ± 3.7% | 298 | Appropriately LOW |
+
+**Compound signals:**
+| Signal | Holdout% | n/seed | Notes |
+|--------|----------|--------|-------|
+| TransE+Mech+Rank<=10 | 51.6% | 8 | Too small |
+| TransE+Mech | 41.5% ± 19.4% | 14 | 73% are CS |
+| Rank<=5+TransE | 40.0% ± 15.3% | 24 | CS-inflated |
+| Freq>=10+Mech | 36.4% ± 11.7% | 54 | Mixed population |
+| Mechanism overall | 25.0% ± 6.3% | 154 | Heterogeneous |
+| TransE overall | 21.4% ± 7.7% | 94 | +6.6pp vs no TransE |
+
+**Key finding: incoherent_demotion deep dive**
+- h488 originally found 3.6% holdout for MEDIUM-level incoherent → LOW
+- But incoherent_demotion also demotes HIGH-level (freq>=15+mech) → LOW
+- HIGH-level incoherent = 44.2%, driven by CS→infectious (45.1%)
+- Non-CS incoherent = 11.7% → correctly at LOW
+- If promoted to MEDIUM, h557 post-processing would re-demote CS→infectious to LOW
+- Net effect: only 11 non-CS predictions at 11.7% would be promoted → WORSE for MEDIUM
+- **Decision: DO NOT PROMOTE. All demotion rules are correctly calibrated.**
+
+### h579: MEDIUM Novel-Only Precision — VALIDATED (structural finding)
+
+**100% of predicted drugs treat at least one training disease.** Zero "novel drug" predictions exist.
+
+This is structural: kNN collaborative filtering only recommends drugs from similar diseases. If a drug doesn't treat ANY training disease, it won't appear in kNN neighbors. The system is inherently a drug REPURPOSING engine — all predictions are cross-disease transfer.
+
+All holdout hits represent genuine drug repurposing: drug known for training diseases, correctly predicted for held-out disease. The tier precision numbers represent true repurposing discovery rates.
+
+### h577: Corticosteroid Holdout Artifact — VALIDATED (major meta-finding)
+
+High-frequency corticosteroids (freq 30-42) inflate holdout precision:
+
+| Tier | All | CS | Non-CS | CS % | Inflation |
+|------|-----|-----|--------|------|-----------|
+| GOLDEN | 69.9% | 100.0% | 65.2% | 39% | +34.8pp |
+| HIGH | 58.8% | 61.7% | 48.5% | 69% | +13.2pp |
+| MEDIUM | 36.5% | 65.1% | 34.8% | 6% | +30.3pp |
+| LOW | 15.5% | 22.8% | 14.3% | 14% | +8.4pp |
+| FILTER | 10.6% | 21.5% | 10.1% | 5% | +11.4pp |
+
+**Key insights:**
+1. **HIGH is 69% corticosteroids!** Non-CS HIGH precision is 48.5%, not 58.8%
+2. **MEDIUM barely affected** (6% CS): non-CS 34.8% vs total 36.5%
+3. **Tier ordering preserved for non-CS**: GOLDEN 65.2% > HIGH 48.5% > MEDIUM 34.8% > LOW 14.3% > FILTER 10.1%
+4. Biggest category inflation: renal +58pp, metabolic/musculoskeletal +44pp
+5. Cancer/cardiovascular: NO CS inflation
+
+**Implication**: Report CS-free precision as supplemental "discovery potential" metric. The tier system is valid but its numbers overstate non-obvious discovery potential, especially for HIGH tier.
+
+### New Hypotheses Generated (3)
+- h577: CS holdout artifact (P4, medium) — COMPLETED
+- h578: LOW TransE annotation (P5, low)
+- h579: Novel-only precision (P4, low) — COMPLETED
+
+### Session Tier Performance (unchanged from h559)
+| Tier | Holdout | Non-CS Holdout |
+|------|---------|----------------|
+| GOLDEN | 69.9% ± 17.9% | 65.2% |
+| HIGH | 58.8% ± 6.2% | 48.5% |
+| MEDIUM | 36.5% ± 3.0% | 34.8% |
+| LOW | 15.5% ± 2.4% | 14.3% |
+| FILTER | 10.6% ± 1.3% | 10.1% |
+
+### Recommended Next Steps
+1. **h577 follow-up**: Add CS-free precision to deliverable metadata
+2. **h578**: Flag best LOW predictions for manual review
+3. Consider pivoting to external data integration (h545, h91) since internal improvements are exhausted
+
+### Key Learning
+LOW→MEDIUM promotion is NOT possible with current signals. All demotion rules are correctly calibrated. CS inflation is a meta-issue that inflates tier precision numbers but doesn't affect tier ordering. The system's "true" discovery potential for non-obvious drug repurposing is ~48.5% for HIGH (not 58.8%) and ~34.8% for MEDIUM (not 36.5%). Future improvement requires external data or fundamentally new signals.
+
+---
+
+## Previous Session: h563/h567/h572 - Promotion/Mismatch/Coherence Analysis (2026-02-06)
 
 ### h563: LA Procedural MEDIUM→HIGH Promotion — INCONCLUSIVE
 
@@ -42,10 +129,38 @@ kNN norm_score adds signal beyond rank for prediction quality:
 - Q4 MEDIUM (28.2%) << HIGH (59.5%) — useful as annotation, not promotable
 - norm_score already stored in deliverable; no code change needed
 
+### h574: Drug-Sharing Density as Disease Quality Signal — VALIDATED (circular)
+
+Mean drug overlap between disease and k=20 kNN neighbors independently predicts holdout precision:
+- r=0.434 with holdout precision
+- Partial r=0.448 AFTER controlling for GT size (independent!)
+- r=0.182 with GT size (NOT a proxy)
+- 93% of diseases have near-zero drug sharing — most holdout diseases share no drugs with neighbors
+- CIRCULAR (uses GT) — annotation only, not for novel predictions
+- Key insight: kNN generalizes when neighbors share drugs; fails structurally when they don't
+
+### h559: CS→Infectious HIGH TB Hierarchy Demotion — VALIDATED (marginal)
+
+CS→TB hierarchy predictions demoted from HIGH→MEDIUM:
+- 18 predictions (CS drugs × 3 TB diseases)
+- Full-data: CS→TB 33.3% vs non-CS infectious HIGH 76.9% (43.6pp gap)
+- Holdout: HIGH -0.7pp, MEDIUM +0.8pp (both within seed variance)
+- Medically justified (dexamethasone→TB meningitis is valid, but generic CS→TB is not SOC)
+- Protected from h557 cascade (stays MEDIUM, not demoted to LOW)
+
+### Session Tier Performance (h559 update)
+| Tier | Holdout | Delta vs h560 |
+|------|---------|---------------|
+| GOLDEN | 69.9% ± 17.9% | 0.0pp |
+| HIGH | 58.8% ± 6.1% | -0.7pp |
+| MEDIUM | 36.6% ± 3.0% | +0.8pp |
+| LOW | 15.5% ± 2.4% | 0.0pp |
+| FILTER | 10.6% ± 1.3% | 0.0pp |
+
 ### Recommended Next Steps
 1. **h571**: Therapeutic island rescue (P3, high impact but high effort)
 2. **h545**: Gene-poor disease expansion (P4, medium)
-3. **h574**: Drug-sharing density as disease quality signal (P5, low)
+3. **h573 follow-up**: Consider norm_score thresholds for deliverable prioritization
 
 ### Key Learning
 MEDIUM demotion is exhausted at 35.8%. All major drug-class × category mismatches are filtered.

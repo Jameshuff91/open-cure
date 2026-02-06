@@ -1,0 +1,78 @@
+
+=== Seed 42 ===
+
+=== Seed 123 ===
+
+=== Seed 456 ===
+
+=== Seed 789 ===
+
+=== Seed 2024 ===
+
+================================================================================
+h579: Novel vs Known Holdout Precision by Tier
+================================================================================
+
+Tier       Type            Holdout%   ±std  n/seed  % of tier
+------------------------------------------------------------
+  GOLDEN   TOTAL              69.9%  17.9      23       100%
+  GOLDEN   repurposing        69.9%  17.9      23       100%
+
+  HIGH     TOTAL              58.8%   6.2     141       100%
+  HIGH     repurposing        58.8%   6.2     141       100%
+
+  MEDIUM   TOTAL              36.5%   3.0     307       100%
+  MEDIUM   repurposing        36.5%   3.0     307       100%
+
+  LOW      TOTAL              15.5%   2.4     876       100%
+  LOW      repurposing        15.5%   2.4     876       100%
+
+  FILTER   TOTAL              10.6%   1.3    1378       100%
+  FILTER   repurposing        10.6%   1.3    1378       100%
+
+
+=== MEDIUM by reason × novelty ===
+Reason                                   Type            Holdout%   ±std  n/seed
+------------------------------------------------------------------------------
+  antimicrobial_pathogen_mismatch        repurposing         2.6%   2.3      69
+  autoimmune_hierarchy_rheumatoid_arthritis repurposing        86.4%   8.7      23
+  broad_class_isolated                   repurposing        17.1%  12.4       9
+  cancer                                 repurposing        14.2%   2.6      73
+  cancer_no_gt                           repurposing         6.9%   4.0      77
+  cancer_only_non_cancer                 repurposing         3.6%   6.2       8
+  cancer_same_type                       repurposing        29.4%   4.9     118
+  cancer_targeted_therapy                repurposing        13.1%   5.6      30
+  cardiovascular                         repurposing        38.3%  22.2      12
+  cardiovascular_hierarchy_arrhythmia    repurposing        72.9%   1.5      11
+  cardiovascular_hierarchy_hypertension  repurposing        37.9%  38.8       6
+  cardiovascular_medium_demotion         repurposing        25.1%  19.4      69
+  comp_to_base_high_87                   repurposing        33.9%  40.8       6
+  complication_non_validated             repurposing         3.4%   4.4      10
+  corticosteroid_iatrogenic              repurposing        31.9%  39.7       5
+  corticosteroid_soc_promotion           repurposing        52.9%  12.1      69
+  cross_domain_isolated                  repurposing        10.7%   1.4      65
+  cv_pathway_comprehensive               repurposing        40.8%   9.3      16
+  default                                repurposing        13.8%   1.0    1583
+  default_no_mech_high_rank              repurposing        17.1%   5.2      48
+  gastrointestinal_medium_demotion       repurposing         5.6%   2.7      54
+  hematological_corticosteroid_demotion  repurposing        23.7%  21.5      24
+  hematological_medium_demotion          repurposing         4.4%   3.0      34
+  immunological_medium_demotion          repurposing         7.6%   6.9      19
+  incoherent_demotion                    repurposing        58.4%   6.4      60
+  infectious_corticosteroid_demotion     repurposing        16.1%   7.4      19
+  infectious_cs_tb_demotion              repurposing        83.3%   0.0       6
+  inverse_indication                     repurposing        14.4%   9.3      22
+  local_anesthetic_procedural            repurposing        28.6%   4.9      64
+  mechanism_specific                     repurposing        10.6%  15.0      24
+  metabolic                              repurposing         8.3%  14.4       4
+  metabolic_hierarchy_diabetes           repurposing        48.5%  40.9       5
+  metabolic_hierarchy_lipid              repurposing        53.4%  17.8      15
+  metabolic_hierarchy_thyroid            repurposing        38.9%  23.1       6
+  neurological_medium_demotion           repurposing         5.6%   4.5      28
+  non_therapeutic_compound               repurposing        28.8%   9.7      11
+  respiratory                            repurposing        42.9%  37.2       5
+  target_overlap_promotion               repurposing        46.4%   4.8      44
+
+=== Discovery potential ===
+
+Done.

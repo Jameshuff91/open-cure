@@ -1,0 +1,150 @@
+Diseases with GT + embeddings: 455
+
+=== Seed 42 ===
+  LOW: 955 preds, 158 hits (16.5%)
+  MEDIUM: 220 preds, 73 hits (33.2%)
+
+=== Seed 123 ===
+  LOW: 806 preds, 117 hits (14.5%)
+  MEDIUM: 331 preds, 122 hits (36.9%)
+
+=== Seed 456 ===
+  LOW: 860 preds, 132 hits (15.3%)
+  MEDIUM: 354 preds, 117 hits (33.1%)
+
+=== Seed 789 ===
+  LOW: 909 preds, 175 hits (19.3%)
+  MEDIUM: 350 preds, 140 hits (40.0%)
+
+=== Seed 2024 ===
+  LOW: 850 preds, 102 hits (12.0%)
+  MEDIUM: 278 preds, 110 hits (39.6%)
+
+================================================================================
+ANALYSIS: LOW Tier Sub-Population Holdout Precision
+================================================================================
+
+--- Tier Overview (5-seed mean ± std) ---
+  GOLDEN: 69.9% ± 17.9% (n=23/seed)
+  HIGH: 58.8% ± 6.2% (n=141/seed)
+  MEDIUM: 36.5% ± 3.0% (n=307/seed)
+  LOW: 15.5% ± 2.4% (n=876/seed)
+  FILTER: 10.6% ± 1.3% (n=1378/seed)
+
+--- 1. LOW by tier_rule ---
+  Rule                                          Holdout%   ±std  n/seed
+  --------------------------------------------------------------------
+  incoherent_demotion                              44.2%  14.0    34.0 ***
+  cardiovascular_medium_demotion                   25.1%  19.4    69.4 ***
+  local_anesthetic_procedural                      23.8%   5.9    52.4
+  hematological_corticosteroid_demotion            23.7%  21.5    24.4
+  default                                          18.5%   3.7   298.2
+  default_no_mech_high_rank                        17.1%   5.2    48.0
+  broad_class_isolated                             17.1%  12.4     9.2
+  infectious_corticosteroid_demotion               16.1%   7.4    18.6
+  cancer                                           14.3%   2.6    72.8
+  cancer_targeted_therapy                          13.1%   5.6    30.4
+  metabolic                                        11.1%  15.7     3.0
+  immunological_medium_demotion                     7.6%   6.9    19.0
+  mechanism_specific                                6.2%   8.8    22.0
+  gastrointestinal_medium_demotion                  5.6%   2.7    54.0
+  neurological_medium_demotion                      5.6%   4.5    28.4
+  hematological_medium_demotion                     4.4%   3.0    34.2
+  antimicrobial_pathogen_mismatch                   2.6%   2.3    68.8
+
+--- 2. TransE consilience within LOW ---
+  TransE=True: 21.4% ± 7.7% (n=94/seed)
+  TransE=False: 14.8% ± 2.4% (n=782/seed)
+
+--- 3. TransE=True × tier_rule ---
+  antimicrobial_pathogen_mismatch                   2.5%   5.0    11.8
+  cancer                                           23.9%  14.5     7.2
+  cardiovascular_medium_demotion                    7.7%   7.8     6.0
+  default                                          23.8%   5.5    33.8
+  default_no_mech_high_rank                         8.3%  14.4     5.5
+  gastrointestinal_medium_demotion                 10.9%  17.2     6.6
+  hematological_corticosteroid_demotion            32.0%  21.8     6.6 ***
+  hematological_medium_demotion                    10.0%  20.0     2.0
+  incoherent_demotion                              42.1%  30.4     7.6 ***
+  infectious_corticosteroid_demotion               43.0%  14.4     4.2 ***
+  mechanism_specific                                0.0%   0.0     3.0
+  neurological_medium_demotion                     33.3%  47.1     1.7 ***
+
+--- 4. Mechanism support within LOW ---
+  Mechanism=True: 25.0% ± 6.3% (n=154/seed)
+  Mechanism=False: 13.6% ± 2.0% (n=722/seed)
+
+--- 5. Category within LOW ---
+  renal                      41.0%  28.8    18.5
+  cardiovascular             25.4%  19.3    81.0
+  autoimmune                 23.1%  11.5    48.2
+  dermatological             22.6%   5.0    56.2
+  respiratory                19.6%   6.9    34.0
+  ophthalmic                 17.4%  18.3    23.4
+  infectious                 17.3%   4.4   247.0
+  cancer                     13.2%   3.4   109.2
+  hematological              12.7%  10.0    66.8
+  musculoskeletal            11.6%   7.7    17.4
+  metabolic                   8.2%   4.7    37.8
+  immunological               8.1%   6.8    21.7
+  gastrointestinal            7.3%   5.8    62.8
+  neurological                6.1%   5.5    28.8
+  other                       5.6%   5.1    15.4
+  psychiatric                 3.7%   4.5     8.8
+
+--- 6. Rank bucket within LOW ---
+  rank_1-5: 19.3% ± 6.9% (n=205/seed)
+  rank_6-10: 17.6% ± 3.7% (n=208/seed)
+  rank_11-20: 13.7% ± 1.6% (n=427/seed)
+
+--- 7. Compound signal analysis ---
+  Signal combination                  Holdout%   ±std  n/seed
+  ----------------------------------------------------------
+  TransE only                            17.5%   6.0    79.6
+  Mech only                              22.7%   4.9   139.6
+  TransE+Mech                            41.5%  19.4    14.2 ***
+  TransE+Rank<=10                        28.7%   9.5    52.4
+  Mech+Rank<=10                          26.9%  10.2    80.2
+  TransE+Mech+Rank<=10                   51.6%  15.7     8.2 ***
+  Rank<=5+Mech                           30.1%  13.5    40.8 ***
+  Rank<=5+TransE                         40.0%  15.3    23.8 ***
+  Freq>=10+Rank<=5                       20.5%   7.7    86.8
+  Freq>=10+Mech                          36.4%  11.7    53.6 ***
+  Freq>=15+Rank<=10                      24.1%   9.8   125.6
+  Freq>=15+Mech                          39.0%  12.2    41.8 ***
+  Freq>=10+Rank<=10+Mech                 36.3%  17.7    37.0 ***
+
+--- 8. MEDIUM holdout baseline ---
+  MEDIUM overall: 36.5% ± 3.0% (n=307/seed)
+
+--- 9. PROMOTION CANDIDATES (holdout > 25%, n >= 5) ---
+
+  *** incoherent_demotion: 44.2% ± 14.0% (n=34/seed)
+      cardiovascular: 29.2% ± 18.2% (n=6)
+      gastrointestinal: 22.8% ± 24.7% (n=10)
+      infectious: 53.3% ± 15.9% (n=10)
+      musculoskeletal: 33.3% ± 47.1% (n=2)
+      renal: 87.5% ± 0.0% (n=8)
+      respiratory: 44.6% ± 21.1% (n=4)
+
+  *** cardiovascular_medium_demotion: 25.1% ± 19.4% (n=69/seed)
+      cardiovascular: 25.1% ± 19.4% (n=69)
+
+--- 10. TransE LOW vs MEDIUM ---
+  TransE LOW:       21.4% ± 7.7% (n=94)
+  TransE MEDIUM:    55.8% ± 13.4% (n=23)
+  No-TransE MEDIUM: 35.1% (n=284)
+
+--- 11. Demoted LOW rules ---
+  incoherent_demotion                              44.2%  14.0    34.0
+  cardiovascular_medium_demotion                   25.1%  19.4    69.4
+  hematological_corticosteroid_demotion            23.7%  21.5    24.4
+  broad_class_isolated                             17.1%  12.4     9.2
+  infectious_corticosteroid_demotion               16.1%   7.4    18.6
+  immunological_medium_demotion                     7.6%   6.9    19.0
+  gastrointestinal_medium_demotion                  5.6%   2.7    54.0
+  neurological_medium_demotion                      5.6%   4.5    28.4
+  hematological_medium_demotion                     4.4%   3.0    34.2
+  antimicrobial_pathogen_mismatch                   2.6%   2.3    68.8
+
+Done.
