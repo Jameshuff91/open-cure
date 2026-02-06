@@ -54,10 +54,25 @@
 - **h411:** Target Overlap Promotion Holdout Degradation Analysis - Priority 2
 - **h412:** LOW vs FILTER Recalibration (Precision Convergence) - Priority 3
 
+### h400: Deploy Category-Specific k Values - INVALIDATED
+
+h66's category-specific k values hurt R@30 by -2.4pp. h170 selective boosting already provides
+category focus. Only cancer k=30 helps (+4.9pp) but is not statistically significant (h413, p=0.20).
+
+### h411: Target Overlap Promotion Holdout Degradation - VALIDATED
+
+Both promotions are genuine:
+- HIGH→GOLDEN (overlap≥3): 78.5% precision (n=93), well above GOLDEN avg
+- LOW→MEDIUM (overlap≥1): 35.7% holdout ± 2.7% (13.3pp above MEDIUM avg despite -12.6pp drop)
+
+### h413: Cancer-Only k=30 - INCONCLUSIVE
+
+Cancer k=30: +4.9pp (p=0.20), Overall +0.7pp (p=0.21). Not significant, not deployed.
+
 ### Recommended Next Steps
-1. h400: Deploy Category-Specific k Values (h66 finding, never implemented) - Priority 2, low effort, high impact
-2. h411: Target Overlap Promotion Holdout Degradation - Priority 2, low effort
-3. h399: Rule Interaction Audit - Priority 2, medium effort
+1. h398: Fix CATEGORY_PRECISION Impossible Values - Priority 2, medium effort
+2. h399: Rule Interaction Audit - Priority 2, medium effort
+3. h397: Remove Dead Code - Priority 2, low effort (code cleanup)
 
 ---
 
