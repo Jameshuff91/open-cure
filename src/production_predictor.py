@@ -2743,10 +2743,10 @@ class DrugRepurposingPredictor:
                 if any(inv_d in disease_lower for inv_d in inv_diseases):
                     return ConfidenceTier.FILTER, False, 'inverse_indication'
 
-        # h542: Non-therapeutic compounds → FILTER
+        # h542/h552: Non-therapeutic compounds → FILTER
         # These are diagnostic/imaging agents in DRKG, not therapeutic drugs.
         # All predictions are artifacts of diagnostic co-occurrence.
-        NON_THERAPEUTIC_COMPOUNDS = ('fludeoxyglucose',)
+        NON_THERAPEUTIC_COMPOUNDS = ('fludeoxyglucose', 'indocyanine green')
         if any(ntc in drug_lower for ntc in NON_THERAPEUTIC_COMPOUNDS):
             return ConfidenceTier.FILTER, False, 'non_therapeutic_compound'
 
