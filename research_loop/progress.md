@@ -1,13 +1,14 @@
 # Research Loop Progress
 
-## Current Session: h486 - SIDER Adverse Effect Mining for Inverse Indications (2026-02-06)
+## Current Session: h486 + h525 - SIDER Mining + GT Expansion (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 1**
+**Hypotheses Tested: 2**
 - h486: Drug-Induced Disease Filter: Systematic Adverse Effect Mining - **VALIDATED**
+- h525: SIDER Indication-Based GT Expansion - **VALIDATED** (+51 GT pairs, HIGH +1.2pp)
 
 ### Key Findings
 
@@ -52,10 +53,17 @@ Note: Comparison imprecise due to accumulated code changes since last baseline.
 - h527: Systematic corticosteroid iatrogenic filter expansion (P5, low)
 - h528: Systematic NSAID inverse indication expansion (P5, low)
 
+#### 5. SIDER GT Expansion (h525)
+- Used NLP_indication labels only (not text_mention/NLP_precondition)
+- 153 exact-match candidates → 51 genuine missing GT pairs after audit
+- Key additions: 15 ACEi/ARB/statin/beta-blocker → ACS, anticoagulants → VTE, Sildenafil → PAH
+- HIGH: 57.3% → 58.5% (+1.2pp holdout)
+- SIDER indications are ~66% noise even for NLP_indication
+
 ### Recommended Next Steps
-1. **h525**: Use SIDER indications to find missing GT pairs (could improve holdout evaluation)
-2. **h526**: Classify inverse indications by mechanism for systematic expansion
-3. **h521**: Cancer drug SOC stratification (but close to CLOSED direction)
+1. **h526**: Classify inverse indications by mechanism for systematic expansion
+2. **h527**: Systematic corticosteroid iatrogenic filter expansion
+3. **h257**: IV vs oral formulation safety distinction
 
 ---
 

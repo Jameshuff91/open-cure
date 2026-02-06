@@ -14,23 +14,23 @@
       ]
     },
     "HIGH": {
-      "full_precision": 66.1,
-      "holdout_mean": 57.3,
-      "holdout_std": 8.1,
-      "delta": -8.8,
+      "full_precision": 66.5,
+      "holdout_mean": 58.5,
+      "holdout_std": 6.9,
+      "delta": -8.0,
       "seed_values": [
-        46.1,
+        49.4,
         59.2,
         70.2,
         59.3,
-        51.6
+        54.3
       ]
     },
     "MEDIUM": {
-      "full_precision": 41.1,
+      "full_precision": 41.2,
       "holdout_mean": 28.8,
       "holdout_std": 2.6,
-      "delta": -12.3,
+      "delta": -12.4,
       "seed_values": [
         28.2,
         29.0,
@@ -49,20 +49,20 @@
         13.9,
         15.9,
         19.6,
-        11.8
+        11.9
       ]
     },
     "FILTER": {
       "full_precision": 17.0,
-      "holdout_mean": 10.5,
+      "holdout_mean": 10.6,
       "holdout_std": 1.4,
-      "delta": -6.5,
+      "delta": -6.4,
       "seed_values": [
-        8.2,
+        8.3,
         10.9,
         9.9,
-        11.2,
-        12.3
+        11.3,
+        12.4
       ]
     }
   },
@@ -81,9 +81,9 @@
       "tier": "FILTER",
       "full_precision": 20.8,
       "full_n": 8551,
-      "holdout_mean": 13.7,
-      "holdout_std": 1.0,
-      "delta": -7.1,
+      "holdout_mean": 13.8,
+      "holdout_std": 1.1,
+      "delta": -7.0,
       "mean_n": 1784.6,
       "status": "degraded"
     },
@@ -251,9 +251,9 @@
       "tier": "HIGH",
       "full_precision": 83.7,
       "full_n": 49,
-      "holdout_mean": 46.2,
-      "holdout_std": 41.2,
-      "delta": -37.5,
+      "holdout_mean": 48.7,
+      "holdout_std": 40.9,
+      "delta": -35.0,
       "mean_n": 6.0,
       "status": "OVERFITTED?"
     },
@@ -279,11 +279,11 @@
     },
     "cardiovascular_hierarchy_atherosclerosis": {
       "tier": "HIGH",
-      "full_precision": 83.3,
+      "full_precision": 100.0,
       "full_n": 6,
       "holdout_mean": 0,
       "holdout_std": 0,
-      "delta": -83.3,
+      "delta": -100.0,
       "mean_n": 0,
       "status": "small-n"
     },
@@ -309,13 +309,13 @@
     },
     "cardiovascular_hierarchy_coronary": {
       "tier": "HIGH",
-      "full_precision": 65.6,
+      "full_precision": 75.0,
       "full_n": 32,
-      "holdout_mean": 35.2,
-      "holdout_std": 6.6,
-      "delta": -30.4,
+      "holdout_mean": 61.9,
+      "holdout_std": 4.8,
+      "delta": -13.1,
       "mean_n": 13.0,
-      "status": "OVERFITTED?"
+      "status": "degraded"
     },
     "respiratory": {
       "tier": "HIGH",
@@ -489,11 +489,11 @@
     },
     "cardiovascular_medium_demotion": {
       "tier": "LOW",
-      "full_precision": 25.8,
+      "full_precision": 26.2,
       "full_n": 325,
       "holdout_mean": 24.9,
       "holdout_std": 19.5,
-      "delta": -0.9,
+      "delta": -1.3,
       "mean_n": 70.6,
       "status": "GENUINE"
     },
@@ -659,7 +659,6 @@
     "autoimmune_hierarchy_multiple_sclerosis",
     "cardiovascular_hierarchy_arrhythmia",
     "infectious_hierarchy_uti",
-    "cardiovascular_hierarchy_coronary",
     "autoimmune_hierarchy_spondylitis",
     "autoimmune_hierarchy_lupus",
     "respiratory_hierarchy_asthma",
@@ -675,8 +674,8 @@
     "tier_ordering_correct": true,
     "n_rules_tested": 58,
     "n_genuine": 9,
-    "n_overfitted": 19,
-    "n_degraded": 14,
+    "n_overfitted": 18,
+    "n_degraded": 15,
     "n_small_sample": 16
   }
 }

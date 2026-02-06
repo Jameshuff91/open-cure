@@ -10406,10 +10406,12 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h486"
-      ]
+      ],
+      "findings": "SIDER NLP_indication-based GT expansion identified 51 genuine missing pairs.\n\nMETHOD:\n- Used only NLP_indication labels (not text_mention or NLP_precondition) for reliability\n- Exact disease name matching only (no substring/fuzzy)\n- Manual medical audit of 153 candidates \u2192 51 genuine, ~100 comorbidity/AE noise\n\nKEY ADDITIONS:\n- 15 ACEi/ARB/beta-blocker/statin \u2192 ACS pairs (well-evidenced cardiovascular drugs)\n- Sildenafil \u2192 pulmonary hypertension (FDA-approved as Revatio)\n- Timolol \u2192 glaucoma (FDA-approved), migraine (FDA-approved)\n- Dabigatran/Dalteparin \u2192 DVT/PE (anticoagulants)\n- Metformin \u2192 MI (UKPDS evidence)\n- Plus 20+ other FDA-approved/well-evidenced pairs\n\nHOLDOUT IMPACT:\n- HIGH: 57.3% \u2192 58.5% (+1.2pp) \u2014 main beneficiary (new CV GT pairs)\n- Other tiers: unchanged\n\nNOISE SOURCES IN SIDER INDICATIONS:\n- text_mention: includes ANY disease mentioned in label (comorbidities, AEs, precautions)\n- NLP_indication: better but still ~66% noise (comorbidity mentions, inverse indications)\n- Only ~33% of NLP_indication exact matches are genuine missing GT pairs",
+      "result_metric": "+51 GT pairs, HIGH +1.2pp holdout"
     },
     {
       "id": "h526",
@@ -12239,6 +12241,12 @@
       "hypothesis_id": "h486",
       "learning": "SIDER adverse effect mining requires strict matching + indication cross-check + manual medical audit. Loose substring matching produces 80%+ false positives. Generic AE terms (ulcer, infection, tension) match disease names that the drug actually TREATS. The SIDER indications file is essential for excluding known treatments.",
       "implication": "Any future AE-based filtering must use exact/near-exact disease matching and cross-check against indication databases. Short AE terms (<8 chars) should be excluded entirely."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h525",
+      "learning": "SIDER indications are ~66% noise even for NLP_indication labels. Only exact name matching + manual medical audit produces reliable GT expansion. Most noise is from comorbidity mentions in clinical trial descriptions (e.g., drugs for diabetes patients also mention hypertension, ACS, etc.).",
+      "implication": "Automated GT expansion from SIDER requires strict filtering. Best approach: NLP_indication only + exact matching + medical audit. ~1/3 candidates are genuine."
     }
   ],
   "collaborations": [

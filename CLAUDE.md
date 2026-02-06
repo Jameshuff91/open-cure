@@ -147,14 +147,15 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h520/h522 update, 2026-02-06):**
-- GOLDEN: 62.6% ± 8.1% holdout (286 predictions)
-- HIGH: 53.8% ± 2.6% holdout (840 predictions)
-- MEDIUM: 31.3% ± 1.4% holdout (2940 predictions)
-- LOW: 14.2% ± 0.5% holdout (2634 predictions)
-- FILTER: 9.7% ± 0.6% holdout (6922 predictions)
+**Tier System (h486 update, 2026-02-06):**
+- GOLDEN: 69.9% ± 17.9% holdout (287 predictions)
+- HIGH: 57.3% ± 8.1% holdout (835 predictions)
+- MEDIUM: 28.8% ± 2.6% holdout (3004 predictions)
+- LOW: 15.6% ± 2.6% holdout (2702 predictions)
+- FILTER: 10.5% ± 1.4% holdout (7322 predictions)
 - **h520:** Corticosteroid SOC promotion: 333 MEDIUM→HIGH for autoimmune/dermatological/respiratory/ophthalmic. HIGH +2.3pp, MEDIUM +1.2pp.
 - **h522:** Hematological corticosteroid demotion: 123 MEDIUM→LOW. MEDIUM +0.2pp, LOW +0.5pp.
+- **h486:** SIDER adverse effect mining: 47 new inverse indication pairs (55 drugs, 124 total). 105 predictions → FILTER, 93.3% precision.
 - **NOTE:** Full-data inflated; use HOLDOUT only.
 
 **h520:** Corticosteroid SOC promotion for non-hematological categories. Per-class holdout: dermatological 58%, respiratory 61%, autoimmune 46%, ophthalmic 34%, hematological 19% (excluded). Non-hematological = 50.1% holdout ≈ HIGH. 333 predictions promoted.
@@ -241,13 +242,16 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
   - Non-DHP CCBs (Verapamil/Diltiazem) + HF (ACC/AHA 2022)
   - Class Ic/Ia antiarrhythmics + structural heart (CAST/SWORD trials)
   - Dronedarone + HF (ANDROMEDA trial: 2.13x mortality)
-  - **Inverse indications** (drug CAUSES condition):
-    - Procainamide → agranulocytosis/leukopenia/lupus
-    - Amiodarone → thyroid dysfunction (14-18% incidence)
-    - NSAIDs → peptic ulcer (COX-1 inhibition)
+  - **Inverse indications** (drug CAUSES condition): 55 drugs, 124 pairs
+    - Corticosteroids → TB, glaucoma, osteoporosis, MG, pancreatitis
+    - NSAIDs → TEN, SLE, peptic ulcer, stroke (COX-2)
+    - Estradiol → endometrial/uterine cancer, hereditary angioedema
+    - Proarrhythmic drugs → ventricular tachycardia
+    - Azathioprine → TEN, hepatitis B, erythema multiforme
+    - h486: 47 new pairs from SIDER mining (93.3% filter precision)
   - Ganglionic blockers (obsolete), surgical dyes (not therapeutic)
 
-**Total filter exclusions:** 307 predictions (2.3%)
+**Total inverse indication filters:** 105 predictions (55 drugs, 124 pairs)
 **Validation precision:** 20-25% for top predictions (batches 1+2)
 
 ## Key Validated Predictions
