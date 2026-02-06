@@ -7,10 +7,12 @@ After h395, h396, h398, h399, h415 modified tier rules,
 the deliverable needs regeneration.
 """
 
+import json
 import sys
 import time
 from pathlib import Path
 from collections import defaultdict
+from typing import Dict
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -24,6 +26,36 @@ except ImportError:
     print("WARNING: openpyxl not installed, will save as CSV instead")
 
 
+def load_self_referential_data() -> Dict[str, Dict]:
+    """Load h504 self-referential analysis data.
+
+    Returns dict of disease_id -> {self_only_pct, n_gt, therapeutic_island}.
+    """
+    sr_path = Path(__file__).parent.parent / "data" / "analysis" / "h504_self_referential.json"
+    if not sr_path.exists():
+        print(f"WARNING: {sr_path} not found, self-referential annotations will be empty")
+        return {}
+
+    with open(sr_path) as f:
+        sr_data = json.load(f)
+
+    result: Dict[str, Dict] = {}
+    for entry in sr_data:
+        disease_id = entry["disease_id"]
+        n_gt = entry["n_gt"]
+        self_only_pct = entry["self_only_pct"]
+        # h517: Therapeutic island = GT>5 and 100% self-referential
+        therapeutic_island = n_gt > 5 and self_only_pct == 100.0
+        result[disease_id] = {
+            "self_referential_pct": self_only_pct,
+            "therapeutic_island": therapeutic_island,
+        }
+
+    n_islands = sum(1 for v in result.values() if v["therapeutic_island"])
+    print(f"Loaded self-referential data: {len(result)} diseases, {n_islands} therapeutic islands")
+    return result
+
+
 def main():
     start = time.time()
     print("=" * 70)
@@ -32,6 +64,9 @@ def main():
 
     predictor = DrugRepurposingPredictor()
     gt_data = predictor.ground_truth
+
+    # h517: Load self-referential annotations
+    self_ref_data = load_self_referential_data()
 
     # Get all diseases with embeddings
     all_diseases = [d for d in predictor.embeddings if d in predictor.disease_names]
@@ -62,6 +97,11 @@ def main():
                 pred.drug_name, disease_name, result.category, is_gt
             )
 
+            # h517: Self-referential annotations
+            sr_info = self_ref_data.get(disease_id, {})
+            self_ref_pct = sr_info.get("self_referential_pct", "")
+            therapeutic_island = sr_info.get("therapeutic_island", False)
+
             all_predictions.append({
                 'disease_name': disease_name,
                 'disease_id': disease_id,
@@ -84,6 +124,8 @@ def main():
                 'category_holdout_precision': pred.category_holdout_precision,
                 'literature_status': lit_status,
                 'soc_drug_class': soc_class or '',
+                'self_referential_pct': self_ref_pct,
+                'therapeutic_island': therapeutic_island,
             })
 
             tier_counts[pred.confidence_tier.value] += 1

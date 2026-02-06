@@ -10252,10 +10252,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h508"
-      ]
+      ],
+      "findings": "Therapeutic island annotation implemented in deliverable generator.\n- self_referential_pct and therapeutic_island columns added to h420_regenerate_deliverable.py\n- 11 therapeutic islands (GT>5, 100% self-ref): immunodeficiency, PAH, CKD, HepC, etc.\n- Holdout precision gradient: selfref<50%=25.2%, 50-99%=18.6%, 100%=6.0%, island=5.7%\n- Self-referential predictions are concentrated in lower tiers: FILTER 35.7% vs GOLDEN 3.8%\n- NOT actionable for tier demotion (requires GT knowledge), but valuable annotation for consumers\n- Consumers can filter by self_referential_pct to identify more reliable predictions within tiers",
+      "result_metric": "Holdout gradient: selfref<50%=25.2%, 100%=6.0%, island=5.7%"
     },
     {
       "id": "h518",
@@ -12150,6 +12152,12 @@
       "hypothesis_id": "h522",
       "learning": "Hematological corticosteroid demotion gives small but consistent improvements. Medical rationale solid: corticosteroids treat autoimmune blood disorders but not genetic ones. Pattern: when a drug class has clear category-specific efficacy differences, category-specific tier rules are justified.",
       "implication": "Consider similar category-specific rules for other drug-category pairs with heterogeneous outcomes."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h517",
+      "learning": "Self-referential percentage is a strong predictor of holdout precision (25.2% vs 6.0% gradient). But it requires GT knowledge so cannot be used for tier assignment. Best used as deliverable annotation for downstream consumers.",
+      "implication": "Any future GT-free proxy for self-referentiality would be extremely valuable for tier improvement."
     }
   ],
   "collaborations": [
