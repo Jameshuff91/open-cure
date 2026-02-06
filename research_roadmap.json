@@ -10636,14 +10636,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Identify all kinase inhibitor and immunotherapy predictions in MEDIUM tier",
         "Verify holdout precision is significantly below MEDIUM average",
         "Simulate MEDIUM \u2192 LOW demotion impact on both tiers",
         "Check for false positive drug matching (some kinase inhibitors have non-cancer uses)",
         "If validated, implement demotion rule in production_predictor.py"
-      ]
+      ],
+      "findings": "Cancer targeted therapy (kinase inhibitors + immunotherapy) demoted MEDIUM\u2192LOW. Holdout: kinase 9.6%, immunotherapy 18.3% vs cytotoxic 53%. Code implemented in production_predictor.py as CANCER_TARGETED_THERAPY set. 243 predictions demoted.",
+      "result_metric": "Targeted therapy: 12.5% holdout (LOW-level), cytotoxic: 53% (MEDIUM-level)"
     },
     {
       "id": "h539",
