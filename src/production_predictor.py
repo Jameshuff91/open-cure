@@ -348,6 +348,14 @@ CORTICOSTEROID_DRUGS = {
     'cortisone', 'fludrocortisone', 'mometasone',  # h476: added missing corticosteroids
 }
 
+# h520: Corticosteroid SOC promotion constants
+# Non-hematological categories have 50.1% holdout precision, comparable to HIGH (51.5%)
+# Hematological excluded: 19.1% holdout, below MEDIUM avg
+_CORTICOSTEROID_LOWER = {d.lower() for d in CORTICOSTEROID_DRUGS}
+_CORTICOSTEROID_SOC_PROMOTE_CATEGORIES = {
+    'autoimmune', 'dermatological', 'respiratory', 'ophthalmic',
+}
+
 # h150: Drug class rescue criteria
 # Cancer drugs
 TAXANE_DRUGS = {'paclitaxel', 'docetaxel', 'cabazitaxel', 'nab-paclitaxel'}  # 40% precision rank<=5
@@ -3614,6 +3622,16 @@ class DrugRepurposingPredictor:
                     # Not promoted to HIGH (37.4% full-data < HIGH 50.8%)
                     # but flagged for downstream prioritization.
                     in_transe_top30 = drug_id in transe_top30
+
+                    # h520: Corticosteroid SOC promotion for non-hematological categories
+                    # Corticosteroid MEDIUM predictions in autoimmune/dermatological/respiratory/ophthalmic
+                    # have 50.1% holdout precision (p=0.0065), comparable to HIGH (51.5%).
+                    # Hematological excluded (19.1% holdout, below MEDIUM avg).
+                    if (tier == ConfidenceTier.MEDIUM
+                            and category in _CORTICOSTEROID_SOC_PROMOTE_CATEGORIES
+                            and drug_name.lower() in _CORTICOSTEROID_LOWER):
+                        tier = ConfidenceTier.HIGH
+                        cat_specific = 'corticosteroid_soc_promotion'
 
                     # h374: Mark predictions from MinRank ensemble
                     if use_minrank and cat_specific is None:

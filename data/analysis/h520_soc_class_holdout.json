@@ -1,0 +1,863 @@
+{
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    1024
+  ],
+  "per_class_holdout": {
+    "GOLDEN_NOVEL": {
+      "mean_precision": 49.75,
+      "se": 9.91,
+      "mean_n": 9.8
+    },
+    "GOLDEN_aldosterone_antagonists": {
+      "mean_precision": 100.0,
+      "se": 0.0,
+      "mean_n": 1.0,
+      "vs_novel_delta": 50.25,
+      "p_value": "N/A"
+    },
+    "GOLDEN_beta_blockers": {
+      "mean_precision": 50.0,
+      "se": 50.0,
+      "mean_n": 1.0,
+      "vs_novel_delta": 0.25,
+      "p_value": "N/A"
+    },
+    "GOLDEN_corticosteroids": {
+      "mean_precision": 100.0,
+      "se": 0.0,
+      "mean_n": 7.5,
+      "vs_novel_delta": 50.25,
+      "p_value": "N/A"
+    },
+    "GOLDEN_dmards": {
+      "mean_precision": 100.0,
+      "se": 0.0,
+      "mean_n": 1.5,
+      "vs_novel_delta": 50.25,
+      "p_value": "N/A"
+    },
+    "GOLDEN_nsaids": {
+      "mean_precision": 100.0,
+      "se": 0.0,
+      "mean_n": 1.0,
+      "vs_novel_delta": 50.25,
+      "p_value": "N/A"
+    },
+    "GOLDEN_sglt2_inhibitors": {
+      "mean_precision": 12.5,
+      "se": 12.5,
+      "mean_n": 1.8,
+      "vs_novel_delta": -37.25,
+      "p_value": "N/A"
+    },
+    "GOLDEN_statins": {
+      "mean_precision": 90.0,
+      "se": 10.0,
+      "mean_n": 4.5,
+      "vs_novel_delta": 40.25,
+      "p_value": "N/A"
+    },
+    "GOLDEN_thiazolidinediones": {
+      "mean_precision": 0.0,
+      "se": 0,
+      "mean_n": 2.0,
+      "vs_novel_delta": -49.75,
+      "p_value": "N/A"
+    },
+    "HIGH_NOVEL": {
+      "mean_precision": 54.3,
+      "se": 6.75,
+      "mean_n": 32.6
+    },
+    "HIGH_anticoagulants": {
+      "mean_precision": 50.0,
+      "se": 0,
+      "mean_n": 8.0,
+      "vs_novel_delta": -4.3,
+      "p_value": "N/A"
+    },
+    "HIGH_antiplatelets": {
+      "mean_precision": 50.0,
+      "se": 50.0,
+      "mean_n": 1.5,
+      "vs_novel_delta": -4.3,
+      "p_value": "N/A"
+    },
+    "HIGH_arbs": {
+      "mean_precision": 41.67,
+      "se": 25.0,
+      "mean_n": 1.8,
+      "vs_novel_delta": -12.63,
+      "p_value": "N/A"
+    },
+    "HIGH_beta_blockers": {
+      "mean_precision": 56.0,
+      "se": 16.91,
+      "mean_n": 4.2,
+      "vs_novel_delta": 1.7,
+      "p_value": "0.9207"
+    },
+    "HIGH_cancer_drugs": {
+      "mean_precision": 0.0,
+      "se": 0,
+      "mean_n": 1.0,
+      "vs_novel_delta": -54.3,
+      "p_value": "N/A"
+    },
+    "HIGH_corticosteroids": {
+      "mean_precision": 81.49,
+      "se": 3.27,
+      "mean_n": 26.4,
+      "vs_novel_delta": 27.19,
+      "p_value": "0.0179"
+    },
+    "HIGH_dmards": {
+      "mean_precision": 100.0,
+      "se": 0.0,
+      "mean_n": 1.6,
+      "vs_novel_delta": 45.7,
+      "p_value": "0.0025"
+    },
+    "HIGH_fluoroquinolones": {
+      "mean_precision": 24.29,
+      "se": 10.74,
+      "mean_n": 6.6,
+      "vs_novel_delta": -30.01,
+      "p_value": "0.0792"
+    },
+    "HIGH_nsaids": {
+      "mean_precision": 87.5,
+      "se": 12.5,
+      "mean_n": 2.0,
+      "vs_novel_delta": 33.2,
+      "p_value": "N/A"
+    },
+    "HIGH_ophthalmic_antibiotics": {
+      "mean_precision": 0.0,
+      "se": 0,
+      "mean_n": 1.0,
+      "vs_novel_delta": -54.3,
+      "p_value": "N/A"
+    },
+    "HIGH_sglt2_inhibitors": {
+      "mean_precision": 25.0,
+      "se": 25.0,
+      "mean_n": 1.5,
+      "vs_novel_delta": -29.3,
+      "p_value": "N/A"
+    },
+    "HIGH_statins": {
+      "mean_precision": 41.67,
+      "se": 25.0,
+      "mean_n": 1.8,
+      "vs_novel_delta": -12.63,
+      "p_value": "N/A"
+    },
+    "HIGH_thiazolidinediones": {
+      "mean_precision": 0.0,
+      "se": 0.0,
+      "mean_n": 1.3,
+      "vs_novel_delta": -54.3,
+      "p_value": "N/A"
+    },
+    "MEDIUM_NOVEL": {
+      "mean_precision": 28.93,
+      "se": 1.84,
+      "mean_n": 345.2
+    },
+    "MEDIUM_aldosterone_antagonists": {
+      "mean_precision": 50.0,
+      "se": 50.0,
+      "mean_n": 1.0,
+      "vs_novel_delta": 21.07,
+      "p_value": "N/A"
+    },
+    "MEDIUM_anticoagulants": {
+      "mean_precision": 5.0,
+      "se": 5.0,
+      "mean_n": 2.0,
+      "vs_novel_delta": -23.93,
+      "p_value": "0.0139"
+    },
+    "MEDIUM_antiplatelets": {
+      "mean_precision": 36.67,
+      "se": 18.56,
+      "mean_n": 3.2,
+      "vs_novel_delta": 7.73,
+      "p_value": "0.7053"
+    },
+    "MEDIUM_arbs": {
+      "mean_precision": 5.71,
+      "se": 5.71,
+      "mean_n": 3.0,
+      "vs_novel_delta": -23.22,
+      "p_value": "0.0056"
+    },
+    "MEDIUM_beta_blockers": {
+      "mean_precision": 95.0,
+      "se": 5.0,
+      "mean_n": 3.0,
+      "vs_novel_delta": 66.07,
+      "p_value": "0.0001"
+    },
+    "MEDIUM_cancer_drugs": {
+      "mean_precision": 33.96,
+      "se": 3.29,
+      "mean_n": 63.2,
+      "vs_novel_delta": 5.03,
+      "p_value": "0.2514"
+    },
+    "MEDIUM_corticosteroids": {
+      "mean_precision": 46.14,
+      "se": 3.31,
+      "mean_n": 95.8,
+      "vs_novel_delta": 17.21,
+      "p_value": "0.0065"
+    },
+    "MEDIUM_dmards": {
+      "mean_precision": 56.67,
+      "se": 17.16,
+      "mean_n": 2.8,
+      "vs_novel_delta": 27.73,
+      "p_value": "0.2137"
+    },
+    "MEDIUM_fluoroquinolones": {
+      "mean_precision": 23.86,
+      "se": 5.39,
+      "mean_n": 18.4,
+      "vs_novel_delta": -5.08,
+      "p_value": "0.3666"
+    },
+    "MEDIUM_nsaids": {
+      "mean_precision": 0.0,
+      "se": 0.0,
+      "mean_n": 1.8,
+      "vs_novel_delta": -28.93,
+      "p_value": "N/A"
+    },
+    "MEDIUM_ophthalmic_antibiotics": {
+      "mean_precision": 37.5,
+      "se": 23.94,
+      "mean_n": 2.5,
+      "vs_novel_delta": 8.57,
+      "p_value": "N/A"
+    },
+    "MEDIUM_sglt2_inhibitors": {
+      "mean_precision": 0.0,
+      "se": 0,
+      "mean_n": 1.0,
+      "vs_novel_delta": -28.93,
+      "p_value": "N/A"
+    },
+    "MEDIUM_statins": {
+      "mean_precision": 27.0,
+      "se": 12.52,
+      "mean_n": 6.0,
+      "vs_novel_delta": -1.93,
+      "p_value": "0.8926"
+    },
+    "MEDIUM_thiazolidinediones": {
+      "mean_precision": 0.0,
+      "se": 0.0,
+      "mean_n": 2.2,
+      "vs_novel_delta": -28.93,
+      "p_value": "N/A"
+    },
+    "LOW_NOVEL": {
+      "mean_precision": 15.55,
+      "se": 0.62,
+      "mean_n": 615.0
+    },
+    "LOW_aldosterone_antagonists": {
+      "mean_precision": 66.67,
+      "se": 16.67,
+      "mean_n": 1.7,
+      "vs_novel_delta": 51.12,
+      "p_value": "N/A"
+    },
+    "LOW_anticoagulants": {
+      "mean_precision": 43.19,
+      "se": 12.0,
+      "mean_n": 9.6,
+      "vs_novel_delta": 27.64,
+      "p_value": "0.0793"
+    },
+    "LOW_antiplatelets": {
+      "mean_precision": 5.71,
+      "se": 5.71,
+      "mean_n": 7.8,
+      "vs_novel_delta": -9.83,
+      "p_value": "0.1708"
+    },
+    "LOW_arbs": {
+      "mean_precision": 0.0,
+      "se": 0.0,
+      "mean_n": 2.5,
+      "vs_novel_delta": -15.55,
+      "p_value": "N/A"
+    },
+    "LOW_beta_blockers": {
+      "mean_precision": 30.0,
+      "se": 20.0,
+      "mean_n": 1.2,
+      "vs_novel_delta": 14.45,
+      "p_value": "0.5134"
+    },
+    "LOW_cancer_drugs": {
+      "mean_precision": 16.46,
+      "se": 0.3,
+      "mean_n": 24.4,
+      "vs_novel_delta": 0.91,
+      "p_value": "0.2691"
+    },
+    "LOW_corticosteroids": {
+      "mean_precision": 18.0,
+      "se": 7.84,
+      "mean_n": 6.4,
+      "vs_novel_delta": 2.45,
+      "p_value": "0.7616"
+    },
+    "LOW_dmards": {
+      "mean_precision": 39.93,
+      "se": 16.73,
+      "mean_n": 4.8,
+      "vs_novel_delta": 24.38,
+      "p_value": "0.2185"
+    },
+    "LOW_fluoroquinolones": {
+      "mean_precision": 27.62,
+      "se": 6.33,
+      "mean_n": 15.8,
+      "vs_novel_delta": 12.07,
+      "p_value": "0.1212"
+    },
+    "LOW_loop_diuretics": {
+      "mean_precision": 33.33,
+      "se": 33.33,
+      "mean_n": 1.3,
+      "vs_novel_delta": 17.79,
+      "p_value": "N/A"
+    },
+    "LOW_nsaids": {
+      "mean_precision": 0.0,
+      "se": 0.0,
+      "mean_n": 6.6,
+      "vs_novel_delta": -15.55,
+      "p_value": "0.0000"
+    },
+    "LOW_ophthalmic_antibiotics": {
+      "mean_precision": 62.5,
+      "se": 37.5,
+      "mean_n": 3.0,
+      "vs_novel_delta": 46.95,
+      "p_value": "N/A"
+    },
+    "LOW_sglt2_inhibitors": {
+      "mean_precision": 8.33,
+      "se": 8.33,
+      "mean_n": 2.2,
+      "vs_novel_delta": -7.21,
+      "p_value": "N/A"
+    },
+    "LOW_statins": {
+      "mean_precision": 5.83,
+      "se": 3.63,
+      "mean_n": 4.2,
+      "vs_novel_delta": -9.71,
+      "p_value": "0.0552"
+    },
+    "FILTER_NOVEL": {
+      "mean_precision": 8.77,
+      "se": 0.54,
+      "mean_n": 1274.6
+    },
+    "FILTER_aldosterone_antagonists": {
+      "mean_precision": 0.0,
+      "se": 0.0,
+      "mean_n": 2.0,
+      "vs_novel_delta": -8.77,
+      "p_value": "N/A"
+    },
+    "FILTER_anticoagulants": {
+      "mean_precision": 32.17,
+      "se": 10.11,
+      "mean_n": 6.6,
+      "vs_novel_delta": 23.4,
+      "p_value": "0.0780"
+    },
+    "FILTER_antiplatelets": {
+      "mean_precision": 9.0,
+      "se": 5.57,
+      "mean_n": 3.0,
+      "vs_novel_delta": 0.23,
+      "p_value": "0.9708"
+    },
+    "FILTER_arbs": {
+      "mean_precision": 26.19,
+      "se": 10.13,
+      "mean_n": 3.6,
+      "vs_novel_delta": 17.42,
+      "p_value": "0.1644"
+    },
+    "FILTER_beta_blockers": {
+      "mean_precision": 39.31,
+      "se": 10.84,
+      "mean_n": 6.0,
+      "vs_novel_delta": 30.54,
+      "p_value": "N/A"
+    },
+    "FILTER_cancer_drugs": {
+      "mean_precision": 9.29,
+      "se": 2.99,
+      "mean_n": 21.4,
+      "vs_novel_delta": 0.52,
+      "p_value": "0.8462"
+    },
+    "FILTER_corticosteroids": {
+      "mean_precision": 31.9,
+      "se": 6.09,
+      "mean_n": 20.8,
+      "vs_novel_delta": 23.13,
+      "p_value": "0.0225"
+    },
+    "FILTER_dmards": {
+      "mean_precision": 63.0,
+      "se": 12.81,
+      "mean_n": 3.4,
+      "vs_novel_delta": 54.23,
+      "p_value": "0.0149"
+    },
+    "FILTER_fluoroquinolones": {
+      "mean_precision": 20.08,
+      "se": 9.59,
+      "mean_n": 10.6,
+      "vs_novel_delta": 11.31,
+      "p_value": "0.3104"
+    },
+    "FILTER_loop_diuretics": {
+      "mean_precision": 66.67,
+      "se": 16.67,
+      "mean_n": 1.7,
+      "vs_novel_delta": 57.9,
+      "p_value": "N/A"
+    },
+    "FILTER_nsaids": {
+      "mean_precision": 22.86,
+      "se": 8.6,
+      "mean_n": 5.8,
+      "vs_novel_delta": 14.09,
+      "p_value": "0.1838"
+    },
+    "FILTER_ophthalmic_antibiotics": {
+      "mean_precision": 25.0,
+      "se": 25.0,
+      "mean_n": 1.2,
+      "vs_novel_delta": 16.23,
+      "p_value": "N/A"
+    },
+    "FILTER_sglt2_inhibitors": {
+      "mean_precision": 5.0,
+      "se": 5.0,
+      "mean_n": 6.4,
+      "vs_novel_delta": -3.77,
+      "p_value": "0.5107"
+    },
+    "FILTER_statins": {
+      "mean_precision": 41.0,
+      "se": 9.42,
+      "mean_n": 7.2,
+      "vs_novel_delta": 32.23,
+      "p_value": "0.0287"
+    },
+    "FILTER_thiazolidinediones": {
+      "mean_precision": 0.0,
+      "se": 0.0,
+      "mean_n": 2.2,
+      "vs_novel_delta": -8.77,
+      "p_value": "N/A"
+    },
+    "FILTER_topical_steroids": {
+      "mean_precision": 0.0,
+      "se": 0.0,
+      "mean_n": 1.0,
+      "vs_novel_delta": -8.77,
+      "p_value": "N/A"
+    }
+  },
+  "per_class_fulldata": {
+    "FILTER_NOVEL": {
+      "hits": 1006,
+      "total": 6090,
+      "precision": 16.52
+    },
+    "MEDIUM_beta_blockers": {
+      "hits": 12,
+      "total": 13,
+      "precision": 92.31
+    },
+    "MEDIUM_aldosterone_antagonists": {
+      "hits": 4,
+      "total": 7,
+      "precision": 57.14
+    },
+    "HIGH_sglt2_inhibitors": {
+      "hits": 3,
+      "total": 5,
+      "precision": 60.0
+    },
+    "MEDIUM_NOVEL": {
+      "hits": 825,
+      "total": 2103,
+      "precision": 39.23
+    },
+    "MEDIUM_arbs": {
+      "hits": 5,
+      "total": 11,
+      "precision": 45.45
+    },
+    "MEDIUM_statins": {
+      "hits": 13,
+      "total": 41,
+      "precision": 31.71
+    },
+    "FILTER_anticoagulants": {
+      "hits": 7,
+      "total": 23,
+      "precision": 30.43
+    },
+    "FILTER_loop_diuretics": {
+      "hits": 5,
+      "total": 9,
+      "precision": 55.56
+    },
+    "FILTER_sglt2_inhibitors": {
+      "hits": 7,
+      "total": 34,
+      "precision": 20.59
+    },
+    "FILTER_arbs": {
+      "hits": 8,
+      "total": 18,
+      "precision": 44.44
+    },
+    "LOW_NOVEL": {
+      "hits": 582,
+      "total": 2770,
+      "precision": 21.01
+    },
+    "FILTER_aldosterone_antagonists": {
+      "hits": 2,
+      "total": 5,
+      "precision": 40.0
+    },
+    "GOLDEN_NOVEL": {
+      "hits": 85,
+      "total": 97,
+      "precision": 87.63
+    },
+    "HIGH_arbs": {
+      "hits": 6,
+      "total": 8,
+      "precision": 75.0
+    },
+    "GOLDEN_aldosterone_antagonists": {
+      "hits": 1,
+      "total": 1,
+      "precision": 100.0
+    },
+    "HIGH_beta_blockers": {
+      "hits": 21,
+      "total": 26,
+      "precision": 80.77
+    },
+    "GOLDEN_beta_blockers": {
+      "hits": 2,
+      "total": 3,
+      "precision": 66.67
+    },
+    "HIGH_NOVEL": {
+      "hits": 229,
+      "total": 288,
+      "precision": 79.51
+    },
+    "GOLDEN_arbs": {
+      "hits": 1,
+      "total": 1,
+      "precision": 100.0
+    },
+    "FILTER_beta_blockers": {
+      "hits": 9,
+      "total": 25,
+      "precision": 36.0
+    },
+    "GOLDEN_thiazolidinediones": {
+      "hits": 3,
+      "total": 3,
+      "precision": 100.0
+    },
+    "HIGH_thiazolidinediones": {
+      "hits": 1,
+      "total": 4,
+      "precision": 25.0
+    },
+    "HIGH_statins": {
+      "hits": 6,
+      "total": 12,
+      "precision": 50.0
+    },
+    "FILTER_statins": {
+      "hits": 10,
+      "total": 45,
+      "precision": 22.22
+    },
+    "FILTER_thiazolidinediones": {
+      "hits": 2,
+      "total": 25,
+      "precision": 8.0
+    },
+    "MEDIUM_cancer_drugs": {
+      "hits": 192,
+      "total": 387,
+      "precision": 49.61
+    },
+    "LOW_cancer_drugs": {
+      "hits": 19,
+      "total": 114,
+      "precision": 16.67
+    },
+    "MEDIUM_antiplatelets": {
+      "hits": 11,
+      "total": 20,
+      "precision": 55.0
+    },
+    "MEDIUM_anticoagulants": {
+      "hits": 13,
+      "total": 24,
+      "precision": 54.17
+    },
+    "FILTER_antiplatelets": {
+      "hits": 2,
+      "total": 9,
+      "precision": 22.22
+    },
+    "GOLDEN_corticosteroids": {
+      "hits": 42,
+      "total": 42,
+      "precision": 100.0
+    },
+    "HIGH_corticosteroids": {
+      "hits": 85,
+      "total": 112,
+      "precision": 75.89
+    },
+    "MEDIUM_corticosteroids": {
+      "hits": 187,
+      "total": 443,
+      "precision": 42.21
+    },
+    "HIGH_dmards": {
+      "hits": 9,
+      "total": 9,
+      "precision": 100.0
+    },
+    "LOW_nsaids": {
+      "hits": 6,
+      "total": 37,
+      "precision": 16.22
+    },
+    "MEDIUM_fluoroquinolones": {
+      "hits": 24,
+      "total": 89,
+      "precision": 26.97
+    },
+    "LOW_fluoroquinolones": {
+      "hits": 15,
+      "total": 62,
+      "precision": 24.19
+    },
+    "FILTER_fluoroquinolones": {
+      "hits": 6,
+      "total": 45,
+      "precision": 13.33
+    },
+    "FILTER_topical_steroids": {
+      "hits": 2,
+      "total": 4,
+      "precision": 50.0
+    },
+    "MEDIUM_ophthalmic_antibiotics": {
+      "hits": 11,
+      "total": 15,
+      "precision": 73.33
+    },
+    "LOW_ophthalmic_antibiotics": {
+      "hits": 10,
+      "total": 15,
+      "precision": 66.67
+    },
+    "FILTER_corticosteroids": {
+      "hits": 20,
+      "total": 86,
+      "precision": 23.26
+    },
+    "GOLDEN_statins": {
+      "hits": 26,
+      "total": 32,
+      "precision": 81.25
+    },
+    "HIGH_antiplatelets": {
+      "hits": 6,
+      "total": 8,
+      "precision": 75.0
+    },
+    "LOW_anticoagulants": {
+      "hits": 23,
+      "total": 47,
+      "precision": 48.94
+    },
+    "LOW_statins": {
+      "hits": 3,
+      "total": 21,
+      "precision": 14.29
+    },
+    "LOW_beta_blockers": {
+      "hits": 3,
+      "total": 8,
+      "precision": 37.5
+    },
+    "HIGH_anticoagulants": {
+      "hits": 10,
+      "total": 17,
+      "precision": 58.82
+    },
+    "LOW_antiplatelets": {
+      "hits": 1,
+      "total": 24,
+      "precision": 4.17
+    },
+    "LOW_corticosteroids": {
+      "hits": 9,
+      "total": 41,
+      "precision": 21.95
+    },
+    "HIGH_fluoroquinolones": {
+      "hits": 12,
+      "total": 19,
+      "precision": 63.16
+    },
+    "GOLDEN_antiplatelets": {
+      "hits": 0,
+      "total": 1,
+      "precision": 0.0
+    },
+    "MEDIUM_dmards": {
+      "hits": 17,
+      "total": 23,
+      "precision": 73.91
+    },
+    "HIGH_nsaids": {
+      "hits": 10,
+      "total": 10,
+      "precision": 100.0
+    },
+    "GOLDEN_nsaids": {
+      "hits": 2,
+      "total": 2,
+      "precision": 100.0
+    },
+    "FILTER_nsaids": {
+      "hits": 9,
+      "total": 29,
+      "precision": 31.03
+    },
+    "HIGH_aldosterone_antagonists": {
+      "hits": 1,
+      "total": 1,
+      "precision": 100.0
+    },
+    "GOLDEN_dmards": {
+      "hits": 4,
+      "total": 4,
+      "precision": 100.0
+    },
+    "FILTER_dmards": {
+      "hits": 6,
+      "total": 9,
+      "precision": 66.67
+    },
+    "MEDIUM_nsaids": {
+      "hits": 0,
+      "total": 4,
+      "precision": 0.0
+    },
+    "FILTER_ophthalmic_antibiotics": {
+      "hits": 1,
+      "total": 8,
+      "precision": 12.5
+    },
+    "LOW_dmards": {
+      "hits": 1,
+      "total": 4,
+      "precision": 25.0
+    },
+    "MEDIUM_loop_diuretics": {
+      "hits": 3,
+      "total": 4,
+      "precision": 75.0
+    },
+    "LOW_sglt2_inhibitors": {
+      "hits": 6,
+      "total": 14,
+      "precision": 42.86
+    },
+    "MEDIUM_thiazolidinediones": {
+      "hits": 0,
+      "total": 11,
+      "precision": 0.0
+    },
+    "LOW_aldosterone_antagonists": {
+      "hits": 1,
+      "total": 6,
+      "precision": 16.67
+    },
+    "LOW_loop_diuretics": {
+      "hits": 2,
+      "total": 3,
+      "precision": 66.67
+    },
+    "LOW_arbs": {
+      "hits": 0,
+      "total": 12,
+      "precision": 0.0
+    },
+    "HIGH_ophthalmic_antibiotics": {
+      "hits": 0,
+      "total": 1,
+      "precision": 0.0
+    },
+    "FILTER_cancer_drugs": {
+      "hits": 5,
+      "total": 74,
+      "precision": 6.76
+    },
+    "HIGH_cancer_drugs": {
+      "hits": 2,
+      "total": 2,
+      "precision": 100.0
+    },
+    "MEDIUM_sglt2_inhibitors": {
+      "hits": 0,
+      "total": 1,
+      "precision": 0.0
+    },
+    "GOLDEN_sglt2_inhibitors": {
+      "hits": 1,
+      "total": 2,
+      "precision": 50.0
+    }
+  }
+}

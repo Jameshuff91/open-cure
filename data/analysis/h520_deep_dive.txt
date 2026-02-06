@@ -1,0 +1,82 @@
+======================================================================
+h520 Deep Dive: Corticosteroid MEDIUM Predictions
+======================================================================
+
+Loading predictor...
+
+--- FULL DATA: Corticosteroid MEDIUM Predictions ---
+
+Category                  Hits   Total    Precision  # Diseases
+-----------------------------------------------------------------
+hematological             32     123      26.0%      17
+autoimmune                51     122      41.8%      21
+dermatological            57     100      57.0%      18
+ophthalmic                30     56       53.6%      11
+respiratory               17     42       40.5%      13
+
+TOTAL                     187    443      42.2%
+
+
+--- Tier Rules for Corticosteroid MEDIUM ---
+
+Rule                                     Hits   Total    Precision
+------------------------------------------------------------
+default                                  153    329      46.5%
+hematological                            30     102      29.4%
+respiratory                              3      6        50.0%
+target_overlap_promotion                 0      3        0.0%
+mechanism_specific                       1      3        33.3%
+
+
+--- HOLDOUT: Per-Category Corticosteroid MEDIUM Precision ---
+
+Seed 42... done (70 preds)
+Seed 123... done (126 preds)
+Seed 456... done (106 preds)
+Seed 789... done (115 preds)
+Seed 1024... done (62 preds)
+
+Category                  Mean Prec    SE       Mean N  
+-------------------------------------------------------
+autoimmune                   45.5%      4.6pp      32
+dermatological               58.0%     17.1pp      22
+hematological                19.1%      9.4pp      25
+ophthalmic                   34.2%     16.1pp       8
+respiratory                  61.1%     11.5pp       9
+
+TOTAL                        46.1%      3.3pp      96
+
+
+--- PROMOTION IMPACT ---
+
+Total corticosteroid MEDIUM SOC predictions (full data): 443
+Full-data precision: 42.2%
+Holdout precision: 46.1% ± 3.3%
+
+HIGH tier current holdout: 51.5% ± 5.3% (507 predictions)
+Corticosteroid MEDIUM holdout: 46.1% ± 3.3%
+
+** ACTIONABLE: Corticosteroid MEDIUM (46.1%) approaches HIGH (51.5%)
+   Promoting 443 predictions from MEDIUM to HIGH
+   New HIGH total would be: ~950 predictions
+   Estimated new HIGH holdout: ~50.7%
+
+
+--- SAMPLE CORTICOSTEROID MEDIUM PREDICTIONS ---
+(Top 15 diseases by # predictions)
+
+  anemia                                             7/8 (88%) ✓Methylprednisolone, ✓Hydrocortisone, ✓Prednisolone, ✓Dexamethasone... +4 more
+  bullous dermatitis herpetiformis                   8/8 (100%) ✓Dexamethasone, ✓Methylprednisolone, ✓Prednisolone, ✓Hydrocortisone... +4 more
+  severe erythema multiforme                         8/8 (100%) ✓Methylprednisolone, ✓Dexamethasone, ✓Hydrocortisone, ✓Prednisolone... +4 more
+  severe seborrheic dermatitis                       6/8 (75%) ✓Prednisolone, ✓Methylprednisolone, ✓Hydrocortisone, ✓Dexamethasone... +4 more
+  contact dermatitis                                 8/8 (100%) ✓Hydrocortisone, ✓Prednisolone, ✓Methylprednisolone, ✓Dexamethasone... +4 more
+  posterior uveitis                                  6/8 (75%) ✓Methylprednisolone, ✓Dexamethasone, ✓Prednisolone, ✗Betamethasone... +4 more
+  choroiditis                                        6/8 (75%) ✓Methylprednisolone, ✓Dexamethasone, ✓Prednisolone, ✓Hydrocortisone... +4 more
+  heparininduced thrombocytopenia hit type ii        8/8 (100%) ✓Hydrocortisone, ✓Prednisolone, ✓Methylprednisolone, ✓Dexamethasone... +4 more
+  congenitalidiopathic neutropenia                   1/8 (12%) ✗Hydrocortisone, ✗Prednisolone, ✗Methylprednisolone, ✓Dexamethasone... +4 more
+  pure red cell aplasia                              7/8 (88%) ✓Hydrocortisone, ✓Prednisolone, ✓Methylprednisolone, ✓Dexamethasone... +4 more
+  rheumatic fever                                    3/8 (38%) ✗Dexamethasone, ✗Methylprednisolone, ✓Hydrocortisone, ✗Prednisolone... +4 more
+  agranulocytosis                                    1/8 (12%) ✗Hydrocortisone, ✗Prednisolone, ✗Methylprednisolone, ✗Dexamethasone... +4 more
+  eczema                                             6/8 (75%) ✓Betamethasone, ✗Methylprednisolone, ✗Dexamethasone, ✓Hydrocortisone... +4 more
+  pityriasis rubra pilaris                           0/8 (0%) ✗Methylprednisolone, ✗Dexamethasone, ✗Betamethasone, ✗Hydrocortisone... +4 more
+  familial mediterranean fever                       0/8 (0%) ✗Prednisolone, ✗Dexamethasone, ✗Betamethasone, ✗Triamcinolone... +4 more

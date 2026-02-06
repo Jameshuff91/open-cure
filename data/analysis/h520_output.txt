@@ -1,0 +1,200 @@
+======================================================================
+h520: SOC Drug Class Precision Heterogeneity
+======================================================================
+
+Loading predictor...
+Loaded 3638 GT diseases, 59534 pairs
+Diseases with GT + embeddings: 455
+
+======================================================================
+FULL-DATA BASELINE (per SOC class)
+======================================================================
+Evaluated 455 diseases
+
+SOC classes found: ['aldosterone_antagonists', 'anticoagulants', 'antiplatelets', 'arbs', 'beta_blockers', 'cancer_drugs', 'corticosteroids', 'dmards', 'fluoroquinolones', 'loop_diuretics', 'nsaids', 'ophthalmic_antibiotics', 'sglt2_inhibitors', 'statins', 'thiazolidinediones', 'topical_steroids']
+
+Tier       Class                  Hits   Total    Precision 
+------------------------------------------------------------
+GOLDEN     NOVEL                  85     97       87.6%
+GOLDEN     aldosterone_antagonists 1      1        100.0%
+GOLDEN     antiplatelets          0      1        0.0%
+GOLDEN     arbs                   1      1        100.0%
+GOLDEN     beta_blockers          2      3        66.7%
+GOLDEN     corticosteroids        42     42       100.0%
+GOLDEN     dmards                 4      4        100.0%
+GOLDEN     nsaids                 2      2        100.0%
+GOLDEN     sglt2_inhibitors       1      2        50.0%
+GOLDEN     statins                26     32       81.2%
+GOLDEN     thiazolidinediones     3      3        100.0%
+HIGH       NOVEL                  229    288      79.5%
+HIGH       aldosterone_antagonists 1      1        100.0%
+HIGH       anticoagulants         10     17       58.8%
+HIGH       antiplatelets          6      8        75.0%
+HIGH       arbs                   6      8        75.0%
+HIGH       beta_blockers          21     26       80.8%
+HIGH       cancer_drugs           2      2        100.0%
+HIGH       corticosteroids        85     112      75.9%
+HIGH       dmards                 9      9        100.0%
+HIGH       fluoroquinolones       12     19       63.2%
+HIGH       nsaids                 10     10       100.0%
+HIGH       ophthalmic_antibiotics 0      1        0.0%
+HIGH       sglt2_inhibitors       3      5        60.0%
+HIGH       statins                6      12       50.0%
+HIGH       thiazolidinediones     1      4        25.0%
+MEDIUM     NOVEL                  825    2103     39.2%
+MEDIUM     aldosterone_antagonists 4      7        57.1%
+MEDIUM     anticoagulants         13     24       54.2%
+MEDIUM     antiplatelets          11     20       55.0%
+MEDIUM     arbs                   5      11       45.5%
+MEDIUM     beta_blockers          12     13       92.3%
+MEDIUM     cancer_drugs           192    387      49.6%
+MEDIUM     corticosteroids        187    443      42.2%
+MEDIUM     dmards                 17     23       73.9%
+MEDIUM     fluoroquinolones       24     89       27.0%
+MEDIUM     loop_diuretics         3      4        75.0%
+MEDIUM     nsaids                 0      4        0.0%
+MEDIUM     ophthalmic_antibiotics 11     15       73.3%
+MEDIUM     sglt2_inhibitors       0      1        0.0%
+MEDIUM     statins                13     41       31.7%
+MEDIUM     thiazolidinediones     0      11       0.0%
+LOW        NOVEL                  582    2770     21.0%
+LOW        aldosterone_antagonists 1      6        16.7%
+LOW        anticoagulants         23     47       48.9%
+LOW        antiplatelets          1      24       4.2%
+LOW        arbs                   0      12       0.0%
+LOW        beta_blockers          3      8        37.5%
+LOW        cancer_drugs           19     114      16.7%
+LOW        corticosteroids        9      41       22.0%
+LOW        dmards                 1      4        25.0%
+LOW        fluoroquinolones       15     62       24.2%
+LOW        loop_diuretics         2      3        66.7%
+LOW        nsaids                 6      37       16.2%
+LOW        ophthalmic_antibiotics 10     15       66.7%
+LOW        sglt2_inhibitors       6      14       42.9%
+LOW        statins                3      21       14.3%
+FILTER     NOVEL                  1006   6090     16.5%
+FILTER     aldosterone_antagonists 2      5        40.0%
+FILTER     anticoagulants         7      23       30.4%
+FILTER     antiplatelets          2      9        22.2%
+FILTER     arbs                   8      18       44.4%
+FILTER     beta_blockers          9      25       36.0%
+FILTER     cancer_drugs           5      74       6.8%
+FILTER     corticosteroids        20     86       23.3%
+FILTER     dmards                 6      9        66.7%
+FILTER     fluoroquinolones       6      45       13.3%
+FILTER     loop_diuretics         5      9        55.6%
+FILTER     nsaids                 9      29       31.0%
+FILTER     ophthalmic_antibiotics 1      8        12.5%
+FILTER     sglt2_inhibitors       7      34       20.6%
+FILTER     statins                10     45       22.2%
+FILTER     thiazolidinediones     2      25       8.0%
+FILTER     topical_steroids       2      4        50.0%
+
+======================================================================
+HOLDOUT EVALUATION (5-seed)
+======================================================================
+
+Seed 42 (1/5)... 91 diseases evaluated
+
+Seed 123 (2/5)... 91 diseases evaluated
+
+Seed 456 (3/5)... 91 diseases evaluated
+
+Seed 789 (4/5)... 91 diseases evaluated
+
+Seed 1024 (5/5)... 91 diseases evaluated
+
+======================================================================
+PER-CLASS HOLDOUT PRECISION (5-seed mean)
+======================================================================
+
+Tier       Class                  Mean Prec    SE       Mean N   vs NOVEL     p-value   
+----------------------------------------------------------------------------------
+GOLDEN     NOVEL                     49.8%      9.9pp      10  (baseline)  
+GOLDEN     aldosterone_antagonists   100.0%      0.0pp       1  +50.2pp (tiny-n!) N/A
+GOLDEN     beta_blockers             50.0%     50.0pp       1  +0.2pp (tiny-n!) N/A
+GOLDEN     corticosteroids          100.0%      0.0pp       8  +50.2pp      N/A
+GOLDEN     dmards                   100.0%      0.0pp       2  +50.2pp (tiny-n!) N/A
+GOLDEN     nsaids                   100.0%      0.0pp       1  +50.2pp (tiny-n!) N/A
+GOLDEN     sglt2_inhibitors          12.5%     12.5pp       2  -37.2pp (tiny-n!) N/A
+GOLDEN     statins                   90.0%     10.0pp       4  +40.2pp (tiny-n!) N/A
+GOLDEN     thiazolidinediones         0.0%      0.0pp       2  -49.8pp (tiny-n!) N/A
+
+HIGH       NOVEL                     54.3%      6.7pp      33  (baseline)  
+HIGH       anticoagulants            50.0%      0.0pp       8  -4.3pp       N/A
+HIGH       antiplatelets             50.0%     50.0pp       2  -4.3pp (tiny-n!) N/A
+HIGH       arbs                      41.7%     25.0pp       2  -12.6pp (tiny-n!) N/A
+HIGH       beta_blockers             56.0%     16.9pp       4  +1.7pp (tiny-n!) 0.9207
+HIGH       cancer_drugs               0.0%      0.0pp       1  -54.3pp (tiny-n!) N/A
+HIGH       corticosteroids           81.5%      3.3pp      26  +27.2pp      0.0179
+HIGH       dmards                   100.0%      0.0pp       2  +45.7pp (tiny-n!) 0.0025
+HIGH       fluoroquinolones          24.3%     10.7pp       7  -30.0pp      0.0792
+HIGH       nsaids                    87.5%     12.5pp       2  +33.2pp (tiny-n!) N/A
+HIGH       ophthalmic_antibiotics     0.0%      0.0pp       1  -54.3pp (tiny-n!) N/A
+HIGH       sglt2_inhibitors          25.0%     25.0pp       2  -29.3pp (tiny-n!) N/A
+HIGH       statins                   41.7%     25.0pp       2  -12.6pp (tiny-n!) N/A
+HIGH       thiazolidinediones         0.0%      0.0pp       1  -54.3pp (tiny-n!) N/A
+
+MEDIUM     NOVEL                     28.9%      1.8pp     345  (baseline)  
+MEDIUM     aldosterone_antagonists    50.0%     50.0pp       1  +21.1pp (tiny-n!) N/A
+MEDIUM     anticoagulants             5.0%      5.0pp       2  -23.9pp (tiny-n!) 0.0139
+MEDIUM     antiplatelets             36.7%     18.6pp       3  +7.7pp (tiny-n!) 0.7053
+MEDIUM     arbs                       5.7%      5.7pp       3  -23.2pp (tiny-n!) 0.0056
+MEDIUM     beta_blockers             95.0%      5.0pp       3  +66.1pp (tiny-n!) 0.0001
+MEDIUM     cancer_drugs              34.0%      3.3pp      63  +5.0pp       0.2514
+MEDIUM     corticosteroids           46.1%      3.3pp      96  +17.2pp      0.0065
+MEDIUM     dmards                    56.7%     17.2pp       3  +27.7pp (tiny-n!) 0.2137
+MEDIUM     fluoroquinolones          23.9%      5.4pp      18  -5.1pp       0.3666
+MEDIUM     nsaids                     0.0%      0.0pp       2  -28.9pp (tiny-n!) N/A
+MEDIUM     ophthalmic_antibiotics    37.5%     23.9pp       2  +8.6pp (tiny-n!) N/A
+MEDIUM     sglt2_inhibitors           0.0%      0.0pp       1  -28.9pp (tiny-n!) N/A
+MEDIUM     statins                   27.0%     12.5pp       6  -1.9pp       0.8926
+MEDIUM     thiazolidinediones         0.0%      0.0pp       2  -28.9pp (tiny-n!) N/A
+
+LOW        NOVEL                     15.5%      0.6pp     615  (baseline)  
+LOW        aldosterone_antagonists    66.7%     16.7pp       2  +51.1pp (tiny-n!) N/A
+LOW        anticoagulants            43.2%     12.0pp      10  +27.6pp      0.0793
+LOW        antiplatelets              5.7%      5.7pp       8  -9.8pp       0.1708
+LOW        arbs                       0.0%      0.0pp       2  -15.5pp (tiny-n!) N/A
+LOW        beta_blockers             30.0%     20.0pp       1  +14.5pp (tiny-n!) 0.5134
+LOW        cancer_drugs              16.5%      0.3pp      24  +0.9pp       0.2691
+LOW        corticosteroids           18.0%      7.8pp       6  +2.5pp       0.7616
+LOW        dmards                    39.9%     16.7pp       5  +24.4pp (tiny-n!) 0.2185
+LOW        fluoroquinolones          27.6%      6.3pp      16  +12.1pp      0.1212
+LOW        loop_diuretics            33.3%     33.3pp       1  +17.8pp (tiny-n!) N/A
+LOW        nsaids                     0.0%      0.0pp       7  -15.5pp      0.0000
+LOW        ophthalmic_antibiotics    62.5%     37.5pp       3  +47.0pp (tiny-n!) N/A
+LOW        sglt2_inhibitors           8.3%      8.3pp       2  -7.2pp (tiny-n!) N/A
+LOW        statins                    5.8%      3.6pp       4  -9.7pp (tiny-n!) 0.0552
+
+FILTER     NOVEL                      8.8%      0.5pp    1275  (baseline)  
+FILTER     aldosterone_antagonists     0.0%      0.0pp       2  -8.8pp (tiny-n!) N/A
+FILTER     anticoagulants            32.2%     10.1pp       7  +23.4pp      0.0780
+FILTER     antiplatelets              9.0%      5.6pp       3  +0.2pp (tiny-n!) 0.9708
+FILTER     arbs                      26.2%     10.1pp       4  +17.4pp (tiny-n!) 0.1644
+FILTER     beta_blockers             39.3%     10.8pp       6  +30.5pp      N/A
+FILTER     cancer_drugs               9.3%      3.0pp      21  +0.5pp       0.8462
+FILTER     corticosteroids           31.9%      6.1pp      21  +23.1pp      0.0225
+FILTER     dmards                    63.0%     12.8pp       3  +54.2pp (tiny-n!) 0.0149
+FILTER     fluoroquinolones          20.1%      9.6pp      11  +11.3pp      0.3104
+FILTER     loop_diuretics            66.7%     16.7pp       2  +57.9pp (tiny-n!) N/A
+FILTER     nsaids                    22.9%      8.6pp       6  +14.1pp      0.1838
+FILTER     ophthalmic_antibiotics    25.0%     25.0pp       1  +16.2pp (tiny-n!) N/A
+FILTER     sglt2_inhibitors           5.0%      5.0pp       6  -3.8pp       0.5107
+FILTER     statins                   41.0%      9.4pp       7  +32.2pp      0.0287
+FILTER     thiazolidinediones         0.0%      0.0pp       2  -8.8pp (tiny-n!) N/A
+FILTER     topical_steroids           0.0%      0.0pp       1  -8.8pp (tiny-n!) N/A
+
+
+Results saved to data/analysis/h520_soc_class_holdout.json
+
+======================================================================
+ACTIONABLE CLASSES (MEDIUM tier, holdout > 25%, n >= 10)
+======================================================================
+  corticosteroids        46.1% holdout (n=96, p=0.0065)
+  cancer_drugs           34.0% holdout (n=63, p=0.2514)
+
+======================================================================
+HIGH-LEVEL CANDIDATES (MEDIUM tier, holdout >= 40%)
+======================================================================
+  corticosteroids        46.1% holdout (n=96) → PROMOTE to HIGH?

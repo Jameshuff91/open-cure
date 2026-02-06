@@ -10307,9 +10307,83 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h518"
+      ],
+      "findings": "Corticosteroids drive the MEDIUM SOC +6pp signal. Per-class holdout analysis reveals:\n- Corticosteroid MEDIUM: 46.1% holdout (n=96, p=0.0065) \u2014 highest of all SOC classes\n- Category breakdown: dermatological 58.0%, respiratory 61.1%, autoimmune 45.5%, ophthalmic 34.2%, hematological 19.1%\n- Non-hematological corticosteroid MEDIUM: 50.1% holdout \u2014 comparable to HIGH (51.5%)\n- Promotion implemented: corticosteroid MEDIUM in autoimmune/dermatological/respiratory/ophthalmic \u2192 HIGH\n- Impact: HIGH +2.3pp (51.5\u219253.8%), MEDIUM +1.2pp (29.9\u219231.1%), 333 predictions promoted\n- Cancer_drugs MEDIUM: 34.0% (n=63, p=0.25) \u2014 not significant, not promoted\n- All other SOC classes have tiny-n in MEDIUM (<10 per seed), not actionable",
+      "result_metric": "HIGH +2.3pp (51.5\u219253.8%), MEDIUM +1.2pp (29.9\u219231.1%), 333 promotions"
+    },
+    {
+      "id": "h521",
+      "title": "Cancer Drug Same-Category SOC Promotion: cancer_drugs MEDIUM Signal",
+      "hypothesis": "h520 showed cancer_drugs MEDIUM has 34.0% holdout (n=63, p=0.25) vs MEDIUM NOVEL 28.9%. While not significant with n=63, this is the second-largest SOC class. With better stratification (cancer subtype matching?), a subset might reach HIGH-level precision.",
+      "steps": [
+        "Stratify cancer_drugs MEDIUM by cancer type (solid vs hematologic vs CNS)",
+        "Check if cancer_drugs with cancer_same_type interaction boosts precision",
+        "Look for cancer drug classes (e.g. antimetabolites for hematologic cancers) that are consistently better",
+        "Test holdout significance with larger effective n via subtype grouping"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h520"
+      ]
+    },
+    {
+      "id": "h522",
+      "title": "Hematological Corticosteroid Demotion: MEDIUM \u2192 LOW",
+      "hypothesis": "h520 found hematological corticosteroid MEDIUM has only 19.1% holdout precision \u2014 below MEDIUM average (29.9%). Demoting these to LOW would further improve MEDIUM precision. 123 predictions affected.",
+      "steps": [
+        "Implement category-specific demotion for hematological corticosteroid predictions",
+        "Measure holdout impact: MEDIUM and LOW tier precision changes",
+        "Verify medical rationale: which hematological diseases are false positives?",
+        "Check if broad_class_isolated already catches these"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h520"
+      ]
+    },
+    {
+      "id": "h523",
+      "title": "Anticoagulant SOC Signal: HIGH in LOW Tier",
+      "hypothesis": "h520 found anticoagulants in LOW tier have 43.2% holdout (n=10, p=0.08) \u2014 close to MEDIUM level. These are drugs like warfarin, heparin, enoxaparin in cardiovascular/hematological diseases. A LOC\u2192MEDIUM promotion might be warranted.",
+      "steps": [
+        "Deep-dive anticoagulant LOW predictions: which diseases, what categories?",
+        "Verify n is sufficient (10 per seed = borderline)",
+        "Check if promotion to MEDIUM holds with additional seeds",
+        "Assess medical plausibility of the specific predictions"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h520"
+      ]
+    },
+    {
+      "id": "h524",
+      "title": "DMARD SOC Signal Across Tiers: Consistently High But Tiny-N",
+      "hypothesis": "h520 showed DMARDs have high precision across tiers: HIGH 100% (n=2), MEDIUM 56.7% (n=3), LOW 39.9% (n=5), FILTER 63.0% (n=3). All tiny-n but the consistency is notable. With more diseases in the autoimmune category holdout, this might become significant.",
+      "steps": [
+        "Check if DMARD signal is real by examining specific diseases",
+        "Increase effective n by combining across tiers or using bootstrapping",
+        "Test if DMARDs for autoimmune diseases should bypass normal tier rules",
+        "Compare DMARD predictions to known DMARD indications"
+      ],
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h520"
       ]
     }
   ],
@@ -12062,6 +12136,12 @@
       "hypothesis_id": "h481",
       "learning": "Automated literature status classification using 17 drug class SOC mappings achieves +28.4pp precision lift in HIGH tier. Covers 11.7% of predictions as LIKELY_GT_GAP. Top classes: corticosteroids, cancer drugs, fluoroquinolones. Implementation is conservative and clinically reasonable.",
       "implication": "SOC classification is a reliable annotation for deliverable consumers. Potential for tier promotion but needs holdout validation first."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h520",
+      "learning": "SOC signal is heterogeneous: corticosteroids drive nearly all of the +6pp MEDIUM lift. Non-hematological corticosteroid MEDIUM = 50.1% holdout, comparable to HIGH. Promotion implemented: +2.3pp HIGH, +1.2pp MEDIUM. Most other SOC classes have tiny-n (<10/seed) making them unactionable individually.",
+      "implication": "Drug-class-specific SOC promotions can improve tier precision when medical rationale is clear and n is sufficient. Hematological category is consistently weaker for corticosteroids."
     }
   ],
   "collaborations": [

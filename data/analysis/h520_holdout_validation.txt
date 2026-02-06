@@ -1,0 +1,190 @@
+======================================================================
+h393: Holdout Validation of All Tier Rules (Overfitting Audit)
+======================================================================
+
+Loading predictor...
+Loaded 3638 GT diseases, 59534 pairs
+Diseases with GT + embeddings: 455
+
+--- FULL-DATA BASELINE (no holdout) ---
+Evaluated 455 diseases, 13622 predictions
+
+Full-data tier precision:
+  GOLDEN: 88.8% (167/188)
+  HIGH: 66.0% (556/842)
+  MEDIUM: 40.4% (1162/2876)
+  LOW: 21.4% (681/3178)
+  FILTER: 16.9% (1107/6538)
+
+======================================================================
+SEED 42 (1/5)
+======================================================================
+Train: 364, Holdout: 91
+Holdout: 91 diseases, 2726 predictions
+
+Holdout tier precision:
+  GOLDEN: 40.9% (9/22)
+  HIGH: 46.1% (41/89)
+  MEDIUM: 29.6% (122/412)
+  LOW: 15.2% (113/743)
+  FILTER: 8.2% (119/1460)
+
+======================================================================
+SEED 123 (2/5)
+======================================================================
+Train: 364, Holdout: 91
+Holdout: 91 diseases, 2728 predictions
+
+Holdout tier precision:
+  GOLDEN: 63.9% (23/36)
+  HIGH: 59.3% (121/204)
+  MEDIUM: 28.1% (142/506)
+  LOW: 14.4% (88/613)
+  FILTER: 10.7% (146/1369)
+
+======================================================================
+SEED 456 (3/5)
+======================================================================
+Train: 364, Holdout: 91
+Holdout: 91 diseases, 2716 predictions
+
+Holdout tier precision:
+  GOLDEN: 77.8% (21/27)
+  HIGH: 70.1% (108/154)
+  MEDIUM: 25.0% (131/523)
+  LOW: 16.2% (107/660)
+  FILTER: 9.8% (132/1352)
+
+======================================================================
+SEED 789 (4/5)
+======================================================================
+Train: 364, Holdout: 91
+Holdout: 91 diseases, 2725 predictions
+
+Holdout tier precision:
+  GOLDEN: 71.4% (5/7)
+  HIGH: 59.5% (100/168)
+  MEDIUM: 33.9% (176/519)
+  LOW: 18.9% (136/718)
+  FILTER: 11.2% (147/1313)
+
+======================================================================
+SEED 2024 (5/5)
+======================================================================
+Train: 364, Holdout: 91
+Holdout: 91 diseases, 2727 predictions
+
+Holdout tier precision:
+  GOLDEN: 95.5% (21/22)
+  HIGH: 51.9% (98/189)
+  MEDIUM: 25.6% (118/461)
+  LOW: 12.0% (77/642)
+  FILTER: 12.2% (173/1413)
+
+======================================================================
+AGGREGATE HOLDOUT RESULTS (mean ± std across 5 seeds)
+======================================================================
+
+--- TIER PRECISION: Full-Data vs Holdout ---
+  GOLDEN  : Full= 88.8% | Holdout= 69.9% ± 17.9% | Delta=-18.9pp
+  HIGH    : Full= 66.0% | Holdout= 57.4% ±  8.1% | Delta= -8.6pp
+  MEDIUM  : Full= 40.4% | Holdout= 28.4% ±  3.2% | Delta=-12.0pp
+  LOW     : Full= 21.4% | Holdout= 15.3% ±  2.3% | Delta= -6.1pp
+  FILTER  : Full= 16.9% | Holdout= 10.4% ±  1.4% | Delta= -6.5pp
+
+--- SUCCESS CRITERIA ---
+GOLDEN holdout precision > 30%: PASS (69.9%)
+Tier ordering (GOLDEN > HIGH > MEDIUM > LOW > FILTER): PASS
+  Values: GOLDEN=69.9% > HIGH=57.4% > MEDIUM=28.4% > LOW=15.3% > FILTER=10.4%
+
+--- PER-RULE HOLDOUT ANALYSIS ---
+Rule                                     Tier      Full%  Hold%  ±std      Δ     n Status      
+----------------------------------------------------------------------------------------------------
+  inverse_indication                     FILTER    22.4%  37.9% ±27.0 +15.5      5 GENUINE
+  default                                FILTER    20.8%  13.7% ± 1.0  -7.1   1791 degraded
+  complication_non_validated             FILTER    21.1%   3.3% ± 4.3 -17.8     10 OVERFITTED?
+  cross_domain_isolated                  FILTER    11.3%  10.7% ± 1.4  -0.6     65 GENUINE
+  base_to_complication                   FILTER    37.5%  10.0% ±10.0 -27.5      6 OVERFITTED?
+  cancer_no_gt                           FILTER     5.8%   7.1% ± 3.7  +1.3     72 GENUINE
+  corticosteroid_iatrogenic              FILTER    16.7%  37.9% ±37.8 +21.2      6 GENUINE
+  cancer_only_non_cancer                 FILTER    14.3%   3.6% ± 6.2 -10.7      8 degraded
+  statin_cv_event                        GOLDEN    60.0%   0.0% ± 0.0 -60.0      0 small-n
+  metabolic_hierarchy_lipid              GOLDEN    81.5%  53.5% ±17.8 -28.0     15 OVERFITTED?
+  neurological_hierarchy_epilepsy        GOLDEN   100.0%   0.0% ± 0.0 -100.0      0 OVERFITTED?
+  neurological_hierarchy_alzheimers      GOLDEN   100.0%   0.0% ± 0.0 -100.0      0 small-n
+  metabolic_hierarchy_obesity            GOLDEN   100.0%   0.0% ± 0.0 -100.0      0 small-n
+  neurological_hierarchy_neuropathy      GOLDEN    50.0%   0.0% ± 0.0 -50.0      0 small-n
+  cardiovascular_hierarchy_heart_failure HIGH      50.0%   0.0% ± 0.0 -50.0      1 small-n
+  incoherent_demotion                    HIGH      38.1%  54.0% ± 5.7 +15.9     72 GENUINE
+  cardiovascular_hierarchy_hypertension  HIGH      86.5%  38.0% ±38.8 -48.5      6 OVERFITTED?
+  comp_to_base_high_87                   HIGH      57.1%  33.9% ±40.8 -23.2      6 OVERFITTED?
+  metabolic_hierarchy_diabetes           HIGH      83.7%  46.2% ±41.2 -37.5      6 OVERFITTED?
+  autoimmune_hierarchy_multiple_sclerosis HIGH     100.0%   0.0% ± 0.0 -100.0      0 OVERFITTED?
+  corticosteroid_soc_promotion           HIGH      48.4%  51.5% ±11.9  +3.1     74 GENUINE
+  cardiovascular_hierarchy_atherosclerosis HIGH      83.3%   0.0% ± 0.0 -83.3      0 small-n
+  cardiovascular_hierarchy_arrhythmia    HIGH      93.2%  74.1% ± 1.3 -19.1     11 OVERFITTED?
+  infectious_hierarchy_uti               HIGH     100.0%   0.0% ± 0.0 -100.0      0 OVERFITTED?
+  cardiovascular_hierarchy_coronary      HIGH      65.6%  35.2% ± 6.5 -30.4     13 OVERFITTED?
+  respiratory                            HIGH      41.7%  42.9% ±37.2  +1.2      5 GENUINE
+  autoimmune_hierarchy_rheumatoid_arthritis HIGH      94.9%  84.9% ± 9.5 -10.0     26 degraded
+  metabolic_hierarchy_thyroid            HIGH      50.0%  38.9% ±23.2 -11.1      6 degraded
+  autoimmune_hierarchy_spondylitis       HIGH     100.0%   0.0% ± 0.0 -100.0      0 OVERFITTED?
+  autoimmune_hierarchy_lupus             HIGH     100.0%   0.0% ± 0.0 -100.0      0 OVERFITTED?
+  respiratory_hierarchy_asthma           HIGH     100.0%   0.0% ± 0.0 -100.0      0 OVERFITTED?
+  infectious_hierarchy_tuberculosis      HIGH      80.0%  71.2% ± 2.6  -8.8     10 degraded
+  autoimmune_hierarchy_colitis           HIGH      94.3%  85.7% ± 0.0  -8.6      7 degraded
+  reproductive                           HIGH      50.0%   0.0% ± 0.0 -50.0      3 small-n
+  gastrointestinal                       HIGH     100.0% 100.0% ± 0.0  +0.0      1 small-n
+  neurological                           HIGH      80.0% 100.0% ± 0.0 +20.0      1 small-n
+  respiratory_hierarchy_copd             HIGH     100.0%   0.0% ± 0.0 -100.0      0 small-n
+  infectious_hierarchy_respiratory_infection HIGH     100.0%   0.0% ± 0.0 -100.0      0 small-n
+  infectious_hierarchy_sepsis            HIGH     100.0%   0.0% ± 0.0 -100.0      0 small-n
+  autoimmune_hierarchy_scleroderma       HIGH     100.0%   0.0% ± 0.0 -100.0      0 small-n
+  broad_class_isolated                   LOW       22.6%   7.6% ± 5.3 -15.0     17 degraded
+  neurological_medium_demotion           LOW       17.9%   5.5% ± 4.5 -12.4     28 degraded
+  cardiovascular_medium_demotion         LOW       25.8%  24.9% ±19.5  -0.9     71 GENUINE
+  gastrointestinal_medium_demotion       LOW       18.4%   5.5% ± 2.8 -12.9     56 degraded
+  cancer                                 LOW       10.7%  14.9% ± 2.8  +4.2     78 GENUINE
+  immunological_medium_demotion          LOW       27.5%   7.6% ± 6.9 -19.9     19 OVERFITTED?
+  reproductive_medium_demotion           LOW       13.0%   2.9% ± 0.0 -10.1     34 degraded
+  mechanism_specific                     LOW       16.8%   9.3% ±13.2  -7.5     26 degraded
+  cv_pathway_comprehensive               MEDIUM    69.2%  40.8% ± 9.3 -28.5     16 OVERFITTED?
+  target_overlap_promotion               MEDIUM    59.5%  44.2% ± 3.2 -15.3     46 OVERFITTED?
+  cancer_same_type                       MEDIUM    45.0%  24.8% ± 4.1 -20.2    163 OVERFITTED?
+  cardiovascular                         MEDIUM    43.6%  38.3% ±22.2  -5.3     12 degraded
+  hematological                          MEDIUM    29.4%  23.7% ±21.5  -5.7     24 degraded
+  infectious_hierarchy_pneumonia         MEDIUM    80.0%  16.7% ± 0.0 -63.3      6 OVERFITTED?
+  metabolic                              MEDIUM    16.1%   8.3% ±14.4  -7.8      4 degraded
+  neurological_hierarchy_parkinsons      MEDIUM   100.0%   0.0% ± 0.0 -100.0      0 small-n
+  highly_repurposable                    MEDIUM    12.5%   0.0% ± 0.0 -12.5      2 small-n
+  neurological_hierarchy_migraine        MEDIUM   100.0%   0.0% ± 0.0 -100.0      0 small-n
+
+--- OVERFITTED RULES (holdout drops >15pp, n>=10) ---
+  complication_non_validated: Full=21.1% → Holdout=3.3% (Δ=-17.8pp, n=76)
+  base_to_complication: Full=37.5% → Holdout=10.0% (Δ=-27.5pp, n=32)
+  metabolic_hierarchy_lipid: Full=81.5% → Holdout=53.5% (Δ=-28.0pp, n=65)
+  neurological_hierarchy_epilepsy: Full=100.0% → Holdout=0% (Δ=-100.0pp, n=16)
+  cardiovascular_hierarchy_hypertension: Full=86.5% → Holdout=38.0% (Δ=-48.6pp, n=37)
+  comp_to_base_high_87: Full=57.1% → Holdout=33.9% (Δ=-23.2pp, n=21)
+  metabolic_hierarchy_diabetes: Full=83.7% → Holdout=46.2% (Δ=-37.5pp, n=49)
+  autoimmune_hierarchy_multiple_sclerosis: Full=100.0% → Holdout=0% (Δ=-100.0pp, n=15)
+  cardiovascular_hierarchy_arrhythmia: Full=93.2% → Holdout=74.1% (Δ=-19.1pp, n=44)
+  infectious_hierarchy_uti: Full=100.0% → Holdout=0% (Δ=-100.0pp, n=16)
+  cardiovascular_hierarchy_coronary: Full=65.6% → Holdout=35.2% (Δ=-30.4pp, n=32)
+  autoimmune_hierarchy_spondylitis: Full=100.0% → Holdout=0% (Δ=-100.0pp, n=20)
+  autoimmune_hierarchy_lupus: Full=100.0% → Holdout=0% (Δ=-100.0pp, n=14)
+  respiratory_hierarchy_asthma: Full=100.0% → Holdout=0% (Δ=-100.0pp, n=20)
+  immunological_medium_demotion: Full=27.5% → Holdout=7.6% (Δ=-19.9pp, n=69)
+  cv_pathway_comprehensive: Full=69.2% → Holdout=40.8% (Δ=-28.4pp, n=104)
+  target_overlap_promotion: Full=59.5% → Holdout=44.2% (Δ=-15.3pp, n=215)
+  cancer_same_type: Full=45.0% → Holdout=24.8% (Δ=-20.2pp, n=1131)
+  infectious_hierarchy_pneumonia: Full=80.0% → Holdout=16.7% (Δ=-63.3pp, n=15)
+
+--- SUMMARY ---
+Rules tested: 58
+  GENUINE (Δ > -5pp, n>=10): 9
+  Degraded (-15pp < Δ < -5pp, n>=10): 14
+  OVERFITTED? (Δ < -15pp, n>=10): 19
+  Small sample (n<10): 16
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h393_holdout_validation.json

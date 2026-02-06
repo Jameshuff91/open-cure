@@ -145,17 +145,20 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478)
+### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h492 re-baseline, 2026-02-06):**
-- GOLDEN: 63.3% ± 23.2% holdout (286 predictions)
-- HIGH: 51.5% ± 5.3% holdout (507 predictions)
-- MEDIUM: 29.9% ± 2.8% holdout (3396 predictions)
-- LOW: 12.3% ± 1.4% holdout (2511 predictions)
-- FILTER: 8.9% ± 1.1% holdout (6569 predictions)
-- **NOTE:** Re-baselined from h492. Previous CLAUDE.md values (67%, 60.8%, 32.1%) were stale from h478, before h490/h505/h487/h488/h485 code changes. Full-data inflated; use HOLDOUT only.
+**Tier System (h520 update, 2026-02-06):**
+- GOLDEN: 62.6% ± 8.1% holdout (286 predictions)
+- HIGH: 53.8% ± 2.6% holdout (840 predictions)
+- MEDIUM: 31.1% ± 1.6% holdout (3063 predictions)
+- LOW: 13.7% ± 0.4% holdout (2511 predictions)
+- FILTER: 9.7% ± 0.6% holdout (6922 predictions)
+- **h520:** Corticosteroid SOC promotion: 333 predictions MEDIUM→HIGH for autoimmune/dermatological/respiratory/ophthalmic categories. HIGH +2.3pp, MEDIUM +1.2pp.
+- **NOTE:** Full-data inflated; use HOLDOUT only.
 
-**h478 (LATEST):** GT sync: expanded_ground_truth.json was missing 1503 pairs from production GT. All holdout numbers improved ~7-8pp.
+**h520:** Corticosteroid SOC promotion for non-hematological categories. Per-class holdout: dermatological 58%, respiratory 61%, autoimmune 46%, ophthalmic 34%, hematological 19% (excluded). Non-hematological = 50.1% holdout ≈ HIGH. 333 predictions promoted.
+
+**h478:** GT sync: expanded_ground_truth.json was missing 1503 pairs from production GT. All holdout numbers improved ~7-8pp.
 
 **h497:** Standard GOLDEN (62.2% holdout) ≈ Hierarchy GOLDEN (70.3%), NOT significant (p>0.35). No demotion needed.
 **h501:** Fixed kNN non-determinism: drug_id tiebreaker for tied scores. Predictions now reproducible across processes.

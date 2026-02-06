@@ -1,6 +1,51 @@
 # Research Loop Progress
 
-## Current Session: h508/h481/h518/h516 - Self-Ref + Literature Status + SOC Holdout (2026-02-06)
+## Current Session: h520 - SOC Drug Class Precision Heterogeneity (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h520: SOC Drug Class Precision Heterogeneity - **VALIDATED** (corticosteroid promotion implemented)
+
+### Key Findings
+
+#### 1. SOC Signal is Driven by Corticosteroids (h520)
+- Per-class holdout analysis across all 17 SOC drug classes in MEDIUM tier
+- **Corticosteroids**: 46.1% holdout (n=96/seed, p=0.0065) — dominant signal
+- **Cancer drugs**: 34.0% holdout (n=63/seed, p=0.25) — not significant
+- All other classes: tiny-n (<10/seed), not individually actionable
+
+#### 2. Category Breakdown for Corticosteroid MEDIUM
+- **Dermatological**: 58.0% holdout (strong)
+- **Respiratory**: 61.1% holdout (strong, small n=9)
+- **Autoimmune**: 45.5% holdout (solid)
+- **Ophthalmic**: 34.2% holdout (moderate)
+- **Hematological**: 19.1% holdout (weak — excluded from promotion)
+
+#### 3. Promotion Implemented: Corticosteroid MEDIUM → HIGH
+- Non-hematological corticosteroid MEDIUM predictions promoted to HIGH
+- 333 predictions moved
+- **HIGH**: 51.5% → 53.8% (+2.3pp)
+- **MEDIUM**: 29.9% → 31.1% (+1.2pp)
+- Both tiers improved — clean win
+- Code: `_CORTICOSTEROID_SOC_PROMOTE_CATEGORIES` + `_CORTICOSTEROID_LOWER` in production_predictor.py
+
+### New Hypotheses Generated (4)
+- h521: Cancer drug same-category SOC promotion (P4, medium)
+- h522: Hematological corticosteroid demotion MEDIUM→LOW (P4, low)
+- h523: Anticoagulant SOC signal in LOW tier (P5, low)
+- h524: DMARD SOC signal across tiers (P5, medium)
+
+### Recommended Next Steps
+1. **h522**: Demote hematological corticosteroid MEDIUM→LOW (quick, likely +0.5pp MEDIUM)
+2. **h521**: Investigate cancer_drugs MEDIUM stratification by cancer subtype
+3. **h486**: Systematic adverse effect mining from SIDER (high effort but high safety impact)
+
+---
+
+## Previous Session: h508/h481/h518/h516 - Self-Ref + Literature Status + SOC Holdout (2026-02-06)
 
 ### Session Summary
 
