@@ -14,39 +14,39 @@
       ]
     },
     "HIGH": {
-      "full_precision": 68.9,
-      "holdout_mean": 59.5,
-      "holdout_std": 6.2,
-      "delta": -9.4,
+      "full_precision": 68.5,
+      "holdout_mean": 58.9,
+      "holdout_std": 6.0,
+      "delta": -9.6,
       "seed_values": [
         53.7,
-        60.3,
-        69.6,
-        61.3,
-        52.4
+        59.6,
+        68.9,
+        60.4,
+        51.9
       ]
     },
     "MEDIUM": {
-      "full_precision": 49.1,
-      "holdout_mean": 35.8,
-      "holdout_std": 2.8,
-      "delta": -13.3,
+      "full_precision": 49.7,
+      "holdout_mean": 36.6,
+      "holdout_std": 2.9,
+      "delta": -13.1,
       "seed_values": [
-        33.2,
-        36.0,
-        32.2,
-        39.2,
-        38.6
+        33.6,
+        36.9,
+        33.1,
+        40.0,
+        39.6
       ]
     },
     "LOW": {
-      "full_precision": 22.0,
+      "full_precision": 22.1,
       "holdout_mean": 15.5,
       "holdout_std": 2.4,
-      "delta": -6.5,
+      "delta": -6.6,
       "seed_values": [
         16.5,
-        14.5,
+        14.6,
         15.3,
         19.3,
         12.0
@@ -58,7 +58,7 @@
       "holdout_std": 1.3,
       "delta": -6.6,
       "seed_values": [
-        8.4,
+        8.5,
         10.8,
         9.9,
         11.4,
@@ -319,11 +319,11 @@
     },
     "cardiovascular_hierarchy_coronary": {
       "tier": "HIGH",
-      "full_precision": 75.0,
+      "full_precision": 78.1,
       "full_n": 32,
-      "holdout_mean": 61.9,
-      "holdout_std": 4.8,
-      "delta": -13.1,
+      "holdout_mean": 65.5,
+      "holdout_std": 1.2,
+      "delta": -12.6,
       "mean_n": 13.0,
       "status": "degraded"
     },
@@ -389,13 +389,13 @@
     },
     "infectious_hierarchy_tuberculosis": {
       "tier": "HIGH",
-      "full_precision": 85.2,
-      "full_n": 27,
-      "holdout_mean": 75.0,
-      "holdout_std": 6.2,
-      "delta": -10.2,
-      "mean_n": 7.0,
-      "status": "degraded"
+      "full_precision": 77.8,
+      "full_n": 9,
+      "holdout_mean": 25.0,
+      "holdout_std": 43.3,
+      "delta": -52.8,
+      "mean_n": 1.0,
+      "status": "small-n"
     },
     "autoimmune_hierarchy_colitis": {
       "tier": "HIGH",
@@ -551,9 +551,9 @@
       "tier": "LOW",
       "full_precision": 10.0,
       "full_n": 340,
-      "holdout_mean": 14.2,
-      "holdout_std": 2.6,
-      "delta": 4.2,
+      "holdout_mean": 14.4,
+      "holdout_std": 2.4,
+      "delta": 4.4,
       "mean_n": 73.2,
       "status": "GENUINE"
     },
@@ -649,11 +649,11 @@
     },
     "cancer_same_type": {
       "tier": "MEDIUM",
-      "full_precision": 49.6,
+      "full_precision": 49.9,
       "full_n": 807,
-      "holdout_mean": 29.4,
-      "holdout_std": 4.9,
-      "delta": -20.2,
+      "holdout_mean": 29.6,
+      "holdout_std": 4.6,
+      "delta": -20.3,
       "mean_n": 118.4,
       "status": "OVERFITTED?"
     },
@@ -665,6 +665,16 @@
       "holdout_std": 22.2,
       "delta": -5.3,
       "mean_n": 12.4,
+      "status": "degraded"
+    },
+    "infectious_cs_tb_demotion": {
+      "tier": "MEDIUM",
+      "full_precision": 88.9,
+      "full_n": 18,
+      "holdout_mean": 83.3,
+      "holdout_std": 0.0,
+      "delta": -5.6,
+      "mean_n": 6.0,
       "status": "degraded"
     },
     "infectious_hierarchy_pneumonia": {
@@ -743,10 +753,10 @@
     "golden_holdout_precision": 69.9,
     "golden_pass": true,
     "tier_ordering_correct": true,
-    "n_rules_tested": 65,
+    "n_rules_tested": 66,
     "n_genuine": 13,
     "n_overfitted": 19,
     "n_degraded": 17,
-    "n_small_sample": 16
+    "n_small_sample": 17
   }
 }

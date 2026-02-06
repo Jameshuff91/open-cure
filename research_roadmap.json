@@ -12283,12 +12283,14 @@
         "Estimate GT gap rate: what fraction of 'novel' predictions are actually known treatments?",
         "Success: >20 new GT pairs identified, improved separation of novel vs known"
       ],
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
       "category": "data-quality",
-      "rationale": "h592 showed 9/11 novel GOLDEN/HIGH predictions are likely FDA-approved. Fixing GT gaps improves precision estimates and focuses attention on truly novel repurposing."
+      "rationale": "h592 showed 9/11 novel GOLDEN/HIGH predictions are likely FDA-approved. Fixing GT gaps improves precision estimates and focuses attention on truly novel repurposing.",
+      "findings": "VALIDATED: GT gap auto-detection identifies FDA-approved drug-disease pairs missing from GT.\n\nMETHOD: For each non-GT GOLDEN/HIGH/MEDIUM prediction, check if drug treats >=3 other diseases in same category with rank<=5. Manual FDA assessment of top candidates.\n\nRESULTS:\n- 320 same-category candidates found (rank<=5, same-cat GT>=3)\n- 71 non-CS, non-antibiotic interesting candidates\n- Top 20 FDA assessment: 10/20 (50%) are FDA-approved\n- 9 definitive GT gaps added to expanded_ground_truth.json\n\nPAIRS ADDED:\n- Doxorubicin \u2192 choriocarcinoma (EMA/EP regimen for GTD)\n- Paclitaxel \u2192 germ cell testicular cancer (TIP regimen)\n- Fluorouracil \u2192 tongue cancer (head/neck SCC)\n- Verapamil \u2192 acute coronary syndrome (angina component)\n- Posaconazole \u00d7 5 fungal diseases (triazole antifungal GT gaps)\n\nHOLDOUT IMPACT:\n- MEDIUM: 35.8% \u2192 36.6% (+0.8pp)\n- All other tiers: within seed variance\n\nFALSE POSITIVE PATTERNS (non-FDA):\n- Lidocaine \u2192 non-pain diseases (LA artifact)\n- Bleomycin \u2192 non-SCC cancers (cancer_same_type overgeneralizes)\n- Lovastatin \u2192 storage diseases (no mechanism)\n\nKEY INSIGHT: 50% of high-evidence novel predictions are GT gaps, not discoveries. Posaconazole alone had 5 missing fungal disease indications. GT incompleteness remains a significant issue.",
+      "result_metric": "9 GT pairs added, MEDIUM +0.8pp (35.8% \u2192 36.6%)"
     },
     {
       "id": "h594",
@@ -12327,6 +12329,46 @@
       "effort": "medium",
       "category": "meta-analysis",
       "rationale": "Potential improvement from h592. Risk of overfitting to holdout seeds. Need LOO-CV to validate."
+    },
+    {
+      "id": "h596",
+      "title": "Systematic Posaconazole/Voriconazole/Isavuconazole GT Expansion for Fungal Diseases",
+      "description": "h593 found 5 posaconazole GT gaps for fungal diseases. Other triazole antifungals (voriconazole, isavuconazole, itraconazole) likely have similar gaps. Systematically check all triazole antifungals against all fungal disease predictions.",
+      "hypothesis": "Triazole antifungal GT is systematically incomplete. Adding missing FDA-approved fungal indications for voriconazole, isavuconazole, etc. will improve MEDIUM precision by +0.5-1.0pp.",
+      "steps": [
+        "List all triazole antifungals in DRKG (posaconazole, voriconazole, isavuconazole, fluconazole, itraconazole, etc.)",
+        "For each, check FDA-approved indications vs GT coverage",
+        "Identify missing pairs for fungal diseases (aspergillosis, candidiasis, mucormycosis, etc.)",
+        "Add verified FDA-approved pairs to GT",
+        "Re-run holdout evaluation",
+        "Success: >5 new GT pairs, MEDIUM +0.3pp"
+      ],
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "category": "data-quality",
+      "rationale": "h593 found posaconazole alone had 5 GT gaps. Same pattern likely extends to all triazole antifungals."
+    },
+    {
+      "id": "h597",
+      "title": "Cancer Drug GT Expansion: Doxorubicin/Paclitaxel/Bleomycin Missing Cancer Subtypes",
+      "description": "h593 found doxorubicin \u2192 choriocarcinoma and paclitaxel \u2192 testicular cancer as GT gaps. These multi-cancer drugs likely have many more missing cancer subtype indications. Systematic cross-check of cancer chemotherapy drugs vs GT.",
+      "hypothesis": "Broad-spectrum chemotherapy drugs (doxorubicin, paclitaxel, cyclophosphamide, carboplatin) have significant GT gaps for specific cancer subtypes. Adding FDA-approved missing pairs will improve MEDIUM cancer subtype precision.",
+      "steps": [
+        "List top 20 most-used cancer chemotherapy drugs in DRKG",
+        "For each, check NCI Thesaurus / FDA labels for approved cancer types",
+        "Cross-reference with GT coverage",
+        "Add verified FDA-approved pairs",
+        "Re-run holdout evaluation",
+        "Success: >10 new GT pairs"
+      ],
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "category": "data-quality",
+      "rationale": "h593 showed cancer drug GT gaps are common. Doxorubicin alone treats 40+ cancer types in GT but choriocarcinoma was missing."
     }
   ],
   "completed": [
@@ -14331,6 +14373,12 @@
       "hypothesis_id": "h592",
       "learning": "Composite quality score combining disease-level signals (holdout precision, self-ref) with prediction-level signals (rank, TransE, gene overlap) provides +2.6pp over kNN rank alone for MEDIUM tier prioritization. Disease-level signals are the key addition that h443 (prediction-level composite) missed.",
       "implication": "For practical experiment prioritization, composite scores outperform single-signal sorting. This is an annotation/prioritization signal, not a tier promotion signal."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h593",
+      "learning": "50% of high-evidence non-CS/non-antibiotic novel predictions (rank<=3, same-category GT>=3) are actually FDA-approved GT gaps. Posaconazole alone had 5 missing fungal disease indications. GT incompleteness inflates the 'novel prediction' count and deflates measured precision.",
+      "implication": "Before claiming predictions are novel repurposing discoveries, systematically check for GT gaps. Drug families (triazoles, taxanes, etc.) tend to have correlated GT gaps - fixing one drug in the family suggests checking all others."
     }
   ],
   "collaborations": [

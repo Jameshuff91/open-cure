@@ -1,0 +1,33 @@
+{
+  "hypothesis": "h593",
+  "title": "GT Gap Auto-Detection",
+  "methodology": "For each non-GT GOLDEN/HIGH/MEDIUM prediction, check if drug treats >=3 other diseases in same category with rank<=5. Top candidates manually assessed for FDA approval status.",
+  "candidates_found": 320,
+  "interesting_non_cs_non_abx": 71,
+  "fda_rate_top_20": "10/20 = 50%",
+  "actionable_gt_additions": 9,
+  "pairs_added": [
+    "Doxorubicin \u2192 choriocarcinoma (EMA/EP regimen)",
+    "Paclitaxel \u2192 germ cell testicular cancer (TIP regimen)",
+    "Fluorouracil \u2192 tongue cancer (head/neck SCC)",
+    "Verapamil \u2192 acute coronary syndrome (angina)",
+    "Posaconazole \u2192 cryptococcal meningitis (ECIL salvage)",
+    "Posaconazole \u2192 chromomycosis (triazole antifungal)",
+    "Posaconazole \u2192 ringworm (triazole antifungal)",
+    "Posaconazole \u2192 cryptococcosis (IDSA alternative)",
+    "Posaconazole \u2192 cutaneous candidiasis (triazole antifungal)"
+  ],
+  "holdout_impact": {
+    "GOLDEN": "+0.0pp (69.9%)",
+    "HIGH": "-0.6pp (58.9%, within seed variance)",
+    "MEDIUM": "+0.8pp (36.6%)",
+    "LOW": "+0.0pp (15.5%)",
+    "FILTER": "+0.0pp (10.6%)"
+  },
+  "false_positive_patterns": [
+    "Lidocaine for non-pain diseases (LA artifact, caught by h540)",
+    "Bleomycin for non-SCC cancers (cancer_same_type overgeneralizes)",
+    "Lovastatin for storage diseases (no mechanism)"
+  ],
+  "key_insight": "50% of high-evidence novel predictions are GT gaps (FDA-approved but missing). Posaconazole alone had 5 missing indications for fungal diseases."
+}

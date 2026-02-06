@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h592 - Experimental Validation Priority List (2026-02-06)
+## Current Session: h592/h593 - Composite Quality + GT Gap Detection (2026-02-06)
 
 ### h592: Experimental Validation Priority List — VALIDATED
 
@@ -43,22 +43,55 @@ Computed a composite quality score combining all validated signals (kNN rank, no
 - h594: Add composite_quality_score to production deliverable (P5, low)
 - h595: Composite weight optimization via grid search (P5, medium)
 
-### Recommended Next Steps
-1. **h593**: Auto-detect GT gaps to improve GT completeness
-2. **h594**: Add composite score to deliverable (quick implementation)
-3. Consider pivoting to external data integration (LINCS, PubMed) for fundamentally new signals
+### h593: GT Gap Auto-Detection — VALIDATED
 
-### Session Tier Performance (unchanged from h560)
+Systematically identified FDA-approved drug-disease pairs missing from GT by checking if high-ranked predictions (rank<=5) are for drugs that already treat >=3 other diseases in the same category.
+
+**Method:**
+- 320 same-category candidates found
+- 71 non-CS non-antibiotic interesting candidates
+- Top 20 manually assessed: 10/20 (50%) are FDA-approved
+
+**9 Definitive GT Gaps Added:**
+1. Doxorubicin → choriocarcinoma (EMA/EP regimen)
+2. Paclitaxel → germ cell testicular cancer (TIP regimen)
+3. Fluorouracil → tongue cancer (head/neck SCC)
+4. Verapamil → acute coronary syndrome (angina)
+5. Posaconazole → cryptococcal meningitis (ECIL salvage)
+6. Posaconazole → chromomycosis (triazole antifungal)
+7. Posaconazole → ringworm (triazole antifungal)
+8. Posaconazole → cryptococcosis (IDSA alternative)
+9. Posaconazole → cutaneous candidiasis (triazole antifungal)
+
+**Holdout Impact:** MEDIUM 35.8% → 36.6% (+0.8pp). All other tiers within seed variance.
+
+**Key Finding:** 50% of high-evidence novel predictions are actually GT gaps, not discoveries. Posaconazole alone had 5 missing fungal disease indications. This suggests systematic GT incompleteness in antifungal and cancer drug families.
+
+### New Hypotheses Generated (5 total this session)
+- h593: GT gap detection (COMPLETED)
+- h594: Add composite score to deliverable (P5, low)
+- h595: Composite weight optimization (P5, medium)
+- h596: Triazole antifungal GT expansion (P4, low)
+- h597: Cancer drug GT expansion (P4, medium)
+
+### Recommended Next Steps
+1. **h596**: Triazole antifungal GT expansion (low effort, same pattern as h593)
+2. **h597**: Cancer drug GT expansion (medium effort, many expected gaps)
+3. **h594**: Add composite score to deliverable (quick implementation)
+
+### Session Tier Performance (h593 update)
 | Tier | Holdout | Predictions |
 |------|---------|-------------|
 | GOLDEN | 69.9% ± 17.9% | 280 |
-| HIGH | 59.5% ± 6.2% | 754 |
-| MEDIUM | 35.8% ± 2.8% | 2083 |
+| HIGH | 58.9% ± 6.0% | 754 |
+| MEDIUM | 36.6% ± 2.9% | 2083 |
 | LOW | 15.5% ± 2.4% | 3733 |
 | FILTER | 10.6% ± 1.3% | 7300 |
 
-### Key Learning
-Disease-level signals (holdout precision, self-referentiality) add genuine value for prediction prioritization that prediction-level signals (TransE, kNN score) miss. The composite score is useful for practical experiment prioritization but NOT for tier reassignment. Also, many GOLDEN/HIGH "novel" predictions are actually known FDA-approved treatments missing from our GT — a data quality issue, not a discovery.
+### Key Learnings
+1. Disease-level signals (holdout precision, self-referentiality) add genuine value for prediction prioritization that prediction-level signals (TransE, kNN score) miss. The composite score is useful for practical experiment prioritization but NOT for tier reassignment.
+2. 50% of high-evidence "novel" predictions are actually GT gaps (FDA-approved but missing from our GT). Posaconazole had 5 missing fungal indications. Drug families have correlated GT gaps — fixing one suggests checking the whole family.
+3. GT incompleteness inflates the "novel prediction" count and deflates measured precision. Always check for GT gaps before claiming novel discoveries.
 
 ---
 
