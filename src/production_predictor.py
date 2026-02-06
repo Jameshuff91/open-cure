@@ -987,11 +987,29 @@ TARGET_DOMINANT_CATEGORIES: set[str] = set()  # Was {'cardiovascular', 'autoimmu
 
 # h388: Target overlap tier promotion thresholds
 # Use drug-disease target overlap to promote tier WITHOUT changing rankings.
-# HIGH + overlap>=3 → GOLDEN (64.6% precision vs 38.4% GOLDEN baseline)
-# LOW + overlap>=1 → MEDIUM (37.9% precision vs 19.9% MEDIUM baseline)
-# GOLDEN +2.1pp, MEDIUM +1.4pp, R@30 unchanged.
+# HIGH + overlap>=3 + eligible rule → GOLDEN (69.5-91.3% precision vs 38.4% baseline)
+# LOW + overlap>=1 → MEDIUM (37.9% precision vs 19.9% baseline)
+# Guard: HIGH→GOLDEN only for rules with demonstrated good precision.
+# 'default' HIGH = 0% precision when promoted (broad-spectrum drugs like corticosteroids).
 TARGET_OVERLAP_PROMOTE_HIGH_TO_GOLDEN = 3  # Minimum overlap for HIGH→GOLDEN
 TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM = 1   # Minimum overlap for LOW→MEDIUM
+# Rules eligible for HIGH→GOLDEN promotion (demonstrated >33% precision with overlap>=3)
+TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES: set[str] = {
+    'cv_pathway_comprehensive',
+    'cardiovascular_hierarchy_hypertension',
+    'cardiovascular_hierarchy_arrhythmia',
+    'cardiovascular_hierarchy_coronary',
+    'comp_to_base_high_87',
+    'autoimmune_hierarchy_rheumatoid_arthritis',
+    'autoimmune_hierarchy_multiple_sclerosis',
+    'autoimmune_hierarchy_spondylitis',
+    'autoimmune_hierarchy_lupus',
+    'autoimmune_hierarchy_colitis',
+    'respiratory_hierarchy_asthma',
+    'respiratory_hierarchy_copd',
+    'infectious_hierarchy_tuberculosis',
+    'metabolic_hierarchy_thyroid',
+}
 
 # h169/h148: Expanded category keywords to reduce 'other' bucket
 # h148 reduced 'other' from 44.9% to ~25% with comprehensive keyword expansion
@@ -3061,11 +3079,12 @@ class DrugRepurposingPredictor:
                     )
 
                     # h388: Target overlap tier promotion (no rank change)
+                    # Guard: HIGH→GOLDEN only for rules with demonstrated precision
                     target_overlap = self._get_target_overlap_count(drug_id, disease_id)
                     if (tier == ConfidenceTier.HIGH
-                            and target_overlap >= TARGET_OVERLAP_PROMOTE_HIGH_TO_GOLDEN):
+                            and target_overlap >= TARGET_OVERLAP_PROMOTE_HIGH_TO_GOLDEN
+                            and cat_specific in TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES):
                         tier = ConfidenceTier.GOLDEN
-                        cat_specific = cat_specific or 'target_overlap_promotion'
                     elif (tier == ConfidenceTier.LOW
                             and target_overlap >= TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM):
                         tier = ConfidenceTier.MEDIUM
