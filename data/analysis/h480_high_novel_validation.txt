@@ -1,0 +1,131 @@
+h480: HIGH Novel Prediction Literature Validation - Top 20 HIGH Novel Predictions
+================================================================================
+Date: 2026-02-06
+Method: Web search of PubMed, ClinicalTrials.gov, FDA labels, clinical guidelines
+
+Categories:
+  GT_GAP    = Drug IS used for this disease, just missing from our ground truth
+  PROMISING = Clinical evidence exists (trials, case reports) but not standard-of-care
+  WEAK      = Limited/uncertain evidence, theoretical basis only
+  HARMFUL   = Drug contraindicated or causes the condition
+  NO_EVIDENCE = No evidence for this specific drug-disease pair
+
+================================================================================
+RESULTS
+================================================================================
+
+#  Rank  Drug                     Disease                                   Category          Verdict        Evidence Summary
+-- ----  -----------------------  ----------------------------------------  ----------------  ----------     ----------------------------------------
+1  R1    Methylprednisolone       Polyarticular JIA                         autoimmune        GT_GAP         IV methylprednisolone pulse used for JIA. Intra-articular corticosteroids are first-line per ACR. Systemic for severe cases.
+2  R1    Methylprednisolone       Crohn's disease                           autoimmune        GT_GAP         IV methylprednisolone 60mg/day is standard for severe Crohn's. Corticosteroids remain one of the most potent drugs to induce remission.
+3  R1    Dexamethasone            Extrapulmonary TB                         infectious        GT_GAP         Adjunctive dexamethasone IMPROVES SURVIVAL in TB meningitis (NEJM). WHO recommends for CNS TB. Also used for miliary TB.
+4  R1    Dexamethasone            Celiac disease                            gastrointestinal  PROMISING      Corticosteroids used for refractory celiac and celiac crisis. Not first-line (GFD is). Steroids comparable to GFD in studies.
+5  R1    Erythromycin             Bacterial meningitis                      infectious        WEAK           Erythromycin NOT recommended for meningitis. Poor CNS penetration. Standard is 3rd-gen cephalosporins (ceftriaxone/cefotaxime).
+6  R1    Ofloxacin                Sinusitis                                 respiratory       GT_GAP         Fluoroquinolones effective for sinusitis (94% cure rate). FDA-approved class. However, reserved for no-alternative patients due to safety.
+7  R1    Minocycline              Peritonitis                               gastrointestinal  WEAK           Limited evidence for minocycline specifically in peritonitis. Other antibiotics preferred.
+8  R1    Prednisone               Chronic IBD diarrhea                      gastrointestinal  GT_GAP         Prednisone IS first-line for inducing remission in moderate-severe IBD. Directly addresses inflammatory diarrhea.
+9  R1    Dexamethasone            Stomatitis                                gastrointestinal  GT_GAP         Dexamethasone mouthwash IS standard treatment for oral stomatitis/mucositis. Well-established.
+10 R1    Prednisone               Chronic kidney disease                    renal             PROMISING      Corticosteroids used for IgA nephropathy, lupus nephritis, minimal change disease. Not for CKD broadly - depends on underlying cause.
+11 R1    Dexamethasone            Primary biliary cholangitis               gastrointestinal  WEAK           Limited evidence. Prednisolone trial showed better hepatic outcomes but budesonide preferred. Reserved for highly selected cases.
+12 R1    Famotidine               Chronic peptic ulcer disease              gastrointestinal  GT_GAP         FDA-approved for duodenal and gastric ulcers. H2 blocker. Heals active ulcers. Clear GT gap.
+13 R1    Bromocriptine            Dyskinesia                                neurological      PROMISING      Dopamine D2 agonist with some evidence for tardive dyskinesia but mixed results. Not first-line.
+14 R1    Dexamethasone            Chronic pancreatitis                      gastrointestinal  WEAK           No strong evidence for corticosteroids in chronic pancreatitis. Used for autoimmune pancreatitis (type 1) which is different.
+15 R2    Liothyronine             Congenital hypothyroidism                 metabolic         PROMISING      Liothyronine (T3) used as add-on to levothyroxine in selected cases with central resistance. Not first-line.
+16 R2    Levothyroxine            Hyperthyroidism                           metabolic         HARMFUL        Levothyroxine is CONTRAINDICATED in hyperthyroidism. It treats HYPOthyroidism. Giving T4 to hyperthyroid patient is dangerous.
+17 R2    Levofloxacin             Extrapulmonary TB                         infectious        PROMISING      Fluoroquinolones (including levofloxacin) are second-line TB drugs. WHO recommends for MDR-TB. Evidence for efficacy.
+18 R2    Minocycline              Malaria                                   infectious        PROMISING      Tetracyclines active against Plasmodium. Historical evidence for minocycline-quinine combo. Doxycycline preferred in practice.
+19 R2    Diazoxide                Hyperglycemia                             metabolic         HARMFUL        Diazoxide CAUSES hyperglycemia (inhibits insulin). Used for HYPOglycemia. This prediction is INVERSE.
+20 R2    Betamethasone            Primary biliary cholangitis               gastrointestinal  WEAK           Same as dexamethasone (#11). Very limited evidence for corticosteroids in PBC.
+
+================================================================================
+SUMMARY STATISTICS
+================================================================================
+
+Total validated: 20
+
+Category breakdown:
+  GT_GAP       :  7 (35%)  - Drug already used for disease, missing from ground truth
+  PROMISING    :  6 (30%)  - Clinical evidence exists, not yet standard-of-care
+  WEAK         :  5 (25%)  - Limited/uncertain evidence
+  HARMFUL      :  2 (10%)  - Drug contraindicated or causes the condition
+  NO_EVIDENCE  :  0 ( 0%)
+
+Combined GT_GAP + PROMISING = 13/20 (65%) have clinical support
+Combined WEAK + NO_EVIDENCE = 5/20 (25%) lack strong evidence
+HARMFUL = 2/20 (10%) - levothyroxine→hyperthyroidism, diazoxide→hyperglycemia
+
+================================================================================
+COMPARISON: GOLDEN vs HIGH
+================================================================================
+
+| Metric                    | GOLDEN (h473) | HIGH (h480) | Δ          |
+|---------------------------|---------------|-------------|------------|
+| GT_GAP                    | 55%           | 35%         | -20pp      |
+| PROMISING                 | 20%           | 30%         | +10pp      |
+| WEAK                      | 15%           | 25%         | +10pp      |
+| NO_EVIDENCE               | 5%            | 0%          | -5pp       |
+| HARMFUL                   | 0%            | 10%         | +10pp      |
+| GT_GAP + PROMISING        | 75%           | 65%         | -10pp      |
+| WEAK + NO_EVIDENCE        | 20%           | 25%         | +5pp       |
+
+KEY DIFFERENCES:
+1. HIGH has FEWER GT gaps (35% vs 55%) - more diverse drug-disease pairs
+2. HIGH has MORE promising (30% vs 20%) - more genuinely novel predictions
+3. HIGH has 2 HARMFUL predictions (10%) vs 0 for GOLDEN - safety concern
+4. Overall clinical support: HIGH (65%) < GOLDEN (75%) - expected from tier hierarchy
+
+================================================================================
+CRITICAL FINDINGS
+================================================================================
+
+1. **Two HARMFUL predictions in HIGH tier:**
+   - Levothyroxine → hyperthyroidism: INVERSE indication (treats hypothyroidism, contraindicated in hyper)
+   - Diazoxide → hyperglycemia: CAUSES hyperglycemia (treats hypoglycemia)
+   These represent a SAFETY CONCERN in the tier system.
+
+2. **Root cause of harmful predictions:**
+   Both are hierarchy rule matches: metabolic_hierarchy_thyroid and metabolic_hierarchy_diabetes.
+   The hierarchy maps levothyroxine from hypothyroidism→hyperthyroidism (same organ, opposite condition)
+   and diazoxide from hypoglycemia→hyperglycemia (opposite effect).
+   **The hierarchy rules don't account for INVERSE drug-disease relationships.**
+
+3. **HIGH tier is more diverse than GOLDEN:**
+   - GI diseases prominent: celiac, PBC, stomatitis, pancreatitis, peritonitis
+   - Infectious diseases: TB, meningitis, malaria, sinusitis
+   - Metabolic: thyroid, diabetes
+   - GOLDEN was dominated by autoimmune/dermatological
+
+4. **Antibiotic predictions are mixed:**
+   - Ofloxacin→sinusitis: GT gap (fluoroquinolones effective)
+   - Levofloxacin→TB: promising (second-line TB drug)
+   - Erythromycin→meningitis: weak (poor CNS penetration)
+   - Minocycline→peritonitis: weak
+
+5. **Corticosteroid predictions still prevalent but more uncertain:**
+   - Dexamethasone→celiac: promising (refractory)
+   - Dexamethasone→PBC: weak
+   - Dexamethasone→pancreatitis: weak
+   - Fewer obvious GT gaps than GOLDEN corticosteroids
+
+================================================================================
+ACTIONABLE RECOMMENDATIONS
+================================================================================
+
+1. **URGENT: Add inverse-indication filter for thyroid and diabetes hierarchy rules**
+   - Levothyroxine → hyperthyroidism is HARMFUL (currently HIGH tier!)
+   - Diazoxide → hyperglycemia is HARMFUL (currently HIGH tier!)
+   - Need to add these as FILTER exclusions
+
+2. **Investigate all hierarchy rules for inverse-indication patterns:**
+   - metabolic_hierarchy_thyroid: check all anti-thyroid → hypothyroidism and vice versa
+   - metabolic_hierarchy_diabetes: check all insulin → hyperglycemia and vice versa
+   - Could systematically check: if drug treats condition A, filter predictions for opposite of A
+
+3. **Consider adding an "inverse_indication" safety filter:**
+   - Drugs that treat hypothyroidism should be filtered from hyperthyroidism predictions
+   - Drugs that treat hypoglycemia should be filtered from hyperglycemia predictions
+   - This is a new class of error not caught by existing confidence filters
+
+4. **HIGH tier literature support (65%) validates the system:**
+   - Matches holdout precision hierarchy: GOLDEN > HIGH
+   - 35% are GT gaps - ground truth expansion would help here too

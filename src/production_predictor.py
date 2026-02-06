@@ -635,6 +635,26 @@ CV_COMPLICATION_KEYWORDS = {'heart failure', 'stroke', 'myocardial infarction', 
 # Others: various reasons for 0% precision in evaluation
 # h397: CV_PATHWAY_EXCLUDE removed (was dead code from h384, never referenced in tier logic)
 
+# h480: Inverse-indication FILTER
+# Drugs that treat condition A should NOT be predicted for the OPPOSITE of A
+# These are HARMFUL predictions (drug causes/worsens the predicted disease)
+# Found via literature validation of HIGH novel predictions
+INVERSE_INDICATION_PAIRS = {
+    # Thyroid: anti-thyroid drugs → hypothyroidism (they CAUSE hypothyroidism)
+    'propylthiouracil': {'hypothyroidism', 'congenital hypothyroidism'},
+    'methimazole': {'hypothyroidism', 'congenital hypothyroidism'},
+    # Thyroid: thyroid hormones → hyperthyroidism (they CAUSE/worsen hyperthyroidism)
+    'levothyroxine': {'hyperthyroidism'},
+    'liothyronine': {'hyperthyroidism'},
+    # Diabetes: hyperglycemia-causing drugs → hyperglycemia/DKA
+    'diazoxide': {'hyperglycemia', 'diabetic ketoacidosis'},
+    # Diabetes: glucose → hyperglycemia
+    'd-glucose': {'hyperglycemia'},
+    'glucose': {'hyperglycemia'},
+    # Diabetes: glucagon → hyperglycemia (raises blood sugar)
+    'glucagon': {'hyperglycemia'},
+}
+
 # h280/h281: Complication vs Subtype relationship mapping
 # Complications are CAUSED BY the base disease (different treatment expected)
 # Subtypes are IS_A relationships (same treatment expected)
@@ -2365,12 +2385,31 @@ class DrugRepurposingPredictor:
         if train_frequency <= 2 and not mechanism_support:
             return ConfidenceTier.FILTER, False, None
 
-        # h153: Corticosteroids for metabolic diseases = FILTER (contraindicated)
-        # Corticosteroids cause hyperglycemia and worsen diabetes
-        if category == 'metabolic':
-            drug_lower = drug_name.lower()
-            if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
+        # h153/h476: Corticosteroids for iatrogenic conditions = FILTER
+        # Corticosteroids CAUSE these conditions (inverse indications):
+        # - Metabolic: hyperglycemia, diabetes (h153)
+        # - Dermatological: steroid rosacea (h476)
+        # - Musculoskeletal: osteoporosis, avascular necrosis (h476)
+        # - Ophthalmic: glaucoma, cataracts (h476)
+        drug_lower = drug_name.lower()
+        if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
+            if category == 'metabolic':
                 return ConfidenceTier.FILTER, False, None
+            disease_lower = disease_name.lower()
+            steroid_iatrogenic = ['rosacea', 'osteoporosis', 'avascular necrosis',
+                                  'glaucoma', 'cataract']
+            if any(iatrogen in disease_lower for iatrogen in steroid_iatrogenic):
+                return ConfidenceTier.FILTER, False, 'corticosteroid_iatrogenic'
+
+        # h480: Filter inverse-indication predictions (HARMFUL)
+        # Drugs that treat condition A predicted for the OPPOSITE of A
+        # Examples: anti-thyroid drugs→hypothyroidism, thyroid hormone→hyperthyroidism
+        #           diazoxide→hyperglycemia (it CAUSES hyperglycemia)
+        disease_lower = disease_name.lower()
+        for inv_drug, inv_diseases in INVERSE_INDICATION_PAIRS.items():
+            if inv_drug in drug_lower:
+                if any(inv_d in disease_lower for inv_d in inv_diseases):
+                    return ConfidenceTier.FILTER, False, 'inverse_indication'
 
         # h271: Filter cross-domain predictions for domain-isolated drugs (0% precision)
         # Domain-isolated drugs only treat one category, cross-domain predictions are always wrong

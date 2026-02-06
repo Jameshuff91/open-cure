@@ -145,16 +145,24 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469)
+### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480)
 
-**Tier System (h469 updated 2026-02-06):**
-- GOLDEN: 63.9% full / 62.7% ± 13.5% holdout (median 57.7%, h472: GOLDEN>HIGH not significant p=0.574)
-- HIGH: 53.2% full / 51.1% ± 6.5% holdout
+**Tier System (h480 updated 2026-02-06):**
+- GOLDEN: 64.2% full / 62.7% ± 13.5% holdout (median 57.7%, h472: GOLDEN>HIGH not significant p=0.574)
+- HIGH: 53.8% full / 51.1% ± 6.5% holdout
 - MEDIUM: 27.6% full / 23.3% ± 3.3% holdout
-- LOW: 12.3% full / 10.6% ± 1.6% holdout
-- FILTER: 11.4% full / 8.1% ± 1.0% holdout
+- LOW: 12.4% full / 10.6% ± 1.6% holdout
+- FILTER: 11.3% full / 8.1% ± 1.0% holdout
 
-**h469 (LATEST):** Parathyroid false match fix + holdout script bug fix.
+**h473/h480 (LATEST):** Literature validation of GOLDEN/HIGH novel predictions + inverse-indication safety fix.
+  - GOLDEN novels: 75% clinical support (55% GT gaps, 20% promising, 0% harmful)
+  - HIGH novels: 65% clinical support (35% GT gaps, 30% promising, 10% HARMFUL)
+  - Found 10 inverse-indication predictions (drug causes predicted disease):
+    anti-thyroid drugs→hypothyroidism, thyroid hormone→hyperthyroidism, diazoxide→hyperglycemia
+  - Implemented INVERSE_INDICATION_PAIRS filter: 8 predictions demoted to FILTER
+  - GT incompleteness (corticosteroids 37%, lipid drugs 27%) is main source of "novel" predictions
+
+**h469:** Parathyroid false match fix + holdout script bug fix.
   - Added 'parathyroid' to thyroid HIERARCHY_EXCLUSIONS (9/21 false drugs removed)
   - Fixed h393 holdout script: recompute_gt_structures was NOT using HIERARCHY_EXCLUSIONS
   - GOLDEN +8.8pp mostly from holdout script fix (exclusions now applied during recomputation)
@@ -225,20 +233,10 @@ Drugs with GT for BOTH CV base (hypertension/lipids) AND CV complications perfor
 **Implementation:** `CV_PATHWAY_COMPREHENSIVE_DRUGS` + `_is_cv_pathway_comprehensive()` → HIGH tier
 
 ### Complication Drug Class Filter (h353)
-
-For complication diseases, only validated drug classes have non-zero precision:
-| Complication | Validated | Non-validated | Filter |
-|--------------|-----------|---------------|--------|
-| Nephrotic | 69.2% | 0.0% | 17 preds |
-| Retinopathy | 33.3% | 0.0% | 57 preds |
-| Cardiomyopathy | 12.5% | 0.0% | 52 preds |
-
-**Implementation:** `COMPLICATION_VALIDATED_DRUGS` + `_is_complication_non_validated_class()` → FILTER
+Complication diseases (nephropathy/retinopathy/cardiomyopathy): non-validated drug classes = 0%. `COMPLICATION_VALIDATED_DRUGS` → FILTER
 
 ### Key Finding: Organ Proximity Doesn't Transfer (h294)
-
-Within-organ novel predictions have **1.2% precision** (was circular signal at 12%).
-Only **pathway-comprehensive mechanisms** transfer (CV only, NOT metabolic/renal).
+Within-organ novel predictions have **1.2% precision**. Only **CV pathway-comprehensive** transfer works.
 
 ## Performance Gaps & Error Patterns
 

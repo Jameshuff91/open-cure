@@ -1,6 +1,94 @@
 # Research Loop Progress
 
-## Current Session: h469-h474 + cleanup (2026-02-06)
+## Current Session: h473, h480 - Literature Validation + Safety Fix (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 2**
+- h473: Novel Prediction Literature Validation (GOLDEN) - **VALIDATED** (75% clinical support)
+- h480: Novel Prediction Literature Validation (HIGH) - **VALIDATED** (65% support + 10% HARMFUL found)
+
+### h473: GOLDEN Novel Prediction Literature Validation - VALIDATED
+
+**Objective:** Validate top 20 GOLDEN novel predictions against clinical literature.
+
+**Method:** Web search of PubMed, FDA labels, clinical guidelines for each drug-disease pair.
+
+**Results (top 20):**
+| Category | Count | % |
+|----------|-------|---|
+| GT_GAP (drug already used) | 11 | 55% |
+| PROMISING (clinical evidence) | 4 | 20% |
+| WEAK (limited evidence) | 3 | 15% |
+| NO_EVIDENCE | 1 | 5% |
+| HARMFUL | 0 | 0% |
+
+**Extrapolation to all 104 GOLDEN novels (by drug class):**
+- Likely GT Gap: 82/104 (78.8%)
+- Promising: 14/104 (13.5%)
+- Uncertain: 8/104 (7.7%)
+- Combined support: 96/104 = **92.3%**
+
+**Key Finding:** GOLDEN "novel" predictions are mostly GT gaps:
+- Corticosteroids: 38/104 (37%) - steroids for autoimmune/inflammatory
+- Lipid drugs: 28/104 (27%) - statins/sequestrants for FH/dyslipidemia
+- Ground truth incompleteness is the primary source of "novel" predictions
+
+### h480: HIGH Novel Prediction Literature Validation - VALIDATED
+
+**Results (top 20):**
+| Category | Count | % |
+|----------|-------|---|
+| GT_GAP | 7 | 35% |
+| PROMISING | 6 | 30% |
+| WEAK | 5 | 25% |
+| HARMFUL | 2 | 10% |
+
+**CRITICAL SAFETY FINDING: 2 HARMFUL predictions in HIGH tier**
+1. Levothyroxine → hyperthyroidism (CONTRAINDICATED)
+2. Diazoxide → hyperglycemia (drug CAUSES this condition)
+
+**Root cause:** Hierarchy rules match drugs to OPPOSITE conditions in same organ system.
+
+**Full audit found 10 inverse-indication predictions:**
+- 2 GOLDEN: methimazole/propylthiouracil → hypothyroidism
+- 6 HIGH: levothyroxine→hyperthyroidism, diazoxide→hyperglycemia/DKA, etc.
+- 2 already FILTER
+
+**FIX IMPLEMENTED:**
+- Added `INVERSE_INDICATION_PAIRS` constant in production_predictor.py
+- Added inverse-indication check in `_assign_confidence_tier()`
+- 8 predictions demoted to FILTER (0 GT loss)
+- Deliverable regenerated: GOLDEN 64.2%, HIGH 53.8%, MEDIUM 27.6%
+
+### Comparison: GOLDEN vs HIGH Literature Validation
+| Metric | GOLDEN | HIGH |
+|--------|--------|------|
+| GT_GAP | 55% | 35% |
+| PROMISING | 20% | 30% |
+| WEAK | 15% | 25% |
+| HARMFUL | 0% | 10% |
+| Total Support | 75% | 65% |
+
+### New Hypotheses Generated
+- h477: GT Expansion - Corticosteroid Class-Level Indications (Priority 3)
+- h478: GT Expansion - Lipid Drug Class-Level Indications (Priority 3)
+- h479: Uncertain GOLDEN Novel Demotion (Priority 4)
+- h480: HIGH Novel Prediction Literature Validation (tested, validated)
+- h481: Deliverable Annotation - Literature Validation Status Column (Priority 4)
+- h482: Systematic Inverse-Indication Audit (Priority 4)
+- h483: MEDIUM Novel Prediction Literature Validation (Priority 4)
+
+### Recommended Next Steps
+1. **h482:** Systematic inverse-indication audit across all hierarchy rules (medium effort, safety-critical)
+2. **h477:** GT expansion for corticosteroids (medium effort, high impact on GT gap reduction)
+3. **h483:** MEDIUM novel validation (medium effort, completes the tier validation picture)
+
+---
+
+## Previous Session: h469-h474 + cleanup (2026-02-06)
 
 ### Session Summary
 
