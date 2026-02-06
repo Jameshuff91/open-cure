@@ -10964,14 +10964,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List all infectious diseases where corticosteroids have GT hits",
         "Classify into inflammatory response (valid) vs direct infection (invalid)",
         "Build exception list for valid corticosteroid-infection combinations",
         "Implement selective demotion with exceptions",
         "Validate on holdout"
-      ]
+      ],
+      "findings": "Corticosteroid\u2192infectious MEDIUM demotion to LOW. \nCS\u2192infectious MEDIUM has 2.1% \u00b1 2.5% holdout precision (11.6/seed, 5 seeds) vs MEDIUM avg 33.9%.\nEven medically VALID CS uses (ABPA, zoster, leprosy, TB, proctitis) = 2.9% holdout.\nNon-CS infectious MEDIUM = 18.7% \u00b1 5.2% \u2014 16.6pp gap.\n\nMedical classification: 6 VALID diseases, 11 QUESTIONABLE, 16 INVALID.\nBut validity doesn't predict GT hits \u2014 all groups near 0% holdout.\n\nRoot cause: CS predicted for infections via KG co-occurrence (procedural), not therapeutic signal.\nWhen specific diseases are held out, CS don't generalize to other infectious diseases.\n\nImplementation: Added infectious_corticosteroid_demotion rule in _assign_confidence_tier.\n59 predictions demoted MEDIUM\u2192LOW.\nRule classified as GENUINE by holdout evaluator (16.1% \u00b1 7.4% = LOW-level).\n\nOverall impact: MEDIUM 33.9%\u219234.2% (+0.3pp), other tiers stable.\nAlso classified 33 infectious diseases by CS medical validity for future reference.\n\nHIGH CS\u2192TB (18 predictions) left alone despite 0% holdout \u2014 n too small (1.2/seed).",
+      "result_metric": "MEDIUM +0.3pp (33.9%\u219234.2%), 59 preds demoted"
     },
     {
       "id": "h558",
@@ -10986,6 +10988,51 @@
         "Identify spectrum mismatches (e.g., fluoroquinolone\u2192fungal)",
         "Compute holdout for matched vs mismatched",
         "Implement if gap is significant"
+      ]
+    },
+    {
+      "id": "h559",
+      "title": "CS\u2192Infectious HIGH Demotion: TB Hierarchy CS Review",
+      "description": "18 HIGH CS\u2192TB predictions exist from TB disease hierarchy. Holdout shows 0% but n=1.2/seed is too small. Dexamethasone IS valid for TB meningitis (NEJM 2004) so the medical basis is sound. Need larger-scale validation or TB-specific analysis. Potential: move CS\u2192TB HIGH to MEDIUM if holdout confirms poor performance with more data.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Collect per-disease holdout for TB-specific hierarchy predictions (all drugs, not just CS)",
+        "Determine if CS\u2192TB performance is worse than non-CS\u2192TB within the hierarchy",
+        "If CS\u2192TB << non-CS\u2192TB in holdout, demote CS\u2192TB from HIGH to MEDIUM"
+      ]
+    },
+    {
+      "id": "h560",
+      "title": "Infectious Disease Drug Class Mismatch: Antifungal\u2192Bacterial and Vice Versa",
+      "description": "Similar to the antibiotic\u2192viral filter (h556), check whether antifungal drugs are being predicted for bacterial infections and bacterial antibiotics for fungal infections. KG co-occurrence from hospital settings could inflate these cross-pathogen predictions. Could yield another 20-40 demotions.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Build drug\u2192antifungal/antibacterial/antiviral classification",
+        "Build disease\u2192fungal/bacterial/viral classification from infectious disease names",
+        "Cross-reference predictions for mismatches",
+        "Measure holdout precision for mismatched vs matched predictions",
+        "Implement demotion if mismatch holdout < LOW average"
+      ]
+    },
+    {
+      "id": "h561",
+      "title": "Cumulative MEDIUM Precision: Current Status vs Target 40%",
+      "description": "MEDIUM precision has improved from 30.1% (pre-h553) to 34.2% (post-h557) through 5 successive demotions: hematological CS, metabolic statin/TZD, antibiotic\u2192viral, default no-mech rank 11-20, and now CS\u2192infectious. Total +4.1pp from 711 demotions. Analyze remaining MEDIUM sub-reasons to identify what's still dragging precision down and whether 40% is achievable.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Re-run MEDIUM sub-reason analysis with current code",
+        "Identify remaining sub-reasons with holdout < 25% and n > 30/seed",
+        "Estimate maximum achievable MEDIUM precision after all possible demotions",
+        "Determine if tier boundaries need re-calibration"
       ]
     }
   ],
@@ -12858,6 +12905,12 @@
       "hypothesis_id": "h555",
       "learning": "Within default MEDIUM, rank is the strongest predictor: 1-5 (38.7%) \u2192 6-10 (24.0%) \u2192 11-20 (18.7-20.7%). Mechanism support adds +14pp. Frequency-only MEDIUM at high rank is LOW-quality. The freq>=10 no-mechanism path is the bulk of MEDIUM predictions (144/seed) and performs below average.",
       "implication": "Rank within kNN top-20 is a continuous signal, not just a binary cutoff. High-rank + mechanism = HIGH-quality MEDIUM; low-rank + no-mechanism = LOW-quality."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h557",
+      "learning": "CS\u2192infectious MEDIUM has 2.1% holdout \u2014 even medically valid uses (ABPA, zoster, leprosy, TB) don't generalize. Medical validity doesn't predict GT hit rate for rare drug-disease combinations. KG co-occurrence from procedural use dominates.",
+      "implication": "Don't assume medical plausibility implies holdout performance. Always measure even when clinical literature supports the combination."
     }
   ],
   "collaborations": [

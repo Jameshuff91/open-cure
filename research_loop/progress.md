@@ -1,6 +1,58 @@
 # Research Loop Progress
 
-## Current Session: h553+h554+h555+h556 - MEDIUM Precision Deep Dive (2026-02-06)
+## Current Session: h557 - Corticosteroid→Infectious Demotion (2026-02-06)
+
+### h557: Corticosteroid→Infectious Disease Selective Demotion — VALIDATED
+
+Analyzed all 174 corticosteroid→infectious disease predictions across all tiers.
+
+**Medical Classification of 33 Infectious Diseases:**
+| Validity | Diseases | Rationale |
+|----------|----------|-----------|
+| VALID (6) | ABPA, herpes zoster, leprosy, TB, extrapulmonary TB, proctitis | CS are established adjunctive therapy |
+| QUESTIONABLE (11) | Cryptococcosis, fungal meningitis, influenza, HSE, aspergillosis, etc. | Some evidence but not standard |
+| INVALID (16) | Hep B/C, CMV, rabies, smallpox, zygomycosis, candidiasis, etc. | CS harmful or useless |
+
+**Holdout Precision (5-seed):**
+| Group | Holdout | n/seed | vs MEDIUM avg |
+|-------|---------|--------|--------------|
+| ALL CS→infectious MEDIUM | 2.1% ± 2.5% | 11.6 | -31.8pp |
+| VALID CS→infectious | 2.9% ± 3.5% | 8.0 | -31.0pp |
+| QUESTIONABLE | 0.0% | 1.8 | -33.9pp |
+| INVALID | 0.0% | 1.8 | -33.9pp |
+| Non-CS infectious MEDIUM | 18.7% ± 5.2% | 113.4 | -15.2pp |
+
+**Key Finding:** Medical validity does NOT predict holdout performance. Even ABPA/zoster/leprosy/TB (genuinely valid uses) have 2.9% holdout. The KG co-occurrence signal doesn't generalize when specific diseases are held out.
+
+**Implementation:**
+- Added `infectious_corticosteroid_demotion` rule: CS + infectious + MEDIUM → LOW
+- 59 predictions demoted
+- Rule classified as GENUINE (16.1% ± 7.4% holdout = LOW-level)
+
+**Holdout Impact:**
+| Tier | Before (h555) | After (h557) | Delta |
+|------|--------------|-------------|-------|
+| GOLDEN | 70.3% ± 17.8% | 69.9% ± 17.9% | -0.4pp |
+| HIGH | 58.7% ± 6.1% | 59.5% ± 6.2% | +0.8pp |
+| **MEDIUM** | **33.9% ± 2.5%** | **34.2% ± 2.7%** | **+0.3pp** |
+| LOW | 16.2% ± 2.7% | 16.0% ± 2.5% | -0.2pp |
+| FILTER | 10.5% ± 1.3% | 10.4% ± 1.3% | -0.1pp |
+
+**Cumulative MEDIUM improvement since h553:** +4.1pp (30.1% → 34.2%)
+
+**New Hypotheses Generated (3):**
+- h559: CS→infectious HIGH (TB hierarchy) review (P5, low)
+- h560: Antifungal↔bacterial cross-pathogen mismatch (P5, medium)
+- h561: Cumulative MEDIUM precision analysis vs 40% target (P4, medium)
+
+**Recommended Next Steps:**
+1. **h561**: MEDIUM precision gap analysis — what's left to improve?
+2. **h560**: Cross-pathogen drug-disease mismatch filter
+3. **h532**: Every Cure GT error report
+
+---
+
+## Previous Session: h553+h554+h555+h556 - MEDIUM Precision Deep Dive (2026-02-06)
 
 ### h553: MEDIUM Tier Precision by Category Analysis — VALIDATED
 

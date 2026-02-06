@@ -147,12 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h555 update, 2026-02-06):**
-- GOLDEN: 70.3% ± 17.8% holdout (279 predictions)
-- HIGH: 58.7% ± 6.1% holdout (794 predictions)
-- MEDIUM: 33.9% ± 2.5% holdout (2148 predictions)
-- LOW: 16.2% ± 2.7% holdout (3429 predictions)
-- FILTER: 10.5% ± 1.3% holdout (6972 predictions)
+**Tier System (h557 update, 2026-02-06):**
+- GOLDEN: 69.9% ± 17.9% holdout (279 predictions)
+- HIGH: 59.5% ± 6.2% holdout (757 predictions)
+- MEDIUM: 34.2% ± 2.7% holdout (2152 predictions)
+- LOW: 16.0% ± 2.5% holdout (3465 predictions)
+- FILTER: 10.4% ± 1.3% holdout (6969 predictions)
+- **h557:** CS→infectious MEDIUM demotion: 2.1% holdout (even VALID uses = 2.9%). 59 preds MEDIUM→LOW. MEDIUM +0.3pp.
 - **h553+h555+h556:** MEDIUM precision session: hematological→LOW, metabolic statin/TZD→LOW, antibiotic→viral→LOW, default no-mech rank 11-20→LOW. Cumulative MEDIUM +3.8pp (30.1%→33.9%). 311+35+21 preds moved to LOW. target_overlap_promotion (43%) best MEDIUM sub-reason but not promotable (h554 inconclusive).
 - **h542:** MEDIUM tier quality audit: 59 predictions validated. 25% validated, 31% plausible, 44% implausible (vs 88% reasonable for GOLDEN/HIGH). Fixes: corticosteroid→adrenocortical insufficiency inverse indication (6 preds), FDG PET tracer filter (55 preds).
 - **h552:** Non-therapeutic compound audit: indocyanine green (diagnostic dye) 10 preds → FILTER. Total 66 non-therapeutic predictions removed.

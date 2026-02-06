@@ -3881,6 +3881,17 @@ class DrugRepurposingPredictor:
                         tier = ConfidenceTier.LOW
                         cat_specific = 'hematological_corticosteroid_demotion'
 
+                    # h557: Corticosteroid→infectious demotion MEDIUM→LOW
+                    # CS→infectious MEDIUM = 2.1% ± 2.5% holdout (5-seed, 11.6/seed)
+                    # Even medically valid CS uses (ABPA, zoster, leprosy) = 2.9% holdout
+                    # Non-CS infectious MEDIUM = 18.7% ± 5.2% — 16.6pp gap
+                    # CS predicted for infections due to KG co-occurrence, not therapeutic use
+                    if (tier == ConfidenceTier.MEDIUM
+                            and category == 'infectious'
+                            and drug_name.lower() in _CORTICOSTEROID_LOWER):
+                        tier = ConfidenceTier.LOW
+                        cat_specific = 'infectious_corticosteroid_demotion'
+
                     # h374: Mark predictions from MinRank ensemble
                     if use_minrank and cat_specific is None:
                         cat_specific = 'minrank_ensemble'
