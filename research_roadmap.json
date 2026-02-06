@@ -7503,7 +7503,7 @@
       "title": "kNN-Only for Neurological Diseases (Low Gene Coverage)",
       "description": "Neurological diseases showed lowest target performance (42%), possibly due to poor DRKG gene coverage. Verify and quantify the gene coverage gap.",
       "hypothesis": "Neurological diseases have fewer DRKG gene associations, explaining why target-based scoring underperforms kNN.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -7512,7 +7512,9 @@
         "Correlate with target method performance",
         "If confirmed: recommend kNN-only for neuro in production",
         "Success: gene coverage explains >50% of target method variance"
-      ]
+      ],
+      "findings": "Neurological diseases do NOT have unusually low gene coverage:\n- Avg: 145 genes (median: 10)\n- Compare: Autoimmune avg 223, Cancer avg 337, CV avg 110\n\nThe reason MinRank helps neuro is the small gap between methods:\n- Target 42.1% vs kNN 36.8% (gap = 5.3 pp)\n- When gap < 10%, ensemble helps by capturing complementary signals\n\nGene coverage is NOT the predictor of method choice - the gap between methods is.",
+      "result_metric": "Neuro avg 145 genes (not low); method choice based on gap, not genes"
     },
     {
       "id": "h373",
@@ -7529,6 +7531,57 @@
         "Weight ranks by confidence: final_rank = conf1*rank1 + conf2*rank2",
         "Compare to equal-weight MinRank",
         "Success: >3 pp improvement over MinRank"
+      ]
+    },
+    {
+      "id": "h374",
+      "title": "Integrate MinRank Ensemble into Production Predictor",
+      "description": "h369/h370 showed MinRank ensemble improves cancer (+10.5 pp) and neuro (+5.3 pp). Integrate this into production_predictor.py for category-specific ensemble scoring.",
+      "hypothesis": "Adding MinRank ensemble for cancer/neuro/metabolic categories will improve production prediction quality.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Add target overlap scoring using disease genes from DRKG",
+        "Implement MinRank fusion for cancer/neuro/metabolic categories",
+        "Use adaptive selection (ensemble when gap<10%, else dominant method) for CV/autoimmune",
+        "Test on held-out diseases to verify improvement",
+        "Success: +3 pp R@30 improvement vs kNN-only baseline"
+      ]
+    },
+    {
+      "id": "h375",
+      "title": "Disease-Specific Gene Weighting by DRKG Edge Type",
+      "description": "DRKG has multiple edge types for disease-gene associations. Test if weighting genes by edge type improves target scoring.",
+      "hypothesis": "Weighting genes by edge type (e.g., 'causes' vs 'associated_with') will improve target overlap signal quality.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Categorize DRKG disease-gene edges by type",
+        "Weight genes by edge type (causal > associative)",
+        "Recompute target overlap scores with weighted genes",
+        "Compare to unweighted baseline",
+        "Success: >2 pp improvement in target-only scoring"
+      ]
+    },
+    {
+      "id": "h376",
+      "title": "Ensemble Coverage Analysis: Which Diseases Benefit?",
+      "description": "MinRank ensemble helps some diseases but not others. Analyze characteristics of diseases that benefit from ensemble.",
+      "hypothesis": "Diseases with moderate gene coverage (median range) and multiple drug classes benefit most from ensemble.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For each disease, compute: gene count, drug count, drug class diversity",
+        "Compare ensemble improvement vs these features",
+        "Identify predictors of ensemble benefit",
+        "Create disease-level ensemble vs single-method selector",
+        "Success: >5 pp improvement with disease-level adaptive selection"
       ]
     }
   ],
@@ -8897,6 +8950,12 @@
       "hypothesis_id": "h369",
       "learning": "MinRank ensemble (min rank from target/kNN) improves cancer (+10.5 pp) and neuro (+5.3 pp) but hurts autoimmune (-5.6 pp). Ensemble only helps when methods have equal performance.",
       "implication": "Use adaptive selection: ensemble when |target-kNN| < 10 pp, else dominant method"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h369/h370/h371",
+      "learning": "MinRank ensemble captures complementary signals: Target uses gene overlap, kNN uses embedding similarity. Works when methods are equal (cancer, neuro). When one dominates (autoimmune: Target 89%), use dominant method alone.",
+      "implication": "Production predictor should use category-specific method selection: ensemble for cancer/neuro, Target alone for autoimmune/CV"
     }
   ],
   "collaborations": [
