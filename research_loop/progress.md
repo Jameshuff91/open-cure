@@ -1,6 +1,68 @@
 # Research Loop Progress
 
-## Current Session: h571 - Therapeutic Island Rescue Analysis (2026-02-06)
+## Current Session: h586/h588 - GT-Free Quality Signals (2026-02-06)
+
+### h586: GT-Free Paradigm Mismatch via DRKG Edges — INVALIDATED
+
+Tested whether DRKG non-treatment edges (gene associations, anatomy, symptoms) can approximate Drug Jaccard (treatment paradigm similarity) without GT knowledge.
+
+**Key Finding: Biology ≠ Treatment Paradigm**
+- Gene Jaccard: r=+0.079 with holdout (NS), r=+0.086 with drug Jaccard — too weak
+- Combined DRKG Jaccard (genes+anatomy+symptoms): r=+0.077 (NS)
+- GT-free mismatch (embed_sim - combined_jaccard): r=0.996 with embed_sim — just embedding similarity in disguise
+- 63% of diseases share ZERO genes with their kNN neighbors (too sparse)
+- After controlling for self-referentiality: partial_r=+0.030 (NS)
+
+**Why genes fail:** Disease-gene associations capture molecular biology, but treatment decisions are driven by clinical phenotype, drug class availability, and treatment paradigms. Two diseases with identical genes can be treated with completely different drug classes (e.g., hypertension vs PAH).
+
+**Symptom/anatomy edges (Hetionet):** Show promise (symptom r=+0.297) but only 39/312 diseases have coverage.
+
+### h588: HPO Symptom Phenotype Similarity as Quality Signal — VALIDATED (annotation)
+
+Tested HPO phenotype similarity as an extended version of the sparse Hetionet symptom signal. HPO matrix covers 799 diseases (82/312 holdout diseases, 2x Hetionet coverage).
+
+**Key Results:**
+| Signal | r with holdout | Partial r (ctrl GT) | Coverage |
+|--------|---------------|-------------------|----------|
+| HPO sim | +0.243* | +0.258* | 82 diseases |
+| HPO→Drug Jaccard proxy | +0.390*** | +0.416*** | 82 diseases |
+| Gene→Drug Jaccard proxy | +0.086 | +0.116* | 270 diseases |
+
+*p<0.05, ***p<0.001
+
+**Why HPO works better than genes:** Clinical phenotype (symptoms, signs, lab findings) captures treatment paradigm similarity 4.5x better than molecular biology (gene overlap).
+
+**Practical limitation:** Adds only 0.9% incremental R² beyond GT size + embed_sim. HPO sim partial_r=+0.149 (NS) after controlling for embed_sim. Coverage still limited (26.3%).
+
+**Quartile analysis:** Q4 (highest HPO sim) = 11.3% holdout vs Q1 = 6.4%. Within GT 1-20 band: 3.8% vs 1.7% (2.2x lift).
+
+**Conclusion:** Annotation value for deliverable. NOT promotable for tiers.
+
+### New Hypotheses Generated (3)
+- h588: HPO similarity (COMPLETED - VALIDATED)
+- h589: ATC hierarchy as GT-free treatment paradigm proxy (P4, medium)
+- h590: Hetionet disease-resembles as augmented kNN signal (P5, low)
+
+### Key Learning
+Clinical phenotype (HPO) is the best GT-free proxy for treatment paradigm similarity. Molecular biology (gene overlap) fails to predict treatment similarity. The gap between biology and therapy is fundamental: diseases with shared genes may have completely different treatment paradigms. This is consistent with h571 (therapeutic islands) and h583 (paradigm mismatch).
+
+### Session Tier Performance (unchanged from h560)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 69.9% ± 17.9% | 280 |
+| HIGH | 59.5% ± 6.2% | 754 |
+| MEDIUM | 35.8% ± 2.8% | 2083 |
+| LOW | 15.5% ± 2.4% | 3733 |
+| FILTER | 10.6% ± 1.3% | 7300 |
+
+### Recommended Next Steps
+1. **h589**: ATC hierarchy as GT-free treatment proxy (could be stronger than HPO)
+2. **h590**: Hetionet disease-resembles augmentation (low effort)
+3. **h534**: TransE FILTER annotation for manual review
+
+---
+
+## Previous Session: h571 - Therapeutic Island Rescue Analysis (2026-02-06)
 
 ### h571: Therapeutic Island Disease Rescue — INVALIDATED
 
@@ -104,8 +166,26 @@ Paradigm mismatch = mean_embedding_sim - mean_drug_Jaccard (high = diseases near
 - h586: GT-free paradigm mismatch via DRKG edges (P4, medium)
 - h587: Paradigm mismatch deliverable annotation (P5, low)
 
+### h585: Self-Referentiality Threshold Optimization — VALIDATED (confirms 100% boundary)
+
+Self-ref is bimodal: 0% (n=112) and 100% (n=144) dominate. Band analysis:
+
+| Band | n | Mean Holdout | GT Size |
+|------|---|-------------|---------|
+| 0% | 80 | 8.7% | 20.2 |
+| 1-25% | 21 | 26.8% | 86.0* |
+| 26-50% | 54 | 14.0% | ~35 |
+| 51-75% | 43 | 9.6% | ~25 |
+| 76-99% | 15 | 5.2% | ~20 |
+| 100% | 99 | 0.3% | ~15 |
+
+*1-25% band confounded by large-GT diseases (RA, ovarian cancer, COPD).
+
+**Within non-100% diseases, self-ref has MINIMAL predictive power (r=-0.104).**
+Only the 100% vs <100% boundary matters. This confirms h581's choice of cutoffs.
+
 ### Recommended Next Steps
-1. **h586**: GT-free paradigm mismatch approximation (if DRKG edges proxy drug Jaccard, we have a novel non-circular signal)
+1. **h586**: GT-free paradigm mismatch approximation (if DRKG edges proxy drug Jaccard, novel non-circular signal)
 2. **h580**: Drug class expansion for islands (high effort, new predictions)
 3. **h584**: Add corrected precision to deliverable metadata
 

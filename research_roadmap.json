@@ -12120,10 +12120,12 @@
         "Identify the optimal reporting cutoff",
         "Check if partial self-ref diseases have intermediate quality"
       ],
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
-      "effort": "low"
+      "effort": "low",
+      "findings": "Self-referentiality is BIMODAL: 0% (n=112) and 100% (n=144) dominate. 100% self-ref boundary is the clearest cutoff: 100% diseases have 0.3% mean holdout (93.9% at zero). Partial (1-99%): intermediate quality (13.6% mean). 1-25% band appears best (26.8%) but confounded by large GT size (mean GT=86 vs 20 for 0%). Correlation self-ref vs holdout: r=-0.395 overall, r=-0.104 excluding 100%. Key insight: within non-100% diseases, self-ref percentage has MINIMAL predictive power (r=-0.104). The 100% vs <100% boundary is the only meaningful cutoff.",
+      "result_metric": "100% self-ref optimal cutoff. r=-0.395 overall, r=-0.104 excluding 100%"
     },
     {
       "id": "h586",
@@ -12135,10 +12137,12 @@
         "If correlated, test DRKG-based mismatch vs holdout",
         "Compare with GT-based mismatch for quality"
       ],
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
-      "effort": "medium"
+      "effort": "medium",
+      "findings": "GT-free paradigm mismatch CANNOT approximate Drug Jaccard from DRKG edges.\n\nKEY RESULTS:\n1. Gene Jaccard (shared disease-gene associations between kNN neighbors):\n   - r=+0.079 with holdout precision (NS, p=0.16)\n   - Partial r=+0.037 controlling for GT size (NS)\n   - r=+0.086 with drug Jaccard (the oracle signal) \u2014 too weak to proxy\n   - Among nonzero pairs: r=+0.330, but 63% of diseases have ZERO gene overlap\n\n2. GT-free mismatch (embed_sim - combined_jaccard):\n   - r=-0.222 with holdout, BUT r=0.996 with embed_sim\n   - Combined Jaccard (mean=0.005) is negligible compared to embed_sim (0.5-0.9)\n   - After controlling for self-ref: partial_r=+0.030 (NS, p=0.60)\n   - REDUNDANT with embedding similarity \u2014 no independent signal\n\n3. Symptom Jaccard: r=+0.297 (raw), partial_r=+0.296 (ctrl GT, p=0.07)\n   - Only 39/312 holdout diseases have symptom edges (Hetionet coverage)\n   - Selection bias: symptom diseases have 2.4x GT size vs average\n   - Too sparse for practical use\n\n4. Resembles count: partial_r=+0.228 (significant, ctrl GT)\n   - Only 26/312 diseases, GT-free, but too sparse\n\n5. Drug Jaccard (oracle): partial_r=+0.309 (strongest, but requires GT)\n\nWHY IT FAILS:\n- DRKG gene associations capture molecular biology, NOT treatment paradigm\n- Diseases with similar genes may be treated with completely different drug classes\n- 63% of diseases share ZERO genes with their kNN neighbors (too sparse)\n- Combined DRKG features = almost entirely gene Jaccard (r=0.983)\n- Confirms h571/h583: embedding space \u2260 treatment space\n\nIMPLICATIONS:\n- No GT-free approximation of drug Jaccard is possible from DRKG alone\n- Treatment paradigm information requires actual indication/treatment data\n- External sources (clinical practice guidelines, ATC hierarchy) might help\n- Symptom-based similarity is promising if coverage could be expanded (e.g., HPO)",
+      "result_metric": "Gene Jaccard r=0.079 (NS) with holdout, r=0.086 with drug Jaccard. GT-free mismatch r=0.996 with embed_sim (redundant)."
     },
     {
       "id": "h587",
@@ -12154,6 +12158,55 @@
       "priority": 5,
       "expected_impact": "low",
       "effort": "low"
+    },
+    {
+      "id": "h588",
+      "title": "HPO Symptom Phenotype Similarity as Quality Signal",
+      "status": "validated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h586 found symptom Jaccard has partial_r=+0.296 (p=0.07) with holdout, but Hetionet symptoms only cover 39 diseases. HPO (Human Phenotype Ontology) has broader disease-symptom coverage. HPO similarity matrix already exists (data/reference/hpo_similarity_matrix.npz). Could extend symptom-based signal to ~200+ diseases.",
+      "steps": [
+        "Load HPO similarity matrix from data/reference/hpo_similarity_matrix.npz",
+        "Compute mean HPO similarity between each disease and its k=20 kNN neighbors",
+        "Test correlation with holdout precision (controlling for GT size)",
+        "If significant, compute HPO-based paradigm mismatch (embed_sim - hpo_sim)",
+        "Compare with drug Jaccard as quality signal"
+      ],
+      "findings": "HPO phenotype similarity is a VALID but MODEST quality signal for drug repurposing predictions.\n\nKEY RESULTS:\n1. Raw correlation with holdout: r=+0.243 (p=0.028), n=82 diseases\n2. Partial r controlling GT size: +0.258 (p=0.019) \u2014 survives confound control\n3. HPO proxies Drug Jaccard: r=+0.390 (4.5x better than gene overlap r=0.086)\n4. HPO mismatch (embed_sim - hpo_sim): partial_r=+0.325 (p=0.003) ctrl GT+self-ref\n5. BUT incremental R\u00b2 beyond GT+embed_sim: only +0.9%\n6. After triple control (GT+embed_sim): partial_r=+0.149 (p=0.18, NS)\n\nQUARTILE ANALYSIS (n=82):\n- Q4 (highest HPO sim): 11.3% holdout, GT=31.8\n- Q1 (lowest HPO sim): 6.4% holdout, GT=39.4\n- GT-controlled: HPO>median = 2x holdout vs HPO\u2264median in GT 1-20 and GT 20-50 bands\n\nCOVERAGE: 82/312 holdout diseases (26.3%) \u2014 better than Hetionet symptoms (39/312)\nTotal HPO diseases: 799\n\nWHY HPO WORKS BETTER THAN GENES:\n- HPO captures clinical phenotype (symptoms/signs/lab findings)\n- Clinical phenotype DOES predict treatment similarity (r=0.390 with drug Jaccard)\n- Gene associations capture molecular biology which diverges from treatment paradigm\n\nPRACTICAL VALUE: Annotation only. Adds 0.9% R\u00b2 \u2014 not enough for tier promotion.\nBest use: annotate deliverable predictions with HPO neighbor similarity for manual review.",
+      "result_metric": "HPO sim r=+0.243 (p=0.028) with holdout. Proxies drug Jaccard r=0.390 (4.5x gene overlap). Incremental R\u00b2=0.9%."
+    },
+    {
+      "id": "h589",
+      "title": "ATC Hierarchy as GT-Free Treatment Paradigm Proxy",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h586 showed gene biology cannot proxy treatment paradigm (r=0.086). But ATC codes encode therapeutic use directly. For a disease, we know the ATC codes of its GT drugs. Between kNN neighbors, ATC overlap might proxy drug Jaccard better than gene overlap. This uses GT indirectly (ATC comes from known indications), but might provide a GT-free signal if we use ATC of only the TRAINING drugs.",
+      "steps": [
+        "Load ATC codes from DRKG (DRUGBANK::x-atc edges)",
+        "For each disease, compute ATC L2/L3 set from GT drugs",
+        "Compute ATC Jaccard between kNN neighbors",
+        "Test correlation with drug Jaccard and holdout precision",
+        "Assess circularity: does this use holdout information?"
+      ]
+    },
+    {
+      "id": "h590",
+      "title": "Hetionet Disease-Resembles as Augmented kNN Signal",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h586 found Hetionet DrD (disease resembles disease) has partial_r=+0.228 (significant) controlling for GT. Only 26/312 diseases have this edge, but those that do have 16.5% vs 7.3% holdout. These 216 disease pairs are curated medical knowledge about disease similarity. Could augment kNN neighborhoods with Hetionet-confirmed similar diseases for better drug recommendations.",
+      "steps": [
+        "Identify diseases where kNN neighbors differ from Hetionet resembles",
+        "For diseases with resembles edges NOT in kNN top-20, test drug prediction quality",
+        "If Hetionet-confirmed neighbors predict better drugs, consider augmenting kNN with resembles",
+        "Count affected predictions and estimate holdout impact"
+      ]
     }
   ],
   "completed": [
@@ -14128,6 +14181,18 @@
       "hypothesis_id": "h583",
       "learning": "Paradigm mismatch (embedding sim - drug Jaccard with kNN neighbors) predicts holdout precision independently of self-referentiality (r=0.032 with self-ref) and GT size. Drug Jaccard (partial r=0.428 controlling for GT size) is the key component. BUT the signal is GT-dependent (circular at prediction time). Valid as annotation but cannot be used for novel disease predictions.",
       "implication": "Need GT-free proxy for drug Jaccard. DRKG edge-based similarity might approximate it. Paradigm mismatch quartile can annotate disease prediction reliability in deliverable."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h586",
+      "learning": "DRKG gene associations cannot proxy drug Jaccard (treatment similarity). Gene biology \u2260 treatment paradigm. 63% of diseases share zero genes with kNN neighbors. GT-free mismatch collapses to embed_sim (r=0.996). Symptom Jaccard shows promise (partial_r=0.296) but Hetionet symptom coverage too sparse (39/312 diseases). HPO may extend this.",
+      "implication": "Treatment paradigm information requires actual treatment data, not molecular biology. External sources (HPO phenotypes, ATC hierarchy, clinical guidelines) are the most promising GT-free proxies."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h588",
+      "learning": "HPO phenotype similarity predicts drug Jaccard 4.5x better than gene overlap (r=0.390 vs 0.086). Clinical phenotype captures treatment paradigm better than molecular biology. But incremental value beyond GT+embed_sim is only 0.9% R\u00b2. HPO covers 26.3% of holdout diseases \u2014 better than Hetionet symptoms (12.5%) but still sparse.",
+      "implication": "Phenotype-based similarity is the best GT-free proxy for treatment paradigm. To fully exploit, would need comprehensive phenotype data for more diseases. DisGeNET/OMIM phenotype annotations could expand coverage."
     }
   ],
   "collaborations": [
