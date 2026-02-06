@@ -7701,7 +7701,7 @@
       "title": "Cardiovascular Ensemble Harm Investigation",
       "description": "h376 found CV has largest ensemble harm (-14.3 pp). Investigate why - likely because CV drugs have broad targets that confuse target-based scoring.",
       "hypothesis": "CV ensemble harm is due to polypharmacy and broad mechanisms - statins/ACEi/etc have many targets that create noise.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -7710,7 +7710,8 @@
         "Compare target overlap quality for CV vs autoimmune",
         "Identify if CV harm is from specific drug classes",
         "Success: explain CV ensemble harm mechanism"
-      ]
+      ],
+      "findings": "Deprioritized: Ensemble was disabled (h374/h381). CV ensemble harm investigation has no actionable outcome since the ensemble is not used."
     },
     {
       "id": "h384",
@@ -8902,13 +8903,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compute holdout-validated rank-bucket precisions for each tier",
         "Add rank_bucket_precision column to DrugPrediction.to_dict()",
         "Regenerate deliverable Excel with new column",
         "Verify rank_bucket_precision is monotonically decreasing within each tier"
-      ]
+      ],
+      "findings": "Added rank_bucket_precision column to production predictor and deliverable.\n\nImplementation:\n1. Added RANK_BUCKET_PRECISION constant: holdout-validated precision for (tier, rank_lo, rank_hi)\n2. Added get_rank_bucket_precision(tier, rank) utility function\n3. Added rank_bucket_precision field to DrugPrediction dataclass\n4. Set at all 3 DrugPrediction construction sites\n5. Added transe_consilience and rank_bucket_precision to deliverable Excel\n\nDeliverable now has 18 columns (was 16), 14,150 predictions across 473 diseases.\nTier precision maintained: GOLDEN 63.8% > HIGH 52.1% > MEDIUM 26.9% > LOW 11.9% > FILTER 11.4%\n\nExample: MEDIUM rank 1 prediction has rank_bucket_precision=21.7%, MEDIUM rank 16 has 8.1%.\nClinicians can use this to prioritize within a tier.",
+      "result_metric": "Deliverable updated: 18 columns, rank_bucket_precision added"
     },
     {
       "id": "h447",

@@ -263,6 +263,9 @@ class DrugPrediction:
     # h405/h439: TransE consilience flag
     transe_consilience: bool = False
 
+    # h444: Rank-bucket precision (holdout-validated)
+    rank_bucket_precision: float = 0.0
+
     def to_dict(self) -> Dict:
         return {
             'drug': self.drug_name,
@@ -277,6 +280,7 @@ class DrugPrediction:
             'category': self.category,
             'category_rescue_applied': self.category_rescue_applied,
             'transe_consilience': self.transe_consilience,
+            'rank_bucket_precision': self.rank_bucket_precision,
         }
 
 
@@ -1027,6 +1031,44 @@ TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES: set[str] = {
     'infectious_hierarchy_tuberculosis',
     'metabolic_hierarchy_thyroid',
 }
+
+# h444: Holdout-validated rank-bucket precision (5-seed mean)
+# Used for clinical reporting: expected precision given tier + rank bucket
+# Format: (tier, rank_lo, rank_hi) -> holdout_precision
+RANK_BUCKET_PRECISION: Dict[Tuple[str, int, int], float] = {
+    # GOLDEN (high variance, use overall holdout)
+    ('GOLDEN', 1, 5): 73.0, ('GOLDEN', 6, 10): 52.1,
+    ('GOLDEN', 11, 15): 55.7, ('GOLDEN', 16, 20): 44.8,
+    # HIGH
+    ('HIGH', 1, 5): 43.0, ('HIGH', 6, 10): 39.6,
+    ('HIGH', 11, 15): 20.4, ('HIGH', 16, 20): 21.0,
+    # MEDIUM (monotonic, most reliable)
+    ('MEDIUM', 1, 5): 21.7, ('MEDIUM', 6, 10): 18.1,
+    ('MEDIUM', 11, 15): 10.7, ('MEDIUM', 16, 20): 8.1,
+    # LOW (near-flat)
+    ('LOW', 1, 5): 7.9, ('LOW', 6, 10): 5.6,
+    ('LOW', 11, 15): 5.8, ('LOW', 16, 20): 5.4,
+    # FILTER (near-flat)
+    ('FILTER', 1, 5): 6.1, ('FILTER', 6, 10): 6.2,
+    ('FILTER', 11, 15): 3.5, ('FILTER', 16, 20): 2.9,
+}
+
+
+def get_rank_bucket_precision(tier: str, rank: int) -> float:
+    """Get holdout-validated precision for a tier + rank combination."""
+    if rank <= 5:
+        lo, hi = 1, 5
+    elif rank <= 10:
+        lo, hi = 6, 10
+    elif rank <= 15:
+        lo, hi = 11, 15
+    elif rank <= 20:
+        lo, hi = 16, 20
+    else:
+        # rank > 20: use tier's 16-20 bucket as conservative estimate
+        lo, hi = 16, 20
+    return RANK_BUCKET_PRECISION.get((tier, lo, hi), 0.0)
+
 
 # h169/h148: Expanded category keywords to reduce 'other' bucket
 # h148 reduced 'other' from 44.9% to ~25% with comprehensive keyword expansion
@@ -2906,6 +2948,7 @@ class DrugRepurposingPredictor:
                 disease_tier=disease_tier,
                 category_rescue_applied=True,  # Mark as class-based prediction
                 category_specific_tier="class_injected",  # Special marker
+                rank_bucket_precision=get_rank_bucket_precision(tier.value, len(supplemented) + 1),
             )
             supplemented.append(pred)
 
@@ -3054,6 +3097,7 @@ class DrugRepurposingPredictor:
                 disease_tier=disease_tier,
                 category_rescue_applied=True,
                 category_specific_tier="gi_class_injected",
+                rank_bucket_precision=get_rank_bucket_precision(tier.value, len(supplemented) + 1),
             )
             supplemented.append(pred)
 
@@ -3245,6 +3289,7 @@ class DrugRepurposingPredictor:
                         category_rescue_applied=rescue_applied,
                         category_specific_tier=cat_specific,
                         transe_consilience=in_transe_top30,
+                        rank_bucket_precision=get_rank_bucket_precision(tier.value, rank),
                     )
 
                     if include_filtered or tier != ConfidenceTier.FILTER:

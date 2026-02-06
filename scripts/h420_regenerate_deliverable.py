@@ -74,6 +74,8 @@ def main():
                 'has_targets': pred.has_targets,
                 'is_known_indication': is_gt,
                 'rescue_applied': pred.category_rescue_applied,
+                'transe_consilience': pred.transe_consilience,
+                'rank_bucket_precision': pred.rank_bucket_precision,
             })
 
             tier_counts[pred.confidence_tier.value] += 1
