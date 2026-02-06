@@ -1,14 +1,16 @@
 # Research Loop Progress
 
-## Current Session: h294, h353 (2026-02-05)
+## Current Session: h294, h353, h351, h354 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 4**
 - h294: Organ-Specific Complication Patterns - **INVALIDATED** (organ proximity doesn't predict, 1.2% novel precision)
 - h353: Complication-Specific Drug Class Filter - **VALIDATED + IMPLEMENTED** (214 preds filtered, 0 GT loss)
+- h351: Pathway-Comprehensive Drug Class Identification - **VALIDATED** (48.8% vs 7.6% for CV complications)
+- h354: CV Pathway-Comprehensive Drug Boost - **VALIDATED + IMPLEMENTED** (109 drugs → HIGH for CV complications)
 
 ### KEY SESSION FINDINGS
 
@@ -57,16 +59,39 @@ This confirms h280/h293: only pathway-comprehensive mechanisms (statins→MI) tr
 - Filter check in _assign_confidence_tier() → FILTER tier
 - **Impact:** 214 predictions filtered, 0 GT hits lost (100% accuracy)
 
-### New Hypotheses Generated (3)
+### h351: Pathway-Comprehensive Drug Class Identification - VALIDATED
 
-1. **h351: Pathway-Comprehensive Drug Class Identification** (Priority 3)
-   - Find more drug classes like statins that treat underlying cause + complications
+**Hypothesis:** Find drug classes like statins that treat underlying cause + complications
 
+**Key findings:**
+- CV pathway-comprehensive drugs: 48.8% precision (20/41)
+- Non-pathway-comprehensive: 7.6% precision (6/79)
+- **GAP: +41.2 pp (6.4x lift!)**
+
+By tier:
+- HIGH: 53.8% vs 5.9% (+47.9 pp)
+- MEDIUM: 46.4% vs 8.1% (+38.3 pp)
+
+**Important:** This pattern does NOT work for renal complications (-6 pp).
+CV is special because drugs treat underlying vascular pathology.
+
+### h354: CV Pathway-Comprehensive Drug Boost - VALIDATED + IMPLEMENTED
+
+**Implementation:**
+- Added CV_PATHWAY_COMPREHENSIVE_DRUGS (109 drugs)
+- Added _is_cv_pathway_comprehensive() and _is_cv_complication() methods
+- CV complication + pathway-comprehensive → HIGH tier
+
+**Drug classes included:** Statins, ACEi, ARBs, beta-blockers, anticoagulants, SGLT2i, nitrates, diuretics
+
+### New Hypotheses Generated (5)
+
+1. **h351: Pathway-Comprehensive Drug Class Identification** - ✓ VALIDATED
 2. **h352: Disease Mechanism Overlap as Transfer Predictor** (Priority 4)
-   - Test if shared mechanisms (not organs) predict drug transfer
-
-3. **h353: Complication-Specific Drug Class Filter** (Priority 2)
-   - ✓ IMPLEMENTED this session
+3. **h353: Complication-Specific Drug Class Filter** - ✓ IMPLEMENTED
+4. **h354: CV Pathway-Comprehensive Drug Boost** - ✓ IMPLEMENTED
+5. **h355: Metabolic Pathway-Comprehensive Analysis** (Priority 4)
+6. **h356: Non-Pathway-Comprehensive CV Demotion** (Priority 3)
 
 ---
 
@@ -89,13 +114,13 @@ This confirms h280/h293: only pathway-comprehensive mechanisms (statins→MI) tr
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 218 |
-| Invalidated | 67 |
+| Validated | 220 |
+| Invalidated | 68 |
 | Inconclusive | 13 |
 | Blocked | 21 |
-| Deprioritized | 8 |
-| Pending | 25 |
-| **Total** | **352**
+| Deprioritized | 7 |
+| Pending | 27 |
+| **Total** | **356**
 
 ### KEY SESSION FINDINGS
 
