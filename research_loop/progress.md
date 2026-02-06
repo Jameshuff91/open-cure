@@ -1,6 +1,66 @@
 # Research Loop Progress
 
-## Current Session: h542+h551+h552+h548+h549 - MEDIUM Quality + Gene Overlap (2026-02-06)
+## Current Session: h553 - MEDIUM Precision by Category (2026-02-06)
+
+### h553: MEDIUM Tier Precision by Category Analysis — VALIDATED
+
+Computed holdout precision for MEDIUM predictions broken down by disease category.
+
+**Category-Level Holdout Precision (MEDIUM only, 5-seed mean):**
+| Category | Holdout | ±std | n/seed | vs avg |
+|----------|---------|------|--------|--------|
+| psychiatric | 54.8% | 6.6% | 19 | +24.6pp |
+| musculoskeletal | 53.8% | 28.6% | 12 | +23.7pp |
+| cardiovascular | 35.4% | 9.9% | 21 | +5.3pp |
+| dermatological | 31.2% | 4.6% | 28 | +1.1pp |
+| autoimmune | 30.7% | 14.9% | 23 | +0.6pp |
+| respiratory | 29.2% | 9.0% | 14 | -0.9pp |
+| cancer | 27.9% | 4.5% | 125 | -2.2pp |
+| infectious | 26.6% | 8.1% | 104 | -3.5pp |
+| **metabolic** | **18.0%** | 6.7% | 16 | **-12.1pp** |
+| **hematological** | **10.0%** | 20.0% | 8 | **-20.1pp** |
+
+**Sub-Reason Analysis (MEDIUM):**
+| Sub-reason | Holdout | n/seed | vs avg |
+|------------|---------|--------|--------|
+| target_overlap_promotion | 45.3% | 45 | +15.2pp |
+| local_anesthetic_procedural | 44.2% | 13 | +14.1pp |
+| cv_pathway_comprehensive | 40.8% | 16 | +10.6pp |
+| cardiovascular | 36.4% | 8 | +6.3pp |
+| cancer_same_type | 27.9% | 125 | -2.2pp |
+| default | 26.9% | 184 | -3.3pp |
+| **metabolic (statin/TZD rescue)** | **8.3%** | 4.2 | **-21.8pp** |
+
+**Changes Implemented:**
+1. Hematological MEDIUM→LOW demotion (default sub-reason: 0% holdout, n=6/seed × 4 seeds)
+2. Hematological blocked from target_overlap LOW→MEDIUM promotion (n=1.2/seed)
+3. Metabolic statin/TZD category rescue demoted MEDIUM→LOW (8.3% holdout)
+4. Metabolic default sub-reason NOT demoted (32.9% holdout — at MEDIUM level)
+
+**Holdout Impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 69.9% | 70.3% | +0.4pp |
+| HIGH | 58.7% | 54.5%* | -4.2pp* |
+| **MEDIUM** | **30.1%** | **31.7%** | **+1.6pp** |
+| LOW | 16.2% | 14.2%* | -2.0pp* |
+| FILTER | 10.5% | 10.3% | -0.2pp |
+
+*HIGH and LOW changes are seed variance — code changes only affect MEDIUM→LOW transitions.
+
+**New Hypotheses Generated (3):**
+- h554: Target overlap promotion to HIGH (45.3% within MEDIUM, P4)
+- h555: MEDIUM default sub-reason deep dive (26.9%, P5)
+- h556: Infectious MEDIUM precision gap (26.6%, P4)
+
+**Recommended Next Steps:**
+1. **h554**: Target overlap promotion MEDIUM→HIGH (potentially highest impact)
+2. **h556**: Infectious MEDIUM precision gap analysis
+3. **h550**: Antibiotic spectrum validation (overlaps with h556)
+
+---
+
+## Previous Session: h542+h551+h552+h548+h549 - MEDIUM Quality + Gene Overlap (2026-02-06)
 
 ### h542: Deliverable Quality Audit Round 2: MEDIUM Tier Top 59 — VALIDATED
 

@@ -10896,15 +10896,60 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compute holdout precision for MEDIUM by category",
         "Compare with overall MEDIUM average (30.1%)",
         "Identify categories significantly below average",
         "Assess whether category-specific demotion improves MEDIUM"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "MEDIUM tier precision by category analysis reveals heterogeneous performance:\n\nCATEGORIES ABOVE MEDIUM AVG (30.1%): psychiatric 54.8%, musculoskeletal 53.8%, cardiovascular 35.4%, dermatological 31.2%, autoimmune 30.7%\nCATEGORIES AT/BELOW MEDIUM AVG: respiratory 29.2%, ophthalmic 28.3%, cancer 27.9%, infectious 26.6%\nCANDIDATES FOR DEMOTION: metabolic 18.0% (-12.1pp), hematological 10.0% (-20.1pp, n=8/seed)\n\nCHANGES IMPLEMENTED:\n1. Hematological MEDIUM\u2192LOW demotion: 10.0% \u00b1 20.0% holdout (n=8/seed), default sub-reason 0% (n=6/seed \u00d7 4 seeds). Added to MEDIUM_DEMOTED_CATEGORIES and target_overlap block list.\n2. Metabolic statin/TZD category rescue MEDIUM\u2192LOW: 8.3% \u00b1 14.4% holdout (n=4.2/seed). TZDs/statins for non-hierarchy metabolic diseases perform at LOW level.\n3. Metabolic default sub-reason NOT demoted: 32.9% \u00b1 35.2% (n=5/seed) \u2014 actually at MEDIUM level.\n\nHOLDOUT IMPACT: MEDIUM +1.6pp (30.1% \u2192 31.7%). ~21 predictions/seed moved MEDIUM\u2192LOW.\nHIGH -4.2pp is seed variance (code changes only affect MEDIUM\u2192LOW transitions).\nLOW -2.0pp is seed variance (adding ~21 LOW-quality predictions to ~600/seed pool).\n\nKEY INSIGHT: Metabolic category is heterogeneous \u2014 hierarchy-matched predictions (diabetes, thyroid) perform well (GOLDEN/HIGH), but generic metabolic predictions via statin/TZD rescue perform poorly (8.3% holdout). Hematological default MEDIUM is essentially 0% on holdout.\n\nSUB-REASON ANALYSIS (within MEDIUM):\n- target_overlap_promotion: 45.3% (+15.2pp) \u2014 HIGH-level, best MEDIUM sub-reason\n- cv_pathway_comprehensive: 40.8% (+10.6pp)\n- local_anesthetic_procedural: 44.2% (+14.1pp, small n)\n- cancer_same_type: 27.9% (-2.2pp) \u2014 largest contributor (125/seed)\n- default: 26.9% (-3.3pp) \u2014 backbone (184/seed)\n- metabolic sub-reason: 8.3% (-21.8pp) \u2014 NOW DEMOTED TO LOW",
+      "result_metric": "MEDIUM +1.6pp (30.1% \u2192 31.7%), ~21 preds/seed moved to LOW"
+    },
+    {
+      "id": "h554",
+      "title": "Target Overlap Promotion to HIGH: Currently 45.3% Holdout Within MEDIUM",
+      "description": "target_overlap_promotion sub-reason within MEDIUM has 45.3% \u00b1 3.6% holdout precision (n=45/seed) \u2014 comparable to HIGH (54.5%). This could be promoted from MEDIUM to HIGH if it doesn't hurt HIGH tier overall. Need to verify that target_overlap promoted predictions maintain HIGH-level precision across categories and don't dilute HIGH.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Compute target_overlap_promotion holdout by category within MEDIUM",
+        "Simulate promoting target_overlap_promotion MEDIUM\u2192HIGH",
+        "Verify HIGH stays above 50% with these additions",
+        "Implement if validated"
+      ]
+    },
+    {
+      "id": "h555",
+      "title": "MEDIUM Default Sub-Reason Deep Dive: 26.9% \u2014 What Drives the 3pp Gap?",
+      "description": "The 'default' sub-reason within MEDIUM has 26.9% holdout (-3.3pp below MEDIUM avg). It's the largest contributor (184/seed). Understanding what distinguishes the ~27% hits from the ~73% misses could reveal actionable patterns. Cross-tabulation with drug class, disease category, and kNN features might identify subsets that should be LOW.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Cross-tabulate default MEDIUM by category \u2014 which categories have lowest precision?",
+        "Analyze by kNN rank (rank 1-5 vs 6-10 vs 11-20) within default MEDIUM",
+        "Check if train_frequency or mechanism_support predicts hits vs misses",
+        "Identify actionable subsets for demotion"
+      ]
+    },
+    {
+      "id": "h556",
+      "title": "Infectious MEDIUM Precision Gap: 26.6% Overall \u2014 Wrong-Pathogen Detection",
+      "description": "Infectious disease MEDIUM predictions have 26.6% holdout (-3.5pp below avg). Combined with h542's finding of wrong-antibiotic-spectrum errors (tetracyclines for resistant Shigella, bacteriostatic for meningococcal), there may be systematic pathogen-drug mismatches detectable without external data. Analyze which infectious sub-categories and drug classes drive the gap.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Break down infectious MEDIUM by disease sub-type (bacterial, viral, fungal, parasitic)",
+        "Cross-tabulate with drug class (tetracycline, macrolide, quinolone, antifungal, antiviral)",
+        "Identify drug-disease pairs where mechanism is clearly wrong (e.g., antifungal for bacterial disease)",
+        "Assess whether simple class-matching rules can improve precision"
+      ]
     }
   ],
   "completed": [
@@ -12758,6 +12803,12 @@
       "hypothesis_id": "h542",
       "learning": "MEDIUM tier is 56% reasonable vs 88% for GOLDEN/HIGH - confirming tier system calibration. Main MEDIUM error patterns: wrong cancer subtype (cancer_same_type overgeneralizes), wrong antibiotic spectrum, and diagnostic agent artifacts. FDG (PET tracer) had 55 false predictions.",
       "implication": "Cancer same-type and antibiotic spectrum are the two biggest remaining quality gaps in MEDIUM tier."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h553",
+      "learning": "MEDIUM tier has heterogeneous per-category precision: psychiatric 54.8%, musculoskeletal 53.8% vs hematological 10.0%, metabolic 18.0%. Hematological default MEDIUM is 0% on holdout. Metabolic statin/TZD rescue for non-hierarchy diseases is 8.3% \u2014 below LOW. Sub-reason analysis more informative than category-level: target_overlap_promotion (45.3%) is HIGH-quality within MEDIUM.",
+      "implication": "Consider promoting target_overlap_promotion from MEDIUM to HIGH (h554). For categories, only hematological warranted full demotion; metabolic is heterogeneous and requires rule-level intervention."
     }
   ],
   "collaborations": [

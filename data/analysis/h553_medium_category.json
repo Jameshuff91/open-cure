@@ -1,0 +1,171 @@
+{
+  "medium_avg_holdout": 30.1,
+  "categories": {
+    "renal": {
+      "holdout_mean": 58.9,
+      "holdout_std": 15.5,
+      "n_per_seed": 4.0,
+      "delta_vs_avg": 28.8
+    },
+    "psychiatric": {
+      "holdout_mean": 54.8,
+      "holdout_std": 6.6,
+      "n_per_seed": 19.0,
+      "delta_vs_avg": 24.6
+    },
+    "musculoskeletal": {
+      "holdout_mean": 53.8,
+      "holdout_std": 28.6,
+      "n_per_seed": 12.0,
+      "delta_vs_avg": 23.7
+    },
+    "cardiovascular": {
+      "holdout_mean": 35.4,
+      "holdout_std": 9.9,
+      "n_per_seed": 21.0,
+      "delta_vs_avg": 5.3
+    },
+    "dermatological": {
+      "holdout_mean": 31.2,
+      "holdout_std": 4.6,
+      "n_per_seed": 28.0,
+      "delta_vs_avg": 1.1
+    },
+    "autoimmune": {
+      "holdout_mean": 30.7,
+      "holdout_std": 14.9,
+      "n_per_seed": 23.0,
+      "delta_vs_avg": 0.6
+    },
+    "respiratory": {
+      "holdout_mean": 29.2,
+      "holdout_std": 9.0,
+      "n_per_seed": 14.0,
+      "delta_vs_avg": -0.9
+    },
+    "ophthalmic": {
+      "holdout_mean": 28.3,
+      "holdout_std": 22.3,
+      "n_per_seed": 10.0,
+      "delta_vs_avg": -1.8
+    },
+    "cancer": {
+      "holdout_mean": 27.9,
+      "holdout_std": 4.5,
+      "n_per_seed": 125.0,
+      "delta_vs_avg": -2.2
+    },
+    "infectious": {
+      "holdout_mean": 26.6,
+      "holdout_std": 8.1,
+      "n_per_seed": 104.0,
+      "delta_vs_avg": -3.5
+    },
+    "other": {
+      "holdout_mean": 21.4,
+      "holdout_std": 23.3,
+      "n_per_seed": 7.0,
+      "delta_vs_avg": -8.8
+    },
+    "metabolic": {
+      "holdout_mean": 18.0,
+      "holdout_std": 6.7,
+      "n_per_seed": 16.0,
+      "delta_vs_avg": -12.1
+    },
+    "hematological": {
+      "holdout_mean": 10.0,
+      "holdout_std": 20.0,
+      "n_per_seed": 8.0,
+      "delta_vs_avg": -20.1
+    }
+  },
+  "reasons": {
+    "default": {
+      "holdout_mean": 26.9,
+      "holdout_std": 3.1,
+      "n_per_seed": 184.0,
+      "delta_vs_avg": -3.3
+    },
+    "cancer_same_type": {
+      "holdout_mean": 27.9,
+      "holdout_std": 4.5,
+      "n_per_seed": 125.0,
+      "delta_vs_avg": -2.2
+    },
+    "target_overlap_promotion": {
+      "holdout_mean": 45.3,
+      "holdout_std": 3.6,
+      "n_per_seed": 45.0,
+      "delta_vs_avg": 15.2
+    },
+    "cv_pathway_comprehensive": {
+      "holdout_mean": 40.8,
+      "holdout_std": 9.3,
+      "n_per_seed": 16.0,
+      "delta_vs_avg": 10.6
+    },
+    "local_anesthetic_procedural": {
+      "holdout_mean": 44.2,
+      "holdout_std": 10.2,
+      "n_per_seed": 13.0,
+      "delta_vs_avg": 14.1
+    },
+    "cardiovascular": {
+      "holdout_mean": 36.4,
+      "holdout_std": 33.8,
+      "n_per_seed": 8.0,
+      "delta_vs_avg": 6.3
+    },
+    "metabolic": {
+      "holdout_mean": 8.3,
+      "holdout_std": 14.4,
+      "n_per_seed": 4.0,
+      "delta_vs_avg": -21.8
+    }
+  },
+  "cross_tab": {
+    "autoimmune|default": {
+      "holdout_mean": 23.5,
+      "holdout_std": 8.6,
+      "n_per_seed": 12.0,
+      "delta_vs_avg": -6.7
+    },
+    "infectious|default": {
+      "holdout_mean": 25.8,
+      "holdout_std": 8.8,
+      "n_per_seed": 96.0,
+      "delta_vs_avg": -4.3
+    },
+    "cancer|cancer_same_type": {
+      "holdout_mean": 27.9,
+      "holdout_std": 4.5,
+      "n_per_seed": 125.0,
+      "delta_vs_avg": -2.2
+    },
+    "dermatological|default": {
+      "holdout_mean": 30.8,
+      "holdout_std": 4.6,
+      "n_per_seed": 28.0,
+      "delta_vs_avg": 0.7
+    },
+    "cardiovascular|cv_pathway_comprehensive": {
+      "holdout_mean": 40.8,
+      "holdout_std": 9.3,
+      "n_per_seed": 16.0,
+      "delta_vs_avg": 10.6
+    },
+    "musculoskeletal|default": {
+      "holdout_mean": 53.2,
+      "holdout_std": 28.2,
+      "n_per_seed": 11.0,
+      "delta_vs_avg": 23.1
+    },
+    "psychiatric|target_overlap_promotion": {
+      "holdout_mean": 55.7,
+      "holdout_std": 6.2,
+      "n_per_seed": 19.0,
+      "delta_vs_avg": 25.6
+    }
+  }
+}

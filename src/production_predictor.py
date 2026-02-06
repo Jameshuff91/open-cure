@@ -160,9 +160,8 @@ CATEGORY_PRECISION = {
     ("gastrointestinal", "HIGH"): 31.4,   # n=35
     ("gastrointestinal", "LOW"): 9.3,     # n=54 (includes former MEDIUM)
     ("gastrointestinal", "FILTER"): 10.8, # n=509
-    # Hematological
-    ("hematological", "MEDIUM"): 20.5,  # n=215
-    ("hematological", "LOW"): 6.5,      # n=93
+    # Hematological (h553: MEDIUM demoted to LOW; 10.0% ± 20.0% holdout, n=8/seed)
+    ("hematological", "LOW"): 6.5,      # n=93 (includes former MEDIUM)
     ("hematological", "FILTER"): 5.4,   # n=349
     # Immunological (h462: MEDIUM demoted to LOW; 2.5% holdout = massive overfitting)
     ("immunological", "LOW"): 9.1,      # n=22 (includes former MEDIUM)
@@ -1513,7 +1512,7 @@ CATEGORY_MEDIUM_HOLDOUT_PRECISION: Dict[str, float] = {
     'ophthalmic': 23.3,        # ±16.2
     'metabolic': 19.4,         # ±10.4
     'other': 17.2,             # ±14.7
-    'hematological': 16.6,     # ±13.7
+    'hematological': 10.0,     # h553: ±20.0, n=8/seed → demoted to LOW
     # Demoted categories (now LOW): holdout-validated at demotion
     'neurological': 5.8,       # h499: ±? → demoted to LOW, confirmed justified
     'immunological': 8.3,      # h499: → demoted to LOW, confirmed justified
@@ -2989,8 +2988,10 @@ class DrugRepurposingPredictor:
         # - Neurological: 10.2% ± 11.1% holdout (15.7% full-data, n=24 diseases)
         # - Cardiovascular: h490 standard 2.0% ± 4.0%, ATC coherent 8.4% ± 10.4% holdout
         #   cv_pathway_comprehensive (21.4%) and target_overlap (16.2%) return BEFORE this check
+        # - Hematological: h553 10.0% ± 20.0% holdout (27.6% full-data, n=8/seed)
+        #   default sub-reason: 0% holdout (n=6/seed × 4 seeds), target_overlap: 25% ± 43% (n=1.2/seed)
         # Category-specific rescue rules (h380 GI, hierarchy) still promote valid drugs to HIGH.
-        MEDIUM_DEMOTED_CATEGORIES = {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cardiovascular'}
+        MEDIUM_DEMOTED_CATEGORIES = {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cardiovascular', 'hematological'}
         if category in MEDIUM_DEMOTED_CATEGORIES:
             return ConfidenceTier.LOW, False, f'{category}_medium_demotion'
 
@@ -3143,15 +3144,17 @@ class DrugRepurposingPredictor:
         elif category == 'metabolic':
             drug_lower = drug_name.lower()
 
-            # h265/h395: TZDs for metabolic → MEDIUM (was GOLDEN)
+            # h265/h395: TZDs for metabolic → was MEDIUM (was GOLDEN)
             # h395 found 6.9% precision — TZDs only work for diabetes, not thyroid/rare metabolic
+            # h553: Demoted to LOW (8.3% ± 14.4% holdout, n=4.2/seed — below LOW avg 16.2%)
             if any(tzd in drug_lower for tzd in THIAZOLIDINEDIONES):
-                return ConfidenceTier.MEDIUM  # h395: demoted from GOLDEN (6.9% overall)
+                return ConfidenceTier.LOW  # h553: demoted from MEDIUM (8.3% holdout)
 
-            # h144/h395: Statins for metabolic → MEDIUM (was GOLDEN)
+            # h144/h395: Statins for metabolic → was MEDIUM (was GOLDEN)
             # h395 found 6.9% overall — statins get boosted for non-lipid metabolic diseases
+            # h553: Demoted to LOW (8.3% ± 14.4% holdout, n=4.2/seed — below LOW avg 16.2%)
             if rank <= 10 and any(statin in drug_lower for statin in STATIN_DRUGS):
-                return ConfidenceTier.MEDIUM  # h395: demoted from GOLDEN (6.9% overall)
+                return ConfidenceTier.LOW  # h553: demoted from MEDIUM (8.3% holdout)
 
         elif category == 'cancer':
             # h150/h274: Drug class rescue for cancer
@@ -3815,7 +3818,8 @@ class DrugRepurposingPredictor:
                             # h462: Block LOW→MEDIUM for categories with poor MEDIUM holdout
                             # h485: Block cancer (cross-type overlap=0.3% holdout, n=197)
                             # h505: Block cardiovascular (13.6% holdout < LOW avg 14.8%, n=13/seed)
-                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer', 'cardiovascular'}
+                            # h553: Block hematological (25% ± 43% holdout, n=1.2/seed — too tiny, default=0%)
+                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer', 'cardiovascular', 'hematological'}
                             # h488: Block rescue of incoherent demotions (3.6% holdout)
                             and cat_specific != 'incoherent_demotion'):
                         tier = ConfidenceTier.MEDIUM
