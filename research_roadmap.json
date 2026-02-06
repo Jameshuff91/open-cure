@@ -6649,7 +6649,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: For each drug class, calculate average GT diseases per drug (class width)",
         "Step 2: Correlate class width with isolation precision gap",
@@ -6659,7 +6659,10 @@
       "dependencies": [
         "h307",
         "h327"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "r=0.33 (p=0.26) - weak correlation, class width NOT predictive",
+      "findings": "h329 VALIDATED (but with unexpected result): Class Width Analysis\n\nORIGINAL HYPOTHESIS: Class width (avg diseases/drug) predicts isolation signal quality.\n- Broader classes (many diseases) \u2192 isolation = bad signal\n- Narrower classes (few diseases) \u2192 isolation = good signal\n\nRESULT: Correlation is WEAK (r=0.33, p=0.26 - not significant)\n\nKEY FINDINGS:\n\n1. STATINS EXCEPTION WAS WRONG\n   - h307/h327 suggested statins have isolation=good (37.5% vs 29.3%)\n   - Corrected analysis: statins show cohesion helps (+7.8 pp gap)\n   - Small n (8 isolated) made original finding unreliable\n\n2. MOST CLASSES SHOW COHESION HELPS (9/16)\n   - local_anesthetics: +19.1 pp (width=93.5)\n   - corticosteroids: +18.3 pp (width=61.2)  \n   - tnf_inhibitors: +22.1 pp (width=10.2)\n   - antihistamines: +33.3 pp (width=8.2)\n   - beta_blockers: +16.0 pp (width=8.7)\n\n3. TRUE EXCEPTIONS WHERE ISOLATION HELPS (2/16)\n   - platinum_agents: -10.3 pp (width=7.0) - REAL EXCEPTION\n   - anticonvulsants: -6.2 pp - insufficient data (n=2 non-isolated)\n\n4. PLATINUM EXCEPTION MECHANISM\n   - Platinum drugs are cancer-selective (cisplatin\u2192ovarian, oxaliplatin\u2192colorectal)\n   - Single platinum = specific indication = higher quality\n   - Multiple platinums = over-prediction = noise\n   - This is OPPOSITE of broad classes like anesthetics/steroids\n\nCONCLUSION:\n- Class width does NOT predict isolation signal quality (r=0.33)\n- Cohesion (classmates predicted) helps for MOST drug classes\n- Platinum agents are unique exception: isolation is POSITIVE signal\n- Current BROAD_THERAPEUTIC_CLASSES rule is generally correct\n- Consider adding platinum_agents to NARROW_ISOLATION_BOOST (inverse rule)\n\nACTIONABLE:\n- Statins should NOT be excluded from broad class isolation demotion\n- Platinum agents may benefit from isolation BOOST (inverse of current rule)\n- No changes needed to production_predictor.py based on this analysis"
     },
     {
       "id": "h330",
@@ -6678,6 +6681,67 @@
       ],
       "dependencies": [
         "h307"
+      ]
+    },
+    {
+      "id": "h331",
+      "title": "Platinum Agent Isolation Boost",
+      "category": "confidence",
+      "rationale": "h329 found platinum agents are unique: isolation=12.2% vs non-isolated=1.9% (inverse of broad classes). Isolated platinum predictions may deserve BOOST instead of demotion.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: Count isolated platinum predictions in current output",
+        "Step 2: Calculate potential precision improvement from boosting isolated platinum",
+        "Step 3: Implement PLATINUM_ISOLATION_BOOST: if isolated platinum + rank<=10 -> HIGH tier",
+        "Step 4: Validate that boost improves platinum class precision",
+        "Success criteria: >2 pp improvement for platinum predictions"
+      ],
+      "dependencies": [
+        "h329"
+      ]
+    },
+    {
+      "id": "h332",
+      "title": "Cancer-Selective Drug Class Analysis",
+      "category": "error_analysis",
+      "rationale": "h329 platinum exception suggests cancer-selective drugs behave differently. Are there other drug classes (alkylating agents, antimetabolites, targeted therapies) where isolation is positive?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Identify oncology drug classes: alkylating, antimetabolites, topoisomerase, targeted kinase inhibitors",
+        "Step 2: Calculate isolation gap for each class",
+        "Step 3: Determine if cancer-selective drugs generally show isolation=positive",
+        "Step 4: If pattern holds, consider CANCER_DRUG_ISOLATION_BOOST rule",
+        "Success criteria: Identify pattern distinguishing cancer drugs from broad classes"
+      ],
+      "dependencies": [
+        "h329"
+      ]
+    },
+    {
+      "id": "h333",
+      "title": "Statin Broad Class Re-evaluation",
+      "category": "confidence",
+      "rationale": "h329 corrected h307/h327: statins show cohesion helps (+7.8 pp). Should statins be added to BROAD_THERAPEUTIC_CLASSES for isolation demotion?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: Check if statins are currently in BROAD_THERAPEUTIC_CLASSES",
+        "Step 2: Calculate impact of adding statins to isolation demotion rule",
+        "Step 3: Check n=8 isolated statin predictions - would demotion lose any HIGH tier hits?",
+        "Step 4: Decide if statin isolation demotion improves or hurts overall precision",
+        "Success criteria: Decision on whether to add statins to broad class list"
+      ],
+      "dependencies": [
+        "h329",
+        "h326"
       ]
     }
   ],
@@ -7943,6 +8007,12 @@
       "hypothesis_id": "h323",
       "learning": "kNN success is bimodal (100% or 0%) and category-driven. Existing tier system is well-aligned. Pool size adds minimal predictive value.",
       "implication": "Focus on improving category-specific rules rather than per-disease calibration. Consider promoting cancer/endocrine to higher tiers."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h329",
+      "learning": "Class width does NOT predict isolation signal. Most classes benefit from cohesion. Platinum agents are unique exception (isolation=good) due to cancer-selectivity.",
+      "implication": "Current broad class isolation demotion is correct. Consider platinum isolation boost. Statin exception was spurious (small n)."
     }
   ],
   "collaborations": [
