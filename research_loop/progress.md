@@ -59,10 +59,34 @@ Deliverable regenerated: 4 predictions moved to FILTER.
 - h486: Drug-Induced Disease Filter via SIDER Database (Priority 3)
 - h487: ATC Coherent Rule False Positive Analysis (Priority 4)
 
+### h476: Corticosteroid Iatrogenic Filter Expansion - VALIDATED
+
+- Added cortisone, fludrocortisone, mometasone to CORTICOSTEROID_DRUGS (were missing)
+- Added pancreatitis + cushing to steroid_iatrogenic filter
+- 28 predictions moved to FILTER (4 from HIGH), 0 GT loss
+- Key: corticosteroids CAUSE drug-induced pancreatitis (JAMA) but treat autoimmune pancreatitis (different subtype)
+
+### h485: Target Overlap Promotion False Positive Rate - VALIDATED (opposite of expected!)
+
+**5-seed holdout validation of ALL MEDIUM rules:**
+
+| Rule | Holdout Precision | Status |
+|------|-------------------|--------|
+| cv_pathway_comprehensive | 72.9% ± 19.2% | BEST |
+| target_overlap_promotion | 35.9% ± 12.5% | 3rd BEST |
+| cancer_same_type | 34.9% ± 3.4% | GOOD |
+| standard | 21.3% ± 5.7% | baseline |
+| cancer (cross-type) | 0.3% ± 0.7% | **ESSENTIALLY ZERO** |
+| incoherent_demotion | 3.6% ± 6.2% | noise |
+
+**Critical finding:** Cancer cross-type overlap promotion has 0.3% holdout (197 predictions = noise).
+**Fix:** Blocked cancer from target overlap LOW→MEDIUM promotion.
+**Impact:** MEDIUM +1.4pp (27.5% → 28.9%), HIGH +1.3pp, 183 predictions MEDIUM→LOW, only 1 GT lost.
+
 ### Recommended Next Steps
 1. **h486:** Systematic SIDER-based inverse indication mining (Priority 3, high effort, high impact)
-2. **h485:** Target overlap promotion audit (Priority 4, medium effort)
-3. **h487:** ATC coherent rule false positive analysis (Priority 4, medium effort)
+2. **h487:** ATC coherent rule false positive analysis (Priority 4, medium effort)
+3. Investigate incoherent_demotion (3.6% holdout) and atc_coherent_hematological (11.2%) for potential demotions
 
 ---
 
