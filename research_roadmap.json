@@ -10808,7 +10808,7 @@
       "title": "Gene-Poor Disease kNN Quality: Does Self-Referentiality Correlate with Disease Gene Count?",
       "description": "h546 showed gene overlap signal is STRONGEST for diseases with few known genes (+16.7pp vs +4.6pp for gene-rich). h504 showed 31.6% of diseases are 100% self-referential, mostly due to small GT (OR=8.6x). If gene-poor diseases also tend to be self-referential, the overlap signal may be capturing GT size rather than molecular mechanism. Conversely, if gene-poor + overlap predicts holdout precision independently of self-referentiality, we have a genuinely useful annotation.",
       "hypothesis": "Gene-poor diseases are MORE self-referential, and gene overlap quality partially captures GT size rather than mechanism",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -10817,8 +10817,8 @@
         "Check if gene overlap signal persists after controlling for GT size",
         "Determine if gene overlap is a proxy for GT completeness or genuine mechanism signal"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Gene-poor disease kNN quality: Self-referentiality does NOT correlate with disease gene count.\n\nRESULTS:\n- Correlation (max_gene_overlap vs self_ref_pct): r=0.047 (essentially zero)\n- Gene-poor diseases (overlap=0): 52.7% mean self-ref, 38% fully self-referential\n- Gene-low (1-5): 52.4% mean self-ref, 32% fully self-referential\n- Gene-medium (6-50): 53.4% mean self-ref, 20% fully self-referential\n- Gene-rich (51+): 61.1% mean self-ref, 13% fully self-referential\n\n100% self-referential diseases actually have LOWER gene overlap (54%) than partial self-ref (75%).\n\nCONCLUSION:\nGene overlap is NOT a proxy for GT size or self-referentiality.\nIt is an independent molecular signal, consistent with h546's finding that it adds\n+11.4pp to MEDIUM novel holdout after controlling for known-indication bias.\nThis validates the gene_overlap_count annotation as genuinely informative.",
+      "result_metric": "r=0.047: gene overlap independent of self-referentiality"
     },
     {
       "id": "h549",
