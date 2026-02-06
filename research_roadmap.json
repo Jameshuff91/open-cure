@@ -6752,6 +6752,46 @@
         "h329",
         "h326"
       ]
+    },
+    {
+      "id": "h334",
+      "title": "Renal Disease Incoherence Boost",
+      "category": "confidence",
+      "rationale": "h315 found renal diseases have INVERTED coherence: incoherent precision 12.8% vs coherent 5.6% (-7.3 pp gap). Investigate why and whether to boost incoherent renal predictions.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Step 1: Analyze which incoherent ATC codes perform best for renal diseases",
+        "Step 2: Identify specific drug classes driving the inversion",
+        "Step 3: Check if these are known cross-indication patterns (e.g., CV drugs for CKD)",
+        "Step 4: Decide if renal incoherence boost is warranted",
+        "Success criteria: Understand mechanism and decide on boost rule"
+      ],
+      "dependencies": [
+        "h315"
+      ]
+    },
+    {
+      "id": "h335",
+      "title": "Cancer Coherence Investigation",
+      "category": "error_analysis",
+      "rationale": "h315 found cancer has nearly zero coherence gap (+0.8 pp). This is surprising - L (antineoplastics) should match cancer better. Investigate why coherence fails for cancer.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Step 1: Check ATC distribution of cancer predictions (L vs non-L)",
+        "Step 2: Analyze which non-L drugs are hitting for cancer",
+        "Step 3: Identify if this is due to supportive care drugs or actual treatments",
+        "Step 4: Decide if cancer should be excluded from coherence demotion",
+        "Success criteria: Understand cancer coherence patterns"
+      ],
+      "dependencies": [
+        "h315"
+      ]
     }
   ],
   "completed": [
@@ -8022,6 +8062,12 @@
       "hypothesis_id": "h329",
       "learning": "Class width does NOT predict isolation signal. Most classes benefit from cohesion. Platinum agents are unique exception (isolation=good) due to cancer-selectivity.",
       "implication": "Current broad class isolation demotion is correct. Consider platinum isolation boost. Statin exception was spurious (small n)."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h315",
+      "learning": "Category-specific coherence varies from +25pp (ophthalmic) to -7pp (renal). Cancer has no coherence signal. Renal is inverted.",
+      "implication": "Uniform demotion suboptimal. Category-specific rules could improve cancer/metabolic/renal predictions."
     }
   ],
   "collaborations": [
