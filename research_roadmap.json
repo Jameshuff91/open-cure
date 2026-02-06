@@ -6691,7 +6691,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Count isolated platinum predictions in current output",
         "Step 2: Calculate potential precision improvement from boosting isolated platinum",
@@ -6701,7 +6701,10 @@
       ],
       "dependencies": [
         "h329"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "Isolated platinum MEDIUM = 21.4% precision (matches HIGH tier baseline)",
+      "findings": "h331 VALIDATED: Platinum Agent Isolation Boost\n\nANALYSIS:\n1. Isolated platinum (1 drug per disease): 41 preds, 7 hits = 17.1% precision\n2. Non-isolated platinum (2+ drugs): 52 preds, 5 hits = 9.6% precision\n3. Gap: +7.5 pp (isolation helps, confirming h329)\n\nTIER BREAKDOWN FOR ISOLATED PLATINUM:\n- HIGH: 4 preds, 0 hits (0%) - tiny sample\n- MEDIUM: 28 preds, 6 hits (21.4%)\n- LOW: 9 preds, 1 hit (11.1%)\n\nBOOST DECISION:\n- Isolated platinum MEDIUM precision: 21.4%\n- Current HIGH tier overall precision: 21.4%\n- EXACT MATCH - boost is justified!\n\nRECOMMENDATION:\nImplement PLATINUM_ISOLATION_BOOST: isolated platinum + MEDIUM tier -> HIGH tier\n- 28 predictions would be boosted\n- 6 additional hits would be promoted to HIGH tier\n- No precision loss (21.4% = 21.4%)\n\nWHY PLATINUM IS SPECIAL:\nPlatinum agents are cancer-SELECTIVE:\n- Cisplatin: ovarian, testicular, bladder, head/neck\n- Oxaliplatin: colorectal, gastric\n- Carboplatin: ovarian, lung\n\nUnlike \"broad\" classes (anesthetics, steroids) that work across many diseases,\nplatinum drugs have specific cancer indications. Single platinum prediction\nindicates targeted, specific therapy - higher quality signal.\n\nIMPLEMENTATION IMPACT:\n- 28 predictions boosted to HIGH tier\n- 6 true positives elevated\n- HIGH tier count increases but precision maintained\n\nIMPLEMENTATION DECISION: DO NOT IMPLEMENT\n- 28 predictions = 0.21% of total output\n- 6 additional hits = 0.85% impact on HIGH tier\n- Complexity of implementation outweighs marginal gain\n- Document pattern for future reference but no code changes"
     },
     {
       "id": "h332",
