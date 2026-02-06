@@ -78,12 +78,12 @@ USAGE:
     python -m src.production_predictor "rheumatoid arthritis"
     python -m src.production_predictor --disease "type 2 diabetes" --top-k 30
 
-TIER SYSTEM (h135 validated, 9.1x separation):
-- GOLDEN (57.7%): Tier1 category + freq>=10 + mechanism
-- HIGH (20.9%):   freq>=15 + mechanism OR rank<=5 + freq>=10 + mechanism
-- MEDIUM (14.3%): freq>=5 + mechanism OR freq>=10
-- LOW (6.4%):     All else passing filter
-- FILTER (3.2%):  rank>20 OR no_targets OR (freq<=2 AND no_mechanism)
+TIER SYSTEM (h393 holdout-validated, h396 inversion-fixed):
+- GOLDEN (~56%):  High-precision rescue rules (DMARD, lipid/diabetes hierarchy, etc.)
+- HIGH (~49%):    freq>=15 + mechanism OR rank<=5 + freq>=10 + mechanism
+- MEDIUM (~23%):  freq>=5 + mechanism OR freq>=10 OR cancer_same_type
+- LOW (~11%):     All else passing filter
+- FILTER (~8%):   rank>20 OR no_targets OR (freq<=2 AND no_mechanism)
 """
 
 import hashlib
@@ -130,19 +130,22 @@ CATEGORY_PRECISION = {
     # From h165 analysis: 5 seeds, 101,939 predictions, 2,455 diseases
     # GOLDEN/HIGH values from h136/h144/h150/h154/h157 rescue criteria validation
     #
-    # GOLDEN tier values (from rescue criteria validation):
-    ("autoimmune", "GOLDEN"): 75.4,   # h157: DMARD + rank<=10
-    ("infectious", "GOLDEN"): 55.6,   # h136: rank<=10 + freq>=15 + mech
-    ("metabolic", "GOLDEN"): 60.0,    # h144: statin + rank<=10
+    # GOLDEN tier values (h396: updated from h393 holdout + h387/h395 demotions):
+    ("autoimmune", "GOLDEN"): 75.4,   # h157: DMARD + rank<=10 (genuine)
+    # ("infectious", "GOLDEN"): removed by h387 (was 5.3%, not 55.6%)
+    # ("metabolic", "GOLDEN"): h395 demoted statins/TZDs to MEDIUM (was 60.0%)
+    ("metabolic", "GOLDEN"): 55.0,    # h396: lipid hierarchy (53.8%) + diabetes hierarchy (34.2%)
     ("ophthalmic", "GOLDEN"): 62.5,   # h150: antibiotic + rank<=15
     ("dermatological", "GOLDEN"): 63.6,  # h150: topical_steroid + rank<=5
-    # HIGH tier values (from rescue criteria validation):
+    # HIGH tier values (h396: updated):
     ("cardiovascular", "HIGH"): 38.2, # h136: rank<=5 + mech OR h154/h266: beta_blocker + rank<=10 (42.1%)
     ("respiratory", "HIGH"): 35.0,    # h136: rank<=10 + freq>=15 + mech
-    ("cancer", "GOLDEN"): 55.0,       # h197: colorectal + mAb = 50-60% precision
+    # h396: cancer_same_type demoted to MEDIUM (was GOLDEN at 24.5%)
+    ("cancer", "GOLDEN"): 55.0,       # h197: colorectal + mAb = 50-60% precision (still valid for specific rules)
     ("cancer", "HIGH"): 40.0,         # h150: taxane + rank<=5
+    ("cancer", "MEDIUM"): 24.5,       # h396: cancer_same_type = 24.5% (was in GOLDEN)
     ("ophthalmic", "HIGH"): 48.0,     # h150: steroid + rank<=15
-    ("hematological", "HIGH"): 48.6,  # h150: corticosteroid + rank<=10
+    ("hematological", "HIGH"): 19.1,  # h395: demoted from 48.6% (actual measured precision)
     #
     # MEDIUM tier values (from h165):
     ("psychiatric", "MEDIUM"): 85.0,
@@ -199,12 +202,14 @@ CATEGORY_PRECISION = {
 }
 
 # Default tier-only precision (fallback)
+# h396: Updated from h393 holdout validation (5-seed 80/20 split)
+# These replace stale h135 values
 DEFAULT_TIER_PRECISION = {
-    "GOLDEN": 57.7,
-    "HIGH": 20.9,
-    "MEDIUM": 19.3,  # Overall average from h165
-    "LOW": 5.7,
-    "FILTER": 7.6,
+    "GOLDEN": 56.0,   # h396: After cancer_same_type demotion (was 57.7 from h135)
+    "HIGH": 49.0,     # h393 holdout: 49.1% ± 6.4% (was 20.9 from h135)
+    "MEDIUM": 23.0,   # h393 holdout: 23.3% ± 3.6% (was 19.3 from h165)
+    "LOW": 11.0,      # h393 holdout: 11.0% ± 1.6% (was 5.7 from h135)
+    "FILTER": 8.0,    # h393 holdout: 8.2% ± 0.9% (was 7.6 from h135)
 }
 
 
@@ -2123,13 +2128,15 @@ class DrugRepurposingPredictor:
 
         Returns: (tier, rescue_applied, category_specific_tier)
         """
-        # h274: For cancer, check cancer type match BEFORE applying rank filter
-        # Same-type cancer drugs are highly predictive regardless of rank
+        # h274/h396: For cancer, check cancer type match BEFORE applying rank filter
+        # h393 holdout validation: cancer_same_type has 24.5% full-data, 19.2% holdout precision
+        # This is MEDIUM-level, not GOLDEN. Demoted from GOLDEN→MEDIUM by h396.
         if category == 'cancer' and drug_id:
             has_cancer_gt, same_type_match, _ = self._check_cancer_type_match(drug_id, disease_name)
             if same_type_match:
-                # Same cancer type → GOLDEN regardless of rank (100% precision)
-                return ConfidenceTier.GOLDEN, True, 'cancer_same_type'
+                # h396: Demoted from GOLDEN to MEDIUM (24.5% full, 19.2% holdout)
+                # cancer_same_type was 57% of GOLDEN predictions, dragging GOLDEN below HIGH
+                return ConfidenceTier.MEDIUM, True, 'cancer_same_type'
             if not has_cancer_gt:
                 # No cancer GT → FILTER (0% precision)
                 return ConfidenceTier.FILTER, False, 'cancer_no_gt'
@@ -2238,12 +2245,17 @@ class DrugRepurposingPredictor:
         HIERARCHY_GOLDEN_CATEGORIES = {'metabolic', 'neurological'}
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
         HIERARCHY_DEMOTE_TO_HIGH = {'thyroid'}
+        # h396: These hierarchy groups have 0% precision (n>=2) - demote to MEDIUM
+        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine'}
 
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(
                 drug_id, disease_name, category
             )
             if same_group_match:
+                # h396: Demote 0% precision groups to MEDIUM
+                if matching_group in HIERARCHY_DEMOTE_TO_MEDIUM:
+                    return ConfidenceTier.MEDIUM, True, f'{category}_hierarchy_{matching_group}'
                 # h385: Check if this specific group should be demoted to HIGH
                 if matching_group in HIERARCHY_DEMOTE_TO_HIGH:
                     return ConfidenceTier.HIGH, True, f'{category}_hierarchy_{matching_group}'

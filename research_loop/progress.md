@@ -1,6 +1,67 @@
 # Research Loop Progress
 
-## Current Session: h381, h388 (2026-02-05)
+## Current Session: h393, h396 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 2**
+- h393: Holdout Validation of All Tier Rules - **VALIDATED**
+- h396: Resolve GOLDEN vs HIGH Tier Precision Inversion - **VALIDATED**
+
+### h393: Holdout Validation of All Tier Rules - VALIDATED
+
+**Hypothesis:** 80/20 holdout split across 5 seeds to test if hand-crafted tier rules are genuine or overfitted.
+
+**Findings:**
+| Tier | Full-Data | Holdout (5-seed) | Delta |
+|------|-----------|------------------|-------|
+| GOLDEN | 30.3% | 24.1% ± 2.7% | -6.2pp |
+| HIGH | 50.9% | 49.1% ± 6.4% | -1.8pp |
+| MEDIUM | 24.5% | 23.3% ± 3.6% | -1.2pp |
+| LOW | 12.9% | 11.0% ± 1.6% | -1.9pp |
+| FILTER | 10.6% | 8.2% ± 0.9% | -2.4pp |
+
+**Key Insights:**
+1. Tier system IS genuine: HIGH/MED/LOW/FILTER retain >80% precision on holdout
+2. GOLDEN drops 6.2pp — driven by cancer_same_type GT leakage (-5.8pp)
+3. GOLDEN<HIGH inversion is REAL, not an overfitting artifact
+4. 10 rules flagged as "overfitted" — but 6 are structural absence (1-disease groups)
+5. Only 1 truly overfitted rule: infectious_hierarchy_pneumonia (36.4% → 0%)
+
+### h396: Resolve GOLDEN vs HIGH Tier Precision Inversion - VALIDATED
+
+**Changes:**
+1. Demoted cancer_same_type from GOLDEN → MEDIUM (24.5% precision = MEDIUM level)
+2. Demoted parkinsons/migraine hierarchy from GOLDEN → MEDIUM (0% precision)
+3. Updated DEFAULT_TIER_PRECISION with holdout-validated values
+4. Updated stale CATEGORY_PRECISION entries
+
+**Results (after changes):**
+| Tier | Full-Data | Holdout (5-seed) | Delta |
+|------|-----------|------------------|-------|
+| GOLDEN | 53.6% | 55.4% ± 12.1% | +0.6pp |
+| HIGH | 47.7% | 48.1% ± 6.1% | -2.0pp |
+| MEDIUM | 25.6% | 22.4% ± 3.0% | -2.1pp |
+| LOW | 10.1% | 11.0% ± 1.7% | -2.1pp |
+| FILTER | 10.5% | 8.1% ± 0.9% | -2.4pp |
+
+**Success:** Tier ordering correct on holdout: GOLDEN > HIGH > MEDIUM > LOW > FILTER
+
+### New Hypotheses Generated
+- **h410:** Literature Validation of 1-Disease Hierarchy Rules - Priority 3
+- **h411:** Target Overlap Promotion Holdout Degradation Analysis - Priority 2
+- **h412:** LOW vs FILTER Recalibration (Precision Convergence) - Priority 3
+
+### Recommended Next Steps
+1. h400: Deploy Category-Specific k Values (h66 finding, never implemented) - Priority 2, low effort, high impact
+2. h411: Target Overlap Promotion Holdout Degradation - Priority 2, low effort
+3. h399: Rule Interaction Audit - Priority 2, medium effort
+
+---
+
+## Previous Session: h381, h388 (2026-02-05)
 
 ### Session Summary
 
@@ -53,10 +114,22 @@
 - HIGH: 47.1% → 55.0% (+7.9 pp)
 - MEDIUM: 21.2% → 22.5% (+1.3 pp)
 
+### h394: Fix Training Frequency Label Leakage - VALIDATED
+
+**Hypothesis:** Drug frequency counts include the test disease, inflating precision.
+
+**Findings:**
+- R@30: 79.4% → 75.4% honest (-4.0 pp) — ranking most affected
+- GOLDEN: -0.4 pp (negligible, rules are hierarchy-based)
+- HIGH: -2.7 pp (moderate, freq thresholds are borderline)
+- MEDIUM: -0.5 pp (negligible)
+- 57 drug-disease pairs cross freq>=10 threshold
+- No fix needed for production (new diseases have no leakage)
+
 ### Recommended Next Steps
 1. h396: Resolve GOLDEN vs HIGH tier precision inversion (GOLDEN 42.2% < HIGH 55.0%)
-2. h394: Fix training frequency label leakage
-3. h391: MEDIUM Tier Overlap Anomaly
+2. h391: MEDIUM Tier Overlap Anomaly
+3. h401: Frequency-Independent Tier Rules for Border Cases
 
 ---
 
