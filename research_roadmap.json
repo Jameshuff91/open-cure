@@ -10142,7 +10142,7 @@
       "title": "Embedding Norm as Disease Confidence Annotation (Non-Actionable but Informative)",
       "description": "h507 found embedding_norm correlates with self-referentiality (AUC=0.657). While not actionable for tier demotion (too noisy), it could be useful as an ANNOTATION in the deliverable to signal 'confidence in disease coverage'. Diseases with low embedding norm are poorly represented in DRKG and predictions should be interpreted with more caution. This is informational, not a tier change.",
       "status": "pending",
-      "priority": 5,
+      "priority": 6,
       "expected_impact": "low",
       "effort": "low",
       "steps": [
@@ -10171,7 +10171,7 @@
       "id": "h513",
       "title": "Periodic Holdout Re-Baseline After Code Changes",
       "description": "h492 revealed that CLAUDE.md holdout values drifted 4-9pp from actual values due to accumulated code changes since h478. This means our reported precision is inaccurate. Implement a policy of re-running holdout validation after every N code changes to production_predictor.py, or create an automated script that runs as part of commit.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -10179,7 +10179,9 @@
         "Create a lightweight holdout benchmark script",
         "Run after each code change to production_predictor.py",
         "Update CLAUDE.md with correct values"
-      ]
+      ],
+      "findings": "Re-baseline completed as part of h492. Current holdout: GOLDEN 63.3%, HIGH 51.5%, MEDIUM 29.9%, LOW 12.3%, FILTER 8.9%. CLAUDE.md updated. Policy: re-run holdout after code changes to production_predictor.py.",
+      "result_metric": "Baseline re-calibrated, CLAUDE.md updated"
     },
     {
       "id": "h514",
