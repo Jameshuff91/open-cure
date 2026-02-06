@@ -76,6 +76,7 @@ def main():
                 'rescue_applied': pred.category_rescue_applied,
                 'transe_consilience': pred.transe_consilience,
                 'rank_bucket_precision': pred.rank_bucket_precision,
+                'category_holdout_precision': pred.category_holdout_precision,
             })
 
             tier_counts[pred.confidence_tier.value] += 1

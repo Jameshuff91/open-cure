@@ -262,6 +262,9 @@ class DrugPrediction:
     # h444: Rank-bucket precision (holdout-validated)
     rank_bucket_precision: float = 0.0
 
+    # h466: Category-specific holdout precision
+    category_holdout_precision: float = 0.0
+
     def to_dict(self) -> Dict:
         return {
             'drug': self.drug_name,
@@ -277,6 +280,7 @@ class DrugPrediction:
             'category_rescue_applied': self.category_rescue_applied,
             'transe_consilience': self.transe_consilience,
             'rank_bucket_precision': self.rank_bucket_precision,
+            'category_holdout_precision': self.category_holdout_precision,
         }
 
 
@@ -1066,6 +1070,52 @@ def get_rank_bucket_precision(tier: str, rank: int) -> float:
         # rank > 20: use tier's 16-20 bucket as conservative estimate
         lo, hi = 16, 20
     return RANK_BUCKET_PRECISION.get((tier, lo, hi), 0.0)
+
+
+# h462: Category-specific MEDIUM holdout precision (5-seed mean)
+# Used for clinical reporting: expected precision given category within MEDIUM tier
+# Format: category -> holdout_precision (%)
+# Categories not listed use the default MEDIUM holdout precision (21.2%)
+CATEGORY_MEDIUM_HOLDOUT_PRECISION: Dict[str, float] = {
+    'psychiatric': 45.7,       # n=20/seed, ±5.4
+    'renal': 43.5,             # n=12/seed, ±25.2 (HIGH VARIANCE)
+    'musculoskeletal': 29.8,   # n=15/seed, ±13.5
+    'cardiovascular': 26.4,    # n=53/seed, ±10.0
+    'autoimmune': 25.7,        # n=58/seed, ±7.0
+    'respiratory': 25.7,       # n=28/seed, ±8.3
+    'endocrine': 23.4,         # n=12/seed, ±5.2
+    'ophthalmic': 23.3,        # n=21/seed, ±16.2
+    'dermatological': 23.2,    # n=53/seed, ±10.2
+    'infectious': 20.8,        # n=120/seed, ±6.3
+    'metabolic': 19.4,         # n=17/seed, ±10.4
+    'cancer': 19.1,            # n=213/seed, ±2.9 (MOST RELIABLE)
+    'other': 17.2,             # n=9/seed, ±14.7
+    'hematological': 16.6,     # n=43/seed, ±13.7
+    # Demoted categories (now LOW): holdout values at time of demotion
+    'neurological': 10.2,      # n=7/seed, ±11.1 → demoted to LOW
+    'immunological': 2.5,      # n=10/seed, ±3.5 → demoted to LOW
+    'gastrointestinal': 10.9,  # full-data as LOW → demoted to LOW
+    'reproductive': 0.0,       # n=12/seed, ±0.0 → demoted to LOW
+}
+
+
+def get_category_holdout_precision(category: str, tier: str) -> float:
+    """Get holdout-validated precision for a category+tier combination.
+
+    For MEDIUM tier, returns category-specific holdout precision from h462.
+    For other tiers, returns the default tier holdout precision.
+    """
+    if tier == 'MEDIUM' and category.lower() in CATEGORY_MEDIUM_HOLDOUT_PRECISION:
+        return CATEGORY_MEDIUM_HOLDOUT_PRECISION[category.lower()]
+    # Default tier holdout precisions (from h402)
+    tier_defaults = {
+        'GOLDEN': 52.9,
+        'HIGH': 50.6,
+        'MEDIUM': 21.2,
+        'LOW': 12.2,
+        'FILTER': 7.0,
+    }
+    return tier_defaults.get(tier, 0.0)
 
 
 # h169/h148: Expanded category keywords to reduce 'other' bucket
@@ -2958,6 +3008,7 @@ class DrugRepurposingPredictor:
                 category_rescue_applied=True,  # Mark as class-based prediction
                 category_specific_tier="class_injected",  # Special marker
                 rank_bucket_precision=get_rank_bucket_precision(tier.value, len(supplemented) + 1),
+                category_holdout_precision=get_category_holdout_precision(category, tier.value),
             )
             supplemented.append(pred)
 
@@ -3107,6 +3158,7 @@ class DrugRepurposingPredictor:
                 category_rescue_applied=True,
                 category_specific_tier="gi_class_injected",
                 rank_bucket_precision=get_rank_bucket_precision(tier.value, len(supplemented) + 1),
+                category_holdout_precision=get_category_holdout_precision(category, tier.value),
             )
             supplemented.append(pred)
 
@@ -3301,6 +3353,7 @@ class DrugRepurposingPredictor:
                         category_specific_tier=cat_specific,
                         transe_consilience=in_transe_top30,
                         rank_bucket_precision=get_rank_bucket_precision(tier.value, rank),
+                        category_holdout_precision=get_category_holdout_precision(category, tier.value),
                     )
 
                     if include_filtered or tier != ConfidenceTier.FILTER:

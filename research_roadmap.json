@@ -9270,7 +9270,7 @@
       "title": "Category-Specific MEDIUM Holdout Precision as Deliverable Column",
       "description": "The h462 analysis produced holdout-validated MEDIUM precision per category. This is clinically useful: autoimmune MEDIUM (25.7% holdout) vs cancer MEDIUM (19.1% holdout) have very different reliability. Add category_holdout_precision column to the deliverable spreadsheet, giving clinicians category-adjusted expectations.",
       "hypothesis": "Adding category-specific holdout precision to the deliverable improves clinical utility by providing calibrated expectations per disease category.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -9279,7 +9279,9 @@
         "Add category_holdout_precision field to DrugPrediction",
         "Update deliverable generation to include this column",
         "Regenerate deliverable"
-      ]
+      ],
+      "findings": "VALIDATED: Added category_holdout_precision column to DrugPrediction and deliverable.\n\nImplementation:\n1. CATEGORY_MEDIUM_HOLDOUT_PRECISION constant with 18 categories (from h462 5-seed holdout)\n2. get_category_holdout_precision() function: MEDIUM returns category-specific, other tiers return default\n3. category_holdout_precision field on DrugPrediction (set in all 3 constructors)\n4. Deliverable now has 19 columns (was 18)\n\nKey values (MEDIUM holdout precision by category):\n- Psychiatric: 45.7% (highest)\n- Renal: 43.5% (high variance)\n- Musculoskeletal: 29.8%\n- Autoimmune/CV/Respiratory: ~26%\n- Cancer: 19.1% (most reliable, low variance)\n- Immunological: 2.5% (demoted to LOW)\n\nDeliverable regenerated: 14,150 predictions across 473 diseases.",
+      "result_metric": "19 columns in deliverable (was 18). Category-specific MEDIUM precision ranges from 0-45.7%."
     }
   ],
   "completed": [
