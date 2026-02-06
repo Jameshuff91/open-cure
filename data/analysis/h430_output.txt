@@ -1,0 +1,44 @@
+Loading predictor...
+Total diseases: 455
+
+=== PHASE 1: Full-data ===
+
+Tier precision:
+  GOLDEN: 140/223 = 62.8%
+  HIGH: 273/536 = 50.9%
+  MEDIUM: 976/3845 = 25.4%
+  LOW: 326/2456 = 13.3%
+  FILTER: 683/6412 = 10.7%
+
+Diabetes-related rules:
+  (metabolic_hierarchy_diabetes, HIGH): 6/38 = 15.8%
+  (metabolic_hierarchy_diabetes_t2d, GOLDEN): 18/35 = 51.4%
+
+================================================================================
+=== PHASE 2: Holdout (5-seed) ===
+  Seed 42...
+  Seed 123...
+  Seed 456...
+  Seed 789...
+  Seed 2024...
+
+================================================================================
+=== HOLDOUT SUMMARY ===
+  GOLDEN: 47.9% ± 5.7%
+  HIGH: 51.0% ± 9.3%
+  MEDIUM: 21.3% ± 1.9%
+  LOW: 12.5% ± 1.9%
+  FILTER: 6.9% ± 1.8%
+
+Diabetes-related holdout:
+  (metabolic_hierarchy_diabetes, HIGH): 4.5% ± 4.5% (n_seeds=2)
+  (metabolic_hierarchy_diabetes_t2d, GOLDEN): 42.1% ± 6.8% (n_seeds=3)
+
+--- Comparison with h402 baseline ---
+  GOLDEN: h402=52.9% → h430=47.9% (Δ=-5.0pp)
+  HIGH: h402=50.6% → h430=51.0% (Δ=+0.4pp)
+  MEDIUM: h402=21.2% → h430=21.3% (Δ=+0.1pp)
+  LOW: h402=12.2% → h430=12.5% (Δ=+0.3pp)
+  FILTER: h402=7.0% → h430=6.9% (Δ=-0.1pp)
+
+Saved to /Users/jimhuff/github/open-cure/data/analysis/h430_diabetes_narrowing.json

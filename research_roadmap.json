@@ -8593,7 +8593,7 @@
       "id": "h429",
       "title": "Infectious Low-Rank Rescue (Rank 1-5 = 43%)",
       "description": "h390 found infectious LOW rank 1-5 has 43% precision (46/107) \u2014 nearly HIGH level! These are antibiotics with no mechanism data (freq=5.9, 0% mechanism). The issue is they fail mechanism_support requirement. Test rescuing infectious rank<=5 predictions from LOW to MEDIUM or HIGH.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -8602,13 +8602,15 @@
         "Test rank<=5 + freq>=3 + infectious \u2192 MEDIUM rescue rule",
         "Holdout validation (5-seed)",
         "Deploy if precision > 25% on holdout"
-      ]
+      ],
+      "findings": "h390 reported infectious rank 1-5 at 43% precision, but that was ALL tiers. After h402 rule audit, hierarchy rules (UTI 75%, TB 63%, etc.) already capture the high-precision infectious rank 1-5 predictions at HIGH tier.\n\nRemaining infectious LOW at rank 1-5 is only 6.5% (2/31) \u2014 these are the drugs that DIDN'T match any hierarchy rule because they lack mechanism support AND don't belong to a validated disease group.\n\nNo rescue possible. The good signal is already captured.",
+      "result_metric": "Infectious LOW rank 1-5 = 6.5% (2/31), not rescuable"
     },
     {
       "id": "h430",
       "title": "Narrow Diabetes Hierarchy Match to T2D/DM Only",
       "description": "h390 found metabolic_hierarchy_diabetes at GOLDEN (32.4%) is bimodal: T2D=73%, diabetes_mellitus=55% are good, but hypoglycemia=20%, hyperinsulinemic=10%, diabetes_insipidus=0% are bad. The \"diabetes\" keyword matches too broadly. Narrowing to only T2D and \"diabetes mellitus\" (not insipidus/hypoglycemia/hyperglycemia) should improve GOLDEN precision.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -8618,7 +8620,9 @@
         "T2D group \u2192 GOLDEN, broader group \u2192 MEDIUM",
         "Measure precision impact",
         "Holdout validation"
-      ]
+      ],
+      "findings": "Narrowed diabetes hierarchy to rescue T2D/DM targets back to GOLDEN.\n\nFull-data: diabetes_t2d GOLDEN 51.4% (18/35), diabetes HIGH 15.8% (6/38). Split is clean.\n\nHoldout (5-seed): diabetes_t2d GOLDEN 42.1% \u00b1 6.8% (only 3/5 seeds had T2D in holdout).\nBut overall GOLDEN dropped from 52.9% to 47.9% (-5.0pp), and GOLDEN<HIGH inversion returned\n(47.9% vs 51.0%).\n\nRoot cause: Only 2 T2D-like diseases (type 2 diabetes mellitus, diabetes mellitus) match\nthe GOLDEN target criteria. With 80/20 split, often only 0-1 of these 2 diseases is in\nholdout. The rescue adds low-n GOLDEN predictions that dilute the tier.\n\nREVERTED. Diabetes hierarchy stays at HIGH (h402 setting).",
+      "result_metric": "GOLDEN dropped -5.0pp to 47.9%, GOLDEN<HIGH inversion returned"
     },
     {
       "id": "h431",
@@ -10154,6 +10158,12 @@
       "hypothesis_id": "h402",
       "learning": "Rule audit found only 1 of 83 rules is clearly bad (pneumonia hierarchy). 21 rules are too small to evaluate. Code complexity comes from many small rules, not bad rules. Demoting 3 marginal rules improved HIGH by +2.5pp while maintaining tier ordering.",
       "implication": "Focus on rule CONSOLIDATION rather than pruning. Many small rules work individually but create code complexity. Minimum sample size ~30 for reliable holdout validation."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h430",
+      "learning": "Attempted T2D GOLDEN rescue failed because only 2 diseases match T2D criteria. With 80/20 holdout, too few in holdout to validate. Confirmed h402 finding: min n\u224830 for reliable holdout.",
+      "implication": "Do not attempt tier promotions based on 1-2 disease signals. Need at least 5+ diseases in the group for holdout reliability."
     }
   ],
   "collaborations": [

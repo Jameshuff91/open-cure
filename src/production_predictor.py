@@ -2261,6 +2261,7 @@ class DrugRepurposingPredictor:
         HIERARCHY_GOLDEN_CATEGORIES = {'metabolic', 'neurological'}
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
         # h402: Diabetes hierarchy 31.5% holdout ± 13.8% (n=72) vs GOLDEN avg 46.3% - demote to HIGH
+        # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
         HIERARCHY_DEMOTE_TO_HIGH = {'thyroid', 'diabetes'}
         # h396: These hierarchy groups have 0% precision (n>=2) - demote to MEDIUM
         # h402: pneumonia 6.7% holdout precision (n=22) vs HIGH avg 44.1% - demote to MEDIUM
@@ -2274,7 +2275,8 @@ class DrugRepurposingPredictor:
                 # h396: Demote 0% precision groups to MEDIUM
                 if matching_group in HIERARCHY_DEMOTE_TO_MEDIUM:
                     return ConfidenceTier.MEDIUM, True, f'{category}_hierarchy_{matching_group}'
-                # h385: Check if this specific group should be demoted to HIGH
+                # h385/h402: Check if this specific group should be demoted to HIGH
+                # h430: Attempted T2D→GOLDEN rescue, failed holdout (42.1%, caused GOLDEN<HIGH)
                 if matching_group in HIERARCHY_DEMOTE_TO_HIGH:
                     return ConfidenceTier.HIGH, True, f'{category}_hierarchy_{matching_group}'
                 # h276: Use GOLDEN for high-precision categories (>70%), HIGH otherwise
