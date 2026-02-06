@@ -147,12 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h546 update, 2026-02-06):**
-- GOLDEN: 69.9% ± 17.9% holdout (282 predictions)
+**Tier System (h544 update, 2026-02-06):**
+- GOLDEN: 69.9% ± 17.9% holdout (280 predictions)
 - HIGH: 58.9% ± 6.2% holdout (791 predictions)
-- MEDIUM: 30.3% ± 2.5% holdout (2655 predictions)
-- LOW: 16.2% ± 2.7% holdout (3140 predictions)
-- FILTER: 10.3% ± 1.4% holdout (7282 predictions)
+- MEDIUM: 30.3% ± 2.5% holdout (2653 predictions)
+- LOW: 16.2% ± 2.7% holdout (3139 predictions)
+- FILTER: 10.3% ± 1.4% holdout (7287 predictions)
+- **h544:** Anti-TNF paradoxical autoimmunity audit: +15 inverse indication pairs (AIH 389 cases, sarcoidosis 90+, vasculitis 113). 5 predictions → FILTER. Golimumab filters added.
 - **h408:** Ryland collaboration brief. Anti-TNF→SLE/MG/MS inverse indications (7 pairs, 4 GOLDEN/MEDIUM → FILTER). 86% of derm/autoimmune GOLDEN/HIGH are corticosteroids.
 - **h546:** Gene overlap annotation: drug-target/disease-gene overlap as confidence signal. +11.4pp MEDIUM novel holdout. NOT promotable (partially circular with kNN). `gene_overlap_count` column in deliverable.
 - **h537:** Deliverable quality audit: 58% validated, 88% reasonable (top 50 GOLDEN/HIGH). Added statin→diabetes inverse indication (12 preds → FILTER).
@@ -247,17 +248,17 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
   - Non-DHP CCBs (Verapamil/Diltiazem) + HF (ACC/AHA 2022)
   - Class Ic/Ia antiarrhythmics + structural heart (CAST/SWORD trials)
   - Dronedarone + HF (ANDROMEDA trial: 2.13x mortality)
-  - **Inverse indications** (drug CAUSES condition): 66 drugs, 142 pairs
+  - **Inverse indications** (drug CAUSES condition): 67 drugs, 157 pairs
     - Corticosteroids → TB, glaucoma, osteoporosis, MG, pancreatitis
     - NSAIDs → TEN, SLE, peptic ulcer, stroke (COX-2)
     - Estradiol → endometrial/uterine cancer, hereditary angioedema
     - Proarrhythmic drugs → ventricular tachycardia
     - Azathioprine → TEN, hepatitis B, erythema multiforme
     - h486: 47 new pairs from SIDER mining (93.3% filter precision)
-    - h408: Anti-TNF → SLE/MG/MS (adalimumab, etanercept, infliximab — drug INDUCES autoimmune)
+    - h408+h544: Anti-TNF → SLE/MG/MS/AIH/sarcoidosis/vasculitis/polymyositis/lichen planus (class effect + drug-specific)
   - Ganglionic blockers (obsolete), surgical dyes (not therapeutic)
 
-**Total inverse indication filters:** ~136 predictions (66 drugs, 142 pairs)
+**Total inverse indication filters:** ~141 predictions (67 drugs, 157 pairs)
 **Validation precision:** 20-25% for top predictions (batches 1+2)
 
 ## Key Validated Predictions
