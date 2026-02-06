@@ -1,16 +1,17 @@
 # Research Loop Progress
 
-## Current Session: h361, h360, h363, h364 (2026-02-05)
+## Current Session: h361, h360, h363, h364, h179 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 4**
+**Hypotheses Tested: 5**
 - h361: DPP4 Coverage Gap Investigation - **VALIDATED** (measurement artifact from stale deliverables)
 - h360: Deliverables Regeneration - **VALIDATED** (regenerated with all h273-h360 rules)
 - h363: Modern Diabetes Drug Coverage - **VALIDATED** (coverage good, rank>20 filter explains gaps)
 - h364: Tier Distribution Validation - **VALIDATED** (tier structure correct)
+- h179: Embedding Loading Optimization - **VALIDATED** (9.4x speedup with NPY format)
 
 ### KEY SESSION FINDINGS
 
@@ -80,15 +81,24 @@
 
 **Tier structure is CORRECT:** Mechanism support decreases monotonically GOLDEN→LOW
 
+#### h179: Embedding Loading Optimization - VALIDATED
+
+**Performance improvement:**
+- OLD (CSV): 6.09s initialization
+- NEW (NPY): 0.65s initialization
+- **Speedup: 9.4x total init time**
+
+Changes: Updated _load_data() to use NPY format with CSV fallback.
+
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 229 |
+| Validated | 230 |
 | Invalidated | 69 |
 | Inconclusive | 13 |
 | Blocked | 21 |
 | Deprioritized | 7 |
-| Pending | 26 |
+| Pending | 25 |
 | **Total** | **365** |
 
 ---
