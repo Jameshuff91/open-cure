@@ -6364,7 +6364,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 5,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "For each category, compute (coherent_precision, incoherent_precision)",
         "Categories with small gap (<3pp): dont demote",
@@ -6373,7 +6373,10 @@
       ],
       "dependencies": [
         "h311"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "Category gaps range from +25.3 pp (ophthalmic) to -7.3 pp (renal)",
+      "findings": "h315 VALIDATED: Category-Specific Coherence Thresholds\n\nANALYSIS: Coherence gap (coherent_precision - incoherent_precision) varies by category.\n\nSTRONG COHERENCE SIGNAL (gap > +10 pp - ALWAYS demote incoherent):\n- Ophthalmic: +25.3 pp (41.4% vs 16.1%)\n- Psychiatric: +21.1 pp (21.1% vs 0%)\n- Dermatological: +18.1 pp (37.4% vs 19.2%)\n- Cardiovascular: +12.0 pp (17.9% vs 5.9%)\n- Hematological: +11.8 pp (18.8% vs 7.0%)\n\nMODERATE COHERENCE (gap +3 to +10 pp - demote as usual):\n- Autoimmune: +8.2 pp (30.3% vs 22.1%)\n- Respiratory: +7.9 pp (31.4% vs 23.5%)\n- Neurological: +7.0 pp (8.9% vs 1.9%)\n- Infectious: +6.7 pp (28.5% vs 21.8%)\n\nWEAK/NO COHERENCE SIGNAL (gap < +3 pp - consider NOT demoting):\n- Musculoskeletal: +1.5 pp (4.8% vs 3.4%)\n- Cancer: +0.8 pp (17.5% vs 16.7%) - NEARLY EQUAL\n\nINCOHERENCE IS BETTER (gap < 0 - DON'T demote, may boost):\n- Gastrointestinal: -1.9 pp (1.9% vs 3.8%)\n- Metabolic: -2.4 pp (31.6% vs 34.0%)\n- Endocrine: -3.5 pp (9.8% vs 13.2%)\n- Renal: -7.3 pp (5.6% vs 12.8%) - STRONGEST INVERSION\n\nIMPLICATIONS:\n1. Current uniform demotion is suboptimal for cancer, metabolic, renal\n2. For cancer: both coherent and incoherent have ~17% precision - no signal\n3. For renal: incoherent is 2.3x BETTER - inversion!\n4. For metabolic: many cross-ATC treatments (metformin effects)\n\nRECOMMENDATION:\n- Add CATEGORY_COHERENCE_THRESHOLD dict to production_predictor.py\n- Categories with gap < 3 pp: skip demotion (cancer, musculoskeletal)\n- Categories with gap < 0: skip demotion AND mark coherent for review (renal, endocrine, metabolic, GI)\n- All others: continue demoting as currently implemented\n\nIMPLEMENTATION DECISION: DEFER\n- Impact would be ~10% of predictions (cancer + metabolic + renal)\n- Complexity of category-specific rules vs marginal gain\n- Document pattern for future consideration"
     },
     {
       "id": "h316",
