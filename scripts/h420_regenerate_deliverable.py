@@ -106,6 +106,17 @@ def main():
     # h546: Load gene overlap data
     drug_targets, disease_genes_data = load_gene_overlap_data()
 
+    # h570: Load per-disease holdout precision
+    disease_holdout_precision: Dict[str, float] = {}
+    dhp_path = Path(__file__).parent.parent / "data" / "reference" / "disease_holdout_precision.json"
+    if dhp_path.exists():
+        with open(dhp_path) as f:
+            dhp_data = json.load(f)
+        for did, info in dhp_data.items():
+            if info.get("holdout_precision") is not None:
+                disease_holdout_precision[did] = info["holdout_precision"]
+        print(f"Loaded disease holdout precision: {len(disease_holdout_precision)} diseases")
+
     # Get all diseases with embeddings
     all_diseases = [d for d in predictor.embeddings if d in predictor.disease_names]
     print(f"Diseases with embeddings: {len(all_diseases)}")
@@ -170,7 +181,26 @@ def main():
                 'self_referential_pct': self_ref_pct,
                 'therapeutic_island': therapeutic_island,
                 'gene_overlap_count': gene_overlap,
+                'disease_holdout_precision': disease_holdout_precision.get(disease_id, ''),
             })
+
+            # h592: Compute composite quality score for experiment prioritization
+            p = all_predictions[-1]
+            rank_val = p['rank']
+            rank_score = max(0, (20 - rank_val) / 19) if rank_val <= 20 else 0
+            ns = p['normalized_score'] if p['normalized_score'] else 0
+            transe_val = 1.0 if p['transe_consilience'] else 0.0
+            go_val = 1.0 if (p.get('gene_overlap_count') or 0) > 0 else 0.0
+            mech_val = 1.0 if p['mechanism_support'] else 0.0
+            dhp_raw = p.get('disease_holdout_precision')
+            dq_val = float(dhp_raw) / 100 if dhp_raw and dhp_raw != '' else 0.0
+            sr_raw = p.get('self_referential_pct')
+            nsr_val = 1.0 - (float(sr_raw) / 100 if sr_raw and sr_raw != '' else 0.5)
+            p['composite_quality_score'] = round(
+                rank_score * 1.5 + ns * 1.0 + transe_val * 1.0 +
+                go_val * 1.0 + mech_val * 0.5 + dq_val * 1.0 + nsr_val * 0.5,
+                2
+            )
 
             tier_counts[pred.confidence_tier.value] += 1
             category_counts[result.category] += 1
@@ -218,8 +248,6 @@ def main():
         print(f"\nSaved to {output_path}")
 
         # Also save JSON for programmatic use
-        import json
-
         def _json_safe(obj: object) -> object:
             """Convert numpy types to Python native for JSON serialization."""
             import numpy as np

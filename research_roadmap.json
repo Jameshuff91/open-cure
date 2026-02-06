@@ -12304,12 +12304,14 @@
         "Verify top-100 ranking matches h592 analysis",
         "Success: deliverable has composite_quality_score column"
       ],
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
       "category": "deliverable",
-      "rationale": "Implementation of h592 finding. Low effort, direct practical value."
+      "rationale": "Implementation of h592 finding. Low effort, direct practical value.",
+      "findings": "VALIDATED: composite_quality_score added to production deliverable.\n\nFormula: 1.5*rank_score + norm_score + TransE + gene_overlap + 0.5*mechanism + disease_holdout + 0.5*non_self_ref\nScore range: 0.07 to 6.08, mean 1.59\n\nDeliverable regenerated with:\n- 26 columns (added composite_quality_score)\n- 14,150 predictions\n- Updated GT (18 new pairs from h593/h596/h597)\n- Tier counts: GOLDEN 280, HIGH 736, MEDIUM 2101, LOW 3733, FILTER 7300\n\nNote: HIGH shifted from 754\u2192736 and MEDIUM from 2083\u21922101 due to GT update affecting tier assignments during regeneration.",
+      "result_metric": "composite_quality_score column added to deliverable"
     },
     {
       "id": "h595",
