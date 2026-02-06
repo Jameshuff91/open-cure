@@ -10268,10 +10268,12 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h481"
-      ]
+      ],
+      "findings": "SOC status is a significant annotation signal (MEDIUM: SOC 20.3% vs NOVEL 14.3%, p=0.005, +6.0pp) but NOT a tier promotion signal (MEDIUM SOC 20.3% << HIGH 51.5%). HIGH tier shows NO SOC signal (25.5% \u2248 25.7%). SOC is correctly used as annotation in deliverable, not tier modification.",
+      "result_metric": "MEDIUM SOC +6.0pp vs NOVEL (p=0.005), but NOT promotable"
     }
   ],
   "completed": [

@@ -1,0 +1,20 @@
+h518: LIKELY_GT_GAP as Holdout Precision Signal
+
+FINDING: SOC status is a SIGNIFICANT annotation signal but NOT a tier promotion signal.
+
+HOLDOUT RESULTS (5-seed):
+  GOLDEN: SOC 51.6% vs NOVEL 34.0% (+17.6pp, small-n)
+  HIGH:   SOC 25.5% vs NOVEL 25.7% (-0.2pp, NO SIGNAL)
+  MEDIUM: SOC 20.3% vs NOVEL 14.3% (+6.0pp, p=0.005 SIGNIFICANT)
+  LOW:    SOC 10.1% vs NOVEL  5.9% (+4.1pp, p=0.146 NOT significant)
+  FILTER: SOC  9.6% vs NOVEL  3.4% (+6.2pp)
+
+KEY CONCLUSIONS:
+1. MEDIUM SOC (20.3%) is significantly better than MEDIUM NOVEL (14.3%)
+2. BUT MEDIUM SOC (20.3%) << HIGH avg (51.5%) → NOT promotable to HIGH
+3. HIGH tier shows NO SOC signal (25.5% ≈ 25.7%)
+4. LOW SOC trend (+4.1pp) but not significant
+5. SOC is correctly used as ANNOTATION (h481), not tier modification
+
+IMPLICATION: The literature_status column is valuable for consumers to prioritize
+within tiers, but should NOT be used for tier promotion/demotion decisions.
