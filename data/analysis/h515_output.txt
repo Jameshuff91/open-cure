@@ -1,0 +1,30 @@
+
+h515: Diabetes Hierarchy Split - INVALIDATED (NOT ACTIONABLE)
+=============================================================
+
+OBJECTIVE: Split diabetes hierarchy into core (T1D, T2D, DM) and complications
+(DKA, nephropathy, retinopathy, neuropathy) for separate tier assignment.
+
+CLASSIFICATION:
+- Core (6 diseases): T1D, T2D, DM, hyperglycemia, diabetes insipidus (2)
+- Complications (8 diseases): DKA, nephropathy, retinopathy, neuropathy, 
+  hypoglycemia, foot infections, hyperinsulinemic hypoglycemia
+
+HOLDOUT RESULTS:
+- Core: 35.4% ± 25.7% (3/5 seeds with data, n=6-13 per seed)
+- Complications: 11.1% ± 15.7% (3/5 seeds with data, n=1-3 per seed)
+- Combined: 20.8% ± 25.9% (all 5 seeds)
+
+FULL-DATA:
+- Core: 87.8% (36/41 predictions)
+- Complications: 62.5% (5/8 predictions)
+
+DECISION: NOT ACTIONABLE. Reasons:
+1. Only 8 complication predictions in HIGH tier (moving them = negligible impact)
+2. Complication diseases barely generate hierarchy predictions (drugs are unique)
+3. Sample sizes too small for reliable holdout (n=1-3 per seed)
+4. The 20.8% combined holdout is driven by seed variance, not systematic failure
+
+The diabetes hierarchy is fundamentally a SMALL group (14 diseases) with most
+predictions coming from core diseases (T1D/T2D/DM). The complications rarely
+trigger the hierarchy rule because their drugs aren't shared with core diabetes.

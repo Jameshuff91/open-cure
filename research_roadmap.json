@@ -10198,7 +10198,7 @@
       "id": "h515",
       "title": "Diabetes Hierarchy Split: Core vs Complications for Better Tier Assignment",
       "description": "h509 found diabetes hierarchy holdout is 20.8% \u00b1 25.9% (LOW for HIGH tier). Root cause: core diseases (T1D, T2D, DM) have 83-100% full-data precision, but complications (nephropathy, retinopathy, DKA) have tiny GT and don't generalize. Split the diabetes hierarchy into 'core' (T1D, T2D, DM) \u2192 HIGH and 'complications' (DKA, nephropathy, retinopathy, neuropathy) \u2192 MEDIUM.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -10207,7 +10207,9 @@
         "Measure holdout precision separately for each subgroup",
         "If core > 50% holdout and complications < 30%, split the hierarchy",
         "Implement in production_predictor.py"
-      ]
+      ],
+      "findings": "Diabetes hierarchy split NOT actionable. Only 8 complication predictions in HIGH (too few to matter). Core holdout 35.4% \u00b1 25.7%, complications 11.1% \u00b1 15.7%, but both have n<5/seed. Complications barely trigger hierarchy rule because their drugs aren't shared with core diabetes. Not worth implementing.",
+      "result_metric": "Core 35.4%, Comp 11.1%, but only 8 comp predictions total"
     }
   ],
   "completed": [
