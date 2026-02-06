@@ -8297,7 +8297,7 @@
       "title": "LOW vs FILTER Recalibration (Precision Convergence)",
       "description": "h396 measurement shows LOW (10.1%) and FILTER (10.5%) have essentially identical precision. This means the tier system has effectively 4 tiers (GOLDEN/HIGH/MEDIUM/LOW+FILTER), not 5. Either: (a) merge LOW and FILTER into a single tier, or (b) find additional signals that separate them. The FILTER tier was designed for harmful patterns, but many FILTER predictions appear to have the same precision as LOW.",
       "hypothesis": "LOW and FILTER have converged because h319/h318/h346 filters removed the truly 0% precision predictions, leaving FILTER with ~10% precision (same as LOW). Introducing a stricter FILTER criterion or merging would simplify the system without precision loss.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -8307,8 +8307,8 @@
         "Step 3: Check if merging LOW+FILTER changes any downstream behavior",
         "Step 4: If merge is clean, simplify to 4 tiers"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "LOW (12.2%) and FILTER (12.0%) have virtually identical precision, confirming the tier system effectively has 4 tiers, not 5.\n\nDetailed FILTER breakdown:\n- standard (rank>20/no targets/low freq): 5791 preds at 13.1% \u2014 bulk of FILTER, higher than expected\n- zero_precision_mismatch: 378 at 11.9% \n- cancer_no_gt: 311 at 1.6% \u2014 genuinely low\n- cross_domain_isolated: 280 at 0.0% \u2014 genuinely zero\n- base_to_complication: 32 at 28.1% \u2014 TOO HIGH for FILTER (should be MEDIUM!)\n- complication_non_validated: 72 at 11.1%\n- cancer_only_non_cancer: 20 at 10.0%\n\nDetailed LOW breakdown:\n- standard: 1467 at 13.9%\n- cancer cross-type: 171 at 1.2% \u2014 should arguably be FILTER\n- broad_class_isolated: 96 at 12.5%\n- mechanism_specific: 81 at 4.9% \u2014 lower than LOW avg\n\nKey actionable findings:\n1. base_to_complication (28.1% precision) should NOT be FILTER \u2014 likely MEDIUM\n2. cancer cross-type in LOW (1.2%) should arguably be FILTER (already demoted by h395)\n3. Merging LOW+FILTER is NOT recommended because FILTER has genuinely 0% rules (cross_domain, cancer_no_gt)\n4. The convergence is driven by the \"standard\" FILTER pool (rank>20 at 13.1%) being similar to standard LOW (13.9%)\n\nThe tier system distinction between LOW and FILTER is meaningful for the 0% FILTER rules (cross_domain, cancer_no_gt) but the standard/rank>20 FILTER pool inflates FILTER precision.",
+      "result_metric": "LOW 12.2% vs FILTER 12.0% \u2014 base_to_complication at 28.1% should not be FILTER"
     },
     {
       "id": "h413",
@@ -8448,6 +8448,21 @@
       ],
       "findings": "Regenerated production deliverable with current tier rules.\n\nPrevious: ~13,416 predictions with 58% stale categories\nCurrent: 14,150 predictions with accurate tiers from h395/h396/h398/h399/h415\n\nTier distribution:\n- GOLDEN: 367 (2.6%) at 62.4% precision\n- HIGH: 611 (4.3%) at 54.3% precision\n- MEDIUM: 3,993 (28.2%) at 25.8% precision\n- LOW: 1,929 (13.6%) at 11.9% precision\n- FILTER: 7,250 (51.2%) at 11.4% precision\n\n473 diseases, 1,012 unique drugs, 2,645 known indications.\nGeneration time: ~11 seconds.",
       "result_metric": "14,150 predictions regenerated with current tier rules"
+    },
+    {
+      "id": "h421",
+      "title": "Demote base_to_complication from FILTER to MEDIUM",
+      "description": "h412 found base_to_complication has 28.1% precision (9/32 GT), well above FILTER avg (12.0%) and above MEDIUM avg (25.8%). These are valid treatments: diabetes drugs for DKA, ARBs for diabetic nephropathy. The original h280 finding of 0% was based on a smaller GT set. Should demote to MEDIUM and validate on holdout.",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Change base_to_complication from FILTER to MEDIUM in _assign_confidence_tier",
+        "Verify full-data tier precision impact",
+        "Run holdout validation",
+        "Success: MEDIUM precision unchanged or improved, FILTER precision drops slightly"
+      ]
     }
   ],
   "completed": [
@@ -9917,6 +9932,12 @@
       "hypothesis_id": "h415",
       "learning": "ATC L1 mismatch rules are too coarse. Many valid drug-disease pairs share ATC categories that seem wrong at L1 level but make sense clinically (e.g., corticosteroids=ATC A for nephrotic syndrome, opioids=ATC R for pain). Consider L2/L3 refinement for remaining borderline rules.",
       "implication": "When designing cross-category filters, use the most specific classification level available. L1 ATC codes lose too much nuance."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h412",
+      "learning": "FILTER and LOW precision converge at ~12% because rank>20 predictions (13.1% precision) dominate FILTER. The genuine FILTER patterns (cross_domain 0%, cancer_no_gt 1.6%) are diluted by the high-volume standard FILTER. The tier distinction is still meaningful for the specific zero-precision patterns.",
+      "implication": "Report FILTER precision excluding the standard rank>20 pool to give users a more accurate picture of what FILTER means."
     }
   ],
   "collaborations": [
