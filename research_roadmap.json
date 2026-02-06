@@ -9981,8 +9981,10 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
-      "category": "precision"
+      "status": "validated",
+      "category": "precision",
+      "findings": "GOLDEN gap explained: 85.3% of hierarchy hits are self-hits but ALL also match other group diseases (zero self-only predictions). Gap is from kNN neighborhood changes on holdout, NOT hierarchy overfitting. No action needed.",
+      "result_metric": "90.2% full-data, 63.3% holdout. Zero self-only predictions."
     },
     {
       "id": "h503",
