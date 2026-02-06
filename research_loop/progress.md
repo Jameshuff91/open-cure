@@ -1,14 +1,17 @@
 # Research Loop Progress
 
-## Current Session: h462, h463 (2026-02-06)
+## Current Session: h462, h463, h466, h464, h465 (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 2**
-- h462: Category-Specific MEDIUM→HIGH Promotion for Renal/Musculoskeletal - **PARTIALLY VALIDATED**
-- h463: GI MEDIUM Demotion to LOW - **VALIDATED**
+**Hypotheses Tested: 5**
+- h462: Category-Specific MEDIUM→HIGH Promotion - **PARTIALLY VALIDATED** (3 categories demoted, none promoted)
+- h463: GI MEDIUM Demotion to LOW - **VALIDATED** (confirmed by h462)
+- h466: Category Holdout Precision as Deliverable Column - **VALIDATED** (19-column deliverable)
+- h464: Psychiatric MEDIUM→HIGH Promotion - **INVALIDATED** (p=0.232, not significant)
+- h465: Immunological Deep Dive - **VALIDATED** (100% self-referential GT hits)
 
 ### h462: Category-Specific MEDIUM Promotion/Demotion - PARTIALLY VALIDATED
 

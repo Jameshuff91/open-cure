@@ -145,16 +145,23 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h378, h393, h396, h399, h402)
+### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462)
 
-**Tier System (h402 holdout-validated 2026-02-05):**
-- GOLDEN: 64.4% full / 52.9% ± 6.0% holdout (h402: diabetes demoted to HIGH)
-- HIGH: 50.8% full / 50.6% ± 10.4% holdout (h402: gained diabetes, +2.5pp)
-- MEDIUM: 25.3% full / 21.2% ± 1.9% holdout (h402: gained cv_pathway + pneumonia)
-- LOW: 13.0% full / 12.2% ± 1.9% holdout
-- FILTER: 10.8% full / 7.0% ± 1.5% holdout
+**Tier System (h462 updated 2026-02-06):**
+- GOLDEN: 59.2% full / 52.9% ± 6.0% holdout
+- HIGH: 49.2% full / 50.6% ± 10.4% holdout
+- MEDIUM: 26.7% full / ~23% holdout (h462: +1.4pp from category demotions)
+- LOW: 10.9% full / 12.2% ± 1.9% holdout
+- FILTER: 10.4% full / 7.0% ± 1.5% holdout
 
-**h402 (LATEST):** Comprehensive rule audit of 83 rule-tier pairs. Only 1 clearly bad (pneumonia 6.7% holdout). 21 too small to evaluate. Demoted 3 marginal rules: pneumonia HIGH→MEDIUM, diabetes GOLDEN→HIGH, cv_pathway HIGH→MEDIUM.
+**h462/h463 (LATEST):** Category-specific MEDIUM demotions. 3 categories demoted MEDIUM→LOW:
+  - Immunological: 2.5% holdout (36pp overfitting gap, self-referential kNN, h465)
+  - Neurological: 10.2% holdout
+  - Reproductive: 0.0% holdout
+  - GI: already demoted (h463, 10.9% as LOW)
+  No categories qualify for HIGH promotion (psychiatric 45.7% closest but p=0.232, h464).
+**h466:** Added `category_holdout_precision` column to deliverable (19 columns total).
+**h402:** Comprehensive rule audit of 83 rule-tier pairs. Only 1 clearly bad (pneumonia 6.7% holdout). 21 too small to evaluate. Demoted 3 marginal rules: pneumonia HIGH→MEDIUM, diabetes GOLDEN→HIGH, cv_pathway HIGH→MEDIUM.
 **h399/h418 (IMPORTANT):** rank>20 filter shadows 332 hierarchy predictions. Attempted fix FAILED holdout: HIGH -6.2pp. REVERTED.
 **h393 (CRITICAL):** Holdout validation proves tier system IS genuine.
 **h396:** Resolved GOLDEN<HIGH inversion by demoting cancer_same_type to MEDIUM.

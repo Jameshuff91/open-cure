@@ -7687,7 +7687,7 @@
       "title": "Gene Count Q2 Ensemble Rule",
       "description": "h376 found Q2 (2-8 genes) is the only gene quartile where ensemble helps (+1.6 pp). Test if restricting ensemble to medium-low gene diseases improves performance.",
       "hypothesis": "Applying ensemble only to diseases with 2-8 genes will capture benefit while avoiding harm in other quartiles.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -7696,7 +7696,8 @@
         "Apply ensemble only to these diseases",
         "Evaluate on full set",
         "Success: positive delta from gene-based routing"
-      ]
+      ],
+      "findings": "INVALIDATED: MinRank ensemble is disabled (MINRANK_ENSEMBLE_CATEGORIES = empty set). Gene count Q2 routing is moot since ensemble is not used."
     },
     {
       "id": "h383",
@@ -9256,7 +9257,7 @@
       "title": "Immunological Category Deep Dive: Why 36pp Overfitting Gap?",
       "description": "Immunological has the largest full-to-holdout gap in MEDIUM tier (38.9% full \u2192 2.5% holdout = 36pp). With only 5 diseases (sarcoidosis, systemic lupus, etc.), the kNN predictions are entirely self-referential. Investigate: (1) which 5 diseases are immunological? (2) are their kNN neighbors mostly from the same 5? (3) is this a DKA-style self-prediction pattern?",
       "hypothesis": "Immunological overfitting is caused by self-referential kNN neighborhoods where the 5 diseases are their own neighbors.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -9265,7 +9266,9 @@
         "Check if immunological diseases appear in each others top-20 neighbors",
         "Compute self-referential leakage (% of GT hits from self or same-category neighbors)",
         "Compare to DKA self-prediction pattern (h424)"
-      ]
+      ],
+      "findings": "VALIDATED: Immunological overfitting is caused by self-referential kNN.\n\n5 immunological diseases:\n1. Immunodeficiency: 34 GT drugs, ALL from self-only (100% self-referential)\n   - This single disease drives the category's 38.9% full-data precision\n   - On holdout: removed from training \u2192 34 drugs vanish \u2192 precision collapses\n2. CGD, Agammaglobulinemia, CVID: 1 GT drug each, ALL from self-only\n3. Anaphylaxis: 3 GT drugs, NONE from self-only (the only non-self-referential disease)\n\nOnly 1/20 neighbors is ever another immunological disease. These are isolated \"island diseases\" that get predictions entirely from their own GT leaking through kNN.\n\nThis is identical to the DKA self-prediction pattern (h424).\nThe h462 demotion to LOW was correct and necessary.",
+      "result_metric": "4/5 diseases have 100% self-referential GT hits. Immunodeficiency (34 drugs) = 89% of category."
     },
     {
       "id": "h466",
