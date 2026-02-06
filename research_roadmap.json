@@ -9405,6 +9405,58 @@
       "category": "precision_improvement",
       "findings": "GOLDEN variance (\u00b113.5%) is driven by small n (19-71 predictions per seed) and high disease heterogeneity. Seed 42 = worst (47.4%) because asthma+epilepsy in holdout (hard hierarchy diseases). Seed 2024 = best (87.0%) because RA in holdout with comp_to_base getting 100%. GOLDEN > HIGH on average (62.7% vs 51.1%) but NOT statistically significant (paired t-test p=0.574). The most variable rules are autoimmune_hierarchy_RA (std=41.2%, appears in 3/5 seeds) and comp_to_base_high_87 (std=40.0%, appears in 2/5 seeds). RECOMMENDATION: Report median (57.7%) rather than mean (62.7%) for more robust GOLDEN estimate. Stratified splitting could help but adds complexity for marginal benefit given the fundamental small-n limitation.",
       "result_metric": "GOLDEN median=57.7%, mean=62.7%\u00b113.5%, GOLDEN>HIGH not significant (p=0.574)"
+    },
+    {
+      "id": "h473",
+      "title": "Novel Prediction Literature Validation: Top 20 GOLDEN Novel Predictions",
+      "description": "The deliverable has 104 GOLDEN novel predictions (not in GT). Many are corticosteroids for skin/autoimmune conditions (methylprednisolone\u2192TEN, prednisolone\u2192GVHD, tetracycline\u2192Lyme). Validate the top 20 GOLDEN novel predictions against ClinicalTrials.gov and PubMed to estimate actual clinical utility. This is the most direct measure of deliverable value.",
+      "steps": [
+        "Select top 20 GOLDEN novel predictions by knn_score",
+        "For each, search ClinicalTrials.gov for existing trials",
+        "Search PubMed for case reports/reviews of the drug-disease pair",
+        "Categorize as: already used (GT gap), promising, no evidence, harmful",
+        "Calculate: what fraction of GOLDEN novels are genuinely novel vs GT gaps?"
+      ],
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "category": "validation"
+    },
+    {
+      "id": "h474",
+      "title": "FILTER Tier Precision Deep Dive: Should FILTER Be Excluded or Reported?",
+      "description": "51% of deliverable predictions (7,231) are FILTER tier at 8.1% holdout precision. FILTER predictions dilute the deliverable's perceived quality. Options: (1) Remove FILTER from deliverable entirely, (2) Move FILTER to separate sheet, (3) Keep as-is with warning. Analyze what fraction of FILTER predictions have ANY external support (TransE, mechanism, target overlap) and whether a subset could be rescued.",
+      "steps": [
+        "Count FILTER predictions with vs without TransE consilience",
+        "Count FILTER predictions with mechanism support",
+        "Count FILTER predictions with target overlap >= 1",
+        "For each supported subset, compute holdout precision",
+        "Decide: rescue, remove, or keep FILTER as-is"
+      ],
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "validated",
+      "category": "production",
+      "findings": "FILTER tier is correctly calibrated and should be KEPT as-is. Full-data FILTER rank 1-5 appears high-precision (36.2% for low-freq-no-mech) but this is entirely self-referential leakage: drugs with freq=1-2 get high rank BECAUSE their only GT disease is a kNN neighbor. On holdout, ALL FILTER sub-categories collapse to 4-6% precision: R1-5 low-freq-no-mech = 6.1%, R1-5 other = 5.1%, R6-20 = 4.0%, R21+ = 4.5%. No rescue opportunities. The FILTER tier correctly identifies predictions that look good on full-data but fail on holdout. This is the tier system working as designed. 51% of deliverable is FILTER, but removing them would lose the 8% of GT hits that do appear in FILTER. RECOMMENDATION: Keep FILTER in deliverable with clear warning about low confidence.",
+      "result_metric": "All FILTER holdout = 4-6%. Full-data 36% at R1-5 = self-referential leakage."
+    },
+    {
+      "id": "h475",
+      "title": "Corticosteroid Novel Prediction Triage: Are These GT Gaps or Real Discoveries?",
+      "description": "Many top GOLDEN/HIGH novel predictions are corticosteroids (methylprednisolone, dexamethasone, prednisolone) for autoimmune/skin diseases. Corticosteroids are used broadly in clinical practice but may be missing from EveryC re GT due to being 'standard of care' rather than labeled indications. If these are GT gaps (drug IS used but not in GT), they inflate our novel prediction count but don't represent true discoveries. Triage the top 30 corticosteroid predictions.",
+      "steps": [
+        "List all corticosteroid novel GOLDEN/HIGH predictions",
+        "For each, check if corticosteroids are standard of care for that disease",
+        "Classify as: GT gap (used in practice), genuinely novel, or error",
+        "Estimate what fraction of GOLDEN novel is GT gaps vs true discoveries"
+      ],
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "category": "validation"
     }
   ],
   "completed": [
