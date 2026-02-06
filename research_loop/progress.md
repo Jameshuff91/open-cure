@@ -104,13 +104,19 @@ HIGH rank 16-20 has 56.5% precision because hierarchy rules RESCUE low-ranked dr
 - Default rule at rank 1-5 = 16% precision (dilutes rank 1-5)
 - On holdout, gradient re-emerges (43.0% rank 1-5 vs 21.0% rank 16-20)
 
+### h447: Cancer Subtype Leakage Quantification - VALIDATED
+
+Cancer same-type holdout = 10.7% ± 3.1% (below MEDIUM avg 21.2%). Represents 28% of MEDIUM predictions.
+No drug class achieves >30% holdout. Taxane/Vinca best at 28.1% ± 12.2%. "Other" at 7.5%.
+Cancer predictions are a known MEDIUM limitation. No further demotion possible without losing 36.7% of GT hits.
+
 ### New Hypotheses Generated
 - **h446-h449:** (tested this session - see above)
 
 ### Recommended Next Steps
-1. **h447:** Cancer subtype leakage mitigation (Priority 4, medium effort)
-2. **h410:** Literature validation of 1-disease hierarchy rules (Priority 3, medium effort)
-3. **h441:** Drug-level embedding stability for within-tier ranking (Priority 4, medium effort)
+1. **h410:** Literature validation of 1-disease hierarchy rules (Priority 3, medium effort)
+2. **h441:** Drug-level embedding stability for within-tier ranking (Priority 4, medium effort)
+3. **h422:** Expand Top-N from 30 to 50 with target overlap rescue (Priority 4, medium effort)
 
 ---
 

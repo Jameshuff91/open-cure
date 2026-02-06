@@ -8923,13 +8923,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Quantify cancer_same_type contribution to MEDIUM tier precision",
         "Identify which cancer drug classes transfer across subtypes on holdout (checkpoint inhibitors, alkylating agents, etc.)",
         "If any class achieves >30% holdout precision, create targeted cancer subclass rule",
         "Report actionable vs non-actionable cancer predictions separately"
-      ]
+      ],
+      "findings": "Cancer subtype leakage quantified and NO drug class survives holdout above MEDIUM threshold.\n\nOVERALL: cancer_same_type holdout = 10.7% \u00b1 3.1% (vs 36.0% full-data, 25.3pp gap)\n\nCancer same-type represents 28.0% of MEDIUM predictions and 36.7% of MEDIUM GT hits.\nThis means cancer_same_type is DRAGGING DOWN MEDIUM holdout precision.\n\nDRUG CLASS HOLDOUT PRECISION (5-seed mean):\n| Class | Full-data | Holdout | Gap | n/seed |\n|-------|-----------|---------|-----|--------|\n| Taxane/Vinca | 55.3% | 28.1% \u00b1 12.2 | -27.2pp | 6-7 |\n| Anti-VEGF | 35.1% | 25.7% \u00b1 9.5 | -9.4pp | 6-11 |\n| Anthracycline | 33.3% | 24.1% \u00b1 19.1 | -9.2pp | 6-13 |\n| Checkpoint | 37.5% | 16.3% \u00b1 10.0 | -21.2pp | 11-18 |\n| Platinum | 27.0% | 16.4% \u00b1 10.0 | -10.6pp | 5-7 |\n| Alkylating | 33.3% | 11.2% \u00b1 3.2 | -22.1pp | 6-13 |\n| Antimetabolite | 25.2% | 7.1% \u00b1 6.8 | -18.1pp | 10-22 |\n| Other | 37.5% | 7.5% \u00b1 3.5 | -30.0pp | 46-117 |\n\nNO class achieves >30% holdout (threshold for targeted rule).\nTaxane/Vinca (28.1%) and Anti-VEGF (25.7%) are closest but n is too small.\n\nThe \"other\" category (63% of cancer_same_type) has 7.5% holdout = FILTER level.\n\nIMPLICATION: cancer_same_type at MEDIUM tier is generous. Its 10.7% holdout is below MEDIUM avg (21.2%). However, demoting it further would lose 408 GT hits (36.7% of MEDIUM GT).\n\nNO ACTION TAKEN: The 28% MEDIUM composition from cancer is a known limitation. Improving cancer predictions requires external data (cancer-specific KGs, gene expression).",
+      "result_metric": "Cancer holdout 10.7% \u00b1 3.1% (below MEDIUM avg 21.2%), no class > 30%"
     },
     {
       "id": "h448",
