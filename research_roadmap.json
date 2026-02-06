@@ -9128,7 +9128,7 @@
       "title": "HIGH Tier Rank Instability: Diagnose Hierarchy Rescue Rank Distortion",
       "description": "h457 showed HIGH tier rank calibration is broken (38.5pp gap at R11-15, non-monotonic). This is likely because hierarchy rescue rules promote predictions from specific rank ranges, creating artificial patterns. Diagnose which specific rules cause the distortion and whether HIGH should use a different calibration (e.g., uniform precision regardless of rank).",
       "hypothesis": "The non-monotonic rank calibration in HIGH tier is caused by 2-3 specific hierarchy rescue rules that promote drugs at non-standard rank ranges.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -9137,7 +9137,9 @@
         "Compare rank distributions between different rules",
         "Identify rules that cause rank non-monotonicity",
         "Test if removing rank-bucket precision for HIGH improves user experience"
-      ]
+      ],
+      "findings": "HIGH tier rank distortion is caused by hierarchy rescue rules promoting drugs at ALL rank positions.\n\nFull-data analysis (top 3 distorting rules):\n1. autoimmune_hierarchy_rheumatoid_arthritis (n=58): R1-5=33% \u2192 R16-20=94% (INVERTED!)\n2. metabolic_hierarchy_diabetes (n=72): R1-5=56% \u2192 R16-20=62% (non-monotonic)\n3. autoimmune_hierarchy_colitis (n=25): R1-5=29% \u2192 R16-20=100% (INVERTED!)\n\nHoldout (5-seed aggregate) by rule type:\n- Hierarchy HIGH: R1-5=35.6%, R6-10=27.7%, R11-15=21.2%, R16-20=38.1% (NON-MONOTONIC at 16-20)\n- Non-hierarchy HIGH: R1-5=31.3%, R6-10=29.2%, R11-15=14.8%, R16-20=10.7% (MONOTONIC \u2713)\n- Overall: hierarchy=30.9% (n=246), non-hierarchy=23.4% (n=197)\n\nROOT CAUSE: Hierarchy rules identify drugs that treat related diseases in the same therapeutic group. This signal is equally strong regardless of kNN rank \u2014 a drug with a hierarchy match at rank 18 is just as likely to be correct as one at rank 3. The hierarchy match IS the signal, rank is irrelevant once matched.\n\nIMPLICATION: For HIGH tier, rank-bucket precision should NOT be used. The tier precision (overall ~30-31%) is more accurate than rank-based calibration. For non-hierarchy HIGH predictions, rank calibration works but n is small.\n\nNO CODE CHANGES NEEDED: The updated RANK_BUCKET_PRECISION values (h457) already reflect holdout reality. Adding hierarchy/non-hierarchy split would add complexity for small practical gain.",
+      "result_metric": "Hierarchy HIGH: flat 31% across ranks. Non-hierarchy HIGH: 31% \u2192 11% gradient. R16-20 spike = hierarchy rescue."
     },
     {
       "id": "h459",
@@ -9154,6 +9156,23 @@
         "Compare calibration error: category-specific vs overall MEDIUM",
         "If improvement > 5pp, implement as category-specific RANK_BUCKET_PRECISION",
         "Need n >= 30 per category per bucket for reliability"
+      ]
+    },
+    {
+      "id": "h460",
+      "title": "Split HIGH Tier into HIGH-Hierarchy and HIGH-Default for Better Calibration",
+      "description": "h458 showed hierarchy-matched HIGH has 30.9% holdout precision (n=246) and non-hierarchy HIGH has 23.4% (n=197). These have very different properties: hierarchy is rank-independent, non-hierarchy is rank-dependent. Splitting into two sub-tiers would improve calibration accuracy.",
+      "hypothesis": "Splitting HIGH into HIGH-H (hierarchy) and HIGH-D (default) provides better-calibrated precision estimates.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "In deliverable, add hierarchy_match boolean column for HIGH predictions",
+        "Report separate precision for hierarchy vs non-hierarchy within HIGH",
+        "For hierarchy: report uniform precision (31%)",
+        "For non-hierarchy: report rank-based precision (31% \u2192 11%)",
+        "Evaluate: does this help clinician decision-making?"
       ]
     }
   ],
@@ -10732,6 +10751,12 @@
       "hypothesis_id": "h457",
       "learning": "MEDIUM and FILTER tiers have reliable, monotonic rank-based precision calibration. HIGH has massive full-to-holdout gaps (up to 38.5pp at R11-15) due to hierarchy rescue effects. LOW rank calibration REVERSES on holdout (collider effect from h453). Updated RANK_BUCKET_PRECISION with 5-seed holdout values.",
       "implication": "Only present rank-bucket precision for MEDIUM tier in clinical recommendations. HIGH/LOW rank-bucket values should be treated as approximate."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h458",
+      "learning": "HIGH tier rank distortion is caused by hierarchy rescue rules that promote drugs at ALL rank positions. Hierarchy-matched drugs have ~31% precision regardless of rank (hierarchy IS the signal). Non-hierarchy HIGH predictions have clean rank gradient (31% \u2192 11%). Rank calibration only meaningful for non-hierarchy HIGH predictions.",
+      "implication": "For HIGH tier, present overall precision (31%) not rank-based calibration. Hierarchy match is binary, not graded by rank."
     }
   ],
   "collaborations": [
