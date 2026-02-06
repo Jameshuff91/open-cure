@@ -911,6 +911,19 @@ SELECTIVE_BOOST_CATEGORIES = {
 }
 SELECTIVE_BOOST_ALPHA = 0.5  # Similarity multiplier: sim * (1 + alpha) for same-category neighbors
 
+# h374: MinRank Ensemble Categories (from h369/h370 validation)
+# NOTE: h374 INVALIDATED - MinRank ensemble does not help in production context
+# The production predictor already has h274 cancer_same_type and other rules that
+# capture the same target overlap signal. MinRank was validated in isolation but
+# is redundant when combined with production tier assignment rules.
+# R@30: MinRank 83.7% vs kNN 83.9% (-0.2%) - no improvement
+# Keeping constants for reference but set to empty (disabled)
+MINRANK_ENSEMBLE_CATEGORIES: set[str] = set()  # Disabled - was {'cancer', 'neurological', 'metabolic'}
+
+# h374: Categories where Target-only is better (gap >10% from h370)
+# NOTE: Also disabled as MinRank is not used
+TARGET_DOMINANT_CATEGORIES: set[str] = set()  # Was {'cardiovascular', 'autoimmune'}
+
 # h169/h148: Expanded category keywords to reduce 'other' bucket
 # h148 reduced 'other' from 44.9% to ~25% with comprehensive keyword expansion
 CATEGORY_KEYWORDS = {
@@ -1937,6 +1950,74 @@ class DrugRepurposingPredictor:
         dis_genes = self.disease_genes.get(disease_id, set())
         return len(drug_genes & dis_genes) > 0
 
+    def _get_target_overlap_count(self, drug_id: str, disease_id: str) -> int:
+        """Get count of overlapping genes between drug targets and disease genes.
+
+        h374: Used for target-based scoring in MinRank ensemble.
+        """
+        drug_genes = self.drug_targets.get(drug_id, set())
+        dis_genes = self.disease_genes.get(disease_id, set())
+        return len(drug_genes & dis_genes)
+
+    def _get_target_scores(self, disease_id: str) -> Dict[str, int]:
+        """Get target overlap scores for all drugs with targets.
+
+        h374: Returns dict of drug_id -> overlap count for target-based ranking.
+        """
+        dis_genes = self.disease_genes.get(disease_id, set())
+        if not dis_genes:
+            return {}
+
+        scores = {}
+        for drug_id, drug_genes in self.drug_targets.items():
+            overlap = len(drug_genes & dis_genes)
+            if overlap > 0:
+                scores[drug_id] = overlap
+        return scores
+
+    def _minrank_fusion(
+        self,
+        knn_scores: Dict[str, float],
+        target_scores: Dict[str, int],
+    ) -> Dict[str, Tuple[float, int]]:
+        """Combine kNN and target scores using MinRank fusion.
+
+        h374: For each drug, take the minimum rank from either method.
+        Returns dict of drug_id -> (combined_score, min_rank) sorted by min_rank.
+
+        The combined score is used to break ties within same min_rank.
+        """
+        # Rank drugs by each method (1-indexed)
+        knn_sorted = sorted(knn_scores.items(), key=lambda x: -x[1])
+        knn_ranks = {drug_id: rank for rank, (drug_id, _) in enumerate(knn_sorted, 1)}
+
+        target_sorted = sorted(target_scores.items(), key=lambda x: -x[1])
+        target_ranks = {drug_id: rank for rank, (drug_id, _) in enumerate(target_sorted, 1)}
+
+        # Get all drugs from both methods
+        all_drugs = set(knn_scores.keys()) | set(target_scores.keys())
+
+        # Default rank for drugs not in a method is very high (won't be selected)
+        max_rank = len(all_drugs) + 100
+
+        # Compute min rank and combined score for each drug
+        results = {}
+        for drug_id in all_drugs:
+            knn_rank = knn_ranks.get(drug_id, max_rank)
+            tgt_rank = target_ranks.get(drug_id, max_rank)
+            min_rank = min(knn_rank, tgt_rank)
+
+            # Combined score for tie-breaking: normalize and take max
+            knn_max = max(knn_scores.values()) if knn_scores else 1.0
+            tgt_max = max(target_scores.values()) if target_scores else 1
+            knn_norm = knn_scores.get(drug_id, 0) / knn_max if knn_max > 0 else 0
+            tgt_norm = target_scores.get(drug_id, 0) / tgt_max if tgt_max > 0 else 0
+            combined_score = max(knn_norm, tgt_norm)
+
+            results[drug_id] = (combined_score, min_rank)
+
+        return results
+
     def _assign_confidence_tier(
         self,
         rank: int,
@@ -2659,12 +2740,44 @@ class DrugRepurposingPredictor:
             if not drug_scores:
                 coverage_warning = "No drugs found in kNN neighborhood."
             else:
-                # Rank drugs
-                sorted_drugs = sorted(drug_scores.items(), key=lambda x: x[1], reverse=True)
-                max_score = sorted_drugs[0][1] if sorted_drugs else 1.0
+                # h374: Apply MinRank ensemble for cancer/neuro/metabolic categories
+                # For these categories, combine kNN and target overlap via min-rank fusion
+                use_minrank = category in MINRANK_ENSEMBLE_CATEGORIES
 
-                for rank, (drug_id, score) in enumerate(sorted_drugs[:top_n], 1):
-                    norm_score = score / max_score if max_score > 0 else 0
+                if use_minrank:
+                    # Get target scores for MinRank fusion
+                    target_scores = self._get_target_scores(disease_id)
+
+                    if target_scores:
+                        # Apply MinRank fusion
+                        fused = self._minrank_fusion(drug_scores, target_scores)
+                        # Sort by min_rank first, then by combined_score for ties
+                        sorted_drugs = sorted(
+                            fused.items(),
+                            key=lambda x: (x[1][1], -x[1][0])  # (min_rank asc, combined_score desc)
+                        )
+                        # Extract (drug_id, combined_score) for top_n
+                        sorted_drugs = [(drug_id, info[0]) for drug_id, info in sorted_drugs[:top_n]]
+                        max_score = 1.0  # Already normalized
+                    else:
+                        # No target data - fall back to kNN only
+                        sorted_drugs = sorted(drug_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
+                        max_score = sorted_drugs[0][1] if sorted_drugs else 1.0
+                else:
+                    # Standard kNN ranking
+                    sorted_drugs = sorted(drug_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
+                    max_score = sorted_drugs[0][1] if sorted_drugs else 1.0
+
+                for rank, (drug_id, score) in enumerate(sorted_drugs, 1):
+                    if use_minrank:
+                        # For MinRank: score is already normalized combined score
+                        norm_score = score
+                        # Get original kNN score for knn_score field
+                        knn_score = drug_scores.get(drug_id, 0.0)
+                    else:
+                        norm_score = score / max_score if max_score > 0 else 0
+                        knn_score = score
+
                     train_freq = self.drug_train_freq.get(drug_id, 0)
                     mech_support = self._compute_mechanism_support(drug_id, disease_id)
                     has_targets = drug_id in self.drug_targets and len(self.drug_targets[drug_id]) > 0
@@ -2675,11 +2788,15 @@ class DrugRepurposingPredictor:
                         drug_name, disease_name, drug_id
                     )
 
+                    # h374: Mark predictions from MinRank ensemble
+                    if use_minrank and cat_specific is None:
+                        cat_specific = 'minrank_ensemble'
+
                     pred = DrugPrediction(
                         drug_name=drug_name,
                         drug_id=drug_id,
                         rank=rank,
-                        knn_score=score,
+                        knn_score=knn_score,
                         norm_score=norm_score,
                         confidence_tier=tier,
                         train_frequency=train_freq,
@@ -2697,9 +2814,11 @@ class DrugRepurposingPredictor:
             # h173: Supplement with drug-class predictions for neurological diseases
             # When kNN has low coverage, inject drugs from appropriate classes
             if category == 'neurological':
+                # Get max kNN score for normalization (use 1.0 as fallback)
+                knn_max = max(drug_scores.values()) if drug_scores else 1.0
                 predictions = self._supplement_neurological_predictions(
                     disease_name, disease_id, disease_tier, category,
-                    predictions, max_score if drug_scores else 1.0, top_n, include_filtered
+                    predictions, knn_max, top_n, include_filtered
                 )
 
             # h326: Demote broad-class-isolated predictions (1.9% precision when alone vs 12.7% with classmates)

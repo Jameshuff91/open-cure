@@ -1,6 +1,71 @@
 # Research Loop Progress
 
-## Current Session: h369, h370, h371, h372 (2026-02-05)
+## Current Session: h374 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h374: Integrate MinRank Ensemble into Production Predictor - **INVALIDATED**
+
+### KEY SESSION FINDINGS
+
+#### h374: Integrate MinRank Ensemble into Production Predictor - INVALIDATED
+
+**Hypothesis:** Adding MinRank ensemble for cancer/neuro/metabolic categories will improve production prediction quality.
+
+**Implementation:**
+1. Added `_get_target_overlap_count()` - count overlapping genes between drug targets and disease genes
+2. Added `_get_target_scores()` - get target overlap scores for all drugs
+3. Added `_minrank_fusion()` - combine kNN and target scores using min-rank fusion
+4. Modified `predict()` to use MinRank for cancer/neuro/metabolic categories
+
+**Evaluation Results (n=502 diseases):**
+| Category | n | MinRank | kNN | Δ |
+|----------|---|---------|-----|---|
+| Cancer | 100 | 89.0% | 89.0% | **0%** |
+| Metabolic | 40 | 75.0% | 77.5% | **-2.5%** |
+| Neurological | 21 | 71.4% | 71.4% | **0%** |
+| **Overall** | 502 | 83.7% | 83.9% | **-0.2%** |
+
+**Root Cause Analysis:**
+1. h369/h370 validated MinRank in ISOLATION with simple kNN+target scoring
+2. Production predictor has h274 (cancer_same_type) + other rules that ALREADY capture target overlap signal
+3. MinRank adds REDUNDANT signal that slightly HARMS metabolic predictions
+4. Cancer predictions show 19/21 drugs with GOLDEN tier via h274 (already correctly ranked)
+
+**Why Isolated Validation Didn't Transfer:**
+- h369 evaluated on 38 cancer diseases with simple scoring → 76.3% MinRank vs 65.8% kNN
+- Production evaluates on 100 cancer diseases with full tier rules → 89.0% for both
+- The +10.5 pp gain was already captured by existing rules
+
+**Resolution:**
+- Implementation kept but DISABLED (empty set for MINRANK_ENSEMBLE_CATEGORIES)
+- Helper methods retained for potential future use
+
+**Key Learning:**
+> Ensemble methods validated in isolation may not help in production when existing rules capture similar signals. Always test improvements in full production context.
+
+### New Hypotheses Generated
+- **h377:** Identify Under-Covered Categories in Production Predictor
+- **h378:** Tier Precision Analysis: Which Rules Hurt Precision?
+- **h379:** Within-Tier Ranking Optimization
+
+### Cumulative Statistics
+| Status | Count |
+|--------|-------|
+| Validated | 235 |
+| Invalidated | 71 |
+| Inconclusive | 14 |
+| Blocked | 21 |
+| Deprioritized | 7 |
+| Pending | 28 |
+| **Total** | **376** |
+
+---
+
+## Previous Session: h369, h370, h371, h372 (2026-02-05)
 
 ### Session Summary
 

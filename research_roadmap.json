@@ -7538,7 +7538,7 @@
       "title": "Integrate MinRank Ensemble into Production Predictor",
       "description": "h369/h370 showed MinRank ensemble improves cancer (+10.5 pp) and neuro (+5.3 pp). Integrate this into production_predictor.py for category-specific ensemble scoring.",
       "hypothesis": "Adding MinRank ensemble for cancer/neuro/metabolic categories will improve production prediction quality.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 2,
       "expected_impact": "high",
       "effort": "medium",
@@ -7549,7 +7549,9 @@
         "Test on held-out diseases to verify improvement",
         "Success: +3 pp R@30 improvement vs kNN-only baseline"
       ],
-      "notes": "Requires careful implementation:\n1. Add disease-gene associations from DRKG to production predictor\n2. Implement target overlap scoring for each drug\n3. Implement MinRank fusion for cancer/neuro/metabolic\n4. Use Target-only for CV/autoimmune (>10% gap)\n5. Test on held-out diseases before deploying\n\nEstimated time: 2-3 hours of careful implementation"
+      "notes": "Requires careful implementation:\n1. Add disease-gene associations from DRKG to production predictor\n2. Implement target overlap scoring for each drug\n3. Implement MinRank fusion for cancer/neuro/metabolic\n4. Use Target-only for CV/autoimmune (>10% gap)\n5. Test on held-out diseases before deploying\n\nEstimated time: 2-3 hours of careful implementation",
+      "findings": "INVALIDATED: MinRank ensemble does NOT improve R@30 in production context.\n\nKey Findings:\n1. Overall: MinRank 83.7% vs kNN 83.9% (-0.2%) - no improvement\n2. Cancer: 89.0% vs 89.0% (0%) - no change\n3. Metabolic: 75.0% vs 77.5% (-2.5%) - WORSE with ensemble\n4. Neurological: 71.4% vs 71.4% (0%) - no change\n\nRoot Cause Analysis:\n- h369/h370 validated MinRank in ISOLATION with simpler scoring\n- Production predictor has h274 cancer_same_type + other rules that ALREADY capture target overlap signal\n- Cancer diseases with GOLDEN tier via h274 are already correctly ranked\n- The ensemble adds redundant signal that slightly HARMS metabolic predictions\n\nConclusion:\n- MinRank ensemble is REDUNDANT in production context\n- Production tier rules (h274, drug class rescue, etc.) already capture similar signals\n- Implementation kept but DISABLED (empty set)\n- The new helper methods (_get_target_overlap_count, _get_target_scores, _minrank_fusion) remain for future use",
+      "result_metric": "-0.2% R@30 (83.7% vs 83.9%)"
     },
     {
       "id": "h375",
@@ -7583,6 +7585,55 @@
         "Identify predictors of ensemble benefit",
         "Create disease-level ensemble vs single-method selector",
         "Success: >5 pp improvement with disease-level adaptive selection"
+      ]
+    },
+    {
+      "id": "h377",
+      "title": "Identify Under-Covered Categories in Production Predictor",
+      "description": "h374 showed cancer/neuro/autoimmune already have strong coverage from existing rules. Identify categories where kNN alone achieves <70% R@30 and no rescue rules exist.",
+      "hypothesis": "Categories like gastrointestinal (42.9%), endocrine (33.3%), and other (70.5%) may benefit from new category-specific rescue rules.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Analyze h374 evaluation data for categories with <80% R@30",
+        "For each under-performing category, analyze GT drug patterns",
+        "Propose category-specific rescue rules based on drug class/mechanism",
+        "Success: Identify 2+ actionable category rescue opportunities"
+      ]
+    },
+    {
+      "id": "h378",
+      "title": "Tier Precision Analysis: Which Rules Hurt Precision?",
+      "description": "h374 showed some rules may be redundant or conflicting. Analyze per-rule precision to identify rules that hurt precision.",
+      "hypothesis": "Some existing tier assignment rules have precision below the tier average and could be tightened or removed.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Generate predictions with rule attribution (cat_specific_tier)",
+        "Calculate precision for each rule source",
+        "Identify rules with precision significantly below tier average",
+        "Propose rule modifications or removals",
+        "Success: +1pp precision improvement for at least one tier"
+      ]
+    },
+    {
+      "id": "h379",
+      "title": "Within-Tier Ranking Optimization",
+      "description": "Current tier assignment ignores within-tier ranking. For GOLDEN tier (57.7% precision), better ranking could help prioritize.",
+      "hypothesis": "Within GOLDEN tier, predictions with higher kNN scores AND mechanism support have higher precision than those with only one signal.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "For GOLDEN tier predictions, compute multi-signal scores",
+        "Compare precision of high-signal vs low-signal GOLDEN predictions",
+        "If gap exists, implement within-tier ranking",
+        "Success: >10pp precision gap between high and low signal GOLDEN"
       ]
     }
   ],
@@ -8957,6 +9008,12 @@
       "hypothesis_id": "h369/h370/h371",
       "learning": "MinRank ensemble captures complementary signals: Target uses gene overlap, kNN uses embedding similarity. Works when methods are equal (cancer, neuro). When one dominates (autoimmune: Target 89%), use dominant method alone.",
       "implication": "Production predictor should use category-specific method selection: ensemble for cancer/neuro, Target alone for autoimmune/CV"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h374",
+      "learning": "Ensemble methods validated in isolation may not help in production when existing rules capture similar signals",
+      "implication": "Always test improvements in full production context, not just isolated experiments"
     }
   ],
   "collaborations": [
