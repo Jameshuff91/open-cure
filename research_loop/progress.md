@@ -1,15 +1,17 @@
 # Research Loop Progress
 
-## Current Session: h399, h418, h415 (2026-02-05)
+## Current Session: h399, h418, h415, h420, h412 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 3**
+**Hypotheses Tested: 5**
 - h399: Rule Interaction Audit - **VALIDATED** (findings valid, implementation REVERTED)
-- h418: Holdout Validation of h399 - **VALIDATED** (showed fix fails holdout)
+- h418: Holdout Validation of h399 - **VALIDATED** (showed hierarchy reorder fails holdout)
 - h415: Zero-Precision ATC Mismatch Refinement - **VALIDATED** (removed 9 rules, holdout stable)
+- h420: Deliverable File Regeneration - **VALIDATED** (14,150 predictions regenerated)
+- h412: LOW vs FILTER Recalibration - **VALIDATED** (found base_to_complication at 28.1%)
 
 ### h399: Rule Interaction Audit - VALIDATED
 
