@@ -1,29 +1,31 @@
 # Research Loop Progress
 
-## Current Session: h343, h344, h237, h336, h342 (2026-02-05)
+## Current Session: h343, h344, h237, h336, h342, h346, h349, h350 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 5**
+**Hypotheses Tested: 8**
 - h343: Anti-VEGF Psoriasis/Inflammatory Boost - **INVALIDATED** (0% precision, case reports don't justify GOLDEN)
-- h344: TKI Psoriasis Off-Target Effects - **VALIDATED** (TKIs correctly limited to cancer, no psoriasis predictions)
+- h344: TKI Psoriasis Off-Target Effects - **VALIDATED** (TKIs correctly limited to cancer)
 - h237: Indication-Weighted Drug Boosting - **INVALIDATED** (signal already captured by tier system)
-- h336: Disease Name Standardization for GT Matching - **VALIDATED** (+25 GT hits from 5 synonym mappings)
-- h342: Cancer Drug Cross-Activity Patterns - **VALIDATED** (0-2.6% non-cancer precision across all mechanisms)
+- h336: Disease Name Standardization for GT Matching - **VALIDATED** (+25 GT hits from 5 synonyms)
+- h342: Cancer Drug Cross-Activity Patterns - **VALIDATED** (0-2.6% non-cancer precision)
 - h346: Cancer-Only Drug Filter - **VALIDATED + IMPLEMENTED** (115 preds → FILTER, ZERO GT loss)
+- h349: Deliverables Category Regeneration - **VALIDATED** (58% mismatch, regeneration needed)
+- h350: Imatinib GIST-Specific Filter - **VALIDATED** (5.9% precision, no filter needed)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 216 |
+| Validated | 218 |
 | Invalidated | 67 |
 | Inconclusive | 13 |
 | Blocked | 21 |
 | Deprioritized | 8 |
-| Pending | 23 |
-| **Total** | **345**
+| Pending | 25 |
+| **Total** | **352**
 
 ### KEY SESSION FINDINGS
 

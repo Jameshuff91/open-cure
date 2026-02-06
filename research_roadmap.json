@@ -7057,7 +7057,7 @@
       "description": "Imatinib has both cancer (CML) and non-cancer (GIST) uses. Check if it's incorrectly predicted for non-GIST/non-cancer diseases.",
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "steps": [
         "List all imatinib GT indications",
@@ -7065,7 +7065,9 @@
         "Calculate precision by disease type",
         "Decide if filter is needed"
       ],
-      "source": "h346 exclusion rationale"
+      "source": "h346 exclusion rationale",
+      "findings": "Imatinib GIST-Specific Filter Analysis - VALIDATED (No filter needed)\n\nImatinib GT indications (19 entries):\n- CML, ALL, AML (hematological malignancies)\n- GIST (gastrointestinal stromal tumor)\n- Mastocytosis, hypereosinophilic syndrome\n- Dermatofibrosarcoma protuberans\n\nImatinib predictions: 34 total\n- Precision: 5.9% (2/34 GT hits)\n- HIGH: 25% (1/4)\n- MEDIUM: 5.6% (1/18)\n- LOW: 0% (0/12)\n\nGT hits found:\n1. acute lymphoblastic leukemia (MEDIUM) \u2713\n2. dermatofibrosarcoma protuberans (HIGH) \u2713\n\nMost predictions are for hematological/cancer diseases which is appropriate.\nOnly a few truly inappropriate predictions (smallpox, retinitis, glaucoma).\n\nConclusion: Imatinib precision (5.9%) is comparable to other cancer drugs (6.5%).\nPredictions stay in the right disease domain. NO filter needed - current tier\nsystem handles it appropriately (inappropriate predictions go to LOW tier).",
+      "result_metric": "5.9% precision (2/34 GT), appropriate domain, no filter needed"
     }
   ],
   "completed": [
