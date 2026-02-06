@@ -7548,7 +7548,8 @@
         "Use adaptive selection (ensemble when gap<10%, else dominant method) for CV/autoimmune",
         "Test on held-out diseases to verify improvement",
         "Success: +3 pp R@30 improvement vs kNN-only baseline"
-      ]
+      ],
+      "notes": "Requires careful implementation:\n1. Add disease-gene associations from DRKG to production predictor\n2. Implement target overlap scoring for each drug\n3. Implement MinRank fusion for cancer/neuro/metabolic\n4. Use Target-only for CV/autoimmune (>10% gap)\n5. Test on held-out diseases before deploying\n\nEstimated time: 2-3 hours of careful implementation"
     },
     {
       "id": "h375",

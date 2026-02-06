@@ -1,15 +1,16 @@
 # Research Loop Progress
 
-## Current Session: h369, h370, h371 (2026-02-05)
+## Current Session: h369, h370, h371, h372 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 3**
+**Status:** Complete
+**Hypotheses Tested: 4**
 - h369: Apply Max Ensemble to Non-Cancer Categories - **VALIDATED** (MinRank helps cancer/neuro, hurts autoimmune)
 - h370: Adaptive Ensemble Selection by Category - **VALIDATED** (72.4% R@30 with 10% threshold)
 - h371: Target-Only for High-Gene-Coverage Diseases - **VALIDATED** (gene count helps but doesn't make Target superior)
+- h372: kNN-Only for Neurological Diseases - **INVALIDATED** (neuro gene coverage not unusually low)
 
 ### KEY SESSION FINDINGS
 
