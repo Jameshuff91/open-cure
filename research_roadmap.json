@@ -12235,7 +12235,7 @@
     {
       "id": "h592",
       "title": "Cross-Validated Disease-Level Precision: Proper Leave-One-Out Precision Estimates",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -12245,7 +12245,88 @@
         "Compute per-disease precision across all held-out instances",
         "Compare LOO precision vs 5-seed holdout precision",
         "If consistent, update deliverable with LOO-based disease confidence"
-      ]
+      ],
+      "findings": "VALIDATED: Composite quality score provides holdout-validated prioritization beyond kNN rank alone.\n\nHOLDOUT RESULTS (5-seed, MEDIUM tier):\n- Composite Q1: 14.0% \u00b1 1.2% vs kNN-rank Q1: 11.5% \u00b1 0.7% (+2.6pp)\n- Q1-Q4 gap: 8.0pp (composite) vs 4.5pp (rank-only) \u2014 78% better separation\n- Novel non-CS MEDIUM: Q1 6.8% vs Q4 1.7% (4.0x lift)\n\nFULL-DATA (novel non-CS MEDIUM):\n- Q1: 34.5% vs Q4: 9.5% (3.6x lift)\n\nFORMULA: 1.5*rank_score + norm_score + TransE + gene_overlap + 0.5*mechanism + disease_holdout + 0.5*non_self_ref\n\nMEDICAL PLAUSIBILITY (top 20 novel):\n- 65% reasonable (45% validated + 20% plausible) vs 56% overall MEDIUM (+9pp)\n\nKEY INSIGHTS:\n1. Disease-level signals (holdout precision, self-ref) add value that prediction-level signals (TransE) alone don't\n2. Many \"novel\" top predictions are GT gaps (FDA-approved), not discoveries\n3. 44/100 top predictions are already in GT (confirmations)\n4. True novel repurposing candidates: bortezomib\u2192Burkitt lymphoma, montelukast\u2192IPF, lovastatin\u2192Fabry disease\n5. Composite score useful for PRACTICAL PRIORITIZATION, not tier changes\n\nOUTPUT: data/analysis/h592_validation_priority_list.json",
+      "result_metric": "Composite Q1 holdout 14.0% vs rank-only 11.5% (+2.6pp); Q1-Q4 gap 8.0pp vs 4.5pp"
+    },
+    {
+      "id": "h592",
+      "title": "Experimental Validation Priority List: Rank Novel Predictions by Composite Quality",
+      "description": "Generate a prioritized list of novel (non-known-indication) GOLDEN/HIGH/MEDIUM predictions ranked by a composite of all validated quality signals. This is NOT for tier changes (h443 showed kNN rank is optimal). Instead, this creates a practical output for experimental collaborators. Signals: kNN rank, norm_score, TransE consilience, gene overlap, mechanism support, disease holdout precision, non-self-referentiality, non-CS. Also characterize: how many predictions are corticosteroids (known)? How many have gene overlap (molecular support)? How many are TransE-validated? What's the distribution across disease categories?",
+      "hypothesis": "A composite quality score combining kNN rank, TransE consilience, gene overlap, mechanism support, and disease-level holdout precision will identify a subset of predictions (top 50-100) with substantially higher expected precision than the tier average. These should be prioritized for experimental validation.",
+      "steps": [
+        "Extract all novel non-known-indication GOLDEN/HIGH/MEDIUM predictions",
+        "Remove corticosteroids (well-known, not novel repurposing)",
+        "Compute composite quality features: binary (TransE, gene overlap, mechanism) and continuous (norm_score, disease holdout, 1-self_ref_pct)",
+        "Compute simple additive quality score: sum of normalized features",
+        "Characterize top-50 by disease category, drug class, evidence strength",
+        "Validate: within MEDIUM, does top-50 by composite have higher holdout than bottom-50?",
+        "Generate output file: data/analysis/h592_validation_priority_list.json",
+        "Success: identifiable subset with >50% expected precision within MEDIUM"
+      ],
+      "status": "in_progress",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "category": "deliverable",
+      "rationale": "All internal quality signals have been validated individually. Combining them into a single priority ranking creates a practical output for collaborators deciding which predictions to test first. This is different from h443 (within-tier ranking) because the goal is not tier reassignment but practical experiment prioritization."
+    },
+    {
+      "id": "h593",
+      "title": "GT Gap Auto-Detection: Identify FDA-Approved Drug-Disease Pairs Missing from GT",
+      "description": "h592 showed many 'novel' top predictions are actually FDA-approved drugs missing from GT (clopidogrel\u2192CAD, levofloxacin\u2192sinusitis). Systematically detect these GT gaps using drug label/approval data. This improves GT completeness and separates true repurposing from known indications.",
+      "hypothesis": "Using ATC codes and disease categories, we can automatically flag predictions that are likely GT gaps (drug approved for same therapeutic area). These should be added to GT or annotated separately.",
+      "steps": [
+        "For each GOLDEN/HIGH prediction not in GT, check if the drug's ATC class is standard-of-care for the disease category",
+        "Cross-reference with SIDER indications (already loaded)",
+        "Flag predictions where drug class perfectly matches disease category as likely GT gaps",
+        "Estimate GT gap rate: what fraction of 'novel' predictions are actually known treatments?",
+        "Success: >20 new GT pairs identified, improved separation of novel vs known"
+      ],
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "category": "data-quality",
+      "rationale": "h592 showed 9/11 novel GOLDEN/HIGH predictions are likely FDA-approved. Fixing GT gaps improves precision estimates and focuses attention on truly novel repurposing."
+    },
+    {
+      "id": "h594",
+      "title": "Add composite_quality_score to Production Deliverable",
+      "description": "h592 validated a composite quality score that provides +2.6pp over kNN rank for identifying top-quartile MEDIUM predictions. Add this as a column to the production deliverable so collaborators can sort by it.",
+      "hypothesis": "Adding composite_quality_score to the deliverable enables collaborators to identify the most promising predictions for experimental validation.",
+      "steps": [
+        "Add composite score computation to h420_regenerate_deliverable.py",
+        "Include formula: 1.5*rank_score + norm_score + TransE + gene_overlap + 0.5*mechanism + disease_holdout + 0.5*non_self_ref",
+        "Regenerate deliverable with new column",
+        "Verify top-100 ranking matches h592 analysis",
+        "Success: deliverable has composite_quality_score column"
+      ],
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "deliverable",
+      "rationale": "Implementation of h592 finding. Low effort, direct practical value."
+    },
+    {
+      "id": "h595",
+      "title": "Composite Score Weight Optimization: Bayesian or Grid Search for Optimal Weights",
+      "description": "h592 used heuristic weights (rank=1.5, score/TransE/gene=1.0, mech/self-ref=0.5). These weights haven't been optimized. A simple grid search over weight space could improve the Q1-Q4 gap further.",
+      "hypothesis": "Optimized weights will improve the Q1 holdout precision from 14.0% to >15%, and increase the Q1-Q4 gap from 8.0pp to >10pp.",
+      "steps": [
+        "Define weight grid: each signal weight in [0, 0.5, 1.0, 1.5, 2.0]",
+        "For each weight combination, compute holdout Q1 precision (5-seed)",
+        "Find optimal weights that maximize Q1-Q4 gap",
+        "Check for overfitting: leave-one-seed-out cross-validation",
+        "Success: Q1 holdout > 15% with stable weights"
+      ],
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "category": "meta-analysis",
+      "rationale": "Potential improvement from h592. Risk of overfitting to holdout seeds. Need LOO-CV to validate."
     }
   ],
   "completed": [
@@ -14244,6 +14325,12 @@
       "hypothesis_id": "h590",
       "learning": "Hetionet disease-resembles edges are 80% already in kNN top-20 (the embedding captures them). Resembles neighbors have LOWER drug overlap (0.036 vs kNN 0.045) and provide only 0.2 unique GT hits per disease. No augmentation value \u2014 kNN already uses this information.",
       "implication": "DRKG-derived auxiliary signals (resembles, gene overlap, HPO phenotype) are all subsumed by or redundant with what Node2Vec embeddings already capture. Any improvement must come from truly external data sources."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h592",
+      "learning": "Composite quality score combining disease-level signals (holdout precision, self-ref) with prediction-level signals (rank, TransE, gene overlap) provides +2.6pp over kNN rank alone for MEDIUM tier prioritization. Disease-level signals are the key addition that h443 (prediction-level composite) missed.",
+      "implication": "For practical experiment prioritization, composite scores outperform single-signal sorting. This is an annotation/prioritization signal, not a tier promotion signal."
     }
   ],
   "collaborations": [

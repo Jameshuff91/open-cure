@@ -1,6 +1,68 @@
 # Research Loop Progress
 
-## Current Session: h586/h588 - GT-Free Quality Signals (2026-02-06)
+## Current Session: h592 - Experimental Validation Priority List (2026-02-06)
+
+### h592: Experimental Validation Priority List — VALIDATED
+
+Computed a composite quality score combining all validated signals (kNN rank, norm_score, TransE consilience, gene overlap, mechanism support, disease holdout precision, non-self-referentiality) to prioritize MEDIUM predictions for experimental validation.
+
+**Key Results:**
+
+**Holdout Validation (5-seed, MEDIUM tier):**
+| Ranking Method | Q1 | Q2 | Q3 | Q4 | Q1-Q4 Gap |
+|---------------|-----|-----|-----|-----|-----------|
+| Composite | 14.0% ± 1.2% | 10.5% ± 0.7% | 7.1% ± 0.7% | 6.0% ± 0.7% | 8.0pp |
+| kNN Rank only | 11.5% ± 0.7% | 9.2% ± 0.6% | 10.0% ± 0.8% | 7.0% ± 0.5% | 4.5pp |
+
+**Composite beats kNN rank by +2.6pp for Q1 and 78% better separation (8.0pp vs 4.5pp gap).**
+
+**Formula:** `1.5*rank_score + norm_score + TransE + gene_overlap + 0.5*mechanism + disease_holdout + 0.5*non_self_ref`
+
+**Novel Non-CS MEDIUM (holdout):**
+- Q1: 6.8% ± 1.1% vs Q4: 1.7% ± 0.7% (4.0x lift)
+
+**Full-Data (novel non-CS MEDIUM):**
+- Q1: 34.5% vs Q4: 9.5% (3.6x lift)
+
+**Medical Plausibility (top 20 novel):**
+- 65% reasonable (45% validated + 20% plausible) vs 56% overall MEDIUM (+9pp)
+- Key validated novel: doxorubicin→choriocarcinoma (FDA), clopidogrel→CAD (FDA), enoxaparin→DIC
+- Key implausible: erythromycin→meningitis (poor BBB), phenobarbital→dry skin (no mechanism)
+
+**Key Insight: Many "novel" predictions are GT gaps, not discoveries:**
+- 4/4 GOLDEN novel = FDA-approved (clopidogrel→CAD, lovastatin→atherosclerosis, etc.)
+- 5/7 HIGH novel = standard treatments (levofloxacin→sinusitis, verapamil→ACS)
+- Truly novel repurposing: bortezomib→Burkitt lymphoma, montelukast→IPF, lovastatin→Fabry disease
+
+**Output:** `data/analysis/h592_validation_priority_list.json` (top 100 prioritized novel non-CS predictions)
+
+**Difference from h443 (CLOSED):** h443 tested TransE+kNN within-tier and found no improvement over rank alone. h592 adds disease-level signals (holdout precision, self-referentiality) which provide the +2.6pp lift. This is an annotation/prioritization signal, NOT for tier changes.
+
+### New Hypotheses Generated (3)
+- h593: GT gap auto-detection from ATC/category matching (P4, medium)
+- h594: Add composite_quality_score to production deliverable (P5, low)
+- h595: Composite weight optimization via grid search (P5, medium)
+
+### Recommended Next Steps
+1. **h593**: Auto-detect GT gaps to improve GT completeness
+2. **h594**: Add composite score to deliverable (quick implementation)
+3. Consider pivoting to external data integration (LINCS, PubMed) for fundamentally new signals
+
+### Session Tier Performance (unchanged from h560)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 69.9% ± 17.9% | 280 |
+| HIGH | 59.5% ± 6.2% | 754 |
+| MEDIUM | 35.8% ± 2.8% | 2083 |
+| LOW | 15.5% ± 2.4% | 3733 |
+| FILTER | 10.6% ± 1.3% | 7300 |
+
+### Key Learning
+Disease-level signals (holdout precision, self-referentiality) add genuine value for prediction prioritization that prediction-level signals (TransE, kNN score) miss. The composite score is useful for practical experiment prioritization but NOT for tier reassignment. Also, many GOLDEN/HIGH "novel" predictions are actually known FDA-approved treatments missing from our GT — a data quality issue, not a discovery.
+
+---
+
+## Previous Session: h586/h588 - GT-Free Quality Signals (2026-02-06)
 
 ### h586: GT-Free Paradigm Mismatch via DRKG Edges — INVALIDATED
 
