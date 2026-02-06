@@ -14,7 +14,7 @@ from collections import defaultdict
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.production_predictor import DrugRepurposingPredictor, ConfidenceTier
+from src.production_predictor import DrugRepurposingPredictor, ConfidenceTier, classify_literature_status
 
 try:
     import openpyxl
@@ -57,6 +57,11 @@ def main():
         for pred in result.predictions:
             is_gt = disease_id in gt_data and pred.drug_id in gt_data[disease_id]
 
+            # h481: Classify literature status
+            lit_status, soc_class = classify_literature_status(
+                pred.drug_name, disease_name, result.category, is_gt
+            )
+
             all_predictions.append({
                 'disease_name': disease_name,
                 'disease_id': disease_id,
@@ -77,6 +82,8 @@ def main():
                 'transe_consilience': pred.transe_consilience,
                 'rank_bucket_precision': pred.rank_bucket_precision,
                 'category_holdout_precision': pred.category_holdout_precision,
+                'literature_status': lit_status,
+                'soc_drug_class': soc_class or '',
             })
 
             tier_counts[pred.confidence_tier.value] += 1
@@ -123,6 +130,28 @@ def main():
 
         wb.save(str(output_path))
         print(f"\nSaved to {output_path}")
+
+        # Also save JSON for programmatic use
+        import json
+
+        def _json_safe(obj: object) -> object:
+            """Convert numpy types to Python native for JSON serialization."""
+            import numpy as np
+            if isinstance(obj, (np.floating,)):
+                return float(obj)
+            if isinstance(obj, (np.integer,)):
+                return int(obj)
+            if isinstance(obj, np.bool_):
+                return bool(obj)
+            return obj
+
+        json_preds = [
+            {k: _json_safe(v) for k, v in p.items()} for p in all_predictions
+        ]
+        json_path = output_dir / "drug_repurposing_predictions_with_confidence.json"
+        with open(json_path, 'w') as jf:
+            json.dump(json_preds, jf, indent=2)
+        print(f"Saved JSON to {json_path}")
     else:
         output_path = output_dir / "drug_repurposing_predictions_with_confidence.csv"
         import csv

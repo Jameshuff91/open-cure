@@ -94,7 +94,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import numpy as np
 import pandas as pd
@@ -268,6 +268,10 @@ class DrugPrediction:
     # h466: Category-specific holdout precision
     category_holdout_precision: float = 0.0
 
+    # h481: Literature status annotation
+    literature_status: str = 'NOVEL'
+    soc_drug_class: Optional[str] = None
+
     def to_dict(self) -> Dict:
         return {
             'drug': self.drug_name,
@@ -284,6 +288,8 @@ class DrugPrediction:
             'transe_consilience': self.transe_consilience,
             'rank_bucket_precision': self.rank_bucket_precision,
             'category_holdout_precision': self.category_holdout_precision,
+            'literature_status': self.literature_status,
+            'soc_drug_class': self.soc_drug_class,
         }
 
 
@@ -728,6 +734,119 @@ INVERSE_INDICATION_PAIRS = {
     'fluticasone': {'idiopathic pulmonary fibrosis'},
     'cortisone': {'idiopathic pulmonary fibrosis'},
 }
+
+# h481: Drug class → disease category standard-of-care mappings
+# Used to classify predictions as LIKELY_GT_GAP (drug class is standard for disease category)
+# Validated: SOC predictions have +28.4pp higher full-data precision vs NOVEL in HIGH tier
+DRUG_CLASS_SOC_MAPPINGS: Dict[str, Dict[str, Any]] = {
+    'corticosteroids': {
+        'drugs': CORTICOSTEROID_DRUGS,
+        'categories': {'autoimmune', 'hematological', 'dermatological', 'respiratory',
+                       'ophthalmic', 'immunological'},
+    },
+    'statins': {
+        'drugs': STATIN_DRUGS,
+        'categories': {'cardiovascular', 'metabolic'},
+    },
+    'nsaids': {
+        'drugs': NSAID_DRUGS,
+        'categories': {'autoimmune', 'musculoskeletal'},
+    },
+    'dmards': {
+        'drugs': DMARD_DRUGS,
+        'categories': {'autoimmune'},
+    },
+    'beta_blockers': {
+        'drugs': BETA_BLOCKERS,
+        'categories': {'cardiovascular'},
+    },
+    'loop_diuretics': {
+        'drugs': LOOP_DIURETICS,
+        'categories': {'cardiovascular', 'renal'},
+    },
+    'arbs': {
+        'drugs': ARB_DRUGS,
+        'categories': {'cardiovascular', 'renal'},
+    },
+    'anticoagulants': {
+        'drugs': ANTICOAGULANT_DRUGS,
+        'categories': {'cardiovascular', 'hematological'},
+    },
+    'antiplatelets': {
+        'drugs': ANTIPLATELET_DRUGS,
+        'categories': {'cardiovascular'},
+    },
+    'sglt2_inhibitors': {
+        'drugs': SGLT2_INHIBITORS,
+        'categories': {'metabolic', 'cardiovascular', 'renal'},
+    },
+    'thiazolidinediones': {
+        'drugs': THIAZOLIDINEDIONES,
+        'categories': {'metabolic'},
+    },
+    'fluoroquinolones': {
+        'drugs': FLUOROQUINOLONE_DRUGS,
+        'categories': {'infectious', 'respiratory'},
+    },
+    'topical_steroids': {
+        'drugs': TOPICAL_STEROIDS,
+        'categories': {'dermatological'},
+    },
+    'cancer_drugs': {
+        'drugs': CANCER_ONLY_DRUGS | TAXANE_DRUGS | ALKYLATING_DRUGS,
+        'categories': {'cancer'},
+    },
+    'ophthalmic_antibiotics': {
+        'drugs': OPHTHALMIC_ANTIBIOTICS,
+        'categories': {'ophthalmic'},
+    },
+    'ophthalmic_steroids': {
+        'drugs': OPHTHALMIC_STEROIDS,
+        'categories': {'ophthalmic'},
+    },
+    'aldosterone_antagonists': {
+        'drugs': ALDOSTERONE_ANTAGONISTS,
+        'categories': {'cardiovascular', 'renal'},
+    },
+}
+
+# Build reverse lookup for SOC classification
+_DRUG_TO_SOC: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
+for _cls_name, _cls_info in DRUG_CLASS_SOC_MAPPINGS.items():
+    for _drug in _cls_info['drugs']:
+        _DRUG_TO_SOC[_drug.lower()].append({
+            'class': _cls_name,
+            'categories': _cls_info['categories']
+        })
+
+
+def classify_literature_status(
+    drug_name: str,
+    disease_name: str,
+    category: str,
+    is_known_indication: bool,
+) -> Tuple[str, Optional[str]]:
+    """Classify a prediction's literature status.
+
+    Returns:
+        (status, soc_drug_class) where status is one of:
+        - KNOWN_INDICATION: Already in ground truth
+        - LIKELY_GT_GAP: Drug class is standard-of-care for disease category
+        - NOVEL: No automated classification
+    """
+    if is_known_indication:
+        return 'KNOWN_INDICATION', None
+
+    drug_lower = drug_name.lower()
+
+    # Check SOC match
+    soc_matches = _DRUG_TO_SOC.get(drug_lower, [])
+    for soc in soc_matches:
+        if category in soc['categories']:
+            return 'LIKELY_GT_GAP', soc['class']
+
+    return 'NOVEL', None
+
 
 # h280/h281: Complication vs Subtype relationship mapping
 # Complications are CAUSED BY the base disease (different treatment expected)

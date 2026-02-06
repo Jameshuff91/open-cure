@@ -9570,8 +9570,10 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
-      "category": "deliverable"
+      "status": "validated",
+      "category": "deliverable",
+      "findings": "Added literature_status column to deliverable. 17 drug class SOC mappings cover 1651 predictions (11.7%) as LIKELY_GT_GAP. SOC predictions have +28.4pp higher precision than NOVEL in HIGH tier (40.3% vs 11.9%). Top classes: corticosteroids (494), cancer_drugs (433), fluoroquinolones (194). Also regenerated JSON deliverable and fixed stale format.",
+      "result_metric": "SOC +28.4pp vs NOVEL in HIGH tier"
     },
     {
       "id": "h482",
@@ -10097,10 +10099,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "in_progress",
+      "status": "validated",
       "depends_on": [
         "h504"
-      ]
+      ],
+      "findings": "Self-referentiality has two causes: (1) Small GT (79% of cases, GT\u22642, odds ratio 8.6x) - statistical artifact, and (2) Therapeutic islands (8%, GT>5 with dedicated drug classes like PAH/CKD/HepC). Category modulates: GI/immunological 89-100% self-ref vs autoimmune/dermatological 20-33%. Mechanism-specific overlap minimal (4.2%). Not actionable for demotion but informative for deliverable annotation.",
+      "result_metric": "GT\u22642 accounts for 79.2% of self-ref (OR=8.6x)"
     },
     {
       "id": "h509",
@@ -10214,6 +10218,60 @@
       ],
       "findings": "Diabetes hierarchy split NOT actionable. Only 8 complication predictions in HIGH (too few to matter). Core holdout 35.4% \u00b1 25.7%, complications 11.1% \u00b1 15.7%, but both have n<5/seed. Complications barely trigger hierarchy rule because their drugs aren't shared with core diabetes. Not worth implementing.",
       "result_metric": "Core 35.4%, Comp 11.1%, but only 8 comp predictions total"
+    },
+    {
+      "id": "h516",
+      "title": "Expand SOC Drug Class Mappings for Higher LIKELY_GT_GAP Coverage",
+      "hypothesis": "Current 17 drug classes cover 1651/14150 (11.7%) as LIKELY_GT_GAP. Adding additional well-characterized classes (ACE inhibitors, anticonvulsants, SSRIs, proton pump inhibitors, insulin preparations, benzodiazepines) could increase coverage to 15-20% while maintaining precision.",
+      "steps": [
+        "Identify top 10 most frequent drugs in NOVEL predictions",
+        "Map to drug classes and their standard disease categories",
+        "Add to DRUG_CLASS_SOC_MAPPINGS if precision > 20%",
+        "Re-evaluate precision lift"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h481"
+      ]
+    },
+    {
+      "id": "h517",
+      "title": "Therapeutic Island Annotation: Flag Self-Referential High-GT Diseases in Deliverable",
+      "hypothesis": "h508 identified 11 'therapeutic island' diseases (GT>5, 100% self-referential). These include immunodeficiency (34 drugs), PAH (26), CKD (19). Predictions for these diseases rely entirely on within-disease evidence. Adding a 'therapeutic_island' flag to the deliverable would help consumers assess prediction reliability.",
+      "steps": [
+        "Compute self-referential fraction for each disease at prediction time",
+        "Flag diseases with GT>5 and 100% self-referential as therapeutic_island=True",
+        "Add to deliverable as annotation column",
+        "Check if this correlates with holdout precision"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h508"
+      ]
+    },
+    {
+      "id": "h518",
+      "title": "LIKELY_GT_GAP Predictions as Holdout Precision Signal",
+      "hypothesis": "h481 showed SOC predictions have +28.4pp higher precision in HIGH tier. If LIKELY_GT_GAP predictions are preferentially correct on holdout too, this could be used as a tier promotion signal (SOC + MEDIUM \u2192 HIGH potential).",
+      "steps": [
+        "Run proper 5-seed holdout with recompute_gt_structures",
+        "Compare holdout precision: LIKELY_GT_GAP vs NOVEL within each tier",
+        "Test if SOC + MEDIUM achieves HIGH-tier precision on holdout",
+        "If validated, implement as tier promotion rule"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h481"
+      ]
     }
   ],
   "completed": [
@@ -11953,6 +12011,18 @@
       "hypothesis_id": "h509",
       "learning": "CV hierarchy groups are all too small for holdout validation (3-5 diseases each). Full-data precision is high (65-93%) confirming genuine medical knowledge. h506's 35.1% coronary holdout was from n\u22481 disease/seed.",
       "implication": "Stop investigating individual hierarchy group demotions when group size < 10 diseases. Small hierarchy rules should be evaluated on full-data precision only."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h508",
+      "learning": "Self-referentiality has two distinct causes: small GT (79%, OR=8.6x) and therapeutic islands (8%, dedicated drug classes). GI/immunological 89-100% self-ref vs autoimmune/dermatological 20-33%. Mechanism-specific overlap minimal (4.2%).",
+      "implication": "GT size is the dominant predictor of self-referentiality. Therapeutic islands (PAH, HepC, CKD) are informative for annotation but not actionable for demotion."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h481",
+      "learning": "Automated literature status classification using 17 drug class SOC mappings achieves +28.4pp precision lift in HIGH tier. Covers 11.7% of predictions as LIKELY_GT_GAP. Top classes: corticosteroids, cancer drugs, fluoroquinolones. Implementation is conservative and clinically reasonable.",
+      "implication": "SOC classification is a reliable annotation for deliverable consumers. Potential for tier promotion but needs holdout validation first."
     }
   ],
   "collaborations": [

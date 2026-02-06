@@ -1,0 +1,27 @@
+h508: Self-Referential Disease Characterization
+
+FINDING 1: GT Size is the DOMINANT Predictor
+- 79.2% of self-ref diseases have GT ≤ 2
+- Odds ratio: 8.6x (GT ≤ 2 predicts self-ref)
+- GT=1: 59.6% are self-ref; GT=2: 41.4%; GT>5: 7.6%
+
+FINDING 2: Category Modulates Self-Ref Rate (controlling for GT ≤ 2)
+- HIGH: GI 89%, immunological 100%, hematological 77%, renal 83%
+- LOW: infectious 35%, autoimmune 33%, dermatological 20%
+- GI/immuno/heme have UNIQUE drug profiles; autoimmune/infectious share drugs
+
+FINDING 3: 11 'Therapeutic Island' Diseases (GT>5, 100% self-ref)
+- Immunodeficiency (34 drugs), PAH (26), CKD (19), HepC (11), Opioid constipation (11)
+- ADHD (7), DKA (8), Obesity (8), Migraine w/ aura (9), Dacryocystitis (6), Aplastic anemia (6)
+- Each has a DEDICATED drug class with no cross-indication use
+
+FINDING 4: Mechanism-Specific Overlap is Minimal
+- Only 6/144 (4.2%) self-ref overlap with mechanism-specific
+- Different phenomena: mech-specific=drug specificity, self-ref=embedding isolation
+
+CONCLUSION: Two distinct causes:
+1. SMALL GT (79%): statistical (few drugs → no sharing possible)
+2. THERAPEUTIC ISLANDS (8%): genuine uniqueness (dedicated drug classes)
+3. RESIDUAL (13%): medium GT with partial uniqueness
+
+ACTIONABILITY: Not actionable for tier demotion. Informative for deliverable annotation.

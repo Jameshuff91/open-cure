@@ -1,0 +1,35 @@
+h481: Literature Status Classification for Deliverable
+
+IMPLEMENTATION:
+- Added `classify_literature_status()` function to production_predictor.py
+- Added `DRUG_CLASS_SOC_MAPPINGS` constant (17 drug classes mapped to disease categories)
+- Added `literature_status` and `soc_drug_class` fields to DrugPrediction dataclass
+- Updated h420_regenerate_deliverable.py to include new columns + JSON output
+
+CLASSIFICATION:
+- KNOWN_INDICATION: 2,645 (18.7%) - Drug already in ground truth for this disease
+- LIKELY_GT_GAP: 1,651 (11.7%) - Drug class is standard-of-care for disease category
+- NOVEL: 9,854 (69.6%) - No automated classification available
+
+DRUG CLASS BREAKDOWN (top 5 by volume):
+  corticosteroids: 494 (30%)
+  cancer_drugs: 433 (26%)
+  fluoroquinolones: 194 (12%)
+  statins: 119 (7%)
+  anticoagulants: 78 (5%)
+
+VALIDATION (full-data precision by tier x status):
+  HIGH:    SOC 40.3% vs NOVEL 11.9% (+28.4pp gap)
+  MEDIUM:  SOC 14.5% vs NOVEL  6.9% (+7.6pp gap)
+  LOW:     SOC 12.0% vs NOVEL  1.6% (+10.4pp gap)
+
+  Per-class precision (top 5):
+    thiazolidinediones: 66.7%
+    corticosteroids: 43.7%
+    statins: 41.7%
+    nsaids: 35.5%
+    dmards: 33.3%
+
+DELIVERABLE UPDATE:
+- data/deliverables/drug_repurposing_predictions_with_confidence.xlsx (21 columns now)
+- data/deliverables/drug_repurposing_predictions_with_confidence.json (regenerated)

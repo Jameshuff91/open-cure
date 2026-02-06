@@ -1,6 +1,45 @@
 # Research Loop Progress
 
-## Current Session: h507/h492/h509/h515 - Self-Referentiality + GT Expansion + Baseline Re-Calibration (2026-02-06)
+## Current Session: h508/h481 - Self-Ref Characterization + Literature Status Deliverable (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 2**
+- h508: Self-Referential Disease Characterization - **VALIDATED** (GT size is dominant predictor)
+- h481: Deliverable Literature Validation Status Column - **VALIDATED** (+28.4pp precision for SOC)
+
+### Key Findings
+
+#### 1. Self-Referentiality Characterization (h508)
+- **GT size is the DOMINANT predictor**: 79.2% of self-ref diseases have GT ≤ 2 (OR=8.6x)
+- Category modulates: GI/immunological 89-100% vs autoimmune/dermatological 20-33%
+- 11 "Therapeutic Islands" (GT>5, 100% self-ref): immunodeficiency, PAH, CKD, HepC, opioid constipation
+- Mechanism-specific overlap minimal (4.2%)
+- Two distinct causes: small GT (79%) and dedicated drug classes (8%)
+
+#### 2. Literature Status Classification (h481)
+- Added `literature_status` + `soc_drug_class` columns to deliverable
+- 17 drug class → disease category SOC mappings (184 unique drugs)
+- KNOWN_INDICATION: 2,645 (18.7%), LIKELY_GT_GAP: 1,651 (11.7%), NOVEL: 9,854 (69.6%)
+- **Precision validation**: SOC +28.4pp vs NOVEL in HIGH tier (40.3% vs 11.9%)
+- Top classes: corticosteroids (494), cancer_drugs (433), fluoroquinolones (194)
+- Also regenerated JSON deliverable (was stale from old script)
+
+### New Hypotheses Generated (3)
+- h516: Expand SOC drug class mappings (P5, low)
+- h517: Therapeutic island annotation (P5, low)
+- h518: LIKELY_GT_GAP as holdout precision signal (P4, medium)
+
+### Recommended Next Steps
+1. **h518**: Test if SOC status improves holdout precision (potential tier promotion)
+2. **h517**: Annotate therapeutic islands in deliverable (quick win)
+3. **h516**: Expand SOC coverage with more drug classes
+
+---
+
+## Previous Session: h507/h492/h509/h515 - Self-Referentiality + GT Expansion + Baseline Re-Calibration (2026-02-06)
 
 ### Session Summary
 
