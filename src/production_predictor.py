@@ -670,7 +670,46 @@ INVERSE_INDICATION_PAIRS = {
     'metronidazole': {'myopia'},
     # h483: Verapamil → cardiac arrest (CAN PRECIPITATE cardiac arrest in WPW/VT; not a treatment)
     # IV verapamil is CONTRAINDICATED in ventricular tachycardia per ACLS guidelines
-    'verapamil': {'cardiac arrest'},
+    # h484: Non-DHP CCBs contraindicated in HF (ACC/AHA 2022 Class III - harm)
+    # Negative inotropes that can cause acute decompensation in HFrEF
+    'verapamil': {
+        'cardiac arrest',
+        'chronic heart failure', 'heart failure', 'congestive heart failure',
+        'systolic heart failure', 'acute heart failure',
+    },
+    # h484: Diltiazem — same non-DHP CCB class contraindications as verapamil
+    # Cardiac arrest: can precipitate arrest in WPW/structural heart disease
+    # Heart failure: negative inotrope, ACC/AHA 2022 Class III (harm)
+    # Ventricular tachycardia: NOT indicated (unlike verapamil for fascicular VT)
+    #   Can cause hemodynamic collapse in VT with structural heart disease
+    'diltiazem': {
+        'cardiac arrest',
+        'chronic heart failure', 'heart failure', 'congestive heart failure',
+        'systolic heart failure', 'acute heart failure',
+        'ventricular tachycardia',
+    },
+    # h484: Short-acting nifedipine → ACS (HINT study: excess mortality)
+    # Extended-release may be acceptable but we cannot distinguish formulations
+    # Furberg 1995 meta-analysis: dose-dependent mortality increase with short-acting nifedipine
+    'nifedipine': {'acute coronary syndrome'},
+    # h495: Class Ic antiarrhythmics + structural heart disease (CAST trial: 2.5x mortality)
+    # Flecainide and propafenone are FDA-approved for SVT/atrial fibrillation
+    # but CONTRAINDICATED with structural heart (post-MI, HF, VT, VF)
+    'flecainide': {
+        'myocardial infarction', 'ventricular tachycardia', 'ventricular fibrillation',
+        'heart failure', 'chronic heart failure', 'cardiomyopathy',
+        'dilated cardiomyopathy', 'cardiac arrest',
+    },
+    'propafenone': {
+        'myocardial infarction', 'ventricular tachycardia', 'ventricular fibrillation',
+        'heart failure', 'chronic heart failure', 'cardiomyopathy',
+        'dilated cardiomyopathy', 'cardiac arrest',
+    },
+    # h495: SGLT2 inhibitors → hypoglycemia (they CAUSE hypoglycemia as adverse effect)
+    # SGLT2i are glucose-lowering drugs; predicting them for hypoglycemia is inverse
+    'empagliflozin': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    'dapagliflozin': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    'canagliflozin': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
 }
 
 # h280/h281: Complication vs Subtype relationship mapping

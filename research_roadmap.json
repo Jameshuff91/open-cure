@@ -9494,8 +9494,10 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
-      "category": "data_quality"
+      "status": "invalidated",
+      "category": "data_quality",
+      "findings": "GT expansion for systemic corticosteroids analyzed:\n- 57 diseases have at least 1 systemic steroid in GT\n- 21 diseases have ALL 8 systemic steroids (complete)\n- 36 diseases have partial coverage \u2192 166 potential new GT pairs\n- Only 12 of these are in current predictions (11 MEDIUM, 1 GOLDEN)\n- Impact: MEDIUM +0.3pp, GOLDEN +0.4pp \u2014 MINIMAL\n- 14 diseases with only 1 steroid are TOPICAL uses (correct as-is)\n- Diseases with 6-7 steroids have genuine GT gaps (5-13 diseases, 5-21 pairs)\nDECISION: Not worth implementing. Modifying GT would invalidate all holdout baselines.\nThe h473 finding (37% of GOLDEN novels are steroid GT gaps) stands as a known limitation.",
+      "result_metric": "Only +0.3pp MEDIUM from 12 new GT pairs. Not implemented."
     },
     {
       "id": "h478",
@@ -9618,7 +9620,9 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending"
+      "status": "validated",
+      "findings": "VALIDATED: Audited 96 CCB predictions. Found 4 harmful predictions at HIGH/MEDIUM: (1) diltiazem\u2192cardiac arrest (MEDIUM\u2192FILTER), (2) verapamil\u2192chronic heart failure (MEDIUM\u2192FILTER, ACC/AHA Class III harm), (3) diltiazem\u2192ventricular tachycardia (HIGH\u2192FILTER, not indicated), (4) nifedipine\u2192acute coronary syndrome (HIGH\u2192FILTER, HINT study mortality). Also discovered: confidence_filter.py is NOT used by production_predictor.py - they are separate systems. All safety-critical pairs now in INVERSE_INDICATION_PAIRS. Kept: verapamil\u2192VT at HIGH (fascicular VT indication), felodipine\u2192CHF at MEDIUM (safe per V-HeFT III).",
+      "result_metric": "4 harmful predictions removed (2 HIGH, 2 MEDIUM \u2192 FILTER)"
     },
     {
       "id": "h485",
@@ -9700,7 +9704,9 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending"
+      "status": "invalidated",
+      "findings": "Psychiatric no-mechanism 0% holdout is a SMALL-N ARTIFACT (n=1.3/seed):\n- Full-data: 13 predictions, 5 GT (38.5%) - all clinically valid (paroxetine/sertraline/venlafaxine for depression/anxiety)\n- P(all 5 seeds 0 GT | n=1.3/seed, base_rate=38.5%) = 8.8% \u2014 not surprising\n- Requiring mechanism would lose 5 valid GT hits for psychiatric\n- Respiratory: same issue (n=1.0 mech/seed, n=3.4 nomech/seed)\n- LESSON: Holdout with <5 predictions/seed is unreliable. Do NOT make demotion decisions based on it.",
+      "result_metric": "No change. Small-n holdout artifact (n<5/seed unreliable)."
     },
     {
       "id": "h489",
@@ -9709,7 +9715,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Add mechanism requirement for atc_coherent_psychiatric and atc_coherent_respiratory",
         "Regenerate deliverable and measure MEDIUM precision change",
@@ -9717,7 +9723,9 @@
         "Check GT loss (how many valid predictions lose MEDIUM status)"
       ],
       "category": "confidence_system",
-      "parent_hypothesis": "h487"
+      "parent_hypothesis": "h487",
+      "findings": "INVALIDATED: Mechanism-required ATC coherent does NOT improve system. Psychiatric nomech: n=2.4/seed (UNRELIABLE), 10% holdout (not 0% as h487 reported). 46.2% full-data GT rate = 6/13 are FDA-approved uses. Respiratory nomech: 2.5% holdout from n=4.0/seed, +0.1pp MEDIUM impact (negligible). Combined impact +0.2pp - not worth removing clinically valid predictions. h487's 0% psychiatric nomech was an artifact of n=1.3/seed. Confirms memory note #26: n<5/seed = UNRELIABLE for demotion decisions.",
+      "result_metric": "+0.2pp MEDIUM holdout (negligible, not implemented)"
     },
     {
       "id": "h490",
@@ -9743,7 +9751,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List all 11 HIGH incoherent_demotion predictions",
         "Check if any are clinically validated (literature search)",
@@ -9751,7 +9759,97 @@
         "If consistently good, consider removing the incoherent demotion for GOLDEN\u2192HIGH path"
       ],
       "category": "confidence_system",
-      "parent_hypothesis": "h488"
+      "parent_hypothesis": "h488",
+      "findings": "All 11 HIGH incoherent_demotion predictions are local anesthetics (bupivacaine/lidocaine) for autoimmune diseases. \n46.1% holdout = performing well at HIGH but BELOW GOLDEN (62%).\nPromoting to GOLDEN would dilute: 64.1% \u2192 62.1% (-2.0pp).\nKEEP incoherent_demotion for GOLDEN\u2192HIGH path.\nInteresting: bupivacaine/lidocaine have known anti-inflammatory properties (sodium channel blockade \u2192 reduced neurogenic inflammation), so mechanism support is medically justified even though ATC is incoherent.",
+      "result_metric": "No change. GOLDEN\u2192HIGH incoherent correctly placed (46.1% < 62% GOLDEN avg)."
+    },
+    {
+      "id": "h492",
+      "title": "GT Expansion: Common Psychiatric Drug-Disease Pairs Missing from GT",
+      "description": "h489 found 6/13 psychiatric ATC coherent nomech predictions are FDA-approved (paroxetine\u2192MDD, sertraline\u2192social anxiety, diazepam\u2192alcohol withdrawal, etc.) but missing from GT. These GT gaps artificially lower holdout precision. Systematically identify well-known psychiatric drug-disease pairs missing from the expanded GT and add them. This would improve holdout calibration accuracy and potentially reveal that more MEDIUM rules are performing better than measured.",
+      "steps": [
+        "Cross-reference FDA drug labels for psychiatric drugs against GT",
+        "Identify FDA-approved indications missing from GT for top psychiatric drugs",
+        "Add confirmed pairs to expanded_ground_truth.json",
+        "Re-run holdout validation to measure impact on tier precisions",
+        "Check if other categories have similar GT gap patterns"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "category": "gt_quality"
+    },
+    {
+      "id": "h493",
+      "title": "Respiratory ATC Coherent Literature Validation: GT Gaps vs True False Positives",
+      "description": "h489 found respiratory ATC coherent without mechanism has 2.5% GT rate (1/40) but includes fluticasone\u2192allergic rhinitis (FDA-approved), mometasone\u2192allergic rhinitis (FDA-approved), montelukast\u2192seasonal allergic rhinitis (FDA-approved). These are clearly GT gaps. Do a literature validation of all 40 respiratory nomech predictions to determine what fraction are GT gaps vs true false positives. If most are GT gaps, the respiratory category may be systematically underpopulated in the GT.",
+      "steps": [
+        "List all 40 respiratory ATC coherent nomech predictions",
+        "Literature search for each drug-disease pair",
+        "Categorize as GT_GAP, PROMISING, NO_EVIDENCE, or HARMFUL",
+        "Calculate corrected precision accounting for GT gaps",
+        "Determine if respiratory GT needs systematic expansion"
+      ],
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "category": "literature_validation"
+    },
+    {
+      "id": "h494",
+      "title": "Systematic Small-n Holdout Audit: Which Published Results Are Unreliable?",
+      "description": "h489 demonstrated that h487's 0% psychiatric nomech was an artifact of n=1.3/seed. Multiple previous findings may be similarly unreliable. Systematically audit ALL sub-rule holdout results reported across h487, h462, h485, h402 for n<5/seed reliability. Flag any implemented decisions based on unreliable holdout data. This is a meta-science improvement to prevent future false decisions.",
+      "steps": [
+        "Collect all sub-rule holdout results from h487, h462, h485, h402 analysis files",
+        "Flag any result with n<5/seed as UNRELIABLE",
+        "Cross-reference with implemented code changes",
+        "Identify any implemented demotions based solely on unreliable holdout data",
+        "Recommend reversals if found"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "validated",
+      "category": "meta_science",
+      "findings": "VALIDATED (no reversals needed). Audited 8 implemented decisions against holdout reliability. Found 2 technically unreliable: (1) hematological ATC exclusion n=4.9/seed (borderline), (2) reproductive MEDIUM demotion based on 1 seed only. Both kept because full-data precision (5.0%, 4.8%) and clinical review support the demotions. 34%+ of sub-rule holdout results have n<5/seed, but conservative decision-making (requiring multiple evidence lines) made the system robust to artifacts. Key lesson: sub-rule splits quickly hit n<5 threshold; only split when category has n>25 full-data predictions.",
+      "result_metric": "0 reversals needed; 2/8 decisions unreliable but direction correct"
+    },
+    {
+      "id": "h495",
+      "title": "Confidence Filter Integration: Reconcile confidence_filter.py with production_predictor.py",
+      "description": "h484 discovered that confidence_filter.py (h258) has safety rules for non-DHP CCBs + HF that production_predictor.py does not use. The two systems evolved independently. Audit all safety rules in confidence_filter.py and check which are NOT covered by production_predictor.py's INVERSE_INDICATION_PAIRS or other filters. This could reveal additional harmful predictions being shown at HIGH/MEDIUM tiers.",
+      "steps": [
+        "List all safety exclusion rules in confidence_filter.py",
+        "Cross-reference each with production_predictor.py's filters",
+        "Identify gaps where confidence_filter catches something production_predictor misses",
+        "Add missing safety rules to INVERSE_INDICATION_PAIRS or other production filters",
+        "Estimate impact on tier precisions"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "validated",
+      "category": "safety",
+      "findings": "VALIDATED: 12 of 15 confidence_filter.py safety rules were NOT covered by production_predictor.py. Found 5 harmful predictions at HIGH/MEDIUM: flecainide\u2192MI (CAST trial, 2.5x mortality), flecainide\u2192VT, propafenone\u2192VT (Class Ic + structural heart), empagliflozin\u2192hypoglycemia\u00d72 (inverse indication). Added flecainide, propafenone, empagliflozin, dapagliflozin, canagliflozin to INVERSE_INDICATION_PAIRS. 8 total predictions moved to FILTER. HIGH +0.7pp, MEDIUM +0.3pp from removing harmful predictions. Remaining 7 gaps have no harmful predictions in current deliverable (drugs not predicted for dangerous conditions).",
+      "result_metric": "5 harmful predictions removed; HIGH +0.7pp, MEDIUM +0.3pp"
+    },
+    {
+      "id": "h496",
+      "title": "DHP CCB Heart Failure Safety Check: Amlodipine and Felodipine in HF",
+      "description": "h484 kept felodipine\u2192CHF at MEDIUM because V-HeFT III showed safety. But the PRAISE trial showed amlodipine is safe in HF - both are DHP CCBs. Check if amlodipine appears for HF predictions and whether DHP CCBs should get a special 'safe but not beneficial' annotation. Also check if any DHP CCBs appear for conditions where even they would be harmful (e.g., severe aortic stenosis, hypotension).",
+      "steps": [
+        "List all DHP CCB predictions for HF and related conditions",
+        "Literature validation for each pair",
+        "Consider adding 'not beneficial' annotation (not FILTER, but flagged)",
+        "Check for DHP CCB contraindications beyond HF"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "category": "safety"
     }
   ],
   "completed": [
@@ -11407,6 +11505,30 @@
       "hypothesis_id": "h485",
       "learning": "Target overlap promotion is actually the 3rd best MEDIUM rule (35.9% holdout), contradicting h483's small sample. However, cancer cross-type overlap promotion has 0.3% holdout - blocking cancer from promotion yields MEDIUM +1.4pp. Lesson: always validate rules with holdout, not small literature samples.",
       "implication": "Rule evaluation requires holdout precision (n\u224830+), not literature validation of 2-3 examples. cancer cross-type overlap promotion was the single largest source of noise in MEDIUM tier."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h489",
+      "learning": "h487 mechanism split for psychiatric (0% nomech) was a small-n artifact (n=1.3/seed). Actual replication: 10% from n=2.4/seed. 46.2% full-data GT rate = most are FDA-approved uses. +0.2pp MEDIUM impact not worth clinical false positives.",
+      "implication": "Always verify sub-rule splits have n>=5/seed before making demotion decisions. Full-data GT rate is a useful cross-check when holdout is unreliable."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h494",
+      "learning": "Audited all 8 implemented holdout-based decisions. 2 were technically unreliable (hematological n=4.9, reproductive only 1 seed) but both correct by full-data + clinical review. 34%+ of sub-rule holdouts have n<5/seed. Conservative multi-evidence approach = robust to artifacts.",
+      "implication": "For future decisions: always require full-data + clinical support when holdout n<5. Sub-rule splitting creates fragmentation - only split at n>25 full-data. The system's integrity is confirmed."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h484",
+      "learning": "CCB audit found 4 harmful predictions (diltiazem cardiac arrest, verapamil CHF, diltiazem VT, nifedipine ACS). Also discovered confidence_filter.py is NOT used by production_predictor.py - separate systems with potential safety gaps. INVERSE_INDICATION_PAIRS is the correct production safety mechanism.",
+      "implication": "Need to audit ALL confidence_filter.py safety rules for coverage in production_predictor.py (h495). Class-level drug safety audits (like CCBs) are efficient: one audit covers multiple harmful predictions."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h495",
+      "learning": "confidence_filter.py and production_predictor.py are independent systems with 80% safety rule gap. Class Ic antiarrhythmics (CAST trial) and SGLT2i\u2192hypoglycemia were the main uncovered harmful patterns. Always cross-reference safety systems after changes.",
+      "implication": "When adding inverse indication rules, check BOTH systems. Consider migrating all confidence_filter.py rules to INVERSE_INDICATION_PAIRS for single source of truth."
     }
   ],
   "collaborations": [

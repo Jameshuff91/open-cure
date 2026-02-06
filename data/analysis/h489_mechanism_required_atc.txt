@@ -1,0 +1,104 @@
+======================================================================
+h489: Mechanism-Required ATC Coherent for Psychiatric/Respiratory
+======================================================================
+Date: 2026-02-06
+Status: INVALIDATED
+
+HYPOTHESIS: h487 found psychiatric ATC coherent: 35.1% holdout WITH mechanism,
+0% WITHOUT. Respiratory: 38.9% with mechanism, 6.7% without. Test requiring
+mechanism_support for these ATC coherent categories.
+
+======================================================================
+FULL-DATA ANALYSIS
+======================================================================
+
+Total predictions: 13,622
+
+Psychiatric ATC coherent:
+  With mechanism: 50 (27/50 GT = 54.0%)
+  Without mechanism: 13 (6/13 GT = 46.2%)
+
+Respiratory ATC coherent:
+  With mechanism: 2 (0/2 GT = 0.0%)
+  Without mechanism: 40 (1/40 GT = 2.5%)
+
+Psychiatric WITHOUT mechanism predictions:
+  [GT] Paroxetine → major depressive disorder (freq=4) [FDA APPROVED]
+  [GT] Sertraline → major depressive disorder (freq=3) [FDA APPROVED]
+  [  ] Venlafaxine → social anxiety disorder (freq=3) [FDA APPROVED - GT GAP]
+  [GT] Sertraline → social anxiety disorder (freq=3) [FDA APPROVED]
+  [GT] Diazepam → acute alcohol withdrawal (freq=5) [STANDARD OF CARE]
+  [  ] Paroxetine → acute alcohol withdrawal (freq=4) [Off-label]
+  [GT] Phenobarbital → acute alcohol withdrawal (freq=7) [STANDARD OF CARE]
+  [  ] Paroxetine → bulimia nervosa (freq=4) [Off-label SSRI]
+  [  ] Venlafaxine → bulimia nervosa (freq=3) [Off-label]
+  [GT] Sertraline → bulimia nervosa (freq=3)
+  [  ] Diazepam → bulimia nervosa (freq=5) [Not indicated]
+  [  ] Phenobarbital → bulimia nervosa (freq=7) [Not indicated]
+  [  ] Diazepam → obsessive compulsive disorder (freq=5) [Not indicated]
+
+Clinical assessment: 6/13 (46%) are FDA-approved or standard-of-care uses.
+At least 2 more are well-known off-label uses.
+
+======================================================================
+5-SEED HOLDOUT RESULTS
+======================================================================
+
+Seeds: 42, 123, 456, 789, 2024
+
+Seed 42: psych_mech=5(3GT) psych_nomech=1(0GT) resp_mech=3(0GT) resp_nomech=3(0GT)
+Seed 123: psych_mech=5(2GT) psych_nomech=4(0GT) resp_mech=0(0GT) resp_nomech=2(0GT)
+Seed 456: psych_mech=8(4GT) psych_nomech=2(0GT) resp_mech=3(0GT) resp_nomech=8(1GT)
+Seed 789: psych_mech=11(7GT) psych_nomech=2(1GT) resp_mech=5(4GT) resp_nomech=2(0GT)
+Seed 2024: psych_mech=13(5GT) psych_nomech=3(0GT) resp_mech=3(1GT) resp_nomech=5(0GT)
+
+Split                       n/seed    Holdout      Std
+-------------------------------------------------------
+psych_mech                     8.4      50.4%    10.2%   [RELIABLE]
+psych_nomech                   2.4      10.0%    20.0%   [UNRELIABLE, n<5]
+resp_mech                      2.8      22.7%    31.4%   [UNRELIABLE, n<5]
+resp_nomech                    4.0       2.5%     5.0%   [BORDERLINE]
+
+MEDIUM precision impact:
+  Baseline: 24.6% ± 2.9%
+  Simulated (with demotion): 24.8% ± 2.8%
+  Delta: +0.2pp (negligible)
+
+======================================================================
+COMPARISON WITH h487 RESULTS
+======================================================================
+
+h487 reported (from earlier session):
+  psychiatric_mech: n=5.6/seed, 35.1% holdout
+  psychiatric_nomech: n=1.3/seed, 0.0% holdout ← ARTIFACT of small n!
+
+Our replication:
+  psychiatric_mech: n=8.4/seed, 50.4% holdout (higher n, different prediction set)
+  psychiatric_nomech: n=2.4/seed, 10.0% holdout (NOT zero - still unreliable)
+
+Discrepancy likely due to different seed set or code changes between sessions.
+Key finding: psychiatric_nomech 0% was an artifact of n=1.3/seed.
+With slightly more data (n=2.4), it becomes 10% - still unreliable but not zero.
+
+======================================================================
+DECISION: INVALIDATED
+======================================================================
+
+1. PSYCHIATRIC nomech demotion: REJECTED
+   - Holdout n=2.4/seed (UNRELIABLE per memory note #26)
+   - 46.2% full-data GT rate (6/13 are known FDA-approved uses)
+   - Demoting would remove clinically correct predictions
+   - h487's 0% was a small-n artifact
+
+2. RESPIRATORY nomech demotion: NOT WORTH IT
+   - Impact: +0.1pp MEDIUM holdout (negligible)
+   - Would demote 40 predictions including plausible GT gaps
+     (fluticasone→allergic rhinitis = FDA-approved but not in GT)
+
+3. COMBINED impact: +0.2pp MEDIUM holdout (not worth the clinical false positives)
+
+KEY LEARNING:
+- The h487 mechanism split data was based on sub-threshold n sizes
+- 0% holdout from n=1.3/seed has p(artifact) = ~8.8% - not uncommon
+- Full-data GT rate is a better signal than unreliable holdout for n<5
+- Confirms memory note #26: DO NOT make demotion decisions from n<5/seed

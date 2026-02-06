@@ -1,0 +1,101 @@
+======================================================================
+h494: Systematic Small-n Holdout Audit
+======================================================================
+Date: 2026-02-06
+Status: VALIDATED (no reversals needed, but important meta-science finding)
+
+PURPOSE: After h489 showed that h487's 0% psychiatric nomech was a small-n
+artifact, audit ALL implemented decisions for similar unreliable holdout data.
+
+======================================================================
+AUDIT SCOPE
+======================================================================
+
+Reviewed all sub-rule holdout results from:
+- h487: ATC coherent category/mechanism splits (27 sub-rules)
+- h462: Category-specific MEDIUM holdout (18 categories)
+- h402: Per-rule precision audit (83 rule-tier pairs)
+- h488: Incoherent demotion holdout
+
+Threshold: n < 5 predictions/seed = UNRELIABLE (per memory note #26)
+
+======================================================================
+FINDINGS: UNRELIABLE HOLDOUT RESULTS
+======================================================================
+
+Overall: 50+ of ~145 sub-rule results have n<5/seed (>34%)
+
+By source:
+- h487 ATC coherent: 20/27 (74%) sub-rules UNRELIABLE
+- h462 categories: 6/18 (33%) UNRELIABLE
+- h402 hierarchy rules: 31+ rules with holdout_n_mean < 5
+
+======================================================================
+IMPLEMENTED DECISIONS AUDIT
+======================================================================
+
+UNRELIABLE DECISIONS (2):
+
+1. Hematological ATC exclusion (h487)
+   - n/seed: 4.9 (borderline)
+   - Holdout: 5.0% ± 10.0%
+   - Affects: 44 predictions (MEDIUM→LOW)
+   - VERDICT: KEEP - 5.0% is far below MEDIUM avg (23%), direction correct
+
+2. Reproductive MEDIUM demotion (h462)
+   - n/seed: 12.0 BUT only 1 seed had data!
+   - Holdout: 0.0% from 1 seed (meaningless statistically)
+   - Affects: 41 predictions (MEDIUM→LOW)
+   - Full-data: 4.8% (1/21 GT)
+   - Clinical review: Most predictions are clinically inappropriate
+     (ARBs contraindicated in pregnancy, random antibiotics for ovarian failure)
+   - VERDICT: KEEP - clinical review and full-data both support demotion
+
+AT-THRESHOLD DECISIONS (1):
+
+3. Pneumonia hierarchy HIGH→MEDIUM (h402)
+   - n/seed: 5.0
+   - Holdout: 20.0%
+   - VERDICT: KEEP - pneumonia was clearly worst hierarchy rule
+
+RELIABLE DECISIONS (4):
+
+4. Immunological MEDIUM demotion (h462): n=10.3, 2.5% ± 3.5% → RELIABLE
+5. Neurological MEDIUM demotion (h462): n=7.2, 10.2% ± 11.1% → RELIABLE
+6. Incoherent MEDIUM→LOW (h488): n=10.0, 3.6% → RELIABLE
+7. h487 mechanism splits: NOT implemented (h489 correctly prevented this)
+
+======================================================================
+CONCLUSION: NO REVERSALS NEEDED
+======================================================================
+
+Despite 2 decisions based on technically unreliable holdout data:
+- Both are supported by full-data precision (4.8%, 5.0%) well below MEDIUM avg
+- Clinical review of reproductive predictions confirms inappropriate drug-disease pairs
+- Impact of wrong decisions is LOW (41+44 = 85 predictions, few GT hits)
+
+The system's conservative approach (only demoting when BOTH holdout AND full-data
+support it) made it robust to small-n artifacts.
+
+======================================================================
+META-SCIENCE LESSONS
+======================================================================
+
+1. Sub-rule splits quickly hit n<5/seed threshold
+   - Splitting 409 ATC coherent predictions by 9 categories × 2 mechanism states
+     = 18 sub-groups, most with <5/seed
+   - Solution: Only split when category has n>25 full-data predictions
+
+2. The 5-seed holdout framework has limited resolution for rare categories
+   - Reproductive: only 1 of 5 seeds had any MEDIUM predictions
+   - For rare categories, full-data precision + clinical review > holdout
+
+3. Conservative decision-making = robust to artifacts
+   - All decisions required multiple lines of evidence
+   - No decision was based SOLELY on an unreliable holdout number
+   - This is the correct approach for small-n situations
+
+4. The audit process is valuable even when no reversals are found
+   - Confirms the system's integrity
+   - Identifies where future caution is needed
+   - Quantifies the scope of unreliable data (34%+ of sub-rules)

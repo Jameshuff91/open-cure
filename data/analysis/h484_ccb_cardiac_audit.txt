@@ -1,0 +1,100 @@
+======================================================================
+h484: Systematic CCB Cardiac Arrest Audit
+======================================================================
+Date: 2026-02-06
+Status: VALIDATED
+
+HYPOTHESIS: After h483 found verapamil→cardiac arrest as harmful, audit all
+calcium channel blocker predictions for cardiac arrest, heart failure, and
+other conditions where CCBs are contraindicated.
+
+======================================================================
+AUDIT RESULTS
+======================================================================
+
+Total CCB predictions in deliverable: 96
+  Non-DHP CCB (verapamil, diltiazem): 58
+  DHP CCB (nifedipine, amlodipine, felodipine, etc.): 38
+
+======================================================================
+NEW INVERSE INDICATIONS ADDED (4 predictions → FILTER)
+======================================================================
+
+1. Diltiazem → cardiac arrest [was MEDIUM → now FILTER]
+   Evidence: Same non-DHP CCB class as verapamil. Can precipitate cardiac arrest
+   in patients with pre-existing conduction abnormalities or WPW syndrome.
+   ACC/AHA/HRS guidelines.
+
+2. Verapamil → chronic heart failure [was MEDIUM → now FILTER]
+   Evidence: ACC/AHA 2022 HF Guidelines: "Nondihydropyridine calcium channel
+   blockers can worsen HF and should be avoided" (Class III - harm).
+   Negative inotrope causes acute decompensation in HFrEF.
+   NOTE: h258 confidence_filter.py already had this rule but production_predictor.py
+   was not using confidence_filter.py. Now added to INVERSE_INDICATION_PAIRS.
+
+3. Diltiazem → ventricular tachycardia [was HIGH → now FILTER]
+   Evidence: NOT indicated for VT (unlike verapamil for fascicular VT which has
+   specific evidence). Can cause hemodynamic collapse in VT with structural heart.
+   Not FDA-approved for any VT subtype.
+
+4. Nifedipine → acute coronary syndrome [was HIGH → now FILTER]
+   Evidence: HINT study showed excess mortality with short-acting nifedipine in ACS.
+   Furberg 1995 meta-analysis: dose-dependent mortality increase.
+   Cannot distinguish extended-release (potentially safe) from short-acting (harmful).
+
+======================================================================
+BORDERLINE DECISIONS (kept as-is)
+======================================================================
+
+1. Verapamil → ventricular tachycardia [KEPT at HIGH]
+   Reason: Verapamil IS used for idiopathic fascicular VT (verapamil-sensitive VT).
+   This is a real, specific indication recognized in guidelines. The drug IS in GT
+   for this disease. Risk exists for VT with structural heart, but the specific
+   indication is valid.
+
+2. Felodipine → chronic heart failure [KEPT at MEDIUM]
+   Reason: V-HeFT III showed felodipine safe (not harmful) but not beneficial in HF.
+   DHP CCBs (amlodipine, felodipine) do NOT have the negative inotropic effect of
+   non-DHP CCBs. Not an inverse indication, just not a useful prediction.
+
+======================================================================
+ALREADY FILTERED (no action needed)
+======================================================================
+
+- Verapamil → cardiac arrest [FILTER] — caught by h483
+- Verapamil/Diltiazem → dilated cardiomyopathy [FILTER] — complication_non_validated
+- Verapamil/Diltiazem → obstructive hypertrophic CM [FILTER] — complication_non_validated
+
+======================================================================
+CORRECT CCB PREDICTIONS (GT gaps, no action needed)
+======================================================================
+
+- Verapamil/Diltiazem → tachyarrhythmia [HIGH] — Rate control (FDA-approved)
+- Verapamil/Diltiazem → atrial fibrillation [HIGH] — Rate control (FDA-approved)
+- Verapamil/Diltiazem → atrial flutter [HIGH] — Rate control (FDA-approved)
+- Verapamil → hypertension [GOLDEN] — FDA-approved
+- Verapamil → coronary artery disease [GOLDEN] — Stable angina indication
+- Verapamil → stable angina [MEDIUM] — FDA-approved
+
+======================================================================
+DISCOVERY: confidence_filter.py NOT used by production_predictor.py
+======================================================================
+
+The h258 non-DHP CCB + HF filter in confidence_filter.py correctly catches
+verapamil/diltiazem + heart failure. But production_predictor.py does NOT call
+confidence_filter.py at all — they are separate systems.
+
+INVERSE_INDICATION_PAIRS in production_predictor.py is the correct place to
+add these safety filters. All safety-critical drug-disease pairs should be
+checked against BOTH systems to ensure coverage.
+
+======================================================================
+IMPLEMENTATION
+======================================================================
+
+Added to INVERSE_INDICATION_PAIRS in production_predictor.py:
+- verapamil: +5 HF variants (chronic/congestive/systolic/acute heart failure)
+- diltiazem: cardiac arrest + 5 HF variants + ventricular tachycardia
+- nifedipine: acute coronary syndrome
+
+Net change: 4 predictions HIGH/MEDIUM → FILTER

@@ -1,6 +1,93 @@
 # Research Loop Progress
 
-## Current Session: h487 + h488 - ATC Coherent & Incoherent Demotion (2026-02-06)
+## Current Session: h489/h494/h484/h495 - Safety Audit & Meta-Science (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 4**
+- h489: Mechanism-Required ATC Coherent for Psychiatric/Respiratory - **INVALIDATED**
+- h494: Systematic Small-n Holdout Audit - **VALIDATED** (no reversals needed)
+- h484: CCB Cardiac Arrest Audit - **VALIDATED** (4 harmful predictions removed)
+- h495: Confidence Filter Integration - **VALIDATED** (5 more harmful predictions removed)
+
+### h489: Mechanism-Required ATC Coherent - INVALIDATED
+
+**Objective:** Require mechanism_support for psychiatric/respiratory ATC coherent rules (based on h487 finding of 0% nomech holdout).
+
+**Key finding:** h487's 0% psychiatric nomech was a **small-n artifact** (n=1.3/seed).
+- Replication showed 10% holdout from n=2.4/seed (still unreliable, but not zero)
+- 46.2% full-data GT rate (6/13 are FDA-approved uses like paroxetine→MDD, sertraline→social anxiety)
+- MEDIUM impact of demotion: +0.2pp (negligible)
+- Demoting would remove clinically correct predictions for negligible improvement
+
+**Lesson:** Always verify sub-rule splits have n≥5/seed before making demotion decisions.
+
+### h494: Systematic Small-n Holdout Audit - VALIDATED
+
+**Objective:** Audit ALL implemented decisions for unreliable small-n holdout data.
+
+**Findings:**
+- 8 implemented decisions audited
+- 2 technically unreliable: hematological ATC exclusion (n=4.9), reproductive MEDIUM demotion (1 seed only)
+- Both are correct by full-data precision + clinical review
+- **No reversals needed** - conservative multi-evidence approach made system robust
+
+**Lesson:** 34%+ of sub-rule holdout results have n<5/seed. System integrity confirmed.
+
+### h484: CCB Cardiac Arrest Audit - VALIDATED
+
+**Objective:** Audit all CCB predictions for cardiac arrest and contraindicated conditions.
+
+**Findings:** 4 harmful predictions at HIGH/MEDIUM:
+1. Diltiazem → cardiac arrest (MEDIUM → FILTER)
+2. Verapamil → chronic heart failure (MEDIUM → FILTER, ACC/AHA Class III harm)
+3. Diltiazem → ventricular tachycardia (HIGH → FILTER)
+4. Nifedipine → acute coronary syndrome (HIGH → FILTER, HINT study mortality)
+
+**Discovery:** confidence_filter.py is NOT used by production_predictor.py (separate systems).
+
+### h495: Confidence Filter Integration - VALIDATED
+
+**Objective:** Reconcile 15 safety rules in confidence_filter.py with production_predictor.py.
+
+**Findings:** 12 of 15 rules NOT covered. Found 5 more harmful predictions:
+1. Flecainide → MI (CAST trial: 2.5x mortality)
+2. Flecainide → VT (proarrhythmic in structural heart)
+3. Propafenone → VT (same class)
+4. Empagliflozin → hypoglycemia (inverse indication)
+5. Empagliflozin → hyperinsulinemic hypoglycemia (inverse indication)
+
+8 total predictions → FILTER. HIGH +0.7pp, MEDIUM +0.3pp.
+
+### Combined Impact (h484 + h495)
+
+| Tier | Before | After | Δ |
+|------|--------|-------|---|
+| GOLDEN | 284, 64.1% | 284, 64.1% | unchanged |
+| HIGH | 516, 56.6% | 504, 57.7% | -12, **+1.1pp** |
+| MEDIUM | 3620, 29.5% | 3613, 29.5% | -7, +0.0pp |
+| LOW | 2439, 11.4% | 2426, 11.5% | -13, +0.1pp |
+| FILTER | 7288, 11.3% | 7323, 11.3% | +35, 0.0pp |
+
+9 harmful predictions removed from HIGH/MEDIUM tiers.
+
+### New Hypotheses Generated (5)
+- h492: GT Expansion for Common Psychiatric Drug-Disease Pairs (Priority 4)
+- h493: Respiratory ATC Coherent Literature Validation (Priority 4)
+- h494: Small-n Holdout Audit [COMPLETED] (Priority 4)
+- h495: Confidence Filter Integration [COMPLETED] (Priority 3)
+- h496: DHP CCB Heart Failure Safety Check (Priority 5)
+
+### Recommended Next Steps
+1. **h492:** GT expansion for psychiatric drugs (many FDA-approved uses missing from GT)
+2. **h493:** Literature validation of respiratory ATC coherent predictions
+3. **h478:** GT expansion for lipid drug class indications (medium effort, medium impact)
+
+---
+
+## Previous Session: h487 + h488 - ATC Coherent & Incoherent Demotion (2026-02-06)
 
 ### Session Summary
 

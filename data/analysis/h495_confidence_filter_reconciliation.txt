@@ -1,0 +1,90 @@
+======================================================================
+h495: Confidence Filter Integration - Reconcile Two Safety Systems
+======================================================================
+Date: 2026-02-06
+Status: VALIDATED
+
+DISCOVERY: confidence_filter.py has 15 safety rules, but production_predictor.py
+(which generates the deliverable) does NOT use confidence_filter.py at all.
+The two systems evolved independently.
+
+======================================================================
+GAP ANALYSIS
+======================================================================
+
+15 rules in confidence_filter.py:
+  1 COVERED by production_predictor.py (h484 non-DHP CCBs)
+  2 PARTIALLY covered
+  12 NOT covered at all
+
+Of the 12 gaps, 5 had actual harmful predictions at HIGH/MEDIUM:
+
+1. Flecainide → myocardial infarction (was MEDIUM)
+   CAST trial: 2.5x mortality with Class Ic antiarrhythmics in post-MI
+
+2. Flecainide → ventricular tachycardia (was HIGH)
+   CAST trial: proarrhythmic in structural heart disease
+
+3. Propafenone → ventricular tachycardia (was HIGH)
+   Same Class Ic mechanism as flecainide
+
+4. Empagliflozin → hypoglycemia (was HIGH)
+   SGLT2i CAUSE hypoglycemia - inverse indication
+
+5. Empagliflozin → hyperinsulinemic hypoglycemia (was HIGH)
+   Same as above
+
+Additional catches (predictions already at FILTER but now explicitly covered):
+- Propafenone → cardiac arrest
+- Propafenone → dilated cardiomyopathy
+- Flecainide → cardiac arrest
+
+======================================================================
+IMPLEMENTATION
+======================================================================
+
+Added to INVERSE_INDICATION_PAIRS in production_predictor.py:
+
+- flecainide: 8 structural heart conditions (MI, VT, VF, HF, cardiomyopathy, cardiac arrest)
+- propafenone: 8 structural heart conditions (same set)
+- empagliflozin: hypoglycemia, hyperinsulinemic hypoglycemia
+- dapagliflozin: hypoglycemia, hyperinsulinemic hypoglycemia
+- canagliflozin: hypoglycemia, hyperinsulinemic hypoglycemia
+
+NET CHANGE: 8 predictions moved to FILTER
+  From HIGH: 4 (flecainide VT, propafenone VT, 2x empagliflozin hypoglycemia)
+  From MEDIUM: 1 (flecainide MI)
+  Already FILTER: 3 (propafenone cardiac arrest/cardiomyopathy, flecainide cardiac arrest)
+
+======================================================================
+REMAINING GAPS (not addressed - no harmful predictions found)
+======================================================================
+
+These rules have no harmful predictions at HIGH/MEDIUM in current deliverable:
+- 0f3: Endothelin receptor antagonists for HF (drugs not in predictions for HF)
+- 0f4: Prostacyclin analogs for systolic HF (not predicted for HF)
+- 0f5: sGC stimulators for pregnancy (riociguat not in predictions)
+- 0f9: Oral milrinone for chronic HF (milrinone not in predictions)
+- 0f12: Dronedarone for HF (dronedarone not in predictions)
+- 0f13: Sotalol for post-MI (sotalol → MI not predicted)
+- 0f15: Procainamide iatrogenic (not predicted for lupus/leukopenia)
+- 0f16: Amiodarone thyroid (not predicted for thyroid conditions)
+- 0f17: NSAIDs GI (NSAIDs not predicted for peptic ulcer/GI bleeding)
+
+These are "theoretical" gaps - the drugs exist but aren't predicted for the
+dangerous conditions. No action needed now but should be monitored.
+
+======================================================================
+TIER PRECISION IMPACT
+======================================================================
+
+After h484 + h495 combined:
+  GOLDEN: 64.1% (284 predictions) - unchanged
+  HIGH: 57.7% (504) - +0.7pp from removing harmful predictions
+  MEDIUM: 29.5% (3613) - +0.3pp
+  LOW: 11.5% (2426)
+  FILTER: 11.3% (7323)
+
+Total harmful predictions removed: 9 (4 from h484, 5 from h495)
+  From HIGH: 6
+  From MEDIUM: 3
