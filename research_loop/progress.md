@@ -1,8 +1,78 @@
 # Research Loop Progress
 
-## Current Session: h343, h344, h237, h336, h342, h346, h349, h350 (2026-02-05)
+## Current Session: h294, h353 (2026-02-05)
 
 ### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested: 2**
+- h294: Organ-Specific Complication Patterns - **INVALIDATED** (organ proximity doesn't predict, 1.2% novel precision)
+- h353: Complication-Specific Drug Class Filter - **VALIDATED + IMPLEMENTED** (214 preds filtered, 0 GT loss)
+
+### KEY SESSION FINDINGS
+
+#### h294: Organ-Specific Complication Patterns - INVALIDATED
+
+**Hypothesis:** Drugs with GT affinity for an organ should predict well for that organ's complications
+
+**Initial Result (appeared positive):**
+- With organ affinity: 24.9% precision (169/679)
+- Without organ affinity: 0.2% precision (2/854)
+- Gap: +24.7 pp
+
+**After circularity check (revealed true signal):**
+- Circular predictions (same disease): 100% precision (163/163)
+- Novel predictions (different disease, same organ): **1.2% precision** (6/516)
+
+**Breakdown by organ:**
+| Organ | Novel Precision | N |
+|-------|-----------------|---|
+| CV | 0.6% | 346 |
+| Renal | 2.1% | 48 |
+| Ocular | 0.0% | 45 |
+| Neuro | 4.4%* | 68 |
+
+*Neuro hits are neurodermatitis (skin), classification error
+
+**Key insight:** Organ affinity only works when predicting the SAME disease that gave the affinity.
+Transfer to different diseases in the same organ (heart failure → MI) has ~1% precision.
+This confirms h280/h293: only pathway-comprehensive mechanisms (statins→MI) transfer.
+
+#### h353: Complication-Specific Drug Class Filter - VALIDATED + IMPLEMENTED
+
+**Analysis:** For complication diseases, only validated drug classes have non-zero precision.
+
+| Complication | Validated Precision | Non-validated Precision | Filtered |
+|--------------|---------------------|-------------------------|----------|
+| Nephrotic syndrome | 69.2% | 0.0% | 17 |
+| Retinopathy | 33.3% | 0.0% | 57 |
+| Cardiomyopathy | 12.5% | 0.0% | 52 |
+| Neuropathy | 0.0% | 0.0% | 88 |
+| **TOTAL** | **varies** | **0.0%** | **214** |
+
+**Implementation:**
+- Added COMPLICATION_VALIDATED_DRUGS constant with drug sets per complication
+- Added _is_complication_non_validated_class() method
+- Filter check in _assign_confidence_tier() → FILTER tier
+- **Impact:** 214 predictions filtered, 0 GT hits lost (100% accuracy)
+
+### New Hypotheses Generated (3)
+
+1. **h351: Pathway-Comprehensive Drug Class Identification** (Priority 3)
+   - Find more drug classes like statins that treat underlying cause + complications
+
+2. **h352: Disease Mechanism Overlap as Transfer Predictor** (Priority 4)
+   - Test if shared mechanisms (not organs) predict drug transfer
+
+3. **h353: Complication-Specific Drug Class Filter** (Priority 2)
+   - ✓ IMPLEMENTED this session
+
+---
+
+## Previous Session: h343, h344, h237, h336, h342, h346, h349, h350 (2026-02-05)
+
+### Previous Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete

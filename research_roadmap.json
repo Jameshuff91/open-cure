@@ -7080,7 +7080,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Review h296 statin findings in detail",
@@ -7092,7 +7092,9 @@
       "dependencies": [
         "h294",
         "h296"
-      ]
+      ],
+      "findings": "VALIDATED: Pathway-comprehensive drug identification reveals strong signal for CV complications.\n\nKEY FINDINGS:\n\n1. CV COMPLICATIONS (heart failure, MI, stroke):\n   - Pathway-comprehensive drugs: 48.8% precision (20/41)\n   - Non-pathway-comprehensive: 7.6% precision (6/79)\n   - GAP: +41.2 pp (6.4x lift!)\n   \n   By tier:\n   - HIGH: 53.8% vs 5.9% (+47.9 pp)\n   - MEDIUM: 46.4% vs 8.1% (+38.3 pp)\n\n2. DIABETES\u2192CV PATHWAY:\n   - Pathway-comprehensive: 26.2% (11/42)\n   - Non-pathway-comprehensive: 13.8% (19/138)\n   - GAP: +12.4 pp\n\n3. RENAL COMPLICATIONS (NO EFFECT):\n   - Diabetes\u2192renal: -5.9 pp (pathway hurts!)\n   - Hypertension\u2192renal: -6.0 pp\n   \n   Renal complications don't follow the pathway pattern.\n\nMECHANISM INSIGHT:\nCV pathway-comprehensive drugs (statins, ACEi, ARBs, SGLT2i) treat BOTH \nthe underlying cause (lipids, BP, glucose) AND the vascular damage pathway.\nRenal drugs don't have this dual mechanism - kidney damage is more organ-specific.\n\n99 drugs identified as CV pathway-comprehensive in GT.\n38 drugs identified as diabetes-renal pathway-comprehensive.\n\nACTIONABLE:\n- Boost CV complication predictions for pathway-comprehensive drugs \u2192 HIGH/GOLDEN\n- Do NOT apply to renal complications\n- Filter: non-pathway-comprehensive CV complication \u2192 demote to LOW",
+      "result_metric": "48.8% vs 7.6% for CV complications (+41.2 pp gap)"
     },
     {
       "id": "h352",
@@ -7135,6 +7137,65 @@
       ],
       "findings": "VALIDATED + IMPLEMENTED: Complication-specific drug class filter removes 214 predictions with 100% accuracy.\n\nKEY RESULTS:\n| Complication | Validated Precision | Non-validated Precision | Predictions Filtered |\n|--------------|---------------------|-------------------------|----------------------|\n| Nephrotic syndrome | 69.2% | 0.0% | 17 |\n| Retinopathy | 33.3% | 0.0% | 57 |\n| Cardiomyopathy | 12.5% | 0.0% | 52 |\n| Neuropathy | 0.0% | 0.0% | 88 |\n| **TOTAL** | **varies** | **0.0%** | **214** |\n\nVALIDATED DRUG CLASSES:\n- Nephrotic: steroids, immunosuppressants, anesthetics (for procedures)\n- Retinopathy: anti-VEGF, steroids\n- Cardiomyopathy: beta-blockers, ACEi, ARBs, SGLT2i\n- Neuropathy: SNRIs, anticonvulsants, TCAs, topicals\n\nIMPLEMENTATION:\n1. Added COMPLICATION_VALIDATED_DRUGS constant with validated drug sets\n2. Added _is_complication_non_validated_class() static method\n3. Added filter check in _assign_confidence_tier() \u2192 FILTER tier\n\nIMPACT:\n- 214 predictions filtered (all MEDIUM/LOW tier, no HIGH)\n- 0 GT hits lost (100% filter accuracy)\n- This confirms h294 finding: organ proximity doesn't predict transferability",
       "result_metric": "214 predictions filtered, 0 GT loss (100% accuracy)"
+    },
+    {
+      "id": "h354",
+      "title": "CV Pathway-Comprehensive Drug Boost Implementation",
+      "description": "Implement the h351 finding: drugs with GT for CV base disease AND CV complication should get boosted for CV complication predictions.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Build CV_PATHWAY_COMPREHENSIVE_DRUGS set from GT",
+        "Step 2: Add _is_cv_pathway_comprehensive() method",
+        "Step 3: For CV complication predictions: pathway-comp \u2192 HIGH, non-pathway \u2192 demote to LOW",
+        "Step 4: Validate on holdout set",
+        "Success criteria: >30% precision for boosted predictions, no GT loss"
+      ],
+      "dependencies": [
+        "h351"
+      ]
+    },
+    {
+      "id": "h355",
+      "title": "Metabolic Pathway-Comprehensive Analysis",
+      "description": "Check if metabolic/diabetes drugs that treat BOTH glucose control AND metabolic complications perform better.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Define metabolic base (diabetes, glucose) and complications (neuropathy, NAFLD, etc.)",
+        "Step 2: Identify pathway-comprehensive metabolic drugs",
+        "Step 3: Calculate precision gap for metabolic complications",
+        "Step 4: Decide if boost is warranted",
+        "Success criteria: >20 pp gap for pathway-comprehensive"
+      ],
+      "dependencies": [
+        "h351"
+      ]
+    },
+    {
+      "id": "h356",
+      "title": "Non-Pathway-Comprehensive CV Demotion",
+      "description": "h351 showed non-pathway-comprehensive drugs have only 7.6% precision for CV complications. Consider demoting these to LOW.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Count non-pathway-comprehensive CV predictions by tier",
+        "Step 2: Calculate GT loss if demoted to LOW",
+        "Step 3: Implement demotion if GT loss <5%",
+        "Success criteria: >50 predictions filtered with <5% GT loss"
+      ],
+      "dependencies": [
+        "h351"
+      ]
     }
   ],
   "completed": [
@@ -8442,6 +8503,12 @@
       "hypothesis_id": "h294",
       "learning": "Organ proximity does NOT predict drug transferability. Within-organ novel predictions have 1.2% precision. Only pathway-comprehensive mechanisms (like statins for CV) transfer reliably.",
       "implication": "Do not use organ matching as confidence signal. Focus on identifying pathway-comprehensive drug classes."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h351",
+      "learning": "Pathway-comprehensive drugs (treat base AND complications) have 48.8% precision for CV complications vs 7.6% for non-pathway-comprehensive (6.4x lift). But this pattern does NOT hold for renal complications (-6 pp).",
+      "implication": "CV complication predictions should check for pathway-comprehensive status. Renal complications need different approach."
     }
   ],
   "collaborations": [
