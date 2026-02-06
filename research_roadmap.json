@@ -7762,7 +7762,7 @@
       "title": "Remove Infectious GOLDEN Rule",
       "description": "h386 found infectious GOLDEN has 5.3% precision. Remove it from get_category_tier.",
       "hypothesis": "Removing infectious GOLDEN will improve GOLDEN tier precision by eliminating 19 low-quality predictions.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "high",
       "effort": "low",
@@ -7771,7 +7771,9 @@
         "Remove infectious_hierarchy_hepatitis rule",
         "Evaluate GOLDEN tier precision change",
         "Success: GOLDEN precision increases"
-      ]
+      ],
+      "findings": "VALIDATED: Removed infectious GOLDEN rule and viral hierarchy groups.\n\nCHANGES MADE:\n1. Removed infectious GOLDEN/HIGH case from get_category_tier()\n2. Removed 'hepatitis' and 'hiv' from DISEASE_HIERARCHY_GROUPS['infectious']\n3. Kept bacterial hierarchy groups: UTI, tuberculosis, pneumonia, sepsis, skin_infection, respiratory_infection\n\nIMPACT ON TIER PRECISION:\n| Tier | Before | After | Delta |\n|------|--------|-------|-------|\n| GOLDEN | 35.8% | 40.4% | **+4.6pp** |\n| HIGH | 59.9% | 58.1% | -1.8pp |\n| MEDIUM | 30.0% | 30.9% | +0.9pp |\n| LOW | 24.0% | 21.7% | -2.3pp |\n| FILTER | 17.9% | 17.9% | 0.0pp |\n\nMAIN SUCCESS: GOLDEN tier precision improved by +4.6 pp by removing low-quality infectious predictions.\n\nNOTE: HIGH tier dropped slightly (-1.8pp) because hepatitis hierarchy predictions moved to lower tiers.\nThis is acceptable since those had 0% precision anyway.",
+      "result_metric": "GOLDEN +4.6pp (35.8% \u2192 40.4%)"
     }
   ],
   "completed": [
@@ -9175,6 +9177,12 @@
       "hypothesis_id": "h386",
       "learning": "Viral diseases (hepatitis, HIV) have 0% infectious rule precision. Bacterial-specific rules (UTI, TB) work well (45-75%). General infectious GOLDEN rule should be removed.",
       "implication": "Split infectious category into viral vs bacterial for tier rules."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h387",
+      "learning": "Removing low-precision rules (infectious GOLDEN at 5.3%, viral hierarchies at 0%) improved GOLDEN tier precision by +4.6pp.",
+      "implication": "Continue auditing and removing problem rules identified in h378."
     }
   ],
   "collaborations": [

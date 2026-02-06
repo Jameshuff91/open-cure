@@ -799,11 +799,12 @@ DISEASE_HIERARCHY_GROUPS = {
                         'diffuse scleroderma', 'limited scleroderma'],
         'spondylitis': ['ankylosing spondylitis', 'axial spondyloarthritis', 'non-radiographic axial spondyloarthritis'],
     },
+    # h387: Removed hepatitis and HIV groups - viral diseases have 0% hierarchy precision
+    # Kept: UTI (75%), tuberculosis (45.5%), pneumonia, sepsis, skin_infection, respiratory_infection
     'infectious': {
         'pneumonia': ['pneumonia', 'bronchopneumonia', 'community-acquired pneumonia', 'hospital-acquired pneumonia',
                       'streptococcal pneumonia', 'pneumococcal pneumonia', 'bacterial pneumonia', 'aspiration pneumonia'],
-        'hepatitis': ['hepatitis', 'hepatitis b', 'hepatitis c', 'chronic hepatitis', 'viral hepatitis',
-                      'hepatitis c genotype 1', 'hepatitis c genotype 2', 'hepatitis c genotype 3'],
+        # h387: hepatitis REMOVED - 0% precision (viral diseases don't work with hierarchy)
         'uti': ['urinary tract infection', 'uti', 'complicated urinary tract infection', 'uncomplicated uti',
                 'recurrent uti', 'chronic urinary tract infection', 'pyelonephritis', 'cystitis'],
         'sepsis': ['sepsis', 'bacterial sepsis', 'septicemia', 'blood stream infection', 'severe sepsis', 'septic shock'],
@@ -812,7 +813,7 @@ DISEASE_HIERARCHY_GROUPS = {
         'respiratory_infection': ['respiratory infection', 'bronchitis', 'acute bronchitis', 'chronic bronchitis',
                                   'respiratory tract infection', 'upper respiratory infection', 'lower respiratory infection'],
         'tuberculosis': ['tuberculosis', 'tb', 'pulmonary tuberculosis', 'latent tuberculosis', 'multidrug-resistant tuberculosis'],
-        'hiv': ['hiv', 'human immunodeficiency virus', 'aids', 'hiv infection', 'hiv-1 infection'],
+        # h387: HIV REMOVED - 0% precision (viral diseases don't work with hierarchy)
     },
     'neurological': {
         'epilepsy': ['epilepsy', 'seizure', 'seizure disorder', 'partial seizure', 'generalized seizure',
@@ -2289,21 +2290,22 @@ class DrugRepurposingPredictor:
 
         Returns the rescued tier or None if no rescue criteria met.
 
-        h136 findings:
-        - Infectious: rank<=10 + freq>=15 + mech = 55.6% precision (GOLDEN!)
+        h136 findings (REVISED by h386/h387):
+        - Infectious: REMOVED - h386 found 5.3% precision (not 55.6%)
         - Cardiovascular: rank<=5 + mech = 38.2% precision (HIGH)
         - Respiratory: rank<=10 + freq>=15 + mech = 35.0% precision (HIGH)
 
         h144 findings:
         - Metabolic + statin + rank<=10 = 60.0% precision (GOLDEN!)
-        """
-        if category == 'infectious':
-            if rank <= 10 and train_frequency >= 15 and mechanism_support:
-                return ConfidenceTier.GOLDEN  # 55.6% precision
-            if rank <= 10 and train_frequency >= 10 and mechanism_support:
-                return ConfidenceTier.HIGH
 
-        elif category == 'cardiovascular':
+        h387: Removed infectious GOLDEN/HIGH rules - precision was 5.3% not 55.6%.
+        The infectious_hierarchy rules (UTI 75%, TB 45.5%) in _assign_confidence_tier
+        still apply for bacterial diseases with specific matches.
+        """
+        # h387: Infectious rules removed - were 5.3% precision
+        # Specific hierarchy rules (UTI, TB) in _assign_confidence_tier still apply
+
+        if category == 'cardiovascular':
             drug_lower = drug_name.lower()
             disease_lower = disease_name.lower()
 
