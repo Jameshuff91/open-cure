@@ -1,27 +1,28 @@
 # Research Loop Progress
 
-## Current Session: h329, h331, h330, h315, h335 (2026-02-05)
+## Current Session: h329, h331, h330, h315, h335, h334 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 5**
+**Hypotheses Tested: 6**
 - h329: Drug Class Width Analysis - **VALIDATED** (class width NOT predictive, r=0.33)
 - h331: Platinum Agent Isolation Boost - **VALIDATED** (justified but not implemented, 0.21% impact)
 - h330: Formulation-Specific Prediction Analysis - **VALIDATED** (combos not a significant error source)
 - h315: Category-Specific Coherence Thresholds - **VALIDATED** (gaps from +25pp to -7pp)
 - h335: Cancer Coherence Investigation - **VALIDATED** (non-L cancer drugs are legitimate)
+- h334: Renal Disease Incoherence Boost - **VALIDATED + IMPLEMENTED** (fixed ATC map)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 199 |
+| Validated | 200 |
 | Invalidated | 64 |
 | Inconclusive | 12 |
 | Blocked | 21 |
 | Deprioritized | 4 |
-| Pending | 35 |
+| Pending | 34 |
 | **Total** | **335**
 
 ### KEY SESSION FINDINGS
@@ -109,17 +110,33 @@
 **Conclusion:** Cancer is multi-modal (chemo + steroids + hormones + diagnostics).
 Don't demote non-L cancer predictions - both L and non-L are legitimate.
 
+#### h334: Renal Disease Incoherence Boost - VALIDATED + IMPLEMENTED
+
+**Question:** Why does renal have inverted coherence? (incoherent 12.8% > coherent 5.6%)
+
+**Answer:** Expected ATC 'C' (cardiovascular) was TOO NARROW!
+
+**Key findings:**
+- C class (expected): 5.6% precision - CV drugs for CKD
+- A class (incoherent): 30.8% precision - corticosteroids for nephrotic!
+- H class (incoherent): 37.5% precision - hormone replacement for CAH
+
+**Implementation:** Updated `DISEASE_CATEGORY_ATC_MAP`:
+```
+'renal': {'C', 'A', 'H'}  # CV drugs + corticosteroids for nephrotic/CAH
+```
+
 ### New Hypotheses Added
 - h331: Platinum Isolation Boost (tested this session)
 - h332: Cancer-Selective Drug Class Analysis
 - h333: Statin Broad Class Re-evaluation
-- h334: Renal Disease Incoherence Boost
+- h334: Renal Disease Incoherence Boost (tested this session, IMPLEMENTED)
 - h335: Cancer Coherence Investigation (tested this session)
 
 ### Recommended Next Steps
-1. h334: Renal Incoherence Analysis (understand inverted signal, -7.3 pp gap)
-2. h272: GT Expansion (medium effort potential win)
-3. h332: Cancer-Selective Drug Class Analysis (follow-up to h329 platinum finding)
+1. h272: GT Expansion (medium effort potential win)
+2. h332: Cancer-Selective Drug Class Analysis (follow-up to h329 platinum finding)
+3. Low-effort cleanup: h178 (DiseaseMatcher optimization), h220 (MESH mappings)
 
 ---
 
