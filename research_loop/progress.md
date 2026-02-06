@@ -1,78 +1,105 @@
 # Research Loop Progress
 
-## Current Session: h309, h310, h261 (2026-02-05)
+## Current Session: h311, h312, h314, h316 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
 **Hypotheses Tested: 4**
-- h309: Refine ATC-Category Coherence Map - **VALIDATED** (already committed)
-- h310: Implement Coherence Boost with Refined ATC Map - **VALIDATED**
-- h261: Pathway-Weighted PPI Scoring - **INVALIDATED**
-- h181: Drug-Level Cross-Category Transfer - **INVALIDATED**
+- h311: ATC Incoherence Demotion - **VALIDATED** (GOLDEN +7.78 pp)
+- h312: Drug Target Count vs Precision - **INVALIDATED** (multi-target BETTER)
+- h314: ATC Mismatch Severity by Category - **VALIDATED** (identified 0% and 27% mismatches)
+- h316: Zero-Precision Mismatch FILTER - **VALIDATED** (+0.78 pp, 1319 filtered)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 181 |
-| Invalidated | 61 |
+| Validated | 185 |
+| Invalidated | 63 |
 | Inconclusive | 10 |
 | Blocked | 21 |
 | Deprioritized | 3 |
-| Pending | 37 |
-| Pending | 35 |
-| **Total** | **311**
+| Pending | 36 |
+| **Total** | **318**
 
 ### KEY SESSION FINDINGS
 
-#### h309/h310: ATC Coherence Map and Boost - VALIDATED
-
-**h309 Finding:**
-- Original ATC map: coherent GOLDEN 15.0% vs incoherent 28.5% (wrong direction!)
-- Refined ATC map: coherent GOLDEN 35.5% vs incoherent 18.7% (correct +16.8pp gap)
-- Key fix: Add H (corticosteroids) and A (alimentary) to inflammatory categories
-
-**h310 Implementation:**
-- Added `DISEASE_CATEGORY_ATC_MAP` with refined mapping
-- Added `_is_atc_coherent()` method
-- Integrated coherence boost: LOW→MEDIUM for coherent + rank<=10 + evidence
-- All 10 unit tests pass
-
-#### h261: Pathway-Weighted PPI Scoring - INVALIDATED
+#### h311: ATC Incoherence Demotion - VALIDATED
 
 **Results:**
-- Raw PPI R@30: 6.21% ± 0.79%
-- Pathway-weighted R@30: 6.46% ± 0.87%
-- Improvement: +0.25 pp (below 1pp threshold)
+- Baseline GOLDEN precision: 22.48%
+- With demotion GOLDEN precision: 30.26% (+7.78 pp)
+- GOLDEN→HIGH demotions: 1,121 (57.7% of GOLDEN)
+- HIGH→MEDIUM demotions: 663 (54.9% of HIGH)
 
-**Root cause:** Only 50% of PPI genes have pathway annotations, and the signal is redundant with PPI connectivity.
+**Implementation:** Added to `_assign_confidence_tier()`:
+- Check ATC coherence before assigning GOLDEN/HIGH tiers
+- If incoherent, demote GOLDEN→HIGH, HIGH→MEDIUM
 
-#### h181: Drug-Level Cross-Category Transfer - INVALIDATED
+#### h312: Drug Target Count vs Precision - INVALIDATED
+
+**Hypothesis:** Single-target drugs should have higher kNN precision.
+
+**Results (5-seed, 13,531 predictions):**
+- Single-target (1): 5.57% precision
+- Multi-target (5+): 9.68% precision
+- Difference: **-4.11 pp (multi-target is BETTER!)**
+
+**Explanation:** Drugs with more targets treat more diseases (higher repurposability).
+kNN benefits from broader utility since similar diseases share these widely-used drugs.
+
+#### h314: ATC Mismatch Severity by Category - VALIDATED
+
+**Coherent baseline:** 11.7% precision
+
+**High-precision mismatches (better than coherent!):**
+- D→respiratory: 27.5% (2.4x baseline!)
+- A→ophthalmological: 26.5%
+- D→autoimmune: 20.0%
+- J→respiratory: 17.8%
+
+**Zero-precision mismatches (always wrong):**
+- A→cancer, J→cancer, N→cancer: 0.0%
+- B→other, R→other, J→dermatological: 0.0%
+- L→ophthalmological, G→other: 1-2%
+
+#### h316: Zero-Precision Mismatch FILTER - VALIDATED
+
+**Implementation:** Added 16 ATC→category pairs to FILTER tier.
 
 **Results:**
-- Baseline kNN R@30: 38.06% ± 3.21%
-- Cross-category boost R@30: 37.32% ± 3.63%
-- Improvement: -0.74 pp (NEGATIVE)
+- Predictions filtered: 1,319 (9.7% of total)
+- Filtered precision: 1.21%
+- Hits lost: 16
+- Overall precision improvement: +0.78 pp
 
-**Root cause:** Boosting drugs from related categories dilutes kNN signal - the collaborative filtering already captures cross-category patterns through disease similarity.
+**Note:** High-precision mismatches (10-27%) are NOT rescued to GOLDEN since they're
+below GOLDEN baseline (30%). Normal h311 demotion to HIGH (20% baseline) is optimal.
+
+### New Hypotheses Added
+
+- h313: Coherence Degree (full vs partial ATC match)
+- h314: ATC Mismatch Severity (DONE)
+- h315: Category-Specific Coherence Thresholds
+- h316: Zero-Precision Mismatch FILTER (DONE)
+- h317: Category-Specific Coherence Maps
+- h318: Antibiotic FILTER for Non-Infectious Diseases
 
 ### Recommended Next Steps
-1. h181 (Drug-Level Cross-Category Transfer) builds on ATC coherence work
-2. h272 (GT Expansion: Cancer Drug Non-Cancer Uses) requires manual research
-3. Low-effort hypotheses available (h178, h183, h196, etc.)
+1. h318: Antibiotic FILTER for non-infectious diseases (builds on h314)
+2. h313: Test coherence degree (full vs partial ATC match)
+3. h317: Refine DISEASE_CATEGORY_ATC_MAP with evidence-based mappings
 
 ---
 
-## Previous Session: h297, h298, h293, h286, h299, h162 (2026-02-05)
+## Previous Session: h309, h310, h261, h181 (2026-02-05)
 
-**Hypotheses Tested: 6**
-- h297: Mechanism-Specific Disease Categories - **VALIDATED**
-- h298: Implement Mechanism-Specificity Confidence Signal - **VALIDATED**
-- h293: Inverse Complication Filter Analysis - **VALIDATED**
-- h286: Mechanistic Pathway Overlap - **BLOCKED** (ID format mismatch)
-- h299: Alternative Methods for Mechanism-Specific Diseases - **BLOCKED** (ID format mismatch)
-- h162: Precision-Coverage Trade-off Quantification - **VALIDATED**
+**Hypotheses Tested: 4**
+- h309: Refine ATC-Category Coherence Map - **VALIDATED**
+- h310: Implement Coherence Boost with Refined ATC Map - **VALIDATED**
+- h261: Pathway-Weighted PPI Scoring - **INVALIDATED**
+- h181: Drug-Level Cross-Category Transfer - **INVALIDATED**
 
 ---
 

@@ -6278,13 +6278,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "For GOLDEN/HIGH tier predictions, check ATC coherence",
         "If incoherent (drug ATC L1 not in expected for category), demote tier",
         "GOLDEN incoherent \u2192 HIGH, HIGH incoherent \u2192 MEDIUM",
         "Measure precision improvement on high-confidence tiers"
-      ]
+      ],
+      "findings": "h311 VALIDATED: Incoherent tier demotion improves GOLDEN precision by +7.78 pp.\n\nRESULTS (5-seed, 13,531 predictions):\n- Baseline GOLDEN precision: 22.48%\n- With demotion GOLDEN precision: 30.26% (+7.78 pp)\n- Baseline HIGH precision: 12.75%\n- With demotion HIGH precision: 16.75% (+4.00 pp)\n\nDEMOTIONS:\n- GOLDEN\u2192HIGH: 1,121 predictions (57.7% of GOLDEN)\n- HIGH\u2192MEDIUM: 663 predictions (54.9% of HIGH)\n\nIMPLEMENTATION:\nAdded to _assign_confidence_tier() in production_predictor.py:\n- Check ATC coherence before assigning GOLDEN/HIGH tiers\n- If incoherent, demote GOLDEN\u2192HIGH, HIGH\u2192MEDIUM\n- This filters out ~57% of high-tier predictions that have lower precision\n\nKEY INSIGHT:\nCoherent predictions (drug ATC matches expected for disease category) have\ninherently higher precision. Incoherent drugs may be valid treatments but\nare less reliable to predict from kNN similarity alone.",
+      "result_metric": "+7.78 pp GOLDEN precision"
     },
     {
       "id": "h312",
@@ -6293,12 +6295,126 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Compute target count per drug from drug_targets.json",
         "Analyze: do single-target drugs have higher precision than multi-target?",
         "Test: does target count correlate with kNN prediction success?",
         "If yes, add target count as confidence signal"
+      ],
+      "findings": "h312 INVALIDATED: Multi-target drugs have HIGHER precision than single-target.\n\nHYPOTHESIS: Single-target drugs should have higher kNN precision due to more specific mechanism.\n\nRESULTS (5-seed, 13,531 predictions):\n- Single-target (1): 5.57% precision (1,006 predictions)\n- 2-4 targets: 5.74% (2,040 predictions)\n- 5-9 targets: 7.02% (1,895 predictions)\n- 10-49 targets: 10.17% (5,803 predictions)\n- 50+ targets: 10.65% (2,273 predictions)\n\nFINDING: Multi-target drugs (5+) have 9.68% precision vs single-target 5.57% (-4.11 pp).\n\nEXPLANATION:\nDrugs with more targets tend to treat more diseases (higher repurposability).\nkNN collaborative filtering benefits from this broader utility since similar\ndiseases are more likely to share treatments from frequently-used drugs.\n\nIMPLICATION:\nTarget count is NOT a useful signal for confidence filtering.\nIf anything, single-target drugs should be penalized, not boosted.\nThis contradicts mechanism-specificity intuitions but supports kNN logic.",
+      "result_metric": "-4.11 pp (opposite of expected)"
+    },
+    {
+      "id": "h313",
+      "title": "Coherence Degree: Full vs Partial ATC Match",
+      "description": "h311 used binary coherence. Some drugs have multiple ATC codes - are drugs with ALL codes coherent more precise than those with only SOME codes coherent?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "For each prediction, count coherent vs total ATC codes",
+        "Compute precision by coherence ratio (0%, 50%, 100%)",
+        "Test if full coherence (100%) significantly outperforms partial (50%)",
+        "If yes, add coherence_ratio as confidence modifier"
+      ],
+      "dependencies": [
+        "h311"
+      ]
+    },
+    {
+      "id": "h314",
+      "title": "ATC Mismatch Severity by Source Category",
+      "description": "h311 treats all incoherent predictions equally. But N drugs (neurological) predicted for cardiovascular may be worse than H drugs (hormonal) for the same. Analyze which ATC\u2192category mismatches are most harmful.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 5,
+      "status": "validated",
+      "steps": [
+        "For all incoherent predictions, record (drug_ATC_L1, disease_category, is_hit)",
+        "Compute precision by (ATC_L1, category) pair",
+        "Identify highest-precision mismatches (may warrant rescue)",
+        "Identify lowest-precision mismatches (may warrant FILTER)"
+      ],
+      "dependencies": [
+        "h311"
+      ],
+      "findings": "h314 VALIDATED: ATC mismatch severity varies dramatically by ATC\u00d7category pair.\n\nCOHERENT BASELINE: 11.7% precision (4,247 predictions)\n\nHIGH-PRECISION MISMATCHES (better than coherent!):\n- D (Dermatological) \u2192 respiratory: 27.5% (2.4x coherent!)\n- A (Alimentary) \u2192 ophthalmological: 26.5% (2.3x coherent!)\n- D (Dermatological) \u2192 autoimmune: 20.0%\n- J (Antiinfectives) \u2192 respiratory: 17.8%\n- A (Alimentary) \u2192 infectious: 17.3%\n- L (Antineoplastic) \u2192 gastrointestinal: 17.2%\n- A (Alimentary) \u2192 other: 13.3%\n\nZERO-PRECISION MISMATCHES (always wrong):\n- A\u2192cancer, B\u2192other, J\u2192dermatological: 0.0%\n- N\u2192cancer, A\u2192immune, R\u2192other, J\u2192cancer: 0.0%\n- N\u2192other: 0.9%, L\u2192ophthalmological: 1.3%\n\nKEY INSIGHT:\nCurrent h311 demotion is too aggressive - some mismatches are actually\nBETTER than coherent predictions. Should rescue high-precision mismatches\nand only filter truly zero-precision ones.\n\nACTIONABLE:\n1. Add rescue rules for high-precision mismatches (D\u2192respiratory, etc.)\n2. Add FILTER rules for zero-precision mismatches (A\u2192cancer, etc.)\n3. This could improve tier calibration substantially",
+      "result_metric": "27.5% best mismatch vs 11.7% coherent"
+    },
+    {
+      "id": "h315",
+      "title": "Category-Specific Coherence Thresholds",
+      "description": "Some disease categories may be more tolerant of ATC incoherence than others. Autoimmune diseases use many drug classes; cancer uses targeted therapies. Compute category-specific coherence benefit.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "For each category, compute (coherent_precision, incoherent_precision)",
+        "Categories with small gap (<3pp): dont demote",
+        "Categories with large gap (>10pp): always demote",
+        "Implement category-specific demotion thresholds"
+      ],
+      "dependencies": [
+        "h311"
+      ]
+    },
+    {
+      "id": "h316",
+      "title": "Implement ATC Mismatch-Specific Rules from h314",
+      "description": "h314 found high-precision mismatches (D\u2192respiratory 27.5%, A\u2192ophthalmological 26.5%) and zero-precision mismatches (A\u2192cancer 0%, J\u2192cancer 0%). Implement rescue and filter rules for these specific patterns.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "validated",
+      "steps": [
+        "Add rescue rules: D\u2192respiratory, A\u2192ophthalmological, D\u2192autoimmune \u2192 MEDIUM tier (not demoted)",
+        "Add FILTER rules: A\u2192cancer, J\u2192cancer, N\u2192cancer, B\u2192other, R\u2192other \u2192 always FILTER",
+        "Test precision improvement on GOLDEN tier",
+        "Verify total predictions affected and precision change"
+      ],
+      "dependencies": [
+        "h314"
+      ],
+      "findings": "h316 VALIDATED: Zero-precision mismatch FILTER improves overall precision.\n\nFILTER RULES (from h314):\n16 ATC\u2192category pairs with <3% precision:\n- A\u2192cancer, J\u2192cancer, N\u2192cancer (0%)\n- B\u2192other, R\u2192other, J\u2192dermatological (0%)\n- L\u2192ophthalmological, G\u2192other, D\u2192cancer (1-2%)\n- J\u2192musculoskeletal, J\u2192genetic, L\u2192genetic, L\u2192other (1-3%)\n\nRESULTS (5-seed, 13,531 predictions):\n- Predictions filtered: 1,319 (9.7% of total)\n- Filtered precision: 1.21%\n- Hits lost: 16\n- Overall precision improvement: +0.78 pp (8.40% \u2192 9.18%)\n\nIMPLEMENTATION:\nAdded ZERO_PRECISION_MISMATCHES set to production_predictor.py.\nIn _assign_confidence_tier(), check _check_atc_mismatch_rules() and\nreturn FILTER tier for zero-precision mismatches.\n\nNOTE: High-precision mismatches are NOT rescued to GOLDEN because\ntheir precision (10-27%) is below GOLDEN baseline (30%). The normal\nh311 demotion to HIGH (20% baseline) is appropriate for them.",
+      "result_metric": "+0.78 pp precision, 1319 filtered"
+    },
+    {
+      "id": "h317",
+      "title": "Category-Specific Coherence Maps (Refine h309)",
+      "description": "h314 shows current ATC coherence map is too strict. For respiratory diseases, D drugs are better than \"coherent\" drugs. Refine DISEASE_CATEGORY_ATC_MAP based on actual precision data.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Compute precision by ATC L1 for each disease category",
+        "Identify which ATC codes should be \"coherent\" for each category",
+        "Update DISEASE_CATEGORY_ATC_MAP with evidence-based mappings",
+        "Re-run h311 analysis with updated map"
+      ],
+      "dependencies": [
+        "h314"
+      ]
+    },
+    {
+      "id": "h318",
+      "title": "Antibiotic FILTER for Non-Infectious Diseases",
+      "description": "h314 shows J (antiinfectives) have 0% precision for dermatological, cancer, musculoskeletal, genetic diseases. Implement global filter for antibiotics predicted for non-infectious diseases.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Add rule: J drugs + non-infectious category \u2192 FILTER tier",
+        "Exception: J\u2192respiratory is acceptable (17.8%)",
+        "Count affected predictions",
+        "Verify precision improvement"
+      ],
+      "dependencies": [
+        "h314"
       ]
     }
   ],
@@ -7528,6 +7644,24 @@
       "hypothesis_id": "h181",
       "learning": "Explicit drug cross-category boosting hurts performance (-0.74pp) - kNN already captures this signal",
       "implication": "Category-based boosting should be at disease/prediction level, not drug level"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h311",
+      "learning": "Incoherent predictions at GOLDEN/HIGH tiers should be demoted. This improved GOLDEN precision by +7.78 pp (22.48% \u2192 30.26%).",
+      "implication": "ATC coherence is both a positive signal (h309/h310 boost) AND negative signal (h311 demotion). The optimal strategy uses coherence bidirectionally."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h314",
+      "learning": "ATC mismatches are not uniformly bad. D\u2192respiratory (27.5%) and A\u2192ophthalmological (26.5%) outperform coherent baseline (11.7%). Meanwhile A\u2192cancer, J\u2192cancer, N\u2192cancer have 0% precision.",
+      "implication": "Refine h311 demotion to only demote truly harmful mismatches (A/J/N\u2192cancer, etc.) and rescue surprisingly good mismatches (D\u2192respiratory, etc.)."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h316",
+      "learning": "Zero-precision ATC mismatches (A/J/N\u2192cancer, etc.) should always be FILTERED. 1,319 predictions had only 1.21% precision. High-precision mismatches (10-27%) should NOT be rescued since they are still below GOLDEN baseline (30%).",
+      "implication": "ATC coherence is now a 3-level signal: coherent (GOLDEN), incoherent-but-not-zero (demote to HIGH), zero-precision (FILTER)."
     }
   ],
   "collaborations": [

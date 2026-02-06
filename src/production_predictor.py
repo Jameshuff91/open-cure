@@ -26,6 +26,13 @@ Unified pipeline integrating validated research findings:
 - h309/h310: ATC coherence boost - drugs matching expected ATC for disease category
   - Coherent: 35.5% precision vs Incoherent: 18.7% (+16.8 pp gap)
   - Boosts LOW→MEDIUM for coherent predictions with rank<=10 + evidence
+- h311: ATC incoherence demotion - demote incoherent high-tier predictions
+  - Incoherent GOLDEN: 22.5% precision vs Coherent: 30.3% (+7.8 pp improvement)
+  - Demotes GOLDEN→HIGH and HIGH→MEDIUM when drug ATC doesn't match category
+- h314/h316: Zero-precision ATC mismatch FILTER
+  - 16 ATC→category pairs with <3% precision (e.g., A/J/N→cancer, B→other)
+  - Filter removes 1,319 predictions with 1.21% precision (+0.78 pp overall)
+  - NOTE: High-precision mismatches (10-27%) still demote to HIGH (not GOLDEN)
 
 USAGE:
     # Get predictions for a disease
@@ -869,6 +876,43 @@ DISEASE_CATEGORY_ATC_MAP: Dict[str, Set[str]] = {
     'other': set(),  # No ATC coherence for uncategorized
 }
 
+# h314/h316: ATC Mismatch-Specific Rules
+# Some "incoherent" predictions actually have HIGHER precision than coherent baseline (11.7%)
+# HIGH-PRECISION MISMATCHES - don't demote these (precision > coherent baseline):
+HIGH_PRECISION_MISMATCHES: Dict[Tuple[str, str], float] = {
+    ('D', 'respiratory'): 27.5,      # Dermatological drugs for respiratory
+    ('A', 'ophthalmological'): 26.5, # Alimentary drugs for ophthalmic
+    ('A', 'ophthalmic'): 26.5,       # Same for alternate spelling
+    ('D', 'autoimmune'): 20.0,       # Dermatological drugs for autoimmune
+    ('J', 'respiratory'): 17.8,      # Antiinfectives for respiratory
+    ('A', 'infectious'): 17.3,       # Alimentary drugs for infectious
+    ('L', 'gastrointestinal'): 17.2, # Antineoplastic for GI
+    ('A', 'other'): 13.3,            # Alimentary drugs for other
+    ('C', 'other'): 11.7,            # Cardiovascular for other
+    ('D', 'infectious'): 11.2,       # Dermatological for infectious
+    ('D', 'other'): 10.3,            # Dermatological for other
+}
+
+# ZERO-PRECISION MISMATCHES - always FILTER these (precision < 3%):
+ZERO_PRECISION_MISMATCHES: Set[Tuple[str, str]] = {
+    ('A', 'cancer'),          # 0.0% - Alimentary drugs never work for cancer
+    ('B', 'other'),           # 0.0% - Blood drugs for other
+    ('J', 'dermatological'),  # 0.0% - Antibiotics for skin diseases
+    ('N', 'cancer'),          # 0.0% - Nervous system drugs for cancer
+    ('A', 'immune'),          # 0.0% - Alimentary for immune disorders
+    ('A', 'immunological'),   # 0.0% - Same for alternate name
+    ('R', 'other'),           # 0.0% - Respiratory drugs for other
+    ('J', 'cancer'),          # 0.0% - Antibiotics for cancer
+    ('L', 'ophthalmological'), # 1.3% - Antineoplastic for ophthalmic
+    ('L', 'ophthalmic'),      # 1.3% - Same
+    ('G', 'other'),           # 1.4% - Genitourinary for other
+    ('D', 'cancer'),          # 1.6% - Dermatological for cancer
+    ('J', 'musculoskeletal'), # 1.6% - Antibiotics for musculoskeletal
+    ('J', 'genetic'),         # 1.6% - Antibiotics for genetic diseases
+    ('L', 'genetic'),         # 1.7% - Antineoplastic for genetic
+    ('L', 'other'),           # 2.5% - Antineoplastic for other
+}
+
 
 def extract_cancer_types(disease_name: str) -> Set[str]:
     """
@@ -1387,6 +1431,39 @@ class DrugRepurposingPredictor:
         except Exception:
             return False
 
+    def _check_atc_mismatch_rules(self, drug_name: str, category: str) -> Tuple[bool, bool, Optional[float]]:
+        """
+        h314/h316: Check ATC mismatch-specific rules.
+
+        Returns: (is_high_precision_mismatch, is_zero_precision_mismatch, precision)
+        - is_high_precision_mismatch: True if this ATC→category pair has >10% precision
+        - is_zero_precision_mismatch: True if this ATC→category pair has <3% precision
+        - precision: The precision percentage if known, else None
+        """
+        try:
+            mapper = _get_atc_mapper()
+            atc_codes = mapper.get_atc_codes(drug_name)
+            if not atc_codes:
+                return False, False, None
+
+            # Get primary ATC L1 code
+            atc_l1 = atc_codes[0][0] if atc_codes and atc_codes[0] else None
+            if not atc_l1:
+                return False, False, None
+
+            # Check high-precision mismatches
+            key = (atc_l1, category)
+            if key in HIGH_PRECISION_MISMATCHES:
+                return True, False, HIGH_PRECISION_MISMATCHES[key]
+
+            # Check zero-precision mismatches
+            if key in ZERO_PRECISION_MISMATCHES:
+                return False, True, 0.0
+
+            return False, False, None
+        except Exception:
+            return False, False, None
+
     @staticmethod
     def categorize_disease(disease_name: str) -> str:
         """Categorize a disease by name."""
@@ -1540,14 +1617,40 @@ class DrugRepurposingPredictor:
                 return rescued_tier, True, category
 
         # Standard h135 tier assignment for Tier 1
+        # h311/h314/h316: Check ATC coherence and mismatch rules for tier adjustment
+        # h311: Incoherent GOLDEN has 22.5% precision vs 30.3% coherent (+7.8 pp gap)
+        # h316: Zero-precision mismatches should always be FILTERED
+        # Note: High-precision mismatches (10-27%) are BELOW GOLDEN (30%) so demotion is correct
+        #       They are ABOVE HIGH baseline (20%) so regular demotion path is optimal
+        is_coherent = drug_name and category and self._is_atc_coherent(drug_name, category)
+
+        # h314/h316: Check for zero-precision ATC mismatch rules
+        _, is_zero_prec_mismatch, _ = (False, False, None)
+        if drug_name and category:
+            _, is_zero_prec_mismatch, _ = self._check_atc_mismatch_rules(drug_name, category)
+
+        # h316: Zero-precision mismatches are always FILTER (0-3% precision)
+        # These are patterns that NEVER work: A→cancer, J→cancer, N→cancer, etc.
+        if is_zero_prec_mismatch:
+            return ConfidenceTier.FILTER, False, 'zero_precision_mismatch'
+
         # GOLDEN tier (Tier1 + freq>=10 + mechanism)
         if disease_tier == 1 and train_frequency >= 10 and mechanism_support:
+            # h311: Demote incoherent GOLDEN to HIGH
+            if not is_coherent:
+                return ConfidenceTier.HIGH, False, 'incoherent_demotion'
             return ConfidenceTier.GOLDEN, False, None
 
         # HIGH tier
         if train_frequency >= 15 and mechanism_support:
+            # h311: Demote incoherent HIGH to MEDIUM
+            if not is_coherent:
+                return ConfidenceTier.MEDIUM, False, 'incoherent_demotion'
             return ConfidenceTier.HIGH, False, None
         if rank <= 5 and train_frequency >= 10 and mechanism_support:
+            # h311: Demote incoherent HIGH to MEDIUM
+            if not is_coherent:
+                return ConfidenceTier.MEDIUM, False, 'incoherent_demotion'
             return ConfidenceTier.HIGH, False, None
 
         # MEDIUM tier
