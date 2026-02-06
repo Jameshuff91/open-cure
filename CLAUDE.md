@@ -147,12 +147,14 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h560 update, 2026-02-06):**
+**Tier System (h597 update, 2026-02-06):**
 - GOLDEN: 69.9% ± 17.9% holdout (280 predictions)
-- HIGH: 59.5% ± 6.2% holdout (754 predictions)
-- MEDIUM: 35.8% ± 2.8% holdout (2083 predictions)
-- LOW: 15.5% ± 2.4% holdout (3733 predictions)
+- HIGH: 58.9% ± 6.0% holdout (736 predictions)
+- MEDIUM: 37.0% ± 2.8% holdout (2101 predictions)
+- LOW: 15.6% ± 2.4% holdout (3733 predictions)
 - FILTER: 10.6% ± 1.3% holdout (7300 predictions)
+- **h592:** Composite quality score (rank+TransE+gene_overlap+mechanism+disease_holdout+non_SR) beats kNN rank by +2.6pp for Q1 MEDIUM. Added to deliverable as `composite_quality_score`.
+- **h593+h596+h597:** GT gap expansion: 18 FDA-approved pairs added (antifungals, cancer drugs). MEDIUM +1.2pp.
 - **h560:** Antimicrobial-pathogen mismatch filter: 0% holdout for all mismatches. Antibacterial→fungal/parasitic/viral, antifungal→parasitic/viral/bacterial. Dual-activity drugs handled. ~30 MEDIUM→LOW. +0.9pp MEDIUM. Also fixed target_overlap rescue leakage.
 - **h562:** extract_cancer_types bug fix: 'ALL' substring matched 'small','fallopian','allergic'. Word boundary regex for <=4 char keywords. 39 false cancer_same_type removed. MEDIUM +0.7pp.
 - **h557:** CS→infectious MEDIUM demotion: 2.1% holdout (even VALID uses = 2.9%). 59 preds MEDIUM→LOW. MEDIUM +0.3pp.
