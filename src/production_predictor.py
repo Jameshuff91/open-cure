@@ -902,6 +902,52 @@ NEUROLOGICAL_DRUG_CLASS_MEMBERS = {
     'wake_promoting': ['modafinil', 'armodafinil', 'pitolisant', 'solriamfetol'],
 }
 
+# h380: GI Disease Drug Classes (from h377 analysis)
+# GI category is worst performing (42.9% R@30) because kNN finds neighbors
+# from different categories (infectious, neurological) with different drug needs.
+GI_DISEASE_DRUG_CLASSES = {
+    # Constipation diseases -> laxatives (0/4 hits without rescue)
+    'constipation': ['laxative', 'opioid_antagonist'],
+    'opioid-induced': ['opioid_antagonist', 'laxative'],
+    # Liver/hepatic diseases -> bile acid agents (0/3 hits without rescue)
+    'cholangitis': ['bile_acid_agent'],
+    'cholestasis': ['bile_acid_agent'],
+    'hepatic encephalopathy': ['ammonia_reducer'],
+    # Ulcer diseases -> PPIs (0/1 hits without rescue)
+    'ulcer': ['ppi', 'h2_blocker', 'cytoprotective'],
+    'reflux': ['ppi', 'h2_blocker'],
+    'gerd': ['ppi', 'h2_blocker'],
+    # IBS -> antispasmodics
+    'irritable bowel': ['antispasmodic', 'laxative'],
+    # Inflammatory (but check autoimmune category first)
+    'pancreatitis': ['pancreatic_enzyme', 'ppi'],
+}
+
+# h380: GI Drug Class Members
+GI_DRUG_CLASS_MEMBERS = {
+    'laxative': [
+        'lactulose', 'lubiprostone', 'prucalopride', 'plecanatide',
+        'linaclotide', 'macrogol', 'sennosides', 'bisacodyl',
+        'polyethylene glycol', 'docusate', 'elobixibat', 'tegaserod'
+    ],
+    'opioid_antagonist': [
+        'naldemedine', 'naloxegol', 'methylnaltrexone', 'alvimopan'
+    ],
+    'bile_acid_agent': [
+        'cholestyramine', 'obeticholic acid', 'ursodeoxycholic acid',
+        'maralixibat', 'odevixibat', 'seladelpar', 'colestipol'
+    ],
+    'ammonia_reducer': ['lactulose', 'rifaximin', 'neomycin'],
+    'ppi': [
+        'omeprazole', 'esomeprazole', 'lansoprazole', 'pantoprazole',
+        'rabeprazole', 'dexlansoprazole', 'vonoprazan'
+    ],
+    'h2_blocker': ['ranitidine', 'famotidine', 'cimetidine', 'nizatidine'],
+    'cytoprotective': ['sucralfate', 'misoprostol', 'bismuth'],
+    'antispasmodic': ['dicyclomine', 'hyoscyamine', 'peppermint oil'],
+    'pancreatic_enzyme': ['pancrelipase', 'pancreatin'],
+}
+
 # h170: Selective category boosting (VALIDATED: +2.40pp, p=0.009)
 # Only boost same-category neighbors for isolated categories where it helps
 # Improves neurological +14.3pp, respiratory +16.8pp, metabolic +13.9pp
@@ -2473,6 +2519,57 @@ class DrugRepurposingPredictor:
             if any(h in drug_lower for h in REPRODUCTIVE_HORMONE_DRUGS):
                 return ConfidenceTier.HIGH  # 26.3% precision (h183)
 
+        elif category == 'gastrointestinal':
+            # h380: GI category is worst (42.9% R@30) because kNN finds wrong drug classes
+            # Apply drug class rescue similar to h171 for neurological
+            drug_lower = drug_name.lower()
+            disease_lower = disease_name.lower()
+
+            # Constipation diseases (4 failures) -> laxatives/opioid antagonists
+            if 'constipation' in disease_lower:
+                laxatives = GI_DRUG_CLASS_MEMBERS.get('laxative', [])
+                opioid_antag = GI_DRUG_CLASS_MEMBERS.get('opioid_antagonist', [])
+                if any(lax.lower() in drug_lower for lax in laxatives):
+                    return ConfidenceTier.HIGH  # Drug class rescue
+                if any(oa.lower() in drug_lower for oa in opioid_antag):
+                    return ConfidenceTier.HIGH  # Drug class rescue
+                # Opioid-induced specifically needs opioid antagonists
+                if 'opioid' in disease_lower:
+                    if any(oa.lower() in drug_lower for oa in opioid_antag):
+                        return ConfidenceTier.GOLDEN  # Higher precision for specific match
+
+            # Liver/hepatic diseases (3 failures) -> bile acid agents
+            if any(kw in disease_lower for kw in ['cholangitis', 'cholestasis', 'hepatic']):
+                bile_acid = GI_DRUG_CLASS_MEMBERS.get('bile_acid_agent', [])
+                ammonia = GI_DRUG_CLASS_MEMBERS.get('ammonia_reducer', [])
+                if any(ba.lower() in drug_lower for ba in bile_acid):
+                    return ConfidenceTier.HIGH  # Drug class rescue
+                # Hepatic encephalopathy specifically
+                if 'encephalopathy' in disease_lower:
+                    if any(am.lower() in drug_lower for am in ammonia):
+                        return ConfidenceTier.GOLDEN  # Specific match
+
+            # Ulcer/reflux diseases (1 failure) -> PPIs
+            if any(kw in disease_lower for kw in ['ulcer', 'reflux', 'gerd']):
+                ppis = GI_DRUG_CLASS_MEMBERS.get('ppi', [])
+                h2_blockers = GI_DRUG_CLASS_MEMBERS.get('h2_blocker', [])
+                cytoprotective = GI_DRUG_CLASS_MEMBERS.get('cytoprotective', [])
+                if any(ppi.lower() in drug_lower for ppi in ppis):
+                    return ConfidenceTier.HIGH  # Drug class rescue
+                if any(h2.lower() in drug_lower for h2 in h2_blockers):
+                    return ConfidenceTier.HIGH  # Drug class rescue
+                if any(cp.lower() in drug_lower for cp in cytoprotective):
+                    return ConfidenceTier.HIGH  # Drug class rescue
+
+            # IBS -> antispasmodics + laxatives
+            if 'irritable bowel' in disease_lower:
+                antispasmodics = GI_DRUG_CLASS_MEMBERS.get('antispasmodic', [])
+                laxatives = GI_DRUG_CLASS_MEMBERS.get('laxative', [])
+                if any(asp.lower() in drug_lower for asp in antispasmodics):
+                    return ConfidenceTier.HIGH  # Drug class rescue
+                if any(lax.lower() in drug_lower for lax in laxatives):
+                    return ConfidenceTier.HIGH  # Drug class rescue
+
         return None
 
     def _get_atc_level4(self, drug_name: str) -> Set[str]:
@@ -2660,6 +2757,152 @@ class DrugRepurposingPredictor:
 
         return supplemented[:top_n]
 
+    def _get_gi_drug_classes(self, disease_name: str) -> List[str]:
+        """Get appropriate drug classes for a GI disease subtype.
+
+        h380: Maps GI diseases to appropriate drug classes.
+        """
+        disease_lower = disease_name.lower()
+        matching_classes = []
+
+        for disease_key, drug_classes in GI_DISEASE_DRUG_CLASSES.items():
+            if disease_key in disease_lower:
+                matching_classes.extend(drug_classes)
+
+        return list(set(matching_classes))
+
+    def _get_gi_class_matched_drugs(self, disease_name: str) -> List[Tuple[str, str, str]]:
+        """Get drugs from appropriate classes for a GI disease.
+
+        h380: Drug-class prediction for gastrointestinal diseases.
+        Returns list of (drug_id, drug_name, drug_class) tuples sorted by training frequency.
+        """
+        drug_classes = self._get_gi_drug_classes(disease_name)
+        if not drug_classes:
+            return []
+
+        matched_drugs: List[Tuple[str, str, str, int]] = []  # (id, name, class, freq)
+
+        for drug_class in drug_classes:
+            members = GI_DRUG_CLASS_MEMBERS.get(drug_class, [])
+            for member in members:
+                # Find drug ID for this drug name
+                member_lower = member.lower()
+                if member_lower in self.name_to_drug_id:
+                    drug_id = self.name_to_drug_id[member_lower]
+                    if drug_id in self.embeddings:  # Only include drugs in DRKG
+                        freq = self.drug_train_freq.get(drug_id, 0)
+                        matched_drugs.append((drug_id, member, drug_class, freq))
+
+        # Sort by training frequency (higher frequency = more evidence)
+        matched_drugs.sort(key=lambda x: x[3], reverse=True)
+
+        # Return (drug_id, drug_name, drug_class) without freq
+        return [(d[0], d[1], d[2]) for d in matched_drugs]
+
+    def _supplement_gi_predictions(
+        self,
+        disease_name: str,
+        disease_id: str,
+        disease_tier: int,
+        category: str,
+        existing_predictions: List[DrugPrediction],
+        max_knn_score: float,
+        top_n: int,
+        include_filtered: bool,
+    ) -> List[DrugPrediction]:
+        """
+        h380: Supplement kNN predictions with drug-class-matched drugs for GI diseases.
+
+        GI category has 42.9% R@30 because kNN finds neighbors from different categories
+        (infectious, neurological) that have different drug needs. This method injects
+        drugs from appropriate classes (laxatives for constipation, PPIs for ulcer, etc.)
+        that aren't already in kNN results.
+        """
+        # Get drugs already predicted by kNN
+        existing_drug_ids = {p.drug_id for p in existing_predictions}
+
+        # Get class-matched drugs not in kNN results
+        class_matched = self._get_gi_class_matched_drugs(disease_name)
+        missing_drugs = [(d_id, d_name, d_class) for d_id, d_name, d_class in class_matched
+                         if d_id not in existing_drug_ids]
+
+        if not missing_drugs:
+            return existing_predictions
+
+        # Calculate starting position for injected drugs
+        high_tier_count = sum(1 for p in existing_predictions
+                             if p.confidence_tier in [ConfidenceTier.GOLDEN, ConfidenceTier.HIGH])
+
+        supplemented = existing_predictions.copy()
+
+        for drug_id, drug_name, drug_class in missing_drugs:
+            # Stop if we've reached top_n
+            if len(supplemented) >= top_n:
+                break
+
+            train_freq = self.drug_train_freq.get(drug_id, 0)
+            mech_support = self._compute_mechanism_support(drug_id, disease_id)
+            has_targets = drug_id in self.drug_targets and len(self.drug_targets[drug_id]) > 0
+
+            # Assign tier through normal process but mark as rescued
+            tier, _, _ = self._assign_confidence_tier(
+                rank=high_tier_count + 1,
+                train_frequency=train_freq,
+                mechanism_support=mech_support,
+                has_targets=has_targets,
+                disease_tier=disease_tier,
+                category=category,
+                drug_name=drug_name,
+                disease_name=disease_name,
+                drug_id=drug_id,
+            )
+
+            # GI class-matched drugs get at least MEDIUM tier
+            # (they have strong class-based evidence even if kNN didn't find them)
+            if tier in [ConfidenceTier.LOW, ConfidenceTier.FILTER]:
+                tier = ConfidenceTier.MEDIUM
+
+            if not include_filtered and tier == ConfidenceTier.FILTER:
+                continue
+
+            # Create synthetic score (lower than kNN max since these weren't found by kNN)
+            synthetic_score = max_knn_score * 0.5 * (1 + train_freq / 100)
+            norm_score = synthetic_score / max_knn_score if max_knn_score > 0 else 0.5
+
+            pred = DrugPrediction(
+                drug_name=drug_name,
+                drug_id=drug_id,
+                rank=len(supplemented) + 1,
+                knn_score=synthetic_score,
+                norm_score=norm_score,
+                confidence_tier=tier,
+                train_frequency=train_freq,
+                mechanism_support=mech_support,
+                has_targets=has_targets,
+                category=category,
+                disease_tier=disease_tier,
+                category_rescue_applied=True,
+                category_specific_tier="gi_class_injected",
+            )
+            supplemented.append(pred)
+
+        # Re-sort by tier priority, then by score within tier
+        tier_priority = {
+            ConfidenceTier.GOLDEN: 0,
+            ConfidenceTier.HIGH: 1,
+            ConfidenceTier.MEDIUM: 2,
+            ConfidenceTier.LOW: 3,
+            ConfidenceTier.FILTER: 4,
+        }
+        supplemented.sort(key=lambda p: (tier_priority.get(p.confidence_tier, 5), -p.knn_score))
+
+        # Re-assign ranks
+        for i, pred in enumerate(supplemented, 1):
+            pred.rank = i
+
+        return supplemented[:top_n]
+
     def find_disease_id(self, disease_name: str) -> Optional[str]:
         """Find the DRKG disease ID for a disease name."""
         # Try exact match first
@@ -2817,6 +3060,15 @@ class DrugRepurposingPredictor:
                 # Get max kNN score for normalization (use 1.0 as fallback)
                 knn_max = max(drug_scores.values()) if drug_scores else 1.0
                 predictions = self._supplement_neurological_predictions(
+                    disease_name, disease_id, disease_tier, category,
+                    predictions, knn_max, top_n, include_filtered
+                )
+
+            # h380: Supplement with drug-class predictions for GI diseases
+            # GI has 42.9% R@30 because kNN finds wrong drug classes
+            if category == 'gastrointestinal':
+                knn_max = max(drug_scores.values()) if drug_scores else 1.0
+                predictions = self._supplement_gi_predictions(
                     disease_name, disease_id, disease_tier, category,
                     predictions, knn_max, top_n, include_filtered
                 )

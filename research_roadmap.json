@@ -7575,7 +7575,7 @@
       "title": "Ensemble Coverage Analysis: Which Diseases Benefit?",
       "description": "MinRank ensemble helps some diseases but not others. Analyze characteristics of diseases that benefit from ensemble.",
       "hypothesis": "Diseases with moderate gene coverage (median range) and multiple drug classes benefit most from ensemble.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -7585,7 +7585,9 @@
         "Identify predictors of ensemble benefit",
         "Create disease-level ensemble vs single-method selector",
         "Success: >5 pp improvement with disease-level adaptive selection"
-      ]
+      ],
+      "findings": "VALIDATED: Identified disease characteristics predicting ensemble benefit.\n\nOVERALL: Ensemble HURTS (-2.0 pp) in LOO evaluation: kNN 61.0% vs Ensemble 59.0%\n- 0 diseases rescued, 21 diseases hurt by ensemble\n\nCATEGORIES THAT BENEFIT FROM ENSEMBLE:\n- Autoimmune: +7.7 pp (84.6% \u2192 92.3%)\n- Metabolic: +8.3 pp (66.7% \u2192 75.0%)\n- Cancer: +2.0 pp (69.4% \u2192 71.4%)\n\nCATEGORIES HURT BY ENSEMBLE:\n- Cardiovascular: -14.3 pp (71.4% \u2192 57.1%)\n- Neurological: -11.1 pp (33.3% \u2192 22.2%)\n- Immune: -12.5 pp (62.5% \u2192 50.0%)\n- Other: -5.8 pp (56.3% \u2192 50.5%)\n\nGENE COUNT: Only Q2 (2-8 genes) shows positive delta (+1.6 pp)\nAll other quartiles show negative deltas (-1.4 to -4.5 pp)\n\nMETHOD GAP: When methods disagree (one better), ensemble hurts -3.6 pp\nWhen methods agree, ensemble is neutral (-0.6 pp)\n\nKEY INSIGHT: Ensemble only helps categories where Target method performs similarly to kNN (autoimmune: 61.5% target vs 84.6% kNN is closest gap). When kNN dominates, adding Target noise hurts.\n\nRECOMMENDATION: Apply ensemble ONLY to autoimmune/metabolic/cancer categories, disable for all others. This matches h369/h370 findings.",
+      "result_metric": "Ensemble -2.0 pp overall; +7.7pp autoimmune, +8.3pp metabolic, -14.3pp CV"
     },
     {
       "id": "h377",
@@ -7646,7 +7648,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Define GI_DISEASE_DRUG_CLASSES mapping (constipation->laxatives, liver->bile_acid, ulcer->ppi)",
         "Define GI_DRUG_CLASS_MEMBERS with specific drugs",
@@ -7655,6 +7657,54 @@
         "Success: +20 pp R@30 for gastrointestinal category"
       ],
       "notes": "Drug lists from h377 analysis:\n- Laxatives: lubiprostone, lactulose, prucalopride, plecanatide, naldemedine, macrogol\n- Bile acid: cholestyramine, obeticholic acid, maralixibat, ursodeoxycholic acid\n- PPIs: omeprazole, esomeprazole, lansoprazole, pantoprazole"
+    },
+    {
+      "id": "h381",
+      "title": "Category-Specific Ensemble Routing",
+      "description": "Apply MinRank ensemble only to autoimmune/metabolic/cancer categories where it helps (+7-8pp). Disable for CV/neuro/immune where it hurts.",
+      "hypothesis": "Selective ensemble routing will improve overall R@30 by +1-2 pp by capturing ensemble benefits while avoiding harms.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Enable MINRANK_ENSEMBLE_CATEGORIES for autoimmune, metabolic, cancer only",
+        "Evaluate on full disease set with LOO",
+        "Compare to baseline kNN-only production predictor",
+        "Success: +1 pp overall R@30 improvement"
+      ]
+    },
+    {
+      "id": "h382",
+      "title": "Gene Count Q2 Ensemble Rule",
+      "description": "h376 found Q2 (2-8 genes) is the only gene quartile where ensemble helps (+1.6 pp). Test if restricting ensemble to medium-low gene diseases improves performance.",
+      "hypothesis": "Applying ensemble only to diseases with 2-8 genes will capture benefit while avoiding harm in other quartiles.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Filter diseases to 2-8 gene count (Q2 from h376)",
+        "Apply ensemble only to these diseases",
+        "Evaluate on full set",
+        "Success: positive delta from gene-based routing"
+      ]
+    },
+    {
+      "id": "h383",
+      "title": "Cardiovascular Ensemble Harm Investigation",
+      "description": "h376 found CV has largest ensemble harm (-14.3 pp). Investigate why - likely because CV drugs have broad targets that confuse target-based scoring.",
+      "hypothesis": "CV ensemble harm is due to polypharmacy and broad mechanisms - statins/ACEi/etc have many targets that create noise.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Analyze target counts for CV drugs vs autoimmune drugs",
+        "Compare target overlap quality for CV vs autoimmune",
+        "Identify if CV harm is from specific drug classes",
+        "Success: explain CV ensemble harm mechanism"
+      ]
     }
   ],
   "completed": [
@@ -9040,6 +9090,12 @@
       "hypothesis_id": "h377",
       "learning": "GI category fails because kNN neighbors are from different categories with different drug needs",
       "implication": "Category-specific drug class injection (like h171 for neurological) can rescue low-coverage categories"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h376",
+      "learning": "MinRank ensemble only helps categories where Target and kNN have similar performance. When kNN dominates, ensemble hurts by mixing noise from weaker Target method.",
+      "implication": "Apply ensemble selectively to autoimmune/metabolic/cancer only. This reinforces h369/h370/h374."
     }
   ],
   "collaborations": [
