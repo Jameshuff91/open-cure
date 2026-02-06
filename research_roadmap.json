@@ -8534,7 +8534,7 @@
       "title": "Nephropathy-Specific Renoprotective Drug Rescue",
       "description": "h421 investigation revealed diabetic nephropathy base_to_complication predictions have 41.7% precision (5/12) when the drug is a statin, fibrate, or ARB with known renoprotective effects. All other complication diseases have 0%. This is a specific, well-supported clinical pattern: statins reduce proteinuria, ARBs reduce intraglomerular pressure.",
       "hypothesis": "A targeted rescue rule for nephropathy + renoprotective drugs (statins, fibrates, ARBs) will have >35% holdout precision and rescue 5-12 predictions from FILTER to HIGH.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -8545,7 +8545,8 @@
         "Holdout validate (note: n=12 is very small)",
         "If precision holds, add specific rescue rule",
         "Success: >35% holdout precision for this specific pattern"
-      ]
+      ],
+      "findings": "Quick invalidation check: Only 8 nephropathy-like diseases total (diabetic nephropathy has just 4 GT drugs). With 80/20 holdout, ~2 diseases per split. Per h433, min n\u224830 for reliable holdout validation. Not worth running a full experiment. The pattern is clinically sound (ARBs/statins are renoprotective) but dataset is too small to validate."
     },
     {
       "id": "h426",
@@ -8653,7 +8654,7 @@
       "title": "Consolidate Small Hierarchy Rules into Generic Category Groups",
       "description": "h402 found 21 rules are TOO_SMALL to validate on holdout (each covers 1-2 diseases). Instead of individual hierarchy groups like scleroderma, lupus, spondylitis, consolidate into generic category-level rules that aggregate across groups. This would reduce code complexity while maintaining the precision signal.",
       "hypothesis": "Consolidating small hierarchy rules into category-level groups will maintain holdout precision while reducing code from 83 to ~40 rule-tier pairs.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8663,7 +8664,9 @@
         "Compare to individual group precision",
         "If equivalent, simplify DISEASE_HIERARCHY_GROUPS",
         "Validate on holdout"
-      ]
+      ],
+      "findings": "Small hierarchy groups should NOT be consolidated - they are the highest-precision rules.\n\nINVENTORY: 29 hierarchy groups total, 18 (62%) have <=2 diseases, generating 179 predictions.\n\nSmall groups have HIGHER precision than large groups in every category:\n- Autoimmune: small 88.2% vs large 73.4% (+14.8pp)\n- Infectious: small 86.2% vs large 47.4% (+38.8pp)\n- Neurological: small 100.0% vs large 50.0% (+50.0pp)\n- Metabolic: small 100.0% vs large 50.0% (+50.0pp)\n\nReason: 1-disease groups are essentially \"known drug lists\" for specific diseases. They match drugs treating very similar conditions, providing near-100% precision. Consolidating would dilute this signal.\n\nCategory-level precision IS high (autoimmune 81.1%, neurological 96.0%, respiratory 96.6%) but this is DRIVEN by the small groups. Removing them would lower category-level precision.\n\nOnly actionable finding: respiratory_hierarchy_pulmonary_fibrosis has 0% precision (1 prediction) - could be removed but negligible impact.\n\nKEY LEARNING: Code complexity from many small rules is not the same as bad code. These rules encode specific medical knowledge about disease subtypes. Simplification would lose clinical precision.",
+      "result_metric": "Small groups 87% precision vs large groups 62% - do NOT consolidate"
     },
     {
       "id": "h433",

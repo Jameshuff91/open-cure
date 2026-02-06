@@ -1,0 +1,299 @@
+{
+  "n_diseases": 455,
+  "tier_summary": {
+    "GOLDEN": {
+      "total": 263,
+      "gt_hits": 143,
+      "precision": 54.372623574144484
+    },
+    "HIGH": {
+      "total": 626,
+      "gt_hits": 315,
+      "precision": 50.319488817891376
+    },
+    "MEDIUM": {
+      "total": 3794,
+      "gt_hits": 935,
+      "precision": 24.644175013178703
+    },
+    "LOW": {
+      "total": 2476,
+      "gt_hits": 318,
+      "precision": 12.84329563812601
+    },
+    "FILTER": {
+      "total": 6463,
+      "gt_hits": 696,
+      "precision": 10.768992727835371
+    }
+  },
+  "rule_precision": {
+    "cv_pathway_comprehensive": {
+      "tier": "HIGH",
+      "total": 106,
+      "gt_hits": 39,
+      "precision": 36.79245283018868
+    },
+    "standard": {
+      "tier": "FILTER",
+      "total": 9699,
+      "gt_hits": 1328,
+      "precision": 13.692133209609239
+    },
+    "incoherent_demotion": {
+      "tier": "HIGH",
+      "total": 257,
+      "gt_hits": 87,
+      "precision": 33.85214007782101
+    },
+    "complication_non_validated": {
+      "tier": "FILTER",
+      "total": 77,
+      "gt_hits": 12,
+      "precision": 15.584415584415584
+    },
+    "cardiovascular_hierarchy_hypertension": {
+      "tier": "HIGH",
+      "total": 36,
+      "gt_hits": 18,
+      "precision": 50.0
+    },
+    "comp_to_base_high_87": {
+      "tier": "HIGH",
+      "total": 23,
+      "gt_hits": 7,
+      "precision": 30.434782608695656
+    },
+    "metabolic_hierarchy_diabetes": {
+      "tier": "GOLDEN",
+      "total": 71,
+      "gt_hits": 23,
+      "precision": 32.3943661971831
+    },
+    "target_overlap_promotion": {
+      "tier": "MEDIUM",
+      "total": 269,
+      "gt_hits": 130,
+      "precision": 48.3271375464684
+    },
+    "broad_class_isolated": {
+      "tier": "LOW",
+      "total": 115,
+      "gt_hits": 10,
+      "precision": 8.695652173913043
+    },
+    "cancer_same_type": {
+      "tier": "MEDIUM",
+      "total": 1132,
+      "gt_hits": 285,
+      "precision": 25.176678445229683
+    },
+    "autoimmune_hierarchy_multiple_sclerosis": {
+      "tier": "HIGH",
+      "total": 14,
+      "gt_hits": 10,
+      "precision": 71.42857142857143
+    },
+    "cross_domain_isolated": {
+      "tier": "FILTER",
+      "total": 281,
+      "gt_hits": 31,
+      "precision": 11.032028469750891
+    },
+    "base_to_complication": {
+      "tier": "FILTER",
+      "total": 32,
+      "gt_hits": 5,
+      "precision": 15.625
+    },
+    "cardiovascular": {
+      "tier": "MEDIUM",
+      "total": 41,
+      "gt_hits": 12,
+      "precision": 29.268292682926827
+    },
+    "cardiovascular_hierarchy_atherosclerosis": {
+      "tier": "HIGH",
+      "total": 6,
+      "gt_hits": 1,
+      "precision": 16.666666666666664
+    },
+    "cancer_no_gt": {
+      "tier": "FILTER",
+      "total": 310,
+      "gt_hits": 15,
+      "precision": 4.838709677419355
+    },
+    "cancer": {
+      "tier": "MEDIUM",
+      "total": 362,
+      "gt_hits": 39,
+      "precision": 10.773480662983426
+    },
+    "cardiovascular_hierarchy_arrhythmia": {
+      "tier": "HIGH",
+      "total": 47,
+      "gt_hits": 36,
+      "precision": 76.59574468085107
+    },
+    "infectious_hierarchy_uti": {
+      "tier": "HIGH",
+      "total": 16,
+      "gt_hits": 12,
+      "precision": 75.0
+    },
+    "cardiovascular_hierarchy_coronary": {
+      "tier": "HIGH",
+      "total": 33,
+      "gt_hits": 11,
+      "precision": 33.33333333333333
+    },
+    "respiratory": {
+      "tier": "MEDIUM",
+      "total": 20,
+      "gt_hits": 7,
+      "precision": 35.0
+    },
+    "autoimmune_hierarchy_rheumatoid_arthritis": {
+      "tier": "HIGH",
+      "total": 77,
+      "gt_hits": 62,
+      "precision": 80.51948051948052
+    },
+    "metabolic_hierarchy_lipid": {
+      "tier": "GOLDEN",
+      "total": 65,
+      "gt_hits": 35,
+      "precision": 53.84615384615385
+    },
+    "metabolic_hierarchy_thyroid": {
+      "tier": "HIGH",
+      "total": 41,
+      "gt_hits": 8,
+      "precision": 19.51219512195122
+    },
+    "hematological": {
+      "tier": "MEDIUM",
+      "total": 93,
+      "gt_hits": 29,
+      "precision": 31.182795698924732
+    },
+    "metabolic": {
+      "tier": "MEDIUM",
+      "total": 40,
+      "gt_hits": 4,
+      "precision": 10.0
+    },
+    "autoimmune_hierarchy_spondylitis": {
+      "tier": "HIGH",
+      "total": 20,
+      "gt_hits": 16,
+      "precision": 80.0
+    },
+    "autoimmune_hierarchy_lupus": {
+      "tier": "HIGH",
+      "total": 14,
+      "gt_hits": 12,
+      "precision": 85.71428571428571
+    },
+    "respiratory_hierarchy_asthma": {
+      "tier": "GOLDEN",
+      "total": 20,
+      "gt_hits": 14,
+      "precision": 70.0
+    },
+    "infectious_hierarchy_tuberculosis": {
+      "tier": "HIGH",
+      "total": 35,
+      "gt_hits": 22,
+      "precision": 62.857142857142854
+    },
+    "infectious_hierarchy_pneumonia": {
+      "tier": "HIGH",
+      "total": 22,
+      "gt_hits": 8,
+      "precision": 36.36363636363637
+    },
+    "autoimmune_hierarchy_colitis": {
+      "tier": "HIGH",
+      "total": 35,
+      "gt_hits": 25,
+      "precision": 71.42857142857143
+    },
+    "neurological": {
+      "tier": "HIGH",
+      "total": 5,
+      "gt_hits": 4,
+      "precision": 80.0
+    },
+    "highly_repurposable": {
+      "tier": "MEDIUM",
+      "total": 11,
+      "gt_hits": 3,
+      "precision": 27.27272727272727
+    },
+    "reproductive": {
+      "tier": "HIGH",
+      "total": 6,
+      "gt_hits": 1,
+      "precision": 16.666666666666664
+    },
+    "neurological_hierarchy_epilepsy": {
+      "tier": "GOLDEN",
+      "total": 16,
+      "gt_hits": 8,
+      "precision": 50.0
+    },
+    "mechanism_specific": {
+      "tier": "LOW",
+      "total": 107,
+      "gt_hits": 12,
+      "precision": 11.214953271028037
+    },
+    "respiratory_hierarchy_copd": {
+      "tier": "HIGH",
+      "total": 8,
+      "gt_hits": 6,
+      "precision": 75.0
+    },
+    "infectious_hierarchy_respiratory_infection": {
+      "tier": "HIGH",
+      "total": 9,
+      "gt_hits": 6,
+      "precision": 66.66666666666666
+    },
+    "metabolic_hierarchy_obesity": {
+      "tier": "GOLDEN",
+      "total": 7,
+      "gt_hits": 3,
+      "precision": 42.857142857142854
+    },
+    "cancer_only_non_cancer": {
+      "tier": "FILTER",
+      "total": 21,
+      "gt_hits": 3,
+      "precision": 14.285714285714285
+    }
+  },
+  "low_gt_hits_count": 318,
+  "low_gt_by_category": {
+    "other": 6,
+    "cancer": 14,
+    "neurological": 8,
+    "infectious": 137,
+    "dermatological": 17,
+    "ophthalmic": 10,
+    "cardiovascular": 42,
+    "renal": 9,
+    "autoimmune": 9,
+    "immunological": 3,
+    "respiratory": 8,
+    "hematological": 10,
+    "endocrine": 3,
+    "reproductive": 4,
+    "metabolic": 11,
+    "psychiatric": 7,
+    "gastrointestinal": 17,
+    "musculoskeletal": 3
+  }
+}

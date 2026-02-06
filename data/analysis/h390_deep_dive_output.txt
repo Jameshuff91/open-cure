@@ -1,0 +1,143 @@
+Loading predictor...
+
+======================================================================
+=== 1. metabolic_hierarchy_diabetes (GOLDEN, 32.4%) ===
+======================================================================
+Total: 71, GT hits: 24, Precision: 33.8%
+
+By disease (10 diseases):
+  central diabetes insipidus: 0/1 GT (0%)
+  diabetes insipidus: 0/2 GT (0%)
+  diabetes mellitus: 6/11 GT (55%)
+    ✓ Fenofibrate (freq=5, rank=2)
+    ✓ Gemfibrozil (freq=7, rank=3)
+    ✓ Colestipol (freq=5, rank=5)
+    ✓ Miglitol (freq=3, rank=12)
+    ✓ Isoniazid (freq=6, rank=13)
+    ✓ Simvastatin (freq=7, rank=16)
+  diabetic ketoacidosis: 0/1 GT (0%)
+  diabetic nephropathy: 1/1 GT (100%)
+    ✓ Captopril (freq=3, rank=17)
+  hyperglycemia: 1/7 GT (14%)
+    ✓ Glipizide (freq=4, rank=1)
+  hyperinsulinemic hypoglycemia: 1/10 GT (10%)
+    ✓ Diazoxide (freq=3, rank=1)
+  hypoglycemia: 3/15 GT (20%)
+    ✓ Diazoxide (freq=3, rank=1)
+    ✓ Glucagon (freq=4, rank=4)
+    ✓ D-glucose (freq=1, rank=8)
+  type 1 diabetes mellitus: 1/8 GT (12%)
+    ✓ Glyburide (freq=3, rank=9)
+  type 2 diabetes mellitus: 11/15 GT (73%)
+    ✓ Liraglutide (freq=6, rank=6)
+    ✓ Semaglutide (freq=7, rank=7)
+    ✓ Colesevelam (freq=3, rank=11)
+    ✓ Fenofibrate (freq=5, rank=12)
+    ✓ Pramlintide (freq=2, rank=13)
+    ✓ Saxagliptin (freq=2, rank=14)
+    ✓ Miglitol (freq=3, rank=15)
+    ✓ Glyburide (freq=3, rank=16)
+    ✓ Sitagliptin (freq=3, rank=18)
+    ✓ Dapagliflozin (freq=5, rank=19)
+    ✓ Ipragliflozin (freq=2, rank=20)
+
+GT hit freq: 4.0 ± 1.7
+Non-GT freq: 5.1 ± 3.0
+
+======================================================================
+=== 2. psychiatric MEDIUM (55.4% precision) ===
+======================================================================
+Total: 105, GT hits: 56, Precision: 53.3%
+
+Rules assigning MEDIUM:
+  target_overlap_promotion: 53/100 (53.0%)
+  standard: 3/5 (60.0%)
+
+Top drugs (GT hits):
+  Fluoxetine: 3 hits
+  Paroxetine: 3 hits
+  Sertraline: 3 hits
+  Venlafaxine: 2 hits
+  Diazepam: 2 hits
+  Trifluoperazine: 2 hits
+  Mirtazapine: 2 hits
+  Aripiprazole: 2 hits
+  Olanzapine: 2 hits
+  Loxapine: 2 hits
+
+By disease (8 diseases):
+  schizophrenia: 18/20 (90%)
+  bipolar disorder: 11/19 (58%)
+  attention deficit hyperactivity disorder adhd: 9/17 (53%)
+  agoraphobia: 7/15 (47%)
+  social anxiety disorder: 6/7 (86%)
+  obsessive compulsive disorder: 4/9 (44%)
+  major depressive disorder: 1/1 (100%)
+  hyperactive children who show excessive motor activity with accompanying conduct disorders: 0/17 (0%)
+
+======================================================================
+=== 3. incoherent_demotion (HIGH, 33.9%) ===
+======================================================================
+Total: 257, GT hits: 86, Precision: 33.5%
+
+By category:
+  gastrointestinal: 11/48 (22.9%)
+  autoimmune: 24/47 (51.1%)
+  infectious: 6/45 (13.3%)
+  dermatological: 19/42 (45.2%)
+  renal: 11/20 (55.0%)
+  ophthalmic: 9/16 (56.2%)
+  respiratory: 3/12 (25.0%)
+  hematological: 0/9 (0.0%)
+  cardiovascular: 2/8 (25.0%)
+  musculoskeletal: 1/5 (20.0%)
+  immunological: 0/3 (0.0%)
+  endocrine: 0/2 (0.0%)
+
+======================================================================
+=== 4. infectious LOW (20.5%, n=667) ===
+======================================================================
+Total: 661, GT hits: 136
+
+Rules:
+  standard: 136/639 (21.3%)
+  mechanism_specific: 0/15 (0.0%)
+  broad_class_isolated: 0/7 (0.0%)
+
+GT freq: 5.9 ± 1.9 (range: 3-9)
+Non-GT freq: 6.7 ± 5.8
+  Rank 1-5: 46/107 (43.0%)
+  Rank 6-10: 33/143 (23.1%)
+  Rank 11-15: 27/202 (13.4%)
+  Rank 16-20: 30/209 (14.4%)
+
+======================================================================
+=== 5. cardiovascular LOW (19.4%, n=216) ===
+======================================================================
+Total: 219, GT hits: 44
+
+Rules:
+  standard: 44/203 (21.7%)
+  mechanism_specific: 0/12 (0.0%)
+  broad_class_isolated: 0/4 (0.0%)
+
+By disease (top 10 by GT):
+  deep vein thrombosis: 7/14 (50.0%)
+  pulmonary embolism: 6/13 (46.2%)
+  atrial flutter: 4/9 (44.4%)
+  edema: 4/7 (57.1%)
+  stable angina: 3/8 (37.5%)
+  cardiac arrest: 3/8 (37.5%)
+  recurrent venous thromboembolism: 3/15 (20.0%)
+  myocardial infarction: 2/2 (100.0%)
+  angioedema: 2/9 (22.2%)
+  myxedema: 2/5 (40.0%)
+
+======================================================================
+=== 6. metabolic HIGH (17.3%, n=52) — below MEDIUM avg ===
+======================================================================
+Total: 50, GT hits: 9
+
+Rules:
+  metabolic_hierarchy_thyroid: 6/36 (16.7%)
+  comp_to_base_high_87: 3/14 (21.4%)

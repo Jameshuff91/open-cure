@@ -1,0 +1,217 @@
+Loading predictor...
+Analyzing rule coverage...
+  Processed 50/455 diseases...
+  Processed 100/455 diseases...
+  Processed 150/455 diseases...
+  Processed 200/455 diseases...
+  Processed 250/455 diseases...
+  Processed 300/455 diseases...
+  Processed 350/455 diseases...
+  Processed 400/455 diseases...
+  Processed 450/455 diseases...
+
+======================================================================
+=== h390: PRODUCTION TIER RULE COVERAGE ANALYSIS ===
+======================================================================
+Diseases analyzed: 455
+
+--- TIER SUMMARY ---
+Tier          Total    GT Hits  Precision  # Rules
+--------------------------------------------------
+GOLDEN          263        143      54.4%       23
+HIGH            626        315      50.3%       29
+MEDIUM         3794        935      24.6%       13
+LOW            2476        318      12.8%        4
+FILTER         6463        696      10.8%        6
+
+--- TOP RULES BY VOLUME (n>=20) ---
+Rule                                     Tier          N     GT    Prec
+----------------------------------------------------------------------
+standard                                 FILTER     9699   1328   13.7%
+cancer_same_type                         MEDIUM     1132    285   25.2%
+cancer                                   MEDIUM      362     39   10.8%
+cancer_no_gt                             FILTER      310     15    4.8%
+cross_domain_isolated                    FILTER      281     31   11.0%
+target_overlap_promotion                 MEDIUM      269    130   48.3%
+incoherent_demotion                      HIGH        257     87   33.9%
+broad_class_isolated                     LOW         115     10    8.7%
+mechanism_specific                       LOW         107     12   11.2%
+cv_pathway_comprehensive                 HIGH        106     39   36.8%
+hematological                            MEDIUM       93     29   31.2%
+complication_non_validated               FILTER       77     12   15.6%
+autoimmune_hierarchy_rheumatoid_arthritis HIGH         77     62   80.5%
+metabolic_hierarchy_diabetes             GOLDEN       71     23   32.4%
+metabolic_hierarchy_lipid                GOLDEN       65     35   53.8%
+cardiovascular_hierarchy_arrhythmia      HIGH         47     36   76.6%
+cardiovascular                           MEDIUM       41     12   29.3%
+metabolic_hierarchy_thyroid              HIGH         41      8   19.5%
+metabolic                                MEDIUM       40      4   10.0%
+cardiovascular_hierarchy_hypertension    HIGH         36     18   50.0%
+infectious_hierarchy_tuberculosis        HIGH         35     22   62.9%
+autoimmune_hierarchy_colitis             HIGH         35     25   71.4%
+cardiovascular_hierarchy_coronary        HIGH         33     11   33.3%
+base_to_complication                     FILTER       32      5   15.6%
+comp_to_base_high_87                     HIGH         23      7   30.4%
+infectious_hierarchy_pneumonia           HIGH         22      8   36.4%
+cancer_only_non_cancer                   FILTER       21      3   14.3%
+respiratory                              MEDIUM       20      7   35.0%
+autoimmune_hierarchy_spondylitis         HIGH         20     16   80.0%
+respiratory_hierarchy_asthma             GOLDEN       20     14   70.0%
+
+--- RULES SORTED BY PRECISION (n>=10) ---
+Rule                                     Tier          N     GT    Prec
+----------------------------------------------------------------------
+autoimmune_hierarchy_lupus               HIGH         14     12   85.7%
+autoimmune_hierarchy_rheumatoid_arthritis HIGH         77     62   80.5%
+autoimmune_hierarchy_spondylitis         HIGH         20     16   80.0%
+cardiovascular_hierarchy_arrhythmia      HIGH         47     36   76.6%
+infectious_hierarchy_uti                 HIGH         16     12   75.0%
+autoimmune_hierarchy_multiple_sclerosis  HIGH         14     10   71.4%
+autoimmune_hierarchy_colitis             HIGH         35     25   71.4%
+respiratory_hierarchy_asthma             GOLDEN       20     14   70.0%
+infectious_hierarchy_tuberculosis        HIGH         35     22   62.9%
+metabolic_hierarchy_lipid                GOLDEN       65     35   53.8%
+cardiovascular_hierarchy_hypertension    HIGH         36     18   50.0%
+neurological_hierarchy_epilepsy          GOLDEN       16      8   50.0%
+target_overlap_promotion                 MEDIUM      269    130   48.3% ← POTENTIAL UPGRADE
+cv_pathway_comprehensive                 HIGH        106     39   36.8%
+infectious_hierarchy_pneumonia           HIGH         22      8   36.4%
+respiratory                              MEDIUM       20      7   35.0% ← POTENTIAL UPGRADE
+incoherent_demotion                      HIGH        257     87   33.9%
+cardiovascular_hierarchy_coronary        HIGH         33     11   33.3%
+metabolic_hierarchy_diabetes             GOLDEN       71     23   32.4%
+hematological                            MEDIUM       93     29   31.2% ← POTENTIAL UPGRADE
+comp_to_base_high_87                     HIGH         23      7   30.4%
+cardiovascular                           MEDIUM       41     12   29.3%
+highly_repurposable                      MEDIUM       11      3   27.3%
+cancer_same_type                         MEDIUM     1132    285   25.2%
+metabolic_hierarchy_thyroid              HIGH         41      8   19.5%
+base_to_complication                     FILTER       32      5   15.6%
+complication_non_validated               FILTER       77     12   15.6%
+cancer_only_non_cancer                   FILTER       21      3   14.3%
+standard                                 FILTER     9699   1328   13.7%
+mechanism_specific                       LOW         107     12   11.2%
+cross_domain_isolated                    FILTER      281     31   11.0%
+cancer                                   MEDIUM      362     39   10.8%
+metabolic                                MEDIUM       40      4   10.0%
+broad_class_isolated                     LOW         115     10    8.7%
+cancer_no_gt                             FILTER      310     15    4.8%
+
+--- LOW TIER GT HITS (rescue candidates) ---
+Total LOW tier GT hits: 318
+
+By category:
+  infectious: 137 GT hits in LOW tier
+    freq: 5.9 ± 1.9, mechanism: 0/137 (0%), rank: 9.6
+    - Streptomycin → plague (freq=4, mech=False, rank=10)
+    - Sulfadiazine → plague (freq=9, mech=False, rank=15)
+    - Moxifloxacin → plague (freq=9, mech=False, rank=16)
+  cardiovascular: 42 GT hits in LOW tier
+    freq: 4.6 ± 1.5, mechanism: 0/42 (0%), rank: 8.9
+    - Niacin → atherosclerosis (freq=6, mech=False, rank=9)
+    - Esmolol → myocardial infarction (freq=5, mech=False, rank=18)
+    - Landiolol → myocardial infarction (freq=4, mech=False, rank=19)
+  dermatological: 17 GT hits in LOW tier
+    freq: 6.4 ± 1.9, mechanism: 1/17 (6%), rank: 12.8
+    - Salicylic acid → acne vulgaris (freq=8, mech=False, rank=6)
+    - Sulfacetamide → acne vulgaris (freq=3, mech=False, rank=14)
+    - Clindamycin → acne vulgaris (freq=6, mech=False, rank=20)
+  gastrointestinal: 17 GT hits in LOW tier
+    freq: 5.7 ± 1.8, mechanism: 0/17 (0%), rank: 11.6
+    - Metronidazole → peritonitis (freq=8, mech=False, rank=3)
+    - Clindamycin → peritonitis (freq=6, mech=False, rank=4)
+    - Vancomycin → peritonitis (freq=8, mech=False, rank=9)
+  cancer: 14 GT hits in LOW tier
+    freq: 14.1 ± 12.2, mechanism: 4/14 (29%), rank: 11.4
+    - Cyclophosphamide → breast cancer (freq=10, mech=True, rank=2)
+    - Dexamethasone → multiple myeloma (freq=42, mech=True, rank=18)
+    - Bleomycin → melanoma (freq=10, mech=False, rank=3)
+  metabolic: 11 GT hits in LOW tier
+    freq: 4.5 ± 1.3, mechanism: 0/11 (0%), rank: 7.9
+    - Cyanocobalamin → hyperthyroidism (freq=6, mech=False, rank=12)
+    - Levothyroxine → hypercholesterolemia (freq=4, mech=False, rank=18)
+    - Chlorpromazine → acute intermittent porphyria (freq=4, mech=False, rank=1)
+  ophthalmic: 10 GT hits in LOW tier
+    freq: 7.0 ± 1.3, mechanism: 0/10 (0%), rank: 14.5
+    - Ofloxacin → conjunctivitis (freq=6, mech=False, rank=6)
+    - Cyclosporine → conjunctivitis (freq=8, mech=False, rank=20)
+    - Cyclosporine → keratitis (freq=8, mech=False, rank=11)
+  hematological: 10 GT hits in LOW tier
+    freq: 6.0 ± 2.1, mechanism: 0/10 (0%), rank: 7.6
+    - Fludarabine → anemia (freq=9, mech=False, rank=12)
+    - Cyanocobalamin → pernicious anemia (freq=6, mech=False, rank=1)
+    - Cyanocobalamin → sickle cell anemia (freq=6, mech=False, rank=1)
+  renal: 9 GT hits in LOW tier
+    freq: 15.7 ± 13.8, mechanism: 0/9 (0%), rank: 12.0
+    - Aztreonam → pyelonephritis (freq=8, mech=False, rank=13)
+    - Cefazolin → pyelonephritis (freq=4, mech=False, rank=16)
+    - Sitafloxacin → pyelonephritis (freq=8, mech=False, rank=20)
+  autoimmune: 9 GT hits in LOW tier
+    freq: 7.3 ± 4.3, mechanism: 1/9 (11%), rank: 12.3
+    - Eculizumab → systemic myasthenia gravis (freq=4, mech=False, rank=16)
+    - Salicylic acid → psoriasis vulgaris (freq=8, mech=False, rank=1)
+    - Gentamicin → psoriasis vulgaris (freq=17, mech=False, rank=8)
+  neurological: 8 GT hits in LOW tier
+    freq: 3.8 ± 0.8, mechanism: 0/8 (0%), rank: 6.1
+    - Carbamazepine → cerebral palsy (freq=3, mech=False, rank=3)
+    - Dantrolene → cerebral palsy (freq=4, mech=False, rank=7)
+    - Diazepam → cerebral palsy (freq=5, mech=False, rank=9)
+  respiratory: 8 GT hits in LOW tier
+    freq: 4.8 ± 1.6, mechanism: 0/8 (0%), rank: 12.0
+    - Clarithromycin → chronic bronchitis (freq=5, mech=False, rank=9)
+    - Acetylcysteine → chronic bronchitis (freq=6, mech=False, rank=17)
+    - Cetirizine → seasonal allergic rhinitis (freq=3, mech=False, rank=13)
+  psychiatric: 7 GT hits in LOW tier
+    freq: 9.7 ± 13.7, mechanism: 0/7 (0%), rank: 3.4
+    - Paroxetine → major depressive disorder (freq=4, mech=False, rank=1)
+    - Sertraline → major depressive disorder (freq=3, mech=False, rank=2)
+    - Sertraline → social anxiety disorder (freq=3, mech=False, rank=2)
+  other: 6 GT hits in LOW tier
+    freq: 17.7 ± 18.0, mechanism: 2/6 (33%), rank: 11.0
+    - Lidocaine → pain (freq=43, mech=True, rank=20)
+    - Lidocaine → chronic pain (freq=43, mech=True, rank=1)
+    - Morphine → chronic pain (freq=4, mech=False, rank=14)
+  reproductive: 4 GT hits in LOW tier
+    freq: 6.0 ± 1.2, mechanism: 0/4 (0%), rank: 14.2
+    - Cefotaxime → endometritis (freq=5, mech=False, rank=12)
+    - Cefoxitin → endometritis (freq=5, mech=False, rank=14)
+    - Aztreonam → endometritis (freq=8, mech=False, rank=15)
+  immunological: 3 GT hits in LOW tier
+    freq: 6.0 ± 0.8, mechanism: 0/3 (0%), rank: 1.3
+    - Promethazine → anaphylaxis (freq=5, mech=False, rank=1)
+    - Epinephrine → anaphylaxis (freq=6, mech=False, rank=2)
+    - Human immunoglobulin G → common variable immunodeficiency disease (freq=7, mech=False, rank=1)
+  endocrine: 3 GT hits in LOW tier
+    freq: 4.7 ± 0.9, mechanism: 0/3 (0%), rank: 14.3
+    - Indomethacin → secondary adrenocortical insufficiency (freq=6, mech=False, rank=14)
+    - Budesonide → secondary adrenocortical insufficiency (freq=4, mech=False, rank=16)
+    - Bromocriptine → hypogonadotropic hypogonadism (freq=4, mech=False, rank=13)
+  musculoskeletal: 3 GT hits in LOW tier
+    freq: 6.0 ± 0.0, mechanism: 0/3 (0%), rank: 13.3
+    - Naproxen → bursitis (freq=6, mech=False, rank=14)
+    - Indomethacin → bursitis (freq=6, mech=False, rank=15)
+    - Indomethacin → tendinitis (freq=6, mech=False, rank=11)
+
+--- CATEGORY × TIER PRECISION ---
+Category                 GOLDEN       HIGH     MEDIUM        LOW     FILTER
+---------------------------------------------------------------------------
+autoimmune               89.4%( 47)     66.5%(161)     28.0%(239)      9.3%( 97)     17.9%(352)
+cancer                  n=1      n=2       23.6%(1322)      6.8%(205)      5.8%(656)
+cardiovascular           54.8%( 31)     42.6%(223)     20.6%(160)     19.4%(216)     17.0%(540)
+dermatological                -     45.2%( 42)     28.4%(268)      9.6%(178)      9.0%(411)
+endocrine                     -          -     23.1%( 26)     18.8%( 16)     18.8%( 48)
+gastrointestinal              -    n=1       12.9%(209)     12.3%(138)     11.0%(372)
+hematological                 -          -     22.3%(175)      7.0%(142)      5.8%(343)
+immunological                 -          -     31.8%( 44)     10.0%( 30)     18.4%( 76)
+infectious              n=4       58.5%( 82)     23.7%(636)     20.5%(667)     11.6%(1126)
+metabolic                43.2%(155)     17.3%( 52)     16.2%(111)      5.6%(198)      9.0%(796)
+musculoskeletal               -          -     33.3%( 66)      7.3%( 41)      1.0%( 99)
+neurological             50.0%( 20)     80.0%(  5)     15.4%( 52)      6.4%(125)      6.6%(518)
+ophthalmic                    -     52.9%( 17)     27.6%(145)     11.8%( 85)      4.9%(263)
+other                         -          -     32.3%( 62)      8.8%( 68)     10.5%(228)
+psychiatric                   -          -     55.4%(101)     20.6%( 34)     29.1%(165)
+renal                         -          -     31.9%( 69)     14.3%( 63)     13.7%(168)
+reproductive                  -     16.7%(  6)      5.0%( 20)     15.4%( 26)      4.1%( 98)
+respiratory             100.0%(  5)     57.1%( 35)     25.8%( 89)      5.4%(147)     15.7%(204)
+
+Saved to /Users/jimhuff/github/open-cure/data/analysis/h390_rule_coverage.json

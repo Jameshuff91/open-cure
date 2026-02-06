@@ -1,0 +1,63 @@
+Loading predictor...
+Total diseases: 455
+
+=== PHASE 1: Global Alpha Sweep (Full Data) ===
+  alpha= 0.0: R@30= 20.7%  [hematological=19.2%, immunological=23.2%, metabolic=20.8%, neurological=21.9%, renal=9.0%, respiratory=13.9%]
+  alpha= 0.1: R@30= 20.8%  [hematological=19.4%, immunological=23.2%, metabolic=21.0%, neurological=23.5%, renal=8.1%, respiratory=13.9%]
+  alpha= 0.3: R@30= 20.8%  [hematological=19.8%, immunological=23.2%, metabolic=21.4%, neurological=21.7%, renal=9.2%, respiratory=13.5%]
+  alpha= 0.5: R@30= 20.9%  [hematological=20.7%, immunological=21.9%, metabolic=22.3%, neurological=20.1%, renal=9.3%, respiratory=14.3%]
+  alpha= 0.7: R@30= 20.7%  [hematological=20.6%, immunological=21.9%, metabolic=22.4%, neurological=17.6%, renal=9.4%, respiratory=14.0%]
+  alpha= 1.0: R@30= 20.7%  [hematological=20.1%, immunological=21.9%, metabolic=22.4%, neurological=17.6%, renal=9.3%, respiratory=12.4%]
+  alpha= 1.5: R@30= 20.6%  [hematological=20.1%, immunological=23.3%, metabolic=22.4%, neurological=17.4%, renal=9.5%, respiratory=10.2%]
+  alpha= 2.0: R@30= 20.5%  [hematological=20.1%, immunological=20.4%, metabolic=22.4%, neurological=17.4%, renal=9.5%, respiratory=10.0%]
+
+=== PHASE 2: Holdout Validation (5-seed) ===
+  Seed 42 complete
+  Seed 123 complete
+  Seed 456 complete
+  Seed 789 complete
+  Seed 2024 complete
+
+======================================================================
+=== HOLDOUT SUMMARY ===
+======================================================================
+
+ Alpha |     R@30 (holdout) |  Improvement
+---------------------------------------------
+   0.0 |  15.1% ±  2.3% |  +0.0pp
+   0.3 |  15.1% ±  2.2% |  -0.0pp
+   0.5 |  14.8% ±  2.1% |  -0.3pp
+   0.7 |  14.7% ±  2.1% |  -0.3pp
+   1.0 |  14.6% ±  2.0% |  -0.5pp
+
+=== CATEGORY-SPECIFIC R@30 (holdout avg) ===
+Category        | α=0.0 | α=0.3 | α=0.5 | α=0.7 | α=1.0 |
+----------------------------------------------------------------------
+hematological   |  10.5%  |  14.1%  |  11.1%  |  11.4%  |  11.4%  |
+immunological   |   8.6%  |   4.9%  |   4.7%  |   4.7%  |   4.7%  |
+metabolic       |   9.9%  |   9.8%  |   8.1%  |   7.5%  |   7.5%  |
+neurological    |  11.3%  |   8.6%  |   7.9%  |   7.7%  |   4.6%  |
+renal           |   5.4%  |   6.1%  |   6.5%  |   6.4%  |   6.4%  |
+respiratory     |  19.5%  |  19.1%  |  18.3%  |  17.8%  |  16.4%  |
+
+---Non-boosted---
+autoimmune      |  19.3%  |  19.3%  |  19.3%  |  19.3%  |  19.3%  |
+cancer          |  12.1%  |  12.1%  |  12.1%  |  12.1%  |  12.1%  |
+cardiovascular  |   8.9%  |   8.9%  |   8.9%  |   8.9%  |   8.9%  |
+dermatological  |  16.2%  |  16.2%  |  16.2%  |  16.2%  |  16.2%  |
+endocrine       |  22.8%  |  22.8%  |  22.8%  |  22.8%  |  22.8%  |
+gastrointestinal |   6.1%  |   6.1%  |   6.1%  |   6.1%  |   6.1%  |
+infectious      |  25.9%  |  25.9%  |  25.9%  |  25.9%  |  25.9%  |
+musculoskeletal |  38.6%  |  38.6%  |  38.6%  |  38.6%  |  38.6%  |
+ophthalmic      |  13.5%  |  13.5%  |  13.5%  |  13.5%  |  13.5%  |
+other           |   9.5%  |   9.5%  |   9.5%  |   9.5%  |   9.5%  |
+psychiatric     |   9.3%  |   9.3%  |   9.3%  |   9.3%  |   9.3%  |
+reproductive    |   2.1%  |   2.1%  |   2.1%  |   2.1%  |   2.1%  |
+
+Best alpha: 0.0 (R@30=15.1%)
+Current alpha=0.5: R@30=14.8%
+Improvement: +0.3pp
+
+Conclusion: Current alpha=0.5 is near-optimal. No change needed.
+
+Saved to /Users/jimhuff/github/open-cure/data/analysis/h414_alpha_optimization.json

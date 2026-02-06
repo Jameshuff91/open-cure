@@ -1,0 +1,121 @@
+======================================================================
+h436: kNN Bootstrap Ensemble for Rank Stability
+======================================================================
+
+Loading predictor...
+Loaded in 0.1s
+
+Diseases with GT and embeddings: 455
+
+======================================================================
+PART 1: Standard vs Bootstrap Rank Stability (full data)
+======================================================================
+
+Running on 455 diseases...
+  50/455 (0.1s elapsed, ~1s remaining)
+  100/455 (0.2s elapsed, ~1s remaining)
+  150/455 (0.4s elapsed, ~1s remaining)
+  200/455 (0.5s elapsed, ~1s remaining)
+  250/455 (0.6s elapsed, ~1s remaining)
+  300/455 (0.7s elapsed, ~0s remaining)
+  350/455 (0.9s elapsed, ~0s remaining)
+  400/455 (1.0s elapsed, ~0s remaining)
+  450/455 (1.1s elapsed, ~0s remaining)
+
+Completed in 1.1s
+
+--- Rank Changes (Standard → Bootstrap) ---
+Diseases analyzed: 455
+Mean top-20 overlap: 15.7/20 (78.4%)
+Mean top-30 overlap: 24.0/30 (79.9%)
+Mean drugs promoted (21-30 → top-20): 1.94
+Mean drugs demoted (top-20 → 21-30): 2.38
+Mean boundary crossings (promoted+demoted): 4.33
+
+--- Recall ---
+Standard kNN:  R@20 = 73.05%, R@30 = 87.47%
+Bootstrap kNN: R@20 = 68.85%, R@30 = 84.56%
+Delta R@20: -4.20pp
+Delta R@30: -2.91pp
+
+--- Per-Disease Impact ---
+Bootstrap improves: 8 diseases
+Bootstrap hurts:    40 diseases
+No change:          407 diseases
+
+======================================================================
+PART 2: Bootstrap Stability Under Holdout
+======================================================================
+(Testing if bootstrap reduces full→holdout rank changes)
+
+--- Seed 42 ---
+  Holdout diseases: 91
+  Standard R@30: 42.77%
+  Bootstrap R@30: 39.41%
+  Delta: -3.35pp
+  Mean boundary crossings (std vs boot): 4.37
+
+--- Seed 123 ---
+  Holdout diseases: 91
+  Standard R@30: 39.97%
+  Bootstrap R@30: 38.79%
+  Delta: -1.18pp
+  Mean boundary crossings (std vs boot): 5.46
+
+--- Seed 456 ---
+  Holdout diseases: 91
+  Standard R@30: 40.03%
+  Bootstrap R@30: 38.77%
+  Delta: -1.27pp
+  Mean boundary crossings (std vs boot): 4.63
+
+--- Seed 789 ---
+  Holdout diseases: 91
+  Standard R@30: 37.86%
+  Bootstrap R@30: 37.29%
+  Delta: -0.57pp
+  Mean boundary crossings (std vs boot): 3.79
+
+--- Seed 2024 ---
+  Holdout diseases: 91
+  Standard R@30: 36.43%
+  Bootstrap R@30: 35.12%
+  Delta: -1.31pp
+  Mean boundary crossings (std vs boot): 4.01
+
+--- Holdout Summary (5-seed) ---
+Standard R@30: 39.41% +/- 2.16%
+Bootstrap R@30: 37.88% +/- 1.54%
+Delta: -1.54pp
+
+======================================================================
+PART 3: Full→Holdout Rank Drift (Bootstrap vs Standard)
+======================================================================
+(Does bootstrap reduce the number of drugs that cross rank-20 boundary
+ when going from full data to holdout?)
+
+Computing full-data rankings for holdout diseases...
+Computing holdout rankings...
+
+--- Full→Holdout Rank Drift (seed=42) ---
+Diseases compared: 91
+Standard: Mean 5.51 drugs leave top-20 (std: 3.95)
+Bootstrap: Mean 7.19 drugs leave top-20 (std: 3.68)
+Reduction: -30.5%
+
+Jaccard overlap (full→holdout top-20):
+Standard: 0.603 ± 0.227
+Bootstrap: 0.498 ± 0.198
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h436_bootstrap_knn.json
+
+======================================================================
+SUMMARY
+======================================================================
+Bootstrap stabilizes rankings? Top-20 overlap: 15.7/20
+Full-data R@30: Standard 87.47% vs Bootstrap 84.56%
+Holdout R@30: Standard 39.41% ± 2.16% vs Bootstrap 37.88% ± 1.54%
+Full→Holdout drift reduction: -30.5%
+Jaccard improvement: 0.603 → 0.498
+
+** Bootstrap does NOT meaningfully reduce rank drift. Hypothesis invalidated. **
