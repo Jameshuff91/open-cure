@@ -8439,13 +8439,15 @@
       "priority": 2,
       "expected_impact": "high",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Run batch_predict for all diseases with current production_predictor.py",
         "Generate updated Excel deliverable",
         "Compare tier distributions before/after to quantify changes",
         "Success: updated deliverable with accurate confidence tiers"
-      ]
+      ],
+      "findings": "Regenerated production deliverable with current tier rules.\n\nPrevious: ~13,416 predictions with 58% stale categories\nCurrent: 14,150 predictions with accurate tiers from h395/h396/h398/h399/h415\n\nTier distribution:\n- GOLDEN: 367 (2.6%) at 62.4% precision\n- HIGH: 611 (4.3%) at 54.3% precision\n- MEDIUM: 3,993 (28.2%) at 25.8% precision\n- LOW: 1,929 (13.6%) at 11.9% precision\n- FILTER: 7,250 (51.2%) at 11.4% precision\n\n473 diseases, 1,012 unique drugs, 2,645 known indications.\nGeneration time: ~11 seconds.",
+      "result_metric": "14,150 predictions regenerated with current tier rules"
     }
   ],
   "completed": [
