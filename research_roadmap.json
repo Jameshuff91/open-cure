@@ -8388,7 +8388,7 @@
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Collect all FILTER predictions at rank 21-30",
         "Remove the ones now rescued by hierarchy/cv_pathway (h399)",
@@ -8396,7 +8396,9 @@
         "Identify feature combinations with >25% precision",
         "If found, implement additional rank>20 rescue rules",
         "Success: identify >50 additional rescuable predictions at >25% precision"
-      ]
+      ],
+      "findings": "Comprehensive analysis of 4,690 rank 21-30 predictions (all currently FILTER).\n\nKEY FINDINGS:\n1. Overall precision at rank 21-30: 10.3% (481/4690 GT hits)\n2. Best single feature: mechanism_support = 26.3% (n=900)\n3. Best combination (non-hierarchy): target_overlap>=3 = 32.7% full-data (n=346, 113 GT hits)\n4. Note: overlap>=3 and overlap3_AND_mech are IDENTICAL - target overlap implies mechanism support\n5. hierarchy_match = 36.0% full-data (n=339, 122 hits) - but h418 showed this fails holdout\n6. ATC coherence: ~54% of rank 21-30 predictions are ATC-coherent\n\nHOLDOUT VALIDATION (5-seed, 80/20):\n- overlap>=3: 23.6% \u00b1 5.1% holdout (vs 32.7% full, -9.1pp drop)\n- freq10_mech: 27.6% \u00b1 17.3% holdout (too few samples, n\u224815)\n- Current MEDIUM holdout: 20.9% \u00b1 1.8%\n\nIMPACT ASSESSMENT:\n- Rescued overlap>=3 predictions at 23.6% are ABOVE MEDIUM holdout avg (20.9%)\n- But MEDIUM tier would only drop 0.5pp (20.9% \u2192 20.4%) with rescue added\n- Effect size is within noise of MEDIUM std (1.8%)\n\nDECISION: NOT IMPLEMENTED. The holdout validation is marginal:\n- 23.6% vs 20.9% MEDIUM avg = only 2.7pp advantage (within std)\n- 9.1pp full-to-holdout drop suggests some overfitting\n- Given h418 precedent (hierarchy rescue reverted), conservative approach warranted\n- The signal EXISTS but is not strong enough to justify adding another rank>20 exception\n\nCATEGORY INSIGHTS:\n- Psychiatric: 28% precision at rank 21-30 (best category)\n- Immunological: 22%, Autoimmune: 17.9%, CV: 17.8%\n- Neurological: 1.8%, Musculoskeletal: 1.3% (worst categories)\n\nNEW FINDING: target overlap is a more generalizable signal than hierarchy for rank>20 rescue (23.6% holdout vs hierarchy failure). Future work could re-evaluate if rank>20 filter is adjusted to 25 or 30.",
+      "result_metric": "Best non-hierarchy rescue: overlap>=3 at 23.6% holdout precision (above MEDIUM avg 20.9% but within noise). NOT implemented."
     },
     {
       "id": "h418",
@@ -8456,12 +8458,82 @@
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Change base_to_complication from FILTER to MEDIUM in _assign_confidence_tier",
         "Verify full-data tier precision impact",
         "Run holdout validation",
         "Success: MEDIUM precision unchanged or improved, FILTER precision drops slightly"
+      ],
+      "findings": "INVALIDATED: base_to_complication actual precision is 15.6% (5/32), NOT 28.1% as h412 reported.\n\nCRITICAL FINDING: The signal is ENTIRELY from diabetic nephropathy:\n- Diabetic nephropathy: 5/12 = 41.7% (statins, fibrates, ARBs - known renoprotective)\n- Diabetic ketoacidosis: 0/7 = 0%\n- Proliferative diabetic retinopathy: 0/6 = 0%  \n- Uremia: 0/7 = 0%\n- Diabetic foot infection: 0/1 = 0%\nWithout nephropathy: 0/20 = 0%\n\nAt 15.6% overall, base_to_complication is above FILTER (10.6%) but below MEDIUM (24.7%). \nHowever, a blanket demotion to MEDIUM would be incorrect since 4 of 5 diseases have 0% precision.\n\nThe correct approach would be a nephropathy-specific rescue rule rather than a blanket demotion.\nBut n=12 for nephropathy is too small for holdout validation.\n\nKeeping base_to_complication as FILTER is the correct conservative choice.",
+      "result_metric": "15.6% precision (not 28.1% as h412 claimed). Signal entirely from nephropathy (41.7%). NOT implemented."
+    },
+    {
+      "id": "h422",
+      "title": "Expand Top-N from 30 to 50 with Target Overlap Rescue",
+      "description": "h417 showed target_overlap>=3 at rank 21-30 has 23.6% holdout precision (above MEDIUM avg 20.9%). The current top_n=30 hard limit means we never see predictions at rank 31-50. If overlap>=3 continues to be a strong signal beyond rank 30, expanding top_n and applying the overlap rescue could yield more high-quality predictions without hurting tier precision. The key insight: target overlap is a drug-level feature that generalizes better than hierarchy groups.",
+      "hypothesis": "Predictions at rank 31-50 with target_overlap>=3 will have >20% precision, making them worth including as MEDIUM tier predictions.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Modify predict() to generate top_n=50 predictions",
+        "Compute target_overlap for rank 31-50 predictions",
+        "Measure precision by rank bucket (31-40, 41-50) for overlap>=3",
+        "Run holdout validation",
+        "Success: >20% holdout precision for overlap>=3 at rank 31-50"
+      ]
+    },
+    {
+      "id": "h423",
+      "title": "Category-Specific Rank Cutoffs Instead of Global rank>20",
+      "description": "h417 showed massive precision variation by category at rank 21-30: psychiatric 28%, immunological 22%, autoimmune 17.9% vs neurological 1.8%, musculoskeletal 1.3%. The global rank>20 FILTER is too aggressive for some categories and too lenient for others. Category-specific rank cutoffs could rescue high-precision categories while maintaining FILTER for low-precision ones.",
+      "hypothesis": "Using category-specific rank cutoffs (e.g., psychiatric rank<=25, neurological rank<=15) will improve overall tier precision without hurting any individual tier.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Compute precision by rank bucket (1-10, 11-20, 21-30) for each category",
+        "Identify categories where rank 21-25 or 21-30 have >MEDIUM precision",
+        "Propose category-specific rank cutoffs",
+        "Run holdout validation",
+        "Success: improved tier precision for high-precision categories without regression"
+      ]
+    },
+    {
+      "id": "h424",
+      "title": "Fix h412 Precision Discrepancy for base_to_complication",
+      "description": "h421 investigation found base_to_complication has 15.6% precision (5/32), NOT 28.1% (9/32) as h412 reported. The discrepancy needs investigation: was h412 using a different code version, different GT, or different counting method? Understanding this prevents future analysis errors.",
+      "hypothesis": "The h412 precision discrepancy is due to code changes between h412 and h421 investigation (possibly h415 ATC rule removal or h420 deliverable regeneration changed base_to_complication assignments).",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Check git diff between h412 commit and current for _is_base_to_complication",
+        "Compare h412 analysis output file with current results",
+        "Identify which 4 predictions were counted as hits in h412 but not now",
+        "Document the root cause"
+      ]
+    },
+    {
+      "id": "h425",
+      "title": "Nephropathy-Specific Renoprotective Drug Rescue",
+      "description": "h421 investigation revealed diabetic nephropathy base_to_complication predictions have 41.7% precision (5/12) when the drug is a statin, fibrate, or ARB with known renoprotective effects. All other complication diseases have 0%. This is a specific, well-supported clinical pattern: statins reduce proteinuria, ARBs reduce intraglomerular pressure.",
+      "hypothesis": "A targeted rescue rule for nephropathy + renoprotective drugs (statins, fibrates, ARBs) will have >35% holdout precision and rescue 5-12 predictions from FILTER to HIGH.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Define renoprotective drug classes: statins, fibrates, ARBs, ACE inhibitors",
+        "Check if SGLT2 inhibitors (newer renoprotective evidence) also appear",
+        "Measure precision for nephropathy + renoprotective",
+        "Holdout validate (note: n=12 is very small)",
+        "If precision holds, add specific rescue rule",
+        "Success: >35% holdout precision for this specific pattern"
       ]
     }
   ],

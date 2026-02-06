@@ -1,6 +1,63 @@
 # Research Loop Progress
 
-## Current Session: h399, h418, h415, h420, h412 (2026-02-05)
+## Current Session: h417, h421 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 2**
+- h417: Rank 21-30 Rule Coverage Gap Analysis - **VALIDATED** (findings useful, no implementation)
+- h421: Demote base_to_complication from FILTER to MEDIUM - **INVALIDATED** (15.6% precision, not 28.1%)
+
+### h417: Rank 21-30 Rule Coverage Gap Analysis - VALIDATED
+
+**Hypothesis:** Beyond hierarchy matches, are there other high-precision signals at rank 21-30 that could rescue predictions from FILTER?
+
+**Key Findings:**
+1. Overall rank 21-30 precision: 10.3% (481/4690 GT hits)
+2. Best non-hierarchy signal: **target_overlap>=3 = 32.7% full-data** (n=346, 113 GT hits)
+3. Target overlap>=3 implies mechanism_support (identical results)
+4. freq>=10 + mechanism: 27.3% full-data (n=128)
+5. Category variation: psychiatric 28%, immunological 22% vs neurological 1.8%
+
+**Holdout Validation (5-seed, 80/20):**
+
+| Rule | Full-Data | Holdout (5-seed) | Delta |
+|------|-----------|------------------|-------|
+| overlap>=3 | 32.7% | 23.6% ± 5.1% | -9.1pp |
+| freq10_mech | 31.4% | 27.6% ± 17.3% | -3.8pp (n≈15) |
+| Current MEDIUM | 24.7% | 20.9% ± 1.8% | — |
+
+**Decision:** NOT IMPLEMENTED. While overlap>=3 holdout (23.6%) exceeds MEDIUM avg (20.9%), the 9.1pp full-to-holdout drop and small effect size (2.7pp above MEDIUM, within std) doesn't justify adding another rank>20 exception given h418 precedent.
+
+**Key Insight:** Target overlap is MORE generalizable than hierarchy for rank>20 rescue (23.6% holdout vs hierarchy failure), but still not strong enough to overcome the rank>20 filter. The filter is doing its job.
+
+### h421: Demote base_to_complication from FILTER to MEDIUM - INVALIDATED
+
+**Hypothesis:** h412 found base_to_complication has 28.1% precision. Demote from FILTER to MEDIUM.
+
+**Key Findings:**
+1. Actual precision is **15.6% (5/32)**, NOT 28.1% as h412 reported
+2. Signal is ENTIRELY from diabetic nephropathy: **5/12 = 41.7%**
+3. Other complications have 0% precision: DKA 0/7, retinopathy 0/6, uremia 0/7
+4. Nephropathy hits are all statins/fibrates/ARBs (known renoprotective drugs)
+5. Blanket demotion to MEDIUM would be wrong since 4/5 diseases have 0%
+
+### New Hypotheses Generated
+- **h422:** Expand Top-N from 30 to 50 with Target Overlap Rescue - Priority 4
+- **h423:** Category-Specific Rank Cutoffs Instead of Global rank>20 - Priority 3
+- **h424:** Fix h412 Precision Discrepancy for base_to_complication - Priority 4
+- **h425:** Nephropathy-Specific Renoprotective Drug Rescue - Priority 4
+
+### Recommended Next Steps
+1. **h423:** Category-specific rank cutoffs - promising given psychiatric (28%) vs neuro (1.8%) gap
+2. **h402:** Simplify Production Predictor - high impact, depends on understanding which rules matter
+3. **h390:** Production Tier Rule Coverage Analysis - understand rule interaction patterns
+
+---
+
+## Previous Session: h399, h418, h415, h420, h412 (2026-02-05)
 
 ### Session Summary
 

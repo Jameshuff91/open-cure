@@ -1,0 +1,485 @@
+{
+  "full_data": {
+    "current_tiers": {
+      "GOLDEN": {
+        "hits": 147,
+        "total": 265,
+        "precision": 55.5
+      },
+      "HIGH": {
+        "hits": 310,
+        "total": 618,
+        "precision": 50.2
+      },
+      "MEDIUM": {
+        "hits": 927,
+        "total": 3760,
+        "precision": 24.7
+      },
+      "LOW": {
+        "hits": 320,
+        "total": 2464,
+        "precision": 13.0
+      },
+      "FILTER": {
+        "hits": 691,
+        "total": 6515,
+        "precision": 10.6
+      }
+    },
+    "rescue_rules": {
+      "overlap1_mech_freq5": {
+        "hits": 90,
+        "total": 336,
+        "precision": 26.8
+      },
+      "freq10_mech": {
+        "hits": 38,
+        "total": 121,
+        "precision": 31.4
+      },
+      "overlap3_OR_freq10mech": {
+        "hits": 125,
+        "total": 412,
+        "precision": 30.3
+      },
+      "overlap>=3": {
+        "hits": 113,
+        "total": 346,
+        "precision": 32.7
+      },
+      "overlap3_AND_mech": {
+        "hits": 113,
+        "total": 346,
+        "precision": 32.7
+      }
+    },
+    "simulated_tiers": {},
+    "rescue_impact": {
+      "MEDIUM_before": {
+        "hits": 927,
+        "total": 3760,
+        "precision": 24.7
+      },
+      "MEDIUM_after": {
+        "hits": 1063,
+        "total": 4358,
+        "precision": 24.4
+      },
+      "FILTER_before": {
+        "hits": 691,
+        "total": 6515,
+        "precision": 10.6
+      },
+      "FILTER_after": {
+        "hits": 555,
+        "total": 5917,
+        "precision": 9.4
+      }
+    }
+  },
+  "holdout_seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "holdout_results": [
+    {
+      "current_tiers": {
+        "GOLDEN": {
+          "hits": 13,
+          "total": 29,
+          "precision": 44.8
+        },
+        "HIGH": {
+          "hits": 33,
+          "total": 65,
+          "precision": 50.8
+        },
+        "MEDIUM": {
+          "hits": 155,
+          "total": 672,
+          "precision": 23.1
+        },
+        "LOW": {
+          "hits": 61,
+          "total": 554,
+          "precision": 11.0
+        },
+        "FILTER": {
+          "hits": 85,
+          "total": 1406,
+          "precision": 6.0
+        }
+      },
+      "rescue_rules": {
+        "overlap>=3": {
+          "hits": 23,
+          "total": 92,
+          "precision": 25.0
+        },
+        "overlap3_OR_freq10mech": {
+          "hits": 23,
+          "total": 100,
+          "precision": 23.0
+        },
+        "overlap3_AND_mech": {
+          "hits": 23,
+          "total": 92,
+          "precision": 25.0
+        },
+        "overlap1_mech_freq5": {
+          "hits": 9,
+          "total": 37,
+          "precision": 24.3
+        },
+        "freq10_mech": {
+          "hits": 1,
+          "total": 11,
+          "precision": 9.1
+        }
+      },
+      "simulated_tiers": {},
+      "rescue_impact": {
+        "MEDIUM_before": {
+          "hits": 155,
+          "total": 672,
+          "precision": 23.1
+        },
+        "MEDIUM_after": {
+          "hits": 181,
+          "total": 793,
+          "precision": 22.8
+        },
+        "FILTER_before": {
+          "hits": 85,
+          "total": 1406,
+          "precision": 6.0
+        },
+        "FILTER_after": {
+          "hits": 59,
+          "total": 1285,
+          "precision": 4.6
+        }
+      }
+    },
+    {
+      "current_tiers": {
+        "GOLDEN": {
+          "hits": 22,
+          "total": 43,
+          "precision": 51.2
+        },
+        "HIGH": {
+          "hits": 51,
+          "total": 129,
+          "precision": 39.5
+        },
+        "MEDIUM": {
+          "hits": 151,
+          "total": 660,
+          "precision": 22.9
+        },
+        "LOW": {
+          "hits": 54,
+          "total": 482,
+          "precision": 11.2
+        },
+        "FILTER": {
+          "hits": 136,
+          "total": 1406,
+          "precision": 9.7
+        }
+      },
+      "rescue_rules": {
+        "overlap>=3": {
+          "hits": 13,
+          "total": 41,
+          "precision": 31.7
+        },
+        "overlap3_OR_freq10mech": {
+          "hits": 14,
+          "total": 53,
+          "precision": 26.4
+        },
+        "overlap3_AND_mech": {
+          "hits": 13,
+          "total": 41,
+          "precision": 31.7
+        },
+        "overlap1_mech_freq5": {
+          "hits": 10,
+          "total": 47,
+          "precision": 21.3
+        },
+        "freq10_mech": {
+          "hits": 3,
+          "total": 16,
+          "precision": 18.8
+        }
+      },
+      "simulated_tiers": {},
+      "rescue_impact": {
+        "MEDIUM_before": {
+          "hits": 151,
+          "total": 660,
+          "precision": 22.9
+        },
+        "MEDIUM_after": {
+          "hits": 166,
+          "total": 732,
+          "precision": 22.7
+        },
+        "FILTER_before": {
+          "hits": 136,
+          "total": 1406,
+          "precision": 9.7
+        },
+        "FILTER_after": {
+          "hits": 121,
+          "total": 1334,
+          "precision": 9.1
+        }
+      }
+    },
+    {
+      "current_tiers": {
+        "GOLDEN": {
+          "hits": 17,
+          "total": 43,
+          "precision": 39.5
+        },
+        "HIGH": {
+          "hits": 32,
+          "total": 69,
+          "precision": 46.4
+        },
+        "MEDIUM": {
+          "hits": 150,
+          "total": 770,
+          "precision": 19.5
+        },
+        "LOW": {
+          "hits": 49,
+          "total": 488,
+          "precision": 10.0
+        },
+        "FILTER": {
+          "hits": 68,
+          "total": 1354,
+          "precision": 5.0
+        }
+      },
+      "rescue_rules": {
+        "overlap>=3": {
+          "hits": 12,
+          "total": 73,
+          "precision": 16.4
+        },
+        "overlap3_OR_freq10mech": {
+          "hits": 15,
+          "total": 91,
+          "precision": 16.5
+        },
+        "overlap3_AND_mech": {
+          "hits": 12,
+          "total": 73,
+          "precision": 16.4
+        },
+        "overlap1_mech_freq5": {
+          "hits": 13,
+          "total": 69,
+          "precision": 18.8
+        },
+        "freq10_mech": {
+          "hits": 6,
+          "total": 27,
+          "precision": 22.2
+        }
+      },
+      "simulated_tiers": {},
+      "rescue_impact": {
+        "MEDIUM_before": {
+          "hits": 150,
+          "total": 770,
+          "precision": 19.5
+        },
+        "MEDIUM_after": {
+          "hits": 165,
+          "total": 884,
+          "precision": 18.7
+        },
+        "FILTER_before": {
+          "hits": 68,
+          "total": 1354,
+          "precision": 5.0
+        },
+        "FILTER_after": {
+          "hits": 53,
+          "total": 1240,
+          "precision": 4.3
+        }
+      }
+    },
+    {
+      "current_tiers": {
+        "GOLDEN": {
+          "hits": 7,
+          "total": 16,
+          "precision": 43.8
+        },
+        "HIGH": {
+          "hits": 51,
+          "total": 100,
+          "precision": 51.0
+        },
+        "MEDIUM": {
+          "hits": 127,
+          "total": 685,
+          "precision": 18.5
+        },
+        "LOW": {
+          "hits": 83,
+          "total": 556,
+          "precision": 14.9
+        },
+        "FILTER": {
+          "hits": 100,
+          "total": 1371,
+          "precision": 7.3
+        }
+      },
+      "rescue_rules": {
+        "overlap>=3": {
+          "hits": 12,
+          "total": 49,
+          "precision": 24.5
+        },
+        "overlap3_OR_freq10mech": {
+          "hits": 12,
+          "total": 50,
+          "precision": 24.0
+        },
+        "overlap3_AND_mech": {
+          "hits": 12,
+          "total": 49,
+          "precision": 24.5
+        },
+        "overlap1_mech_freq5": {
+          "hits": 7,
+          "total": 40,
+          "precision": 17.5
+        },
+        "freq10_mech": {
+          "hits": 3,
+          "total": 5,
+          "precision": 60.0
+        }
+      },
+      "simulated_tiers": {},
+      "rescue_impact": {
+        "MEDIUM_before": {
+          "hits": 127,
+          "total": 685,
+          "precision": 18.5
+        },
+        "MEDIUM_after": {
+          "hits": 141,
+          "total": 769,
+          "precision": 18.3
+        },
+        "FILTER_before": {
+          "hits": 100,
+          "total": 1371,
+          "precision": 7.3
+        },
+        "FILTER_after": {
+          "hits": 86,
+          "total": 1287,
+          "precision": 6.7
+        }
+      }
+    },
+    {
+      "current_tiers": {
+        "GOLDEN": {
+          "hits": 8,
+          "total": 22,
+          "precision": 36.4
+        },
+        "HIGH": {
+          "hits": 23,
+          "total": 67,
+          "precision": 34.3
+        },
+        "MEDIUM": {
+          "hits": 150,
+          "total": 737,
+          "precision": 20.4
+        },
+        "LOW": {
+          "hits": 76,
+          "total": 554,
+          "precision": 13.7
+        },
+        "FILTER": {
+          "hits": 93,
+          "total": 1350,
+          "precision": 6.9
+        }
+      },
+      "rescue_rules": {
+        "overlap1_mech_freq5": {
+          "hits": 9,
+          "total": 47,
+          "precision": 19.1
+        },
+        "overlap>=3": {
+          "hits": 16,
+          "total": 79,
+          "precision": 20.3
+        },
+        "overlap3_OR_freq10mech": {
+          "hits": 18,
+          "total": 88,
+          "precision": 20.5
+        },
+        "overlap3_AND_mech": {
+          "hits": 16,
+          "total": 79,
+          "precision": 20.3
+        },
+        "freq10_mech": {
+          "hits": 5,
+          "total": 18,
+          "precision": 27.8
+        }
+      },
+      "simulated_tiers": {},
+      "rescue_impact": {
+        "MEDIUM_before": {
+          "hits": 150,
+          "total": 737,
+          "precision": 20.4
+        },
+        "MEDIUM_after": {
+          "hits": 170,
+          "total": 869,
+          "precision": 19.6
+        },
+        "FILTER_before": {
+          "hits": 93,
+          "total": 1350,
+          "precision": 6.9
+        },
+        "FILTER_after": {
+          "hits": 73,
+          "total": 1218,
+          "precision": 6.0
+        }
+      }
+    }
+  ]
+}
