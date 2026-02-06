@@ -156,6 +156,8 @@ vastai destroy instance <INSTANCE_ID>
 - **h520:** Corticosteroid SOC promotion: 333 MEDIUM→HIGH for autoimmune/dermatological/respiratory/ophthalmic. HIGH +2.3pp, MEDIUM +1.2pp.
 - **h522:** Hematological corticosteroid demotion: 123 MEDIUM→LOW. MEDIUM +0.2pp, LOW +0.5pp.
 - **h486:** SIDER adverse effect mining: 47 new inverse indication pairs (55 drugs, 124 total). 105 predictions → FILTER, 93.3% precision.
+- **h526:** Inverse indication taxonomy (10 mechanism classes). +10 new pairs (SSRIs→bipolar, estrogens→cancer, ACEi→angioedema). Bug fix: moved inverse_indication before cancer_same_type. Total: 63 drugs, 135 pairs.
+- **h529:** GT quality audit: removed 19 false DRKG-derived GT entries (drug CAUSES disease). 14 Every Cure errors flagged.
 - **NOTE:** Full-data inflated; use HOLDOUT only.
 
 **h520:** Corticosteroid SOC promotion for non-hematological categories. Per-class holdout: dermatological 58%, respiratory 61%, autoimmune 46%, ophthalmic 34%, hematological 19% (excluded). Non-hematological = 50.1% holdout ≈ HIGH. 333 predictions promoted.
@@ -251,7 +253,7 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
     - h486: 47 new pairs from SIDER mining (93.3% filter precision)
   - Ganglionic blockers (obsolete), surgical dyes (not therapeutic)
 
-**Total inverse indication filters:** 105 predictions (55 drugs, 124 pairs)
+**Total inverse indication filters:** ~116 predictions (63 drugs, 135 pairs)
 **Validation precision:** 20-25% for top predictions (batches 1+2)
 
 ## Key Validated Predictions
