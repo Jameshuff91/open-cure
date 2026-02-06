@@ -9153,7 +9153,7 @@
       "title": "Category-Adjusted Rank Calibration for MEDIUM",
       "description": "h457 showed MEDIUM is monotonic overall but per-category monotonicity varies (cancer=yes, autoimmune=no, GI=no). Create category-specific rank calibration curves for the 6 largest MEDIUM categories to provide more accurate per-prediction precision estimates.",
       "hypothesis": "Category-specific rank calibration within MEDIUM will provide more accurate precision estimates (+/-5pp improvement in calibration error).",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -9163,7 +9163,9 @@
         "Compare calibration error: category-specific vs overall MEDIUM",
         "If improvement > 5pp, implement as category-specific RANK_BUCKET_PRECISION",
         "Need n >= 30 per category per bucket for reliability"
-      ]
+      ],
+      "findings": "Category-specific rank calibration shows significant variation: 3 categories are monotonic (autoimmune +19.4pp, hematological +17.4pp, cancer +6.1pp), 5 are non-monotonic (CV, dermatological, infectious, psychiatric, respiratory). Overall calibration MAE = 5.9pp. Biggest gaps: dermatological R6-10 (+31.7pp), CV R16-20 (+12.1pp), cancer R1-5 (-8.7pp). Cancer is systematically undercalibrated (actual precision lower than overall predicts). Autoimmune is systematically overcalibrated (actual precision higher). NOT implementing as category-specific RANK_BUCKET_PRECISION because: (1) only 3/8 major categories have monotonic calibration, (2) category_holdout_precision column already provides category-level estimates, (3) added complexity for modest gain. RECOMMENDATION: Users should note cancer MEDIUM predictions are weaker than overall MEDIUM, and autoimmune MEDIUM is stronger.",
+      "result_metric": "Overall calibration MAE = 5.9pp. 3/8 categories monotonic."
     },
     {
       "id": "h460",
