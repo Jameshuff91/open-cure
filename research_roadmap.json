@@ -10276,6 +10276,41 @@
       ],
       "findings": "SOC status is a significant annotation signal (MEDIUM: SOC 20.3% vs NOVEL 14.3%, p=0.005, +6.0pp) but NOT a tier promotion signal (MEDIUM SOC 20.3% << HIGH 51.5%). HIGH tier shows NO SOC signal (25.5% \u2248 25.7%). SOC is correctly used as annotation in deliverable, not tier modification.",
       "result_metric": "MEDIUM SOC +6.0pp vs NOVEL (p=0.005), but NOT promotable"
+    },
+    {
+      "id": "h519",
+      "title": "CV Pathway-Comprehensive Holdout Re-evaluation After h492 Code Changes",
+      "hypothesis": "cv_pathway_comprehensive holdout was 26.0% (h402) and 21.4% (h490 note), but h492 re-baseline showed drift. Re-evaluate to confirm MEDIUM is still correct or if accumulated fixes changed the picture.",
+      "steps": [
+        "Run 5-seed holdout for cv_pathway_comprehensive specifically",
+        "Compare to h492 MEDIUM baseline (29.9%)",
+        "Check if it's now below LOW threshold"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h492"
+      ]
+    },
+    {
+      "id": "h520",
+      "title": "SOC Drug Class Precision Heterogeneity: Which Classes Drive the +6pp MEDIUM Signal?",
+      "hypothesis": "h518 showed MEDIUM SOC has +6pp over NOVEL. But this may be driven by specific drug classes (e.g., corticosteroids might be +15pp while fluoroquinolones might be -5pp). Per-class holdout analysis could identify which SOC classes are genuinely informative.",
+      "steps": [
+        "Run h518-style holdout but stratified by soc_drug_class",
+        "Identify classes with highest holdout lift",
+        "Check if any class-specific MEDIUM SOC achieves HIGH-level precision",
+        "Potentially promote specific drug-class SOC combinations"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h518"
+      ]
     }
   ],
   "completed": [

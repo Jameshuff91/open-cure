@@ -1,14 +1,16 @@
 # Research Loop Progress
 
-## Current Session: h508/h481 - Self-Ref Characterization + Literature Status Deliverable (2026-02-06)
+## Current Session: h508/h481/h518/h516 - Self-Ref + Literature Status + SOC Holdout (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 4**
 - h508: Self-Referential Disease Characterization - **VALIDATED** (GT size is dominant predictor)
 - h481: Deliverable Literature Validation Status Column - **VALIDATED** (+28.4pp precision for SOC)
+- h518: SOC Status as Holdout Precision Signal - **VALIDATED** (annotation only, not promotable)
+- h516: Expand SOC Drug Class Mappings - **INVALIDATED** (0% precision for all 7 proposed)
 
 ### Key Findings
 
@@ -16,26 +18,37 @@
 - **GT size is the DOMINANT predictor**: 79.2% of self-ref diseases have GT ≤ 2 (OR=8.6x)
 - Category modulates: GI/immunological 89-100% vs autoimmune/dermatological 20-33%
 - 11 "Therapeutic Islands" (GT>5, 100% self-ref): immunodeficiency, PAH, CKD, HepC, opioid constipation
-- Mechanism-specific overlap minimal (4.2%)
 - Two distinct causes: small GT (79%) and dedicated drug classes (8%)
 
 #### 2. Literature Status Classification (h481)
 - Added `literature_status` + `soc_drug_class` columns to deliverable
-- 17 drug class → disease category SOC mappings (184 unique drugs)
-- KNOWN_INDICATION: 2,645 (18.7%), LIKELY_GT_GAP: 1,651 (11.7%), NOVEL: 9,854 (69.6%)
-- **Precision validation**: SOC +28.4pp vs NOVEL in HIGH tier (40.3% vs 11.9%)
-- Top classes: corticosteroids (494), cancer_drugs (433), fluoroquinolones (194)
+- 17 drug class SOC mappings (184 drugs), 1,651 as LIKELY_GT_GAP (11.7%)
+- Full-data: SOC +28.4pp vs NOVEL in HIGH tier (40.3% vs 11.9%)
 - Also regenerated JSON deliverable (was stale from old script)
 
-### New Hypotheses Generated (3)
-- h516: Expand SOC drug class mappings (P5, low)
+#### 3. SOC Holdout Validation (h518)
+- MEDIUM: SOC 20.3% vs NOVEL 14.3% (+6.0pp, p=0.005)
+- HIGH: SOC 25.5% ≈ NOVEL 25.7% (NO SIGNAL)
+- MEDIUM SOC (20.3%) << HIGH avg (51.5%) → NOT promotable
+- **Conclusion**: SOC is ANNOTATION signal, not tier promotion signal
+
+#### 4. SOC Expansion Fails (h516)
+- All 7 proposed new drug classes have 0% precision
+- Tetracyclines→infectious: 0/248 (0%), macrolides: 0/129, etc.
+- Current 17 SOC classes are well-calibrated; expansion dilutes signal
+- **Insight**: SOC captures BROAD classes (corticosteroids, statins), not specific ones
+
+### New Hypotheses Generated (5)
+- h516: INVALIDATED
 - h517: Therapeutic island annotation (P5, low)
-- h518: LIKELY_GT_GAP as holdout precision signal (P4, medium)
+- h518: VALIDATED as annotation
+- h519: CV pathway holdout re-evaluation (P5, low)
+- h520: SOC class-specific holdout precision (P4, medium)
 
 ### Recommended Next Steps
-1. **h518**: Test if SOC status improves holdout precision (potential tier promotion)
-2. **h517**: Annotate therapeutic islands in deliverable (quick win)
-3. **h516**: Expand SOC coverage with more drug classes
+1. **h520**: Which SOC drug classes drive the +6pp MEDIUM signal? Could identify class-specific promotions
+2. **h517**: Annotate therapeutic islands in deliverable
+3. **h486**: Systematic adverse effect mining from SIDER database (high effort but high impact safety)
 
 ---
 
