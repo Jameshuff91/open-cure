@@ -5408,7 +5408,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 2,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Step 1: Extract drug targets for cancer drugs from DRKG",
         "Step 2: Extract known cancer gene markers (oncogenes, tumor suppressors)",
@@ -5419,8 +5419,8 @@
       "dependencies": [
         "h267"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Leave-one-out CV on 38 evaluable cancer diseases:\n- Target Overlap R@30: 65.8% (25/38 hits)\n- kNN Baseline R@30: 63.2% (24/38 hits)\n- McNemar's chi-square: 0.00 (not significant)\n\nTarget overlap wins in 7 cases, kNN wins in 6 cases, both hit in 18 cases.\nMethods are statistically equivalent.\n\nKey insight: Target-based scoring captures different signal from kNN (18 shared wins, 13 different outcomes).\nPotential for ensemble, but no single-method improvement.\n\nLimiting factor: Only 38 diseases evaluable due to MONDO\u2192MESH mapping coverage (103/395 cancer diseases have MESH) and DRKG disease-gene coverage (88/104 with genes).",
+      "result_metric": "Target Overlap 65.8% vs kNN 63.2% (n.s. difference)"
     },
     {
       "id": "h270",
@@ -7386,6 +7386,55 @@
         "Verify removals were appropriate (harmful patterns, mechanism-specific, etc.)",
         "Success: Understand the reduction and confirm it's correct"
       ]
+    },
+    {
+      "id": "h366",
+      "title": "Target+kNN Ensemble for Cancer",
+      "description": "Combine target overlap and kNN scores for cancer predictions. Since they win on different diseases (7 vs 6), ensemble could capture complementary signals.",
+      "hypothesis": "Ensemble of target overlap and kNN will outperform either method alone on cancer diseases.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Compute normalized target overlap scores",
+        "Compute normalized kNN scores",
+        "Test linear combinations and rank fusion",
+        "Evaluate on cancer diseases with LOO CV",
+        "Success: >70% R@30 (vs 65.8% target, 63.2% kNN)"
+      ]
+    },
+    {
+      "id": "h367",
+      "title": "Disease-Specific Gene Weighting",
+      "description": "Currently all DRKG disease-gene associations are weighted equally. Weight genes by association strength/evidence type.",
+      "hypothesis": "Weighting disease genes by DRKG edge types (L/J/U/Te) will improve target overlap precision.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Extract edge type for each disease-gene association",
+        "Define weights based on edge semantic meaning",
+        "Compute weighted target overlap scores",
+        "Compare to unweighted baseline"
+      ]
+    },
+    {
+      "id": "h368",
+      "title": "Cancer Subtype-Specific Target Scoring",
+      "description": "h269 treated all cancers equally. Some cancer subtypes (leukemia, melanoma) may have better target-based predictions than others.",
+      "hypothesis": "Target-based scoring performs better on specific cancer subtypes (hematological vs solid tumors).",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Group cancer diseases by subtype (hematological, solid, brain)",
+        "Calculate per-subtype R@30 for target and kNN methods",
+        "Identify subtypes where target scoring outperforms",
+        "Success: Identify subtype with >80% target R@30"
+      ]
     }
   ],
   "completed": [
@@ -8729,6 +8778,12 @@
       "hypothesis_id": "h360+h361",
       "learning": "DPP4 '5.3% coverage' was a measurement artifact from stale deliverables. DPP4 drugs ARE properly in DRKG (600-1700 edges), GT, and embeddings. After regeneration, Sitagliptin/Saxagliptin appear at GOLDEN tier for diabetes.",
       "implication": "Never trust coverage measurements against old deliverables. Always regenerate before measuring."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h269",
+      "learning": "Target-based scoring and kNN achieve equivalent performance on cancer diseases (65.8% vs 63.2%), but win on different diseases (18 shared, 7 target-only, 6 kNN-only). This suggests complementary signals worth ensembling.",
+      "implication": "Focus on ensembling rather than replacing kNN with target-based approach."
     }
   ],
   "collaborations": [
