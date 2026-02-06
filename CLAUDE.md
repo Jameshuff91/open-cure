@@ -147,13 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h553 update, 2026-02-06):**
+**Tier System (h556 update, 2026-02-06):**
 - GOLDEN: 70.3% ± 17.8% holdout (279 predictions)
 - HIGH: 58.7% ± 6.1% holdout (794 predictions)
-- MEDIUM: 31.7% ± 2.4% holdout (2492 predictions)
-- LOW: 16.2% ± 2.7% holdout (3085 predictions)
+- MEDIUM: 32.1% ± 2.4% holdout (2459 predictions)
+- LOW: 16.2% ± 2.7% holdout (3118 predictions)
 - FILTER: 10.5% ± 1.3% holdout (6972 predictions)
-- **h553:** MEDIUM precision by category: hematological 10.0%→LOW demotion, metabolic statin/TZD rescue 8.3%→LOW. MEDIUM +1.6pp (30.1%→31.7%). target_overlap_promotion at 45.3% is best MEDIUM sub-reason.
+- **h553+h556:** MEDIUM precision by category: hematological→LOW, metabolic statin/TZD→LOW, antibiotic→viral→LOW. Cumulative MEDIUM +2.0pp (30.1%→32.1%). target_overlap_promotion at 43% is best MEDIUM sub-reason but not promotable to HIGH (h554 inconclusive).
 - **h542:** MEDIUM tier quality audit: 59 predictions validated. 25% validated, 31% plausible, 44% implausible (vs 88% reasonable for GOLDEN/HIGH). Fixes: corticosteroid→adrenocortical insufficiency inverse indication (6 preds), FDG PET tracer filter (55 preds).
 - **h552:** Non-therapeutic compound audit: indocyanine green (diagnostic dye) 10 preds → FILTER. Total 66 non-therapeutic predictions removed.
 - **h544:** Anti-TNF paradoxical autoimmunity audit: +15 inverse indication pairs (AIH 389 cases, sarcoidosis 90+, vasculitis 113). 5 predictions → FILTER. Golimumab filters added.

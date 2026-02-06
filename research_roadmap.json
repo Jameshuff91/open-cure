@@ -10913,13 +10913,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Compute target_overlap_promotion holdout by category within MEDIUM",
         "Simulate promoting target_overlap_promotion MEDIUM\u2192HIGH",
         "Verify HIGH stays above 50% with these additions",
         "Implement if validated"
-      ]
+      ],
+      "findings": "target_overlap_promotion within MEDIUM has 43.0% \u00b1 6.3% holdout (31/seed). Category breakdown is highly heterogeneous:\n- psychiatric: 53.7% (11/seed) \u2014 at HIGH level\n- infectious: 53.3% (3.6/seed, high variance \u00b140%)\n- metabolic: 18.3% (5.4/seed) \u2014 terrible\n- autoimmune: 11.9% (4/seed) \u2014 terrible\n\nPromotion strategies tested:\n1. Promote all \u2192 HIGH -2.2pp (too much dilution)\n2. Exclude worst categories \u2192 HIGH -0.1pp (21 promoted, neutral)\n3. Only psych+infect \u2192 HIGH -0.2pp (15 promoted, neutral)\n4. Overlap >= 2 \u2192 0 promoted (all target_overlap=1)\n\nVERDICT: The best strategy (exclude_worst) is calibration-neutral but only moves 21 predictions. MEDIUM drops from 31.7% to 30.7%. Net effect is marginal \u2014 not worth the added complexity.\n\nKEY INSIGHT: All target_overlap_promotion predictions have overlap=1 (minimum threshold). The signal is binary (has overlap vs doesn't), not graded. This limits the ability to further subset.\n\nThe existing target_overlap annotation in the deliverable already allows users to prioritize these predictions manually.",
+      "result_metric": "Best strategy: HIGH -0.1pp, 21 promoted \u2014 not worth implementation complexity"
     },
     {
       "id": "h555",
@@ -10943,12 +10945,45 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Break down infectious MEDIUM by disease sub-type (bacterial, viral, fungal, parasitic)",
         "Cross-tabulate with drug class (tetracycline, macrolide, quinolone, antifungal, antiviral)",
         "Identify drug-disease pairs where mechanism is clearly wrong (e.g., antifungal for bacterial disease)",
         "Assess whether simple class-matching rules can improve precision"
+      ],
+      "findings": "Infectious MEDIUM precision gap (26.6% vs 30.1% avg) driven by:\n\nFULL-DATA ANALYSIS (by disease type):\n- fungal: 54.8% (23/42) \u2014 high precision\n- STI: 63.6% (7/11) \u2014 high precision\n- malaria: 72.7% (8/11) \u2014 high precision\n- gram_positive: 44.1% (15/34) \u2014 good\n- pneumonia: 43.2% (16/37) \u2014 good\n- CNS_infection: 20.0% (10/50) \u2014 below avg\n- respiratory_viral: 5.9% (1/17) \u2014 terrible (antibiotics for viruses)\n- herpesvirus: 20.0% (5/25) \u2014 mixed (corticosteroids for zoster are valid)\n\nFULL-DATA ANALYSIS (by drug class):\n- antifungal: 56.2% (50/89) \u2014 excellent\n- beta_lactam: 52.2% (12/23) \u2014 good\n- macrolide: 40.0% (36/90) \u2014 good\n- tetracycline: 33.8% (75/222) \u2014 at avg (largest class)\n- fluoroquinolone: 27.3% (30/110) \u2014 below avg\n- corticosteroid\u2192infectious: 15.1% (8/53) \u2014 below avg but includes valid uses (zoster, leprosy, ABPA)\n- other: 35.2% (51/145)\n\nACTIONABLE ERROR PATTERN: Antibiotic \u2192 Viral Disease\n- 30 MEDIUM predictions, 2 HIGH predictions, 3 FILTER\n- Full-data: 3.3% precision (1/30 MEDIUM, the 1 hit is azithromycin\u2192influenza which is likely GT error)\n- Holdout: 5.0% \u00b1 10.0% (5.8/seed) \u2014 FILTER-level\n- Antibiotics CANNOT treat viral infections by definition\n- Diseases: influenza, HSV, CMV, smallpox, herpes zoster, AIDS, hepatitis\n\nIMPLEMENTED: antibiotic_viral_mismatch rule \u2192 LOW tier\n- 35 predictions caught (32 \u2192 LOW, 3 \u2192 MEDIUM via target_overlap promotion)\n- MEDIUM: 31.7% \u2192 32.1% (+0.4pp)\n- Corticosteroid\u2192infectious NOT demoted (12.1% holdout but includes valid uses for inflammatory responses)\n\nNOT IMPLEMENTED (future work):\n- Corticosteroid\u2192infectious demotion: 20.4 preds/seed at 12.1% holdout. Nuanced \u2014 CS are valid for zoster, leprosy reactions, ABPA. Would need disease-specific exceptions.\n- Tetracycline\u2192CNS/pneumonia: tiny n (1.6-2.0/seed), not enough for reliable signal.",
+      "result_metric": "MEDIUM +0.4pp (31.7% \u2192 32.1%), 35 antibiotic\u2192viral predictions caught"
+    },
+    {
+      "id": "h557",
+      "title": "Corticosteroid\u2192Infectious Disease Selective Demotion",
+      "description": "Corticosteroid\u2192infectious has 12.1% holdout (20.4/seed), below MEDIUM. But some uses are valid: zoster (anti-inflammatory), leprosy reactions, ABPA. Need to identify which infectious sub-types should exclude corticosteroids vs keep them. Could improve MEDIUM by ~1-2pp if done correctly.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "List all infectious diseases where corticosteroids have GT hits",
+        "Classify into inflammatory response (valid) vs direct infection (invalid)",
+        "Build exception list for valid corticosteroid-infection combinations",
+        "Implement selective demotion with exceptions",
+        "Validate on holdout"
+      ]
+    },
+    {
+      "id": "h558",
+      "title": "Fluoroquinolone Infectious Precision: 27.3% \u2014 Spectrum Mismatch Analysis",
+      "description": "Fluoroquinolones are the second-lowest antibiotic class in infectious MEDIUM (27.3%). Fluoroquinolones have good gram-negative coverage but are predicted for gram-positive infections, viral infections, and fungal infections. Analyzing spectrum mismatch could identify demotable predictions.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Cross-tabulate fluoroquinolone predictions by infectious sub-type",
+        "Identify spectrum mismatches (e.g., fluoroquinolone\u2192fungal)",
+        "Compute holdout for matched vs mismatched",
+        "Implement if gap is significant"
       ]
     }
   ],
@@ -12809,6 +12844,12 @@
       "hypothesis_id": "h553",
       "learning": "MEDIUM tier has heterogeneous per-category precision: psychiatric 54.8%, musculoskeletal 53.8% vs hematological 10.0%, metabolic 18.0%. Hematological default MEDIUM is 0% on holdout. Metabolic statin/TZD rescue for non-hierarchy diseases is 8.3% \u2014 below LOW. Sub-reason analysis more informative than category-level: target_overlap_promotion (45.3%) is HIGH-quality within MEDIUM.",
       "implication": "Consider promoting target_overlap_promotion from MEDIUM to HIGH (h554). For categories, only hematological warranted full demotion; metabolic is heterogeneous and requires rule-level intervention."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h556",
+      "learning": "Antibiotic\u2192viral disease predictions are systematically wrong (3.3% full-data, 5.0% holdout). Antibiotics cannot treat viral infections. The kNN co-prescription artifact inflates scores. 35 predictions caught by rule. Corticosteroid\u2192infectious is more nuanced (12.1% holdout) \u2014 valid for inflammatory responses to infections (zoster, leprosy, ABPA) but not for direct infection treatment.",
+      "implication": "Simple drug-class/pathogen-type mismatch rules can catch clear biological errors. More nuanced rules (corticosteroid exceptions) require disease-specific lists."
     }
   ],
   "collaborations": [

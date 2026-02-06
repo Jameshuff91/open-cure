@@ -2766,6 +2766,33 @@ class DrugRepurposingPredictor:
                 # Lidocaine in non-therapeutic category → procedural artifact
                 return ConfidenceTier.LOW, False, 'local_anesthetic_procedural'
 
+        # h556: Antibiotic → viral disease demotion
+        # Antibiotics (ATC J class) cannot treat viral infections (influenza, herpesvirus,
+        # HIV, hepatitis, smallpox, CMV, etc.). kNN co-prescription artifacts inflate scores.
+        # Full-data: 3.3% (1/30), holdout: 5.0% ± 10.0% (5.8/seed). Demote to LOW.
+        if category == 'infectious':
+            ANTIBIOTIC_CLASSES = {
+                'tetracycline', 'doxycycline', 'minocycline', 'demeclocycline', 'oxytetracycline', 'tigecycline',
+                'erythromycin', 'azithromycin', 'clarithromycin',
+                'ciprofloxacin', 'levofloxacin', 'moxifloxacin', 'ofloxacin', 'norfloxacin', 'gemifloxacin',
+                'gentamicin', 'tobramycin', 'amikacin', 'vancomycin', 'clindamycin', 'metronidazole',
+                'trimethoprim', 'sulfamethoxazole', 'nitrofurantoin', 'linezolid', 'daptomycin',
+                'amoxicillin', 'ampicillin', 'penicillin', 'piperacillin', 'cephalexin',
+                'ceftriaxone', 'cefazolin', 'cefepime', 'ceftazidime', 'meropenem', 'imipenem', 'ertapenem',
+                'colistin', 'polymyxin', 'fosfomycin', 'chloramphenicol',
+            }
+            VIRAL_DISEASE_KEYWORDS = [
+                'influenza', 'respiratory syncytial', 'rsv', 'covid', 'sars',
+                'herpes simplex', 'hsv', 'varicella', 'zoster', 'shingles',
+                'cytomegalovirus', 'cmv', 'hiv', 'aids', 'hepatitis',
+                'measles', 'mumps', 'rubella', 'dengue', 'ebola', 'rabies',
+                'viral', 'smallpox', 'adenovirus', 'norovirus', 'rotavirus',
+            ]
+            is_antibiotic = any(ab in drug_lower for ab in ANTIBIOTIC_CLASSES)
+            is_viral_disease = any(vk in disease_lower for vk in VIRAL_DISEASE_KEYWORDS)
+            if is_antibiotic and is_viral_disease:
+                return ConfidenceTier.LOW, False, 'antibiotic_viral_mismatch'
+
         # h274/h396: For cancer, check cancer type match BEFORE applying rank filter
         # h393 holdout validation: cancer_same_type has 24.5% full-data, 19.2% holdout precision
         # This is MEDIUM-level, not GOLDEN. Demoted from GOLDEN→MEDIUM by h396.
