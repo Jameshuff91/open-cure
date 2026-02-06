@@ -7322,7 +7322,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "invalidated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Identify drugs with <10 predictions but FDA approval",
@@ -7333,7 +7333,9 @@
       ],
       "dependencies": [
         "h358"
-      ]
+      ],
+      "findings": "Sparse drug rescue is NOT NEEDED - sparse drugs already outperform.\n\nKEY FINDING: Sparse drugs have HIGHER known indication rates across ALL tiers:\n| Tier | Sparse Known% | Non-Sparse Known% | Difference |\n|------|---------------|-------------------|------------|\n| GOLDEN | 59.7% | 23.9% | +35.8pp |\n| HIGH | 76.0% | 46.7% | +29.4pp |\n| MEDIUM | 37.5% | 17.4% | +20.0pp |\n| LOW | 40.4% | 11.6% | +28.8pp |\n\nWHY SPARSE DRUGS PERFORM BETTER:\n1. Sparse drugs only appear when there's strong evidence from kNN neighbors\n2. When a sparse drug appears, it's more likely to be a true positive\n3. The current tiering system already captures this signal\n\nLANDIOLOL EXAMPLE (from h358):\n- 8 predictions total, 4 are known indications (50% precision)\n- Known indications get HIGH/MEDIUM tier: VT (HIGH), atrial flutter (MEDIUM), atrial fib (HIGH), tachyarrhythmia (HIGH)\n- Unknown predictions (MI, angina, ACS) correctly get LOW tier\n- No rescue needed - tiering is CORRECT\n\nCONCLUSION: The perceived \"problem\" was a misunderstanding. Sparse drugs aren't under-tiered - \nthey're actually over-performing relative to tier expectations. A rescue rule would add \ncomplexity without improving predictions.",
+      "result_metric": "N/A - sparse drugs already outperform (40.4% vs 11.6% at LOW tier)"
     },
     {
       "id": "h363",
