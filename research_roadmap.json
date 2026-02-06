@@ -9910,13 +9910,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Re-run h462-style category-specific holdout with corrected GT",
         "Check if immunological 2.5%, neurological 10.2%, reproductive 0% have changed",
         "If changed significantly, reconsider demotions",
         "Update MEDIUM_DEMOTED_CATEGORIES if needed"
-      ]
+      ],
+      "findings": "h499 VALIDATED: Category-Specific Holdout Re-Validation with Corrected GT\n\nAfter h478 GT sync (1464 pairs added), re-ran category-specific MEDIUM holdout:\n\nDEMOTED CATEGORIES (at LOW tier):\n  gastrointestinal: 5.0% holdout (well below LOW avg 14.8%) - DEMOTION JUSTIFIED\n  immunological: 8.3% holdout - DEMOTION JUSTIFIED\n  neurological: 5.8% holdout - DEMOTION JUSTIFIED\n  reproductive: 2.9% holdout - DEMOTION JUSTIFIED\n\nNON-DEMOTED MEDIUM CATEGORIES (corrected vs previous):\n  dermatological: 48.4% \u00b1 14.5 (was 28.5%, +19.9pp) \u2190 biggest beneficiary\n  musculoskeletal: 55.6% \u00b1 29.8 (was ~30%)\n  respiratory: 30.5% \u00b1 6.5 (was 16.2%, +14.3pp)\n  autoimmune: 36.4% \u00b1 7.1 (was 37.3%, -0.9pp) \u2190 unchanged\n  psychiatric: 33.3% \u00b1 5.2 (was 45.7%, -12.4pp) \u2190 dropped\n  cardiovascular: 30.7% \u00b1 10.9 (was 29.5%, +1.2pp)\n  infectious: 27.9% \u00b1 7.0 (was 19.4%, +8.5pp)\n  cancer: 24.5% \u00b1 3.7 (was 17.5%, +7.0pp)\n\nCONCLUSIONS:\n1. All 4 MEDIUM demotions remain justified (all <10% holdout at LOW)\n2. GT sync disproportionately helped dermatological (+19.9pp) and respiratory (+14.3pp)\n3. Psychiatric DROPPED (-12.4pp) - likely from seed distribution changes, not GT issues\n4. No new promotions or demotions needed",
+      "result_metric": "All 4 demotions confirmed justified. Dermatological +19.9pp biggest beneficiary."
     },
     {
       "id": "h500",
