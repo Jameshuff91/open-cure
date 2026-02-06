@@ -7212,7 +7212,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Load SGLT2 inhibitor GT indications",
@@ -7223,7 +7223,9 @@
       ],
       "dependencies": [
         "h245"
-      ]
+      ],
+      "findings": "Investigated SGLT2 inhibitors and found NO gap - expected behavior:\n\n1. SGLT2 inhibitors ARE in DRKG with good connectivity (1400-1900 edges)\n2. HF is already in GT for these drugs, so filtered as known indication\n3. Canagliflozin \u2192 chronic heart failure IS predicted at HIGH (is_known=True)\n4. The \"gap\" was misunderstanding: deliverables only shows novel predictions\n\n5. Minor finding: SGLT2\u2192CV should get GOLDEN tier (code exists) but predictions show HIGH\n   - May need deliverables regeneration to apply latest rules\n\nNOT a model gap - correct behavior with known indication filtering.",
+      "result_metric": "No gap - HF is known indication, correctly filtered"
     },
     {
       "id": "h358",
@@ -7262,6 +7264,26 @@
         "Success criteria: Identify coverage gap"
       ],
       "dependencies": []
+    },
+    {
+      "id": "h360",
+      "title": "Deliverables Regeneration for Latest Rules",
+      "description": "h357 found SGLT2\u2192CV predictions at HIGH not GOLDEN despite rule existing. Regenerate deliverables with latest production_predictor to verify all rules are applied.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 6,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Run production_predictor to generate fresh predictions",
+        "Step 2: Compare tier distribution to existing deliverables",
+        "Step 3: Verify SGLT2\u2192CV now gets GOLDEN tier",
+        "Step 4: Update deliverables if significant differences found",
+        "Success criteria: All implemented rules reflected in deliverables"
+      ],
+      "dependencies": [
+        "h357"
+      ]
     }
   ],
   "completed": [
@@ -8581,6 +8603,12 @@
       "hypothesis_id": "h245",
       "learning": "Model correctly predicted 5/9 emerging treatments (55%). Validated: Sotatercept\u2192PAH (FDA 2024), Dantrolene\u2192VT (RCT 2025), Canagliflozin\u2192HF (HIGH). Missed: newer drugs not in DRKG, some SGLT2\u2192HF patterns.",
       "implication": "Model has good signal for drugs in DRKG. Coverage gap for newer drugs. SGLT2\u2192HF gap suggests kNN disease similarity issue."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h357",
+      "learning": "SGLT2\u2192HF 'gap' was a misunderstanding. Empagliflozin HF is in GT, so correctly filtered from novel predictions. Canagliflozin\u2192chronic HF IS predicted at HIGH. Deliverables may need regeneration to reflect latest GOLDEN rules.",
+      "implication": "Check assumptions before investigating gaps. Known indications are correctly filtered from deliverables."
     }
   ],
   "collaborations": [
