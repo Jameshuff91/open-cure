@@ -1,6 +1,89 @@
 # Research Loop Progress
 
-## Current Session: h442-h449 (2026-02-06)
+## Current Session: h436, h451, h441, h422, h424, h454 (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 6**
+- h436: kNN Bootstrap Ensemble for Rank Stability - **INVALIDATED** (bootstrap hurts R@30 -1.17pp, drift +30.3% worse)
+- h451: k-Expansion for Rank Stabilization - **INVALIDATED** (multi-k only +0.31pp, no drift reduction)
+- h441: Drug-Level Embedding Stability - **INVALIDATED** (97.2% full-data → 7.4% holdout, circular signal)
+- h422: Expand Top-N from 30 to 50 - **INVALIDATED** (rank 31-50 overlap>=3 only 4.4% holdout)
+- h424: base_to_complication Precision Discrepancy - **VALIDATED** (DKA self-prediction = 65% of hits)
+- h454: Circularity Audit of Tier Rules - **VALIDATED** (7 structural-absence rules, 19 genuine rules)
+
+### h436: kNN Bootstrap Ensemble - INVALIDATED
+
+Subsampling 80% of training diseases HURTS performance because it removes actual nearest neighbors.
+- Full-data: Standard 87.47% vs Bootstrap 84.56% (-2.91pp)
+- Holdout (5-seed): Standard 39.22% ± 2.26% vs Bootstrap 38.05% ± 1.49% (-1.17pp)
+- Rank drift: +30.3% WORSE (7.19 vs 5.54 crossings)
+- Root cause: kNN subsampling degrades neighborhood quality, unlike classical bagging
+
+### h451: k-Expansion - INVALIDATED
+
+Using multiple k values (15,20,25,30) with Borda count or score averaging does not help.
+- k=30 holdout: +0.31pp over k=20 (within noise)
+- Multi-k: +0.15 to +0.20pp (within noise)
+- Rank drift: identical (5.41-5.59 crossings vs 5.54 for standard)
+- Combined with h436: kNN instability is inherent to embedding space, not fixable by parameter tuning
+
+### h441: Drug-Level Embedding Stability - INVALIDATED
+
+Drug rank consistency (CV across diseases) is entirely circular with GT.
+- Full-data: Q1 (most stable) = 97.2% vs Q4 (least stable) = 17.6% — MASSIVE signal
+- Holdout: REVERSES to 7.4% vs 9.4% (-2.1pp, wrong direction!)
+- Root cause: CV=0 drugs (always same rank) are drugs in GT for ALL their kNN neighbors
+- kNN-derived metrics are inherently confounded by GT overlap
+
+### h422: Top-N Expansion to 50 - INVALIDATED
+
+Target overlap IS a valid non-circular signal (~2x lift) but rank 31-50 base precision is too low.
+- Rank 31-40 overlap>=3: 8.8% full → 4.4% ± 1.3% holdout (below 20% MEDIUM threshold)
+- Rank 41-50 overlap>=3: 8.8% full → 8.3% ± 2.6% holdout
+- 7th independent confirmation that rank>20 filter is correct
+
+### h424: base_to_complication Discrepancy - VALIDATED
+
+Root cause: DKA (diabetic ketoacidosis) is its own #1 nearest neighbor (sim=1.0).
+ALL 8 GT drugs come only from DKA itself, no other neighbors contribute.
+- Full-data: 6/7 DKA hits inflate precision to 28.1% (h412)
+- Holdout: 0/7 DKA hits → ~15.6% (h421 was correct)
+- 65% of base_to_complication hits are self-referential
+
+### h454: Circularity Audit - VALIDATED
+
+Systematic audit of all tier rules for circularity:
+- 7 hierarchy rules with 0% holdout = structural absence (drug_disease_groups disappears when disease held out)
+- 19 rules with gap ≤10pp = GENUINE (including default n=9698, RA n=78, arrhythmia n=46)
+- No hidden circular rules beyond known small-group limitation and DKA self-prediction
+- Min n≥30 for reliable holdout validation (confirmed)
+
+### Key Conclusions from this Session
+
+1. **kNN instability is INHERENT** (h436+h451): Neither subsampling nor expansion can fix it. The rank>20 filter is the correct compensation. This research direction is now CLOSED after 7 independent confirmations.
+
+2. **kNN-derived metrics are circular** (h441): Any metric computed from kNN predictions (drug rank CV, frequency, stability) correlates with GT on full-data but fails holdout. Within-tier ranking must use EXTERNAL signals only.
+
+3. **Self-referential leakage is real but contained** (h424+h454): DKA self-prediction is the main example. 19 of the large-n rules are genuine. The system's circularity is well-characterized.
+
+### New Hypotheses Generated
+- h450: Weighted kNN by Neighborhood Stability Score (Priority 4)
+- h451: k-Expansion (tested and invalidated this session)
+- h452: Per-Disease k Optimization by Category (Priority 5)
+- h453: External-Signal-Only Within-Tier Ranking (Priority 4)
+- h454: Circularity Audit (tested and validated this session)
+
+### Recommended Next Steps
+1. **h453:** External-Signal-Only Within-Tier Ranking (Priority 4, medium effort) - use target overlap, mechanism, ATC as within-tier ranking
+2. **h410:** Literature Validation of 1-Disease Hierarchy Rules (Priority 3, medium effort) - validate small rules via clinical evidence
+3. **h389:** Rescued Disease Analysis (Priority 4, low effort) - understand ensemble rescue patterns
+
+---
+
+## Previous Session: h442-h449 (2026-02-06)
 
 ### Session Summary
 
