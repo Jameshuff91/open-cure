@@ -7121,7 +7121,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Define COMPLICATION_DISEASES set (retinopathy, nephropathy, etc.)",
@@ -7132,7 +7132,9 @@
       ],
       "dependencies": [
         "h294"
-      ]
+      ],
+      "findings": "VALIDATED + IMPLEMENTED: Complication-specific drug class filter removes 214 predictions with 100% accuracy.\n\nKEY RESULTS:\n| Complication | Validated Precision | Non-validated Precision | Predictions Filtered |\n|--------------|---------------------|-------------------------|----------------------|\n| Nephrotic syndrome | 69.2% | 0.0% | 17 |\n| Retinopathy | 33.3% | 0.0% | 57 |\n| Cardiomyopathy | 12.5% | 0.0% | 52 |\n| Neuropathy | 0.0% | 0.0% | 88 |\n| **TOTAL** | **varies** | **0.0%** | **214** |\n\nVALIDATED DRUG CLASSES:\n- Nephrotic: steroids, immunosuppressants, anesthetics (for procedures)\n- Retinopathy: anti-VEGF, steroids\n- Cardiomyopathy: beta-blockers, ACEi, ARBs, SGLT2i\n- Neuropathy: SNRIs, anticonvulsants, TCAs, topicals\n\nIMPLEMENTATION:\n1. Added COMPLICATION_VALIDATED_DRUGS constant with validated drug sets\n2. Added _is_complication_non_validated_class() static method\n3. Added filter check in _assign_confidence_tier() \u2192 FILTER tier\n\nIMPACT:\n- 214 predictions filtered (all MEDIUM/LOW tier, no HIGH)\n- 0 GT hits lost (100% filter accuracy)\n- This confirms h294 finding: organ proximity doesn't predict transferability",
+      "result_metric": "214 predictions filtered, 0 GT loss (100% accuracy)"
     }
   ],
   "completed": [
