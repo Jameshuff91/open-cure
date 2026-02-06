@@ -145,16 +145,22 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410)
+### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469)
 
-**Tier System (h410 updated 2026-02-06):**
-- GOLDEN: 64.6% full / 53.9% ± 7.1% holdout
-- HIGH: 51.8% full / 49.9% ± 8.2% holdout
-- MEDIUM: 26.1% full / 22.3% ± 2.0% holdout (h410: +1.1pp from bug fixes)
-- LOW: 13.1% full / 12.0% ± 1.8% holdout
-- FILTER: 10.7% full / 6.9% ± 1.6% holdout
+**Tier System (h469 updated 2026-02-06):**
+- GOLDEN: 63.9% full / 62.7% ± 13.5% holdout (median 57.7%, h472: GOLDEN>HIGH not significant p=0.574)
+- HIGH: 53.2% full / 51.1% ± 6.5% holdout
+- MEDIUM: 27.6% full / 23.3% ± 3.3% holdout
+- LOW: 12.3% full / 10.6% ± 1.6% holdout
+- FILTER: 11.4% full / 8.1% ± 1.0% holdout
 
-**h410 (LATEST):** Literature validation + string-matching bug fixes. 3 bugs found:
+**h469 (LATEST):** Parathyroid false match fix + holdout script bug fix.
+  - Added 'parathyroid' to thyroid HIERARCHY_EXCLUSIONS (9/21 false drugs removed)
+  - Fixed h393 holdout script: recompute_gt_structures was NOT using HIERARCHY_EXCLUSIONS
+  - GOLDEN +8.8pp mostly from holdout script fix (exclusions now applied during recomputation)
+  - Word-boundary regex NOT suitable for medical terms (breaks compound words)
+
+**h410:** Literature validation + string-matching bug fixes. 3 bugs found:
   - 'sle' matched 'sleep/sleepiness' (not lupus) → removed from variants
   - 'cystitis' matched cholecystitis/dacryocystitis → HIERARCHY_EXCLUSIONS added
   - bare 'fibrosis' matched 'cystic fibrosis' → removed from variants

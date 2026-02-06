@@ -1,6 +1,71 @@
 # Research Loop Progress
 
-## Current Session: h410, h467, h461 (2026-02-06)
+## Current Session: h469, h470, h472, h468, h471, h431, h460 (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested: 7**
+- h469: Word-Boundary-Aware Hierarchy Matching - **VALIDATED** (parathyroid fix + holdout script bug)
+- h470: Holdout Script Consistency Audit - **VALIDATED** (2 reusable scripts fixed)
+- h472: GOLDEN Variance Reduction - **VALIDATED** (small-n + disease heterogeneity)
+- h468: Neuropathy Hierarchy Group Decomposition - **INVALIDATED** (only 3 predictions)
+- h471: Parathyroid Group - **INVALIDATED** (2 diseases, 1 shared drug)
+- h431: CV Disease-Specific LOW Rescue - **INVALIDATED** (h390 numbers stale)
+- h460: Split HIGH into Hierarchy vs Default - **INVALIDATED** (already in tier_rule column)
+
+### h469: Word-Boundary-Aware Hierarchy Matching - VALIDATED
+
+**Key Finding:** Pure word-boundary regex matching (`\b`) is NOT suitable for medical terminology.
+It would break 6 correct compound-word matches (tachyarrhythmia, polyneuropathy, hypothyroidism, etc.)
+while only fixing 2 false matches. The HIERARCHY_EXCLUSIONS manual approach is the correct solution.
+
+**Fixes Applied:**
+1. Added 'parathyroid' to thyroid HIERARCHY_EXCLUSIONS (9/21 false drugs removed)
+2. Fixed holdout script bug: `recompute_gt_structures()` was NOT using HIERARCHY_EXCLUSIONS
+
+**Updated Holdout Precisions (with both fixes):**
+| Tier | Previous (h410) | Current (h469) | Δ |
+|------|----------------|----------------|---|
+| GOLDEN | 53.9% ± 7.1% | 62.7% ± 13.5% | +8.8pp |
+| HIGH | 49.9% ± 8.2% | 51.1% ± 6.5% | +1.2pp |
+| MEDIUM | 22.3% ± 2.0% | 23.3% ± 3.3% | +1.0pp |
+| LOW | 12.0% ± 1.8% | 10.6% ± 1.6% | -1.4pp |
+| FILTER | 6.9% ± 1.6% | 8.1% ± 1.0% | +1.2pp |
+
+GOLDEN improvement mainly from holdout script fix (exclusions now applied during recomputation).
+
+### h472: GOLDEN Variance Analysis - VALIDATED
+
+GOLDEN holdout has ±13.5% std (seeds: 47.4, 65.7, 57.7, 55.6, 87.0).
+Root cause: small n (19-71 predictions per seed) + disease heterogeneity.
+GOLDEN > HIGH on average (62.7% vs 51.1%) but NOT significant (p=0.574).
+Recommend reporting median (57.7%) over mean (62.7%).
+
+### Full-Data Tier Precisions (h469 deliverable)
+| Tier | Full-Data | Holdout | Count |
+|------|-----------|---------|-------|
+| GOLDEN | 63.9% | 62.7% ± 13.5% | 288 |
+| HIGH | 53.2% | 51.1% ± 6.5% | 553 |
+| MEDIUM | 27.6% | 23.3% ± 3.3% | 3,918 |
+| LOW | 12.3% | 10.6% ± 1.6% | 2,160 |
+| FILTER | 11.4% | 8.1% ± 1.0% | 7,231 |
+| **Total** | | | **14,150** |
+
+### New Hypotheses Generated
+- h470: Holdout Script Consistency Audit (tested, validated)
+- h471: Parathyroid Hierarchy Group (tested, invalidated)
+- h472: GOLDEN Variance Reduction (tested, validated)
+
+### Recommended Next Steps
+1. **h401:** Reassess DRKG Ceiling with Category-Specific Approaches (Priority 3, high effort)
+2. **h257:** IV vs Oral Formulation Safety Distinction (Priority 4, medium effort)
+3. **h459:** Category-Adjusted Rank Calibration for MEDIUM (Priority 5, medium effort)
+
+---
+
+## Previous Session: h410, h467, h461 (2026-02-06)
 
 ### Session Summary
 
