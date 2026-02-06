@@ -6887,14 +6887,16 @@
       "description": "h272 found Trametinib\u2192hypothyroidism is likely inverse (MEK inhibitors cause thyroid dysfunction). Systematically detect inverse indication patterns for MEK inhibitors.",
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "steps": [
         "List all MEK inhibitors in predictions",
         "Check predictions against known side effect databases",
         "Add inverse indications to FILTER tier",
         "Quantify impact on precision"
-      ]
+      ],
+      "findings": "MEK inhibitor analysis complete:\n\nMEK inhibitors in predictions: Trametinib (15), Selumetinib (21)\nTotal predictions: 36\nGT hits: 0\nPrecision: 0.0% (all tiers)\n\nGT analysis: 100% of MEK inhibitor GT indications are cancer\n- Trametinib: melanoma, thyroid carcinoma, lung cancer, glioma\n- Selumetinib: neurofibromatosis, plexiform neurofibroma\n\nNon-cancer predictions (24 total):\n- HIGH: 3 (Trametinib\u2192hypothyroidism, Selumetinib\u2192hyperparathyroidism/hypoparathyroidism)\n- MEDIUM: 9\n- LOW: 12\n\nLiterature check: NO evidence found for selumetinib in parathyroid disorders.\nHypothyroidism is NOT a known side effect of trametinib (unlike sunitinib/sorafenib).\n\nThe high kNN scores are spurious correlations from shared graph neighbors.\n\nRECOMMENDATION: Add MEK_INHIBITORS set to production_predictor.py\nFilter non-cancer MEK predictions to LOW tier (similar to mechanism-specific diseases).\nImpact: 3 HIGH + 9 MEDIUM \u2192 LOW, 0% precision improvement.",
+      "result_metric": "0% precision on 36 MEK predictions, 12 would be demoted"
     },
     {
       "id": "h341",

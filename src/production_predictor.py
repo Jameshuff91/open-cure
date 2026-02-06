@@ -322,6 +322,12 @@ LYMPHOMA_BTK_KEYWORDS = {'lymphoplasmacytic', 'mantle cell lymphoma', 'marginal 
                          'waldenstrom', 'macroglobulinemia'}
 BTK_INHIBITORS = {'ibrutinib', 'acalabrutinib', 'zanubrutinib', 'pirtobrutinib'}
 
+# h340: MEK inhibitors - cancer-only drugs (0% precision for non-cancer)
+# These target the RAS/RAF/MEK/ERK pathway which is only relevant for cancer
+# Unlike VEGF inhibitors, MEK inhibitors have no plausible non-cancer mechanism
+MEK_INHIBITORS = {'trametinib', 'cobimetinib', 'binimetinib', 'selumetinib',
+                  'mirdametinib', 'pimasertib', 'refametinib'}
+
 # Ophthalmic drugs
 OPHTHALMIC_ANTIBIOTICS = {'ciprofloxacin', 'moxifloxacin', 'ofloxacin', 'tobramycin', 'gentamicin',
                           'gatifloxacin', 'levofloxacin', 'besifloxacin', 'neomycin', 'polymyxin'}  # 62.5% rank<=15
@@ -1543,6 +1549,30 @@ class DrugRepurposingPredictor:
         return disease_lower in MECHANISM_SPECIFIC_DISEASES
 
     @staticmethod
+    def _is_mek_inhibitor_non_cancer(drug_name: str, disease_name: str) -> bool:
+        """
+        h340: Check if this is a MEK inhibitor predicted for non-cancer disease.
+
+        MEK inhibitors have 0% precision for non-cancer predictions because:
+        1. They target the RAS/RAF/MEK/ERK pathway specific to cancer
+        2. All GT indications are cancer (100%)
+        3. No plausible non-cancer mechanism exists
+
+        Returns True if drug is MEK inhibitor AND disease is NOT cancer.
+        """
+        drug_lower = drug_name.lower()
+        if drug_lower not in MEK_INHIBITORS:
+            return False
+
+        # Check if disease is cancer
+        cancer_keywords = ['cancer', 'carcinoma', 'tumor', 'melanoma', 'leukemia',
+                          'lymphoma', 'neoplasm', 'neurofibroma', 'glioma', 'sarcoma', 'myeloma']
+        disease_lower = disease_name.lower()
+        is_cancer = any(kw in disease_lower for kw in cancer_keywords)
+
+        return not is_cancer
+
+    @staticmethod
     def _is_highly_repurposable_disease(disease_name: str) -> bool:
         """
         h297: Check if disease is highly repurposable (kNN works well).
@@ -1735,6 +1765,12 @@ class DrugRepurposingPredictor:
             # For mechanism-specific diseases, cap confidence at LOW
             # This overrides other tier boosts since kNN fundamentally won't work
             return ConfidenceTier.LOW, False, 'mechanism_specific'
+
+        # h340: MEK inhibitors for non-cancer diseases have 0% precision
+        # These drugs target RAS/RAF/MEK/ERK pathway specific to cancer
+        # 100% of their GT is cancer, non-cancer predictions are spurious
+        if self._is_mek_inhibitor_non_cancer(drug_name, disease_name):
+            return ConfidenceTier.LOW, False, 'mek_non_cancer'
 
         # h297: Highly repurposable diseases can get a confidence boost
         # These diseases have drugs widely used across many conditions
