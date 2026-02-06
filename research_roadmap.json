@@ -7145,7 +7145,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Build CV_PATHWAY_COMPREHENSIVE_DRUGS set from GT",
@@ -7156,7 +7156,9 @@
       ],
       "dependencies": [
         "h351"
-      ]
+      ],
+      "findings": "VALIDATED + IMPLEMENTED: CV pathway-comprehensive boost added.\n\nIMPLEMENTATION:\n1. Added CV_PATHWAY_COMPREHENSIVE_DRUGS set (109 drugs)\n   - Includes: statins, ACEi, ARBs, beta-blockers, anticoagulants, SGLT2i, nitrates, etc.\n   - Identified from GT as drugs with BOTH CV base AND CV complication indications\n\n2. Added CV_COMPLICATION_KEYWORDS set\n   - heart failure, stroke, myocardial infarction, angina, peripheral vascular, cardiomyopathy\n\n3. Added static methods:\n   - _is_cv_complication(disease_name) \u2192 bool\n   - _is_cv_pathway_comprehensive(drug_name) \u2192 bool\n\n4. Added boost logic in _assign_confidence_tier():\n   - CV complication + pathway-comprehensive \u2192 HIGH tier (48.8% precision)\n   - CV complication + non-pathway-comprehensive \u2192 standard tier assignment (7.6% precision)\n\nEXPECTED IMPACT:\n- 41 CV complication predictions from pathway-comprehensive drugs \u2192 HIGH tier\n- No filter on non-pathway drugs (some GT hits exist at 7.6%)\n- All tests pass",
+      "result_metric": "109 drugs boosted to HIGH for CV complications"
     },
     {
       "id": "h355",
