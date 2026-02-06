@@ -8021,7 +8021,7 @@
       "title": "Deploy Category-Specific k Values (h66 Finding, Never Implemented)",
       "description": "PROMISING DIRECTION: h66 validated category-specific k values improve R@30: metabolic k=30 (+9pp), respiratory k=30 (+8pp), CV k=15 (+3pp). This was NEVER deployed to production. It represents the most validated, unimplemented model improvement - a genuine prediction quality gain, not just confidence labeling.",
       "hypothesis": "Implementing category-specific k values in production kNN will improve overall R@30 by 2-4pp. This is the first real model improvement since h39.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 2,
       "expected_impact": "high",
       "effort": "low",
@@ -8034,8 +8034,8 @@
         "Step 6: If overall improves, update production predictor",
         "Step 7: Success criteria: Overall R@30 improvement > 1pp (statistically significant at p<0.05)"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: Category-specific k values HURT overall R@30.\n\nUniform k=20: 63.2% \u00b1 3.3% R@30\nCategory k:   60.8% \u00b1 3.8% R@30 (-2.4pp, p=0.062)\n\nPer-category:\n- Cancer k=30: +4.9pp (only winner)\n- CV k=5: -8.2pp (h66 was wrong)\n- Respiratory k=5: -14.7pp (catastrophic)\n- Psychiatric k=5: -23.3pp (small n)\n- Autoimmune k=10: -4.7pp\n- Metabolic k=30: 0.0pp (no effect)\n\nROOT CAUSE: h66 was validated BEFORE h170 selective category boosting.\nh170 already achieves the category-focus effect that lower k was meant to provide.\nWith boosting active, reducing k removes useful cross-category neighbors\nwithout adding category-specific benefit.\n\nThe only category where k>20 helps is cancer (k=30 = +4.9pp), likely because\ncancer has high GT diversity across many cancer types.",
+      "result_metric": "Overall: -2.4pp (p=0.062). Category k HURTS, not helps."
     },
     {
       "id": "h401",
@@ -8306,6 +8306,42 @@
         "Step 2: Check if these are patterns that should be in LOW instead of FILTER",
         "Step 3: Check if merging LOW+FILTER changes any downstream behavior",
         "Step 4: If merge is clean, simplify to 4 tiers"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h413",
+      "title": "Cancer-Only k=30 Deployment",
+      "description": "h400 found that ONLY cancer benefits from k=30 (+4.9pp). Test cancer-specific k=30 with all other categories at k=20. This is a targeted improvement that avoids the harm from lowering k for other categories.",
+      "hypothesis": "Using k=30 for cancer diseases only will improve cancer R@30 by ~5pp without hurting other categories, yielding +1-2pp overall.",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Step 1: Test k=30 for cancer, k=20 for all else (5-seed evaluation)",
+        "Step 2: Confirm cancer +4.9pp holds in isolation",
+        "Step 3: Confirm no harm to other categories",
+        "Step 4: If validated, implement in production predictor"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h414",
+      "title": "h170 Boosting Strength Optimization",
+      "description": "h400 showed h170 selective boosting (alpha=0.5) already provides category-focus. The alpha value was set somewhat arbitrarily. Optimizing alpha per category could improve R@30. Higher alpha = more category focus (like lower k), lower alpha = more diversity.",
+      "hypothesis": "Category-specific alpha values could achieve the same benefit h66 was targeting. E.g., cancer might benefit from lower alpha (more diverse neighbors), while autoimmune might benefit from higher alpha.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Step 1: Test alpha in [0.1, 0.3, 0.5, 0.7, 1.0] for each category",
+        "Step 2: Find optimal alpha per category using 5-seed evaluation",
+        "Step 3: Compare category-specific alpha vs uniform alpha=0.5",
+        "Step 4: If improvement > 1pp, deploy"
       ],
       "findings": null,
       "result_metric": null
@@ -9754,6 +9790,12 @@
       "hypothesis_id": "h396",
       "learning": "GOLDEN<HIGH inversion was caused by cancer_same_type (24.5% precision) comprising 57% of GOLDEN. Demoting to MEDIUM fixed ordering and raised GOLDEN to 53.6%. High-precision rules should dominate GOLDEN, not high-volume mediocre rules.",
       "implication": "When adding new GOLDEN rules, verify their precision exceeds current HIGH tier average (~48%). Volume dilutes precision."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h400",
+      "learning": "Category-specific k values (h66) are invalidated in production because h170 selective boosting already provides category focus. Reducing k from 20 to 5/10 removes useful diverse neighbors. Only cancer benefits from k=30.",
+      "implication": "Do not deploy category-specific k. h170 boosting is sufficient for category routing. Future k optimization should account for all production features."
     }
   ],
   "collaborations": [
