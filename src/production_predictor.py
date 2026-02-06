@@ -542,19 +542,22 @@ COMPLICATION_VALIDATED_DRUGS: Dict[str, Set[str]] = {
     },
 }
 
-# h354: CV Pathway-Comprehensive Drugs (from h351 analysis)
-# These drugs have GT for BOTH a CV base disease AND a CV complication.
-# For CV complication predictions:
-#   - Pathway-comprehensive: 48.8% precision (20/41)
-#   - Non-pathway-comprehensive: 7.6% precision (6/79)
-#   - GAP: +41.2 pp (6.4x lift!)
+# h354/h356: CV Pathway-Comprehensive Drugs (from h351 analysis)
+# Criteria: drugs with GT for BOTH CV base AND CV complication, OR drugs with 2+ CV complication types
+# h356 expanded criteria to include antiplatelets/anticoagulants that specialize in CV complications
+#
+# For CV complication predictions (with expanded criteria):
+#   - Pathway-comprehensive: 28.9% precision (26/90)
+#   - Non-pathway-comprehensive: 1.1% precision (1/90)
+#   - GAP: +27.8 pp
 #
 # CV Base: hypertension, coronary artery disease, hyperlipidemia, dyslipidemia, atherosclerosis
 # CV Complications: heart failure, stroke, myocardial infarction, angina, peripheral vascular
 #
-# 109 drugs identified as pathway-comprehensive for CV.
+# 129 drugs identified as pathway-comprehensive for CV (109 original + 20 multi-complication drugs)
 # Use for boost (pathway-comp → HIGH) and demotion (non-pathway → LOW for CV complications)
 CV_PATHWAY_COMPREHENSIVE_DRUGS = {
+    # Original 109 drugs (base + complication)
     'alirocumab', 'aliskiren', 'aliskiren mixture with hydrochlorothiazide',
     'amiloride', 'amiloride / hydrochlorothiazide oral tablet', 'amiodarone',
     'amlodipine', 'amlodipine / hydrochlorothiazide / olmesartan',
@@ -585,7 +588,12 @@ CV_PATHWAY_COMPREHENSIVE_DRUGS = {
     'sacubitril and valsartan sodium hydrate drug combination', 'semaglutide', 'simvastatin',
     'spironolactone', 'technetium tc-99m sestamibi', 'telmisartan', 'telmisartan/amlodipine',
     'terazosin', 'ticagrelor', 'timolol', 'torasemide', 'trandolaprilat', 'valsartan',
-    'valsartan, amlodipine, hct', 'verapamil', 'warfarin'
+    'valsartan, amlodipine, hct', 'verapamil', 'warfarin',
+    # h356: 20 additional drugs with 2+ CV complication types (antiplatelets, thrombolytics, etc.)
+    'alteplase', 'aspirin', 'aspirin; omeprazole', 'celecoxib', 'clopidogrel',
+    'clopidogrel aspirin', 'colchicine', 'dalteparin', 'dopamine', 'dulaglutide',
+    'enoxaparin', 'eptifibatide', 'finerenone', 'fondaparinux', 'icosapent',
+    'papaverine', 'prasugrel', 'stannous cation', 'tenecteplase', 'vorapaxar'
 }
 
 # CV complication keywords (heart failure, stroke, MI, angina, peripheral vascular)

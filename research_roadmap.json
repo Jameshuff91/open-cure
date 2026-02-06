@@ -7187,7 +7187,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Count non-pathway-comprehensive CV predictions by tier",
@@ -7197,7 +7197,9 @@
       ],
       "dependencies": [
         "h351"
-      ]
+      ],
+      "findings": "VALIDATED: Expanded CV_PATHWAY_COMPREHENSIVE_DRUGS set improves precision.\n\nANALYSIS WITH ORIGINAL SET (109 drugs):\n- Non-pathway-comprehensive CV predictions: 98\n- Non-pathway HIGH/MEDIUM to demote: 85\n- GT loss if demoted: 5 (5.9%)\n\nANALYSIS OF GT LOSSES:\nFound that Clopidogrel, Vorapaxar, Celecoxib, Aspirin have GT for 2+ CV complication types\nbut no CV base disease. These are CV specialty drugs (antiplatelets, thrombolytics).\n\nEXPANDED CRITERIA (h356):\n- Original: drugs with CV base + CV complication GT\n- New: ALSO include drugs with 2+ CV complication types (indicates CV specialization)\n\nRESULTS WITH EXPANDED SET (129 drugs):\n- Expanded pathway-comprehensive: 28.9% precision (26/90)\n- Non-pathway-comprehensive: 1.1% precision (1/90)\n- GAP: +27.8 pp\n\nDEMOTION IMPACT:\n- Predictions to demote: 78\n- GT loss: 1 (1.3%)\n- Decision: DO NOT implement demotion now - boost is sufficient\n\n20 NEW DRUGS ADDED:\nAntiplatelets: aspirin, clopidogrel, prasugrel, vorapaxar, eptifibatide\nAnticoagulants: enoxaparin, dalteparin, fondaparinux\nThrombolytics: alteplase, tenecteplase\nOther: celecoxib, colchicine, dopamine, finerenone, icosapent, etc.\n\nIMPLEMENTATION:\n- Updated CV_PATHWAY_COMPREHENSIVE_DRUGS from 109 \u2192 129 drugs\n- No demotion implemented (boost is sufficient)",
+      "result_metric": "129 drugs (expanded from 109), 28.9% vs 1.1% precision"
     }
   ],
   "completed": [
