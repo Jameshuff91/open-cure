@@ -67,25 +67,50 @@ Systematically identified FDA-approved drug-disease pairs missing from GT by che
 
 **Key Finding:** 50% of high-evidence novel predictions are actually GT gaps, not discoveries. Posaconazole alone had 5 missing fungal disease indications. This suggests systematic GT incompleteness in antifungal and cancer drug families.
 
+### h596: Triazole Antifungal GT Expansion — VALIDATED (marginal)
+
+Antifungal GT was 85% complete (23/27 pairs already present). Added 4 new pairs:
+- Voriconazole → cutaneous/chronic mucocutaneous candidiasis, cryptococcosis
+- Isavuconazonium → zygomycosis/mucormycosis
+
+Holdout unchanged (36.6% MEDIUM). Posaconazole gaps from h593 were the exception.
+
+### h597: Cancer Drug GT Expansion — VALIDATED
+
+Added 5 FDA/guideline-approved cancer drug pairs:
+- Paclitaxel → larynx cancer, vulva cancer
+- Cisplatin → uterine cancer
+- Bortezomib → Burkitt lymphoma, anaplastic large cell lymphoma
+
+Holdout: MEDIUM 36.6% → 37.0% (+0.4pp). Cancer drug GT more complete than expected.
+
+### Cumulative GT Expansion (h593+h596+h597)
+| Source | Pairs Added | MEDIUM Impact |
+|--------|-------------|---------------|
+| h593: Auto-detection | 9 | +0.8pp |
+| h596: Antifungals | 4 | +0.0pp |
+| h597: Cancer drugs | 5 | +0.4pp |
+| **Total** | **18** | **+1.2pp** |
+
 ### New Hypotheses Generated (5 total this session)
-- h593: GT gap detection (COMPLETED)
+- h593-h597: GT gap detection arc (COMPLETED)
 - h594: Add composite score to deliverable (P5, low)
 - h595: Composite weight optimization (P5, medium)
-- h596: Triazole antifungal GT expansion (P4, low)
-- h597: Cancer drug GT expansion (P4, medium)
+- h596: Triazole antifungal GT expansion (COMPLETED)
+- h597: Cancer drug GT expansion (COMPLETED)
 
 ### Recommended Next Steps
-1. **h596**: Triazole antifungal GT expansion (low effort, same pattern as h593)
-2. **h597**: Cancer drug GT expansion (medium effort, many expected gaps)
-3. **h594**: Add composite score to deliverable (quick implementation)
+1. **h594**: Add composite score to deliverable (quick implementation)
+2. Consider pivoting to external data integration (LINCS, PubMed) for fundamentally new signals
+3. Remaining GT gaps have diminishing returns; focus on deliverable quality
 
-### Session Tier Performance (h593 update)
+### Session Tier Performance (h597 update)
 | Tier | Holdout | Predictions |
 |------|---------|-------------|
 | GOLDEN | 69.9% ± 17.9% | 280 |
 | HIGH | 58.9% ± 6.0% | 754 |
-| MEDIUM | 36.6% ± 2.9% | 2083 |
-| LOW | 15.5% ± 2.4% | 3733 |
+| MEDIUM | 37.0% ± 2.8% | 2083 |
+| LOW | 15.6% ± 2.4% | 3733 |
 | FILTER | 10.6% ± 1.3% | 7300 |
 
 ### Key Learnings

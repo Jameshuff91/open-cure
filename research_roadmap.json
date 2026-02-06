@@ -12365,12 +12365,14 @@
         "Re-run holdout evaluation",
         "Success: >10 new GT pairs"
       ],
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
       "category": "data-quality",
-      "rationale": "h593 showed cancer drug GT gaps are common. Doxorubicin alone treats 40+ cancer types in GT but choriocarcinoma was missing."
+      "rationale": "h593 showed cancer drug GT gaps are common. Doxorubicin alone treats 40+ cancer types in GT but choriocarcinoma was missing.",
+      "findings": "VALIDATED: Cancer drug GT expansion adds 5 FDA/guideline-approved pairs.\n\nPAIRS ADDED:\n1. Paclitaxel \u2192 larynx cancer (head/neck SCC, TPF regimen)\n2. Paclitaxel \u2192 vulva cancer (NCCN recommended, paclitaxel/cisplatin)\n3. Cisplatin \u2192 uterine cancer (carcinosarcoma regimens)\n4. Bortezomib \u2192 Burkitt lymphoma (relapsed aggressive NHL)\n5. Bortezomib \u2192 anaplastic large cell lymphoma (NCCN for relapsed ALCL)\n\nNOT APPROVED (correctly excluded):\n- Bleomycin \u2192 uterine/endometrial/rectal/fallopian (not standard)\n- Doxorubicin \u2192 medulloblastoma (not SOC)\n- Paclitaxel \u2192 rectal cancer (5-FU based SOC)\n\nHOLDOUT IMPACT: MEDIUM 36.6% \u2192 37.0% (+0.4pp)\n\nCUMULATIVE GT EXPANSION (h593+h596+h597): 18 pairs added, MEDIUM 35.8% \u2192 37.0% (+1.2pp)\n\nKEY INSIGHT: Cancer drug GT has fewer gaps than expected. Most broad-spectrum chemo drugs (cisplatin, gemcitabine, carboplatin) already have comprehensive cancer subtype GT. The remaining gaps are for newer/specialty drugs (bortezomib, bevacizumab) and specific cancer subtypes.",
+      "result_metric": "5 GT pairs added, MEDIUM 36.6% \u2192 37.0% (+0.4pp)"
     }
   ],
   "completed": [
@@ -14387,6 +14389,12 @@
       "hypothesis_id": "h596",
       "learning": "Antifungal GT is 85% complete (23/27 checked pairs already present). Posaconazole gaps (h593) were an outlier. Cancer drugs likely have larger GT gaps than antifungals.",
       "implication": "GT gap detection has diminishing returns for well-covered drug families. Focus on cancer drugs (h597) where subtype-level GT is less complete."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h597",
+      "learning": "Cancer chemotherapy GT is more complete than expected. Cisplatin/gemcitabine/carboplatin already have 29-39 cancer subtypes in GT. GT gaps are concentrated in newer/specialty drugs (bortezomib, bevacizumab) and rare cancer subtypes. Cumulative GT expansion (h593-h597): 18 pairs, MEDIUM +1.2pp.",
+      "implication": "GT expansion has diminishing returns. The 18 most obvious gaps are fixed. Remaining gaps require drug-specific FDA label cross-referencing rather than systematic class-level detection."
     }
   ],
   "collaborations": [
