@@ -1,13 +1,15 @@
 # Research Loop Progress
 
-## Current Session: h526 - Drug-Induced Disease Classes Taxonomy (2026-02-06)
+## Current Session: h526/h529/h531 - Inverse Indication Taxonomy + GT Audit (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 1**
+**Hypotheses Tested: 3**
 - h526: Drug-Induced Disease Classes: Systematic Taxonomy - **VALIDATED**
+- h529: GT Quality Audit: Remove Inverse Indication GT Entries - **VALIDATED** (-19 false GT pairs)
+- h531: TCA/MAOI → Bipolar Extension - **INVALIDATED** (no predictions to filter)
 
 ### Key Findings
 
@@ -48,15 +50,25 @@ Source: adverse effect/warning mentions confused with indications in data curati
 - Holdout: unchanged (too few predictions to measure)
 - Safety: 10 harmful predictions now correctly filtered
 
+#### 6. h529: GT Quality Audit
+- 38 GT entries are inverse indications; 14 from Every Cure (flagged), 24 from DRKG (removed)
+- 19 unique (drug_id, disease_id) pairs removed from expanded_ground_truth.json
+- FILTER precision dropped 0.2pp (16 fewer false hits)
+- Key insight: DRKG associations ≠ treatments
+
+#### 7. h531: No TCA/MAOI Bipolar Predictions
+- Checked 24 antidepressants (10 TCAs, 7 MAOIs, 7 others)
+- None have bipolar disorder predictions — SSRIs/SNRIs already fully covered
+
 ### New Hypotheses Generated (3)
-- h529: GT quality audit - remove inverse indication GT entries (P4, medium)
+- h529: GT quality audit (P4, completed)
 - h530: Automatic inverse indication classifier (P5, high)
-- h531: TCA/MAOI → bipolar expansion (P5, low)
+- h531: TCA/MAOI → bipolar expansion (P5, completed - invalidated)
 
 ### Recommended Next Steps
-1. **h529**: Audit and clean 38 erroneous GT entries (reduces full↔holdout gap)
-2. **h531**: Quick check for TCA/MAOI → bipolar predictions
-3. **h408**: Ryland collaboration prep (Feb 10 deadline approaching)
+1. **h408**: Ryland collaboration prep (Feb 10 deadline approaching)
+2. **h257**: IV vs oral formulation safety distinction (medium effort)
+3. **h530**: Automatic inverse indication classifier (high effort, longer term)
 
 ---
 

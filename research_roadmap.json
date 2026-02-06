@@ -10484,14 +10484,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List all 38 GT inverse indication conflicts from h526",
         "Verify each against Every Cure GT vs expanded GT (which source?)",
         "For DRKG-derived entries: safe to remove (DRKG association \u2260 treatment)",
         "For Every Cure entries: flag but do NOT remove (upstream data issue)",
         "Measure full-data vs holdout gap change after removal"
-      ]
+      ],
+      "findings": "h529 VALIDATED: GT Quality Audit - removed 19 false inverse indication GT entries.\n\nTOTAL CONFLICTS: 38 GT entries are inverse indications (drug CAUSES disease).\n\nSOURCE CLASSIFICATION:\n- Every Cure (14): Cannot remove (upstream data). Analysis:\n  * 5 clearly incorrect EC entries (ACEi\u2192angioedema, estrogens\u2192cancer, liothyronine\u2192hyperthyroid)\n  * 8 disease name mismatch errors (PSVT\u2260VT, nephrotic\u2260IPF, flutter\u2260HF)\n  * 1 borderline (verapamil HFpEF)\n- DRKG/Expanded (24 unique names \u2192 19 unique ID pairs): REMOVED\n  * CCBs/Class Ic \u2192 cardiac arrest/MI/HF (diltiazem 5, flecainide 3, propafenone 1, verapamil 1)\n  * Corticosteroids \u2192 steroid AEs (prednisone 3, prednisolone 1, dexamethasone 1, budesonide 1)\n  * NSAIDs \u2192 drug-induced diseases (celecoxib 1, diclofenac 1, indomethacin 1)\n  * Others: azathioprine\u2192TEN, dofetilide\u2192VT\n\nIMPACT:\n- 19 pairs removed from expanded_ground_truth.json (59585 \u2192 59566 pairs)\n- FILTER full-data: 17.0% \u2192 16.8% (-0.2pp, 16 fewer false hits)\n- FILTER holdout: 10.5% \u2192 10.3% (-0.2pp)\n- All other tiers: unchanged (corrections only affected FILTER-tier predictions)\n\nKEY INSIGHT: DRKG associations include drug-disease relationships that are NOT treatments\n(adverse effects, contraindications, mentions in literature). These were incorrectly \nincluded as positive GT entries during GT expansion. The inverse indication filter catches\nthem, but having them in GT inflates precision metrics.",
+      "result_metric": "-19 false GT entries, FILTER -0.2pp (data quality improvement)"
     },
     {
       "id": "h530",
@@ -12312,6 +12314,12 @@
       "hypothesis_id": "h526",
       "learning": "Inverse indication filter ordering matters: safety-critical checks must precede all positive tier assignments. Cancer_same_type was bypassing inverse_indication check. 38 GT entries are actually inverse indications (drug CAUSES disease).",
       "implication": "Always place safety filters at the TOP of _assign_confidence_tier. GT quality issues can be masked by inverse indication filters."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h529",
+      "learning": "DRKG associations \u2260 treatments. 19 DRKG-derived GT entries were actually inverse indications (drug causes disease). Always validate DRKG associations against clinical evidence before including in GT.",
+      "implication": "Future GT expansion should cross-check against inverse indication list. Every Cure GT has ~5 incorrect entries (adverse effects labeled as indications) and ~8 disease name mismatch errors."
     }
   ],
   "collaborations": [
