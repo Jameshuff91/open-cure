@@ -79,10 +79,30 @@ Analyzed all 174 corticosteroid→infectious disease predictions across all tier
 - h563: LA procedural MEDIUM→HIGH promotion (P5, low)
 - h564: Deliverable regeneration with updated tiers (P4, low)
 
+### h562: Cancer Same-Type Subtype Specificity Analysis — VALIDATED (Bug Fix)
+
+Expected to find cross-subtype contamination. Instead found a substring matching bug.
+
+**Finding 1:** All 846 cancer_same_type predictions were already SAME_SUBTYPE (100%). No cross-subtype issue.
+
+**Finding 2:** `extract_cancer_types()` had a substring bug with short abbreviations:
+- `'ALL'` (Acute Lymphoblastic Leukemia) matched "sm**all**", "f**all**opian", "**all**ergic"
+- 8 diseases falsely tagged as leukemia, inflating cancer_same_type count by 39 predictions
+
+**Fix:** Word boundary regex (`\b`) for keywords <=4 chars (ALL, CLL, AML, CML, SCLC).
+
+**Impact:**
+| Metric | Before | After | Delta |
+|--------|--------|-------|-------|
+| MEDIUM predictions | 2152 | 2113 | -39 |
+| cancer_same_type | 846 | 807 | -39 |
+| cancer_same_type holdout | 27.9% | 29.4% | +1.5pp |
+| **Overall MEDIUM holdout** | **34.2%** | **34.9%** | **+0.7pp** |
+
 **Recommended Next Steps:**
-1. **h562**: Cancer same-type subtype specificity — the main remaining opportunity
-2. **h564**: Deliverable regeneration (practical impact for collaboration)
-3. **h560**: Cross-pathogen mismatch filter (infectious sub-type)
+1. **h564**: Deliverable regeneration (practical impact for collaboration)
+2. **h560**: Cross-pathogen mismatch filter (infectious sub-type)
+3. **h532**: Every Cure GT error report
 
 ---
 

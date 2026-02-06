@@ -1811,15 +1811,26 @@ ZERO_PRECISION_MISMATCHES: Set[Tuple[str, str]] = {
 def extract_cancer_types(disease_name: str) -> Set[str]:
     """
     h274: Extract cancer types from a disease name.
+    h562: Fixed word boundary matching for short abbreviations (ALL, CLL, AML, CML, SCLC)
+    to prevent false matches like "small" → "all", "fallopian" → "all".
 
     Returns set of cancer types (e.g., {'lymphoma', 'leukemia'}).
     """
+    import re
     disease_lower = disease_name.lower()
     cancer_types = set()
 
     for cancer_type, keywords in CANCER_TYPE_KEYWORDS.items():
-        if any(kw in disease_lower for kw in keywords):
-            cancer_types.add(cancer_type)
+        for kw in keywords:
+            if len(kw) <= 4:
+                # Short abbreviations need word boundary matching
+                if re.search(r'\b' + re.escape(kw) + r'\b', disease_lower):
+                    cancer_types.add(cancer_type)
+                    break
+            else:
+                if kw in disease_lower:
+                    cancer_types.add(cancer_type)
+                    break
 
     return cancer_types
 

@@ -147,12 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h557 update, 2026-02-06):**
+**Tier System (h562 update, 2026-02-06):**
 - GOLDEN: 69.9% ± 17.9% holdout (279 predictions)
 - HIGH: 59.5% ± 6.2% holdout (757 predictions)
-- MEDIUM: 34.2% ± 2.7% holdout (2152 predictions)
-- LOW: 16.0% ± 2.5% holdout (3465 predictions)
-- FILTER: 10.4% ± 1.3% holdout (6969 predictions)
+- MEDIUM: 34.9% ± 3.1% holdout (2113 predictions)
+- LOW: 16.0% ± 2.5% holdout (3448 predictions)
+- FILTER: 10.4% ± 1.3% holdout (7025 predictions)
+- **h562:** extract_cancer_types bug fix: 'ALL' substring matched 'small','fallopian','allergic'. Word boundary regex for <=4 char keywords. 39 false cancer_same_type removed. MEDIUM +0.7pp.
 - **h557:** CS→infectious MEDIUM demotion: 2.1% holdout (even VALID uses = 2.9%). 59 preds MEDIUM→LOW. MEDIUM +0.3pp.
 - **h553+h555+h556:** MEDIUM precision session: hematological→LOW, metabolic statin/TZD→LOW, antibiotic→viral→LOW, default no-mech rank 11-20→LOW. Cumulative MEDIUM +3.8pp (30.1%→33.9%). 311+35+21 preds moved to LOW. target_overlap_promotion (43%) best MEDIUM sub-reason but not promotable (h554 inconclusive).
 - **h542:** MEDIUM tier quality audit: 59 predictions validated. 25% validated, 31% plausible, 44% implausible (vs 88% reasonable for GOLDEN/HIGH). Fixes: corticosteroid→adrenocortical insufficiency inverse indication (6 preds), FDG PET tracer filter (55 preds).

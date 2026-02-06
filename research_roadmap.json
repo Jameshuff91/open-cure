@@ -11044,14 +11044,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Analyze holdout precision of cancer_same_type by cancer subtype pairs",
         "Identify which cross-subtype predictions perform worst",
         "Check if hematologic\u2192solid cross-type (h551 finding: 0%) is driving the gap",
         "Propose subtype-specific matching rules",
         "Validate on holdout"
-      ]
+      ],
+      "findings": "Cancer same-type subtype specificity analysis revealed a BUG, not a design issue.\n\nFINDING 1: All 846 cancer_same_type predictions were already SAME_SUBTYPE (100%).\nThe cancer_same_type rule already requires matching subtypes. No cross-subtype contamination.\n\nFINDING 2: extract_cancer_types() had a substring matching bug with short abbreviations.\n'ALL' (acute lymphoblastic leukemia) matched 'small', 'fallopian', 'allergic', 'smallpox'.\n8 diseases were falsely classified as leukemia:\n- fallopian tube cancer (solid tumor, not leukemia)\n- small intestine cancer (solid tumor, not leukemia)\n- allergic rhinitis, allergic bronchopulmonary aspergillosis, smallpox, etc.\n\nFIX: Added word boundary matching (regex \\b) for keywords <=4 chars (ALL, CLL, AML, CML, SCLC).\n\nIMPACT: 39 false cancer_same_type predictions removed from MEDIUM.\n- MEDIUM: 2152\u21922113 predictions\n- cancer_same_type: 846\u2192807 predictions\n- cancer_same_type holdout: 27.9%\u219229.4% (+1.5pp)\n- Overall MEDIUM holdout: 34.2%\u219234.9% (+0.7pp)\n\nLeukemia subtype holdout was 17.9% due to false positives inflating count.\nAfter fix, remaining leukemia predictions are genuine.",
+      "result_metric": "MEDIUM +0.7pp (34.2%\u219234.9%), 39 false cancer preds removed, bug fix"
     },
     {
       "id": "h563",
@@ -11075,7 +11077,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Run h420_regenerate_deliverable.py with current code",
         "Verify tier counts match expected (279 GOLDEN, 757 HIGH, 2152 MEDIUM, etc.)",
@@ -12965,6 +12967,12 @@
       "hypothesis_id": "h561",
       "learning": "MEDIUM precision ceiling at 34.2% via demotion strategy. cancer_same_type (27.9%, 39% of MEDIUM) is the main drag but at genuine MEDIUM level. No remaining sub-reasons with both low holdout (<25%) and high n (>=10/seed). Further improvement requires promotion or refinement, not demotion.",
       "implication": "Pivot from demotion to refinement strategies. cancer_same_type subtype specificity is the highest-impact remaining direction."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h562",
+      "learning": "Short abbreviation keywords (ALL, CLL, AML, CML) in substring matching cause false positives. 'all' matches 'small', 'fallopian', 'allergic'. Always use word boundary matching for keywords <=4 chars. This bug affected 8 diseases and 39 cancer_same_type predictions.",
+      "implication": "Audit all substring matching in the codebase for short keyword false positives. Use regex word boundaries for abbreviations."
     }
   ],
   "collaborations": [
