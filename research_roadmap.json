@@ -4884,7 +4884,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Identify novel predictions for cardiovascular diseases",
         "Search for recent (2023-2026) clinical trial results for these drugs",
@@ -4893,7 +4893,9 @@
       ],
       "dependencies": [
         "h241"
-      ]
+      ],
+      "findings": "Searched 10+ drugs with 2023-2026 FDA approvals/expansions.\n        \nVALIDATED (5 drugs):\n1. Sotatercept \u2192 Pulmonary Hypertension (MEDIUM) - FDA approved March 2024\n2. Dantrolene \u2192 Heart Failure/VT - 2025 RCT shows 66% VT reduction\n3. Landiolol \u2192 Cardiac Arrhythmias (LOW) - FDA approved for SVT\n4. Canagliflozin \u2192 Heart Failure (HIGH) - SGLT2 class approved for HF\n5. Evolocumab \u2192 Atherosclerosis (HIGH) - VESALIUS-CV 2024 expansion\n\nMISSED (4 drugs):\n- Finerenone \u2192 HF (drug not in predictions)\n- Aficamten \u2192 HCM (new drug not in DRKG)\n- Acoramidis \u2192 ATTR-CM (not in predictions)\n- Empagliflozin \u2192 HF (model gap despite 11 predictions)\n\nKey insight: Model performs well (~55%) for drugs in DRKG with good connectivity.\nMisses newer drugs and some SGLT2 inhibitor \u2192 HF patterns.",
+      "result_metric": "5/9 emerging treatments validated (55%)"
     },
     {
       "id": "h246",
@@ -7202,6 +7204,64 @@
       ],
       "findings": "VALIDATED: Expanded CV_PATHWAY_COMPREHENSIVE_DRUGS set improves precision.\n\nANALYSIS WITH ORIGINAL SET (109 drugs):\n- Non-pathway-comprehensive CV predictions: 98\n- Non-pathway HIGH/MEDIUM to demote: 85\n- GT loss if demoted: 5 (5.9%)\n\nANALYSIS OF GT LOSSES:\nFound that Clopidogrel, Vorapaxar, Celecoxib, Aspirin have GT for 2+ CV complication types\nbut no CV base disease. These are CV specialty drugs (antiplatelets, thrombolytics).\n\nEXPANDED CRITERIA (h356):\n- Original: drugs with CV base + CV complication GT\n- New: ALSO include drugs with 2+ CV complication types (indicates CV specialization)\n\nRESULTS WITH EXPANDED SET (129 drugs):\n- Expanded pathway-comprehensive: 28.9% precision (26/90)\n- Non-pathway-comprehensive: 1.1% precision (1/90)\n- GAP: +27.8 pp\n\nDEMOTION IMPACT:\n- Predictions to demote: 78\n- GT loss: 1 (1.3%)\n- Decision: DO NOT implement demotion now - boost is sufficient\n\n20 NEW DRUGS ADDED:\nAntiplatelets: aspirin, clopidogrel, prasugrel, vorapaxar, eptifibatide\nAnticoagulants: enoxaparin, dalteparin, fondaparinux\nThrombolytics: alteplase, tenecteplase\nOther: celecoxib, colchicine, dopamine, finerenone, icosapent, etc.\n\nIMPLEMENTATION:\n- Updated CV_PATHWAY_COMPREHENSIVE_DRUGS from 109 \u2192 129 drugs\n- No demotion implemented (boost is sufficient)",
       "result_metric": "129 drugs (expanded from 109), 28.9% vs 1.1% precision"
+    },
+    {
+      "id": "h357",
+      "title": "SGLT2 Inhibitor \u2192 Heart Failure Gap Analysis",
+      "description": "Empagliflozin has 11 predictions but NONE for heart failure despite FDA approval. Why does kNN miss this major indication? Investigate disease similarity patterns for SGLT2 inhibitors.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Load SGLT2 inhibitor GT indications",
+        "Step 2: Find which diseases are kNN-similar to T2D and CKD",
+        "Step 3: Determine why HF doesn't appear as similar disease",
+        "Step 4: Check if HF appears in neighbor diseases for SGLT2 drugs",
+        "Success criteria: Understand mechanism of gap, potentially fix"
+      ],
+      "dependencies": [
+        "h245"
+      ]
+    },
+    {
+      "id": "h358",
+      "title": "Confidence Calibration by Validation Status",
+      "description": "h245 found Landiolol validated at LOW confidence and Sotatercept at MEDIUM. Are our confidence tiers well-calibrated for emerging treatments? Compare tier precision against validation status.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Compile all predictions with external validation (CT, FDA)",
+        "Step 2: Calculate precision per confidence tier for externally validated predictions",
+        "Step 3: Compare to overall tier precisions",
+        "Step 4: Identify if certain tiers are under/over-confident for novel treatments",
+        "Success criteria: Understand if tier system predicts external validation"
+      ],
+      "dependencies": [
+        "h245"
+      ]
+    },
+    {
+      "id": "h359",
+      "title": "Missing Drug Detection via DRKG Coverage",
+      "description": "h245 found drugs like finerenone, aficamten not in predictions. Build tool to identify drugs in GT but missing from DRKG to quantify coverage gap.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Extract unique drugs from GT file",
+        "Step 2: Extract unique drugs from DRKG",
+        "Step 3: Find GT drugs missing from DRKG",
+        "Step 4: Quantify impact on prediction coverage",
+        "Success criteria: Identify coverage gap"
+      ],
+      "dependencies": []
     }
   ],
   "completed": [
@@ -8515,6 +8575,12 @@
       "hypothesis_id": "h351",
       "learning": "Pathway-comprehensive drugs (treat base AND complications) have 48.8% precision for CV complications vs 7.6% for non-pathway-comprehensive (6.4x lift). But this pattern does NOT hold for renal complications (-6 pp).",
       "implication": "CV complication predictions should check for pathway-comprehensive status. Renal complications need different approach."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h245",
+      "learning": "Model correctly predicted 5/9 emerging treatments (55%). Validated: Sotatercept\u2192PAH (FDA 2024), Dantrolene\u2192VT (RCT 2025), Canagliflozin\u2192HF (HIGH). Missed: newer drugs not in DRKG, some SGLT2\u2192HF patterns.",
+      "implication": "Model has good signal for drugs in DRKG. Coverage gap for newer drugs. SGLT2\u2192HF gap suggests kNN disease similarity issue."
     }
   ],
   "collaborations": [
