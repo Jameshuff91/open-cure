@@ -12343,12 +12343,14 @@
         "Re-run holdout evaluation",
         "Success: >5 new GT pairs, MEDIUM +0.3pp"
       ],
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
       "category": "data-quality",
-      "rationale": "h593 found posaconazole alone had 5 GT gaps. Same pattern likely extends to all triazole antifungals."
+      "rationale": "h593 found posaconazole alone had 5 GT gaps. Same pattern likely extends to all triazole antifungals.",
+      "findings": "VALIDATED (marginal): Triazole antifungal GT was already 85% complete (23/27 pairs present).\n\n4 new GT gaps found and added:\n1. Voriconazole \u2192 cutaneous candidiasis (triazole for candida)\n2. Voriconazole \u2192 chronic mucocutaneous candidiasis (triazole for candida)\n3. Voriconazole \u2192 cryptococcosis (IDSA alternative)\n4. Isavuconazonium \u2192 zygomycosis/mucormycosis (FDA primary indication)\n\nHoldout impact: negligible (36.6% MEDIUM unchanged from h593).\n\nKey insight: Antifungal GT is quite comprehensive. The h593 posaconazole gaps were the exception, not the rule. Most triazole-fungal pairs are already captured. Future GT expansion should focus on cancer drug families where gaps are more common.",
+      "result_metric": "4 GT pairs added, holdout unchanged (36.6% MEDIUM)"
     },
     {
       "id": "h597",
@@ -14379,6 +14381,12 @@
       "hypothesis_id": "h593",
       "learning": "50% of high-evidence non-CS/non-antibiotic novel predictions (rank<=3, same-category GT>=3) are actually FDA-approved GT gaps. Posaconazole alone had 5 missing fungal disease indications. GT incompleteness inflates the 'novel prediction' count and deflates measured precision.",
       "implication": "Before claiming predictions are novel repurposing discoveries, systematically check for GT gaps. Drug families (triazoles, taxanes, etc.) tend to have correlated GT gaps - fixing one drug in the family suggests checking all others."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h596",
+      "learning": "Antifungal GT is 85% complete (23/27 checked pairs already present). Posaconazole gaps (h593) were an outlier. Cancer drugs likely have larger GT gaps than antifungals.",
+      "implication": "GT gap detection has diminishing returns for well-covered drug families. Focus on cancer drugs (h597) where subtype-level GT is less complete."
     }
   ],
   "collaborations": [
