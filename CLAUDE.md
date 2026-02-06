@@ -166,6 +166,18 @@ vastai destroy instance <INSTANCE_ID>
 **Key learning (h399):** Full-data precision can be misleading. Always validate with holdout.
 **Key learning (h393):** Most "overfitted" hierarchy rules are actually 1-disease groups (structural absence, not overfitting).
 
+### TransE Consilience (h405/h439/h440 - NEW 2026-02-06)
+
+**TransE agreement is a strong, holdout-validated signal:**
+- MEDIUM + TransE top-30: 34.7% ± 4.2% holdout (+13.6pp over MEDIUM avg)
+- Works across ALL tiers: GOLDEN +11.4pp, HIGH +6.1pp, LOW +6.5pp, FILTER +7.2pp
+- **NOT a tier promotion** (37.4% full-data < HIGH 50.8%)
+- Implemented as `transe_consilience` boolean flag on DrugPrediction
+- `_load_transe_model()` + `_get_transe_top_n()` in production_predictor.py
+- TransE top-30 optimal (38.9% precision) vs top-100 (38.2% but 2x coverage)
+
+**Key learning (h434):** LOO frequency provides negligible improvement (0-0.5pp). The rank>20 filter compensates for kNN NEIGHBORHOOD INSTABILITY (5-10pp), not frequency inflation. Mean 4.1 drugs cross rank-20 boundary per disease.
+
 ### Mechanism & ATC Integration (h96, h259, h152, h189)
 
 **Mechanism = PRECISION signal** (2.62x lift), NOT recall signal

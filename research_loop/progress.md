@@ -1,16 +1,18 @@
 # Research Loop Progress
 
-## Current Session: h435, h434, h437, h405 (2026-02-06)
+## Current Session: h435, h434, h437, h405, h439, h440 (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 4**
+**Status:** Complete
+**Hypotheses Tested: 6**
 - h435: Deliverable Regeneration with h402 Tier Demotions - **VALIDATED** (14,150 predictions, tier ordering correct)
 - h434: Feature Inflation Root Cause: LOO Frequency - **INVALIDATED** (LOO changes <0.5pp; kNN neighborhood changes are the real driver)
 - h437: kNN Neighborhood Overlap Analysis - **VALIDATED** (Jaccard 0.664, rank-20 crossings 4.1/disease)
 - h405: Multi-Method Consilience Ensemble - **VALIDATED** (TransE top-30 = +13.6pp lift on holdout!)
+- h439: Implement TransE Consilience in Production - **VALIDATED** (annotation flag, not tier promotion)
+- h440: TransE Threshold Optimization - **VALIDATED** (top-30 optimal at 38.9% precision)
 
 ### h435: Deliverable Regeneration - VALIDATED
 
@@ -67,17 +69,41 @@ Tier ordering correct: GOLDEN 64.1% > HIGH 52.5% > MEDIUM 27.0% > LOW 12.0% > FI
 MEDIUM + TransE top-30 = 34.7% on holdout approaches HIGH tier threshold.
 This is the first new promotable signal since h388 target overlap.
 
+### h439: Implement TransE Consilience in Production - VALIDATED
+
+**Implementation:**
+1. Added `_load_transe_model()` to load TransE entity/relation embeddings at init
+2. Added `_get_transe_top_n(disease_id, candidates, n=30)` method
+3. Added `transe_consilience` boolean field to DrugPrediction dataclass
+4. For each disease, computes TransE top-30 from all ~1108 GT drugs
+
+**Decision:** Annotation only, NOT tier promotion:
+- Full-data MEDIUM + TransE: 37.4% precision (238 predictions)
+- Promoting to HIGH would dilute HIGH from 50.8% to 44.0% (-6.8pp)
+- Flag is useful for within-tier prioritization
+
+**Performance:** <3ms per prediction (no measurable overhead)
+
+### h440: TransE Threshold Optimization - VALIDATED
+
+| Threshold | MEDIUM Precision | n | Lift |
+|-----------|-----------------|---|------|
+| top-10 | 33.3% | 174 | +7.8pp |
+| top-20 | 36.7% | 313 | +11.8pp |
+| **top-30** | **38.9%** | **453** | **+14.6pp** |
+| top-50 | 37.9% | 672 | +14.5pp |
+| top-100 | 38.2% | 1,067 | +16.8pp |
+
+Optimal for precision: top-30 (38.9%). None reach HIGH threshold (50.8%).
+
 ### New Hypotheses Generated
 - **h436:** kNN Bootstrap Ensemble for Rank Stability - Priority 3
-- **h437:** kNN Neighborhood Overlap Analysis (completed) - Priority 3
 - **h438:** Full-Data vs Holdout Gap Reconciliation - Priority 4
-- **h439:** Implement TransE Consilience Promotion in Production - Priority 2
-- **h440:** TransE Top-N Threshold Optimization - Priority 3
 
 ### Recommended Next Steps
-1. **h439:** Implement TransE consilience promotion (Priority 2, medium effort)
-2. **h440:** Optimize TransE threshold before implementing (Priority 3, low effort)
-3. **h436:** kNN Bootstrap for rank stability (Priority 3, medium effort)
+1. **h436:** kNN Bootstrap for rank stability (Priority 3, medium effort)
+2. **h407:** Build Comprehensive Drug/Disease ID Mapping Infrastructure (Priority 2, high effort)
+3. **h91:** Literature Mining from PubMed (Priority 2, high effort)
 
 ---
 

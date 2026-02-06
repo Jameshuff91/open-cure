@@ -98,6 +98,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 import numpy as np
 import pandas as pd
+import torch
 from sklearn.metrics.pairwise import cosine_similarity
 
 # h189: ATC-based drug classification (lazy import to avoid circular dependency)
@@ -259,6 +260,9 @@ class DrugPrediction:
     category_rescue_applied: bool = False
     category_specific_tier: Optional[str] = None
 
+    # h405/h439: TransE consilience flag
+    transe_consilience: bool = False
+
     def to_dict(self) -> Dict:
         return {
             'drug': self.drug_name,
@@ -272,6 +276,7 @@ class DrugPrediction:
             'has_targets': self.has_targets,
             'category': self.category,
             'category_rescue_applied': self.category_rescue_applied,
+            'transe_consilience': self.transe_consilience,
         }
 
 
@@ -1416,6 +1421,73 @@ class DrugRepurposingPredictor:
         # h271: Build domain-isolated drug mapping
         self._build_domain_isolation_mapping()
 
+        # h405/h439: Load TransE model for consilience scoring
+        self._load_transe_model()
+
+    def _load_transe_model(self) -> None:
+        """Load TransE model for consilience scoring (h405/h439).
+
+        TransE agreement is a strong holdout-validated signal:
+        MEDIUM + TransE top-30 = 34.7% holdout (+13.6pp over MEDIUM avg).
+        """
+        transe_path = self.data_dir / "models" / "transe.pt"
+        self.transe_entity_emb: Optional[np.ndarray] = None
+        self.transe_entity2id: Optional[Dict[str, int]] = None
+        self.transe_treat_vec: Optional[np.ndarray] = None
+
+        if not transe_path.exists():
+            return
+
+        try:
+            data = torch.load(transe_path, map_location="cpu", weights_only=False)
+            self.transe_entity_emb = data["model_state_dict"][
+                "entity_embeddings.weight"
+            ].numpy()
+            self.transe_entity2id = data["entity2id"]
+            relation2id = data["relation2id"]
+            treat_rel_id = relation2id.get("DRUGBANK::treats::Compound:Disease")
+            if treat_rel_id is not None:
+                self.transe_treat_vec = data["model_state_dict"][
+                    "relation_embeddings.weight"
+                ].numpy()[treat_rel_id]
+        except Exception:
+            # TransE loading is optional; continue without it
+            self.transe_entity_emb = None
+            self.transe_entity2id = None
+            self.transe_treat_vec = None
+
+    def _get_transe_top_n(
+        self, disease_id: str, candidate_drugs: Set[str], n: int = 30
+    ) -> Set[str]:
+        """Get top-N drugs by TransE scoring for a disease (h405/h439).
+
+        TransE score: -||drug_emb + treat_vec - disease_emb||
+        Higher (less negative) is better.
+        """
+        if (
+            self.transe_entity_emb is None
+            or self.transe_entity2id is None
+            or self.transe_treat_vec is None
+        ):
+            return set()
+
+        if disease_id not in self.transe_entity2id:
+            return set()
+
+        disease_emb = self.transe_entity_emb[self.transe_entity2id[disease_id]]
+        scores: List[Tuple[str, float]] = []
+
+        for drug_id in candidate_drugs:
+            if drug_id in self.transe_entity2id:
+                drug_emb = self.transe_entity_emb[self.transe_entity2id[drug_id]]
+                score = -float(
+                    np.linalg.norm(drug_emb + self.transe_treat_vec - disease_emb)
+                )
+                scores.append((drug_id, score))
+
+        scores.sort(key=lambda x: x[1], reverse=True)
+        return {drug_id for drug_id, _ in scores[:n]}
+
     def _get_cache_key(self) -> str:
         """Generate a cache key based on source file modification times and content hash."""
         # h176: Cache invalidation based on source files
@@ -1524,6 +1596,12 @@ class DrugRepurposingPredictor:
         for _, drugs in self.ground_truth.items():
             for drug_id in drugs:
                 self.drug_train_freq[drug_id] += 1
+
+        # h405/h439: Pre-compute set of all GT drugs with embeddings for TransE scoring
+        self.all_gt_drugs_with_embeddings: Set[str] = {
+            d for drugs in self.ground_truth.values() for d in drugs
+            if d in self.embeddings
+        }
 
         # h280/h281: Reverse mapping - drug_id → set of disease names (for complication check)
         self.drug_to_diseases: Dict[str, Set[str]] = defaultdict(set)
@@ -3103,6 +3181,13 @@ class DrugRepurposingPredictor:
                     sorted_drugs = sorted(drug_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
                     max_score = sorted_drugs[0][1] if sorted_drugs else 1.0
 
+                # h405/h439: Compute TransE top-30 once per disease for
+                # consilience annotation. TransE agreement = +13.6pp
+                # holdout-validated lift for MEDIUM tier.
+                transe_top30 = self._get_transe_top_n(
+                    disease_id, self.all_gt_drugs_with_embeddings, n=30
+                )
+
                 for rank, (drug_id, score) in enumerate(sorted_drugs, 1):
                     if use_minrank:
                         # For MinRank: score is already normalized combined score
@@ -3135,6 +3220,12 @@ class DrugRepurposingPredictor:
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 
+                    # h405/h439: TransE consilience flag
+                    # MEDIUM + TransE top-30 = 34.7% holdout (+13.6pp)
+                    # Not promoted to HIGH (37.4% full-data < HIGH 50.8%)
+                    # but flagged for downstream prioritization.
+                    in_transe_top30 = drug_id in transe_top30
+
                     # h374: Mark predictions from MinRank ensemble
                     if use_minrank and cat_specific is None:
                         cat_specific = 'minrank_ensemble'
@@ -3153,6 +3244,7 @@ class DrugRepurposingPredictor:
                         disease_tier=disease_tier,
                         category_rescue_applied=rescue_applied,
                         category_specific_tier=cat_specific,
+                        transe_consilience=in_transe_top30,
                     )
 
                     if include_filtered or tier != ConfidenceTier.FILTER:
