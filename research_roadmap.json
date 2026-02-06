@@ -8938,13 +8938,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Break down HIGH tier by rank bucket AND assignment rule",
         "Check if hierarchy match predictions cluster at specific ranks",
         "Check if high-frequency drugs cluster at specific ranks",
         "If HIGH rank 16-20 enriched in hierarchy, these were likely rescued from rank>20 FILTER"
-      ]
+      ],
+      "findings": "HIGH tier's flat rank gradient (full-data) is explained by hierarchy rule composition.\n\nKEY FINDING: HIGH rank 16-20 has 56.5% precision (65/115) because it's DOMINATED by hierarchy-matched predictions:\n- RA hierarchy: 94.7% at rank 16-20 (19 preds)\n- Spondylitis: 100% (5 preds), Colitis: 100% (5 preds), Hypertension: 71.4% (7 preds)\n\nMeanwhile, HIGH rank 1-5 (60.2%, 182 preds) includes more \"default\" rule predictions (43 = 24%) at only 16% precision.\n\nMechanism: Hierarchy rules RESCUE low-ranked drugs (kNN rank 16-20) to HIGH tier. These rescued drugs have high precision because they treat closely related diseases. But the high-ranked default predictions (freq>=15+mech at rank 1-5) include false positives.\n\nWHY HOLDOUT SHOWS A GRADIENT: On holdout, hierarchy rescue is weaker (many are 1-disease groups that may miss the holdout split), so the rank gradient re-emerges (43.0% rank 1-5 vs 21.0% rank 16-20).\n\nFrequency by rank: rank 1-5 avg_freq=18.9 vs rank 16-20 avg_freq=9.3 (-9.6).\nMechanism support: ~58-65% across all rank buckets (flat).\n\nNO ACTION NEEDED: The flat gradient is a feature, not a bug. Hierarchy rules correctly rescue high-quality low-ranked predictions.",
+      "result_metric": "HIGH rank 16-20 = 56.5% (hierarchy-dominated) vs rank 1-5 = 60.2% (default-heavy)"
     },
     {
       "id": "h449",
@@ -8953,13 +8955,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Count corticosteroid predictions in MEDIUM tier",
         "Compute MEDIUM precision with vs without corticosteroids",
         "If improvement >1pp, consider adding corticosteroid-specific demotion",
         "Validate on holdout"
-      ]
+      ],
+      "findings": "Corticosteroid demotion from MEDIUM is NOT justified.\n\nFull-data analysis:\n- Corticosteroids in MEDIUM: 20.8% (148/713) vs non-corticosteroids 29.0% (969/3336) \u2192 -8.3pp gap\n- Demoting would improve MEDIUM by +1.5pp (27.6% \u2192 29.0%)\n\nPer-drug precision shows most corticosteroids ARE at MEDIUM holdout level:\n- Prednisolone 23.6%, Dexamethasone 22.6%, Hydrocortisone 22.1%, Methylprednisolone 20.9%\n- Below average: Triamcinolone 15.3%, Betamethasone 19.7%\n- The 20.8% class precision is within MEDIUM holdout range (21.2% \u00b1 1.9%)\n\n533/713 (75%) of corticosteroid MEDIUM predictions come from the \"default\" rule, meaning they hit MEDIUM because no other rule applied. They are correctly assigned.\n\nDemotion to LOW (12.2% holdout) would be overly harsh since corticosteroids at 20.8% are closer to MEDIUM than LOW.\n\nNO ACTION TAKEN. Corticosteroids are appropriately in MEDIUM tier.",
+      "result_metric": "Corticosteroids MEDIUM at 20.8% \u2248 MEDIUM holdout 21.2% - not demoted"
     }
   ],
   "completed": [

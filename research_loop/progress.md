@@ -1,17 +1,23 @@
 # Research Loop Progress
 
-## Current Session: h442, h444, h445, h391, h416 (2026-02-06)
+## Current Session: h442-h449 (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 5**
+**Hypotheses Tested: 9**
 - h442: kNN Score Margin as Confidence Signal - **INVALIDATED** (margin vs R@30 = -0.04, no signal)
 - h444: Sub-Tier Precision Reporting - **VALIDATED** (MEDIUM rank 1-5 = 21.7% holdout, monotonic)
 - h445: TransE Score Distribution Paradox - **VALIDATED** (TransE is subset selector, not within-tier ranker)
 - h391: MEDIUM Tier Overlap Anomaly - **VALIDATED** (anomaly resolved, overlap now +10.6pp)
 - h416: Cancer Same-Type → HIGH Promotion - **INVALIDATED** (61.6% full → 16.1% holdout, 45.5pp gap)
+- h446: Add Rank-Bucket Precision to Deliverable - **VALIDATED** (implemented + regenerated)
+- h432: Consolidate Small Hierarchy Rules - **INVALIDATED** (small groups have 87% precision, do NOT consolidate)
+- h449: Corticosteroid MEDIUM Demotion - **INVALIDATED** (20.8% ≈ MEDIUM holdout 21.2%)
+- h448: HIGH Tier Rank Gradient Anomaly - **VALIDATED** (flat gradient due to hierarchy rescue at rank 16-20)
+- h425: Nephropathy Drug Rescue - **INCONCLUSIVE** (n too small)
+- h383: CV Ensemble Harm - **DEPRIORITIZED** (ensemble not used)
 
 ### h442: kNN Score Margin - INVALIDATED
 
@@ -72,16 +78,39 @@ Corticosteroids are the main low-precision overlap drugs (Dexamethasone 10.8%, B
 Root cause: Cancer subtype matching is almost entirely GT leakage.
 Confirms h393/h396 decision to demote cancer_same_type from GOLDEN to MEDIUM.
 
+### h446: Add Rank-Bucket Precision to Deliverable - VALIDATED
+
+Added `rank_bucket_precision` column to production predictor and deliverable:
+- RANK_BUCKET_PRECISION constant with holdout-validated values
+- Deliverable now has 18 columns (was 16)
+- Also added `transe_consilience` column to deliverable
+
+### h432: Consolidate Small Hierarchy Rules - INVALIDATED
+
+Small groups (<=2 diseases) have HIGHER precision than large groups:
+- Autoimmune: small 88.2% vs large 73.4%
+- Infectious: small 86.2% vs large 47.4%
+- 1-disease groups encode specific medical knowledge. Do NOT consolidate.
+
+### h449: Corticosteroid MEDIUM Demotion - INVALIDATED
+
+Corticosteroids at 20.8% MEDIUM precision ≈ MEDIUM holdout 21.2%. Not below tier threshold.
+Most individual steroids (Prednisolone 23.6%, Dexamethasone 22.6%) are at/above average.
+
+### h448: HIGH Tier Rank Gradient Anomaly - VALIDATED
+
+HIGH rank 16-20 has 56.5% precision because hierarchy rules RESCUE low-ranked drugs:
+- RA hierarchy: 94.7% at rank 16-20, Spondylitis/Colitis: 100%
+- Default rule at rank 1-5 = 16% precision (dilutes rank 1-5)
+- On holdout, gradient re-emerges (43.0% rank 1-5 vs 21.0% rank 16-20)
+
 ### New Hypotheses Generated
-- **h446:** Add Rank-Bucket Precision to Deliverable Excel - Priority 3
-- **h447:** Cancer Subtype Leakage Quantification and Mitigation - Priority 4
-- **h448:** HIGH Tier Rank Gradient Anomaly Investigation - Priority 5
-- **h449:** Corticosteroid-Specific MEDIUM Demotion - Priority 5
+- **h446-h449:** (tested this session - see above)
 
 ### Recommended Next Steps
-1. **h446:** Add rank-bucket precision to deliverable (Priority 3, low effort, direct clinical value)
-2. **h383:** CV Ensemble Harm Investigation (Priority 4, low effort)
-3. **h447:** Cancer subtype leakage mitigation (Priority 4, medium effort)
+1. **h447:** Cancer subtype leakage mitigation (Priority 4, medium effort)
+2. **h410:** Literature validation of 1-disease hierarchy rules (Priority 3, medium effort)
+3. **h441:** Drug-level embedding stability for within-tier ranking (Priority 4, medium effort)
 
 ---
 
