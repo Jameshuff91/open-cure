@@ -1,14 +1,15 @@
 # Research Loop Progress
 
-## Current Session: h417, h421 (2026-02-05)
+## Current Session: h417, h421, h423 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 2**
+**Hypotheses Tested: 3**
 - h417: Rank 21-30 Rule Coverage Gap Analysis - **VALIDATED** (findings useful, no implementation)
 - h421: Demote base_to_complication from FILTER to MEDIUM - **INVALIDATED** (15.6% precision, not 28.1%)
+- h423: Category-Specific Rank Cutoffs - **INVALIDATED** (full-data +1.6pp, holdout -8.7pp)
 
 ### h417: Rank 21-30 Rule Coverage Gap Analysis - VALIDATED
 
@@ -44,16 +45,44 @@
 4. Nephropathy hits are all statins/fibrates/ARBs (known renoprotective drugs)
 5. Blanket demotion to MEDIUM would be wrong since 4/5 diseases have 0%
 
+### h423: Category-Specific Rank Cutoffs - INVALIDATED
+
+**Hypothesis:** Use category-specific rank cutoffs instead of global rank>20 FILTER.
+
+**Full-Data Analysis:**
+Category precision at rank 21-30 varies enormously:
+- Consistent EXTEND (all 5 seeds): psychiatric 28-30%, autoimmune 16-24%, CV 17-19%
+- Consistent TIGHTEN: neurological 1.8%, musculoskeletal 1.3%, reproductive 2%
+- Mechanism_support at rank 21-30 in extend cats: 40.9% full-data, 35.9% ± 3.3% holdout
+
+**Implementation attempted:** Skip rank>20 for psych/autoimmune/CV with mechanism_support.
+
+**Full-data precision (WITH h423):**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 53.6% | 55.2% | +1.6pp |
+| HIGH | 47.7% | 48.0% | +0.3pp |
+
+**Holdout validation FAILED:**
+| Tier | h396 Baseline | h423 Holdout | Delta |
+|------|---------------|--------------|-------|
+| GOLDEN | 55.4% | 50.9% ± 6.4% | -4.5pp |
+| HIGH | 48.1% | 39.4% ± 9.3% | **-8.7pp** |
+
+**Root cause:** Same as h399/h418 — drug features (freq, mechanism) are INFLATED on full data. At rank 21-30, drugs appear high-quality because they're counted across ALL 497 diseases. On holdout (80% diseases), their freq drops below tier thresholds, getting assigned to lower tiers and diluting HIGH/GOLDEN.
+
+**CRITICAL LEARNING:** The rank>20 filter compensates for feature inflation, not just noise. THREE separate attempts (h399, h418, h423) confirm this is a fundamental boundary. Do NOT attempt further rank>20 rescue without solving the underlying feature inflation.
+
 ### New Hypotheses Generated
 - **h422:** Expand Top-N from 30 to 50 with Target Overlap Rescue - Priority 4
-- **h423:** Category-Specific Rank Cutoffs Instead of Global rank>20 - Priority 3
 - **h424:** Fix h412 Precision Discrepancy for base_to_complication - Priority 4
 - **h425:** Nephropathy-Specific Renoprotective Drug Rescue - Priority 4
+- **h426:** Holdout-Aware Feature Computation for Rank>20 Rescue - Priority 4
 
 ### Recommended Next Steps
-1. **h423:** Category-specific rank cutoffs - promising given psychiatric (28%) vs neuro (1.8%) gap
-2. **h402:** Simplify Production Predictor - high impact, depends on understanding which rules matter
-3. **h390:** Production Tier Rule Coverage Analysis - understand rule interaction patterns
+1. **h402:** Simplify Production Predictor - high impact, prune to validated rules only
+2. **h390:** Production Tier Rule Coverage Analysis - understand rule interaction patterns
+3. **h414:** h170 Boosting Strength Optimization - tune alpha for category-specific boosts
 
 ---
 

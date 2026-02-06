@@ -2149,11 +2149,13 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.FILTER, False, 'cancer_no_gt'
             # Cross-type: continue to standard filtering, will get MEDIUM in _apply_category_rescue
 
-        # h399/h418: Hierarchy-before-rank reordering was REVERTED after holdout validation.
-        # Full-data showed GOLDEN +2.1pp, HIGH +0.2pp but holdout showed HIGH -6.2pp
-        # (48.1% → 41.9%). The hierarchy rules at rank>20 don't generalize to unseen diseases.
-        # Many hierarchy groups have only 1-2 diseases, so holdout often excludes them entirely.
-        # The rank>20 filter remains the correct default for now.
+        # h399/h418/h423: Multiple attempts to rescue rank 21-30 predictions have FAILED holdout:
+        # - h399/h418: Hierarchy-before-rank: full GOLDEN +2.1pp, holdout HIGH -6.2pp → REVERTED
+        # - h423: Category+mechanism rescue: full GOLDEN +1.6pp, holdout HIGH -8.7pp → REVERTED
+        # Root cause: drugs at rank 21-30 appear high-quality on full data (high freq, mechanism)
+        # but lose these signals on holdout (80% GT → lower freq, weaker mechanism evidence).
+        # The rank>20 filter is a robust, validated boundary. DO NOT attempt further rescues
+        # without first solving the underlying freq/mechanism inflation at full data.
 
         # FILTER tier (h123 negative signals)
         if rank > 20:

@@ -8490,7 +8490,7 @@
       "title": "Category-Specific Rank Cutoffs Instead of Global rank>20",
       "description": "h417 showed massive precision variation by category at rank 21-30: psychiatric 28%, immunological 22%, autoimmune 17.9% vs neurological 1.8%, musculoskeletal 1.3%. The global rank>20 FILTER is too aggressive for some categories and too lenient for others. Category-specific rank cutoffs could rescue high-precision categories while maintaining FILTER for low-precision ones.",
       "hypothesis": "Using category-specific rank cutoffs (e.g., psychiatric rank<=25, neurological rank<=15) will improve overall tier precision without hurting any individual tier.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8500,7 +8500,9 @@
         "Propose category-specific rank cutoffs",
         "Run holdout validation",
         "Success: improved tier precision for high-precision categories without regression"
-      ]
+      ],
+      "findings": "INVALIDATED: Category-specific rank cutoffs fail holdout validation, confirming rank>20 is a robust boundary.\n\nFULL-DATA ANALYSIS:\nCategory precision at rank 21-30 varies enormously:\n- Psychiatric: 28-30%, Autoimmune: 16-24%, CV: 17-19% (high)\n- Neurological: 1.8%, Musculoskeletal: 1.3%, Reproductive: 2% (very low)\n\nThe 3 consistent EXTEND categories (psychiatric, autoimmune, CV) have 35.9% \u00b1 3.3% \nholdout precision when mechanism_support=True at rank 21-30 (above MEDIUM 20.9%).\n\nIMPLEMENTATION ATTEMPTED: Skip rank>20 FILTER for psych/autoimmune/CV with mechanism_support.\nFull-data results looked excellent:\n- GOLDEN: 53.6% \u2192 55.2% (+1.6pp)\n- HIGH: 47.7% \u2192 48.0% (+0.3pp)\n- MEDIUM: 25.6% \u2192 25.8% (+0.2pp)\n\nHOLDOUT VALIDATION FAILED:\n- GOLDEN: 55.4% \u2192 50.9% (-4.5pp) \n- HIGH: 48.1% \u2192 39.4% (-8.7pp) \u2190 UNACCEPTABLE\n- MEDIUM: 22.4% \u2192 22.2% (-0.2pp)\n- LOW: 11.0% \u2192 8.4% (-2.6pp)\n\nROOT CAUSE IDENTIFIED: The same mechanism that causes h399/h418 failure.\nDrugs at rank 21-30 have inflated freq and mechanism scores on full data.\nOn holdout (80% of diseases), their freq drops below tier thresholds,\nso they get assigned to LOWER tiers, diluting HIGH and GOLDEN precision.\nThis is a FUNDAMENTAL limitation: the rank>20 filter cannot be circumvented\nwithout solving the underlying feature inflation problem.\n\nKEY LEARNING: rank>20 is NOT just a noise filter \u2014 it's compensating for \nfeature inflation. At rank 21-30, full-data features overestimate drug quality.\nTHREE separate attempts (h399, h417, h423) have confirmed this. The rank>20 \nfilter should be considered FINAL and not subject to further rescue attempts.\n\nADDITIONAL FINDING: Category-specific TIGHTENING (lowering cutoff for neuro/GI/etc.)\nwas not tested because the standard tier logic already handles these \u2014 low-quality\npredictions at rank 11-20 get LOW/FILTER from freq/mechanism criteria regardless.",
+      "result_metric": "Full-data GOLDEN +1.6pp, but holdout HIGH -8.7pp. REVERTED. Rank>20 is a fundamental boundary."
     },
     {
       "id": "h424",
@@ -8534,6 +8536,23 @@
         "Holdout validate (note: n=12 is very small)",
         "If precision holds, add specific rescue rule",
         "Success: >35% holdout precision for this specific pattern"
+      ]
+    },
+    {
+      "id": "h426",
+      "title": "Holdout-Aware Feature Computation for Rank>20 Rescue",
+      "description": "h417/h418/h423 all show the SAME failure: rank 21-30 predictions look great on full data but fail holdout because drug frequency and mechanism support are inflated when computed from all diseases. A holdout-aware approach would compute features differently: e.g., use only cross-validated frequency estimates, or compute mechanism support only from structurally dissimilar diseases. This could unlock rank 21-30 rescue without the inflation problem.",
+      "hypothesis": "Computing drug frequency and mechanism support from LOO (leave-one-out) estimates rather than full-data counts will produce features that are consistent between full-data and holdout evaluation, enabling rank 21-30 rescue rules that generalize.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "high",
+      "steps": [
+        "For each disease, compute drug_freq as the LOO freq (exclude current disease from count)",
+        "For mechanism_support, compute using only training diseases (not the test disease)",
+        "Re-evaluate h423 rescue rules with LOO features",
+        "Compare full-data vs holdout precision gap",
+        "Success: full-data and holdout precision within 3pp for rescue rules"
       ]
     }
   ],
