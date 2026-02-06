@@ -1,28 +1,29 @@
 # Research Loop Progress
 
-## Current Session: h337, h338, h272, h178, h340 (2026-02-05)
+## Current Session: h337, h338, h272, h178, h340, h339 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 5**
+**Hypotheses Tested: 6**
 - h337: ACE Inhibitor Broad Class Analysis - **INCONCLUSIVE** (opposite pattern to statins, but tiny sample)
 - h338: NRTI HBV Cross-Activity Boost - **INVALIDATED** (already in GT, nothing to boost)
 - h272: GT Expansion: Cancer Drug Repurposing - **VALIDATED** (Bevacizumab → PsA literature confirmed)
 - h178: DiseaseMatcher Performance Optimization - **DEPRIORITIZED** (0.02ms/lookup, not needed)
 - h340: MEK Inhibitor Non-Cancer Filter - **VALIDATED + IMPLEMENTED** (0% precision → LOW tier)
+- h339: Anti-VEGF Drug Non-Cancer Repurposing - **VALIDATED** (psoriasis case reports confirmed)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 209 |
+| Validated | 210 |
 | Invalidated | 65 |
 | Inconclusive | 13 |
 | Blocked | 21 |
 | Deprioritized | 8 |
-| Pending | 31 |
-| **Total** | **347**
+| Pending | 29 |
+| **Total** | **346**
 
 ### KEY SESSION FINDINGS
 
@@ -104,6 +105,29 @@
 - Non-cancer MEK predictions now capped at LOW tier
 
 **Impact:** 3 HIGH + 9 MEDIUM → LOW, 0% precision improvement
+
+#### h339: Anti-VEGF Drug Non-Cancer Repurposing - VALIDATED
+
+**Question:** Can anti-VEGF drugs be repurposed for inflammatory diseases?
+
+**Analysis:**
+- Anti-VEGF predictions: 148 total
+- Overall precision: 3.4% (5/148) - mostly cancer/retinopathy GT
+- HIGH tier inflammatory predictions: Bevacizumab → PsA, Aflibercept → psoriasis
+
+**Literature Validation:**
+Multiple case reports confirm anti-VEGF efficacy for psoriasis:
+- Bevacizumab: Complete psoriasis remission during cancer treatment
+- Sunitinib: 2 case reports of psoriasis clearance/improvement
+- Sorafenib: Psoriasis improvement after 3 weeks
+- PNAS mouse study: Anti-VEGF strongly reduced skin inflammation
+
+**Mechanistic Support:**
+- VEGF elevated in psoriatic plaques
+- Angiogenesis plays key role in psoriasis pathogenesis
+- No anti-VEGF licensed for psoriasis YET
+
+**New hypotheses generated:** h343-h345 (anti-VEGF boost, TKI psoriasis, side effect mining)
 
 ---
 

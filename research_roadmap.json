@@ -6872,14 +6872,16 @@
       "description": "h272 validated Bevacizumab \u2192 PsA. Explore other anti-VEGF drugs (Aflibercept, Ranibizumab) for inflammatory conditions where VEGF is elevated.",
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "steps": [
         "Identify all anti-VEGF drugs in DRKG",
         "Find inflammatory diseases with elevated VEGF",
         "Check if predictions exist and their confidence tiers",
         "Validate top predictions in literature"
-      ]
+      ],
+      "findings": "Anti-VEGF Drug Non-Cancer Repurposing Analysis:\n\nAnti-VEGF drugs in predictions: 148 total\n- Aflibercept (57), Ranibizumab (39), Bevacizumab (23), Sunitinib (17), etc.\n\nOverall precision: 3.4% (5/148)\n- GT hits are all CANCER or retinopathy (expected for anti-VEGF)\n- HIGH tier: 7.7% (1/13 GT)\n\nINFLAMMATORY DISEASE PREDICTIONS (2):\n1. Bevacizumab \u2192 psoriatic arthritis (HIGH) - VALIDATED in h272\n2. Aflibercept \u2192 psoriasis vulgaris (HIGH)\n\nLITERATURE VALIDATION:\nMultiple case reports confirm anti-VEGF efficacy for psoriasis:\n- Bevacizumab: Complete psoriasis remission during cancer treatment\n- Sunitinib: 2 case reports of psoriasis clearance/improvement\n- Sorafenib: Psoriasis improvement after 3 weeks\n- PNAS study: Anti-VEGF strongly reduced skin inflammation in mouse model\n\nMECHANISTIC SUPPORT:\n- VEGF elevated in psoriatic plaques\n- Angiogenesis plays key role in psoriasis pathogenesis\n- No anti-VEGF licensed for psoriasis YET\n\nRECOMMENDATION:\n- Bevacizumab \u2192 psoriatic arthritis: Validated (h272)\n- Aflibercept \u2192 psoriasis: Plausible, needs more clinical data\n- Consider boosting anti-VEGF \u2192 psoriasis predictions",
+      "result_metric": "Literature confirms anti-VEGF efficacy for psoriasis (case reports)"
     },
     {
       "id": "h340",
@@ -6926,6 +6928,50 @@
         "Map mechanisms to non-cancer pathways",
         "Identify high-confidence non-cancer predictions",
         "Prioritize by mechanism plausibility"
+      ]
+    },
+    {
+      "id": "h343",
+      "title": "Anti-VEGF Psoriasis/Inflammatory Boost",
+      "description": "h339 validated anti-VEGF for psoriasis (case reports). Add boost rule: anti-VEGF + psoriasis/psoriatic disease = GOLDEN tier",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "priority": 4,
+      "steps": [
+        "Define ANTI_VEGF_MAB set (bevacizumab, aflibercept, ranibizumab)",
+        "Define PSORIATIC_DISEASES set",
+        "Add boost rule in _apply_category_rescue()",
+        "Verify impact on predictions"
+      ]
+    },
+    {
+      "id": "h344",
+      "title": "TKI Psoriasis Off-Target Effects",
+      "description": "h339 found sunitinib/sorafenib clear psoriasis as side effect. Are TKIs with VEGFR activity predicted for psoriasis?",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "priority": 5,
+      "steps": [
+        "List all VEGFR-targeting TKIs",
+        "Check their psoriasis predictions",
+        "Validate precision against case reports"
+      ]
+    },
+    {
+      "id": "h345",
+      "title": "Cancer Drug Side Effect Mining for Repurposing",
+      "description": "Cancer drugs often cause side effects that reveal off-target activity. Mine known side effects for repurposing candidates.",
+      "expected_impact": "high",
+      "effort": "high",
+      "status": "pending",
+      "priority": 3,
+      "steps": [
+        "Get cancer drug side effect database (FDA labels)",
+        "Identify side effects that are therapeutic (e.g., psoriasis clearance)",
+        "Cross-reference with model predictions",
+        "Validate top candidates"
       ]
     }
   ],
@@ -8213,6 +8259,15 @@
       ],
       "learning": "ACE inhibitors show opposite cohesion pattern to statins (-22.2pp gap vs +16.7pp). Anti-VEGF cancer drugs (Bevacizumab) can be repurposed for inflammatory diseases (psoriatic arthritis) where VEGF is elevated. Case report evidence: PMC4248526.",
       "implication": "Drug class cohesion patterns are heterogeneous - statins are exception not rule. Anti-VEGF mechanism is promising for inflammatory disease repurposing."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_ids": [
+        "h339",
+        "h340"
+      ],
+      "learning": "Anti-VEGF drugs (bevacizumab, sunitinib, sorafenib) have case report evidence for psoriasis efficacy. MEK inhibitors are cancer-specific (0% non-cancer precision). Drug mechanism class determines repurposing potential.",
+      "implication": "VEGF inhibition is a valid mechanism for psoriasis repurposing. MEK inhibition is not. Mechanism-based drug classification improves prediction quality."
     }
   ],
   "collaborations": [
