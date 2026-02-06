@@ -33,6 +33,10 @@ Unified pipeline integrating validated research findings:
   - 16 ATC→category pairs with <3% precision (e.g., A/J/N→cancer, B→other)
   - Filter removes 1,319 predictions with 1.21% precision (+0.78 pp overall)
   - NOTE: High-precision mismatches (10-27%) still demote to HIGH (not GOLDEN)
+- h318: Antibiotic FILTER for non-infectious diseases
+  - J drugs have 0% precision for: hematological, gastrointestinal, metabolic, immune, rare_genetic
+  - Exception: J→respiratory = 17.8% (kept as HIGH_PRECISION_MISMATCH)
+  - Filters additional 180 predictions with 0% precision (0 hits lost)
 
 USAGE:
     # Get predictions for a disease
@@ -894,6 +898,8 @@ HIGH_PRECISION_MISMATCHES: Dict[Tuple[str, str], float] = {
 }
 
 # ZERO-PRECISION MISMATCHES - always FILTER these (precision < 3%):
+# h316: Initial set from h314 analysis
+# h318: Added comprehensive J (antibiotic) filter for non-infectious diseases
 ZERO_PRECISION_MISMATCHES: Set[Tuple[str, str]] = {
     ('A', 'cancer'),          # 0.0% - Alimentary drugs never work for cancer
     ('B', 'other'),           # 0.0% - Blood drugs for other
@@ -911,6 +917,12 @@ ZERO_PRECISION_MISMATCHES: Set[Tuple[str, str]] = {
     ('J', 'genetic'),         # 1.6% - Antibiotics for genetic diseases
     ('L', 'genetic'),         # 1.7% - Antineoplastic for genetic
     ('L', 'other'),           # 2.5% - Antineoplastic for other
+    # h318: Antibiotic FILTER for non-infectious diseases (all 0% precision)
+    ('J', 'hematological'),   # 0.0% - Antibiotics for blood disorders
+    ('J', 'gastrointestinal'),# 0.0% - Antibiotics for GI (except infectious)
+    ('J', 'metabolic'),       # 0.0% - Antibiotics for metabolic diseases
+    ('J', 'immune'),          # 0.0% - Antibiotics for immune disorders
+    ('J', 'rare_genetic'),    # 0.0% - Antibiotics for rare genetic diseases
 }
 
 

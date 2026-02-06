@@ -6406,7 +6406,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add rule: J drugs + non-infectious category \u2192 FILTER tier",
         "Exception: J\u2192respiratory is acceptable (17.8%)",
@@ -6415,7 +6415,98 @@
       ],
       "dependencies": [
         "h314"
+      ],
+      "findings": "h318 VALIDATED: Antibiotic FILTER for non-infectious diseases.\n\nAnalysis of J (antiinfective) drug precision across all disease categories from h314 data:\n\nJ\u2192respiratory: 17.8% (HIGH_PRECISION_MISMATCH - kept)\nJ\u2192other: 7.4% (acceptable, kept)\nJ\u2192ophthalmological: 3.7% (acceptable, kept)\nJ\u2192hematological: 0.0% (0/32) \u2192 Added to FILTER\nJ\u2192gastrointestinal: 0.0% (0/34) \u2192 Added to FILTER\nJ\u2192metabolic: 0.0% (0/23) \u2192 Added to FILTER\nJ\u2192immune: 0.0% (0/47) \u2192 Added to FILTER\nJ\u2192rare_genetic: 0.0% (0/44) \u2192 Added to FILTER\n\nAlready filtered from h316: dermatological, cancer, musculoskeletal, genetic\n\nImpact:\n- 5 new J\u2192category pairs added to ZERO_PRECISION_MISMATCHES\n- Additional 180 predictions filtered\n- 0 hits lost (all 0% precision)\n- Total J pairs now filtered: 9 (vs 4 before)\n\nImplementation: Updated ZERO_PRECISION_MISMATCHES in production_predictor.py",
+      "result_metric": "+180 filtered predictions, 0 hits lost, 0% precision"
+    },
+    {
+      "id": "h319",
+      "title": "Comprehensive Low-Precision ATC Filter (Batch 2)",
+      "description": "h318 added J\u2192non-infectious filters. h314 analysis shows 26 more ATC\u2192category pairs with <3% precision:\n        \nTop candidates (0% precision, >=30 predictions):\n- C\u2192neurological: 0% (0/53)\n- L\u2192infectious: 0% (0/51) \n- M\u2192other: 0% (0/51)\n- N\u2192cardiovascular: 0% (0/46)\n- L\u2192storage: 0% (0/42)\n- C\u2192cancer: 0% (0/38)\n- P\u2192other: 0% (0/36)\n\nLower volume but still 0%:\n- H\u2192cancer: 0% (0/31)\n- L\u2192neurological: 0% (0/31)\n- A\u2192renal: 0% (0/29)\n- L\u2192endocrine: 0% (0/28)\n- B\u2192renal: 0% (0/27)\n- D\u2192gastrointestinal: 0% (0/26)\n- R\u2192cancer: 0% (0/26)\n- L\u2192cardiovascular: 0% (0/26)\n\nTotal potential impact: 1165 predictions filtered, 6 hits lost.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Add all 0% precision ATC\u2192category pairs to ZERO_PRECISION_MISMATCHES",
+        "Skip borderline cases (>2% precision) to avoid overfitting",
+        "Count total predictions filtered",
+        "Verify no major hits lost"
+      ],
+      "dependencies": [
+        "h318",
+        "h316"
       ]
+    },
+    {
+      "id": "h320",
+      "title": "N (Nervous System) Comprehensive Filter",
+      "description": "N drugs show 0% precision for multiple categories:\n- N\u2192cancer: 0% (0/77) - already filtered\n- N\u2192cardiovascular: 0% (0/46)\n- N\u2192gastrointestinal: 0% (0/23)\n- N\u2192metabolic: 0% (0/21)\n- N\u2192rare_genetic: 0% (0/21)\n- N\u2192other: 0.9% (3/342)\n\nSimilar to h318 (J comprehensive filter), could add all N\u2192non-psychiatric/non-neurological.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Add N\u2192cardiovascular, gastrointestinal, metabolic, rare_genetic to ZERO_PRECISION_MISMATCHES",
+        "Consider N\u2192other (0.9% with 342 predictions)",
+        "Count impact",
+        "Verify exceptions (N\u2192psychiatric, N\u2192neurological should stay coherent)"
+      ],
+      "dependencies": [
+        "h318"
+      ]
+    },
+    {
+      "id": "h321",
+      "title": "L (Antineoplastic) Cross-Domain Filter",
+      "description": "L drugs (antineoplastics/immunomodulators) show 0% precision for several non-cancer categories:\n- L\u2192infectious: 0% (0/51)\n- L\u2192storage: 0% (0/42)\n- L\u2192neurological: 0% (0/31)\n- L\u2192endocrine: 0% (0/28)\n- L\u2192cardiovascular: 0% (0/26)\n- L\u2192respiratory: 2.5% (1/40)\n\nNote: L\u2192autoimmune should NOT be filtered (immunomodulators treat autoimmune).\nL\u2192cancer is coherent by definition.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Add L\u2192infectious, storage, neurological, endocrine, cardiovascular to filter",
+        "Keep L\u2192autoimmune as coherent (immunomodulators)",
+        "Consider L\u2192respiratory (borderline 2.5%)",
+        "Count impact"
+      ],
+      "dependencies": [
+        "h318"
+      ]
+    },
+    {
+      "id": "h322",
+      "title": "C (Cardiovascular) Cross-Domain Filter",
+      "description": "C drugs show 0% precision for several non-cardiovascular categories:\n- C\u2192neurological: 0% (0/53)\n- C\u2192cancer: 0% (0/38)\n- C\u2192musculoskeletal: 0% (0/25)\n\nC\u2192other already in HIGH_PRECISION_MISMATCH (11.7%).\nThese represent 116 predictions with 0 hits.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Add C\u2192neurological, cancer, musculoskeletal to ZERO_PRECISION_MISMATCHES",
+        "Count impact",
+        "Verify no overlap with valid uses (C drugs for metabolic OK due to cardiometabolic)"
+      ],
+      "dependencies": [
+        "h318"
+      ]
+    },
+    {
+      "id": "h323",
+      "title": "Cohort Analysis: Why Do Some Diseases Have 100% kNN Success?",
+      "description": "Not all diseases benefit equally from kNN. Some diseases have 100% hit rate while others have 0%.\n\nQuestions:\n1. What distinguishes high-success diseases?\n2. Is it category, # of treatments, similarity to training diseases, or drug class patterns?\n3. Can we predict kNN success and use this for confidence calibration?\n\nThis is a precision/calibration hypothesis (meta-prediction about prediction quality).",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Run kNN on 500 diseases, record per-disease hit rate",
+        "Compute features: category, # GT drugs, avg similarity to training, # unique ATC codes in neighbors",
+        "Correlate features with success rate",
+        "Build logistic regression to predict P(hit@30)",
+        "If predictable, integrate into confidence tier system"
+      ],
+      "dependencies": []
     }
   ],
   "completed": [
@@ -7662,6 +7753,12 @@
       "hypothesis_id": "h316",
       "learning": "Zero-precision ATC mismatches (A/J/N\u2192cancer, etc.) should always be FILTERED. 1,319 predictions had only 1.21% precision. High-precision mismatches (10-27%) should NOT be rescued since they are still below GOLDEN baseline (30%).",
       "implication": "ATC coherence is now a 3-level signal: coherent (GOLDEN), incoherent-but-not-zero (demote to HIGH), zero-precision (FILTER)."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h318",
+      "learning": "J (antibiotic) drugs have 0% precision for 9 disease categories. Only J\u2192respiratory (17.8%) and J\u2192other (7.4%) are acceptable. Comprehensive ATC class filters are highly effective.",
+      "implication": "Expand comprehensive filtering to N, L, C drug classes. Each ATC class has predictable cross-domain failure patterns."
     }
   ],
   "collaborations": [
