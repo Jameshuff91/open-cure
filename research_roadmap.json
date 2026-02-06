@@ -3637,12 +3637,14 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add reproductive keywords to CATEGORY_KEYWORDS",
         "Verify correct categorization of reproductive diseases",
         "Update precision calibration for new category"
-      ]
+      ],
+      "findings": "h183 VALIDATED + IMPLEMENTED: Reproductive Disease Category Enhancement\n\nFINDINGS:\n- Reproductive category already exists in CATEGORY_KEYWORDS (added by h188)\n- But NO category rescue was implemented\n\nANALYSIS:\n- 150 non-cancer reproductive predictions currently in predictions file\n- Hormone drugs: 26.3% precision (5/19)\n- Non-hormone drugs: 3.1% precision (4/131)\n- Gap: +23.2 pp (significant!)\n\nHITS:\n- Estradiol, Conjugated Estrogens, Estropipate \u2192 hypoestrogenism (hormones)\n- Follitropin, Corifollitropin alfa \u2192 female infertility (fertility drugs)\n- Piperacillin, Cefotaxime, Cefoxitin, Aztreonam \u2192 endometritis (antibiotics)\n\nIMPLEMENTATION:\n1. Added REPRODUCTIVE_HORMONE_DRUGS set with estrogens, progestins, gonadotropins\n2. Added category rescue in _apply_category_rescue():\n   - Hormone drugs for reproductive diseases \u2192 HIGH tier (26.3% precision)\n\nIMPACT:\n- 19 hormone predictions for reproductive diseases get HIGH tier\n- Remaining 131 non-hormone predictions stay at MEDIUM/LOW (3.1% precision)",
+      "result_metric": "Hormone drugs 26.3% vs non-hormone 3.1% (+23.2 pp)"
     },
     {
       "id": "h184",

@@ -423,6 +423,12 @@ ALKYLATING_AGENTS = {'cyclophosphamide', 'ifosfamide', 'melphalan', 'chlorambuci
                      'busulfan', 'carmustine', 'lomustine', 'dacarbazine',
                      'temozolomide', 'bendamustine'}
 
+# h183: Hormone drugs for reproductive diseases (26.3% precision vs 3.1% non-hormone)
+REPRODUCTIVE_HORMONE_DRUGS = {'estradiol', 'estrogen', 'estropipate', 'conjugated estrogen',
+                              'progesterone', 'progestin', 'medroxyprogesterone',
+                              'testosterone', 'follitropin', 'corifollitropin', 'lutropin',
+                              'gonadotropin', 'gonadorelin', 'clomiphene', 'letrozole'}
+
 # Broad therapeutic classes where ISOLATION = bad signal (1.9% precision overall)
 # These are classes that treat many conditions; if kNN only recommends ONE,
 # it's likely noise rather than a real signal.
@@ -2063,6 +2069,13 @@ class DrugRepurposingPredictor:
             # h171: HIGH tier for drug class matches
             if self._is_neurological_class_match(drug_lower, disease_name):
                 return ConfidenceTier.HIGH  # ~60% coverage
+
+        elif category == 'reproductive':
+            # h183: Hormone drugs achieve 26.3% precision for reproductive diseases
+            # vs 3.1% for non-hormone drugs - significant enough for HIGH tier
+            drug_lower = drug_name.lower()
+            if any(h in drug_lower for h in REPRODUCTIVE_HORMONE_DRUGS):
+                return ConfidenceTier.HIGH  # 26.3% precision (h183)
 
         return None
 
