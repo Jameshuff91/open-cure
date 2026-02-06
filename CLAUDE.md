@@ -215,6 +215,22 @@ Drugs from "broad" therapeutic classes (anesthetics, steroids, TNFi, NSAIDs, IL-
 - 213 predictions affected (151 original + 62 IL inhibitors)
 - 0% HIGH tier precision for isolated broad-class drugs
 
+### Cancer-Only Drug Filter (h346 validated 2026-02-05)
+
+69 cancer-only drugs have **0% precision for non-cancer predictions** (115 preds, 0 GT hits).
+Drug classes: BRAF, PD-1, BCL2, PARP, proteasome, HDAC, CDK, BCR-ABL, BTK, ALK, EGFR, HER2, TKIs.
+**Excludes:** mTOR inhibitors (transplant), imatinib (GIST), ranibizumab/aflibercept (ophthalmic).
+
+**Implementation:** `CANCER_ONLY_DRUGS` set + `_is_cancer_only_drug_non_cancer()` → FILTER tier
+- 115 predictions → FILTER with ZERO GT loss
+
+### Key Finding: kNN Limitation (h342 2026-02-05)
+
+kNN predicts by **disease similarity**, NOT drug mechanism. Cancer drugs with valid non-cancer uses
+(mTOR for transplant/TSC) still have low precision because:
+- Transplant rejection diseases aren't similar to cancer diseases in the graph
+- The 2 mTOR GT hits (lymphangioma, hemangioendothelioma) are similar to cancer
+
 ## Performance Gaps & Error Patterns
 
 **Gaps:** Biologics (mAbs 17% vs small mol 32%), Antibiotics (wrong diseases), GI (5% kNN blind spot)
@@ -258,39 +274,11 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 - DrugBank: `data/reference/drugbank_lookup.json`
 - Disease mapping: `data/reference/disease_ontology_mapping.json`
 
-## External Resources for Breaking the 37% Ceiling
-
-| Resource | Type | Potential Use |
-|----------|------|---------------|
-| **helicalAI/helical** | Bio Foundation Models | Disease embeddings from gene expression |
-| GEO/GTEx | Gene expression DB | Skin disease expression profiles |
-| DrugBank indications | Drug-disease GT | Expand ground truth coverage |
-
-**helicalAI/helical**: Install `source .venv-helical/bin/activate` (Python 3.11)
-
-## Validation & Confounding
-
-**Scripts:** `src/external_validation.py`, `src/confounding_detector.py`
-**Key patterns:** Inverse indication, cardiac-metabolic comorbidity, polypharmacy. Details: `docs/archive/detailed_analysis_findings.md`
-
-## Production Deployment
+## Production & Deployment
 
 **Deliverable:** `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx` - 13,416 predictions
-**Confidence model:** `models/meta_confidence_model.pkl` (h52-only at 0.8 = 84% precision)
-**Category k:** k=5 (dermatological, cardiovascular), k=10 (autoimmune, GI), k=30 (cancer, metabolic), k=20 (default)
+**Note (h349):** File has 58% stale categories - needs regeneration with current code.
 
-## TxGNN Summary
+## Archives
 
-14.5% R@30 on our benchmark, excels at storage diseases (83.3%). **However, direct comparison to our 37% kNN is unfair** — TxGNN was designed for zero-shot on diseases with NO graph edges, while our kNN leverages test diseases' existing graph presence. Under equivalent transductive conditions, performance would likely be comparable. Details: `docs/archive/txgnn_learnings.md`
-
-## Zero-Shot Benchmark (2026-02-03)
-
-**470 diseases with NO FDA-approved treatments** — Every Cure's core mission
-- 31 in DRKG (6.6%) — can use graph methods
-- 439 NOT in DRKG (93.4%) — require literature mining (h91)
-- Benchmark: `data/analysis/zero_shot_benchmark.json`
-
-## Archives & Methodology
-
-**Full docs:** `docs/impressive_evidence_report.md`, `docs/methodology_limitations.md`
-**Archives:** `docs/archive/experiment_history.md`, `docs/archive/validation_sessions.md`, `docs/archive/txgnn_learnings.md`
+**Full docs:** `docs/archive/experiment_history.md`, `docs/archive/txgnn_learnings.md`, `docs/methodology_limitations.md`
