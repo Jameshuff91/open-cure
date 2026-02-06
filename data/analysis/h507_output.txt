@@ -1,0 +1,51 @@
+
+h507: Predictable Self-Referentiality - INVALIDATED
+====================================================
+
+OBJECTIVE: Can we detect 100% self-referential diseases from GT-free features
+(embedding geometry only) and use this as a MEDIUM tier demotion signal?
+
+FEATURES TESTED (GT-FREE):
+- same_cat_frac: Fraction of kNN neighbors sharing disease category (AUC=0.734)
+- embedding_norm: L2 norm of Node2Vec embedding (AUC=0.657)
+- nn_density: Mean pairwise cosine sim among kNN neighbors (AUC=0.577)
+- category_size: Number of diseases in same category (AUC=0.608)
+- neighbor_sim_{mean,std,max,min}, self_gap, global_sim_mean: AUC < 0.55
+
+BEST COMBINED: same_cat_frac + nn_density + embedding_norm → AUC=0.781
+
+FULL-DATA RESULTS:
+- same_cat_frac ≤ 0.10: MEDIUM precision 34.3% (n=432)
+- same_cat_frac > 0.10: MEDIUM precision 43.0% (n=2964)
+- Gap: 8.7pp suggesting demotion value
+
+HOLDOUT RESULTS (5-seed):
+- same_cat_frac ≤ 0.10: mean holdout 35.2% ± 10.9% (n=79/seed)
+- same_cat_frac > 0.10: mean holdout 29.2% ± 3.8% (n=560/seed)
+- Gap: -6.0pp ± 12.9pp (REVERSED! Low-scf has HIGHER holdout precision!)
+
+PARADOX EXPLAINED:
+Low same_cat_frac captures TWO opposite populations:
+1. Self-referential diseases (58%): 100% of GT from self in kNN
+   → Full-data inflated, holdout collapses
+2. Cross-category transfer diseases (42%): genuine drug transfer from other categories
+   → Good holdout precision
+   
+No GT-free feature can separate these populations (best sub-AUC = 0.708 nn_density).
+The only separator is n_gt (AUC=0.766) which is itself GT-dependent → circular.
+
+DIRECTION ON HOLDOUT IS SEED-DEPENDENT:
+- Seeds 42,123,456: low-scf has HIGHER precision (cross-category diseases dominate holdout)
+- Seeds 789,2024: low-scf has LOWER precision (self-ref diseases dominate holdout)
+
+CONCLUSION:
+Self-referentiality is NOT predictable from embedding geometry with sufficient 
+reliability for tier demotion. The ±12.9pp variance across seeds means this 
+would sometimes help and sometimes hurt. INVALIDATED as actionable signal.
+
+KEY LEARNING:
+This reinforces the h453 collider/h445 paradox pattern: features that correlate 
+with GT on full data often REVERSE on holdout. Full-data precision is a poor guide 
+for holdout demotion rules. The self-referential structure is an inherent property 
+of the disease's position in the knowledge graph and cannot be disentangled from 
+genuine cross-category transfer without GT knowledge.

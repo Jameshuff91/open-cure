@@ -10073,10 +10073,12 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "depends_on": [
         "h504"
-      ]
+      ],
+      "findings": "Self-referentiality is NOT predictable from GT-free embedding features with sufficient reliability for tier demotion. Best GT-free feature same_cat_frac (AUC=0.734 on full data) has \u00b112.9pp variance across holdout seeds and REVERSES direction. Low same_cat_frac captures two opposite populations: 58% truly self-referential (bad on holdout) + 42% cross-category transfer (good on holdout). Combined features reach AUC=0.781 but remain unreliable. Reinforces h453/h445 collider bias pattern: full-data correlations are poor guides for holdout.",
+      "result_metric": "AUC=0.734 full-data, holdout gap -6.0pp \u00b1 12.9pp (REVERSED)"
     },
     {
       "id": "h508",
@@ -10091,7 +10093,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "in_progress",
       "depends_on": [
         "h504"
       ]
@@ -10112,6 +10114,51 @@
       "status": "pending",
       "depends_on": [
         "h506"
+      ]
+    },
+    {
+      "id": "h510",
+      "title": "Cross-Category Transfer Diseases: Identify and Promote Genuine Cross-Domain Predictions",
+      "description": "h507 found 42 diseases with low same_cat_frac but genuinely good cross-category drug transfer (e.g., uveitis, pyelonephritis, nephrotic syndrome). These diseases' kNN neighborhoods span multiple categories but drugs still transfer well. Could we identify which cross-category predictions are genuine vs noise? Look at: (1) whether the same drug class appears in multiple categories, (2) whether the mechanism of action applies broadly.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "For the 42 low-scf non-self-ref diseases, identify which drugs transfer across categories",
+        "Check if these drugs have broad mechanisms (corticosteroids, NSAIDs, antibiotics)",
+        "Test if cross-category drugs are distinguishable from noise",
+        "If reliable, add as a sub-rule to MEDIUM tier"
+      ]
+    },
+    {
+      "id": "h511",
+      "title": "Embedding Norm as Disease Confidence Annotation (Non-Actionable but Informative)",
+      "description": "h507 found embedding_norm correlates with self-referentiality (AUC=0.657). While not actionable for tier demotion (too noisy), it could be useful as an ANNOTATION in the deliverable to signal 'confidence in disease coverage'. Diseases with low embedding norm are poorly represented in DRKG and predictions should be interpreted with more caution. This is informational, not a tier change.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Add embedding_norm to deliverable as 'disease_graph_coverage' column",
+        "Add same_cat_frac as 'neighborhood_category_coherence' column",
+        "Add interpretive text in deliverable README"
+      ]
+    },
+    {
+      "id": "h512",
+      "title": "External Disease Similarity for Self-Referential Diseases: HPO/Gene Overlap Alternative to kNN",
+      "description": "h504 showed 144 diseases (31.6%) are 100% self-referential - their kNN neighborhoods provide no information beyond self. h507 confirmed this cannot be fixed within the embedding space. The structural fix requires an ALTERNATIVE similarity measure for these diseases. HPO phenotype similarity or gene-disease association overlap could provide non-kNN neighbors. Test: for the 144 self-ref diseases, do HPO-based neighbors provide any GT drugs that kNN misses?",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "steps": [
+        "Download HPO disease-phenotype annotations",
+        "Build HPO-based disease similarity matrix",
+        "For each self-referential disease, find HPO nearest neighbors",
+        "Check if HPO neighbors' GT drugs appear in the disease's GT",
+        "If recall > 10%, integrate as supplementary neighbor source"
       ]
     }
   ],
@@ -11834,6 +11881,12 @@
       "hypothesis_id": "h503",
       "learning": "Seed 42 poor performance is sampling variance: fewest autoimmune (3), most infectious (22), lowest mean GT (5.2). 5-seed evaluation has \u00b120% GOLDEN variance. Stratified splitting would help but adds complexity.",
       "implication": "Report results as mean\u00b1std across seeds. Individual seed outliers are expected with n=91 holdout diseases."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h507",
+      "learning": "GT-free embedding features (same_cat_frac AUC=0.734, embedding_norm AUC=0.657) correlate well with self-referentiality on full data but REVERSE on holdout (gap -6.0pp \u00b1 12.9pp). Root cause: low same_cat_frac captures TWO opposite populations (58% self-referential + 42% cross-category transfer). This is another instance of the collider/full-to-holdout reversal pattern (h453/h445).",
+      "implication": "Self-referentiality is a structural floor of kNN that cannot be detected or corrected without GT knowledge. Alternative similarity measures (HPO, gene overlap) needed for 144 structurally un-generalizable diseases."
     }
   ],
   "collaborations": [
