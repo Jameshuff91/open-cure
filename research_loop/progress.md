@@ -1,6 +1,87 @@
 # Research Loop Progress
 
-## Current Session: h427, h402, h430, h429, h428, h433 (2026-02-05)
+## Current Session: h435, h434, h437, h405 (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested: 4**
+- h435: Deliverable Regeneration with h402 Tier Demotions - **VALIDATED** (14,150 predictions, tier ordering correct)
+- h434: Feature Inflation Root Cause: LOO Frequency - **INVALIDATED** (LOO changes <0.5pp; kNN neighborhood changes are the real driver)
+- h437: kNN Neighborhood Overlap Analysis - **VALIDATED** (Jaccard 0.664, rank-20 crossings 4.1/disease)
+- h405: Multi-Method Consilience Ensemble - **VALIDATED** (TransE top-30 = +13.6pp lift on holdout!)
+
+### h435: Deliverable Regeneration - VALIDATED
+
+Regenerated production deliverable with h402 tier demotions. 14,150 predictions across 473 diseases.
+Tier ordering correct: GOLDEN 64.1% > HIGH 52.5% > MEDIUM 27.0% > LOW 12.0% > FILTER 11.3%.
+
+### h434: Feature Inflation Root Cause - INVALIDATED
+
+**Hypothesis:** LOO frequency will enable rank>20 rescue by removing inflation.
+
+**Key Finding:** LOO frequency is a negligible effect (0-0.5pp per tier). The real driver of holdout degradation is **kNN neighborhood changes** (5-10pp effect), not frequency inflation.
+
+- Mean frequency inflation: only 0.9 (5.4 → 4.5)
+- LOO reduces full→holdout gap by only 0.1-0.7pp
+- kNN uses 479 diseases on full data vs ~383 on holdout → rankings change fundamentally
+- The rank>20 filter compensates for kNN instability, not frequency inflation
+
+**Implication:** To improve rank>20 predictions, need to stabilize kNN rankings (bootstrap, more data) rather than deflate features.
+
+### h437: kNN Neighborhood Overlap - VALIDATED
+
+**Key Findings:**
+1. Mean Jaccard overlap: 0.664 (66.4% of k=20 neighbors retained in holdout)
+2. Mean 4.1 drugs cross rank-20 boundary per disease
+3. Only 9.7% of diseases have zero boundary crossings
+4. Jaccard vs GT rate correlation: 0.006 (ZERO overall correlation)
+5. BUT: Stable neighborhoods have HIGHER tier precision:
+   - HIGH overlap GOLDEN: 69.7% vs MEDIUM overlap: 59.8% (+9.9pp)
+   - HIGH overlap HIGH: 52.1% vs MEDIUM overlap: 38.8% (+13.3pp)
+
+### h405: Multi-Method Consilience Ensemble - VALIDATED (BREAKTHROUGH)
+
+**Hypothesis:** Using rank-based voting across kNN, TransE, and chemical similarity will identify high-confidence predictions.
+
+**Individual Method Precision:**
+- kNN: 17.8% (current)
+- TransE: 5.2% (weak alone)
+- Chemical sim: 5.2% (weak alone)
+
+**Consensus Results:**
+- kNN ∩ TransE top-30: 30.0% precision (n=1,119)
+- All 3 methods agree: 38.0% (n=108, too sparse)
+
+**KEY FINDING: TransE agreement is a STRONG tier-additive signal that survives holdout:**
+
+| Tier | + TransE T30 | Without T30 | Holdout Lift |
+|------|-------------|-------------|--------------|
+| GOLDEN | 64.6% | 53.2% | +11.4pp |
+| HIGH | 48.6% | 42.5% | +6.1pp |
+| **MEDIUM** | **34.7%** | **21.2%** | **+13.6pp** |
+| LOW | 14.8% | 8.3% | +6.5pp |
+| FILTER | 14.1% | 6.9% | +7.2pp |
+
+MEDIUM + TransE top-30 = 34.7% on holdout approaches HIGH tier threshold.
+This is the first new promotable signal since h388 target overlap.
+
+### New Hypotheses Generated
+- **h436:** kNN Bootstrap Ensemble for Rank Stability - Priority 3
+- **h437:** kNN Neighborhood Overlap Analysis (completed) - Priority 3
+- **h438:** Full-Data vs Holdout Gap Reconciliation - Priority 4
+- **h439:** Implement TransE Consilience Promotion in Production - Priority 2
+- **h440:** TransE Top-N Threshold Optimization - Priority 3
+
+### Recommended Next Steps
+1. **h439:** Implement TransE consilience promotion (Priority 2, medium effort)
+2. **h440:** Optimize TransE threshold before implementing (Priority 3, low effort)
+3. **h436:** kNN Bootstrap for rank stability (Priority 3, medium effort)
+
+---
+
+## Previous Session: h427, h402, h430, h429, h428, h433 (2026-02-05)
 
 ### Session Summary
 
