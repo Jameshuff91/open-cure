@@ -8252,7 +8252,7 @@
       "result_metric": null
     },
     {
-      "id": "h401",
+      "id": "h568",
       "title": "Frequency-Independent Tier Rules for Border Cases",
       "description": "h394 found 57 drug-disease pairs cross freq>=10 threshold due to leakage. These border cases (freq=10-14) are unreliable. Test if replacing frequency thresholds with frequency-independent signals (mechanism + rank + ATC coherence) improves honest evaluation.",
       "hypothesis": "Replacing freq>=10 requirement with mechanism + rank<=5 + ATC coherence for standard GOLDEN/HIGH assignment will reduce leakage sensitivity while maintaining or improving honest precision.",
@@ -11136,6 +11136,52 @@
         "Identify zero-precision mismatches across all categories",
         "Implement demotion rules for validated mismatches"
       ]
+    },
+    {
+      "id": "h569",
+      "title": "Disease-Level Precision Audit: Zero-Holdout Disease Characterization",
+      "description": "Systematic analysis of per-disease holdout precision. 121/325 (37%) diseases have 0% holdout precision. 80% of these have GT\u22642 (small ground truth). The remaining 20% are therapeutic islands (PAH, HCV, migraine, narcolepsy, ADHD, DKA) where drug profiles are too specific for kNN transfer.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 5,
+      "status": "validated",
+      "steps": [
+        "Run per-disease holdout precision across 5 seeds",
+        "Characterize 0% diseases by GT size and category",
+        "Identify therapeutic islands with large GT but 0% precision"
+      ],
+      "findings": "121/325 (37%) diseases have 0% holdout precision. 80% have GT\u22642 (structural: tiny GT = no kNN signal). Notable large-GT failures: PAH (GT=26), HCV (GT=11), migraine (GT=9), narcolepsy (GT=8), DKA (GT=8), ADHD (GT=7). These are therapeutic islands where drugs are disease-specific and dont share kNN neighbors. Top performers: RA (93%), UC (67%), AS (63%) \u2014 all large-GT autoimmune with many shared drugs. This is a structural limitation of kNN collaborative filtering.",
+      "result_metric": "37% of diseases have 0% holdout (structural limit)"
+    },
+    {
+      "id": "h570",
+      "title": "Disease Confidence Annotation: Flag Low-Predictability Diseases in Deliverable",
+      "description": "Add per-disease holdout precision annotation to the deliverable. Diseases with 0% holdout (or very low) should be flagged so clinicians know which predictions to trust. Could use GT size as proxy (GT\u22642 \u2192 low confidence).",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Compute average per-disease holdout precision across 5 seeds",
+        "Add disease_holdout_precision column to deliverable",
+        "Flag diseases with 0% as LOW_CONFIDENCE",
+        "Verify GT size is a good proxy for disease-level precision"
+      ]
+    },
+    {
+      "id": "h571",
+      "title": "Therapeutic Island Disease Rescue: Alternative Prediction Strategy",
+      "description": "For the 8 large-GT therapeutic islands (PAH, HCV, migraine, narcolepsy, ADHD, DKA, agranulocytosis, DMD), kNN fails because drugs are disease-specific. Could mechanism-based approaches (target overlap, pathway analysis) work better for these diseases? These are high-value diseases where predictions would be most impactful.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "For each therapeutic island, analyze WHY kNN fails (drug specificity vs embedding isolation)",
+        "Test if target overlap or pathway analysis identifies any GT drugs",
+        "Test if TransE consilience has signal for these diseases",
+        "If any alternative approach works, implement disease-specific prediction strategy"
+      ]
     }
   ],
   "completed": [
@@ -13031,6 +13077,12 @@
       "hypothesis_id": "h560",
       "learning": "Antimicrobial-pathogen mismatch is a clean 0% holdout signal. Drug class \u00d7 pathogen type is a strong biological rule. Dual-activity drugs (metronidazole, doxycycline, amphotericin B) must be handled carefully. Target_overlap promotion can rescue predictions that should stay demoted \u2014 always check for leakage paths.",
       "implication": "Look for similar drug-class \u00d7 disease-subtype mismatches in other categories. Always check if target_overlap or other promotion paths override demotions."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h569",
+      "learning": "37% of diseases have 0% holdout. 80% of these have GT\u22642 (structural small-GT limit). The remaining 20% are therapeutic islands where drug profiles are too specific for kNN. Top performers are large-GT autoimmune diseases with many shared drugs (RA=93%, UC=67%).",
+      "implication": "Disease-level confidence annotation would help clinicians. Therapeutic islands need alternative prediction strategies."
     }
   ],
   "collaborations": [
