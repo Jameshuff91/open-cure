@@ -1,34 +1,83 @@
 # Research Loop Progress
 
-## Current Session: h333, h300, h332, h183, h220, h256, h228, h222, h224 (2026-02-05)
+## Current Session: h337, h338, h272, h178 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 9**
-- h333: Statin Broad Class Re-evaluation - **VALIDATED** (statins are exception - do NOT demote)
-- h300: HIV Drug Network Analysis - **VALIDATED** (HIV mechanism-specificity is REAL)
-- h332: Cancer-Selective Drug Class Analysis - **VALIDATED + IMPLEMENTED** (mTOR, alkylating added)
-- h183: Reproductive Disease Category - **VALIDATED + IMPLEMENTED** (hormone rescue added)
-- h220: Expand MESH Mappings - **DEPRIORITIZED** (742 diseases, scope too large)
-- h256: Methylene Blue Filter - **VALIDATED** (0% precision confirms filter is appropriate)
-- h228: Psychiatric Drug-Class Mappings - **VALIDATED** (keywords present, kNN coverage is issue)
-- h222: Injection Layer Quality Check - **VALIDATED** (73%+ precision, excellent quality)
-- h224: Quinolone Warning - **DEPRIORITIZED** (clinical annotation, out of scope)
+**Hypotheses Tested: 4**
+- h337: ACE Inhibitor Broad Class Analysis - **INCONCLUSIVE** (opposite pattern to statins, but tiny sample)
+- h338: NRTI HBV Cross-Activity Boost - **INVALIDATED** (already in GT, nothing to boost)
+- h272: GT Expansion: Cancer Drug Repurposing - **VALIDATED** (Bevacizumab → PsA literature confirmed)
+- h178: DiseaseMatcher Performance Optimization - **DEPRIORITIZED** (0.02ms/lookup, not needed)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 207 |
-| Invalidated | 64 |
-| Inconclusive | 12 |
+| Validated | 208 |
+| Invalidated | 65 |
+| Inconclusive | 13 |
 | Blocked | 21 |
-| Deprioritized | 6 |
-| Pending | 25 |
-| **Total** | **335**
+| Deprioritized | 8 |
+| Pending | 28 |
+| **Total** | **343**
 
 ### KEY SESSION FINDINGS
+
+#### h337: ACE Inhibitor Broad Class Analysis - INCONCLUSIVE
+
+**Question:** Do ACE inhibitors follow the same pattern as statins (isolation helps)?
+
+**Answer:** OPPOSITE PATTERN - cohesion helps for ACE inhibitors
+
+**Data:**
+- HIGH isolated: 0% (2/0 GT)
+- HIGH non-isolated: 22.2% (9/2 GT)
+- Gap: -22.2 pp (cohesion HELPS, not isolation)
+
+**Comparison with Statins:**
+- Statins: +16.7 pp (isolation helps)
+- ACE inhibitors: -22.2 pp (cohesion helps)
+- ARBs: +33.3 pp (isolation helps)
+
+**Decision:** Sample too small (2 isolated HIGH) - NOT implementing
+
+#### h338: NRTI HBV Cross-Activity Boost - INVALIDATED
+
+**Hypothesis:** Boost NRTI → HBV predictions based on h300 finding
+
+**Finding:** NRTI → HBV pairs already exist in GT:
+- Lamivudine → hepatitis B (GT)
+- Tenofovir → chronic hepatitis B virus infection (GT)
+- Adefovir → hepatitis B (GT)
+
+**Conclusion:** Nothing to boost - predictions correctly filtered as known indications
+
+#### h272: GT Expansion: Cancer Drug Repurposing - VALIDATED
+
+**Hypothesis:** Find non-cancer uses for cancer-only drugs
+
+**Key Finding:** Bevacizumab → Psoriatic Arthritis
+- HIGH confidence prediction
+- VALIDATED in literature: PMC4248526 (case report)
+- Patient had 40-year psoriasis, 30-year PsA history
+- Complete skin clearance + DAS28 drop (6.98 → 2.8) during bevacizumab
+- Relapse when switched to other drugs, remission when restarted
+
+**Mechanism:** VEGF inhibition - VEGF elevated in psoriatic joints
+
+**Other findings:**
+- Trametinib → hypothyroidism: INVERSE INDICATION (MEK inhibitors cause thyroid dysfunction)
+- Sunitinib → TSC: Not supported (mTOR inhibitors are standard)
+
+**New hypotheses generated:** h339-h342 (anti-VEGF repurposing, MEK inverse detection)
+
+---
+
+## Previous Session: h333, h300, h332, h183, h220, h256, h228, h222, h224 (2026-02-05)
+
+### Previous Session Summary (9 hypotheses tested)
 
 #### h333: Statin Broad Class Re-evaluation - VALIDATED
 

@@ -3558,13 +3558,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Profile get_mesh_id() to confirm O(n) behavior in steps 3-4",
         "Build inverse index: canonical_name -> mesh_id at init time",
         "Replace linear search with dict lookup",
         "Measure improvement (target: <30s without cache)"
-      ]
+      ],
+      "findings": "Performance analysis shows optimization is NOT needed:\n- MESH mappings: Only 4 entries in disease_ontology_mapping.json\n- mesh_mappings_from_agents.json: 835 mappings (organized by batch)\n- Current lookup time: 0.02ms per lookup\n- Stress test (1000 worst-case lookups): 0.02s total\n\nThe O(n) loop in steps 3-4 is negligible with such small mapping sizes.\nThis is a non-issue - no implementation needed.",
+      "result_metric": "0.02ms per lookup - no optimization needed"
     },
     {
       "id": "h179",
@@ -5466,7 +5468,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Research non-cancer uses for top 20 cancer-only drugs",
         "Step 2: Validate uses in literature (FDA/off-label)",
@@ -5477,8 +5479,8 @@
       "dependencies": [
         "h267"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "GT Expansion analysis for cancer-only drugs:\n\n252 cancer-only drugs in GT. Analyzed HIGH-confidence non-cancer predictions.\n\nKEY FINDING - Bevacizumab \u2192 Psoriatic Arthritis:\n- Predicted as HIGH confidence\n- VALIDATED in literature: Case report (PMC4248526) showed remission of both psoriasis and PsA during bevacizumab therapy\n- VEGF inhibition mechanism plausible (VEGF elevated in psoriatic joints)\n- Drug relapse-rechallenge pattern strengthens causal link\n- SHOULD ADD TO GT\n\nOther predictions analyzed:\n1. Sunitinib \u2192 TSC: NOT supported. mTOR inhibitors (Everolimus, Sirolimus) are standard, not Sunitinib\n2. Trametinib \u2192 Hypothyroidism: INVERSE INDICATION (MEK inhibitors CAUSE hypothyroidism)\n3. Pembrolizumab/Nivolumab \u2192 Glaucoma: Uncertain mechanism, could be inverse (uveitis is side effect)\n\nACTION: Add Bevacizumab \u2192 psoriatic arthritis to expanded_ground_truth.json",
+      "result_metric": "1 validated GT expansion (Bevacizumab \u2192 PsA)"
     },
     {
       "id": "h273",
@@ -6834,7 +6836,7 @@
       "id": "h337",
       "title": "Broad Class Cohesion Signal: ACE Inhibitors Analysis",
       "description": "h333 confirmed statins are exception (isolation helps). Test if ACE inhibitors follow similar pattern.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -6843,13 +6845,15 @@
         "Calculate isolation vs cohesion precision gap",
         "Determine if ACE inhibitors are exception like statins",
         "Update rules if pattern found"
-      ]
+      ],
+      "findings": "ACE inhibitors show OPPOSITE pattern to statins:\n- HIGH isolated: 0% (2/0)\n- HIGH non-isolated: 22.2% (9/2)\n- Gap: -22.2 pp (cohesion HELPS)\n\nThis suggests ACE inhibitors COULD be added to BROAD_THERAPEUTIC_CLASSES.\n\nHOWEVER: Sample sizes too small for implementation:\n- Only 2 isolated HIGH predictions\n- Only 9 non-isolated HIGH predictions\n\nARBs show inconsistent pattern:\n- HIGH isolated: 33.3% (3/1)\n- HIGH non-isolated: 0% (11/0)\n- Gap: +33.3 pp (isolation helps like statins)\n\nConclusion: Pattern exists but insufficient data. Would only affect 2 HIGH predictions. NOT worth implementing.",
+      "result_metric": "ACE: -22.2 pp (cohesion helps), Sample size: 2 isolated HIGH"
     },
     {
       "id": "h338",
       "title": "NRTI HBV Cross-Activity Boost",
       "description": "h300 found NRTIs (Lamivudine, Tenofovir) have HBV cross-activity. Boost NRTI\u2192HBV predictions.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -6858,6 +6862,68 @@
         "Calculate precision of NRTI\u2192HBV predictions",
         "Add cross-disease boost rule if precision is high",
         "Quantify impact (likely small due to few predictions)"
+      ],
+      "findings": "NRTI\u2192HBV boost is NOT applicable because:\n1. NRTI \u2192 HBV pairs (Lamivudine, Tenofovir, Adefovir \u2192 Hepatitis B) are ALREADY in GT\n2. GT pairs are filtered from predictions (is_known_indication = True)\n3. The model correctly identifies these as known indications\n\nObserved NRTI predictions:\n- Lamivudine \u2192 hepatitis C [MEDIUM] (novel)\n- Adefovir \u2192 hepatitis C [MEDIUM] (novel)\n- No NRTI \u2192 HBV predictions (already GT)\n\nNo action needed - h300 finding about NRTI HBV cross-activity is correctly reflected in GT.",
+      "result_metric": "N/A - NRTI\u2192HBV already in GT"
+    },
+    {
+      "id": "h339",
+      "title": "Anti-VEGF Drug Non-Cancer Repurposing",
+      "description": "h272 validated Bevacizumab \u2192 PsA. Explore other anti-VEGF drugs (Aflibercept, Ranibizumab) for inflammatory conditions where VEGF is elevated.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 4,
+      "steps": [
+        "Identify all anti-VEGF drugs in DRKG",
+        "Find inflammatory diseases with elevated VEGF",
+        "Check if predictions exist and their confidence tiers",
+        "Validate top predictions in literature"
+      ]
+    },
+    {
+      "id": "h340",
+      "title": "Inverse Indication Detection: MEK Inhibitors",
+      "description": "h272 found Trametinib\u2192hypothyroidism is likely inverse (MEK inhibitors cause thyroid dysfunction). Systematically detect inverse indication patterns for MEK inhibitors.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "priority": 4,
+      "steps": [
+        "List all MEK inhibitors in predictions",
+        "Check predictions against known side effect databases",
+        "Add inverse indications to FILTER tier",
+        "Quantify impact on precision"
+      ]
+    },
+    {
+      "id": "h341",
+      "title": "Drug Class Cohesion Pattern Database",
+      "description": "h337 found ACE inhibitors show opposite pattern to statins (cohesion helps vs isolation helps). Build comprehensive database of class-specific isolation patterns.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "status": "pending",
+      "priority": 5,
+      "steps": [
+        "Identify top 20 drug classes by prediction count",
+        "Calculate isolation vs cohesion precision for each",
+        "Categorize into 'isolation helps' vs 'cohesion helps'",
+        "Implement class-specific rules"
+      ]
+    },
+    {
+      "id": "h342",
+      "title": "Cancer Drug Cross-Activity Patterns",
+      "description": "h272 found cancer drugs with non-cancer mechanisms (VEGF inhibition) can work for inflammatory diseases. Identify other cancer drugs with dual mechanisms.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 4,
+      "steps": [
+        "Categorize cancer drugs by mechanism (VEGF, mTOR, kinase, etc)",
+        "Map mechanisms to non-cancer pathways",
+        "Identify high-confidence non-cancer predictions",
+        "Prioritize by mechanism plausibility"
       ]
     }
   ],
@@ -8135,6 +8201,16 @@
       "hypothesis_id": "h315",
       "learning": "Category-specific coherence varies from +25pp (ophthalmic) to -7pp (renal). Cancer has no coherence signal. Renal is inverted.",
       "implication": "Uniform demotion suboptimal. Category-specific rules could improve cancer/metabolic/renal predictions."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_ids": [
+        "h337",
+        "h338",
+        "h272"
+      ],
+      "learning": "ACE inhibitors show opposite cohesion pattern to statins (-22.2pp gap vs +16.7pp). Anti-VEGF cancer drugs (Bevacizumab) can be repurposed for inflammatory diseases (psoriatic arthritis) where VEGF is elevated. Case report evidence: PMC4248526.",
+      "implication": "Drug class cohesion patterns are heterogeneous - statins are exception not rule. Anti-VEGF mechanism is promising for inflammatory disease repurposing."
     }
   ],
   "collaborations": [
