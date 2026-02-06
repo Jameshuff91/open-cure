@@ -1,0 +1,93 @@
+======================================================================
+h451: k-Expansion for Rank Stabilization
+======================================================================
+
+Loading predictor...
+Loaded in 0.1s
+Diseases: 455
+
+======================================================================
+PART 1: Full-Data Comparison (k=20 vs multi-k)
+======================================================================
+  100/455 (0.2s)
+  200/455 (0.4s)
+  300/455 (0.6s)
+  400/455 (0.8s)
+
+Completed in 0.9s
+
+--- Full-Data Recall ---
+  k=20 (standard)                    : R@20=8.50%, R@30=10.52%
+  k=30                               : R@20=8.27%, R@30=10.57%
+  multi-k avg [15,20,25,30]          : R@20=8.53%, R@30=10.56%
+  multi-k borda [15,20,25,30]        : R@20=8.58%, R@30=10.55%
+
+--- Rank Overlap (k=20 vs alternatives) ---
+  k=30                               : top-20 overlap=82.4%, top-30 overlap=87.7%
+  multi-k avg [15,20,25,30]          : top-20 overlap=90.7%, top-30 overlap=93.6%
+  multi-k borda [15,20,25,30]        : top-20 overlap=95.5%, top-30 overlap=96.2%
+
+======================================================================
+PART 2: Holdout Evaluation (5-seed)
+======================================================================
+
+--- Seed 42 (1/5) ---
+  k=20 (standard)                    : R@30=9.61%
+  k=30                               : R@30=10.05%
+  multi-k avg [15,20,25,30]          : R@30=9.90%
+  multi-k borda [15,20,25,30]        : R@30=9.96%
+
+--- Seed 123 (2/5) ---
+  k=20 (standard)                    : R@30=7.33%
+  k=30                               : R@30=7.82%
+  multi-k avg [15,20,25,30]          : R@30=7.59%
+  multi-k borda [15,20,25,30]        : R@30=7.44%
+
+--- Seed 456 (3/5) ---
+  k=20 (standard)                    : R@30=9.25%
+  k=30                               : R@30=9.49%
+  multi-k avg [15,20,25,30]          : R@30=9.37%
+  multi-k borda [15,20,25,30]        : R@30=9.37%
+
+--- Seed 789 (4/5) ---
+  k=20 (standard)                    : R@30=7.17%
+  k=30                               : R@30=7.55%
+  multi-k avg [15,20,25,30]          : R@30=7.41%
+  multi-k borda [15,20,25,30]        : R@30=7.25%
+
+--- Seed 2024 (5/5) ---
+  k=20 (standard)                    : R@30=8.19%
+  k=30                               : R@30=8.21%
+  multi-k avg [15,20,25,30]          : R@30=8.30%
+  multi-k borda [15,20,25,30]        : R@30=8.28%
+
+======================================================================
+AGGREGATE HOLDOUT RESULTS (5-seed)
+======================================================================
+  k=20 (standard)                    : 8.31% ± 0.99%
+  k=30                               : 8.62% ± 0.98%
+  multi-k avg [15,20,25,30]          : 8.51% ± 0.98%
+  multi-k borda [15,20,25,30]        : 8.46% ± 1.06%
+
+--- Deltas vs k=20 ---
+  k=30                               : +0.31pp
+  multi-k avg [15,20,25,30]          : +0.20pp
+  multi-k borda [15,20,25,30]        : +0.15pp
+
+======================================================================
+PART 3: Full→Holdout Rank Drift (seed=42)
+======================================================================
+
+--- Rank Drift Metrics ---
+  k=20 (standard)                    : crossings=5.54, Jaccard=0.601
+  k=30                               : crossings=5.41, Jaccard=0.601
+  multi-k avg [15,20,25,30]          : crossings=5.59, Jaccard=0.592
+  multi-k borda [15,20,25,30]        : crossings=5.41, Jaccard=0.607
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h451_k_expansion.json
+
+======================================================================
+CONCLUSION
+======================================================================
+Best method on holdout: k=30 (8.62%)
+NEUTRAL: No method significantly improves over k=20

@@ -1,0 +1,46 @@
+{
+  "hypothesis": "h451",
+  "title": "k-Expansion for Rank Stabilization",
+  "k_values": [
+    15,
+    20,
+    25,
+    30
+  ],
+  "holdout_r30": {
+    "k=20 (standard)": {
+      "mean": 8.31,
+      "std": 0.99
+    },
+    "k=30": {
+      "mean": 8.62,
+      "std": 0.98
+    },
+    "multi-k avg [15,20,25,30]": {
+      "mean": 8.51,
+      "std": 0.98
+    },
+    "multi-k borda [15,20,25,30]": {
+      "mean": 8.46,
+      "std": 1.06
+    }
+  },
+  "full_data_recall": {
+    "k=20 (standard)": {
+      "R@20": 8.5,
+      "R@30": 10.52
+    },
+    "k=30": {
+      "R@20": 8.27,
+      "R@30": 10.57
+    },
+    "multi-k avg [15,20,25,30]": {
+      "R@20": 8.53,
+      "R@30": 10.56
+    },
+    "multi-k borda [15,20,25,30]": {
+      "R@20": 8.58,
+      "R@30": 10.55
+    }
+  }
+}

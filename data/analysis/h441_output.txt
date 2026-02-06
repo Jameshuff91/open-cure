@@ -1,0 +1,82 @@
+======================================================================
+h441: Drug-Level Embedding Stability for Within-Tier Ranking
+======================================================================
+
+Loading predictor...
+Loaded in 0.1s
+Diseases: 455
+
+Running predictions for all diseases...
+Completed in 0.1s, 455 diseases
+
+Computing drug stability metrics...
+Unique drugs predicted: 1015
+
+--- Drug Stability Distribution ---
+Appearances: mean=13.4, median=5, max=170
+CV of rank: mean=0.284, median=0.263
+Rank spread: mean=13.7, median=15
+
+======================================================================
+ANALYSIS: Stability vs GT Hit Rate
+======================================================================
+
+--- Overall Precision by Stability ---
+  high_cv (unstable)       : 17.0% (1974/11624)
+  low_cv (stable)          : 33.6% (671/1998)
+
+--- Precision by Rank Bucket × Stability ---
+
+  rank 1-5:
+    low_cv (stable)          : 100.0% (30/30)
+    high_cv (unstable)       : 35.8% (803/2245)
+
+  rank 6-10:
+    low_cv (stable)          : 88.3% (53/60)
+    high_cv (unstable)       : 23.5% (520/2215)
+
+  rank 11-20:
+    low_cv (stable)          : 45.3% (324/715)
+    high_cv (unstable)       : 12.5% (479/3835)
+
+  rank 21-30:
+    low_cv (stable)          : 22.1% (264/1193)
+    high_cv (unstable)       : 5.2% (172/3329)
+
+--- Precision by CV Quartile ---
+CV quartiles: Q1=0.000, Q2=0.263, Q3=0.445
+  Q1 (most stable)         : 97.2% (274/282)
+  Q2                       : 23.1% (397/1716)
+  Q3                       : 15.8% (648/4096)
+  Q4 (least stable)        : 17.6% (1326/7528)
+
+--- Precision by Drug Appearance Count ---
+  appears 1-5x             : 59.9% (651/1086)
+  appears 6-20x            : 20.5% (752/3673)
+  appears 21-50x           : 12.0% (520/4344)
+  appears 51-100x          : 12.8% (315/2453)
+  appears 101-500x         : 19.7% (407/2066)
+
+======================================================================
+HOLDOUT VALIDATION (5-seed)
+======================================================================
+Seed 42: low_cv=5.6% vs high_cv=7.8%  |  rare=6.4% vs common=7.6%
+Seed 123: low_cv=12.0% vs high_cv=9.7%  |  rare=14.1% vs common=9.7%
+Seed 456: low_cv=5.7% vs high_cv=9.9%  |  rare=13.0% vs common=9.0%
+Seed 789: low_cv=4.4% vs high_cv=10.5%  |  rare=4.6% vs common=10.3%
+Seed 2024: low_cv=9.1% vs high_cv=9.2%  |  rare=8.2% vs common=9.2%
+
+--- Holdout Summary ---
+  low_cv    : 7.4% ± 2.8%
+  high_cv   : 9.4% ± 0.9%
+  Delta (low - high CV): -2.1pp
+  rare      : 9.3% ± 3.7%
+  common    : 9.2% ± 0.9%
+  Delta (common - rare): -0.1pp
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h441_drug_stability.json
+
+======================================================================
+CONCLUSION
+======================================================================
+NOT SIGNIFICANT: CV stability gap is only -2.1pp on holdout

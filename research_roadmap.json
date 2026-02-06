@@ -8738,8 +8738,8 @@
         "Evaluate R@30 and tier precision with bootstrapped scores",
         "If stable, test rank>20 rescue with bootstrapped scores on holdout"
       ],
-      "findings": "Bootstrap kNN (10 samples, 80% subsample) HURTS performance instead of improving stability.\n\nKey findings:\n1. Full-data R@30: 87.47% (standard) vs 84.56% (bootstrap) = -2.91pp\n2. Holdout R@30: 39.41% \u00b1 2.16% vs 37.88% \u00b1 1.54% = -1.54pp\n3. Full\u2192holdout rank drift INCREASES: 5.51 drugs leave top-20 (std) vs 7.19 (bootstrap) = 30.5% WORSE\n4. Jaccard overlap full\u2192holdout: 0.603 (std) vs 0.498 (bootstrap) = WORSE\n5. Per-disease: Only 8/455 improve, 40 get worse\n\nRoot cause: Subsampling 80% of train diseases loses genuinely informative neighbors. The 20% dropped are not noise \u2014 they contain real signal. Unlike classical bagging where each sample trains an independent model, kNN neighborhoods are 80% correlated across bootstraps, so variance reduction is minimal while information loss is real.\n\nImplication: kNN instability (h434/h437) is a STRUCTURAL property of using 455 diseases with k=20. It cannot be fixed by bootstrap/bagging. The rank>20 filter is the correct response. Any future rank stability work would need to operate at the drug level (e.g., drug embedding stability) rather than the disease neighborhood level.",
-      "result_metric": "Bootstrap R@30 = 37.88% vs Standard 39.41% (-1.54pp), drift +30.5% WORSE"
+      "findings": "Bootstrap kNN WORSENS performance, not improves it.\n\nPart 1 (Full-data): Bootstrap R@30 = 84.56% vs Standard 87.47% (-2.91pp). Only 8/455 diseases improve, 40 get worse. Top-20 overlap between standard and bootstrap is 78.5% (4.28 boundary crossings).\n\nPart 2 (Holdout, 5-seed): Bootstrap 38.05% \u00b1 1.49% vs Standard 39.22% \u00b1 2.26% (-1.17pp). Bootstrap hurts across ALL 5 seeds consistently.\n\nPart 3 (Rank drift): Bootstrap INCREASES full\u2192holdout drift by 30.3% (7.19 vs 5.52 drugs leaving top-20). Jaccard drops 0.602 \u2192 0.498.\n\nROOT CAUSE: Subsampling 80% of training diseases REMOVES actual nearest neighbors, introducing noise. Unlike classical bagging where each learner sees the same feature space, kNN subsampling degrades neighborhood quality. The standard kNN with ALL available neighbors is already optimal.\n\nIMPLICATION: kNN neighborhood instability (h434/h437) cannot be solved by subsampling/bagging. The 4.1 rank-20 crossings per disease are an inherent property of the embedding space topology, not a sampling artifact. The rank>20 filter remains necessary.",
+      "result_metric": "Bootstrap R@30 = 38.05% vs Standard 39.22% (-1.17pp holdout); Rank drift +30.3% worse"
     },
     {
       "id": "h437",
@@ -8823,14 +8823,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "For each drug, count how many diseases it appears in top-20 predictions for",
         "Compute coefficient of variation of rank across diseases where it appears",
         "Split predictions into stable (low CV) vs unstable (high CV)",
         "Compare GT hit rate for stable vs unstable predictions",
         "If significant gap (>10pp), implement as within-tier ranking boost"
-      ]
+      ],
+      "findings": "Drug-level rank stability (CV of rank across diseases) shows MASSIVE full-data signal but COMPLETELY FAILS on holdout. Classic overfitting.\n\nFull-Data:\n- Q1 (most stable, CV=0): 97.2% precision (274/282) - almost entirely self-referential\n- Low CV at rank 1-5: 100% (30/30) vs High CV: 35.8%\n- Low CV at rank 21-30: 22.1% vs High CV: 5.2% (17pp gap!)\n- Drug appearance count also shows signal: 1-5x = 59.9%, 21-50x = 12.0%\n\nHoldout (5-seed): Signal REVERSES\n- Low CV: 7.4% \u00b1 2.8% vs High CV: 9.4% \u00b1 0.9% (-2.1pp, wrong direction!)\n- Rare vs common drugs: 9.3% \u00b1 3.7% vs 9.2% \u00b1 0.9% (no difference)\n\nROOT CAUSE: CV=0 drugs (always same rank) are drugs present in GT for ALL their kNN neighbors. They are high-precision ON the training data because they ARE the training signal. On holdout, GT changes and these drugs lose their advantage.\n\nThe 97.2% Q1 precision is entirely a reflection of the GT structure, not a generalizable signal. Drugs with low rank variability are low-variability BECAUSE they re-appear in every neighbor's GT - which is the same GT we evaluate against.\n\nLESSON: Any metric derived from the GT-based kNN predictions is inherently circular when evaluated on the same GT. Drug stability, frequency, and rank consistency all capture the same circular signal.",
+      "result_metric": "Full-data: Q1 97.2% vs Q4 17.6%; Holdout: low_cv 7.4% vs high_cv 9.4% (REVERSED, -2.1pp)"
     },
     {
       "id": "h442",
@@ -8968,6 +8970,93 @@
       ],
       "findings": "Corticosteroid demotion from MEDIUM is NOT justified.\n\nFull-data analysis:\n- Corticosteroids in MEDIUM: 20.8% (148/713) vs non-corticosteroids 29.0% (969/3336) \u2192 -8.3pp gap\n- Demoting would improve MEDIUM by +1.5pp (27.6% \u2192 29.0%)\n\nPer-drug precision shows most corticosteroids ARE at MEDIUM holdout level:\n- Prednisolone 23.6%, Dexamethasone 22.6%, Hydrocortisone 22.1%, Methylprednisolone 20.9%\n- Below average: Triamcinolone 15.3%, Betamethasone 19.7%\n- The 20.8% class precision is within MEDIUM holdout range (21.2% \u00b1 1.9%)\n\n533/713 (75%) of corticosteroid MEDIUM predictions come from the \"default\" rule, meaning they hit MEDIUM because no other rule applied. They are correctly assigned.\n\nDemotion to LOW (12.2% holdout) would be overly harsh since corticosteroids at 20.8% are closer to MEDIUM than LOW.\n\nNO ACTION TAKEN. Corticosteroids are appropriately in MEDIUM tier.",
       "result_metric": "Corticosteroids MEDIUM at 20.8% \u2248 MEDIUM holdout 21.2% - not demoted"
+    },
+    {
+      "id": "h450",
+      "title": "Weighted kNN by Neighborhood Stability Score",
+      "description": "h436 showed subsampling hurts. h437 showed neighbor stability correlates with tier precision (+10-13pp for stable neighborhoods). Instead of bootstrapping, use the known stability signal: for each drug prediction, weight its score by the MEAN COSINE SIMILARITY of the disease to its k neighbors. High mean similarity = stable neighborhood = more reliable ranking. This is a meta-confidence signal, not a ranking change.",
+      "hypothesis": "Diseases with higher mean neighbor similarity will have more reliable predictions. Weighting predictions by mean neighbor similarity will improve tier precision without changing rankings.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For each disease, compute mean cosine similarity to its k=20 neighbors",
+        "Split predictions into high/low mean similarity groups",
+        "Compare GT hit rates between groups (full-data and holdout)",
+        "If significant gap (>10pp), use as meta-confidence for tier adjustment",
+        "Run holdout validation"
+      ]
+    },
+    {
+      "id": "h451",
+      "title": "Alternative Rank Stabilization: k-Expansion Instead of Subsampling",
+      "description": "h436 invalidated subsampling because it REMOVES good neighbors. The opposite approach: instead of subsampling, use MORE neighbors (k=30 or k=40) and take the intersection of top drugs across multiple k values. Drugs that are consistently ranked high across k=15,20,25,30 are more stable than single-k rankings. This tests whether EXPANDING the neighborhood stabilizes rather than REDUCING it.",
+      "hypothesis": "Using the intersection/consensus of rankings across multiple k values (15,20,25,30) will produce more stable drug rankings than single k=20.",
+      "status": "invalidated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For each disease, compute kNN drug scores at k=15,20,25,30",
+        "Aggregate via rank averaging (Borda count) or score averaging",
+        "Compare rank stability to single k=20 using holdout",
+        "Measure R@30 and rank-20 crossings",
+        "If improved stability, test rank>20 rescue"
+      ],
+      "findings": "k-Expansion does NOT meaningfully stabilize rankings or improve R@30.\n\nFull-Data (expanded GT):\n- k=20: R@30 = 10.52%\n- k=30: R@30 = 10.57% (+0.05pp)\n- multi-k avg [15,20,25,30]: R@30 = 10.56% (+0.04pp)\n- multi-k borda [15,20,25,30]: R@30 = 10.55% (+0.03pp)\n\nHoldout (5-seed, expanded GT):\n- k=20: 8.31% \u00b1 0.99%\n- k=30: 8.62% \u00b1 0.98% (+0.31pp)\n- multi-k avg: 8.51% \u00b1 0.98% (+0.20pp)\n- multi-k borda: 8.46% \u00b1 1.06% (+0.15pp)\n\nRank Drift (full\u2192holdout, seed=42):\n- k=20: 5.54 crossings, Jaccard 0.601\n- k=30: 5.41 crossings, Jaccard 0.601\n- multi-k avg: 5.59 crossings, Jaccard 0.592\n- multi-k borda: 5.41 crossings, Jaccard 0.607\n\nAll deltas within noise. k-expansion does not stabilize rankings.\n\nCOMBINED WITH h436: Neither subsampling (bootstrap) nor expansion (multi-k) can stabilize kNN rankings. The instability is an INHERENT property of the embedding space topology. The rank>20 boundary is fundamentally noisy.\n\nNote: Measured with expanded_ground_truth.json (larger GT sets), making absolute R@30 appear lower (~10% vs ~87% with predictor GT). Relative comparisons are valid.",
+      "result_metric": "k=30 holdout R@30 +0.31pp vs k=20; Rank drift unchanged (5.41 vs 5.54 crossings)"
+    },
+    {
+      "id": "h452",
+      "title": "Per-Disease k Optimization by Category",
+      "description": "kNN uses k=20 globally but different disease categories may have very different neighborhood structures. Autoimmune diseases (many related diseases) might benefit from larger k, while rare diseases (few neighbors) might need smaller k. h436 showed that using fewer data points hurts uniformly, but the optimal k per disease might vary.",
+      "hypothesis": "Disease categories have different optimal k values. Category-specific k optimization will improve R@30 by 1-3pp over global k=20.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "For each disease category, sweep k=5,10,15,20,25,30,40 on full data",
+        "Identify optimal k per category",
+        "Validate on holdout (5-seed)",
+        "Compare to global k=20 baseline",
+        "If improvement, implement category-specific k"
+      ]
+    },
+    {
+      "id": "h453",
+      "title": "External-Signal-Only Within-Tier Ranking",
+      "description": "h441 proved kNN-derived metrics are circular for within-tier ranking. h445 proved TransE is negative within tiers. The remaining external signals are: target overlap count, mechanism support boolean, drug frequency (from external databases like DrugBank, not from kNN), and structural similarity. Test whether a COMPOSITE of external signals provides a holdout-validated within-tier ranking.",
+      "hypothesis": "A composite of external signals (target overlap, mechanism, DrugBank frequency) will provide a within-tier ranking signal that holds on holdout, unlike kNN-derived or TransE signals.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For each prediction, collect: target_overlap_count, mechanism_support, drug ATC level, category match",
+        "Build a simple logistic regression predicting GT hit from these features",
+        "Train on 80% diseases, validate on 20% (5-seed)",
+        "If AUC > 0.6, use predicted probability as within-tier ranking boost",
+        "Compare within-tier precision vs raw kNN rank"
+      ]
+    },
+    {
+      "id": "h454",
+      "title": "Circularity Audit: Which Existing Tier Rules are Circular?",
+      "description": "h441 discovered that drug rank stability is a circular signal (97.2% full-data \u2192 7.4% holdout). This raises the question: are ANY existing tier rules based on similarly circular metrics? h402 validated most rules but some had too-small samples. Systematically check whether drug_train_freq, drug_disease_groups, and other GT-derived features contribute to tier rules via circularity rather than genuine signal.",
+      "hypothesis": "Some tier rules may be partially circular (e.g., using drug_train_freq which is GT-derived). Identifying and removing circular components will reduce the full-to-holdout gap.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "List all tier rules that depend on GT-derived features",
+        "For each, compute full-data vs holdout precision (already available from h402)",
+        "Flag rules with >20pp full-to-holdout gap as potentially circular",
+        "Check if removing GT-derived features from these rules maintains holdout precision",
+        "Report which rules are genuine vs circular"
+      ]
     }
   ],
   "completed": [
@@ -10491,6 +10580,24 @@
       "hypothesis_id": "h443",
       "learning": "kNN rank is already the best within-tier ranking signal. TransE composite does NOT improve over kNN rank. TransE value is binary (tier indicator), not continuous (ranking signal). Top-half vs bottom-half gap on holdout: HIGH +15.9pp, MEDIUM +11.5pp. TransE boolean is actually NEGATIVE for global ranking (MEDIUM -3.7pp, LOW -4.4pp) \u2014 the h405 benefit is purely per-disease, not global.",
       "implication": "For clinical deliverables, emphasize that rank within tier is informative. Consider reporting sub-tier precision (rank 1-5 vs 6-10 vs 11-20). Do not attempt to replace kNN rank as the primary ordering signal."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h436",
+      "learning": "kNN bootstrap (subsampling 80% of training diseases per run) HURTS performance (-1.17pp holdout, -2.91pp full-data). Subsampling removes actual nearest neighbors, degrading neighborhood quality. Unlike classical bagging, kNN subsampling adds noise. Rank drift INCREASES +30.3%. The 4.1 rank-20 crossings per disease are inherent to embedding topology, not fixable by subsampling.",
+      "implication": "kNN neighborhood instability is a fundamental property of the embedding space, not a sampling artifact. Do NOT attempt further subsampling-based approaches. Alternative: use neighborhood quality metrics (mean cosine similarity) as META-CONFIDENCE, or test k-expansion (consensus across multiple k values)."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h451",
+      "learning": "k-expansion (multi-k Borda, multi-k averaging, k=30) does not improve R@30 (max +0.31pp) or rank stability (crossings identical). Combined with h436 (bootstrap -1.17pp), this proves kNN rank instability is an inherent embedding space property. Neither adding nor removing information changes it.",
+      "implication": "The rank>20 filter is the CORRECT response to this instability. Further ranking stabilization requires fundamentally different approaches (different embedding method, different similarity metric) rather than kNN parameter tuning."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h441",
+      "learning": "Drug rank stability (CV across diseases) is entirely circular with GT: stable-rank drugs are stable BECAUSE they appear in every neighbor's GT, which is the evaluation GT. Full-data: 97.2% for Q1 vs 17.6% for Q4. Holdout: REVERSES to 7.4% vs 9.4%. Any kNN-derived drug metric is confounded by GT overlap.",
+      "implication": "Do NOT use drug-level kNN metrics (rank CV, appearance frequency, rank spread) for within-tier ranking. These are all circular. Valid within-tier signals must come from EXTERNAL sources: TransE, target overlap, mechanism support, literature."
     }
   ],
   "collaborations": [
