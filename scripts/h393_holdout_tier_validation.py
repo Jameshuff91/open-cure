@@ -32,6 +32,7 @@ from production_predictor import (
     DrugRepurposingPredictor,
     extract_cancer_types,
     DISEASE_HIERARCHY_GROUPS,
+    HIERARCHY_EXCLUSIONS,
 )
 
 
@@ -93,14 +94,18 @@ def recompute_gt_structures(
     predictor.drug_cancer_types = dict(new_cancer)
 
     # 4. Recompute drug_disease_groups from training diseases only
+    # h469: Use HIERARCHY_EXCLUSIONS to prevent false matches (was missing before)
     new_groups: Dict[str, Set[Tuple[str, str]]] = defaultdict(set)
     for disease_id in train_disease_ids:
         if disease_id in predictor.ground_truth:
             disease_name = predictor.disease_names.get(disease_id, disease_id)
-            category = predictor.categorize_disease(disease_name)
-            if category in DISEASE_HIERARCHY_GROUPS:
-                for group_name, keywords in DISEASE_HIERARCHY_GROUPS[category].items():
-                    if any(kw in disease_name.lower() for kw in keywords):
+            disease_lower = disease_name.lower()
+            for category, groups in DISEASE_HIERARCHY_GROUPS.items():
+                for group_name, keywords in groups.items():
+                    exclusions = HIERARCHY_EXCLUSIONS.get((category, group_name), [])
+                    if any(excl in disease_lower for excl in exclusions):
+                        continue
+                    if any(kw in disease_lower or disease_lower in kw for kw in keywords):
                         for drug_id in predictor.ground_truth[disease_id]:
                             new_groups[drug_id].add((category, group_name))
     predictor.drug_disease_groups = dict(new_groups)

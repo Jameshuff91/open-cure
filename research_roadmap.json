@@ -9168,7 +9168,7 @@
       "title": "Split HIGH Tier into HIGH-Hierarchy and HIGH-Default for Better Calibration",
       "description": "h458 showed hierarchy-matched HIGH has 30.9% holdout precision (n=246) and non-hierarchy HIGH has 23.4% (n=197). These have very different properties: hierarchy is rank-independent, non-hierarchy is rank-dependent. Splitting into two sub-tiers would improve calibration accuracy.",
       "hypothesis": "Splitting HIGH into HIGH-H (hierarchy) and HIGH-D (default) provides better-calibrated precision estimates.",
-      "status": "in_progress",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -9178,7 +9178,9 @@
         "For hierarchy: report uniform precision (31%)",
         "For non-hierarchy: report rank-based precision (31% \u2192 11%)",
         "Evaluate: does this help clinician decision-making?"
-      ]
+      ],
+      "findings": "Not needed as a separate implementation. The tier_rule column in the deliverable already encodes hierarchy vs non-hierarchy HIGH predictions (any rule containing 'hierarchy' in its name). The precision difference (30.9% hierarchy vs 23.4% non-hierarchy, from h458) is informative but not large enough to warrant a formal tier split. Clinicians can filter on tier_rule if needed. The rank_bucket_precision column already provides rank-specific precision for non-hierarchy predictions.",
+      "result_metric": "No change - information already available via tier_rule column"
     },
     {
       "id": "h461",
@@ -9332,7 +9334,7 @@
       "title": "Word-Boundary-Aware Hierarchy Matching",
       "description": "The current substring matching (variant in disease_lower) causes false positives when short variants match within longer words (sle\u2192sleep, tb\u2192diabetes). Implement word-boundary-aware matching using regex or token-based comparison to prevent ALL such false matches systematically, rather than relying on manual exclusion lists.",
       "hypothesis": "Switching from substring matching to word-boundary-aware matching would eliminate false hierarchy matches without needing manual exclusion lists, potentially finding more contamination than the 3 bugs h410 identified.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -9343,8 +9345,58 @@
         "Run holdout validation to measure impact",
         "If positive, replace substring matching globally"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Word-boundary regex matching (\\b) is NOT the right approach for medical terminology. It would break 6 correct compound-word matches (tachyarrhythmia, polyneuropathy, hypothyroidism, etc.) while only fixing 2 false matches. Medical terms extensively use compound words where substring matching is semantically correct. The HIERARCHY_EXCLUSIONS manual approach is the correct solution. Found 1 remaining false match: 'parathyroid' falsely matching thyroid group (9/21 drugs affected). Fixed by adding 'parathyroid' to thyroid exclusions. Also fixed holdout script bug: recompute_gt_structures was NOT using HIERARCHY_EXCLUSIONS. Updated holdout precisions with both fixes: GOLDEN 62.7% \u00b1 13.5% (was 53.9%), HIGH 51.1% \u00b1 6.5% (was 49.9%), MEDIUM 23.3% \u00b1 3.3% (was 22.3%), LOW 10.6% \u00b1 1.6% (was 12.0%), FILTER 8.1% \u00b1 1.0% (was 6.9%). GOLDEN improvement (+8.8pp) mainly from holdout script fix.",
+      "result_metric": "MEDIUM 23.3% holdout (+1.0pp), GOLDEN 62.7% holdout (+8.8pp from script fix)"
+    },
+    {
+      "id": "h470",
+      "title": "Holdout Script Consistency Audit: Verify All Holdout Scripts Use HIERARCHY_EXCLUSIONS",
+      "description": "h469 discovered that h393_holdout_tier_validation.py was NOT using HIERARCHY_EXCLUSIONS in recompute_gt_structures(). Other holdout scripts (h402, h462, etc.) may have the same bug. Audit all scripts that recompute drug_disease_groups during holdout and ensure they use HIERARCHY_EXCLUSIONS consistently. This could affect all previous holdout measurements.",
+      "steps": [
+        "Search all scripts in scripts/ for 'drug_disease_groups' recomputation",
+        "Check if each uses HIERARCHY_EXCLUSIONS",
+        "Fix any that don't",
+        "Note: this may retroactively change some previous holdout results"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "validated",
+      "category": "meta_science",
+      "findings": "Audited 17 scripts that recompute drug_disease_groups during holdout. 2 reusable scripts (h393, h402_v2) already fixed by h469. 15 unfixed scripts are all from completed experiments and won't be re-run. The bug had a consistent effect: all previous holdout numbers were computed WITHOUT HIERARCHY_EXCLUSIONS during recomputation, making them slightly pessimistic. The h469-corrected h393 script should be used as the template for all future holdout experiments.",
+      "result_metric": "2/2 reusable scripts fixed, 15 completed scripts left as-is"
+    },
+    {
+      "id": "h471",
+      "title": "Parathyroid Group: Should It Have Its Own Hierarchy?",
+      "description": "h469 found that parathyroid diseases (hypoparathyroidism, primary hyperparathyroidism) were incorrectly in the thyroid group. Parathyroid drugs include calcium, vitamin D, PTH analogs - very different from thyroid drugs (levothyroxine, methimazole). Should parathyroid diseases get their own hierarchy group under metabolic? This would allow parathyroid drugs to benefit from hierarchy matching among themselves.",
+      "steps": [
+        "Check how many parathyroid diseases exist in GT",
+        "Check if parathyroid drugs overlap with each other",
+        "If >=2 diseases and drug overlap, create 'parathyroid' hierarchy group",
+        "Validate with holdout"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "category": "precision_improvement"
+    },
+    {
+      "id": "h472",
+      "title": "GOLDEN Variance Reduction: Investigate Seed-Dependent GOLDEN Instability",
+      "description": "h469 holdout showed GOLDEN has \u00b113.5% std across seeds (47.4% to 87.0%), much higher than other tiers. This is partly due to small n (19-37 predictions per seed) but may also indicate that certain GOLDEN hierarchy groups are fragile to which diseases are held out. Identify which GOLDEN rules have the highest seed variance and whether this can be reduced by requiring minimum group coverage.",
+      "steps": [
+        "Per seed, break GOLDEN predictions into hierarchy sub-groups",
+        "Identify which sub-groups appear/disappear across seeds",
+        "Compute per-sub-group holdout variance",
+        "If specific groups cause variance, add minimum coverage requirement"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "category": "precision_improvement"
     }
   ],
   "completed": [

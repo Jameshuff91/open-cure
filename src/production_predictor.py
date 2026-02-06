@@ -907,7 +907,8 @@ HIERARCHY_EXCLUSIONS: Dict[Tuple[str, str], list[str]] = {
     # h467: 'diabetic' matches 'nondiabetic' and 'diabetic foot infections' (infection, not metabolic)
     ('metabolic', 'diabetes'): ['nondiabetic', 'diabetic foot'],
     # h467: 'thyroid' matches 'thyroid cancer' (cancer, not metabolic)
-    ('metabolic', 'thyroid'): ['thyroid cancer'],
+    # h469: 'thyroid' matches 'parathyroid' (parathyroid gland ≠ thyroid gland, different organ)
+    ('metabolic', 'thyroid'): ['thyroid cancer', 'parathyroid'],
 }
 
 # h171: Neurological drug class mappings (60.4% coverage vs 18% kNN baseline)
