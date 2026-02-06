@@ -6672,7 +6672,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Identify combination products in GT (contain '/')",
         "Step 2: Compare precision for combination vs single-agent predictions",
@@ -6681,7 +6681,10 @@
       ],
       "dependencies": [
         "h307"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "68.8% of combination GT covered by single-agent predictions",
+      "findings": "h330 VALIDATED: Formulation-Specific Prediction Analysis\n\nKEY FINDINGS:\n\n1. GT COMPOSITION:\n   - Total drugs: 2,367\n   - Combination products: 297 (12.5%)\n   - Combination GT pairs: 805 (7.9% of 10,224)\n\n2. PREDICTION COVERAGE:\n   - Predictions are 99.9% single-agent (kNN from DRKG)\n   - Only 15 \"combination\" predictions (all Varicella Zoster Vaccine)\n   - Combination products NOT in DRKG \u2192 NOT being predicted\n\n3. COMPONENT COVERAGE:\n   - 28.3% of combo GT FULLY covered (both components predicted)\n   - 40.5% PARTIALLY covered (at least 1 component predicted)\n   - 31.2% NOT covered (no components predicted)\n   - Total: 68.8% have at least 1 component predicted\n\n4. COMBO-ONLY DISEASES:\n   - 32 diseases have ONLY combination products in GT\n   - These are mostly not in prediction set (name mismatch or not in DRKG)\n   - Examples: arthralgia, diaper rash, chapped skin, goiter\n   - These are \"gap\" diseases where model cannot help\n\nCONCLUSION:\n- Combination products are NOT a source of significant prediction errors\n- Single-agent predictions capture most of the signal (68.8% coverage)\n- No special handling needed for combination products\n- Gap diseases (32 combo-only) are minor (<1.2% of GT diseases)\n\nACTIONABLE:\n- No code changes needed\n- Combination handling is sufficient as-is"
     },
     {
       "id": "h331",
