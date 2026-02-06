@@ -9050,7 +9050,7 @@
       "title": "Circularity Audit: Which Existing Tier Rules are Circular?",
       "description": "h441 discovered that drug rank stability is a circular signal (97.2% full-data \u2192 7.4% holdout). This raises the question: are ANY existing tier rules based on similarly circular metrics? h402 validated most rules but some had too-small samples. Systematically check whether drug_train_freq, drug_disease_groups, and other GT-derived features contribute to tier rules via circularity rather than genuine signal.",
       "hypothesis": "Some tier rules may be partially circular (e.g., using drug_train_freq which is GT-derived). Identifying and removing circular components will reduce the full-to-holdout gap.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -9060,7 +9060,9 @@
         "Flag rules with >20pp full-to-holdout gap as potentially circular",
         "Check if removing GT-derived features from these rules maintains holdout precision",
         "Report which rules are genuine vs circular"
-      ]
+      ],
+      "findings": "Circularity audit confirms TWO types of precision inflation:\n\nTYPE 1: STRUCTURAL ABSENCE (7 hierarchy rules, 36-86pp gaps)\n- autoimmune_lupus (85.7%\u21920%), spondylitis (80%\u21920%), MS (71.4%\u21920%)\n- respiratory_asthma (70%\u21920%), infectious_UTI (75%\u21920%), epilepsy (50%\u21920%), pneumonia (36.4%\u21920%)\n- Root cause: These rules cover 1-6 diseases. When those diseases are held out, drug_disease_groups loses the group entirely (recomputed from training-only GT). The rule can NEVER fire on holdout.\n- This is not overfitting \u2014 it is a STRUCTURAL LIMITATION of small-group hierarchy rules.\n- h432 already showed these groups have high precision and should not be consolidated.\n- IMPLICATION: holdout_mean=0% does NOT mean these rules are bad. It means holdout CANNOT validate them (sample too small).\n\nTYPE 2: SELF-REFERENTIAL LEAKAGE (confirmed by h424)\n- base_to_complication: 28.1% full \u2192 ~15% holdout (DKA self-prediction accounts for 6/9 hits)\n- complication_non_validated: 13.2% \u2192 3.3% (similar self-referential pattern)\n\nGENUINE RULES (gap \u2264 10pp, n \u2265 10): 19 rules including:\n- RA hierarchy (80.8%\u219274.4%, -6.4pp), arrhythmia (76.1%\u219268.2%, -7.9pp)\n- tuberculosis (62.9%\u219265.6%, +2.7pp), thyroid (19.5%\u219216.5%, -3.0pp)\n- default (13.6%\u219211.1%, -2.5pp, n=9698), cross_domain (9.4%\u21929.9%, +0.5pp)\n- cancer_same_type (25.5%\u219219.9%, -5.6pp, n=1129)\n\nEXTERNAL RULES: cv_pathway (-7.0pp), target_overlap (-14.2pp), comp_to_base (-2.9pp)\n- target_overlap has the largest gap for an external rule (-14.2pp) but this is expected since overlap COUNTS change when GT diseases are removed.\n\nNO HIDDEN CIRCULAR RULES FOUND beyond the known structural limitations.\nThe tier system circularity is well-characterized:\n1. Small hierarchy groups: structural absence (cannot validate, not fixable)\n2. DKA self-prediction: known, already FILTER-assigned\n3. All large-n rules: genuine (gaps \u2264 10pp)",
+      "result_metric": "7 rules with 0% holdout (structural absence, not fixable). 19 rules genuine (gap<=10pp). No hidden circular rules."
     }
   ],
   "completed": [
@@ -10614,6 +10616,12 @@
       "hypothesis_id": "h424",
       "learning": "Self-referential leakage: diseases are their own #1 nearest neighbor (sim=1.0) and predict their own GT drugs. DKA has 6/7 hits purely from self-prediction, no other neighbors contribute. This inflates full-data precision but disappears on holdout. Any full-data evaluation of base_to_complication (or similar rules) that includes self-prediction is systematically inflated.",
       "implication": "Full-data precision for kNN-based rules should always be accompanied by holdout validation. Self-referential inflation is largest for diseases with unique drug signatures (no neighbor overlap). Consider excluding self-similarity in full-data evaluation or always using LOO."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h454",
+      "learning": "Circularity audit complete: 7 hierarchy rules show 0% holdout because drug_disease_groups is recomputed from training GT (structural absence, not overfitting). 19 large-n rules are genuine (gap<=10pp). The tier system has no HIDDEN circularity beyond the known small-group limitation. Target overlap promotion has -14.2pp gap (expected since overlap counts change with GT). The holdout validation framework correctly identifies both genuine and structurally limited rules.",
+      "implication": "No code changes needed. The circularity is well-characterized and the correct response is MIN_N filtering (n>=30 for holdout conclusions, per h402). Small hierarchy rules cannot be holdout-validated but ARE medically correct (h432 confirmed). Future rule additions should target n>=30 predictions for reliable validation."
     }
   ],
   "collaborations": [
