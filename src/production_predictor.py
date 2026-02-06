@@ -37,6 +37,10 @@ Unified pipeline integrating validated research findings:
   - J drugs have 0% precision for: hematological, gastrointestinal, metabolic, immune, rare_genetic
   - Exception: J→respiratory = 17.8% (kept as HIGH_PRECISION_MISMATCH)
   - Filters additional 180 predictions with 0% precision (0 hits lost)
+- h319: Comprehensive Low-Precision ATC Filter (Batch 2)
+  - Added 22 additional 0% precision ATC→category pairs
+  - Includes: C/N drugs for non-CV/non-neuro, L for non-cancer/non-autoimmune, etc.
+  - Filters additional 703 predictions with 0% precision (0 hits lost)
 
 USAGE:
     # Get predictions for a disease
@@ -900,7 +904,9 @@ HIGH_PRECISION_MISMATCHES: Dict[Tuple[str, str], float] = {
 # ZERO-PRECISION MISMATCHES - always FILTER these (precision < 3%):
 # h316: Initial set from h314 analysis
 # h318: Added comprehensive J (antibiotic) filter for non-infectious diseases
+# h319: Batch 2 - all remaining 0% precision ATC→category pairs
 ZERO_PRECISION_MISMATCHES: Set[Tuple[str, str]] = {
+    # h316: Original set
     ('A', 'cancer'),          # 0.0% - Alimentary drugs never work for cancer
     ('B', 'other'),           # 0.0% - Blood drugs for other
     ('J', 'dermatological'),  # 0.0% - Antibiotics for skin diseases
@@ -917,12 +923,35 @@ ZERO_PRECISION_MISMATCHES: Set[Tuple[str, str]] = {
     ('J', 'genetic'),         # 1.6% - Antibiotics for genetic diseases
     ('L', 'genetic'),         # 1.7% - Antineoplastic for genetic
     ('L', 'other'),           # 2.5% - Antineoplastic for other
-    # h318: Antibiotic FILTER for non-infectious diseases (all 0% precision)
+    # h318: Antibiotic FILTER for non-infectious diseases
     ('J', 'hematological'),   # 0.0% - Antibiotics for blood disorders
     ('J', 'gastrointestinal'),# 0.0% - Antibiotics for GI (except infectious)
     ('J', 'metabolic'),       # 0.0% - Antibiotics for metabolic diseases
     ('J', 'immune'),          # 0.0% - Antibiotics for immune disorders
     ('J', 'rare_genetic'),    # 0.0% - Antibiotics for rare genetic diseases
+    # h319: Batch 2 - comprehensive 0% precision pairs (703 predictions, 0 hits)
+    ('C', 'neurological'),    # 0.0% - Cardiovascular for neurological
+    ('L', 'infectious'),      # 0.0% - Antineoplastic for infectious
+    ('M', 'other'),           # 0.0% - Musculoskeletal for other
+    ('N', 'cardiovascular'),  # 0.0% - Nervous system for cardiovascular
+    ('L', 'storage'),         # 0.0% - Antineoplastic for storage diseases
+    ('C', 'cancer'),          # 0.0% - Cardiovascular for cancer
+    ('P', 'other'),           # 0.0% - Antiparasitic for other
+    ('H', 'cancer'),          # 0.0% - Hormones for cancer
+    ('L', 'neurological'),    # 0.0% - Antineoplastic for neurological
+    ('A', 'renal'),           # 0.0% - Alimentary for renal
+    ('L', 'endocrine'),       # 0.0% - Antineoplastic for endocrine
+    ('B', 'renal'),           # 0.0% - Blood drugs for renal
+    ('D', 'gastrointestinal'),# 0.0% - Dermatological for GI
+    ('R', 'cancer'),          # 0.0% - Respiratory for cancer
+    ('L', 'cardiovascular'),  # 0.0% - Antineoplastic for cardiovascular
+    ('V', 'other'),           # 0.0% - Various for other
+    ('C', 'musculoskeletal'), # 0.0% - Cardiovascular for musculoskeletal
+    ('A', 'rare_genetic'),    # 0.0% - Alimentary for rare genetic
+    ('N', 'gastrointestinal'),# 0.0% - Nervous system for GI
+    ('R', 'autoimmune'),      # 0.0% - Respiratory for autoimmune
+    ('N', 'metabolic'),       # 0.0% - Nervous system for metabolic
+    ('N', 'rare_genetic'),    # 0.0% - Nervous system for rare genetic
 }
 
 

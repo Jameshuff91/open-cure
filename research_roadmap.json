@@ -6426,7 +6426,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add all 0% precision ATC\u2192category pairs to ZERO_PRECISION_MISMATCHES",
         "Skip borderline cases (>2% precision) to avoid overfitting",
@@ -6436,7 +6436,9 @@
       "dependencies": [
         "h318",
         "h316"
-      ]
+      ],
+      "findings": "h319 VALIDATED: Comprehensive Low-Precision ATC Filter (Batch 2)\n\nAdded 22 additional 0% precision ATC\u2192category pairs to ZERO_PRECISION_MISMATCHES.\n\nNew pairs added:\n- C\u2192neurological (0/53), C\u2192cancer (0/38), C\u2192musculoskeletal (0/25)\n- L\u2192infectious (0/51), L\u2192storage (0/42), L\u2192neurological (0/31), L\u2192endocrine (0/28), L\u2192cardiovascular (0/26)\n- N\u2192cardiovascular (0/46), N\u2192gastrointestinal (0/23), N\u2192metabolic (0/21), N\u2192rare_genetic (0/21)\n- M\u2192other (0/51), P\u2192other (0/36), V\u2192other (0/25)\n- H\u2192cancer (0/31), R\u2192cancer (0/26), R\u2192autoimmune (0/23)\n- A\u2192renal (0/29), A\u2192rare_genetic (0/24)\n- B\u2192renal (0/27), D\u2192gastrointestinal (0/26)\n\nImpact:\n- 22 new ATC\u2192category pairs added\n- Additional 703 predictions filtered\n- 0 hits lost (all 0% precision)\n- Total pairs now: 43 (was 21 after h318)\n\nCombined with h316+h318:\n- Total predictions filtered: ~2,202 (1,319 + 180 + 703)\n- Total hits lost: ~16 (all from h316's borderline cases)\n- Overall filtered precision: ~0.7%",
+      "result_metric": "+703 filtered predictions, 0 hits lost, 0% precision"
     },
     {
       "id": "h320",
@@ -7759,6 +7761,12 @@
       "hypothesis_id": "h318",
       "learning": "J (antibiotic) drugs have 0% precision for 9 disease categories. Only J\u2192respiratory (17.8%) and J\u2192other (7.4%) are acceptable. Comprehensive ATC class filters are highly effective.",
       "implication": "Expand comprehensive filtering to N, L, C drug classes. Each ATC class has predictable cross-domain failure patterns."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h319",
+      "learning": "43 total ATC\u2192category pairs now filter ~2,200 predictions with <1% precision. Major drug class cross-domain failures are: L (antineoplastics) for non-cancer, N (neurological) for non-neuro, C (cardiovascular) for non-CV.",
+      "implication": "ATC L1 coherence is highly predictive of precision. Production system should prioritize same-domain predictions."
     }
   ],
   "collaborations": [
