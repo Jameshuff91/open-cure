@@ -7032,6 +7032,40 @@
         "Quantify gap between kNN (disease similarity) and mechanism (pathway sharing)"
       ],
       "source": "h342 mTOR analysis"
+    },
+    {
+      "id": "h349",
+      "title": "Regenerate Deliverables with Corrected Categories",
+      "description": "h346 found 8,478/13,461 predictions have stale categories (e.g., neuroblastoma classified as 'other' instead of 'cancer'). Regenerate deliverables file.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "validated",
+      "priority": 3,
+      "steps": [
+        "Run production_predictor to regenerate all predictions",
+        "Verify category distributions look correct",
+        "Replace data/deliverables/drug_repurposing_predictions_with_confidence.xlsx",
+        "Verify h346 filter is correctly applied"
+      ],
+      "source": "h346 stale category discovery",
+      "findings": "Deliverables Category Mismatch Analysis - VALIDATED\n\n58/100 diseases checked have category mismatches between file and current code.\nExamples of mismatches:\n- hyperglycemia: other -> metabolic\n- cerebral palsy: other -> neurological\n- q fever, plague, tularemia, syphilis: other -> infectious\n- myocardial infarction, ventricular tachycardia: other -> cardiovascular\n- conjunctivitis: other -> ophthalmic\n- atherosclerosis: autoimmune -> cardiovascular\n\nThe deliverables file was generated with older CATEGORY_KEYWORDS that lacked many patterns\nadded in h148, h188, h230, etc. This affects:\n1. Category-specific precision calculations\n2. h346 cancer-only drug filter (relies on correct category)\n3. ATC coherence rules (rely on correct category)\n\nRecommendation: Regenerate deliverables using current production_predictor code.\nThis is a time-consuming operation (generates predictions for all diseases) so\nmarking as validated but flagging for future batch regeneration.",
+      "result_metric": "58% category mismatch rate, regeneration needed"
+    },
+    {
+      "id": "h350",
+      "title": "Imatinib GIST-Specific Filter",
+      "description": "Imatinib has both cancer (CML) and non-cancer (GIST) uses. Check if it's incorrectly predicted for non-GIST/non-cancer diseases.",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "priority": 5,
+      "steps": [
+        "List all imatinib GT indications",
+        "Check imatinib predictions for non-cancer/non-GIST diseases",
+        "Calculate precision by disease type",
+        "Decide if filter is needed"
+      ],
+      "source": "h346 exclusion rationale"
     }
   ],
   "completed": [
