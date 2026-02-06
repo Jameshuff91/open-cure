@@ -9237,7 +9237,7 @@
       "title": "Psychiatric MEDIUM\u2192HIGH Promotion with Additional Evidence",
       "description": "Psychiatric MEDIUM holdout = 45.7% \u00b1 5.4% is the highest category in MEDIUM, just 5pp below HIGH threshold (50.8%). With only 10 diseases, adding psychiatric-specific hierarchy rules or mechanism filters might push the best predictions above 50%. Could a targeted rescue rule (e.g., rank<=5 + mechanism + ATC coherent) achieve HIGH-level precision for psychiatric MEDIUM?",
       "hypothesis": "Top-ranked psychiatric MEDIUM predictions with mechanism support and ATC coherence achieve >50% holdout precision and can be promoted to HIGH.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -9247,7 +9247,9 @@
         "Measure holdout precision for this subset across 5 seeds",
         "If >50%: implement as psychiatric-specific HIGH promotion rule",
         "Verify no tier ordering violations"
-      ]
+      ],
+      "findings": "INVALIDATED: Psychiatric rank<=10 achieves 54.5% \u00b1 9.2% holdout but NOT statistically significant.\n\nKEY FINDINGS:\n1. Psychiatric MEDIUM overall: 49.4% \u00b1 11.9% holdout (just below 50.8% HIGH threshold)\n2. Rank 1-5 subset: 74.4% \u00b1 15.6% holdout (n=5/seed, TOO SMALL)\n3. Rank 1-10 subset: 54.5% \u00b1 9.2% holdout (n=9/seed)\n4. Mechanism support is universal (100% of psych MEDIUM) \u2192 provides NO filtering power\n5. Statistical test: t=0.81, p=0.232 (NOT significant)\n6. 95% CI: [41.8%, 67.2%] \u2014 includes values well below threshold\n\nROOT CAUSE: Only 10 psychiatric diseases \u2192 2 per holdout seed \u2192 extreme variance.\nNeed \u226550 diseases for reliable category-specific promotion rules.\n\nCONCLUSION: Cannot justify promotion. Psychiatric MEDIUM stays as MEDIUM.\nThe category_holdout_precision column (h466) already communicates the higher\nprecision to clinicians without needing a formal tier promotion.",
+      "result_metric": "54.5% \u00b1 9.2% holdout (p=0.232, not significant). NOT promotable."
     },
     {
       "id": "h465",
@@ -10877,6 +10879,12 @@
       "hypothesis_id": "h462",
       "learning": "Category-specific MEDIUM precision varies enormously (0-47% holdout). Immunological has 36pp overfitting gap from only 5 diseases. Neurological, immunological, reproductive demoted to LOW. No category reaches HIGH threshold.",
       "implication": "Small-n categories are vulnerable to massive overfitting. Use holdout validation for any category-specific rules, especially when n_diseases < 10."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h464",
+      "learning": "10 psychiatric diseases is insufficient for category-specific promotion (2 per holdout seed, extreme variance). Need >=50 diseases for n>=10 per seed and statistical power. Mechanism support is universal for psychiatric MEDIUM (no filtering power).",
+      "implication": "Category-specific tier promotions require >=50 diseases. For small categories, use category_holdout_precision annotation instead of tier changes."
     }
   ],
   "collaborations": [
