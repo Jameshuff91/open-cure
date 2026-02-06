@@ -1036,21 +1036,23 @@ TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES: set[str] = {
 # Used for clinical reporting: expected precision given tier + rank bucket
 # Format: (tier, rank_lo, rank_hi) -> holdout_precision
 RANK_BUCKET_PRECISION: Dict[Tuple[str, int, int], float] = {
-    # GOLDEN (high variance, use overall holdout)
-    ('GOLDEN', 1, 5): 73.0, ('GOLDEN', 6, 10): 52.1,
-    ('GOLDEN', 11, 15): 55.7, ('GOLDEN', 16, 20): 44.8,
-    # HIGH
-    ('HIGH', 1, 5): 43.0, ('HIGH', 6, 10): 39.6,
-    ('HIGH', 11, 15): 20.4, ('HIGH', 16, 20): 21.0,
-    # MEDIUM (monotonic, most reliable)
-    ('MEDIUM', 1, 5): 21.7, ('MEDIUM', 6, 10): 18.1,
-    ('MEDIUM', 11, 15): 10.7, ('MEDIUM', 16, 20): 8.1,
-    # LOW (near-flat)
-    ('LOW', 1, 5): 7.9, ('LOW', 6, 10): 5.6,
-    ('LOW', 11, 15): 5.8, ('LOW', 16, 20): 5.4,
-    # FILTER (near-flat)
-    ('FILTER', 1, 5): 6.1, ('FILTER', 6, 10): 6.2,
-    ('FILTER', 11, 15): 3.5, ('FILTER', 16, 20): 2.9,
+    # h457: Updated with 5-seed holdout validation. Reliability varies by tier:
+    # GOLDEN: reliable R1-15, R16-20 unreliable (29.5pp full-to-holdout gap)
+    ('GOLDEN', 1, 5): 61.5, ('GOLDEN', 6, 10): 65.8,
+    ('GOLDEN', 11, 15): 50.9, ('GOLDEN', 16, 20): 32.3,
+    # HIGH: UNRELIABLE calibration - hierarchy rescue creates non-monotonic rank patterns
+    # Full-to-holdout gaps: R1-5=+15pp, R6-10=+21pp, R11-15=+38pp, R16-20=+34pp
+    ('HIGH', 1, 5): 34.6, ('HIGH', 6, 10): 30.8,
+    ('HIGH', 11, 15): 15.8, ('HIGH', 16, 20): 20.0,
+    # MEDIUM: MOST RELIABLE - monotonic on holdout, clean gradient
+    ('MEDIUM', 1, 5): 20.5, ('MEDIUM', 6, 10): 16.3,
+    ('MEDIUM', 11, 15): 10.8, ('MEDIUM', 16, 20): 9.2,
+    # LOW: rank calibration REVERSES on holdout (collider effect, h453)
+    ('LOW', 1, 5): 3.8, ('LOW', 6, 10): 2.0,
+    ('LOW', 11, 15): 6.5, ('LOW', 16, 20): 5.2,
+    # FILTER: approximately monotonic on holdout
+    ('FILTER', 1, 5): 6.0, ('FILTER', 6, 10): 7.8,
+    ('FILTER', 11, 15): 3.2, ('FILTER', 16, 20): 3.0,
 }
 
 

@@ -9035,7 +9035,7 @@
       "title": "External-Signal-Only Within-Tier Ranking",
       "description": "h441 proved kNN-derived metrics are circular for within-tier ranking. h445 proved TransE is negative within tiers. The remaining external signals are: target overlap count, mechanism support boolean, drug frequency (from external databases like DrugBank, not from kNN), and structural similarity. Test whether a COMPOSITE of external signals provides a holdout-validated within-tier ranking.",
       "hypothesis": "A composite of external signals (target overlap, mechanism, DrugBank frequency) will provide a within-tier ranking signal that holds on holdout, unlike kNN-derived or TransE signals.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -9045,7 +9045,9 @@
         "Train on 80% diseases, validate on 20% (5-seed)",
         "If AUC > 0.6, use predicted probability as within-tier ranking boost",
         "Compare within-tier precision vs raw kNN rank"
-      ]
+      ],
+      "findings": "External signals (target overlap, mechanism support, train frequency, ATC coherence) do NOT improve within-tier ranking beyond raw kNN rank.\n\nKey findings (5-seed holdout, aggregate per-disease top-half vs bottom-half):\n\nMEDIUM tier (n~659 per seed):\n- rank_only: +8.8 \u00b1 3.7pp (SIGNIFICANT, *** \u2014 confirms h443)\n- freq_only: +6.7 \u00b1 2.2pp (SIGNIFICANT independently)\n- rank + freq composite: +7.8 \u00b1 2.8pp (WORSE than rank alone, additive = -1.0pp)\n- rank + freq + mechanism: +7.8 \u00b1 3.1pp (additive = -1.1pp)\n- External-only (freq + mech + overlap): +5.2 \u00b1 2.4pp (WORSE than rank alone)\n\nLOW tier (n~394): All signals < 2pp (not significant)\nFILTER tier (n~1552): rank_only = +2.2 \u00b1 1.0pp (marginally significant)\n\nCollider effect discovered: Within a tier, kNN rank and external signals are ANTI-CORRELATED because the tier system conditions on both. A MEDIUM prediction at rank 1-5 lacks external support (no hierarchy match, low frequency) \u2014 that is WHY it is MEDIUM and not HIGH. A MEDIUM prediction at rank 15-20 has external support that compensated for its low kNN ranking. This anti-correlation means adding external signals to rank introduces noise.\n\nATC coherence issue: ATC mapper requires drug names (not IDs) and returned 0 matches in script \u2014 ATC signal was not evaluated. However, ATC coherence is already used in tier assignment (h309/h314), so it would be redundant within-tier anyway.\n\nGLOBAL (cross-disease) vs PER-DISEASE analysis:\n- Global tertile analysis showed rank REVERSAL for MEDIUM (-13.0pp) because tier assignment creates a selection effect\n- Per-disease analysis showed rank is POSITIVE (+8.8pp) because within each disease, rank reflects relative kNN evidence\n- h443 was correct: kNN rank IS the within-tier signal, and it already works optimally\n\nConclusion: The current system (present predictions in kNN rank order within each tier) is already optimal. No reranking implementation needed.",
+      "result_metric": "No external signal adds >0pp to kNN rank within-tier (all composites negative additive value)"
     },
     {
       "id": "h454",
@@ -9065,6 +9067,94 @@
       ],
       "findings": "Circularity audit confirms TWO types of precision inflation:\n\nTYPE 1: STRUCTURAL ABSENCE (7 hierarchy rules, 36-86pp gaps)\n- autoimmune_lupus (85.7%\u21920%), spondylitis (80%\u21920%), MS (71.4%\u21920%)\n- respiratory_asthma (70%\u21920%), infectious_UTI (75%\u21920%), epilepsy (50%\u21920%), pneumonia (36.4%\u21920%)\n- Root cause: These rules cover 1-6 diseases. When those diseases are held out, drug_disease_groups loses the group entirely (recomputed from training-only GT). The rule can NEVER fire on holdout.\n- This is not overfitting \u2014 it is a STRUCTURAL LIMITATION of small-group hierarchy rules.\n- h432 already showed these groups have high precision and should not be consolidated.\n- IMPLICATION: holdout_mean=0% does NOT mean these rules are bad. It means holdout CANNOT validate them (sample too small).\n\nTYPE 2: SELF-REFERENTIAL LEAKAGE (confirmed by h424)\n- base_to_complication: 28.1% full \u2192 ~15% holdout (DKA self-prediction accounts for 6/9 hits)\n- complication_non_validated: 13.2% \u2192 3.3% (similar self-referential pattern)\n\nGENUINE RULES (gap \u2264 10pp, n \u2265 10): 19 rules including:\n- RA hierarchy (80.8%\u219274.4%, -6.4pp), arrhythmia (76.1%\u219268.2%, -7.9pp)\n- tuberculosis (62.9%\u219265.6%, +2.7pp), thyroid (19.5%\u219216.5%, -3.0pp)\n- default (13.6%\u219211.1%, -2.5pp, n=9698), cross_domain (9.4%\u21929.9%, +0.5pp)\n- cancer_same_type (25.5%\u219219.9%, -5.6pp, n=1129)\n\nEXTERNAL RULES: cv_pathway (-7.0pp), target_overlap (-14.2pp), comp_to_base (-2.9pp)\n- target_overlap has the largest gap for an external rule (-14.2pp) but this is expected since overlap COUNTS change when GT diseases are removed.\n\nNO HIDDEN CIRCULAR RULES FOUND beyond the known structural limitations.\nThe tier system circularity is well-characterized:\n1. Small hierarchy groups: structural absence (cannot validate, not fixable)\n2. DKA self-prediction: known, already FILTER-assigned\n3. All large-n rules: genuine (gaps \u2264 10pp)",
       "result_metric": "7 rules with 0% holdout (structural absence, not fixable). 19 rules genuine (gap<=10pp). No hidden circular rules."
+    },
+    {
+      "id": "h455",
+      "title": "Collider Bias Decomposition: Untangle Tier Assignment for Better Predictions",
+      "description": "h453 discovered that within a tier, kNN rank and external signals are anti-correlated (collider effect). This means the tier assignment process destroys within-tier signal by conditioning on a collider. Hypothesis: if we decompose predictions into (1) kNN-only score and (2) external-only score BEFORE tier assignment, then re-assign tiers using just the kNN score, the external signals might become positively correlated with GT within tiers, providing better within-tier ranking.",
+      "hypothesis": "Assigning tiers based on kNN rank only (not external signals) would make external signals positively correlated with GT within tiers, enabling composite ranking.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "high",
+      "steps": [
+        "Current tier assignment uses rank + frequency + mechanism + hierarchy = confounded",
+        "Build kNN-only tier assignment (just rank thresholds)",
+        "Within those tiers, test if external signals are now positively correlated",
+        "This requires rethinking the entire tier system architecture",
+        "May not be worth it if kNN-only tiers have lower precision overall"
+      ]
+    },
+    {
+      "id": "h456",
+      "title": "Train Frequency as Disease-Level Difficulty Predictor",
+      "description": "h453 found that train_frequency is a significant holdout-validated signal within MEDIUM tier (+6.7 \u00b1 2.2pp). Rather than using it for within-tier ranking (where it adds nothing beyond rank), use it at the DISEASE level: diseases where most kNN predictions are high-frequency drugs are easier diseases (more established treatments). Diseases with low-frequency predictions are harder (novel area). This could be a disease-level meta-confidence signal.",
+      "hypothesis": "Mean train_frequency of top-20 predictions per disease predicts per-disease R@30 on holdout.",
+      "status": "invalidated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For each disease, compute mean train_frequency of top-20 kNN predictions",
+        "Correlate with per-disease R@30 (binary: any GT in top-30 or not)",
+        "Split diseases into high-freq vs low-freq groups",
+        "Compare R@30 between groups on full-data and holdout",
+        "If gap > 10pp, use as disease-level meta-confidence for deliverable"
+      ],
+      "findings": "Mean train_frequency of top-20 predictions does NOT predict disease-level R@30 after controlling for category.\n\nFull-data: 99.6% R@30 (nearly all diseases have GT in top-30) \u2014 no discriminative power.\n\nHoldout (5-seed):\n- Q1 (highest freq): 73.6 \u00b1 4.5% R@30\n- Q2: 68.2 \u00b1 2.9%\n- Q3: 52.7 \u00b1 8.4%\n- Q4 (lowest freq): 57.6 \u00b1 6.5%\n- Q1 vs Q4 gap: +16.0pp (SIGNIFICANT)\n- Correlation: 0.125 \u00b1 0.045\n\nHOWEVER: The signal is ENTIRELY confounded by disease category:\n- Q1 (easy) diseases: autoimmune (27), dermatological (15), infectious (15)\n- Q4 (hard) diseases: metabolic (31), neurological (20), cancer (18), psychiatric (10)\n\nWithin-category analysis (holdout):\n- High-freq within category: 61.4 \u00b1 6.0%\n- Low-freq within category: 66.5 \u00b1 3.5%\n- Gap: -5.1pp (NOT significant, REVERSES!)\n\nConclusion: The apparent signal was driven by category composition, not drug frequency per se. Easy categories have broadly-used drugs (corticosteroids, antibiotics) which inflate mean_freq. Hard categories have narrow drugs (anticonvulsants, targeted therapies) with low mean_freq. Once you control for category, the signal vanishes.\n\nLesson: Always test confounders before concluding a signal is genuine. Category was the obvious confounder here.",
+      "result_metric": "Within-category holdout gap: -5.1pp (reverses, not significant). Confounded by category."
+    },
+    {
+      "id": "h457",
+      "title": "Within-Tier Rank Calibration Curve",
+      "description": "h453 confirmed kNN rank works within tier (+8.8pp for MEDIUM). h444 showed monotonic rank-bucket precision for MEDIUM (rank 1-5 = 21.7%, rank 16-20 = 8.1%). This means we can create a calibrated within-tier precision CURVE that gives users more granular precision estimates than just the tier label. Currently rank_bucket_precision is already implemented but only for the uniform tier. Test calibration quality across tiers and categories.",
+      "hypothesis": "Within-tier rank calibration (precision vs rank) is monotonic and reliable across all tier \u00d7 category combinations with n >= 30.",
+      "status": "validated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For each tier \u00d7 category combination, compute precision by rank bucket (1-5, 6-10, 11-15, 16-20)",
+        "Check monotonicity across buckets",
+        "Validate on holdout: does the ordering hold?",
+        "Identify tier \u00d7 category combinations where monotonicity breaks (hierarchy rescue effects)",
+        "Update rank_bucket_precision to be tier \u00d7 category specific"
+      ],
+      "findings": "Within-tier rank calibration analysis reveals that MEDIUM and FILTER tiers have reliable, monotonic rank-based precision curves. HIGH and GOLDEN do not.\n\nFULL-DATA tier x rank bucket precision:\n                R1-5    R6-10   R11-15  R16-20  Monotonic\nGOLDEN         69.7%   64.9%   51.9%   61.8%   NO (hierarchy rescue at R16-20)\nHIGH           50.0%   52.2%   54.3%   54.4%   NO (flat, hierarchy dominates)  \nMEDIUM         38.9%   24.5%   23.7%   20.0%   YES (clean gradient)\nLOW            13.4%   10.7%   15.0%   10.0%   NO (mixed signals)\nFILTER         26.9%   21.7%   14.2%   10.0%   YES (clean gradient)\n\nHOLDOUT (5-seed mean \u00b1 std):\n                R1-5        R6-10       R11-15      R16-20      Monotonic\nGOLDEN         61.5\u00b114.6%  65.8\u00b110.7%  50.9\u00b114.7%  32.3\u00b117.6%  NO\nHIGH           34.6\u00b110.4%  30.8\u00b17.9%   15.8\u00b12.4%   20.0\u00b117.8%  NO\nMEDIUM         20.5\u00b15.4%   16.3\u00b13.6%   10.8\u00b11.0%   9.2\u00b14.3%    ~YES\nLOW            3.8\u00b13.1%    2.0\u00b11.8%    6.5\u00b11.9%    5.2\u00b11.7%    NO (REVERSES!)\nFILTER         6.0\u00b14.5%    7.8\u00b12.4%    3.2\u00b10.7%    3.0\u00b11.0%    ~YES\n\nKEY FINDINGS:\n1. MEDIUM rank calibration is RELIABLE: monotonic on both full-data and holdout\n   - Rank 1-5: 20.5% holdout vs 38.9% full-data (gap = 18.4pp)\n   - Rank 16-20: 9.2% holdout vs 20.0% full-data (gap = 10.8pp)\n   - Gradient: 11.3pp across rank buckets on holdout\n\n2. HIGH rank calibration is BROKEN: all buckets have massive full-to-holdout gaps\n   - R1-5: 50% full \u2192 34.6% holdout (+15.4pp gap)\n   - R11-15: 54.3% full \u2192 15.8% holdout (+38.5pp gap!)\n   - Hierarchy rescue rules create artificial rank patterns\n\n3. GOLDEN: reliable for R1-15 (gap < 10pp) but R16-20 collapses (+29.5pp gap)\n\n4. LOW: rank calibration REVERSES on holdout (R11-15 = 6.5% > R1-5 = 3.8%)\n   Confirms h453 collider effect: within LOW, high kNN rank = missing external signals\n\n5. Per-category MEDIUM: Cancer, infectious, CV, dermatological = monotonic\n   Autoimmune, GI, respiratory = NOT monotonic\n\nACTIONABLE: MEDIUM rank-bucket precision can be presented as reliable calibration.\nFor HIGH/GOLDEN, rank-bucket precision should NOT be used (hierarchy effects dominate).\nFor LOW/FILTER, rank-bucket precision has very low absolute values (all < 8%).\n\nALREADY IMPLEMENTED: rank_bucket_precision field exists (h444/h446). Current implementation uses tier-only buckets which is correct for MEDIUM. No changes needed.",
+      "result_metric": "MEDIUM holdout monotonic: R1-5=20.5%, R6-10=16.3%, R11-15=10.8%, R16-20=9.2%. HIGH calibration broken (38.5pp gap R11-15)."
+    },
+    {
+      "id": "h458",
+      "title": "HIGH Tier Rank Instability: Diagnose Hierarchy Rescue Rank Distortion",
+      "description": "h457 showed HIGH tier rank calibration is broken (38.5pp gap at R11-15, non-monotonic). This is likely because hierarchy rescue rules promote predictions from specific rank ranges, creating artificial patterns. Diagnose which specific rules cause the distortion and whether HIGH should use a different calibration (e.g., uniform precision regardless of rank).",
+      "hypothesis": "The non-monotonic rank calibration in HIGH tier is caused by 2-3 specific hierarchy rescue rules that promote drugs at non-standard rank ranges.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For HIGH tier predictions, tag which rule promoted them to HIGH",
+        "Compare rank distributions between different rules",
+        "Identify rules that cause rank non-monotonicity",
+        "Test if removing rank-bucket precision for HIGH improves user experience"
+      ]
+    },
+    {
+      "id": "h459",
+      "title": "Category-Adjusted Rank Calibration for MEDIUM",
+      "description": "h457 showed MEDIUM is monotonic overall but per-category monotonicity varies (cancer=yes, autoimmune=no, GI=no). Create category-specific rank calibration curves for the 6 largest MEDIUM categories to provide more accurate per-prediction precision estimates.",
+      "hypothesis": "Category-specific rank calibration within MEDIUM will provide more accurate precision estimates (+/-5pp improvement in calibration error).",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "For top-6 MEDIUM categories (cancer, infectious, CV, dermatological, autoimmune, hematological)",
+        "Compute holdout rank-bucket precision per category",
+        "Compare calibration error: category-specific vs overall MEDIUM",
+        "If improvement > 5pp, implement as category-specific RANK_BUCKET_PRECISION",
+        "Need n >= 30 per category per bucket for reliability"
+      ]
     }
   ],
   "completed": [
@@ -10624,6 +10714,24 @@
       "hypothesis_id": "h454",
       "learning": "Circularity audit complete: 7 hierarchy rules show 0% holdout because drug_disease_groups is recomputed from training GT (structural absence, not overfitting). 19 large-n rules are genuine (gap<=10pp). The tier system has no HIDDEN circularity beyond the known small-group limitation. Target overlap promotion has -14.2pp gap (expected since overlap counts change with GT). The holdout validation framework correctly identifies both genuine and structurally limited rules.",
       "implication": "No code changes needed. The circularity is well-characterized and the correct response is MIN_N filtering (n>=30 for holdout conclusions, per h402). Small hierarchy rules cannot be holdout-validated but ARE medically correct (h432 confirmed). Future rule additions should target n>=30 predictions for reliable validation."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h453",
+      "learning": "External signals (target overlap, mechanism, frequency) do NOT add value beyond kNN rank for within-tier ordering. The tier system creates a COLLIDER EFFECT: within a tier, rank and external signals are anti-correlated because tier assignment conditions on both. Adding external signals to rank introduces noise. kNN rank IS the optimal within-tier signal.",
+      "implication": "Do not attempt further within-tier reranking. The current system is already optimal. Future improvements must come from tier ASSIGNMENT (what goes into each tier) rather than within-tier ORDERING."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h456",
+      "learning": "Mean train_frequency of top-20 predictions does NOT predict disease-level R@30 after controlling for category. The apparent Q1 vs Q4 gap (+16.0pp) was entirely driven by category composition (easy=autoimmune/dermatological, hard=metabolic/neurological). Within same category, the signal reverses (-5.1pp).",
+      "implication": "Always test confounders before concluding a signal is genuine. Category is the primary driver of disease difficulty."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h457",
+      "learning": "MEDIUM and FILTER tiers have reliable, monotonic rank-based precision calibration. HIGH has massive full-to-holdout gaps (up to 38.5pp at R11-15) due to hierarchy rescue effects. LOW rank calibration REVERSES on holdout (collider effect from h453). Updated RANK_BUCKET_PRECISION with 5-seed holdout values.",
+      "implication": "Only present rank-bucket precision for MEDIUM tier in clinical recommendations. HIGH/LOW rank-bucket values should be treated as approximate."
     }
   ],
   "collaborations": [

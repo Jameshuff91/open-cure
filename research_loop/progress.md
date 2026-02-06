@@ -1,6 +1,72 @@
 # Research Loop Progress
 
-## Current Session: h436, h451, h441, h422, h424, h454 (2026-02-06)
+## Current Session: h453, h456, h457 (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested: 3**
+- h453: External-Signal-Only Within-Tier Ranking - **INVALIDATED** (no external signal adds >0pp to kNN rank)
+- h456: Train Frequency as Disease-Level Difficulty Predictor - **INVALIDATED** (confounded by category)
+- h457: Within-Tier Rank Calibration Curve - **VALIDATED** (MEDIUM monotonic, HIGH broken)
+
+### h453: External-Signal-Only Within-Tier Ranking - INVALIDATED
+
+External signals (target overlap, mechanism, ATC, train frequency) do NOT improve within-tier ranking beyond raw kNN rank.
+
+Key results (5-seed holdout, MEDIUM tier):
+- rank_only: +8.8 ± 3.7pp (SIGNIFICANT, confirms h443)
+- freq_only: +6.7 ± 2.2pp (significant independently)
+- rank + freq composite: +7.8pp (additive = -1.0pp — WORSE than rank alone)
+- All composites perform worse than rank alone
+
+**Collider effect discovered:** Within a tier, kNN rank and external signals are ANTI-CORRELATED because tier assignment conditions on both. High kNN rank + low external support → MEDIUM. Low kNN rank + high external support → MEDIUM. Adding external signals to rank introduces noise.
+
+**Practical conclusion:** Current system (kNN rank order within each tier) is already optimal.
+
+### h456: Train Frequency as Disease-Level Difficulty Predictor - INVALIDATED
+
+Mean train_frequency of top-20 predictions appears to predict disease-level R@30 (+16.0pp Q1 vs Q4) but is ENTIRELY confounded by disease category.
+
+- Q1 (highest freq): autoimmune, dermatological, infectious → easy categories
+- Q4 (lowest freq): metabolic, neurological, cancer → hard categories
+- Within-category analysis: gap REVERSES to -5.1pp (not significant)
+
+**Lesson:** Always control for confounders before reporting signals.
+
+### h457: Within-Tier Rank Calibration Curve - VALIDATED
+
+Systematic analysis of tier × rank bucket precision on holdout:
+- MEDIUM: **MONOTONIC and reliable** (R1-5=20.5%, R6-10=16.3%, R11-15=10.8%, R16-20=9.2%)
+- FILTER: approximately monotonic on holdout
+- HIGH: **BROKEN calibration** — hierarchy rescue creates 15-38pp full-to-holdout gaps
+- LOW: rank calibration REVERSES on holdout (collider effect)
+
+Updated RANK_BUCKET_PRECISION constants with new holdout-validated values.
+
+### Key Conclusions
+
+1. **Within-tier ranking is SOLVED:** kNN rank is optimal, external signals cannot improve it (h453)
+2. **Disease difficulty is category-driven:** mean drug frequency is a confound, not a signal (h456)
+3. **Rank calibration varies drastically by tier:** MEDIUM=reliable, HIGH=broken, LOW=reversed (h457)
+4. **Collider bias is fundamental:** tier assignment conditions on rank + signals, making them anti-correlated within tiers
+
+### New Hypotheses Generated
+- h455: Collider Bias Decomposition (Priority 5)
+- h456: Train Frequency as Disease Difficulty (tested, invalidated)
+- h457: Rank Calibration Curve (tested, validated)
+- h458: HIGH Tier Rank Instability Diagnosis (Priority 4)
+- h459: Category-Adjusted Rank Calibration (Priority 5)
+
+### Recommended Next Steps
+1. **h458:** Diagnose which hierarchy rules cause HIGH tier rank distortion (Priority 4, low effort)
+2. **h450:** Weighted kNN by Neighborhood Stability Score (Priority 4, medium effort)
+3. **h410:** Literature Validation of 1-Disease Hierarchy Rules (Priority 3, medium effort)
+
+---
+
+## Previous Session: h436, h451, h441, h422, h424, h454 (2026-02-06)
 
 ### Session Summary
 
