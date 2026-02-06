@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h542 - MEDIUM Tier Quality Audit Round 2 (2026-02-06)
+## Current Session: h542+h551+h552+h548+h549 - MEDIUM Quality + Gene Overlap (2026-02-06)
 
 ### h542: Deliverable Quality Audit Round 2: MEDIUM Tier Top 59 — VALIDATED
 
@@ -51,10 +51,36 @@ Literature validation of 59 diverse MEDIUM novel predictions against PubMed/clin
 - h552: Non-therapeutic compound audit (other diagnostic agents) — P5, low effort
 - h553: MEDIUM precision by category analysis — P5, medium effort
 
+### h551: Cancer Drug Hematologic vs Solid Specificity — INCONCLUSIVE
+
+- Only 16 cross-type predictions (heme drug→solid cancer or vice versa)
+- 0% known indication rate vs 36% for same-type
+- Too small for reliable holdout measurement
+- cancer_same_type holdout 27.4% is appropriate for MEDIUM tier
+
+### h552: Non-Therapeutic Compound Audit — VALIDATED
+
+- Found indocyanine green (diagnostic imaging dye): 10 MEDIUM preds → FILTER
+- Combined with h542's FDG fix: 66 total non-therapeutic predictions removed
+- No other diagnostic agents found in 1,004 unique drugs
+
+### h548: Gene-Poor Disease kNN Quality — VALIDATED
+
+- Gene overlap is independent of self-referentiality (r=0.047)
+- Gene-poor diseases NOT more self-referential than gene-rich
+- Validates gene_overlap_count as genuine molecular signal
+
+### h549: Gene Overlap Dose-Response — INVALIDATED
+
+- Signal is BINARY (>0 vs 0), NOT proportional to count
+- kNN score actually decreases with higher overlap
+- Category confound: overlap 51+ is 100% cancer
+- Existing binary annotation is sufficient
+
 **Recommended Next Steps:**
-1. **h551**: Cancer hematologic vs solid drug specificity (could fix 7+ cancer_same_type errors)
-2. **h550**: Antibiotic spectrum validation (6+ wrong-pathogen errors)
-3. **h552**: Non-therapeutic compound audit (quick, could find more FDG-like compounds)
+1. **h550**: Antibiotic spectrum validation (wrong-pathogen filter) — P4, high effort
+2. **h532**: Every Cure GT error report (low effort, medium impact)
+3. **h539**: Cancer drug class annotation (low effort)
 
 ---
 
