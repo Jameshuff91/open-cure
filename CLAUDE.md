@@ -198,6 +198,23 @@ vastai destroy instance <INSTANCE_ID>
 
 **Implementation:** `_is_cross_domain_isolated()` → FILTER tier
 
+### Broad Class Isolation Demotion (h307/h326/h328 validated 2026-02-05)
+
+Drugs from "broad" therapeutic classes (anesthetics, steroids, TNFi, NSAIDs, IL-inhibitors) predicted **alone** (no classmates) have very low precision:
+| Class | Alone | With Classmates | Difference |
+|-------|-------|-----------------|------------|
+| IL Inhibitors | 3% | 50% | **+47 pp** |
+| TNF Inhibitors | 3.4% | 27.3% | +23.8 pp |
+| Local Anesthetics | 1.8% | 15.0% | +13.2 pp |
+| Corticosteroids | 0.0% | 12.6% | +12.6 pp |
+| NSAIDs | 2.4% | 7.1% | +4.7 pp |
+
+**Exception:** Statins - alone is BETTER (37.5% vs 29.3%)
+
+**Implementation:** `_is_broad_class_isolated()` demotes HIGH→LOW, MEDIUM→LOW
+- 213 predictions affected (151 original + 62 IL inhibitors)
+- 0% HIGH tier precision for isolated broad-class drugs
+
 ## Performance Gaps & Error Patterns
 
 **Gaps:** Biologics (mAbs 17% vs small mol 32%), Antibiotics (wrong diseases), GI (5% kNN blind spot)
