@@ -859,7 +859,8 @@ DISEASE_HIERARCHY_GROUPS = {
         'alzheimers': ['alzheimer', "alzheimer's disease", 'dementia', 'cognitive impairment', 'memory loss'],
         'migraine': ['migraine', 'headache', 'chronic migraine', 'episodic migraine', 'cluster headache', 'tension headache'],
         'neuropathy': ['neuropathy', 'peripheral neuropathy', 'diabetic neuropathy', 'polyneuropathy', 'nerve damage'],
-        'stroke': ['stroke', 'cerebrovascular', 'ischemic stroke', 'hemorrhagic stroke', 'tia', 'transient ischemic attack'],
+        # h467: Removed 'tia' - too short, matches 'interstitial' (4 false matches)
+        'stroke': ['stroke', 'cerebrovascular', 'ischemic stroke', 'hemorrhagic stroke', 'transient ischemic attack'],
     },
     'cardiovascular': {
         'heart_failure': ['heart failure', 'congestive heart failure', 'chf', 'left ventricular failure',
@@ -894,13 +895,19 @@ DISEASE_HIERARCHY_GROUPS = {
 # These disease name substrings should NEVER match the specified hierarchy group,
 # even though they contain a matching variant substring.
 HIERARCHY_EXCLUSIONS: Dict[Tuple[str, str], list[str]] = {
-    # 'cystitis' in UTI group matches cholecystitis (gallbladder), dacryocystitis (tear duct),
+    # h410: 'cystitis' in UTI group matches cholecystitis (gallbladder), dacryocystitis (tear duct),
     # interstitial cystitis (bladder pain syndrome - not infectious)
     ('infectious', 'uti'): ['cholecystitis', 'dacryocystitis', 'interstitial cystitis'],
-    # 'bronchitis' in respiratory_infection matches chronic bronchitis (which is COPD, not infection)
+    # h410: 'bronchitis' in respiratory_infection matches chronic bronchitis (which is COPD, not infection)
     ('infectious', 'respiratory_infection'): ['chronic bronchitis'],
-    # 'cystic fibrosis' is not pulmonary fibrosis
+    # h410: 'cystic fibrosis' is not pulmonary fibrosis
     ('respiratory', 'pulmonary_fibrosis'): ['cystic fibrosis'],
+    # h467: 'pneumonia' matches autoimmune interstitial pneumonia (not infectious)
+    ('infectious', 'pneumonia'): ['interstitial pneumonia'],
+    # h467: 'diabetic' matches 'nondiabetic' and 'diabetic foot infections' (infection, not metabolic)
+    ('metabolic', 'diabetes'): ['nondiabetic', 'diabetic foot'],
+    # h467: 'thyroid' matches 'thyroid cancer' (cancer, not metabolic)
+    ('metabolic', 'thyroid'): ['thyroid cancer'],
 }
 
 # h171: Neurological drug class mappings (60.4% coverage vs 18% kNN baseline)

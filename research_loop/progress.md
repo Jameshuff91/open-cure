@@ -1,13 +1,14 @@
 # Research Loop Progress
 
-## Current Session: h410 (2026-02-06)
+## Current Session: h410, h467 (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 1**
+**Hypotheses Tested: 2**
 - h410: Literature Validation of 1-Disease Hierarchy Rules - **VALIDATED**
+- h467: Systematic Substring Matching Audit - **VALIDATED**
 
 ### h410: Literature Validation of Small Hierarchy Rules - VALIDATED
 
@@ -52,15 +53,30 @@
 4. **HIERARCHY_EXCLUSIONS pattern** - reusable for preventing future false matches
 5. **MEDIUM +1.1pp** is a genuine data quality improvement from fixing contamination
 
+### h467: Systematic Substring Matching Audit - VALIDATED
+
+**Objective:** Find ALL remaining substring false matches beyond the 3 found in h410.
+
+**Results:** 5 additional false matches found and fixed:
+1. 'tia' (stroke) matched 'interstitial' (4 false diseases, 16 false drug memberships)
+2. 'pneumonia' (infectious) matched autoimmune interstitial pneumonia
+3. 'diabetic' matched 'nondiabetic autonomic neuropathy'
+4. 'diabetic' matched 'diabetic foot infections' (infectious complication)
+5. 'thyroid' matched 'thyroid cancer' (cancer, not metabolic)
+
+Also identified 7 category mismatches that are medically expected (IBD as autoimmune, stroke as neurological, etc.).
+
+**Impact:** Combined h410+h467: MEDIUM +1.1pp holdout. h467 alone: marginal.
+
 ### New Hypotheses Generated
-- h467: Systematic Substring Matching Audit for All Hierarchy Variants (Priority 4, low effort)
+- h467: (tested above - VALIDATED)
 - h468: Neuropathy Hierarchy Group Decomposition (Priority 5, low effort)
 - h469: Word-Boundary-Aware Hierarchy Matching (Priority 4, medium effort)
 
 ### Recommended Next Steps
-1. **h467:** Systematic audit of ALL variant substrings (Priority 4, low effort) - may find more bugs
-2. **h469:** Word-boundary matching (Priority 4, medium effort) - systematic fix vs manual exclusions
-3. **h461:** Sparse neighborhood disease classification (Priority 5, low effort)
+1. **h469:** Word-boundary matching (Priority 4, medium effort) - systematic fix vs manual exclusions
+2. **h461:** Sparse neighborhood disease classification (Priority 5, low effort)
+3. **h468:** Neuropathy group decomposition (Priority 5, low effort)
 
 ---
 

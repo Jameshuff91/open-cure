@@ -9293,7 +9293,7 @@
       "title": "Systematic Substring Matching Audit for All Hierarchy Variants",
       "description": "h410 found 3 critical substring bugs (sle\u2192sleep, cystitis\u2192cholecystitis, fibrosis\u2192cystic fibrosis). There may be MORE false matches lurking in other variant lists. Systematically check every variant in DISEASE_HIERARCHY_GROUPS against all GT disease names to find additional false matches.",
       "hypothesis": "There are additional substring false matches beyond the 3 found in h410 that contaminate hierarchy group precision.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -9304,8 +9304,8 @@
         "Add exclusions for any new false matches found",
         "Re-run holdout validation"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Systematic audit of all 194 hierarchy variants found 5 additional false matches beyond h410:\n1. 'tia' (stroke) matched 'interstitial' - 4 false diseases, 16 false drug memberships \u2192 FIXED: removed from variants\n2. 'pneumonia' (infectious) matched autoimmune interstitial pneumonia \u2192 FIXED: HIERARCHY_EXCLUSIONS\n3. 'diabetic' (diabetes) matched 'nondiabetic autonomic neuropathy' \u2192 FIXED: HIERARCHY_EXCLUSIONS\n4. 'diabetic' matched 'diabetic foot infections' (infectious, not metabolic) \u2192 FIXED: HIERARCHY_EXCLUSIONS\n5. 'thyroid' (metabolic) matched 'unresectable thyroid cancer' (cancer) \u2192 FIXED: HIERARCHY_EXCLUSIONS\n\nAlso identified 7 category mismatches that are MEDICALLY EXPECTED (not bugs):\n- IBD as autoimmune (GI disease), stroke as neurological (CV categorized), etc.\n\nCombined h410+h467 impact: MEDIUM +1.1pp holdout (22.3% from 21.2%).\nh467 alone: marginal (+0.5pp HIGH holdout from 49.9% to 50.4%).\nNo more short-variant bugs remain. Audit is complete.",
+      "result_metric": "HIGH holdout +0.5pp (50.4% from 49.9%); 5 additional false matches fixed"
     },
     {
       "id": "h468",
@@ -10950,6 +10950,12 @@
       "hypothesis_id": "h410",
       "learning": "Hierarchy rules encode genuine medical knowledge (14/20 confirmed by guidelines, 0 memorization). But substring matching is fragile: 3 bugs found where short variants (sle, cystitis, fibrosis) matched wrong diseases. HIERARCHY_EXCLUSIONS dict added to prevent false matches. Impact: MEDIUM +1.1pp holdout.",
       "implication": "Always audit substring matches for false positives, especially with short variant strings. Consider word-boundary matching (h469)."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h467",
+      "learning": "5 additional substring bugs found: 'tia'\u2192'interstitial' (16 false drugs), 'pneumonia'\u2192autoimmune pneumonia, 'diabetic'\u2192'nondiabetic', 'diabetic'\u2192foot infections, 'thyroid'\u2192cancer. All short variants <=3 chars are now removed or excluded. Also found 7 category mismatches that are medically expected (not bugs).",
+      "implication": "Hierarchy exclusion list is now comprehensive. No more short-variant bugs expected. Consider h469 (word-boundary matching) only if new variants are added in the future."
     }
   ],
   "collaborations": [
