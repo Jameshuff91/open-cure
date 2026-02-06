@@ -7167,7 +7167,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Define metabolic base (diabetes, glucose) and complications (neuropathy, NAFLD, etc.)",
@@ -7178,7 +7178,9 @@
       ],
       "dependencies": [
         "h351"
-      ]
+      ],
+      "findings": "INVALIDATED: Metabolic pathway-comprehensive does NOT improve predictions.\n\nANALYSIS:\n- Metabolic pathway-comprehensive drugs (base + complication GT): 47\n- Metabolic complication predictions: 270\n  - Pathway-comprehensive: 6 predictions\n  - Non-pathway: 264 predictions\n\nRESULTS:\n- Pathway-comprehensive: 0.0% precision (0/6)\n- Non-pathway: 2.7% precision (7/264)\n- GAP: -2.7 pp (pathway is WORSE!)\n\nWHY THIS DIFFERS FROM CV:\n1. CV complications share underlying VASCULAR pathology\n   - Statins/ACEi treat atherosclerosis \u2192 also treat MI/stroke/HF\n   - Same drug mechanism applies across complications\n\n2. Metabolic complications are ORGAN-SPECIFIC\n   - Diabetic neuropathy needs neuropathy drugs (duloxetine, pregabalin)\n   - Diabetic retinopathy needs anti-VEGF (ranibizumab)\n   - No common pathway connects diabetes \u2192 neuropathy \u2192 retinopathy\n\nGT HITS ANALYSIS:\nThe 7 GT hits in metabolic complications were:\n- Amyloid neuropathy drugs (Inotersen, Patisiran) - NOT diabetes drugs\n- Anti-VEGF for retinopathy (Ranibizumab) - eye-specific\n- None were \"pathway-comprehensive\" diabetes drugs\n\nCONCLUSION:\nDo NOT implement metabolic pathway-comprehensive boost.\nCV is special case due to shared vascular pathology.",
+      "result_metric": "0% vs 2.7% precision (-2.7 pp gap)"
     },
     {
       "id": "h356",
