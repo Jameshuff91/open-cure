@@ -55,10 +55,30 @@ Clinical phenotype (HPO) is the best GT-free proxy for treatment paradigm simila
 | LOW | 15.5% ± 2.4% | 3733 |
 | FILTER | 10.6% ± 1.3% | 7300 |
 
+### h589: ATC Hierarchy as GT-Free Treatment Paradigm Proxy — VALIDATED (circular)
+
+ATC codes are the best proxy for drug Jaccard (treatment paradigm similarity):
+
+| Proxy Signal | r with Drug Jaccard | r with Holdout | Partial r (ctrl GT) |
+|-------------|-------------------|---------------|-------------------|
+| ATC L5 | +0.848 | +0.213 | +0.266 |
+| ATC L3 | +0.737 | +0.180 | +0.229 |
+| ATC L2 | +0.665 | +0.157 | +0.206 |
+| HPO sim (h588) | +0.390 | +0.243 | +0.258 |
+| Gene overlap (h586) | +0.086 | +0.079 | +0.037 |
+
+**BUT ATC adds ZERO signal beyond drug Jaccard:**
+- ATC L2 | drug Jaccard: partial_r=-0.013 (p=0.82, NS)
+- Incremental R²: 0.04%
+
+**ATC is a noisy version of drug Jaccard, not an independent signal.** This is because ATC codes come from GT drugs — fully circular. 50% of zero-drug pairs have non-zero ATC L2 overlap, but this doesn't help holdout.
+
+**This closes the GT-free treatment paradigm proxy search.** No DRKG-derived signal (genes, HPO, ATC) provides independent information beyond drug Jaccard. Treatment paradigm knowledge requires treatment data.
+
 ### Recommended Next Steps
-1. **h589**: ATC hierarchy as GT-free treatment proxy (could be stronger than HPO)
-2. **h590**: Hetionet disease-resembles augmentation (low effort)
-3. **h534**: TransE FILTER annotation for manual review
+1. **h590**: Hetionet disease-resembles augmentation (low effort, might augment kNN)
+2. **h534**: TransE FILTER annotation for manual review
+3. Consider external data integration (clinical practice guidelines, RWD prescribing patterns)
 
 ---
 

@@ -12073,10 +12073,12 @@
         "Test if this signal is available at prediction time (without GT knowledge)",
         "If yes, add as deliverable annotation; if no, explain why"
       ],
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
-      "effort": "medium"
+      "effort": "medium",
+      "findings": "Superseded by h586. Drug overlap between disease and kNN neighbors requires GT knowledge (drug Jaccard r=+0.251 with holdout but circular). h586 showed gene overlap (r=0.086) and combined DRKG features (r=0.077) cannot proxy this. Signal is GT-dependent and therefore circular.",
+      "result_metric": "Superseded by h586 analysis"
     },
     {
       "id": "h583",
@@ -12180,7 +12182,7 @@
     {
       "id": "h589",
       "title": "ATC Hierarchy as GT-Free Treatment Paradigm Proxy",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12191,7 +12193,9 @@
         "Compute ATC Jaccard between kNN neighbors",
         "Test correlation with drug Jaccard and holdout precision",
         "Assess circularity: does this use holdout information?"
-      ]
+      ],
+      "findings": "ATC hierarchy is the BEST GT-free proxy for drug Jaccard, but adds ZERO signal beyond drug Jaccard itself.\n\nATC OVERLAP vs DRUG JACCARD:\n- ATC L5: r=0.848 (nearly identical to drug identity)\n- ATC L3: r=0.737 (7.5x better than genes, 1.9x better than HPO)\n- ATC L2: r=0.665\n- Gene: r=0.086 (h586)\n- HPO: r=0.390 (h588)\n\nATC OVERLAP vs HOLDOUT:\n- ATC L5: partial_r=+0.266 (p<0.0001)\n- ATC L2: partial_r=+0.206 (p=0.0003)\n- Drug Jaccard: partial_r=+0.309 (still the best)\n\nATC BEYOND DRUG JACCARD:\n- ATC L2 | drug Jaccard: partial_r=-0.013 (NS, p=0.82)\n- Incremental R\u00b2: 0.04% \u2014 ATC adds NOTHING\n- ATC is a noisy proxy for drug Jaccard, not an independent signal\n\nCIRCULARITY: ATC codes come from GT drugs \u2192 fully circular.\n50% of zero-drug pairs have non-zero ATC L2 overlap,\nbut this information doesn't help beyond what drug Jaccard provides.\n\nHIERARCHY: ATC L2 covers 88% of diseases (vs 26% HPO, 66% gene overlap).\nCoverage is excellent but the signal is circular.\n\nCONCLUSION: ATC hierarchy is a good proxy for drug Jaccard but not\nan independent signal. The treatment paradigm signal requires actual\ntreatment data (drugs or their ATC codes), which is inherently circular.\nNo GT-free version of this signal is possible within DRKG.",
+      "result_metric": "ATC L3 r=0.737 with drug Jaccard (7.5x gene, 1.9x HPO). But ATC|DJ partial_r=-0.013 (NS). Zero incremental R\u00b2."
     },
     {
       "id": "h590",
@@ -14193,6 +14197,12 @@
       "hypothesis_id": "h588",
       "learning": "HPO phenotype similarity predicts drug Jaccard 4.5x better than gene overlap (r=0.390 vs 0.086). Clinical phenotype captures treatment paradigm better than molecular biology. But incremental value beyond GT+embed_sim is only 0.9% R\u00b2. HPO covers 26.3% of holdout diseases \u2014 better than Hetionet symptoms (12.5%) but still sparse.",
       "implication": "Phenotype-based similarity is the best GT-free proxy for treatment paradigm. To fully exploit, would need comprehensive phenotype data for more diseases. DisGeNET/OMIM phenotype annotations could expand coverage."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h589",
+      "learning": "ATC hierarchy is the best proxy for drug Jaccard (L3 r=0.737), far exceeding gene overlap (r=0.086) and HPO (r=0.390). But it adds ZERO signal beyond drug Jaccard (partial_r=-0.013). ATC is a noisy version of drug Jaccard, not an independent signal. This closes the search for GT-free treatment paradigm proxies within DRKG: no DRKG-derived signal can independently predict treatment similarity.",
+      "implication": "Treatment paradigm information is ONLY available from treatment data itself. No amount of biological (genes), phenotypic (HPO), or therapeutic classification (ATC) information provides an INDEPENDENT signal beyond drug Jaccard. The paradigm mismatch concept (h583) is fundamentally a GT-dependent metric. Future quality signals must come from entirely external sources (clinical practice guidelines, expert curation, or RWD prescribing patterns)."
     }
   ],
   "collaborations": [
