@@ -1,12 +1,12 @@
 # Research Loop Progress
 
-## Current Session: h333, h300, h332, h183, h220, h256, h228 (2026-02-05)
+## Current Session: h333, h300, h332, h183, h220, h256, h228, h222, h224 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 7**
+**Status:** Complete
+**Hypotheses Tested: 9**
 - h333: Statin Broad Class Re-evaluation - **VALIDATED** (statins are exception - do NOT demote)
 - h300: HIV Drug Network Analysis - **VALIDATED** (HIV mechanism-specificity is REAL)
 - h332: Cancer-Selective Drug Class Analysis - **VALIDATED + IMPLEMENTED** (mTOR, alkylating added)
@@ -14,16 +14,18 @@
 - h220: Expand MESH Mappings - **DEPRIORITIZED** (742 diseases, scope too large)
 - h256: Methylene Blue Filter - **VALIDATED** (0% precision confirms filter is appropriate)
 - h228: Psychiatric Drug-Class Mappings - **VALIDATED** (keywords present, kNN coverage is issue)
+- h222: Injection Layer Quality Check - **VALIDATED** (73%+ precision, excellent quality)
+- h224: Quinolone Warning - **DEPRIORITIZED** (clinical annotation, out of scope)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 206 |
+| Validated | 207 |
 | Invalidated | 64 |
 | Inconclusive | 12 |
 | Blocked | 21 |
-| Deprioritized | 5 |
-| Pending | 27 |
+| Deprioritized | 6 |
+| Pending | 25 |
 | **Total** | **335**
 
 ### KEY SESSION FINDINGS
@@ -87,10 +89,22 @@
 - Added REPRODUCTIVE_HORMONE_DRUGS set
 - Added reproductive rescue: hormone drugs → HIGH tier
 
+#### h222: Injection Layer Quality Check - VALIDATED
+
+**Finding:** Injection layer has excellent quality (73%+ precision)
+
+**Analysis:**
+- 45 manual_rule predictions
+- Initial precision: 42.2% (exact matching)
+- Adjusted precision: 73.3% (accounting for disease name variations)
+- Most "misses" are GT matches with different name formats
+
+**Conclusion:** Current INJECTED tier is appropriate, no changes needed
+
 ### Recommended Next Steps
 1. h272: GT Expansion (medium effort potential win)
 2. h178: DiseaseMatcher Algorithm Optimization (performance)
-3. h220: Expand MESH Mappings (low effort cleanup)
+3. h237: Indication-Weighted Drug Boosting
 
 ---
 
