@@ -6047,7 +6047,7 @@
     {
       "id": "h300",
       "title": "HIV Drug Network Analysis",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -6058,7 +6058,9 @@
         "Step 3: If repurposing evidence exists, consider GT expansion",
         "Step 4: If truly mechanism-specific, use as negative control for kNN",
         "Success criteria: Determine if HIV drugs are genuinely mechanism-specific"
-      ]
+      ],
+      "findings": "h300 VALIDATED: HIV mechanism-specificity is REAL, not data artifact\n\nKEY FINDINGS:\n\n1. HIV DRUG CLASSIFICATION\n   - 82 drugs with HIV-related GT indications\n   - 57 true ARVs (target HIV lifecycle)\n   - 25 AIDS-associated drugs (opportunistic infection treatments)\n\n2. TRUE ARV ANALYSIS\n   - 93% of ARVs are HIV-only (53/57)\n   - 4 ARVs have HBV cross-activity (Lamivudine, Tenofovir)\n   - NRTIs are NOT mechanism-specific (polymerase inhibitors work on HIV and HBV)\n   - PIs, INSTIs, Entry inhibitors ARE mechanism-specific (HIV-unique targets)\n\n3. PREDICTION PERFORMANCE\n   - 30 predictions for AIDS-related diseases\n   - 6.7% precision (2/30) - correctly identifies CMV drugs for AIDS\n   - Low precision confirms mechanism-specificity is real\n\n4. CLASSIFICATION VALIDATION\n   - 'hiv-1 infection' correctly in MECHANISM_SPECIFIC_DISEASES\n   - 'acquired immunodeficiency syndrome aids' correctly NOT in list\n   - AIDS requires supportive care (antibiotics for opportunistic infections)\n\nCONCLUSION:\n- HIV infection IS mechanism-specific (ARV targets are HIV-unique)\n- AIDS (syndrome) is NOT mechanism-specific\n- Current MECHANISM_SPECIFIC_DISEASES classification is CORRECT\n- No GT expansion needed\n\nNUANCE:\n- NRTIs (Lamivudine, Tenofovir) have HBV activity - these are exceptions\n- Could add HBV predictions for NRTIs but marginal benefit",
+      "result_metric": "93% of ARVs HIV-only, mechanism-specificity confirmed"
     },
     {
       "id": "h301",
