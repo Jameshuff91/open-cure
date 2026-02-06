@@ -11228,7 +11228,7 @@
       "id": "h574",
       "title": "Drug-Sharing Density as Disease Quality Signal",
       "hypothesis": "h572 showed embeddings cluster by drug-sharing patterns. For each disease, compute the average number of drugs shared between it and its k=20 neighbors (using GT). Higher drug-sharing density = better kNN predictions because the neighborhood has more treatment overlap to generalize from.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -11238,8 +11238,8 @@
         "Compare with GT size correlation (r=0.729)",
         "If r > GT size, it captures independent signal; if r \u2248 GT size, it's redundant"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Drug-sharing density (mean drug overlap between disease and k=20 kNN neighbors) has r=0.434 with holdout precision, with partial r=0.448 after controlling for GT size. This is independent of GT size (r=0.182 with GT size). However, median sharing = 0.00 \u2014 93% of diseases have drug_sharing < 0.5. High sharing (>0.5): 26.2% precision (n=23); low sharing: 6.7% (n=289). CIRCULAR: Uses GT to compute, so cannot be used for novel diseases. Useful as annotation for understanding WHY some diseases have 0% holdout. The key insight: kNN generalizes when neighbors share drugs (high sharing); fails when neighbors have no drug overlap (which is the common case for holdout diseases).",
+      "result_metric": "r=0.434, partial_r=0.448. Strong but circular signal."
     },
     {
       "id": "h575",
@@ -13176,6 +13176,12 @@
       "hypothesis_id": "h573",
       "learning": "kNN norm_score adds signal beyond rank for prediction quality. Within MEDIUM: Q4 (high score) = 28.2% vs Q1 (low score) = 12.6%. Not GT-size proxy (r\u22480). Captures neighborhood consensus. Already in deliverable as annotation.",
       "implication": "Users can use norm_score to prioritize within-tier. High norm_score predictions are more reliable. Score gap is redundant with norm_score (r=-0.716 with rank)."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h574",
+      "learning": "Drug-sharing density (GT-derived) has partial r=0.448 with precision after controlling for GT size. But 93% of diseases have near-zero sharing with kNN neighbors. kNN generalizes when neighbors share drugs; fails when they don't. This is the structural limit of kNN \u2014 it can only transfer knowledge that exists in the training neighborhood.",
+      "implication": "kNN works well for diseases embedded near drug-rich diseases with overlapping treatments. For diseases with unique treatment patterns (PAH, HCV, migraine), kNN structurally cannot help. Alternative prediction strategies needed for low-sharing diseases."
     }
   ],
   "collaborations": [
