@@ -1,6 +1,63 @@
 # Research Loop Progress
 
-## Current Session: h560 - Antimicrobial-Pathogen Mismatch Filter (2026-02-06)
+## Current Session: h563/h567/h572 - Promotion/Mismatch/Coherence Analysis (2026-02-06)
+
+### h563: LA Procedural MEDIUM→HIGH Promotion — INCONCLUSIVE
+
+LA procedural MEDIUM predictions are LA drugs demoted to LOW by h540 then rescued to MEDIUM by target_overlap.
+Only 41 full-data predictions (6.6/seed holdout). 28/41 are bupivacaine.
+- Full-data precision: 31.7% (at MEDIUM level, not HIGH)
+- Holdout: 24.9% ± 16.4% — too noisy with n=6.6/seed
+- Decision: KEEP AS-IS. Too few predictions to justify code change.
+
+### h567: Drug Class × Disease Type Mismatch Matrix — VALIDATED (confirms demotion ceiling)
+
+Comprehensive cross-tabulation of 18 SOC drug classes + 12 broad therapeutic classes × 14 disease categories for MEDIUM predictions.
+- Only 1 candidate: DMARDs→cancer (19.5%, n=41, 2.0% holdout) — BUT all 41 are methotrexate, which IS a cancer drug
+- Anti-thyroid→metabolic: 0% (n=10) — genuine but too small
+- **CONCLUSION: Existing filters are comprehensive. No new demotion rules available.**
+- Demotion ceiling at ~35.8% MEDIUM confirmed
+
+### h572: kNN Neighborhood Category Coherence — INVALIDATED
+
+Tested whether fraction of same-category among k=20 kNN neighbors predicts precision.
+- r = -0.002 (coherence vs holdout precision) — ZERO signal
+- r = -0.028 (coherence vs GT size) — ZERO signal
+- Node2Vec embeddings cluster by drug-sharing patterns, NOT disease category
+- 91% of diseases have <20% same-category neighbors (mean=0.064, median=0.000)
+- **Key insight: kNN works via drug-pattern similarity, not category similarity**
+
+### New Hypotheses Generated (3)
+- h573: kNN score gap as prediction confidence (P4, medium)
+- h574: Drug-sharing density as disease quality signal (P5, low)
+- h575: Methotrexate cancer subtype specificity (P5, medium)
+
+### Recommended Next Steps
+1. **h573**: kNN score gap as confidence signal (measures margin, not just rank)
+2. **h571**: Therapeutic island rescue (P3, high impact but high effort)
+3. **h545**: Gene-poor disease expansion (P4, medium)
+
+### Key Learning
+MEDIUM demotion is exhausted at 35.8%. All major drug-class × category mismatches are filtered.
+Future MEDIUM improvement requires: (1) promotions, (2) new signals, or (3) external data.
+Embedding space clusters by drug sharing, not disease category — quality signals must exploit this structure.
+
+---
+
+## Previous Session: h560 - Antimicrobial-Pathogen Mismatch Filter (2026-02-06)
+
+### h569: Disease-Level Precision Audit — VALIDATED
+
+37% of diseases (121/325) have 0% holdout precision. 80% of these have GT≤2 (structural limit).
+GT size strongly predicts disease-level precision (r=0.732):
+- GT≤2: 1.1% | GT 3-5: 5.0% | GT 6-10: 12.4% | GT 11-20: 19.7% | GT 21-50: 28.3% | GT 51+: 70.0%
+Notable therapeutic island failures: PAH (GT=26, 0%), HCV (GT=11, 0%), migraine (GT=9, 0%).
+Top performers: RA (93.3%), UC (66.7%), AS (63.3%) — all large-GT autoimmune diseases.
+
+### h570: Disease Confidence Annotation — VALIDATED
+
+Added `disease_holdout_precision` column to deliverable (9336/14150 predictions annotated).
+Per-disease holdout precision computed across 5 seeds. Fixed json import shadowing bug.
 
 ### h560: Antimicrobial-Pathogen Mismatch Filter — VALIDATED
 

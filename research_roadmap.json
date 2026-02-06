@@ -11067,13 +11067,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Count full-data local_anesthetic_procedural MEDIUM predictions",
         "Verify holdout is stable across seeds",
         "If n>=30/seed and precision >=40%, implement MEDIUM\u2192HIGH promotion",
         "Validate overall HIGH and MEDIUM impact"
-      ]
+      ],
+      "findings": "LA procedural MEDIUM predictions are LA drugs demoted to LOW by h540 then rescued back to MEDIUM by target_overlap promotion. Only 41 full-data predictions (6.6/seed holdout). Full-data precision 31.7% (at MEDIUM level, not HIGH). Holdout 24.9% \u00b1 16.4% \u2014 too noisy to act on (n too small). 28/41 are bupivacaine (which should never be systemic therapeutic). Lidocaine in auto/resp/inf/ophthal categories showing target overlap. Decision: KEEP AS-IS. Too few predictions to justify code change.",
+      "result_metric": "24.9% \u00b1 16.4% holdout, n=6.6/seed (INCONCLUSIVE)"
     },
     {
       "id": "h564",
@@ -11128,14 +11130,16 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Build ATC drug class taxonomy for top 200 drugs in predictions",
         "Build disease subtype taxonomy for top categories",
         "Cross-tabulate holdout precision by drug-class \u00d7 disease-subtype",
         "Identify zero-precision mismatches across all categories",
         "Implement demotion rules for validated mismatches"
-      ]
+      ],
+      "findings": "Comprehensive drug class \u00d7 disease category matrix analysis for MEDIUM predictions. Cross-tabulated 18 SOC drug classes + 12 broad therapeutic classes against 14 disease categories. Found only 1 actionable mismatch: DMARDs\u2192cancer (19.5%, n=41, 2.0% holdout) \u2014 but ALL are methotrexate which IS a cancer drug (dual-use). Anti-thyroid\u2192metabolic: 0% (n=10) \u2014 genuine mismatch but too small to implement. CONCLUSION: Existing filters (ATC mismatch, domain-isolated, antimicrobial, CS\u2192infectious, statin/TZD metabolic) have comprehensively captured all major drug-class \u00d7 category mismatches. No new demotion rules needed. The demotion ceiling identified in h561 is confirmed: further MEDIUM improvement requires promotions, not demotions.",
+      "result_metric": "No new actionable mismatches. Existing filters comprehensive."
     },
     {
       "id": "h569",
@@ -11160,13 +11164,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compute average per-disease holdout precision across 5 seeds",
         "Add disease_holdout_precision column to deliverable",
         "Flag diseases with 0% as LOW_CONFIDENCE",
         "Verify GT size is a good proxy for disease-level precision"
-      ]
+      ],
+      "findings": "Per-disease holdout precision computed and added to deliverable.\n325 diseases evaluated across 5 seeds. GT size is strong predictor of disease-level precision (r=0.732):\n- GT\u22642: 1.1% mean precision (154 diseases, essentially unpredictable)\n- GT 3-5: 5.0% (63 diseases)\n- GT 6-10: 12.4% (50 diseases)\n- GT 11-20: 19.7% (35 diseases)\n- GT 21-50: 28.3% (21 diseases)\n- GT 51+: 70.0% (2 diseases)\ndisease_holdout_precision column added to deliverable (9336/14150 predictions annotated).\nAlso fixed json import shadowing bug in h420_regenerate_deliverable.py.",
+      "result_metric": "r=0.732 GT size\u2192precision correlation, 325 diseases annotated"
     },
     {
       "id": "h571",
@@ -11182,6 +11188,75 @@
         "Test if TransE consilience has signal for these diseases",
         "If any alternative approach works, implement disease-specific prediction strategy"
       ]
+    },
+    {
+      "id": "h572",
+      "title": "kNN Neighborhood Category Coherence as Prediction Quality Signal",
+      "hypothesis": "For a disease prediction, the fraction of kNN neighbors that share the same disease category is a non-circular proxy for GT size and predicts per-disease holdout precision. High same-category fraction = better predictions; low fraction = disease in wrong embedding neighborhood.",
+      "status": "invalidated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For each disease, compute fraction of k=20 neighbors that are same-category",
+        "Correlate with per-disease holdout precision from h569",
+        "Test if this signal is non-circular (not derived from GT)",
+        "If validated, add as annotation column to deliverable",
+        "Check if high-coherence diseases have systematically better predictions"
+      ],
+      "findings": "Category coherence (fraction of k=20 neighbors with same disease category) does NOT predict holdout precision. r=-0.002 with precision, r=-0.028 with GT size. Node2Vec embeddings cluster by shared drug patterns (KG edges), NOT by disease category. 91% of diseases have <20% same-category neighbors (mean=0.064, median=0.000). High-coherence diseases (>=80%) are 11 \"other\" category diseases with WORSE precision (2.8% vs 9.2%). This confirms that kNN works via drug-sharing patterns, not category similarity. Category coherence is NOT a useful quality signal.",
+      "result_metric": "r=-0.002 (coherence vs precision). No signal."
+    },
+    {
+      "id": "h573",
+      "title": "kNN Score Gap as Prediction Confidence: Top Drug vs Runner-Up",
+      "hypothesis": "The normalized score gap between a drug's kNN score and the next-ranked drug predicts holdout precision. Large gaps indicate high-confidence predictions where the drug dominates the neighborhood. This is NOT circular with kNN rank since it measures MARGIN, not position.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For each disease prediction, compute score gap between consecutive ranks",
+        "Correlate with per-prediction holdout hit rate",
+        "Test if gap adds information beyond kNN rank alone",
+        "If validated, add as annotation to deliverable"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h574",
+      "title": "Drug-Sharing Density as Disease Quality Signal",
+      "hypothesis": "h572 showed embeddings cluster by drug-sharing patterns. For each disease, compute the average number of drugs shared between it and its k=20 neighbors (using GT). Higher drug-sharing density = better kNN predictions because the neighborhood has more treatment overlap to generalize from.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "For each disease, count average drug overlap with k=20 neighbors",
+        "Correlate with per-disease holdout precision",
+        "Compare with GT size correlation (r=0.729)",
+        "If r > GT size, it captures independent signal; if r \u2248 GT size, it's redundant"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h575",
+      "title": "Methotrexate Cancer Subtype Specificity: Remove Non-Indicated Cancer Types",
+      "hypothesis": "h567 found 41 methotrexate\u2192cancer MEDIUM predictions with only 8 hits (19.5%). Methotrexate treats specific cancers (ALL, choriocarcinoma, lymphomas, osteosarcoma, breast) but is predicted for many others. Adding methotrexate-specific cancer type rules could improve precision.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "List all FDA-approved cancer indications for methotrexate",
+        "Compare with predicted cancer types",
+        "Compute holdout precision for on-label vs off-label cancer predictions",
+        "If clear signal, implement subtype-specific filter"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
@@ -13083,6 +13158,18 @@
       "hypothesis_id": "h569",
       "learning": "37% of diseases have 0% holdout. 80% of these have GT\u22642 (structural small-GT limit). The remaining 20% are therapeutic islands where drug profiles are too specific for kNN. Top performers are large-GT autoimmune diseases with many shared drugs (RA=93%, UC=67%).",
       "implication": "Disease-level confidence annotation would help clinicians. Therapeutic islands need alternative prediction strategies."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h572",
+      "learning": "Node2Vec DRKG embeddings cluster diseases by shared drug patterns, NOT by disease category. 91% of diseases have <20% same-category among k=20 neighbors. Category coherence has zero correlation with holdout precision (r=-0.002). Quality signals must exploit the drug-sharing structure, not categorical structure.",
+      "implication": "Any embedding-based quality signal should be based on drug overlap, not category overlap. The kNN works because similar diseases share drugs, not because they're in the same category."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h567",
+      "learning": "Comprehensive drug-class \u00d7 disease-category mismatch scan found NO new actionable rules beyond existing filters (ATC mismatch, domain-isolated, antimicrobial, CS\u2192infectious, statin/TZD). MEDIUM demotion ceiling confirmed at ~35.8%. Further MEDIUM improvement requires promotions or entirely new signals.",
+      "implication": "Demotion-based MEDIUM improvement is exhausted. Future work should focus on: (1) annotation quality signals, (2) novel prediction strategies, or (3) external data integration."
     }
   ],
   "collaborations": [
