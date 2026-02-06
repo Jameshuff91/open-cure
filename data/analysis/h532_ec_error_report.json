@@ -1,0 +1,127 @@
+{
+  "Atorvastatin \u2192 type 2 diabetes": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "2024 Lancet meta-analysis: statins increase diabetes risk 10-36%. FDA label warning since 2012.",
+    "severity": "HIGH"
+  },
+  "Amlodipine/atorvastatin \u2192 type 2 diabetes": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Atorvastatin component causes diabetes. Combination product inherits statin diabetes risk.",
+    "severity": "HIGH"
+  },
+  "Lovastatin \u2192 diabetes mellitus": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Same statin class effect. FDA warning applies to all statins.",
+    "severity": "HIGH"
+  },
+  "Lovastatin \u2192 poorly controlled diabetes": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Same statin class effect. Worsens glycemic control.",
+    "severity": "HIGH"
+  },
+  "Simvastatin \u2192 Diabetes": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Same statin class effect.",
+    "severity": "HIGH"
+  },
+  "ezetimibe/simvastatin \u2192 Diabetes": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Simvastatin component. Same class effect.",
+    "severity": "HIGH"
+  },
+  "Benazepril \u2192 angioedema": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "ACE inhibitors cause angioedema via bradykinin accumulation. FDA black box warning. 0.1-0.7% incidence.",
+    "severity": "HIGH"
+  },
+  "Quinapril \u2192 angioedema": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Same ACE inhibitor class effect. FDA warning.",
+    "severity": "HIGH"
+  },
+  "Liothyronine \u2192 hyperthyroidism": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Liothyronine IS thyroid hormone (T3). Giving T3 to hyperthyroid patients would worsen thyrotoxicosis.",
+    "severity": "HIGH"
+  },
+  "Liothyronine \u2192 Subclinical hyperthyroidism": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Same as above. T3 supplementation contraindicated in ANY form of hyperthyroidism.",
+    "severity": "HIGH"
+  },
+  "Levothyroxine/liothyronine \u2192 hyperthyroidism": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Thyroid hormone combination for hypothyroidism. CAUSES hyperthyroidism if given to hyperthyroid patients.",
+    "severity": "HIGH"
+  },
+  "Conjugated estrogens \u2192 breast cancer": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "WHI trial (JAMA 2002): estrogen+progestin increased breast cancer risk by 26%. FDA black box warning.",
+    "severity": "HIGH"
+  },
+  "Dexamethasone \u2192 adrenocortical insufficiency": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Long-acting corticosteroids cause secondary adrenocortical insufficiency via HPA axis suppression.",
+    "severity": "MEDIUM"
+  },
+  "Methylprednisolone \u2192 adrenocortical insufficiency": {
+    "verdict": "TRUE_ERROR",
+    "evidence": "Same mechanism. Chronic use causes HPA suppression.",
+    "severity": "MEDIUM"
+  },
+  "Prednisolone \u2192 adrenocortical insufficiency": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "EC indication text says 'Primary or secondary adrenocortical insufficiency'. Prednisolone IS used as replacement therapy for adrenal insufficiency. Our inverse rule is too broad.",
+    "severity": "N/A"
+  },
+  "Prednisone \u2192 adrenocortical insufficiency": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Same as prednisolone. FDA-approved for adrenal insufficiency as replacement therapy. Both cause AND treat it depending on context.",
+    "severity": "N/A"
+  },
+  "Flecainide \u2192 ventricular tachycardia": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Flecainide IS FDA-approved for life-threatening ventricular arrhythmias (including VT) in patients WITHOUT structural heart disease. CAST trial showed harm only in post-MI patients. EC entry is correct for the narrow indication.",
+    "severity": "N/A"
+  },
+  "Flecainide \u2192 SVT variants": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Flecainide is FDA-approved for PSVT and sustained VT without structural heart. Our inverse rule covers VT broadly but the narrow indication is valid.",
+    "severity": "N/A"
+  },
+  "Propafenone \u2192 VT/SVT variants": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Same as flecainide. FDA-approved for SVT and VT without structural heart disease.",
+    "severity": "N/A"
+  },
+  "Diltiazem \u2192 PSVT": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Diltiazem IS indicated for rate control in SVT. Our inverse rule covers VT, not SVT. This is SVT which is a correct indication.",
+    "severity": "N/A"
+  },
+  "Ibutilide \u2192 sustained polymorphic VT": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Ibutilide converts atrial flutter/fibrillation but can cause polymorphic VT (torsades). The EC entry may be for the antiarrhythmic indication, not the adverse effect.",
+    "severity": "N/A"
+  },
+  "Milrinone \u2192 catecholaminergic polymorphic VT": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Milrinone is indicated for acute heart failure. CPVT is a different disease. Our inverse rule may be too broad here.",
+    "severity": "N/A"
+  },
+  "Verapamil \u2192 heart failure": {
+    "verdict": "BORDERLINE",
+    "evidence": "Verapamil IS contraindicated in HFrEF (ACC/AHA Class III harm) but can be used in HFpEF and hypertrophic cardiomyopathy-related HF. EC entry may refer to the narrow indication.",
+    "severity": "LOW"
+  },
+  "Dexamethasone \u2192 pulmonary TB": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Dexamethasone IS used adjunctively in TB meningitis (NEJM 2004). Our inverse rule for extrapulmonary TB is too broad \u2014 it includes TB meningitis which is a valid dexamethasone use.",
+    "severity": "N/A"
+  },
+  "Triamcinolone \u2192 pulmonary TB": {
+    "verdict": "FALSE_FLAG",
+    "evidence": "Triamcinolone may be used for TB inflammatory reactions. Our inverse rule is overly broad.",
+    "severity": "N/A"
+  }
+}

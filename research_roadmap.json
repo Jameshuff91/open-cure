@@ -10539,13 +10539,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Compile list of 14 EC entries with evidence for each being incorrect",
         "Classify by error type: adverse effect as indication, contraindication as indication, disease name mismatch",
         "Format as deliverable/report for Every Cure team",
         "Note: 5 are clearly incorrect, 8 are disease name mismatches, 1 borderline"
-      ]
+      ],
+      "findings": "28 EC entries flagged, 14 are TRUE ERRORS (drug causes disease), 10 are FALSE FLAGS (our inverse rules too broad), 1 borderline. True errors: 6 statins\u2192diabetes, 2 ACEi\u2192angioedema, 3 thyroid hormones\u2192hyperthyroidism, 1 estrogens\u2192breast cancer, 2 corticosteroids\u2192adrenal insufficiency. Formal report created at data/analysis/h532_every_cure_gt_error_report.md.",
+      "result_metric": "14 true errors identified, formal report created"
     },
     {
       "id": "h533",
