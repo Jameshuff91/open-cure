@@ -10516,13 +10516,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "List all TCAs, MAOIs, and atypical antidepressants in predictions",
         "Check for bipolar disorder predictions",
         "If found, add to inverse indication pairs",
         "Annotate mania risk tier in deliverable (high/medium/low)"
-      ]
+      ],
+      "findings": "h531 INVALIDATED: No TCA/MAOI \u2192 bipolar predictions exist to filter.\n\nChecked 10 TCAs (amitriptyline, nortriptyline, imipramine, desipramine, clomipramine, \ndoxepin, trimipramine, protriptyline, amoxapine, maprotiline), 7 MAOIs (phenelzine, \ntranylcypromine, isocarboxazid, selegiline, rasagiline, safinamide, moclobemide), and \n7 other antidepressants (mirtazapine, trazodone, nefazodone, vilazodone, vortioxetine, \nbupropion, lithium).\n\nNONE have bipolar disorder predictions in the deliverable.\n\nMost TCAs are not in predictions at all (amitriptyline, nortriptyline, imipramine, etc. \nare absent). MAOIs like selegiline/rasagiline are present but focused on neurological \ndiseases (their Parkinson's indications), not psychiatric.\n\nThe h526 SSRI/SNRI filters (fluoxetine, sertraline, escitalopram, venlafaxine, duloxetine, \nparoxetine) are sufficient \u2014 no additional antidepressant classes need filtering for bipolar.\n\nNo mania/hypomania disease predictions exist at all (search artifact: 'mania' in \n'leishmaniasis' was a false positive).",
+      "result_metric": "0 additional antidepressant\u2192bipolar predictions to filter"
     }
   ],
   "completed": [
