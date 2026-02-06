@@ -10930,13 +10930,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Cross-tabulate default MEDIUM by category \u2014 which categories have lowest precision?",
         "Analyze by kNN rank (rank 1-5 vs 6-10 vs 11-20) within default MEDIUM",
         "Check if train_frequency or mechanism_support predicts hits vs misses",
         "Identify actionable subsets for demotion"
-      ]
+      ],
+      "findings": "Default MEDIUM sub-reason (184/seed, 26.9% holdout) deep dive reveals strong structure:\n\nBY RANK (holdout):\n- Rank 1-5: 38.7% \u00b1 8.6% (66.2/seed) \u2014 above MEDIUM avg\n- Rank 6-10: 24.0% \u00b1 8.1% (42.2/seed) \u2014 below MEDIUM avg\n- Rank 11-15: 20.7% \u00b1 6.2% (32.2/seed) \u2014 near LOW\n- Rank 16-20: 18.7% \u00b1 6.1% (20.8/seed) \u2014 near LOW\n\nBY MECHANISM (holdout):\n- with_mech: 41.5% \u00b1 9.5% (17/seed) \u2014 above MEDIUM avg\n- no_mech: 27.4% \u00b1 4.7% (144.4/seed) \u2014 below MEDIUM avg (bulk of predictions)\n\nBY FREQUENCY (holdout):\n- freq 5-9 (with mech): 43.0% \u2014 high (these all have mechanism support by definition)\n- freq 10-14 (no mech path): 27.1% \u2014 avg\n- freq 15+ (no mech path): 27.9% \u2014 avg\n\nKEY FINDING: The freq>=10 no-mechanism path at rank 11-20 has 18.7-20.7% holdout precision \u2014 essentially LOW-level. These predictions reach MEDIUM purely on frequency, without mechanism support or high rank.\n\nIMPLEMENTED: Demote default no-mechanism rank 11-20 from MEDIUM to LOW.\n- 311 predictions moved (full data), ~42/seed\n- MEDIUM: 32.1% \u2192 33.9% (+1.8pp)\n- LOW: unchanged (14.0% \u2192 14.2%)\n\nCUMULATIVE SESSION IMPACT: MEDIUM 30.1% \u2192 33.9% (+3.8pp) from h553+h556+h555.",
+      "result_metric": "MEDIUM +1.8pp (32.1% \u2192 33.9%), 311 preds moved to LOW"
     },
     {
       "id": "h556",
@@ -12850,6 +12852,12 @@
       "hypothesis_id": "h556",
       "learning": "Antibiotic\u2192viral disease predictions are systematically wrong (3.3% full-data, 5.0% holdout). Antibiotics cannot treat viral infections. The kNN co-prescription artifact inflates scores. 35 predictions caught by rule. Corticosteroid\u2192infectious is more nuanced (12.1% holdout) \u2014 valid for inflammatory responses to infections (zoster, leprosy, ABPA) but not for direct infection treatment.",
       "implication": "Simple drug-class/pathogen-type mismatch rules can catch clear biological errors. More nuanced rules (corticosteroid exceptions) require disease-specific lists."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h555",
+      "learning": "Within default MEDIUM, rank is the strongest predictor: 1-5 (38.7%) \u2192 6-10 (24.0%) \u2192 11-20 (18.7-20.7%). Mechanism support adds +14pp. Frequency-only MEDIUM at high rank is LOW-quality. The freq>=10 no-mechanism path is the bulk of MEDIUM predictions (144/seed) and performs below average.",
+      "implication": "Rank within kNN top-20 is a continuous signal, not just a binary cutoff. High-rank + mechanism = HIGH-quality MEDIUM; low-rank + no-mechanism = LOW-quality."
     }
   ],
   "collaborations": [

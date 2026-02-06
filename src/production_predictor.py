@@ -3025,6 +3025,10 @@ class DrugRepurposingPredictor:
         if train_frequency >= 5 and mechanism_support:
             return ConfidenceTier.MEDIUM, False, None
         if train_frequency >= 10:
+            # h555: Frequency-only MEDIUM (no mechanism) at rank 11-20 has 18.7-20.7% holdout
+            # — near LOW level (16.2%). Demote to LOW. Rank 1-10 stays MEDIUM (24-38.7%).
+            if rank >= 11 and not mechanism_support:
+                return ConfidenceTier.LOW, False, 'default_no_mech_high_rank'
             return ConfidenceTier.MEDIUM, False, None
 
         # h297: Highly repurposable diseases get MEDIUM instead of LOW

@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h553+h554+h556 - MEDIUM Precision + Target Overlap + Infectious Gap (2026-02-06)
+## Current Session: h553+h554+h555+h556 - MEDIUM Precision Deep Dive (2026-02-06)
 
 ### h553: MEDIUM Tier Precision by Category Analysis — VALIDATED
 
@@ -76,23 +76,7 @@ Antibiotic → viral disease mismatch identified and implemented:
 - MEDIUM +0.4pp (31.7% → 32.1%)
 - Corticosteroid→infectious (12.1% holdout, 20.4/seed) NOT demoted — includes valid uses
 
-**Cumulative Session Impact (h553+h556):**
-| Tier | Start | End | Delta |
-|------|-------|-----|-------|
-| GOLDEN | 69.9% | 70.3% | +0.4pp |
-| HIGH | 58.7% | 54.7%* | seed variance |
-| **MEDIUM** | **30.1%** | **32.1%** | **+2.0pp** |
-| LOW | 16.2% | 14.0%* | seed variance |
-| FILTER | 10.5% | 10.3% | -0.2pp |
-
-*HIGH/LOW changes are seed variance — code changes only affect MEDIUM→LOW transitions.
-
-**New Hypotheses Generated:** h554-h558 (5 total)
-
-**Recommended Next Steps:**
-1. **h557**: Corticosteroid→infectious selective demotion (valid for some infections)
-2. **h550**: Antibiotic spectrum validation (broader than h556, high effort)
-3. **h555**: MEDIUM default sub-reason deep dive
+See session summary above for cumulative impact.
 
 ---
 
