@@ -69,10 +69,23 @@ Both promotions are genuine:
 
 Cancer k=30: +4.9pp (p=0.20), Overall +0.7pp (p=0.21). Not significant, not deployed.
 
+### h397: Remove Dead Code - VALIDATED
+Removed 3 dead constants: ATC_HIGH_PRECISION_DERMATOLOGICAL, CV_PATHWAY_EXCLUDE, TARGET_DOMINANT_CATEGORIES.
+
+### h398: Fix CATEGORY_PRECISION Impossible Values - VALIDATED
+Replaced 68 stale h165 estimates with actual measured values. Worst corrections: psychiatric FILTER 90→26%, ophthalmic LOW 68→6%.
+
+### Cumulative Statistics (Session Total)
+| Status | Count |
+|--------|-------|
+| Validated (this session) | 6 (h393, h396, h397, h398, h400→invalidated, h411) |
+| Invalidated | 1 (h400) |
+| Inconclusive | 1 (h413) |
+
 ### Recommended Next Steps
-1. h398: Fix CATEGORY_PRECISION Impossible Values - Priority 2, medium effort
-2. h399: Rule Interaction Audit - Priority 2, medium effort
-3. h397: Remove Dead Code - Priority 2, low effort (code cleanup)
+1. h399: Rule Interaction Audit - Priority 2, medium effort
+2. h91: Literature Mining - Priority 2, high effort (but high potential)
+3. h407: ID Mapping Infrastructure - Priority 2, high effort (unblocks many hypotheses)
 
 ---
 
