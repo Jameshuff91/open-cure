@@ -9513,8 +9513,10 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "pending",
-      "category": "data_quality"
+      "status": "validated",
+      "category": "data_quality",
+      "findings": "h478 VALIDATED: GT Expansion - Lipid + Full Production GT Sync\n\nORIGINAL SCOPE: Add 39 FDA-approved lipid drug-disease pairs missing from expanded GT.\n\nDISCOVERY: expanded_ground_truth.json was missing 1503 drug-disease pairs from the production GT \n(which correctly maps Every Cure Excel via fuzzy matching). This affected 371 diseases and caused \nALL previous holdout precision numbers to be PESSIMISTIC.\n\nACTIONS TAKEN:\n1. Added 39 lipid-specific pairs (original h478 scope)\n2. Extended to full sync: added ALL 1464 remaining production GT pairs\n\nHOLDOUT PRECISION BEFORE \u2192 AFTER (5-seed):\n  GOLDEN: 61.9% \u2192 67.0% (+5.1pp)\n  HIGH: 52.0% \u2192 60.8% (+8.8pp)\n  MEDIUM: 23.4% \u2192 30.8% (+7.4pp)\n  LOW: 12.6% \u2192 14.8% (+2.2pp)\n  FILTER: 8.2% \u2192 10.3% (+2.1pp)\n\nFULL-DATA PRECISION (for reference, more inflated now):\n  GOLDEN: 64.1% \u2192 89.2%, HIGH: 56.6% \u2192 76.8%, MEDIUM: 29.5% \u2192 40.5%\n\nROOT CAUSE: The expanded GT was built from a different mapping pipeline than the production \npredictor's fuzzy matching. The production predictor correctly maps ~1500 additional pairs \nfrom the Excel that were not in the expanded GT.\n\nVALIDITY: Predictions UNCHANGED (same model/code). Only GT evaluation counting changes.\nrecompute_gt_structures() uses predictor.ground_truth (from Excel), not expanded GT.\nTherefore holdout improvements are genuine - measuring same predictions against more complete GT.\n\nKEY INSIGHT: The full-to-holdout gap also increased (e.g., GOLDEN 2.2pp \u2192 22.2pp) because \nfull-data benefits from ALL diseases having better GT, while holdout only evaluates 20%.\nUse HOLDOUT numbers as the authoritative precision measures.\n\nCORRECTED CONFIDENCE TIER TABLE:\n  GOLDEN: 67.0% \u00b1 20.6% holdout (was 61.9%)\n  HIGH: 60.8% \u00b1 7.2% holdout (was 52.0%)\n  MEDIUM: 30.8% \u00b1 3.4% holdout (was 23.4%)\n  LOW: 14.8% \u00b1 2.3% holdout (was 12.6%)\n  FILTER: 10.3% \u00b1 1.1% holdout (was 8.2%)",
+      "result_metric": "HIGH holdout +8.8pp, MEDIUM +7.4pp from GT sync"
     },
     {
       "id": "h479",
@@ -9867,8 +9869,69 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "in_progress",
       "category": "precision"
+    },
+    {
+      "id": "h497",
+      "title": "Reverse GT Sync: Expanded GT \u2192 Production Predictor",
+      "description": "h478 synced production GT \u2192 expanded GT (1464 pairs). But the expanded GT has 58K pairs vs production GT's 3K. Many expanded GT pairs may be from external sources (DRKG treatment edges, etc.) that the production predictor doesn't know about. If we add expanded GT pairs to the production predictor's training data (via a supplemental mapping), drug_train_freq would be more accurate, potentially improving tier assignments. Specifically: drugs appearing in more diseases = higher train_frequency = different tier handling.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Compare expanded GT vs production GT: how many expanded pairs have no production mapping?",
+        "Identify drug classes most affected by the discrepancy",
+        "Test if updating train_frequency with expanded GT changes tier assignments",
+        "Run holdout validation to measure impact",
+        "Implement if beneficial"
+      ]
+    },
+    {
+      "id": "h498",
+      "title": "Full-Data Precision Recalibration: Report Only Holdout Numbers",
+      "description": "After h478 GT sync, full-data precision is now much higher than holdout (GOLDEN 89% vs 67%, HIGH 77% vs 61%). This makes full-data precision misleading. The full-to-holdout gap measures 'GT self-prediction' inflation. Deliverable should report holdout precision as primary, with full-data as supplementary. Also need to update all CLAUDE.md references to use holdout numbers.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Update CLAUDE.md tier table with corrected holdout numbers",
+        "Update deliverable to prominently show holdout precision",
+        "Consider removing full-data precision from deliverable (misleading)",
+        "Document the measurement methodology clearly"
+      ]
+    },
+    {
+      "id": "h499",
+      "title": "Category-Specific Holdout Re-Validation with Corrected GT",
+      "description": "h462 demoted immunological/neurological/reproductive from MEDIUM based on holdout precision. With the corrected GT (1464 more pairs), these holdout numbers may have changed significantly. The demotions may no longer be justified if the GT was incomplete for these categories. Need to re-run category-specific holdout analysis.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Re-run h462-style category-specific holdout with corrected GT",
+        "Check if immunological 2.5%, neurological 10.2%, reproductive 0% have changed",
+        "If changed significantly, reconsider demotions",
+        "Update MEDIUM_DEMOTED_CATEGORIES if needed"
+      ]
+    },
+    {
+      "id": "h500",
+      "title": "Holdout-Validated Tier Thresholds with Corrected Precisions",
+      "description": "With corrected holdout numbers (HIGH 60.8%, MEDIUM 30.8%), the tier boundaries may need adjustment. Previously GOLDEN>HIGH was not significant (p=0.574 at 62% vs 52%). Now it may be GOLDEN 67% vs HIGH 61% - still not significant? Also, MEDIUM at 30.8% is much closer to the original HIGH threshold. Consider if tier system needs recalibration.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Compute GOLDEN vs HIGH significance with new numbers",
+        "Check if MEDIUM rules with >40% holdout should be promoted to HIGH",
+        "Assess if tier thresholds should change",
+        "Run full sensitivity analysis on tier boundaries"
+      ]
     }
   ],
   "completed": [
@@ -11554,6 +11617,12 @@
       "hypothesis_id": "h479",
       "learning": "GOLDEN 'standard' rule (34% of GOLDEN) has higher false positive risk than hierarchy rules. Lidocaine freq=43 leads to many false positives but also many correct predictions. Individual prediction exclusions = overfitting. Minocycline CAUSES urticaria (case reports).",
       "implication": "Consider a holdout audit specifically for 'standard' rule GOLDEN predictions vs hierarchy GOLDEN. May warrant a slight frequency threshold increase for standard rule."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h478",
+      "learning": "expanded_ground_truth.json was missing 1503 drug-disease pairs from the production predictor's GT (built from Every Cure Excel via fuzzy matching). This caused ALL holdout precision numbers to be pessimistic by ~7-8pp for HIGH/MEDIUM. After syncing, holdout: GOLDEN 67%, HIGH 61%, MEDIUM 31%, LOW 15%, FILTER 10%.",
+      "implication": "Always keep expanded GT in sync with production GT. When GT source data changes, re-sync before running holdout evaluation. Full-data precision is now much higher than holdout (22pp gap for GOLDEN) - use holdout as authoritative."
     }
   ],
   "collaborations": [

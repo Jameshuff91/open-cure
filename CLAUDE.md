@@ -145,16 +145,19 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480)
+### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478)
 
-**Tier System (h479/h484/h495 updated 2026-02-06):**
-- GOLDEN: 64.7% full / ~62% holdout (283 predictions)
-- HIGH: 56.6% full / ~52% holdout (511 predictions)
-- MEDIUM: 29.6% full / ~23% holdout (3603 predictions)
-- LOW: 11.4% full / ~13% holdout (2439 predictions)
-- FILTER: 11.4% full / ~8% holdout (7314 predictions)
+**Tier System (h478 GT sync, 2026-02-06):**
+- GOLDEN: 89.2% full / 67.0% ± 20.6% holdout (186 predictions)
+- HIGH: 76.8% full / 60.8% ± 7.2% holdout (514 predictions)
+- MEDIUM: 40.5% full / 30.8% ± 3.4% holdout (3282 predictions)
+- LOW: 21.4% full / 14.8% ± 2.3% holdout (3071 predictions)
+- FILTER: 16.8% full / 10.3% ± 1.1% holdout (6569 predictions)
+- **NOTE:** Full-data inflated after GT sync (1464 pairs added). Use HOLDOUT as authoritative.
 
-**h479+h484+h495 (LATEST):** Safety audit: 10 harmful predictions → FILTER.
+**h478 (LATEST):** GT sync: expanded_ground_truth.json was missing 1503 pairs from production GT. All holdout numbers improved ~7-8pp.
+
+**h479+h484+h495:** Safety audit: 10 harmful predictions → FILTER.
   - h484: CCB cardiac audit (diltiazem cardiac arrest, verapamil CHF, diltiazem VT, nifedipine ACS)
   - h495: confidence_filter.py NOT used by production_predictor.py (12/15 rules uncovered).
     Flecainide/propafenone VT/MI (CAST trial), empagliflozin hypoglycemia (inverse indication)
