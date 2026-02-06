@@ -29,3 +29,38 @@ Also confirmed: ALL CV hierarchy groups suffer from small-n:
   - Heart failure: 2 diseases, 50.0% full-data
 
 None should be demoted — the holdout for ALL is unreliable.
+
+
+EXTENDED ANALYSIS: HIGH Tier Per-Rule Holdout Breakdown
+=======================================================
+
+Underperforming HIGH rules (holdout < 35%):
+- metabolic_hierarchy_diabetes: 20.8% ± 25.9% (n=29, 5 seeds) - CANDIDATE for demotion
+- cardiovascular: 25.0% ± 22.4% (n=14, 5 seeds) - TOO SMALL
+- metabolic_hierarchy_thyroid: 26.4% ± 10.5% (n=16, 3 seeds) - borderline
+- cardiovascular_hierarchy_hypertension: 27.8% ± 20.8% (n=12, 3 seeds) - TOO SMALL
+- cardiovascular_hierarchy_coronary: 16.7% ± 16.7% (n=13, 2 seeds) - TOO SMALL
+- respiratory: 31.2% ± 20.7% (n=20, 4 seeds) - MARGINAL
+
+Well-performing HIGH rules:
+- autoimmune_hierarchy_colitis: 83.3% (n=24)
+- infectious_hierarchy_tuberculosis: 72.7% (n=11)
+- cardiovascular_hierarchy_arrhythmia: 73.3% (n=15)
+- autoimmune_hierarchy_rheumatoid_arthritis: 68.3% (n=41)
+- incoherent_demotion: 64.0% (n=25)
+- default: 54.3% (n=94)
+
+DIABETES HIERARCHY ANALYSIS:
+- 14 diseases total, core diseases (T1D, T2D, DM) have 83-100% full-data
+- But complications (DKA, nephropathy, retinopathy) have tiny GT and don't generalize
+- Holdout 20.8% likely driven by complications in holdout
+- HIGH variance (25.9pp) from seed 2024 (43.8%) vs seeds 42/456/789 (0%)
+
+THYROID HIERARCHY:
+- Congenital hypothyroidism: 14% full-data (drags down)
+- Hyperthyroidism: 33% full-data
+- Holdout 26.4% ± 10.5%
+
+DECISION: Do not demote either yet. Both have <30 predictions across 5 seeds.
+The diabetes hierarchy COULD be a future target if we can separate core diabetes
+from complications in the hierarchy. Create follow-up hypothesis.

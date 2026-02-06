@@ -10117,7 +10117,7 @@
       "depends_on": [
         "h506"
       ],
-      "findings": "Coronary hierarchy should NOT be demoted. Only 5 diseases total (n\u22481/seed), holdout unreliable at 6.7% \u00b1 13.3%. Full-data precision 65.6% (21/32) consistent with HIGH tier. Same small-n conclusion as h432/h494. All CV hierarchy groups have too few diseases for reliable holdout.",
+      "findings": "Coronary hierarchy should NOT be demoted. Only 5 diseases total (n\u22481/seed), holdout unreliable at 6.7% \u00b1 13.3%. Full-data precision 65.6% (21/32) consistent with HIGH tier. Same small-n conclusion as h432/h494. All CV hierarchy groups have too few diseases for reliable holdout. EXTENDED: Also found diabetes hierarchy (20.8% holdout) and thyroid hierarchy (26.4% holdout) underperforming for HIGH, but both have high variance and n<30. Not actionable yet.",
       "result_metric": "Full-data 65.6%, holdout 6.7% \u00b1 13.3% (n too small)"
     },
     {
@@ -10192,6 +10192,21 @@
         "Check which migraine drugs ARE in top-30 and which drug classes are missing",
         "Determine if preventive vs acute treatments have different kNN coverage",
         "Generalize: are multi-mechanism diseases systematically underpredicted?"
+      ]
+    },
+    {
+      "id": "h515",
+      "title": "Diabetes Hierarchy Split: Core vs Complications for Better Tier Assignment",
+      "description": "h509 found diabetes hierarchy holdout is 20.8% \u00b1 25.9% (LOW for HIGH tier). Root cause: core diseases (T1D, T2D, DM) have 83-100% full-data precision, but complications (nephropathy, retinopathy, DKA) have tiny GT and don't generalize. Split the diabetes hierarchy into 'core' (T1D, T2D, DM) \u2192 HIGH and 'complications' (DKA, nephropathy, retinopathy, neuropathy) \u2192 MEDIUM.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Define core vs complication diabetes diseases",
+        "Measure holdout precision separately for each subgroup",
+        "If core > 50% holdout and complications < 30%, split the hierarchy",
+        "Implement in production_predictor.py"
       ]
     }
   ],
