@@ -6740,7 +6740,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Check if statins are currently in BROAD_THERAPEUTIC_CLASSES",
         "Step 2: Calculate impact of adding statins to isolation demotion rule",
@@ -6751,7 +6751,9 @@
       "dependencies": [
         "h329",
         "h326"
-      ]
+      ],
+      "findings": "h333 VALIDATED: Do NOT add statins to BROAD_THERAPEUTIC_CLASSES\n\nKEY FINDING: h329's claim that \"cohesion helps for statins (+7.8 pp)\" was WRONG!\n\nActual data:\n- Isolated statins: 37.5% precision (3/8)\n- Non-isolated statins: 20.0% precision (15/75)\n- Gap: -17.5 pp (isolation HELPS, not hurts)\n\nTier breakdown (ISOLATED):\n- HIGH: 66.7% (2/3) - Lovastatin\u2192hypothyroidism, Lovastatin\u2192coronary atherosclerosis\n- MEDIUM: 20.0% (1/5) - Pravastatin\u2192MI\n\nTier breakdown (NON-ISOLATED):\n- HIGH: 20.0% (2/10)\n- MEDIUM: 20.0% (9/45)\n\nDECISION: Do NOT add statins to broad class list\n- Adding would demote 2 correct HIGH predictions\n- Would reduce HIGH tier precision from 30.8% to 20.0%\n- n=8 isolated is small but pattern is clear: isolation helps for statins\n\nCORRECTING h329: Statins are a genuine exception where isolation is POSITIVE signal.\nThis contrasts with other broad classes (anesthetics, steroids, TNFi) where cohesion helps.",
+      "result_metric": "Isolated 37.5% vs Non-isolated 20.0% (-17.5 pp gap)"
     },
     {
       "id": "h334",
