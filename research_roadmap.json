@@ -9901,13 +9901,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Update CLAUDE.md tier table with corrected holdout numbers",
         "Update deliverable to prominently show holdout precision",
         "Consider removing full-data precision from deliverable (misleading)",
         "Document the measurement methodology clearly"
-      ]
+      ],
+      "findings": "h498 VALIDATED: Full-Data Precision Recalibration\n\nUpdated all precision constants to use h478 holdout-validated values:\n\n1. DEFAULT_TIER_PRECISION: Updated from h402 values to h478 holdout\n   GOLDEN: 53.0 \u2192 67.0, HIGH: 51.0 \u2192 60.8, MEDIUM: 21.0 \u2192 30.8, \n   LOW: 12.0 \u2192 14.8, FILTER: 7.0 \u2192 10.3\n\n2. get_category_holdout_precision() tier_defaults: Same update\n\n3. CATEGORY_MEDIUM_HOLDOUT_PRECISION: Updated from h462 to h499 values\n   Major changes: dermatological 23.2\u219248.4, musculoskeletal 29.8\u219255.6\n   Demoted categories: neurological 10.2\u21925.8, GI 10.9\u21925.0\n\n4. Module docstring tier descriptions updated\n\n5. CLAUDE.md already had correct h478 numbers\n\n6. Deliverable regenerated with updated constants",
+      "result_metric": "All precision constants updated to h478 holdout values"
     },
     {
       "id": "h499",

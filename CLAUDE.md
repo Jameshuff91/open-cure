@@ -157,6 +157,10 @@ vastai destroy instance <INSTANCE_ID>
 
 **h478 (LATEST):** GT sync: expanded_ground_truth.json was missing 1503 pairs from production GT. All holdout numbers improved ~7-8pp.
 
+**h497:** Standard GOLDEN (62.2% holdout) ≈ Hierarchy GOLDEN (70.3%), NOT significant (p>0.35). No demotion needed.
+**h501:** Fixed kNN non-determinism: drug_id tiebreaker for tied scores. Predictions now reproducible across processes.
+**h498:** Updated all precision constants to h478 holdout values. Full-data is misleading — use holdout only.
+
 **h479+h484+h495:** Safety audit: 10 harmful predictions → FILTER.
   - h484: CCB cardiac audit (diltiazem cardiac arrest, verapamil CHF, diltiazem VT, nifedipine ACS)
   - h495: confidence_filter.py NOT used by production_predictor.py (12/15 rules uncovered).

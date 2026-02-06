@@ -78,12 +78,12 @@ USAGE:
     python -m src.production_predictor "rheumatoid arthritis"
     python -m src.production_predictor --disease "type 2 diabetes" --top-k 30
 
-TIER SYSTEM (h393/h396/h402 holdout-validated):
-- GOLDEN (~53%):  High-precision rescue rules (DMARD, lipid hierarchy, etc.)
-- HIGH (~51%):    freq>=15 + mechanism OR rank<=5 + freq>=10 + mechanism + hierarchy
-- MEDIUM (~21%):  freq>=5 + mechanism OR freq>=10 OR cancer_same_type + cv_pathway
-- LOW (~12%):     All else passing filter
-- FILTER (~7%):   rank>20 OR no_targets OR (freq<=2 AND no_mechanism)
+TIER SYSTEM (h478 holdout-validated, use holdout as authoritative):
+- GOLDEN (~67% holdout): Hierarchy match + high-freq/mechanism rescue rules
+- HIGH (~61% holdout):   freq>=15 + mechanism OR rank<=5 + freq>=10 + mechanism
+- MEDIUM (~31% holdout): freq>=5 + mechanism OR freq>=10 OR ATC coherent
+- LOW (~15% holdout):    All else passing filter + demoted categories
+- FILTER (~10% holdout): rank>20 OR no_targets OR harmful patterns
 """
 
 import hashlib
@@ -217,11 +217,14 @@ CATEGORY_PRECISION = {
 # h402: Updated from h402 holdout validation after rule demotions
 # Previous: h396 values from h393 holdout
 DEFAULT_TIER_PRECISION = {
-    "GOLDEN": 53.0,   # h402: 52.9% ± 6.0% (was 56.0 from h396, diabetes demoted to HIGH)
-    "HIGH": 51.0,     # h402: 50.6% ± 10.4% (was 49.0, gained diabetes hierarchy)
-    "MEDIUM": 21.0,   # h402: 21.2% ± 1.9% (was 23.0, gained cv_pathway + pneumonia)
-    "LOW": 12.0,      # h402: 12.2% ± 1.9% (was 11.0)
-    "FILTER": 7.0,    # h402: 7.0% ± 1.5% (was 8.0)
+    # h498: Updated to holdout-validated numbers (h478 GT sync + subsequent fixes)
+    # NOTE: These are 5-seed HOLDOUT precisions, the authoritative metric.
+    # Full-data precision is inflated by GT self-prediction and should not be used.
+    "GOLDEN": 67.0,   # h478: 67.0% ± 20.6% holdout (full-data 89.2% is inflated)
+    "HIGH": 60.8,     # h478: 60.8% ± 7.2% holdout (full-data 76.8% is inflated)
+    "MEDIUM": 30.8,   # h478: 30.8% ± 3.4% holdout (full-data 40.5% is inflated)
+    "LOW": 14.8,      # h478: 14.8% ± 2.3% holdout (full-data 21.4% is inflated)
+    "FILTER": 10.3,   # h478: 10.3% ± 1.1% holdout (full-data 16.8% is inflated)
 }
 
 
@@ -1191,27 +1194,29 @@ def get_rank_bucket_precision(tier: str, rank: int) -> float:
 # h462: Category-specific MEDIUM holdout precision (5-seed mean)
 # Used for clinical reporting: expected precision given category within MEDIUM tier
 # Format: category -> holdout_precision (%)
-# Categories not listed use the default MEDIUM holdout precision (21.2%)
+# Categories not listed use the default MEDIUM holdout precision (30.8% after h478 GT sync)
 CATEGORY_MEDIUM_HOLDOUT_PRECISION: Dict[str, float] = {
-    'psychiatric': 45.7,       # n=20/seed, ±5.4
-    'renal': 43.5,             # n=12/seed, ±25.2 (HIGH VARIANCE)
-    'musculoskeletal': 29.8,   # n=15/seed, ±13.5
-    'cardiovascular': 26.4,    # n=53/seed, ±10.0
-    'autoimmune': 25.7,        # n=58/seed, ±7.0
-    'respiratory': 25.7,       # n=28/seed, ±8.3
-    'endocrine': 23.4,         # n=12/seed, ±5.2
-    'ophthalmic': 23.3,        # n=21/seed, ±16.2
-    'dermatological': 23.2,    # n=53/seed, ±10.2
-    'infectious': 20.8,        # n=120/seed, ±6.3
-    'metabolic': 19.4,         # n=17/seed, ±10.4
-    'cancer': 19.1,            # n=213/seed, ±2.9 (MOST RELIABLE)
-    'other': 17.2,             # n=9/seed, ±14.7
-    'hematological': 16.6,     # n=43/seed, ±13.7
-    # Demoted categories (now LOW): holdout values at time of demotion
-    'neurological': 10.2,      # n=7/seed, ±11.1 → demoted to LOW
-    'immunological': 2.5,      # n=10/seed, ±3.5 → demoted to LOW
-    'gastrointestinal': 10.9,  # full-data as LOW → demoted to LOW
-    'reproductive': 0.0,       # n=12/seed, ±0.0 → demoted to LOW
+    # h498: Updated with h499 corrected GT holdout values (post h478 GT sync)
+    'musculoskeletal': 55.6,   # ±29.8 (HIGH VARIANCE, small n)
+    'dermatological': 48.4,    # ±14.5 (biggest beneficiary of GT sync, +19.9pp)
+    'autoimmune': 36.4,        # ±7.1
+    'psychiatric': 33.3,       # ±5.2 (dropped from 45.7%, seed distribution change)
+    'cardiovascular': 30.7,    # ±10.9
+    'respiratory': 30.5,       # ±6.5 (+14.3pp from GT sync)
+    'infectious': 27.9,        # ±7.0
+    'cancer': 24.5,            # ±3.7 (MOST RELIABLE, largest n)
+    # Categories below not updated by h499 (small n, using h462 values):
+    'renal': 43.5,             # ±25.2 (HIGH VARIANCE, n=12/seed)
+    'endocrine': 23.4,         # ±5.2
+    'ophthalmic': 23.3,        # ±16.2
+    'metabolic': 19.4,         # ±10.4
+    'other': 17.2,             # ±14.7
+    'hematological': 16.6,     # ±13.7
+    # Demoted categories (now LOW): holdout-validated at demotion
+    'neurological': 5.8,       # h499: ±? → demoted to LOW, confirmed justified
+    'immunological': 8.3,      # h499: → demoted to LOW, confirmed justified
+    'gastrointestinal': 5.0,   # h499: → demoted to LOW, confirmed justified
+    'reproductive': 2.9,       # h499: → demoted to LOW, confirmed justified
 }
 
 
@@ -1223,13 +1228,13 @@ def get_category_holdout_precision(category: str, tier: str) -> float:
     """
     if tier == 'MEDIUM' and category.lower() in CATEGORY_MEDIUM_HOLDOUT_PRECISION:
         return CATEGORY_MEDIUM_HOLDOUT_PRECISION[category.lower()]
-    # Default tier holdout precisions (from h402)
+    # h498: Default tier holdout precisions (from h478 GT sync + subsequent fixes)
     tier_defaults = {
-        'GOLDEN': 52.9,
-        'HIGH': 50.6,
-        'MEDIUM': 21.2,
-        'LOW': 12.2,
-        'FILTER': 7.0,
+        'GOLDEN': 67.0,
+        'HIGH': 60.8,
+        'MEDIUM': 30.8,
+        'LOW': 14.8,
+        'FILTER': 10.3,
     }
     return tier_defaults.get(tier, 0.0)
 
