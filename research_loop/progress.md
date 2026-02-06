@@ -40,9 +40,23 @@
 - h505: CV Target Overlap Rescue Precision (Priority 5)
 - h506: CV Hierarchy Rules Holdout Validation (Priority 4)
 
+### h504: PAH Self-Referential Filter - VALIDATED
+
+**Objective:** Systematically identify diseases with >80% self-referential GT.
+
+**Key findings:**
+1. ALL 455 diseases are their own #1 kNN neighbor
+2. 144 (31.6%) are 100% self-referential → FLOOR of kNN performance
+3. 27.5pp MEDIUM holdout gap: <50% self-ref (40.8%) vs 100% (13.3%)
+4. NOT actionable as demotion (requires GT knowledge, already handled indirectly by low freq)
+5. Self-referentiality is the DOMINANT source of full-to-holdout gap
+
+### New Hypotheses Generated (5 total)
+- h504-h506 from h490, h507-h508 from h504
+
 ### Recommended Next Steps
-1. **h504:** PAH Self-Referential Filter - systematic identification of 100% self-referential diseases
-2. **h506:** CV Hierarchy Rules Holdout Validation - check if CV hierarchy HIGH predictions are genuine
+1. **h506:** CV Hierarchy Rules Holdout Validation - check if CV hierarchy HIGH predictions are genuine
+2. **h507:** Predictable Self-Referentiality - can we detect self-ref from embedding features?
 3. **h503:** Seed 42 Failure Mode - low effort, could explain variance
 
 ---

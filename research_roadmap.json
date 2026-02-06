@@ -10011,10 +10011,12 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h490"
-      ]
+      ],
+      "findings": "Systematic self-referential analysis reveals a fundamental property of kNN drug repurposing:\n\n1. ALL 455 diseases are their own #1 kNN neighbor (100% self-inclusion)\n2. 144 diseases (31.6%) are 100% self-referential (ALL GT drugs come only from self)\n3. Most 100% self-ref have small GT: 132 with GT<5, only 12 with GT\u22655\n4. Notable large self-ref: immunodeficiency (34), PAH (26), CKD (19), chronic hep C (11)\n\nHOLDOUT PRECISION BY SELF-REFERENTIAL GROUP:\n- Overall: <50% self=26.0%, 50-79%=18.2%, 80-99%=13.0%, 100%(GT<5)=6.5%, 100%(GT\u22655)=10.4%\n- MEDIUM:  <50%=40.8%, 50-79%=26.2%, 80-99%=30.3%, 100%(GT<5)=13.3%, 100%(GT\u22655)=12.4%\n- 27.5pp MEDIUM gap between <50% (40.8%) and 100% (13.3%)\n\nNOT ACTIONABLE as a demotion because:\n1. Self-referential % requires GT knowledge (can't compute at prediction time)\n2. Already handled indirectly: small-GT diseases have low train_freq \u2192 LOW tier\n3. The 100% self-ref diseases that reach MEDIUM have other evidence (hierarchy, ATC coherent)\n4. This is a STRUCTURAL LIMITATION of kNN, not a bug in the tier system\n\nIMPLICATION: This is the FLOOR of kNN performance. For 144 diseases, our method \nstructurally cannot generalize. External data (transcriptomics, gene expression) \nwould be needed to make predictions for these diseases.",
+      "result_metric": "144/455 diseases (31.6%) are 100% self-referential. 27.5pp MEDIUM holdout gap."
     },
     {
       "id": "h505",
@@ -10050,6 +10052,42 @@
       "status": "pending",
       "depends_on": [
         "h490"
+      ]
+    },
+    {
+      "id": "h507",
+      "title": "Predictable Self-Referentiality: Can We Detect Self-Ref Diseases Without GT?",
+      "hypothesis": "Self-referential diseases might be detectable from embedding-space properties (kNN diversity, neighbor overlap, embedding isolation). If we can predict self-referentiality, we could flag low-confidence predictions.",
+      "steps": [
+        "For each disease, compute: kNN neighbor diversity, avg neighbor overlap, embedding isolation score",
+        "Correlate these features with self_only_pct",
+        "If correlation > 0.5, test as a tier adjustment feature",
+        "Check: does number of unique drugs across kNN neighbors predict self-ref?"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h504"
+      ]
+    },
+    {
+      "id": "h508",
+      "title": "Self-Referential Disease Characterization: What Makes a Disease Self-Referential?",
+      "hypothesis": "Self-referential diseases have unique drug profiles with no overlap to neighboring diseases. This may correlate with mechanism-specific diseases (h297), rare diseases, or diseases with highly targeted therapies.",
+      "steps": [
+        "Cross-reference 100% self-ref diseases with mechanism_specific_diseases",
+        "Check correlation with disease prevalence/rarity",
+        "Check if ATC code distribution differs for self-ref drugs",
+        "Identify common patterns that could inform future research prioritization"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h504"
       ]
     }
   ],
@@ -11760,6 +11798,12 @@
       "hypothesis_id": "h490",
       "learning": "CV standard MEDIUM has 2.0% holdout (essentially random). cv_pathway_comprehensive 44pp gap is from disease selection variance, NOT overfitting. PAH is 100% self-referential.",
       "implication": "Category-level MEDIUM demotions should check sub-rule granularity. Self-referential diseases need systematic identification."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h504",
+      "learning": "31.6% of diseases are 100% self-referential in kNN. This is structural: their drugs are not shared with ANY neighbor. MEDIUM holdout drops from 40.8% (<50% self-ref) to 13.3% (100% self-ref). Not actionable as a demotion because self-ref requires GT knowledge.",
+      "implication": "kNN has a structural floor for ~144 diseases. External data needed for these diseases. Self-referentiality is the dominant source of full-to-holdout gap."
     }
   ],
   "collaborations": [
