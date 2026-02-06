@@ -1,6 +1,65 @@
 # Research Loop Progress
 
-## Current Session: h520 - SOC Drug Class Precision Heterogeneity (2026-02-06)
+## Current Session: h486 - SIDER Adverse Effect Mining for Inverse Indications (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h486: Drug-Induced Disease Filter: Systematic Adverse Effect Mining - **VALIDATED**
+
+### Key Findings
+
+#### 1. SIDER Mining Requires Strict Matching
+- Original loose substring matching: 1,462 candidates — 80%+ false positives
+- Strict matching + SIDER indication exclusion + manual audit: 307 → 47 genuine pairs
+- False positive sources: generic AE terms ("ulcer" matching "ulcerative colitis"), drugs that TREAT the disease
+
+#### 2. 47 New Inverse Indication Pairs Implemented
+- 20 new drugs added to INVERSE_INDICATION_PAIRS (35 → 55 drugs total, 77 → 124 pairs)
+- Key categories:
+  - Corticosteroid iatrogenic: TB reactivation, glaucoma, osteoporosis, MG crisis
+  - NSAID: TEN (Stevens-Johnson), drug-induced SLE, peptic ulcer, stroke (COX-2)
+  - Estradiol: endometrial/uterine cancer, hereditary angioedema
+  - Proarrhythmic: ibutilide/dofetilide/milrinone → VT
+  - Immunosuppressant: azathioprine → TEN, hepatitis B reactivation
+  - Metabolic: paricalcitol → hypoparathyroidism
+
+#### 3. Safety Impact
+- ~105 predictions now filtered by inverse indication rules
+- 98 GT negatives correctly filtered, 7 GT positives filtered (medically justified)
+- Filter precision: 93.3%
+
+#### 4. Holdout Impact (vs h520/h522 baseline)
+| Tier | Previous | Current | Delta |
+|------|----------|---------|-------|
+| GOLDEN | 62.6% ± 8.1% | 69.9% ± 17.9% | +7.3pp |
+| HIGH | 53.8% ± 2.6% | 57.3% ± 8.1% | +3.5pp |
+| MEDIUM | 31.3% ± 1.4% | 28.8% ± 2.6% | -2.5pp (NS) |
+| LOW | 14.2% ± 0.5% | 15.6% ± 2.6% | +1.4pp |
+| FILTER | 9.7% ± 0.6% | 10.5% ± 1.4% | +0.8pp |
+
+Note: Comparison imprecise due to accumulated code changes since last baseline.
+
+### Corrections Applied During Session
+- Removed lidocaine → VT (lidocaine is Class Ib antiarrhythmic that TREATS VT)
+- Removed azathioprine → interstitial pneumonia (azathioprine treats underlying myositis)
+
+### New Hypotheses Generated (4)
+- h525: SIDER indication-based GT expansion (P4, medium)
+- h526: Drug-induced disease class taxonomy (P4, medium)
+- h527: Systematic corticosteroid iatrogenic filter expansion (P5, low)
+- h528: Systematic NSAID inverse indication expansion (P5, low)
+
+### Recommended Next Steps
+1. **h525**: Use SIDER indications to find missing GT pairs (could improve holdout evaluation)
+2. **h526**: Classify inverse indications by mechanism for systematic expansion
+3. **h521**: Cancer drug SOC stratification (but close to CLOSED direction)
+
+---
+
+## Previous Session: h520 - SOC Drug Class Precision Heterogeneity (2026-02-06)
 
 ### Session Summary
 

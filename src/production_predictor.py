@@ -704,6 +704,7 @@ INVERSE_INDICATION_PAIRS = {
         'chronic heart failure', 'heart failure', 'congestive heart failure',
         'systolic heart failure', 'acute heart failure',
         'ventricular tachycardia',
+        'myocardial infarction',  # h486: SIDER AE, CCB in acute MI is harmful
     },
     # h484: Short-acting nifedipine → ACS (HINT study: excess mortality)
     # Extended-release may be acceptable but we cannot distinguish formulations
@@ -733,14 +734,80 @@ INVERSE_INDICATION_PAIRS = {
     # h493: Corticosteroids contraindicated in stable IPF (ATS/ERS/JRS/ALAT 2022)
     # PANTHER-IPF trial (NEJM 2012): prednisone+azathioprine+NAC INCREASED mortality
     # Standard of care is pirfenidone/nintedanib, NOT corticosteroids
-    'prednisolone': {'idiopathic pulmonary fibrosis'},
-    'prednisone': {'idiopathic pulmonary fibrosis'},
-    'methylprednisolone': {'idiopathic pulmonary fibrosis'},
-    'dexamethasone': {'idiopathic pulmonary fibrosis'},
+    # h486: Added TB reactivation, steroid-induced MG crisis, glaucoma, osteoporosis, pancreatitis
+    'prednisolone': {
+        'idiopathic pulmonary fibrosis',
+        'neovascular glaucoma', 'osteoporosis', 'pancreatitis',
+    },
+    'prednisone': {
+        'idiopathic pulmonary fibrosis', 'extrapulmonary tuberculosis',
+        'neovascular glaucoma', 'osteoporosis', 'pancreatitis',
+    },
+    'methylprednisolone': {
+        'idiopathic pulmonary fibrosis',
+        'neovascular glaucoma', 'osteoporosis',
+    },
+    'dexamethasone': {
+        'idiopathic pulmonary fibrosis', 'extrapulmonary tuberculosis',
+        'systemic myasthenia gravis',
+        'neovascular glaucoma', 'osteoporosis',
+    },
     'hydrocortisone': {'idiopathic pulmonary fibrosis'},
     'mometasone': {'idiopathic pulmonary fibrosis'},
     'fluticasone': {'idiopathic pulmonary fibrosis'},
-    'cortisone': {'idiopathic pulmonary fibrosis'},
+    'cortisone': {'idiopathic pulmonary fibrosis', 'neovascular glaucoma'},
+    'triamcinolone': {
+        'extrapulmonary tuberculosis',
+        'neovascular glaucoma', 'osteoporosis',
+    },
+    'budesonide': {
+        'neovascular glaucoma',
+        'secondary adrenocortical insufficiency',
+    },
+    # h486: Azathioprine causes TEN, erythema multiforme, hepatitis B reactivation,
+    # interstitial pneumonia, cholestasis (well-documented immunosuppressant AEs)
+    'azathioprine': {
+        'toxic epidermal necrolysis', 'severe erythema multiforme',
+        'hepatitis b', 'hereditary chronic cholestasis',
+        # Note: interstitial pneumonia omitted — azathioprine treats underlying myositis
+    },
+    # h486: NSAIDs cause TEN (Stevens-Johnson spectrum), drug-induced SLE, peptic ulcer,
+    # lichen planus, cerebrovascular events (COX-2 class effect)
+    'naproxen': {
+        'systemic lupus erythematosus', 'toxic epidermal necrolysis', 'lichen planus',
+    },
+    'celecoxib': {
+        'toxic epidermal necrolysis', 'ischemic cerebrovascular disorder',
+    },
+    'diclofenac': {
+        'toxic epidermal necrolysis', 'chronic peptic ulcer disease',
+    },
+    'indomethacin': {'toxic epidermal necrolysis'},
+    # h486: Estradiol causes endometrial/uterine cancer (classic), exacerbates hereditary angioedema
+    'estradiol': {'endometrial cancer', 'uterine cancer', 'hereditary angioedema'},
+    # h486: Paroxetine triggers mania in bipolar (all SSRIs can, paroxetine well-documented)
+    'paroxetine': {'bipolar disorder'},
+    # h486: Paricalcitol (vitamin D analog) suppresses PTH → hypoparathyroidism
+    'paricalcitol': {'hypoparathyroidism'},
+    # h486: Erythromycin causes erythema multiforme
+    'erythromycin': {'severe erythema multiforme'},
+    # h486: Proarrhythmic drugs → ventricular tachycardia (torsades de pointes risk)
+    # Note: lidocaine omitted — it's a Class Ib antiarrhythmic that TREATS VT
+    'ibutilide': {'ventricular tachycardia'},
+    'dofetilide': {'ventricular tachycardia'},
+    'milrinone': {'ventricular tachycardia'},
+    # h486: Methotrexate is gonadotoxic → female infertility
+    'methotrexate': {'female infertility'},
+    # h486: Imatinib causes interstitial lung disease
+    'imatinib': {'systemic sclerosis associated interstitial lung disease'},
+    # h486: Carbamazepine causes drug-induced dyskinesia
+    'carbamazepine': {'dyskinesia'},
+    # h486: Sulfadiazine nephrotoxicity → nephrotic syndrome
+    'sulfadiazine': {'nephrotic syndrome'},
+    # h486: GnRH agonists cause ovarian hyperstimulation syndrome
+    'nafarelin': {'ovarian hyperstimulation syndrome'},
+    # h486: Everolimus causes acute pancreatitis
+    'everolimus': {'pancreatitis'},
 }
 
 # h481: Drug class → disease category standard-of-care mappings

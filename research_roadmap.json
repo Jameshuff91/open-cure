@@ -9661,7 +9661,9 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 3,
-      "status": "pending"
+      "status": "validated",
+      "findings": "SIDER adverse effect mining completed with strict matching.\n\nOriginal script (loose substring matching): 1,462 candidates \u2014 dominated by false positives.\nStrict matching + SIDER indication exclusion + manual medical audit: 307 candidates \u2192 47 genuine inverse indications implemented.\n\nIMPLEMENTATION:\n- 20 new drugs, 47 new drug-disease pairs added to INVERSE_INDICATION_PAIRS (77 \u2192 124 total)\n- Key categories: corticosteroid iatrogenic effects (TB, glaucoma, osteoporosis, MG), NSAID TEN/SLE,\n  estradiol cancer, azathioprine immunosuppressant AEs, proarrhythmic drugs, etc.\n- ~105 predictions now filtered (98 GT negatives, 7 GT positives = 93.3% filter precision)\n- GT positives filtered are medically justified safety concerns (drugs that both treat AND cause condition)\n\nFALSE POSITIVE LESSONS:\n- \"ulcer\" substring matched \"ulcerative colitis\" \u2014 corticosteroids TREAT UC\n- \"tension\" matched \"hypertension\" \u2014 antihypertensives TREAT HTN\n- \"asthma\" matched \"bronchial asthma\" \u2014 steroids TREAT asthma\n- Generic AE terms (infection, disorder, pain) match too broadly\n- SIDER indications cross-check essential to avoid filtering drugs that TREAT the disease\n\nHOLDOUT IMPACT:\n- GOLDEN: 62.6% \u2192 69.9% (+7.3pp, high variance)\n- HIGH: 53.8% \u2192 57.3% (+3.5pp)\n- MEDIUM: 31.3% \u2192 28.8% (-2.5pp, NOT significant p=0.395)\n- LOW: 14.2% \u2192 15.6% (+1.4pp)\n- FILTER: 9.7% \u2192 10.5% (+0.8pp)\nNote: Comparison imprecise due to accumulated code changes since last baseline.",
+      "result_metric": "+47 inverse indication pairs, 93.3% filter precision, safety improvement"
     },
     {
       "id": "h487",
@@ -10388,6 +10390,79 @@
       "status": "pending",
       "depends_on": [
         "h520"
+      ]
+    },
+    {
+      "id": "h525",
+      "title": "SIDER Indication-Based GT Expansion: Drugs Indicated for Diseases in SIDER but Missing from GT",
+      "hypothesis": "SIDER has 16,726 drug-indication pairs. Many of these may be missing from our GT (expanded_ground_truth.json). Cross-referencing SIDER indications with our disease list could identify missing GT pairs, improving holdout evaluation.",
+      "steps": [
+        "Map SIDER drug names to our drug IDs",
+        "Map SIDER indication terms to our disease names",
+        "Identify SIDER indications not in our GT",
+        "Validate top candidates against clinical literature",
+        "Add confirmed pairs to expanded_ground_truth.json"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h486"
+      ]
+    },
+    {
+      "id": "h526",
+      "title": "Drug-Induced Disease Classes: Systematic Taxonomy of Iatrogenic Predictions",
+      "hypothesis": "h486 found that inverse indications cluster into distinct drug-induced disease classes: steroid-iatrogenic (TB, glaucoma, osteoporosis), NSAID-GI, immunosuppressant-infection, proarrhythmic, etc. A systematic taxonomy could identify more inverse indications without SIDER, using drug mechanism + known AE patterns.",
+      "steps": [
+        "Classify all h486 inverse indications by mechanism of harm",
+        "For each mechanism class, identify additional drugs with same mechanism",
+        "Check if those drugs have similar inverse indication predictions",
+        "Validate and implement additional filters"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h486"
+      ]
+    },
+    {
+      "id": "h527",
+      "title": "Corticosteroid Iatrogenic Disease Filter: Systematic TB/Glaucoma/Osteoporosis Exclusion",
+      "hypothesis": "h486 added individual corticosteroid\u2192iatrogenic disease pairs. But the FILTER also has a broader corticosteroid_iatrogenic rule (line ~2660). These may overlap or miss cases. A systematic audit of ALL corticosteroid predictions for iatrogenic diseases (diabetes, hypertension, osteoporosis, glaucoma, infections, psychosis, myopathy) could catch more harmful predictions.",
+      "steps": [
+        "List all known corticosteroid iatrogenic diseases from medical literature",
+        "Cross-reference with current FILTER rules and INVERSE_INDICATION_PAIRS",
+        "Identify gaps \u2014 iatrogenic diseases not yet filtered",
+        "Implement additional corticosteroid iatrogenic filters"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h486"
+      ]
+    },
+    {
+      "id": "h528",
+      "title": "NSAID Inverse Indication Expansion: Systematic GI/Renal/CV Adverse Effect Mining",
+      "hypothesis": "h486 found NSAIDs\u2192TEN, SLE, peptic ulcer, cerebrovascular disorder. But NSAIDs also cause renal failure, hyperkalemia, asthma exacerbation, and platelet dysfunction. Predictions of NSAIDs for these conditions may be harmful and should be filtered.",
+      "steps": [
+        "List all NSAID-specific inverse indications from medical literature",
+        "Check which diseases in our prediction set match",
+        "Validate against SIDER and clinical evidence",
+        "Implement additional NSAID filters"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h486"
       ]
     }
   ],
@@ -12158,6 +12233,12 @@
       "hypothesis_id": "h517",
       "learning": "Self-referential percentage is a strong predictor of holdout precision (25.2% vs 6.0% gradient). But it requires GT knowledge so cannot be used for tier assignment. Best used as deliverable annotation for downstream consumers.",
       "implication": "Any future GT-free proxy for self-referentiality would be extremely valuable for tier improvement."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h486",
+      "learning": "SIDER adverse effect mining requires strict matching + indication cross-check + manual medical audit. Loose substring matching produces 80%+ false positives. Generic AE terms (ulcer, infection, tension) match disease names that the drug actually TREATS. The SIDER indications file is essential for excluding known treatments.",
+      "implication": "Any future AE-based filtering must use exact/near-exact disease matching and cross-check against indication databases. Short AE terms (<8 chars) should be excluded entirely."
     }
   ],
   "collaborations": [
