@@ -1,0 +1,48 @@
+
+h492: GT Expansion for Common Drug-Disease Pairs - VALIDATED (MINOR)
+====================================================================
+
+OBJECTIVE: Systematically identify well-known FDA-approved drug-disease pairs 
+missing from expanded_ground_truth.json, add them, and measure holdout impact.
+
+DISEASES AUDITED: 20 major diseases across 7 categories:
+- Psychiatric: MDD, social anxiety, bipolar, schizophrenia, OCD, ADHD, agoraphobia, 
+  bulimia, alcohol withdrawal, hyperactive children
+- Neurological: epilepsy, migraine, Parkinson's, Alzheimer's, multiple sclerosis
+- Cardiovascular: hypertension, heart failure
+- Metabolic: T2DM, hyperlipidemia
+- Autoimmune: rheumatoid arthritis
+- Respiratory: asthma
+- Other: Crohn's, ulcerative colitis, psoriasis, osteoporosis
+
+RESULTS: Only 15 FDA-approved pairs missing (out of 167 checked):
+- Psychiatric: 5 (phenelzine→MDD, lurasidone→bipolar, 3 stimulants→hyperactive children)
+- Neurological: 7 (tiagabine→epilepsy, 6 drugs→migraine incl. CGRP antibodies)
+- Cardiovascular: 1 (sacubitril→heart failure)
+- Metabolic: 1 (cholestyramine→hyperlipidemia)
+- Autoimmune: 1 (interferon beta-1a→MS)
+
+HOLDOUT IMPACT: Negligible
+  GOLDEN: +0.5pp (62.8% → 63.3%)
+  HIGH: +0.0pp (51.5% → 51.5%)
+  MEDIUM: +0.1pp (29.8% → 29.9%)
+
+WHY NEGLIGIBLE: 14/15 new GT pairs are NOT in our top-30 predictions.
+Only cholestyramine→hyperlipidemia appears (GOLDEN rank 15).
+The kNN model doesn't predict these drugs because they're structurally distant
+from the diseases' kNN neighborhoods.
+
+KEY INSIGHT: GT incompleteness is NOT the precision bottleneck.
+The model's limitations are structural (kNN coverage), not GT gaps.
+
+IMPORTANT BASELINE UPDATE:
+Current accurate holdout baseline (with all code through h506):
+  GOLDEN: 63.3% ± 23.2% (was 67.0% in CLAUDE.md - STALE)
+  HIGH: 51.5% ± 5.3% (was 60.8% - STALE)
+  MEDIUM: 29.9% ± 2.8% (was 32.1% - STALE)
+  LOW: 12.3% ± 1.4% (was 12.9% - STALE)
+  FILTER: 8.9% ± 1.1% (was 10.3% - STALE)
+
+The drift is from 114 insertions/45 deletions in production_predictor.py
+since h478, including h490/h505 CV demotions, h487/h488 incoherent demotion,
+h485 cancer cross-type block, and other safety filters.

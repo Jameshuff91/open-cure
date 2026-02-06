@@ -147,13 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478)
 
-**Tier System (h478 GT sync, 2026-02-06):**
-- GOLDEN: 89.2% full / 67.0% ± 20.6% holdout (186 predictions)
-- HIGH: 76.8% full / 60.8% ± 7.2% holdout (514 predictions)
-- MEDIUM: 40.5% full / 32.1% ± 3.6% holdout (3396 predictions, h490+h505: -170 from CV demotion)
-- LOW: 21.4% full / 12.9% ± 1.4% holdout (2511 predictions, h490+h505: +170 from CV demotion)
-- FILTER: 16.8% full / 10.3% ± 1.1% holdout (6569 predictions)
-- **NOTE:** Full-data inflated after GT sync (1464 pairs added). Use HOLDOUT as authoritative.
+**Tier System (h492 re-baseline, 2026-02-06):**
+- GOLDEN: 63.3% ± 23.2% holdout (286 predictions)
+- HIGH: 51.5% ± 5.3% holdout (507 predictions)
+- MEDIUM: 29.9% ± 2.8% holdout (3396 predictions)
+- LOW: 12.3% ± 1.4% holdout (2511 predictions)
+- FILTER: 8.9% ± 1.1% holdout (6569 predictions)
+- **NOTE:** Re-baselined from h492. Previous CLAUDE.md values (67%, 60.8%, 32.1%) were stale from h478, before h490/h505/h487/h488/h485 code changes. Full-data inflated; use HOLDOUT only.
 
 **h478 (LATEST):** GT sync: expanded_ground_truth.json was missing 1503 pairs from production GT. All holdout numbers improved ~7-8pp.
 

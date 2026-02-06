@@ -9783,8 +9783,10 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
-      "category": "gt_quality"
+      "status": "validated",
+      "category": "gt_quality",
+      "findings": "GT already very complete: only 15 FDA-approved pairs missing across 20 major diseases (167 checked). Holdout impact negligible (+0.1pp MEDIUM). 14/15 new pairs NOT in top-30 predictions \u2014 kNN model doesn't predict them. KEY INSIGHT: GT incompleteness is NOT the precision bottleneck. Model limitations are structural (kNN coverage). BASELINE UPDATE: Current holdout is GOLDEN 63.3%, HIGH 51.5%, MEDIUM 29.9%, LOW 12.3%, FILTER 8.9% \u2014 lower than CLAUDE.md values due to code changes since h478.",
+      "result_metric": "+0.1pp MEDIUM, 15 pairs added, 14/15 NOT predicted"
     },
     {
       "id": "h493",
@@ -10159,6 +10161,35 @@
         "For each self-referential disease, find HPO nearest neighbors",
         "Check if HPO neighbors' GT drugs appear in the disease's GT",
         "If recall > 10%, integrate as supplementary neighbor source"
+      ]
+    },
+    {
+      "id": "h513",
+      "title": "Periodic Holdout Re-Baseline After Code Changes",
+      "description": "h492 revealed that CLAUDE.md holdout values drifted 4-9pp from actual values due to accumulated code changes since h478. This means our reported precision is inaccurate. Implement a policy of re-running holdout validation after every N code changes to production_predictor.py, or create an automated script that runs as part of commit.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Create a lightweight holdout benchmark script",
+        "Run after each code change to production_predictor.py",
+        "Update CLAUDE.md with correct values"
+      ]
+    },
+    {
+      "id": "h514",
+      "title": "Migraine Drug Coverage Gap: Why Are CGRP Antibodies Not Predicted?",
+      "description": "h492 found 6 migraine drugs missing including 3 CGRP antibodies (erenumab, fremanezumab, galcanezumab) and prophylactic drugs (propranolol, topiramate, amitriptyline). None appear in top-30 predictions. This suggests the kNN model struggles with diseases that have mechanistically diverse treatment options (acute triptans vs preventive beta-blockers vs CGRP antibodies). Understanding WHY could reveal a structural model limitation.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Examine migraine's kNN neighborhood - what diseases are nearest?",
+        "Check which migraine drugs ARE in top-30 and which drug classes are missing",
+        "Determine if preventive vs acute treatments have different kNN coverage",
+        "Generalize: are multi-mechanism diseases systematically underpredicted?"
       ]
     }
   ],
@@ -11887,6 +11918,12 @@
       "hypothesis_id": "h507",
       "learning": "GT-free embedding features (same_cat_frac AUC=0.734, embedding_norm AUC=0.657) correlate well with self-referentiality on full data but REVERSE on holdout (gap -6.0pp \u00b1 12.9pp). Root cause: low same_cat_frac captures TWO opposite populations (58% self-referential + 42% cross-category transfer). This is another instance of the collider/full-to-holdout reversal pattern (h453/h445).",
       "implication": "Self-referentiality is a structural floor of kNN that cannot be detected or corrected without GT knowledge. Alternative similarity measures (HPO, gene overlap) needed for 144 structurally un-generalizable diseases."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h492",
+      "learning": "GT completeness audit: only 15/167 FDA-approved pairs missing across 20 major diseases. 14/15 not in model's top-30 predictions. GT incompleteness is NOT the precision bottleneck. Holdout baseline has drifted: GOLDEN 63.3% (not 67.0%), HIGH 51.5% (not 60.8%), MEDIUM 29.9% (not 32.1%) due to accumulated code changes since h478.",
+      "implication": "Future GT expansion has diminishing returns for major categories. Model structural improvements (external data, HPO similarity, multi-graph) needed for further precision gains. CLAUDE.md holdout numbers need periodic re-validation after code changes."
     }
   ],
   "collaborations": [
