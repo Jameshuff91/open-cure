@@ -6781,7 +6781,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: Check ATC distribution of cancer predictions (L vs non-L)",
         "Step 2: Analyze which non-L drugs are hitting for cancer",
@@ -6791,7 +6791,10 @@
       ],
       "dependencies": [
         "h315"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "result_metric": "L drugs 17.5%, non-L drugs 16.7% (+0.8pp gap explained)",
+      "findings": "h335 VALIDATED: Cancer Coherence Investigation\n\nQUESTION: Why does cancer have nearly zero coherence signal? (L vs non-L only +0.8 pp gap)\n\nANSWER: Non-L cancer drugs are LEGITIMATE cancer treatments, not noise!\n\nCANCER PREDICTION BREAKDOWN (1,674 total):\n- L (antineoplastics): 1,248 predictions, 218 hits (17.5%)\n- Non-L: 426 predictions, 71 hits (16.7%)\n- Gap: only +0.8 pp\n\nNON-L CANCER HITS EXPLAINED (71 total):\n\n1. CORTICOSTEROIDS (26 hits) - ATC: A, D\n   - dexamethasone, prednisone, hydrocortisone, etc.\n   - Used in cancer TREATMENT regimens (not just supportive)\n   - e.g., ALL protocols include dexamethasone as key drug\n   - LEGITIMATE cancer treatments, ATC class A but correctly indicated\n\n2. DIAGNOSTIC AGENTS (23 hits) - ATC: V\n   - fludeoxyglucose (FDG-PET), tilmanocept\n   - Used for cancer STAGING and monitoring\n   - Not treatments but correctly associated with cancer\n   - Consider filtering or separate \"diagnostic\" tier\n\n3. NOVEL BIOLOGICS (14 hits) - ATC: Unknown\n   - inotuzumab ozogamicin, tirabrutinib, gemtuzumab\n   - Newer cancer drugs without ATC classification yet\n   - TRUE cancer treatments, classification lag\n\n4. OTHER LEGITIMATE (9 hits)\n   - levothyroxine: thyroid cancer (hormone suppression therapy)\n   - allopurinol: tumor lysis syndrome prevention\n   - ibritumomab: radioimmunotherapy (V class but cancer treatment)\n\nCONCLUSION:\nCancer is SPECIAL because:\n1. Cancer treatment is multi-modal (chemo + steroids + hormones + supportive)\n2. Diagnostic agents are legitimately cancer-associated\n3. Novel biologics haven't been ATC-classified yet\n\nFor cancer, ATC coherence (L class) is NOT a useful signal because:\n- Many non-L drugs ARE cancer treatments (corticosteroids in protocols)\n- Diagnostic agents are correctly associated but not L class\n- Novel drugs lag in ATC classification\n\nRECOMMENDATION:\n- DO NOT demote non-L cancer predictions\n- Consider: add corticosteroids to \"cancer coherent\" list\n- Consider: filter diagnostic agents (V class for cancer) to separate tier\n- Current +0.8 pp gap is correct - both L and non-L are legitimate"
     }
   ],
   "completed": [
