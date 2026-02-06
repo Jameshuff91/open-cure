@@ -12213,6 +12213,39 @@
       ],
       "findings": "Hetionet disease-resembles edges CANNOT augment kNN neighborhoods.\n\nKEY RESULTS:\n1. Coverage: 33/312 holdout diseases (10.6%) \u2014 too sparse\n2. 80.8% of resembles neighbors already in kNN top-20 \u2014 no novelty\n3. Drug overlap: resembles 0.036 < kNN 0.045 \u2014 kNN finds BETTER drug-sharing neighbors\n4. Unique GT hits: only 4/33 diseases gain any new GT drugs from resembles\n5. Mean unique hits: 0.2 per disease \u2014 negligible\n6. Embedding sim: resembles 0.398 < kNN 0.476 \u2014 kNN already captures closer neighbors\n\nWHY: Node2Vec embeddings are trained ON the DRKG, which includes Hetionet resembles edges.\nThe embedding already incorporates this information. kNN top-20 is a SUPERSET of the\nresembles signal. Adding resembles neighbors just dilutes the better kNN neighbors.\n\nIMPLICATION: Curated disease similarity (Hetionet) is already captured by the embedding.\nAny augmentation must come from EXTERNAL knowledge not already in DRKG.",
       "result_metric": "80.8% resembles already in kNN. 0.2 unique GT hits/disease. No augmentation value."
+    },
+    {
+      "id": "h591",
+      "title": "LOW-Tier Success Pattern Analysis: Why Do Some LOW Predictions Hit GT?",
+      "status": "validated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "LOW tier has 15.5% holdout precision \u2014 meaning ~580 out of 3733 LOW predictions are correct. These are drugs that treat the disease but were demoted for valid reasons (wrong domain, low rank, etc.). Understanding WHAT makes a LOW prediction succeed could reveal systematic patterns for rescue or, more importantly, inform which LOW predictions are most worth manual expert review.",
+      "steps": [
+        "Load production predictions with tier assignments",
+        "Identify all LOW predictions that hit holdout GT across 5 seeds",
+        "Characterize successes: which tier_rules, categories, drug classes, kNN ranks succeed?",
+        "Compare successful LOW predictions vs failed LOW predictions (matched on tier_rule)",
+        "Identify top 3 patterns where LOW predictions systematically succeed"
+      ],
+      "findings": "LOW-tier success patterns comprehensively characterized.\n\nFULL-DATA GT HIT RATE: 20.0% (747/3733) \u2014 note full-data is inflated vs holdout 15.5%\n\nTOP TIER_RULE SUCCESS RATES:\n1. cancer_targeted_therapy: 39.0% (92/236) \u2014 checkpoint inhibitors, kinase inhibitors for cancer\n2. immunological_medium_demotion: 34.0% (18/53)\n3. hematological_corticosteroid_demotion: 29.4% (30/102) \u2014 CS for blood disorders\n4. broad_class_isolated: 27.5% (14/51)\n5. cardiovascular_medium_demotion: 26.9% (82/305)\n\nTOP CATEGORY \u00d7 RULE CROSS-TABS (n>=20):\n1. renal \u00d7 standard: 47.4% (18/38)\n2. cancer \u00d7 cancer_targeted_therapy: 39.0% (92/236)\n3. autoimmune \u00d7 LA_procedural: 36.8% (14/38)\n4. dermatological \u00d7 standard: 35.7% (35/98)\n5. immunological \u00d7 immunological_demotion: 34.0% (18/53)\n\nKEY FINDINGS:\n1. Known indications: 67.5% of LOW GT hits are known (504/747). Most successes are rediscoveries.\n2. Mechanism + Rank<=5: 39.0% (53/136) \u2014 at MEDIUM level. These are strong signals.\n3. Self-referentiality: GT hits have LOWER self-ref (47.3%) than misses (55.1%).\n4. antimicrobial_pathogen_mismatch: 3.1% \u2014 correctly demoted, validates h560 rule.\n\nACTIONABLE INSIGHTS:\n1. cancer_targeted_therapy 39% full-data but 12.6% holdout (h538) \u2014 demotion is correct but predictions are worth reviewing\n2. Mech + Rank<=5 in LOW could be flagged for manual review (53/136 = 39% hit rate)\n3. Renal standard LOW has unusually high success \u2014 worth investigating further\n\nNOTE: All numbers are FULL-DATA and will be inflated vs holdout. The h576 analysis already showed that none of these patterns survive holdout with sufficient n for promotion. This analysis is valuable for DELIVERABLE ANNOTATION, not tier changes.",
+      "result_metric": "cancer_targeted_therapy 39.0% full-data, Mech+Rank<=5 39.0%, known_indication 67.5% of hits"
+    },
+    {
+      "id": "h592",
+      "title": "Cross-Validated Disease-Level Precision: Proper Leave-One-Out Precision Estimates",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "rationale": "Current disease_holdout_precision is computed from 5 random seeds, but each seed holds out only 20% of diseases. A proper leave-one-out cross-validation would give more robust per-disease precision estimates for the deliverable. This would help collaborators assess which diseases to prioritize.",
+      "steps": [
+        "Design LOO-CV scheme: for each disease, hold it out and compute kNN predictions",
+        "Compute per-disease precision across all held-out instances",
+        "Compare LOO precision vs 5-seed holdout precision",
+        "If consistent, update deliverable with LOO-based disease confidence"
+      ]
     }
   ],
   "completed": [

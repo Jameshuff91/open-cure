@@ -104,14 +104,16 @@ This session systematically explored whether DRKG-derived signals can independen
 
 **The only partially independent signal is HPO phenotype similarity**, but at +0.9% incremental R², it's not actionable for tier changes.
 
+### h591: LOW-Tier Success Pattern Analysis — VALIDATED (characterization)
+
+Full-data analysis of which LOW predictions hit GT (20.0% = 747/3733).
+
+Top success patterns: cancer_targeted_therapy 39.0%, immunological demotion 34.0%, Mech+Rank<=5 39.0%. 67.5% of LOW GT hits are known indications. All demotion rules confirmed correct. Useful for deliverable annotation, not tier changes.
+
 ### Recommended Next Steps
 1. **h534**: TransE FILTER annotation for manual review (low effort)
 2. **h539**: Cancer drug class annotation (low effort, deliverable improvement)
 3. Consider pivoting to entirely external data (clinical guidelines, RWD, LINCS)
-
----
-
-## Previous Session: h571 - Therapeutic Island Rescue Analysis (2026-02-06)
 
 ---
 
