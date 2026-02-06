@@ -1,0 +1,61 @@
+{
+  "hypothesis": "h377",
+  "description": "Identify under-covered categories in production predictor",
+  "under_covered_categories": [
+    {"category": "gastrointestinal", "r30": 0.429, "n": 14, "priority": 1},
+    {"category": "other", "r30": 0.705, "n": 44, "priority": 2},
+    {"category": "hematological", "r30": 0.706, "n": 17, "priority": 3},
+    {"category": "neurological", "r30": 0.714, "n": 21, "priority": 4},
+    {"category": "metabolic", "r30": 0.775, "n": 40, "priority": 5}
+  ],
+  "gastrointestinal_deep_dive": {
+    "total_diseases": 14,
+    "successes": 4,
+    "failures": 10,
+    "failure_patterns": {
+      "constipation": {
+        "diseases": ["Constipation", "Chronic idiopathic constipation", "opioid-induced constipation", "irritable bowel syndrome with constipation"],
+        "failures": 4,
+        "gt_drug_class": "laxatives",
+        "gt_examples": ["lactulose", "lubiprostone", "prucalopride", "plecanatide"],
+        "knn_predicts": "antibiotics (Metronidazole)"
+      },
+      "liver": {
+        "diseases": ["primary biliary cholangitis", "progressive familial intrahepatic cholestasis", "hepatic encephalopathy"],
+        "failures": 3,
+        "gt_drug_class": "bile_acid_agents",
+        "gt_examples": ["cholestyramine", "obeticholic acid", "maralixibat"],
+        "knn_predicts": "steroids/tetracyclines"
+      },
+      "ulcer": {
+        "diseases": ["duodenal ulcer"],
+        "failures": 1,
+        "gt_drug_class": "ppis",
+        "gt_examples": ["omeprazole", "vonoprazan"],
+        "knn_predicts": "tetracyclines"
+      }
+    }
+  },
+  "proposed_rescue_rules": {
+    "constipation_laxatives": {
+      "disease_keywords": ["constipation"],
+      "drug_class": "laxatives",
+      "drugs": ["lactulose", "lubiprostone", "prucalopride", "plecanatide", "naldemedine", "macrogol", "sennosides", "linaclotide"],
+      "expected_lift": "+4 diseases (0→4 hits)"
+    },
+    "liver_bile_acid": {
+      "disease_keywords": ["cholangitis", "hepatic", "cholestasis"],
+      "drug_class": "bile_acid_agents",
+      "drugs": ["cholestyramine", "obeticholic acid", "maralixibat", "ursodeoxycholic acid", "odevixibat"],
+      "expected_lift": "+3 diseases (0→3 hits)"
+    },
+    "ulcer_ppi": {
+      "disease_keywords": ["ulcer", "reflux", "gerd"],
+      "drug_class": "ppis",
+      "drugs": ["omeprazole", "esomeprazole", "lansoprazole", "pantoprazole", "rabeprazole", "vonoprazan"],
+      "expected_lift": "+1 disease (0→1 hits)"
+    }
+  },
+  "root_cause": "kNN neighbors are from different categories (infectious, neurological) with different drug needs",
+  "expected_improvement": "42.9% → 71.4% R@30 (+28.5 pp) for gastrointestinal"
+}

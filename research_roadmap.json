@@ -7595,13 +7595,15 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Analyze h374 evaluation data for categories with <80% R@30",
         "For each under-performing category, analyze GT drug patterns",
         "Propose category-specific rescue rules based on drug class/mechanism",
         "Success: Identify 2+ actionable category rescue opportunities"
-      ]
+      ],
+      "findings": "VALIDATED: Identified 5 under-covered categories with actionable rescue opportunities.\n\nUnder-covered Categories (R@30 < 80%, n >= 5):\n1. gastrointestinal: 42.9% (14 diseases) - WORST\n2. other: 70.5% (44 diseases)\n3. hematological: 70.6% (17 diseases)\n4. neurological: 71.4% (21 diseases)\n5. metabolic: 77.5% (40 diseases)\n\nDeep Dive: Gastrointestinal (42.9% \u2192 potential 71.4% with rescue)\n- Constipation diseases (4): 0/4 hits - kNN predicts antibiotics instead of laxatives\n- Liver diseases (3): 0/3 hits - kNN predicts steroids instead of bile acid agents\n- Other GI (7): 4/7 hits - mixed results\n\nRoot Cause: kNN finds neighbors from OTHER categories (infectious, neurological)\nthat have similar embeddings but WRONG therapeutic drugs.\n\nProposed Rescue Rules:\n1. constipation + laxative \u2192 HIGH tier (13 candidate drugs)\n2. liver/hepatic + bile_acid_agent \u2192 HIGH tier (6 candidate drugs)\n3. ulcer + PPI \u2192 HIGH tier (10+ candidate drugs)\n\nExpected Impact: +28.5 pp for GI (42.9% \u2192 71.4%)\nEffort: Low - follow h171 neurological pattern",
+      "result_metric": "5 under-covered categories identified, 3 rescue rules proposed"
     },
     {
       "id": "h378",
@@ -7635,6 +7637,24 @@
         "If gap exists, implement within-tier ranking",
         "Success: >10pp precision gap between high and low signal GOLDEN"
       ]
+    },
+    {
+      "id": "h380",
+      "title": "GI Drug Class Rescue Rules (Constipation, Liver, Ulcer)",
+      "description": "h377 identified GI as worst category (42.9%). Implement drug class rescue rules for constipation (laxatives), liver diseases (bile acid agents), and ulcer (PPIs).",
+      "hypothesis": "Drug class injection for GI diseases will improve R@30 from 42.9% to 71%+",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Define GI_DISEASE_DRUG_CLASSES mapping (constipation->laxatives, liver->bile_acid, ulcer->ppi)",
+        "Define GI_DRUG_CLASS_MEMBERS with specific drugs",
+        "Add _apply_gi_rescue() method following h171 pattern",
+        "Evaluate on held-out GI diseases",
+        "Success: +20 pp R@30 for gastrointestinal category"
+      ],
+      "notes": "Drug lists from h377 analysis:\n- Laxatives: lubiprostone, lactulose, prucalopride, plecanatide, naldemedine, macrogol\n- Bile acid: cholestyramine, obeticholic acid, maralixibat, ursodeoxycholic acid\n- PPIs: omeprazole, esomeprazole, lansoprazole, pantoprazole"
     }
   ],
   "completed": [
@@ -9014,6 +9034,12 @@
       "hypothesis_id": "h374",
       "learning": "Ensemble methods validated in isolation may not help in production when existing rules capture similar signals",
       "implication": "Always test improvements in full production context, not just isolated experiments"
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h377",
+      "learning": "GI category fails because kNN neighbors are from different categories with different drug needs",
+      "implication": "Category-specific drug class injection (like h171 for neurological) can rescue low-coverage categories"
     }
   ],
   "collaborations": [

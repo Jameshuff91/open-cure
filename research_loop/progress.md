@@ -1,6 +1,60 @@
 # Research Loop Progress
 
-## Current Session: h374 (2026-02-05)
+## Current Session: h374, h377 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 2**
+- h374: Integrate MinRank Ensemble into Production Predictor - **INVALIDATED**
+- h377: Identify Under-Covered Categories in Production Predictor - **VALIDATED**
+
+### h377: Identify Under-Covered Categories - VALIDATED
+
+**Hypothesis:** Categories with R@30 < 80% may benefit from new rescue rules.
+
+**Under-Covered Categories Found (n >= 5):**
+| Category | R@30 | n | Priority |
+|----------|------|---|----------|
+| gastrointestinal | 42.9% | 14 | **WORST** |
+| other | 70.5% | 44 | 2 |
+| hematological | 70.6% | 17 | 3 |
+| neurological | 71.4% | 21 | 4 |
+| metabolic | 77.5% | 40 | 5 |
+
+**GI Deep Dive (42.9% R@30):**
+- Constipation diseases (4): 0/4 hits - kNN predicts antibiotics, GT is laxatives
+- Liver diseases (3): 0/3 hits - kNN predicts steroids, GT is bile acid agents
+- Ulcer (1): 0/1 hits - kNN predicts tetracyclines, GT is PPIs
+- Other GI (7): 4/7 hits
+
+**Root Cause:** kNN neighbors are from different categories (infectious, neurological) with different therapeutic needs.
+
+**Proposed Rescue Rules (h380):**
+1. `constipation + laxative → HIGH` (8 drugs: lactulose, lubiprostone, prucalopride...)
+2. `liver + bile_acid → HIGH` (5 drugs: cholestyramine, ursodeoxycholic acid...)
+3. `ulcer + ppi → HIGH` (6 drugs: omeprazole, esomeprazole...)
+
+**Expected Impact:** +28.5 pp for GI (42.9% → 71.4%)
+
+### New Hypotheses Generated
+- **h380:** GI Drug Class Rescue Rules (Constipation, Liver, Ulcer) - Priority 2
+
+### Cumulative Statistics
+| Status | Count |
+|--------|-------|
+| Validated | 236 |
+| Invalidated | 71 |
+| Inconclusive | 14 |
+| Blocked | 21 |
+| Deprioritized | 7 |
+| Pending | 29 |
+| **Total** | **378** |
+
+---
+
+## Previous Session: h374 (2026-02-05)
 
 ### Session Summary
 
