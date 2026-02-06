@@ -7234,7 +7234,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Compile all predictions with external validation (CT, FDA)",
@@ -7245,7 +7245,9 @@
       ],
       "dependencies": [
         "h245"
-      ]
+      ],
+      "findings": "Tier system is well-calibrated for relative ranking:\n\nKnown indication rate by tier:\n- HIGH: 15.0% (n=3,288)\n- MEDIUM: 7.2% (n=7,078)\n- LOW: 1.5% (n=3,050)\n\nOrdering is correct (HIGH > MEDIUM > LOW).\n\nExternal validation sample (n=4 from h245) too small for statistics:\n- HIGH: 50% (2/4)\n- MEDIUM: 25% (1/4)\n- LOW: 25% (1/4)\n\nKey finding: Landiolol (FDA-approved) was placed in LOW tier due to sparse\nDRKG connectivity (only 6 predictions). LOW tier may contain valid but\ndata-sparse drugs that appear \"weak\".",
+      "result_metric": "Tier ordering correct: HIGH(15%)>MEDIUM(7.2%)>LOW(1.5%)"
     },
     {
       "id": "h359",
@@ -7305,6 +7307,26 @@
       ],
       "dependencies": [
         "h359"
+      ]
+    },
+    {
+      "id": "h362",
+      "title": "Sparse Drug Rescue for Valid Low-Connectivity Drugs",
+      "description": "h358 found Landiolol (FDA-approved) was demoted to LOW due to sparse DRKG data. Could add a 'valid-but-sparse' detection to rescue these drugs.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: Identify drugs with <10 predictions but FDA approval",
+        "Step 2: Check if these are systematically under-tiered",
+        "Step 3: Design rescue rule based on external validation sources",
+        "Step 4: Implement if precision gain is significant",
+        "Success criteria: Rescue valid sparse drugs without losing precision"
+      ],
+      "dependencies": [
+        "h358"
       ]
     }
   ],
@@ -8637,6 +8659,12 @@
       "hypothesis_id": "h359",
       "learning": "DRKG coverage gap is 66.5% of GT drugs (1,574/2,367) missing. Gap is structural - DRKG vintage (~2020) misses newer drugs. Best coverage for established classes (statins 82%, ACE-i 78%), worst for newer classes (DPP4i 5.3%, SGLT2i 26.3%).",
       "implication": "Model limitations are primarily coverage, not algorithm. Consider manual rules for high-impact missing drug classes or DRKG update."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h358",
+      "learning": "Tier system is well-calibrated: HIGH(15% known) > MEDIUM(7.2%) > LOW(1.5%). However, LOW tier may contain valid drugs with sparse DRKG connectivity (e.g., Landiolol - FDA-approved but LOW tier due to only 6 predictions).",
+      "implication": "Consider sparse drug rescue mechanism. Don't dismiss LOW tier entirely."
     }
   ],
   "collaborations": [
