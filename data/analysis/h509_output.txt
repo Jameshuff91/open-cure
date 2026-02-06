@@ -1,0 +1,31 @@
+
+h509: CV Coronary Hierarchy Demotion - INVALIDATED (DO NOT DEMOTE)
+==================================================================
+
+OBJECTIVE: Should coronary hierarchy be demoted HIGH→MEDIUM based on h506's 35.1% holdout?
+
+ANALYSIS:
+- Coronary group: 5 diseases (MI, CAD, stable angina, unstable angina, ACS)
+- Only 2 generate hierarchy predictions: CAD (75%) and ACS (50%)
+- Expected holdout diseases per seed: 1.0 (n too small!)
+- Per-seed holdout: Seed 42=33.3% (ACS only), Seeds 123/456/789=0/0, Seed 2024=0/1
+- Mean holdout: 6.7% ± 13.3% (dominated by 3 empty seeds)
+
+FULL-DATA PRECISION: 65.6% (21/32) — WELL ABOVE MEDIUM average
+  - CAD: 15/20 = 75%
+  - ACS: 6/12 = 50%
+
+DECISION: DO NOT DEMOTE. Reasons:
+1. n≈1/seed → holdout unreliable (h494: min n≈30 for reliable holdout)
+2. Full-data 65.6% consistent with HIGH tier
+3. Encodes genuine medical knowledge (statins, antiplatelets, beta-blockers)
+4. Same conclusion as h432 (small rules = high precision) and h494 (min-n)
+
+Also confirmed: ALL CV hierarchy groups suffer from small-n:
+  - Arrhythmia: 3 diseases, 93.2% full-data
+  - Hypertension: 4 diseases, 86.5% full-data
+  - Coronary: 5 diseases, 65.6% full-data
+  - Atherosclerosis: 2 diseases, 83.3% full-data
+  - Heart failure: 2 diseases, 50.0% full-data
+
+None should be demoted — the holdout for ALL is unreliable.

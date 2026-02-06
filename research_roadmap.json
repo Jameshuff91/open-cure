@@ -10113,10 +10113,12 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "invalidated",
       "depends_on": [
         "h506"
-      ]
+      ],
+      "findings": "Coronary hierarchy should NOT be demoted. Only 5 diseases total (n\u22481/seed), holdout unreliable at 6.7% \u00b1 13.3%. Full-data precision 65.6% (21/32) consistent with HIGH tier. Same small-n conclusion as h432/h494. All CV hierarchy groups have too few diseases for reliable holdout.",
+      "result_metric": "Full-data 65.6%, holdout 6.7% \u00b1 13.3% (n too small)"
     },
     {
       "id": "h510",
@@ -11924,6 +11926,12 @@
       "hypothesis_id": "h492",
       "learning": "GT completeness audit: only 15/167 FDA-approved pairs missing across 20 major diseases. 14/15 not in model's top-30 predictions. GT incompleteness is NOT the precision bottleneck. Holdout baseline has drifted: GOLDEN 63.3% (not 67.0%), HIGH 51.5% (not 60.8%), MEDIUM 29.9% (not 32.1%) due to accumulated code changes since h478.",
       "implication": "Future GT expansion has diminishing returns for major categories. Model structural improvements (external data, HPO similarity, multi-graph) needed for further precision gains. CLAUDE.md holdout numbers need periodic re-validation after code changes."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h509",
+      "learning": "CV hierarchy groups are all too small for holdout validation (3-5 diseases each). Full-data precision is high (65-93%) confirming genuine medical knowledge. h506's 35.1% coronary holdout was from n\u22481 disease/seed.",
+      "implication": "Stop investigating individual hierarchy group demotions when group size < 10 diseases. Small hierarchy rules should be evaluated on full-data precision only."
     }
   ],
   "collaborations": [
