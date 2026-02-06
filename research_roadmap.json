@@ -4417,8 +4417,9 @@
         "Focus on: macular degeneration variants, hemophilia, cold agglutinin disease",
         "Re-run injection to capture these rules"
       ],
-      "status": "pending",
-      "priority": 4
+      "status": "deprioritized",
+      "priority": 4,
+      "findings": "h220 DEPRIORITIZED: Scope too large for current priority\n\nAnalysis showed:\n- 742 diseases still need mapping (not just 16 as h220 stated)\n- mondo_to_mesh.json already contains extensive mappings\n- The \"injection\" system is for neurological drug-class predictions, not MESH mappings\n\nThe problem is not MESH mapping but disease name matching between GT and DRKG.\nThis is a larger infrastructure task than originally scoped.\n\nRecommend: Keep current fuzzy matching approach, revisit if precision ceiling is hit."
     },
     {
       "id": "h221",
@@ -5103,7 +5104,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List therapeutic indications for methylene blue",
         "Check if any predictions match therapeutic use",
@@ -5112,7 +5113,9 @@
       ],
       "dependencies": [
         "h250"
-      ]
+      ],
+      "findings": "h256 VALIDATED: Keep methylene blue filter as-is\n\nANALYSIS:\n- Methylene blue has 4 GT indications: UTIs, methemoglobinemia (3 variants)\n- Current predictions: 3 (diabetic foot infections, duodenal ulcer, poisoning)\n- Precision: 0/3 = 0%\n\nTHERAPEUTIC USES:\n- Methemoglobinemia (FDA-approved antidote)\n- Ifosfamide-induced encephalopathy\n- Urinary tract infections (antiseptic)\n- Vasoplegic syndrome (off-label)\n\nPREDICTIONS ANALYSIS:\n- diabetic foot infections: PLAUSIBLE (antiseptic) but not in GT\n- duodenal ulcer: UNLIKELY (not standard use)\n- poisoning: SOMEWHAT PLAUSIBLE only if methemoglobinemia-specific\n\nDECISION: Keep current filter\n- 0% precision validates the filter\n- No GT hits among predictions\n- The filter appropriately excludes low-quality predictions",
+      "result_metric": "0% precision - filter is appropriate"
     },
     {
       "id": "h257",
