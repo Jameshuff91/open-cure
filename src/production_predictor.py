@@ -50,6 +50,9 @@ Unified pipeline integrating validated research findings:
   - vs 12.7% when classmates are also predicted for same disease
   - HIGH tier has 0% precision for isolated broad-class drugs → demote to LOW
   - 212 predictions affected, 4 hits (only MEDIUM tier, no HIGH hits lost)
+- h328: Class Cohesion Analysis - Added IL inhibitors to broad class list
+  - IL inhibitors have strongest cohesion effect: 3% alone vs 50% with classmates (+47 pp!)
+  - Additional 62 predictions affected (7.4% HIGH, 0% MEDIUM precision)
 
 USAGE:
     # Get predictions for a disease
@@ -406,15 +409,20 @@ LOCAL_ANESTHETICS = {'lidocaine', 'bupivacaine', 'ropivacaine', 'prilocaine',
                      'tetracaine', 'mepivacaine', 'articaine', 'levobupivacaine'}
 TNF_INHIBITORS = {'adalimumab', 'infliximab', 'etanercept', 'golimumab',
                   'certolizumab', 'certolizumab pegol'}
+# h328: IL inhibitors have 3% isolated vs 50% with classmates (+47 pp!)
+IL_INHIBITORS = {'tocilizumab', 'secukinumab', 'ixekizumab', 'ustekinumab', 'guselkumab',
+                 'risankizumab', 'tildrakizumab', 'anakinra', 'canakinumab', 'brodalumab'}
 
 # Broad therapeutic classes where ISOLATION = bad signal (1.9% precision overall)
 # These are classes that treat many conditions; if kNN only recommends ONE,
 # it's likely noise rather than a real signal.
+# h328: Added IL inhibitors (3% alone vs 50% with classmates)
 BROAD_THERAPEUTIC_CLASSES: Dict[str, Set[str]] = {
     'local_anesthetics': LOCAL_ANESTHETICS,
     'corticosteroids': CORTICOSTEROID_DRUGS,
     'tnf_inhibitors': TNF_INHIBITORS,
     'nsaids': NSAID_DRUGS,
+    'il_inhibitors': IL_INHIBITORS,  # h328: +47 pp cohesion effect
 }
 
 # h280/h281: Complication vs Subtype relationship mapping

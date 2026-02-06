@@ -6626,7 +6626,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Step 1: For each drug class (not just broad classes), calculate precision when 1, 2, 3+ classmates predicted",
         "Step 2: Identify classes where 2+ classmates = higher precision",
@@ -6636,7 +6636,10 @@
       "dependencies": [
         "h307",
         "h326"
-      ]
+      ],
+      "completed_date": "2026-02-05",
+      "findings": "h328 VALIDATED: Class cohesion analysis reveals demotion opportunities, NOT boosting.\n\nKEY FINDINGS:\nCohesion improvement (precision with 2+ classmates vs 0 classmates):\n| Class | 0 cm | 2+ cm | \u0394 |\n|-------|------|-------|---|\n| IL Inhibitors | 3% | 50% | +47 pp |\n| DMARDs | 6% | 33% | +27 pp |\n| TNF Inhibitors | 3% | 27% | +24 pp |\n| Corticosteroids | 0% | 13% | +13 pp |\n| Beta Blockers | 3% | 14% | +12 pp |\n| Fluoroquinolones | 6% | 14% | +8 pp |\n| Statins | 38% | 40% | +2 pp |\n| ACE Inhibitors | 4% | 4% | 0 pp |\n| ARBs | 3% | 0% | -3 pp |\n\nBOOST ANALYSIS:\nChecked if 2+ classmates warrants tier BOOST (MEDIUM\u2192HIGH):\n- Only 44 candidates (MEDIUM/LOW with 2+ classmates)\n- 9.1% precision - BELOW MEDIUM baseline (14.3%)\n- BOOST NOT WARRANTED - sample too small and precision too low\n\nDEMOTION EXTENSION:\nIL inhibitors isolation demotion (not yet in h326):\n- Isolated HIGH: 7.4% (2/27) - should be ~20%\n- Isolated MEDIUM: 0% (0/35) - should be ~14%\n- 62 predictions affected, 2 hits, 3.2% precision\n\nRECOMMENDATION:\n- Add IL_INHIBITORS to BROAD_THERAPEUTIC_CLASSES constant\n- This extends h326 demotion rule to cover isolated IL inhibitors\n- Expected: demote 62 predictions with 3.2% precision",
+      "result_metric": "Cohesion boost NOT warranted (9.1% < 14.3%); IL inhibitors demotion recommended (+62 predictions)"
     },
     {
       "id": "h329",

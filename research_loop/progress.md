@@ -1,26 +1,29 @@
 # Research Loop Progress
 
-## Current Session: h307, h326 (2026-02-05)
+## Current Session: h307, h326, h327, h328 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 3**
-- h307: Lidocaine-Specific Boosting Analysis - **VALIDATED** (discovered broader pattern)
+**Hypotheses Tested: 6**
+- h307: Lidocaine-Specific Boosting Analysis - **VALIDATED** (discovered broader class cohesion pattern)
 - h304: Lidocaine-Specific Pattern Analysis - **VALIDATED** (via h307)
 - h326: Broad Class Isolation Demotion Rule - **VALIDATED** (151 demoted, 0% HIGH tier cleaned)
+- h327: Statin Isolation Boost Analysis - **INCONCLUSIVE** (n=8 too small)
+- h196: Gene-Augmented Disease Similarity - **INVALIDATED** (prior findings h41/h124 definitive)
+- h328: Class Cohesion Boost Analysis - **VALIDATED** (cohesion=demotion signal, not boost; IL inhibitors added)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 195 |
-| Invalidated | 64 |
-| Inconclusive | 11 |
+| Validated | 197 |
+| Invalidated | 65 |
+| Inconclusive | 12 |
 | Blocked | 21 |
 | Deprioritized | 4 |
 | Pending | 33 |
-| **Total** | **328**
+| **Total** | **332**
 
 ### KEY SESSION FINDINGS
 
