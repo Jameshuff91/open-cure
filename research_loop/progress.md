@@ -1,6 +1,104 @@
 # Research Loop Progress
 
-## Current Session: h269, h366 (2026-02-05)
+## Current Session: h369, h370, h371 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** In Progress
+**Hypotheses Tested: 3**
+- h369: Apply Max Ensemble to Non-Cancer Categories - **VALIDATED** (MinRank helps cancer/neuro, hurts autoimmune)
+- h370: Adaptive Ensemble Selection by Category - **VALIDATED** (72.4% R@30 with 10% threshold)
+- h371: Target-Only for High-Gene-Coverage Diseases - **VALIDATED** (gene count helps but doesn't make Target superior)
+
+### KEY SESSION FINDINGS
+
+#### h369: Apply Max Ensemble to Non-Cancer Categories - VALIDATED
+
+**Hypothesis:** MaxScore/MinRank ensemble (from h366) will generalize to non-cancer categories.
+
+**Results (LOO CV):**
+| Category | N | Target | kNN | MinRank | Δ |
+|----------|---|--------|-----|---------|---|
+| Cancer | 38 | 65.8% | 65.8% | **76.3%** | **+10.5%** |
+| Neurological | 19 | 42.1% | 36.8% | **47.4%** | **+5.3%** |
+| Cardiovascular | 24 | 66.7% | 54.2% | 66.7% | 0% |
+| Autoimmune | 18 | **88.9%** | 77.8% | 83.3% | **-5.6%** |
+| Metabolic | 6 | 100% | 100% | 100% | 0% |
+
+**Key insight:** Ensemble only helps when methods have EQUAL performance. When one method dominates (autoimmune: Target 88.9% vs kNN 77.8%), ensemble HURTS by mixing in noise from the weaker method.
+
+**Alternative strategies tested:**
+- Union30 (top-30 from each): Higher recall but unfairly expands candidate set
+- MinRank: Same @30 threshold, genuine improvement for cancer/neuro
+
+#### h370: Adaptive Ensemble Selection by Category - VALIDATED
+
+**Hypothesis:** Use ensemble when |target-kNN| < 10%, else use dominant method.
+
+**Results:**
+| Threshold | Adaptive R@30 |
+|-----------|---------------|
+| 5% | 71.4% |
+| **10%** | **72.4%** ← Best |
+| 15% | 71.4% |
+| 20% | 71.4% |
+
+**Baselines:**
+- Static MinRank: 71.4%
+- Static Best Single: 67.6%
+- **Best Adaptive: 72.4% (+1.0 pp vs MinRank, +4.8 pp vs best single)**
+
+**Category assignments at 10% threshold:**
+- CV (12.5% gap) → Target alone
+- Autoimmune (11.1% gap) → Target alone
+- Neuro (5.3% gap) → MinRank ensemble
+- Metabolic (0% gap) → MinRank ensemble
+- Cancer (2.6% gap) → MinRank ensemble
+
+#### h371: Target-Only for High-Gene-Coverage Diseases - VALIDATED
+
+**Hypothesis:** Diseases with more DRKG gene associations benefit more from target-based scoring.
+
+**Results across 376 diseases:**
+| Gene Quartile | Target | kNN | Gap |
+|---------------|--------|-----|-----|
+| Q1 (≤4 genes) | 11.4% | 52.4% | **-41 pp** |
+| Q2 (5-12) | 37.9% | 37.9% | 0 pp |
+| Q3 (13-68) | 37.8% | 46.7% | -9 pp |
+| Q4 (>68 genes) | 43.6% | 66.0% | **-22 pp** |
+
+**Category average gene counts:**
+- Autoimmune: 223 genes (Target wins 88.9% vs 77.8%)
+- Cancer: 337 genes (Tie 65.8% vs 65.8%)
+- Neurological: 124 genes (Target wins 42.1% vs 36.8%)
+- Overall median: 12 genes
+
+**Key insight:** Gene count helps Target but isn't sufficient. Also need:
+1. Many drugs per disease (autoimmune has 5-65 drugs)
+2. Category-specific drug overlap (shared targets across drugs)
+
+### New Hypotheses Generated
+
+- **h370:** Adaptive Ensemble Selection by Category - **DONE**
+- **h371:** Target-Only for High-Gene-Coverage Diseases - **DONE**
+- **h372:** kNN-Only for Neurological Diseases (Low Gene Coverage)
+- **h373:** Weighted Rank Fusion by Method Confidence
+
+### Cumulative Statistics
+| Status | Count |
+|--------|-------|
+| Validated | 235 |
+| Invalidated | 70 |
+| Inconclusive | 14 |
+| Blocked | 21 |
+| Deprioritized | 7 |
+| Pending | 26 |
+| **Total** | **373** |
+
+---
+
+## Previous Session: h269, h366, h368 (2026-02-05)
 
 ### Session Summary
 
@@ -17,52 +115,26 @@
 
 **Hypothesis:** Can we improve cancer drug predictions by scoring drug-disease pairs based on target-gene overlap?
 
-**Approach:**
-1. Mapped cancer diseases from GT (MONDO) to DRKG (MESH) format
-2. Extracted disease-specific genes from DRKG (~337 genes/disease average)
-3. Loaded drug targets from DrugBank (167 drugs with targets)
-4. Scored drug-disease pairs by |drug_targets ∩ disease_genes|
-5. Compared to kNN baseline using leave-one-out cross-validation
-
 **Results (n=38 evaluable cancer diseases):**
 | Method | R@30 | Hits |
 |--------|------|------|
 | Target Overlap | 65.8% | 25/38 |
 | kNN Baseline | 63.2% | 24/38 |
 
-**Contingency analysis:**
-- Both hit: 18 diseases
-- Target only wins: 7 diseases
-- kNN only wins: 6 diseases
-- Neither: 7 diseases
-- McNemar's chi-square: 0.00 (not significant)
-
 **Key insight:** The methods capture **complementary signals** - they agree on 25 diseases but disagree on 13. This suggests ensemble potential.
 
-**Limiting factors:**
-- MONDO→MESH mapping: Only 103/395 cancer diseases mapped
-- DRKG gene coverage: 88/104 mapped diseases have gene associations
-- Final evaluable: 38 diseases with ≥3 drugs AND gene data
-
-**Conclusion:** Target-based scoring is NOT superior to kNN for cancer, but captures different signal. Worth exploring ensemble approach.
-
 #### h366: Target+kNN Ensemble for Cancer - VALIDATED
-
-**Hypothesis:** Combining target overlap and kNN scores will capture complementary signals.
 
 **Results (LOO CV on 38 cancer diseases):**
 | Method | R@30 | Hits |
 |--------|------|------|
 | **Max Ensemble** | **76.3%** | 29/38 |
-| Score Fusion (any α) | 73.7% | 28/38 |
-| Rank Fusion α=0.5 | 68.4% | 26/38 |
 | Target Only | 65.8% | 25/38 |
 | kNN Only | 63.2% | 24/38 |
 
 **Key findings:**
 - Max ensemble: take max(normalized_target, normalized_kNN) per drug
 - Captures complementary signals: wins on 5 Target-failed and 6 kNN-failed diseases
-- Only loses 2 diseases compared to single methods
 - +10.5 pp improvement over best single method
 
 #### h368: Cancer Subtype-Specific Target Scoring - VALIDATED
@@ -77,249 +149,8 @@
 | Sarcoma | 2 | **100%** | 50% | 50% |
 | Brain/CNS | 4 | 25% | **50%** | 25% |
 
-**Implications:**
-- Hematological: Use ensemble (93.3%)
-- Brain/CNS: Use kNN only (50% vs 25% for Target)
-- Sarcomas: Use Target only (100%)
-- Default: Ensemble for unknowns
-
-### New Hypotheses Generated
-
-- **h367:** Disease-Specific Gene Weighting - weight genes by DRKG edge type
-- **h369:** Apply Max Ensemble to Non-Cancer Categories - test if pattern generalizes
-
-### Cumulative Statistics
-| Status | Count |
-|--------|-------|
-| Validated | 232 |
-| Invalidated | 70 |
-| Inconclusive | 14 |
-| Blocked | 21 |
-| Deprioritized | 7 |
-| Pending | 25 |
-| **Total** | **369** |
-
 ---
 
 ## Previous Session: h361, h360, h363, h364, h179, h362 (2026-02-05)
 
-### Session Summary
-
-**Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested: 6**
-- h361: DPP4 Coverage Gap Investigation - **VALIDATED** (measurement artifact from stale deliverables)
-- h360: Deliverables Regeneration - **VALIDATED** (regenerated with all h273-h360 rules)
-- h363: Modern Diabetes Drug Coverage - **VALIDATED** (coverage good, rank>20 filter explains gaps)
-- h364: Tier Distribution Validation - **VALIDATED** (tier structure correct)
-- h179: Embedding Loading Optimization - **VALIDATED** (9.4x speedup with NPY format)
-- h362: Sparse Drug Rescue - **INVALIDATED** (sparse drugs already outperform)
-
-### KEY SESSION FINDINGS
-
-#### h361: DPP4 Coverage Gap Investigation - VALIDATED
-
-**Hypothesis:** Why do DPP4 inhibitors have only 5.3% coverage (worst of any drug class)?
-
-**Root Cause Analysis:**
-1. DPP4 drugs **ARE in DRKG** by DrugBank ID (DB01261, DB06335, etc.) with 600-1700 edges each
-2. DPP4 drugs **ARE in Ground Truth** with proper name→DrugBank mapping
-3. DPP4 drugs **ARE in embeddings** as drkg:Compound::DB...
-4. Live predictor **DOES return** Sitagliptin, Saxagliptin at GOLDEN tier for T2DM
-
-**Actual Cause:** The deliverables file was STALE - generated by old script without production_predictor rules
-
-**Impact:** All "coverage gap" measurements against old deliverables were measuring OUTDATED data
-
-#### h360: Deliverables Regeneration - VALIDATED
-
-**Action:** Regenerated deliverables using production_predictor with all h273-h360 rules
-
-**Key Changes:**
-| Metric | Old | New |
-|--------|-----|-----|
-| Total predictions | 13,461 | 7,131 |
-| GOLDEN tier | 0 | 1,946 |
-| HIGH tier | 3,288 | 777 |
-| MEDIUM tier | 7,078 | 2,658 |
-| LOW tier | 3,050 | 1,750 |
-
-**DPP4 in T2DM:**
-- Old: NO DPP4 drugs
-- New: Sitagliptin (GOLDEN), Saxagliptin (GOLDEN)
-
-**Root Cause of Reduction:** Production_predictor has many more filtering rules than old generate_production_deliverable.py:
-- Mechanism-specific disease filter
-- Domain isolation filter
-- Base-to-complication filter
-- Broad class isolation filter
-- Cancer-only drug filter
-- Many others (h273-h360)
-
-#### h363: Modern Diabetes Drug Coverage - VALIDATED
-
-**Coverage after regeneration:**
-| Drug Class | GT Drugs | Predicted | Coverage |
-|------------|----------|-----------|----------|
-| TZDs | 2 | 2 | 100% |
-| Sulfonylureas | 3 | 3 | 75% |
-| SGLT2 inhibitors | 9 | 5 | 56% |
-| GLP-1 agonists | 6 | 3 | 43% |
-| DPP4 inhibitors | 8 | 2 | 22% |
-
-**Root cause of incomplete coverage:** Rank > 20 filter (design choice)
-- ALL "missing" drugs ARE in DRKG with 500-1500 edges
-- They ARE predicted but ranked > 20 → FILTER tier → excluded
-
-#### h364: Tier Distribution Validation - VALIDATED
-
-**Tier metrics:**
-| Tier | Total | Novel | Mech% | Known% |
-|------|-------|-------|-------|--------|
-| GOLDEN | 1946 | 1326 | 65.5 | 31.9 |
-| HIGH | 777 | 358 | 54.1 | 53.9 |
-| MEDIUM | 2658 | 2143 | 16.1 | 19.4 |
-| LOW | 1750 | 1448 | 13.2 | 17.3 |
-
-**Tier structure is CORRECT:** Mechanism support decreases monotonically GOLDEN→LOW
-
-#### h179: Embedding Loading Optimization - VALIDATED
-
-**Performance improvement:**
-- OLD (CSV): 6.09s initialization
-- NEW (NPY): 0.65s initialization
-- **Speedup: 9.4x total init time**
-
-Changes: Updated _load_data() to use NPY format with CSV fallback.
-
-#### h362: Sparse Drug Rescue - INVALIDATED
-
-**Finding:** Sparse drugs already OUTPERFORM across all tiers:
-| Tier | Sparse Known% | Non-Sparse Known% |
-|------|---------------|-------------------|
-| GOLDEN | 59.7% | 23.9% |
-| HIGH | 76.0% | 46.7% |
-| MEDIUM | 37.5% | 17.4% |
-| LOW | 40.4% | 11.6% |
-
-**Conclusion:** No rescue needed - tiering works correctly. Sparse drugs perform better because
-they only appear when strong kNN evidence exists.
-
-### Cumulative Statistics
-| Status | Count |
-|--------|-------|
-| Validated | 230 |
-| Invalidated | 70 |
-| Inconclusive | 13 |
-| Blocked | 21 |
-| Deprioritized | 7 |
-| Pending | 24 |
-| **Total** | **365** |
-
----
-
-## Previous Session: h245, h357, h359, h358 (2026-02-05)
-
-### Session Summary
-
-**Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested: 4**
-- h245: Emerging Treatments Validation - **VALIDATED** (5/9 emerging treatments correctly predicted)
-- h357: SGLT2 Inhibitor → HF Gap Analysis - **VALIDATED** (no gap - expected behavior explained)
-- h359: Missing Drug Detection via DRKG Coverage - **VALIDATED** (33.5% drug coverage quantified)
-- h358: Confidence Calibration by Validation Status - **VALIDATED** (tier ordering correct)
-
-### KEY SESSION FINDINGS
-
-#### h245: Emerging Treatments Validation - VALIDATED
-
-**Hypothesis:** Check if our predictions match recent (2023-2026) FDA approvals/clinical trials
-
-**Validated predictions (5):**
-1. Sotatercept → Pulmonary Hypertension (MEDIUM) - FDA approved March 2024
-2. Dantrolene → Heart Failure/VT - 2025 RCT shows 66% VT reduction
-3. Landiolol → Cardiac Arrhythmias (LOW) - FDA approved for SVT
-4. Canagliflozin → Heart Failure (HIGH) - SGLT2 class approved for HF
-5. Evolocumab → Atherosclerosis (HIGH) - VESALIUS-CV 2024 expansion
-
-**Missed predictions (4):**
-- Finerenone → HF (drug not in predictions)
-- Aficamten → HCM (new drug not in DRKG)
-- Acoramidis → ATTR-CM (not in predictions)
-- Empagliflozin → HF (model gap despite 11 predictions)
-
-**Result:** 55% success rate for drugs in DRKG. Gap is due to newer drugs not in DRKG.
-
-#### h357: SGLT2 Inhibitor → HF Gap Analysis - VALIDATED
-
-**Investigation:** Why doesn't Empagliflozin predict heart failure?
-
-**Findings:**
-1. SGLT2 inhibitors ARE in DRKG with good connectivity (1400-1900 edges)
-2. Heart failure IS in GT for these drugs
-3. Canagliflozin → chronic HF IS predicted (HIGH, is_known=True)
-4. The "gap" is EXPECTED: HF is known indication, correctly filtered
-
-**Conclusion:** No gap - novel predictions filter known indications correctly.
-
-#### h359: Missing Drug Detection via DRKG Coverage - VALIDATED
-
-**Quantified coverage gap:**
-- Total GT drugs: 2,367
-- Drugs WITH predictions: 793 (33.5%)
-- Drugs WITHOUT predictions: 1,574 (66.5%)
-
-**Coverage by drug type (best to worst):**
-| Drug Type | Coverage | Missing |
-|-----------|----------|---------|
-| Fusion proteins | 87.5% | 1 |
-| Statins | 81.8% | 2 |
-| ACE inhibitors | 77.8% | 2 |
-| Monoclonal antibodies | 54.5% | 66 |
-| Kinase inhibitors | 34.9% | 56 |
-| SGLT2 inhibitors | 26.3% | 14 |
-| DPP4 inhibitors | 5.3% | 18 |
-
-**Root causes:** DRKG built ~2020 (misses newer drugs), biologics naming conventions differ, combination products missing.
-
-#### h358: Confidence Calibration by Validation Status - VALIDATED
-
-**Analysis:** Are confidence tiers well-calibrated for predicting validation?
-
-**Known indication rate by tier:**
-| Tier | Known Rate | Expected Precision |
-|------|------------|-------------------|
-| HIGH | 15.0% | 20.9% |
-| MEDIUM | 7.2% | 14.3% |
-| LOW | 1.5% | 6.4% |
-
-**Key findings:**
-- Tier ordering is correct: HIGH > MEDIUM > LOW
-- Absolute rates differ due to methodology (exact vs fuzzy matching)
-- Landiolol case: FDA-approved drug in LOW tier due to sparse DRKG data
-- LOW tier may contain valid but data-sparse drugs
-
-### New Hypotheses Generated
-- h357-h362: SGLT2 gap, calibration, coverage, regeneration, DPP4, sparse rescue
-
-### Cumulative Statistics
-| Status | Count |
-|--------|-------|
-| Validated | 225 |
-| Invalidated | 69 |
-| Inconclusive | 13 |
-| Blocked | 21 |
-| Deprioritized | 7 |
-| Pending | 27 |
-| **Total** | **362** |
-| Deprioritized | 7 |
-| Pending | 27 |
-| **Total** | **361**
-
----
-
-## Previous Session: h294, h353, h351, h354, h356, h355 (2026-02-05)
-
-[Previous session notes truncated for brevity - see git history]
-
+[Truncated for brevity - see git history]

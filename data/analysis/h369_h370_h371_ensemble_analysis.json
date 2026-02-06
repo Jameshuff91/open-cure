@@ -1,0 +1,55 @@
+{
+  "hypothesis": "h369 + h370 + h371",
+  "date": "2026-02-05",
+  "h369_multicategory_ensemble": {
+    "finding": "MinRank ensemble helps cancer (+10.5pp) and neuro (+5.3pp) but hurts autoimmune (-5.6pp)",
+    "categories": {
+      "cardiovascular": {
+        "n": 24,
+        "target": 0.667,
+        "knn": 0.542,
+        "minrank": 0.667
+      },
+      "autoimmune": {
+        "n": 18,
+        "target": 0.889,
+        "knn": 0.778,
+        "minrank": 0.833
+      },
+      "neurological": {
+        "n": 19,
+        "target": 0.421,
+        "knn": 0.368,
+        "minrank": 0.474
+      },
+      "metabolic": {
+        "n": 6,
+        "target": 1.0,
+        "knn": 1.0,
+        "minrank": 1.0
+      },
+      "cancer": {
+        "n": 38,
+        "target": 0.658,
+        "knn": 0.658,
+        "minrank": 0.763
+      }
+    },
+    "conclusion": "Ensemble only helps when methods have equal performance"
+  },
+  "h370_adaptive_selection": {
+    "finding": "10% threshold achieves 72.4% R@30 (+1.0pp vs MinRank, +4.8pp vs best single)",
+    "rule": "If |target-kNN| >= 10%, use dominant method; else use MinRank ensemble"
+  },
+  "h371_gene_coverage": {
+    "finding": "Gene count helps Target but doesn't make it superior to kNN overall",
+    "stats": {
+      "low_gene_gap": -0.224,
+      "high_gene_gap": -0.158,
+      "autoimmune_avg_genes": 223,
+      "cancer_avg_genes": 337,
+      "neuro_avg_genes": 124,
+      "overall_median_genes": 12
+    }
+  }
+}

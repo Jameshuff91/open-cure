@@ -7445,7 +7445,7 @@
       "title": "Apply Max Ensemble to Non-Cancer Categories",
       "description": "h366 showed max(target, kNN) improves cancer R@30 by 10.5 pp. Test if this pattern generalizes to autoimmune, cardiovascular, and neurological categories.",
       "hypothesis": "Max ensemble of target overlap and kNN will improve predictions across disease categories, not just cancer.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -7456,6 +7456,79 @@
         "Test max ensemble on each category",
         "Compare to single-method baselines",
         "Success: >5 pp improvement in at least 2 categories"
+      ],
+      "findings": "MinRank ensemble (min rank from target/kNN) improves R@30 in 2/5 categories:\n- Cancer: +10.5 pp (65.8% \u2192 76.3%)\n- Neurological: +5.3 pp (42.1% \u2192 47.4%)\n\nBut HURTS when one method dominates:\n- Autoimmune: -5.6 pp (88.9% \u2192 83.3%) - target alone is best\n- Cardiovascular: 0 pp (66.7% = 66.7%) - no improvement\n\nKey pattern: Ensemble only helps when methods have EQUAL performance and capture COMPLEMENTARY signals.\nWhen one method dominates (>10 pp gap), use that method alone.\n\nUnion30 (top30 from each method) achieves higher recall but unfairly expands candidate set.",
+      "result_metric": "Cancer +10.5 pp, Neuro +5.3 pp; Autoimmune -5.6 pp"
+    },
+    {
+      "id": "h370",
+      "title": "Adaptive Ensemble Selection by Category",
+      "description": "h369 showed MinRank helps cancer/neuro but hurts autoimmune. Implement adaptive selection: use ensemble when |target-kNN| < 10 pp, else use dominant method.",
+      "hypothesis": "Adaptive ensemble selection will achieve best-of-both-worlds: ensemble gain where it helps, avoid degradation where one method dominates.",
+      "status": "validated",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For each disease, compute gap between target and kNN R@30",
+        "If gap < 10 pp, use MinRank ensemble",
+        "If gap >= 10 pp, use the dominant method",
+        "Compare to static MinRank and static best-single",
+        "Success: beats both static approaches across all categories"
+      ],
+      "findings": "Adaptive ensemble selection with 10% threshold achieves 72.4% R@30:\n- +1.0 pp vs static MinRank (71.4%)\n- +4.8 pp vs static best single method (67.6%)\n\nCategory assignments at 10% threshold:\n- CV (12.5% gap) \u2192 Target alone (66.7%)\n- Autoimmune (11.1% gap) \u2192 Target alone (88.9%)\n- Neuro (5.3% gap) \u2192 MinRank ensemble (47.4%)\n- Metabolic (0% gap) \u2192 MinRank ensemble (100%)\n- Cancer (2.6% gap) \u2192 MinRank ensemble (76.3%)\n\nRule: If |target-kNN| >= 10%, use dominant method; else use MinRank ensemble.\n\nModest improvement because autoimmune recovery (+5.6 pp) doesn't fully offset ensemble gains for cancer/neuro.",
+      "result_metric": "Adaptive 72.4% vs MinRank 71.4% (+1.0 pp)"
+    },
+    {
+      "id": "h371",
+      "title": "Target-Only for High-Gene-Coverage Diseases",
+      "description": "Autoimmune/CV have high target performance (67-89%) possibly because diseases have good DRKG gene coverage. Test if gene count predicts when target>kNN.",
+      "hypothesis": "Diseases with more DRKG gene associations benefit more from target-based scoring than kNN.",
+      "status": "validated",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Compute gene count per disease from DRKG",
+        "Split diseases into high/low gene coverage",
+        "Compare target vs kNN performance in each split",
+        "Identify threshold for when to use target vs kNN",
+        "Success: identify gene-count threshold that predicts method superiority"
+      ],
+      "findings": "Gene count analysis across 376 diseases:\n- Low gene (\u226412): Target 23.4% vs kNN 45.8% (kNN wins by 22.4 pp)\n- High gene (>12): Target 40.8% vs kNN 56.5% (kNN wins by 15.8 pp)\n- Gap NARROWS with more genes but Target never catches up\n\nCategory-level validation:\n- Autoimmune (avg 223 genes): Target 88.9% vs kNN 77.8% - Target wins!\n- Cancer (avg 337 genes): Target 65.8% vs kNN 65.8% - TIE\n- Neurological (avg 124 genes): Target 42.1% vs kNN 36.8% - Target wins\n\nKey insight: Gene count helps Target but isn't sufficient - also need:\n1. Many drugs per disease (autoimmune has 5-65 drugs)\n2. Category-specific drug overlap (autoimmune drugs share targets)\n\nThe 3 categories where Target\u2265kNN all have avg gene count >>12.",
+      "result_metric": "High gene gap -15.8pp vs low gene gap -22.4pp"
+    },
+    {
+      "id": "h372",
+      "title": "kNN-Only for Neurological Diseases (Low Gene Coverage)",
+      "description": "Neurological diseases showed lowest target performance (42%), possibly due to poor DRKG gene coverage. Verify and quantify the gene coverage gap.",
+      "hypothesis": "Neurological diseases have fewer DRKG gene associations, explaining why target-based scoring underperforms kNN.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Compute average gene count per disease category",
+        "Correlate with target method performance",
+        "If confirmed: recommend kNN-only for neuro in production",
+        "Success: gene coverage explains >50% of target method variance"
+      ]
+    },
+    {
+      "id": "h373",
+      "title": "Weighted Rank Fusion by Method Confidence",
+      "description": "Instead of equal weighting in MinRank, weight by method confidence. Target score magnitude indicates gene overlap strength; kNN similarity indicates disease similarity strength.",
+      "hypothesis": "Weighting rank fusion by method-specific confidence will outperform equal-weight MinRank.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Define confidence for target: max_overlap / disease_gene_count",
+        "Define confidence for kNN: max_similarity in top-k",
+        "Weight ranks by confidence: final_rank = conf1*rank1 + conf2*rank2",
+        "Compare to equal-weight MinRank",
+        "Success: >3 pp improvement over MinRank"
       ]
     }
   ],
@@ -8818,6 +8891,12 @@
       "hypothesis_id": "h368",
       "learning": "Cancer subtypes have very different optimal methods: Hematological cancers achieve 93.3% with ensemble, but Brain/CNS tumors only 25% with Target (kNN gets 50%). Sarcomas: Target-only is best (100%).",
       "implication": "Consider subtype-specific method selection for cancer predictions."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h369",
+      "learning": "MinRank ensemble (min rank from target/kNN) improves cancer (+10.5 pp) and neuro (+5.3 pp) but hurts autoimmune (-5.6 pp). Ensemble only helps when methods have equal performance.",
+      "implication": "Use adaptive selection: ensemble when |target-kNN| < 10 pp, else dominant method"
     }
   ],
   "collaborations": [

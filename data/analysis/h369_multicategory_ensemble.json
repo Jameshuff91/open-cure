@@ -1,0 +1,46 @@
+{
+  "hypothesis": "h369",
+  "description": "Max ensemble generalization to non-cancer categories",
+  "results": {
+    "cardiovascular": {
+      "n_diseases": 24,
+      "target_recall": 0.667,
+      "knn_recall": 0.542,
+      "max_recall": 0.625,
+      "improvement": -0.042
+    },
+    "autoimmune": {
+      "n_diseases": 18,
+      "target_recall": 0.889,
+      "knn_recall": 0.778,
+      "max_recall": 0.833,
+      "improvement": -0.056
+    },
+    "neurological": {
+      "n_diseases": 20,
+      "target_recall": 0.4,
+      "knn_recall": 0.35,
+      "max_recall": 0.45,
+      "improvement": 0.05
+    },
+    "metabolic": {
+      "n_diseases": 6,
+      "target_recall": 1.0,
+      "knn_recall": 1.0,
+      "max_recall": 1.0,
+      "improvement": 0.0
+    },
+    "cancer": {
+      "n_diseases": 38,
+      "target_recall": 0.658,
+      "knn_recall": 0.658,
+      "max_recall": 0.737,
+      "improvement": 0.079
+    }
+  },
+  "summary": {
+    "categories_improved_5pp": 1,
+    "total_categories": 5,
+    "average_improvement": 0.006
+  }
+}
