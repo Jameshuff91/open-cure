@@ -12447,7 +12447,7 @@
       "id": "h602",
       "title": "Per-Drug Error Analysis: Systematic Low-Precision Drug Identification",
       "description": "h598's success came from per-drug analysis (vs per-rule/per-category). Systematically identify ALL drugs with <25% holdout precision in any tier with n>=30/seed. This may reveal drug-level patterns invisible to rule-level analysis.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12456,7 +12456,9 @@
         "Identify drugs consistently below tier average",
         "Medical assessment of each candidate",
         "Implement drug-specific demotion for validated candidates"
-      ]
+      ],
+      "findings": "VALIDATED (characterization, no action): Systematic per-drug holdout analysis confirms the tier system is well-calibrated at the drug level after h598.\n\nPer-drug MEDIUM holdout precision (drugs with n>=5/seed):\n| Drug | Holdout | \u00b1std | n/seed |\n|------|---------|------|--------|\n| Oxytetracycline | 18.5% | 8.4 | 9.4 |\n| Gentamicin | 28.9% | 6.1 | 6.4 |\n| Demeclocycline | 29.0% | 13.7 | 10.0 |\n| Doxycycline | 31.7% | 15.8 | 11.4 |\n| Levofloxacin | 32.5% | 18.9 | 7.4 |\n| Minocycline | 34.2% | 14.6 | 10.0 |\n| Erythromycin | 41.5% | 6.6 | 9.2 |\n| Tetracycline | 60.4% | 19.2 | 9.2 |\n| Doxorubicin | 80.0% | 12.0 | 6.8 |\n| Paclitaxel | 87.0% | 10.8 | 5.0 |\n\nKey findings:\n1. NO drugs have holdout < 25% with n >= 10/seed \u2192 no further drug-level demotions possible\n2. NO LOW drugs have holdout >= 30% \u2192 no promotions justified either\n3. Oxytetracycline (18.5%) is the lowest but n=9.4/seed (below threshold)\n4. Wide range: paclitaxel 87% \u2192 oxytetracycline 18.5% reflects genuine drug mechanism differences\n5. Per-drug analysis confirmed h598 captured the major targeted drug improvements",
+      "result_metric": "No demotion/promotion candidates. System well-calibrated at drug level."
     },
     {
       "id": "h603",

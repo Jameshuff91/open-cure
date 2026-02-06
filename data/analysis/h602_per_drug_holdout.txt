@@ -1,0 +1,44 @@
+Loading predictor...
+
+SEED 42 (1/5)
+
+SEED 123 (2/5)
+
+SEED 456 (3/5)
+
+SEED 789 (4/5)
+
+SEED 2024 (5/5)
+
+======================================================================
+MEDIUM TIER: Per-Drug Holdout Precision (mean across 5 seeds)
+======================================================================
+(Only drugs with mean n >= 5/seed shown)
+
+Drug                              Holdout      ±   n/seed    Total
+----------------------------------------------------------------------
+  Oxytetracycline                  18.5%   8.4     9.4      47
+  Gentamicin                       28.9%   6.1     6.4      32
+  Demeclocycline                   29.0%  13.7    10.0      50
+  Doxycycline                      31.7%  15.8    11.4      57
+  Levofloxacin                     32.5%  18.9     7.4      37
+  Minocycline                      34.2%  14.6    10.0      50
+  Bupivacaine                      36.9%  13.6     6.6      33
+  Erythromycin                     41.5%   6.6     9.2      46
+  Methotrexate                     48.2%  24.4     6.2      31
+  Tetracycline                     60.4%  19.2     9.2      46
+  Amphotericin B                   65.3%   9.5     5.8      29
+  Lidocaine                        65.8%  13.8     8.2      41
+  Bleomycin                        67.5%  26.7     5.0      25
+  Doxorubicin                      80.0%  12.0     6.8      34
+  Paclitaxel                       87.0%  10.8     5.0      25
+
+=== CANDIDATES FOR DEMOTION (holdout < 25%, n >= 10/seed) ===
+  None found! All drugs with sufficient n are at MEDIUM level.
+
+======================================================================
+LOW TIER: Per-Drug Holdout Precision (mean across 5 seeds)
+======================================================================
+(Only drugs with mean n >= 10/seed and precision >= 30% shown)
+
+  None found — no LOW drugs have holdout >= 30%
