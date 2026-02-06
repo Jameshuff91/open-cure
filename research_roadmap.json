@@ -7806,7 +7806,7 @@
       "title": "Rescued Disease Analysis: What Makes Diseases Ensemble-Rescuable?",
       "description": "h381 identified 11 diseases rescued by ensemble (osteoporosis, thalassemia, neurofibromatosis, etc). Analyze what they share - likely: diseases where kNN misses because neighbors are dissimilar but target overlap is strong. This could inform new tier rules.",
       "hypothesis": "Rescued diseases have low kNN neighbor similarity but high target overlap for GT drugs, suggesting a complementary signal pathway.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -7816,7 +7816,9 @@
         "Identify distinguishing features of rescuable diseases",
         "If pattern found, design tier rule to capture it",
         "Success: identify actionable pattern for 5+ diseases"
-      ]
+      ],
+      "findings": "h389 is MOOT because the premise no longer applies in production context.\n\nFull-data: 99.6% of diseases (453/455) have at least one GT drug in kNN top-30.\nOnly 2 diseases are missed entirely (bronchopulmonary dysplasia GT=1, familial chylomicronemia GT=1).\nZero diseases are target-overlap-rescuable (no missed diseases have GT drugs with overlap>=1).\n\nThe h381 \"rescued diseases\" were measured in LOO evaluation (where the test disease is removed from training). In that context, some diseases lose GT drugs from top-30. But h381 ALSO showed that the ensemble HURTS in production context (-2.7pp) because tier rules already capture the target overlap signal.\n\nSince ensemble rescue is irrelevant in production, analyzing what makes diseases rescuable has no actionable implication.",
+      "result_metric": "99.6% diseases already have GT in top-30 on full-data. 0 diseases overlap-rescuable. Premise is moot."
     },
     {
       "id": "h390",
