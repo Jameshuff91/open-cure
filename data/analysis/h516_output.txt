@@ -1,0 +1,16 @@
+h516: Expand SOC Drug Class Mappings - INVALIDATED
+
+All 7 proposed expansions have 0% precision:
+  tetracyclines → infectious/dermatological: 0/248 = 0%
+  macrolides → infectious/respiratory: 0/129 = 0%
+  cephalosporins → infectious: 0/119 = 0%
+  antifungals → infectious: 0/116 = 0%
+  local_anesthetics → dermatological/ophthalmic: 0/38 = 0%
+  corticotropin → autoimmune/neuro/derm/opth: 0/37 = 0%
+  methotrexate → cancer: 0/36 = 0%
+
+INSIGHT: Current 17 SOC classes are well-calibrated. These drugs ARE used
+in their predicted categories but kNN doesn't predict them for specific
+diseases where they have GT entries. The SOC classification captures
+GT gaps in BROAD drug classes (corticosteroids, statins) that work 
+across many diseases in a category, NOT drug-disease-specific matches.

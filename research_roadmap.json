@@ -10232,10 +10232,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "invalidated",
       "depends_on": [
         "h481"
-      ]
+      ],
+      "findings": "All 7 proposed new SOC classes (tetracyclines, macrolides, cephalosporins, antifungals, local anesthetics, corticotropin, methotrexate\u2192cancer) have 0% precision. Adding 723 predictions as LIKELY_GT_GAP would dilute the signal. The current 17 classes are well-calibrated. Tetracyclines\u2192infectious has 0/248 precision despite being a valid drug-category match, because kNN doesn't predict them for the specific diseases where they have GT entries.",
+      "result_metric": "0% precision for all 7 proposed expansions"
     },
     {
       "id": "h517",
