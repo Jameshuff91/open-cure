@@ -2312,7 +2312,9 @@ class DrugRepurposingPredictor:
         # h309/h310: ATC coherence boost for LOW tier predictions
         # Coherent predictions have 35.5% precision vs 18.7% for incoherent
         # Boost coherent LOW→MEDIUM when drug has good rank and some support
-        if drug_name and category and self._is_atc_coherent(drug_name, category):
+        # h395: Exclude metabolic (4.3%) and neurological (10.8%) — below MEDIUM avg
+        ATC_COHERENT_EXCLUDED = {'metabolic', 'neurological'}
+        if drug_name and category and category not in ATC_COHERENT_EXCLUDED and self._is_atc_coherent(drug_name, category):
             # Only boost if there's some additional evidence
             if rank <= 10 and (mechanism_support or train_frequency >= 3):
                 return ConfidenceTier.MEDIUM, True, f'atc_coherent_{category}'
@@ -2421,9 +2423,10 @@ class DrugRepurposingPredictor:
                 if any(st in drug_lower for st in STATIN_DRUGS):
                     return ConfidenceTier.HIGH
 
-            # h136 generic rescue
+            # h136/h395: Generic CV rescue → MEDIUM (was HIGH)
+            # h395 found 26.5% precision (n=34) vs HIGH avg 47.1%
             if rank <= 5 and mechanism_support:
-                return ConfidenceTier.HIGH  # 38.2% precision
+                return ConfidenceTier.MEDIUM  # h395: demoted from HIGH (26.5% precision)
             # h154/h266: Beta-blockers achieve 42.1% precision at rank<=10
             # h266 found extending from rank<=5 to rank<=10 captures more predictions
             if rank <= 10 and any(bb in drug_lower for bb in BETA_BLOCKERS):
@@ -2436,19 +2439,23 @@ class DrugRepurposingPredictor:
             if any(fq in drug_lower for fq in FLUOROQUINOLONE_DRUGS):
                 return ConfidenceTier.HIGH  # 44.4% precision (h265/h163)
 
+            # h395: Respiratory generic rescue → MEDIUM (was HIGH)
+            # h395 found 14.3% precision (n=21) vs HIGH avg 47.1%
             if rank <= 10 and train_frequency >= 15 and mechanism_support:
-                return ConfidenceTier.HIGH  # 35.0% precision
+                return ConfidenceTier.MEDIUM  # h395: demoted from HIGH (14.3% precision)
 
         elif category == 'metabolic':
             drug_lower = drug_name.lower()
 
-            # h265: Thiazolidinediones achieve 66.7% precision for metabolic (GOLDEN)
+            # h265/h395: TZDs for metabolic → MEDIUM (was GOLDEN)
+            # h395 found 6.9% precision — TZDs only work for diabetes, not thyroid/rare metabolic
             if any(tzd in drug_lower for tzd in THIAZOLIDINEDIONES):
-                return ConfidenceTier.GOLDEN  # 66.7% precision (h265/h163)
+                return ConfidenceTier.MEDIUM  # h395: demoted from GOLDEN (6.9% overall)
 
-            # h144: Statin drugs achieve 60% precision for metabolic diseases
+            # h144/h395: Statins for metabolic → MEDIUM (was GOLDEN)
+            # h395 found 6.9% overall — statins get boosted for non-lipid metabolic diseases
             if rank <= 10 and any(statin in drug_lower for statin in STATIN_DRUGS):
-                return ConfidenceTier.GOLDEN  # 60.0% precision
+                return ConfidenceTier.MEDIUM  # h395: demoted from GOLDEN (6.9% overall)
 
         elif category == 'cancer':
             # h150/h274: Drug class rescue for cancer
@@ -2488,10 +2495,10 @@ class DrugRepurposingPredictor:
             if rank <= 10 and any(alk in drug_lower for alk in ALKYLATING_DRUGS):
                 return ConfidenceTier.HIGH  # 36.4% precision
 
-            # h274: Cross-type cancer drugs (has cancer GT but different type)
-            # 30.6% precision - give them MEDIUM tier (don't FILTER them)
-            # They're not subtype refinements, but they're still valid cancer drug predictions
-            return ConfidenceTier.MEDIUM  # Cross-type repurposing: 30.6% precision
+            # h274/h395: Cross-type cancer drugs (has cancer GT but different type)
+            # h395 found 0.9% precision (n=349) — much lower than MEDIUM avg 21.2%
+            # Original h274 measured 30.6% but that was before other tier rules reduced the pool
+            return ConfidenceTier.LOW  # h395: demoted from MEDIUM (0.9% precision)
 
         elif category == 'ophthalmic':
             # h150: Drug class rescue for ophthalmic (62.5%/48% precision)
@@ -2508,11 +2515,12 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.GOLDEN  # 63.6% precision
 
         elif category == 'hematological':
-            # h150: Corticosteroids achieve 48.6% precision for hematological diseases
-            # NOTE: Mechanism support NOT required - works through immunosuppression
+            # h150/h395: Corticosteroids for hematological → MEDIUM (was HIGH)
+            # h395 found 19.1% precision (n=94) vs HIGH avg 47.1%
+            # The h150 precision (48.6%) was before other tier rules reduced the pool
             drug_lower = drug_name.lower()
             if rank <= 10 and any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
-                return ConfidenceTier.HIGH  # 48.6% precision
+                return ConfidenceTier.MEDIUM  # h395: demoted from HIGH (19.1% precision)
 
         elif category == 'autoimmune':
             drug_lower = drug_name.lower()
@@ -2758,8 +2766,11 @@ class DrugRepurposingPredictor:
                 drug_id=drug_id,
             )
 
-            # Class-matched neurological drugs get at least MEDIUM tier
-            # (they have strong class-based evidence even if kNN didn't find them)
+            # h395: Cap class-injected drugs at MEDIUM (was HIGH+)
+            # h395 found 0% precision for class_injected at HIGH tier
+            # Class-matched drugs get at most MEDIUM tier (26.1% precision at MEDIUM)
+            if tier in [ConfidenceTier.GOLDEN, ConfidenceTier.HIGH]:
+                tier = ConfidenceTier.MEDIUM
             if tier in [ConfidenceTier.LOW, ConfidenceTier.FILTER]:
                 tier = ConfidenceTier.MEDIUM
 
@@ -2905,8 +2916,10 @@ class DrugRepurposingPredictor:
                 drug_id=drug_id,
             )
 
-            # GI class-matched drugs get at least MEDIUM tier
-            # (they have strong class-based evidence even if kNN didn't find them)
+            # h395: Cap GI class-injected drugs at MEDIUM (was HIGH+)
+            # h395 found 0% precision for gi_class_injected at HIGH tier
+            if tier in [ConfidenceTier.GOLDEN, ConfidenceTier.HIGH]:
+                tier = ConfidenceTier.MEDIUM
             if tier in [ConfidenceTier.LOW, ConfidenceTier.FILTER]:
                 tier = ConfidenceTier.MEDIUM
 

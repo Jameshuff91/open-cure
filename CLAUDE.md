@@ -145,21 +145,23 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h111, h106, h378, h387, h388)
+### Confidence System Summary (h135, h111, h106, h378, h387, h388, h395)
 
 **Tier System (updated 2026-02-05):**
-- GOLDEN: 40.6% (was 38.4% before h388 target overlap promotion)
-- HIGH: 49.3%
-- MEDIUM: 21.3% (was 19.8% before h388)
-- LOW: 14.1%
+- GOLDEN: 42.2% (was 38.4% → 41.7% after h388 → +0.5pp after h395)
+- HIGH: 55.0% (was 47.1% → +7.9pp after h395 demotions)
+- MEDIUM: 22.5% (was 19.8% → 21.2% after h388 → +1.3pp after h395)
+- LOW: 12.5%
 - FILTER: 18.1%
 
-**h388:** Target overlap tier promotion: HIGH+overlap≥3→GOLDEN, LOW+overlap≥1→MEDIUM
+**h395:** Demoted 7 below-tier rules: metabolic GOLDEN→MEDIUM, cancer cross-type MEDIUM→LOW, hematological/CV/respiratory HIGH→MEDIUM, class-injected capped at MEDIUM
+**h388:** Target overlap tier promotion: HIGH+overlap≥3→GOLDEN (rule-guarded), LOW+overlap≥1→MEDIUM
 **h387:** Removed infectious GOLDEN rule (was 5.3% precision)
 **h385:** Demoted thyroid hierarchy to HIGH (was 20.6% precision)
 
 **Key signals:** Drug frequency (+9.4pp), Mechanism support (+6.5pp), Category tier, Target overlap (tier promotion)
 **Key learning (h381/h388):** Rank changes disrupt tier rules; use overlap for tier promotion only
+**Key learning (h395):** Audit per-rule precision regularly; rules drift as other rules change the pool
 
 ### Mechanism & ATC Integration (h96, h259, h152, h189)
 

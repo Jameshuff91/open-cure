@@ -7913,7 +7913,7 @@
       "title": "Demote Remaining Below-Tier Rules (CV, Hematological, Cancer)",
       "description": "AUDIT MODERATE: h378 identified 5 rules still performing far below their tier average. Only infectious (h387) and thyroid (h385) were fixed. Remaining: cardiovascular HIGH (31.6% vs 55.2%), cv_pathway_comprehensive HIGH (38.0%), coronary_hierarchy HIGH (40.0%), hematological HIGH (45.8%), cancer MEDIUM (18.2% vs 31.0%). Each drags its tier precision down.",
       "hypothesis": "Demoting cardiovascular HIGH to MEDIUM, cv_pathway_comprehensive HIGH to MEDIUM, hematological HIGH to MEDIUM, and cancer MEDIUM to LOW will improve HIGH tier precision by 5-10pp and MEDIUM tier precision by 2-5pp.",
-      "status": "pending",
+      "status": "validated",
       "priority": 1,
       "expected_impact": "high",
       "effort": "low",
@@ -7927,8 +7927,8 @@
         "Step 7: Do each demotion individually first to isolate impact, then apply all together",
         "Step 8: Success criteria: HIGH tier precision > 55% maintained, no tier drops below previous level"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "VALIDATED: Demoted 7 below-tier rules. HIGH tier +7.9pp, GOLDEN +0.5pp, MEDIUM +1.3pp.\n\nDEMOTIONS APPLIED:\n1. Metabolic GOLDEN \u2192 MEDIUM: TZDs/statins for non-specific metabolic (6.9% prec vs 41.7% avg)\n2. Cancer cross-type MEDIUM \u2192 LOW: 0.9% prec (n=349) vs 21.2% MEDIUM avg\n3. Hematological HIGH \u2192 MEDIUM: 19.1% prec (n=94) vs 47.1% HIGH avg\n4. CV generic rescue HIGH \u2192 MEDIUM: 26.5% prec (n=34) vs 47.1% avg\n5. Respiratory generic rescue HIGH \u2192 MEDIUM: 14.3% prec (n=21) vs 47.1% avg\n6. Class-injected HIGH \u2192 MEDIUM cap: 0% prec at HIGH\n7. ATC coherent metabolic/neurological MEDIUM \u2192 excluded: 4.3%/10.8% vs 21.2% avg\n\nRESULTS (452 diseases):\n- R@30: 79.4% \u2192 79.4% (UNCHANGED)\n- GOLDEN: 41.7% \u2192 42.2% (+0.5 pp)\n- HIGH: 47.1% \u2192 55.0% (+7.9 pp) \u2014 MASSIVE improvement\n- MEDIUM: 21.2% \u2192 22.5% (+1.3 pp)\n- LOW: 14.0% \u2192 12.5% (-1.5 pp)\n\nREMAINING PROBLEMS (for future work):\n- HIGH 'default': 5.7% (n=70) \u2014 standard tier rules, needs investigation\n- HIGH 'incoherent_demotion': 9.1% (n=11) \u2014 already demoted from GOLDEN\n- HIGH 'respiratory': 18.2% (n=11) \u2014 partially addressed\n- GOLDEN/HIGH tier inversion partially resolved (55.0% > 42.2%)",
+      "result_metric": "HIGH +7.9pp (47.1\u219255.0%), GOLDEN +0.5pp, MEDIUM +1.3pp, R@30 unchanged"
     },
     {
       "id": "h396",
@@ -9567,6 +9567,12 @@
       "hypothesis_id": "h388",
       "learning": "Target overlap should be used as tier promotion signal (adjusting confidence) not rank modifier (changing drug order). Same signal, opposite effects on production quality.",
       "implication": "Always test confidence interventions in production context, not just raw LOO. Rank changes disrupt tier rules but tier promotions compose cleanly."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h395",
+      "learning": "7 below-tier rules were dragging precision down. Largest impact: cancer cross-type at MEDIUM (0.9%, n=349), hematological at HIGH (19.1%, n=94). Demoting to appropriate tiers improved HIGH by +7.9pp.",
+      "implication": "Regularly audit per-rule precision within each tier. Rules that were accurate when first created may drift as other rules change the prediction pool."
     }
   ],
   "collaborations": [

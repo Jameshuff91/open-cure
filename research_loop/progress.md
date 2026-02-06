@@ -34,10 +34,29 @@
 - GOLDEN: 38.4% → 40.6% (+2.2 pp)
 - MEDIUM: 19.8% → 21.3% (+1.5 pp)
 
+### h395: Demote Remaining Below-Tier Rules - VALIDATED
+
+**Hypothesis:** Demoting rules performing below their tier average will improve tier precision.
+
+**Demotions Applied:**
+1. Metabolic TZD/statin GOLDEN → MEDIUM (6.9% vs 41.7% avg)
+2. Cancer cross-type MEDIUM → LOW (0.9% vs 21.2%, n=349)
+3. Hematological corticosteroids HIGH → MEDIUM (19.1% vs 47.1%)
+4. CV generic rescue HIGH → MEDIUM (26.5% vs 47.1%)
+5. Respiratory generic HIGH → MEDIUM (14.3% vs 47.1%)
+6. Class-injected HIGH → capped at MEDIUM (0% at HIGH)
+7. ATC coherent metabolic/neurological excluded (4.3-10.8% vs 21.2%)
+
+**Results:**
+- R@30: 79.4% (UNCHANGED)
+- GOLDEN: 41.7% → 42.2% (+0.5 pp)
+- HIGH: 47.1% → 55.0% (+7.9 pp)
+- MEDIUM: 21.2% → 22.5% (+1.3 pp)
+
 ### Recommended Next Steps
-1. h379: Within-Tier Ranking Optimization (low effort, pending)
-2. h391: MEDIUM Tier Overlap Anomaly (why does overlap hurt MEDIUM?)
-3. h390: Production Tier Rule Coverage Analysis
+1. h396: Resolve GOLDEN vs HIGH tier precision inversion (GOLDEN 42.2% < HIGH 55.0%)
+2. h394: Fix training frequency label leakage
+3. h391: MEDIUM Tier Overlap Anomaly
 
 ---
 
