@@ -11027,12 +11027,60 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Re-run MEDIUM sub-reason analysis with current code",
         "Identify remaining sub-reasons with holdout < 25% and n > 30/seed",
         "Estimate maximum achievable MEDIUM precision after all possible demotions",
         "Determine if tier boundaries need re-calibration"
+      ],
+      "findings": "MEDIUM precision has reached its demotion ceiling at ~34.2%.\n\nSub-reason analysis (5-seed holdout, proper GT):\n- cancer_same_type: 27.9% (125/seed, 39% of MEDIUM) \u2014 largest drag but genuine MEDIUM-level\n- default: 36.6% (101/seed, 29%) \u2014 at tier average\n- atc_coherent_infectious: 36.4% (50/seed, 14%) \u2014 at tier average\n- target_overlap_promotion: 43.0% (31/seed, 8%) \u2014 above average\n- cv_pathway_comprehensive: 40.8% (16/seed) \u2014 above average\n- local_anesthetic_procedural: 50.5% (11/seed) \u2014 potential promotion candidate\n- atc_coherent_psychiatric: 45.3% (11/seed) \u2014 above average\n\nOnly 1 remaining demotion candidate: infectious_hierarchy_pneumonia (16.7%, n=6/seed) \u2014 too small to matter.\nMaximum precision from further demotions: 35.0% (essentially current level).\nWithout cancer_same_type: 38.3%, but losing 846 genuine MEDIUM predictions.\n40% target NOT achievable via demotions. Would require LOW\u2192MEDIUM promotions (collider bias issue).\n\nMEDIUM precision journey: 30.1% (pre-h553) \u2192 34.2% (post-h557) = +4.1pp from 770 demotions.\nThe demotion strategy is EXHAUSTED. Remaining improvements must come from:\n1. Better cancer_same_type precision (cancer subtype specificity)\n2. Promotion from LOW with external signals (avoiding collider bias)\n3. New GT data or external validation",
+      "result_metric": "MEDIUM ceiling at ~34.2%, 40% not achievable via demotions"
+    },
+    {
+      "id": "h562",
+      "title": "Cancer Same-Type Precision: Subtype Specificity Analysis",
+      "description": "cancer_same_type is the largest MEDIUM sub-reason (846 preds, 27.9% holdout) and the main drag on MEDIUM precision. Can precision be improved by using more specific cancer subtype matching? E.g., drugs approved for breast cancer shouldn't auto-promote for lung cancer just because both are 'cancer'. EGFR inhibitors for EGFR+ cancers but not BRCA cancers, etc. This is NOT a demotion but a REFINEMENT of the matching logic.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Analyze holdout precision of cancer_same_type by cancer subtype pairs",
+        "Identify which cross-subtype predictions perform worst",
+        "Check if hematologic\u2192solid cross-type (h551 finding: 0%) is driving the gap",
+        "Propose subtype-specific matching rules",
+        "Validate on holdout"
+      ]
+    },
+    {
+      "id": "h563",
+      "title": "Local Anesthetic Procedural MEDIUM\u2192HIGH Promotion",
+      "description": "local_anesthetic_procedural in MEDIUM has 50.5% \u00b1 11.0% holdout (11.2/seed), above HIGH average (59.5%). This is after h540 already demoted non-therapeutic LA predictions. The remaining LA MEDIUM predictions are genuinely therapeutic (lidocaine for neuro/CV/derm/psych). Worth investigating if n is sufficient for promotion.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Count full-data local_anesthetic_procedural MEDIUM predictions",
+        "Verify holdout is stable across seeds",
+        "If n>=30/seed and precision >=40%, implement MEDIUM\u2192HIGH promotion",
+        "Validate overall HIGH and MEDIUM impact"
+      ]
+    },
+    {
+      "id": "h564",
+      "title": "Deliverable Regeneration with Updated Tier System",
+      "description": "The deliverable Excel/JSON is stale \u2014 it doesn't reflect the 770 demotions from h553-h557 or the current tier assignments. Regenerate deliverable with current production_predictor.py to ensure the output file matches the holdout-validated tier system. Important for the Ryland meeting and any external sharing.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Run h420_regenerate_deliverable.py with current code",
+        "Verify tier counts match expected (279 GOLDEN, 757 HIGH, 2152 MEDIUM, etc.)",
+        "Verify all new filters (CS\u2192infectious, antibiotic\u2192viral) are reflected",
+        "Check that gene_overlap_count and transe_consilience columns are preserved"
       ]
     }
   ],
@@ -12911,6 +12959,12 @@
       "hypothesis_id": "h557",
       "learning": "CS\u2192infectious MEDIUM has 2.1% holdout \u2014 even medically valid uses (ABPA, zoster, leprosy, TB) don't generalize. Medical validity doesn't predict GT hit rate for rare drug-disease combinations. KG co-occurrence from procedural use dominates.",
       "implication": "Don't assume medical plausibility implies holdout performance. Always measure even when clinical literature supports the combination."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h561",
+      "learning": "MEDIUM precision ceiling at 34.2% via demotion strategy. cancer_same_type (27.9%, 39% of MEDIUM) is the main drag but at genuine MEDIUM level. No remaining sub-reasons with both low holdout (<25%) and high n (>=10/seed). Further improvement requires promotion or refinement, not demotion.",
+      "implication": "Pivot from demotion to refinement strategies. cancer_same_type subtype specificity is the highest-impact remaining direction."
     }
   ],
   "collaborations": [

@@ -50,6 +50,40 @@ Analyzed all 174 corticosteroid→infectious disease predictions across all tier
 2. **h560**: Cross-pathogen drug-disease mismatch filter
 3. **h532**: Every Cure GT error report
 
+### h561: Cumulative MEDIUM Precision vs 40% Target — VALIDATED
+
+**Comprehensive sub-reason analysis shows MEDIUM demotion ceiling reached at ~34.2%.**
+
+**MEDIUM Sub-Reason Holdout Precision (5-seed, proper GT):**
+| Sub-Reason | Holdout | n/seed | % of MEDIUM | Notes |
+|------------|---------|--------|-------------|-------|
+| cancer_same_type | 27.9% | 125 | 39.3% | Largest drag, genuine MEDIUM |
+| default | 36.6% | 101 | 29.6% | At average |
+| atc_coherent_infectious | 36.4% | 50 | 9.1% | At average |
+| target_overlap_promotion | 43.0% | 31 | 5.9% | Above average |
+| cv_pathway_comprehensive | 40.8% | 16 | 4.8% | Above average |
+| local_anesthetic_procedural | 50.5% | 11 | 1.9% | Potential promote to HIGH |
+| atc_coherent_psychiatric | 45.3% | 11 | 2.8% | Above average |
+
+**Ceiling Analysis:**
+- Only 1 remaining demotion candidate: infectious_hierarchy_pneumonia (16.7%, n=6) — too small
+- Max from further demotions: ~35.0% (negligible improvement)
+- Without cancer_same_type: 38.3% (but loses 846 genuine predictions)
+- **40% NOT achievable via demotions**
+
+**MEDIUM Precision Journey:**
+30.1% → 31.7% (h553) → 32.1% (h556) → 33.9% (h555) → 34.2% (h557) = **+4.1pp from 770 demotions**
+
+**New Hypotheses Generated (3):**
+- h562: Cancer same-type subtype specificity (P4, medium) — highest impact remaining
+- h563: LA procedural MEDIUM→HIGH promotion (P5, low)
+- h564: Deliverable regeneration with updated tiers (P4, low)
+
+**Recommended Next Steps:**
+1. **h562**: Cancer same-type subtype specificity — the main remaining opportunity
+2. **h564**: Deliverable regeneration (practical impact for collaboration)
+3. **h560**: Cross-pathogen mismatch filter (infectious sub-type)
+
 ---
 
 ## Previous Session: h553+h554+h555+h556 - MEDIUM Precision Deep Dive (2026-02-06)
