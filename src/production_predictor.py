@@ -3633,6 +3633,15 @@ class DrugRepurposingPredictor:
                         tier = ConfidenceTier.HIGH
                         cat_specific = 'corticosteroid_soc_promotion'
 
+                    # h522: Hematological corticosteroid demotion MEDIUM→LOW
+                    # Hematological corticosteroid MEDIUM = 19.1% holdout (below MEDIUM avg 31.1%)
+                    # Works for autoimmune cytopenias but fails for genetic/structural disorders
+                    if (tier == ConfidenceTier.MEDIUM
+                            and category == 'hematological'
+                            and drug_name.lower() in _CORTICOSTEROID_LOWER):
+                        tier = ConfidenceTier.LOW
+                        cat_specific = 'hematological_corticosteroid_demotion'
+
                     # h374: Mark predictions from MinRank ensemble
                     if use_minrank and cat_specific is None:
                         cat_specific = 'minrank_ensemble'

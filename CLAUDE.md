@@ -147,16 +147,18 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h520 update, 2026-02-06):**
+**Tier System (h520/h522 update, 2026-02-06):**
 - GOLDEN: 62.6% ± 8.1% holdout (286 predictions)
 - HIGH: 53.8% ± 2.6% holdout (840 predictions)
-- MEDIUM: 31.1% ± 1.6% holdout (3063 predictions)
-- LOW: 13.7% ± 0.4% holdout (2511 predictions)
+- MEDIUM: 31.3% ± 1.4% holdout (2940 predictions)
+- LOW: 14.2% ± 0.5% holdout (2634 predictions)
 - FILTER: 9.7% ± 0.6% holdout (6922 predictions)
-- **h520:** Corticosteroid SOC promotion: 333 predictions MEDIUM→HIGH for autoimmune/dermatological/respiratory/ophthalmic categories. HIGH +2.3pp, MEDIUM +1.2pp.
+- **h520:** Corticosteroid SOC promotion: 333 MEDIUM→HIGH for autoimmune/dermatological/respiratory/ophthalmic. HIGH +2.3pp, MEDIUM +1.2pp.
+- **h522:** Hematological corticosteroid demotion: 123 MEDIUM→LOW. MEDIUM +0.2pp, LOW +0.5pp.
 - **NOTE:** Full-data inflated; use HOLDOUT only.
 
 **h520:** Corticosteroid SOC promotion for non-hematological categories. Per-class holdout: dermatological 58%, respiratory 61%, autoimmune 46%, ophthalmic 34%, hematological 19% (excluded). Non-hematological = 50.1% holdout ≈ HIGH. 333 predictions promoted.
+**h522:** Hematological corticosteroid demotion: 123 MEDIUM→LOW. 19.1% holdout below MEDIUM avg. Medical: corticosteroids for autoimmune blood disorders only.
 
 **h478:** GT sync: expanded_ground_truth.json was missing 1503 pairs from production GT. All holdout numbers improved ~7-8pp.
 

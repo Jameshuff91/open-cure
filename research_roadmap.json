@@ -10345,10 +10345,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h520"
-      ]
+      ],
+      "findings": "Hematological corticosteroid demotion MEDIUM\u2192LOW validated.\n- 123 predictions demoted (17 diseases: anemia, TTP, neutropenia, aplastic anemia, etc.)\n- MEDIUM: 31.1% \u2192 31.3% (+0.2pp) \u2014 removing weak predictions improves MEDIUM\n- LOW: 13.7% \u2192 14.2% (+0.5pp) \u2014 demoted predictions fit LOW tier\n- Medical rationale: corticosteroids work for autoimmune cytopenias but fail for genetic/structural blood disorders\n- Combined h520+h522 from h492 baseline: HIGH +2.3pp, MEDIUM +1.4pp, LOW +1.9pp",
+      "result_metric": "MEDIUM +0.2pp (31.1\u219231.3%), LOW +0.5pp (13.7\u219214.2%), 123 demotions"
     },
     {
       "id": "h523",
@@ -12142,6 +12144,12 @@
       "hypothesis_id": "h520",
       "learning": "SOC signal is heterogeneous: corticosteroids drive nearly all of the +6pp MEDIUM lift. Non-hematological corticosteroid MEDIUM = 50.1% holdout, comparable to HIGH. Promotion implemented: +2.3pp HIGH, +1.2pp MEDIUM. Most other SOC classes have tiny-n (<10/seed) making them unactionable individually.",
       "implication": "Drug-class-specific SOC promotions can improve tier precision when medical rationale is clear and n is sufficient. Hematological category is consistently weaker for corticosteroids."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h522",
+      "learning": "Hematological corticosteroid demotion gives small but consistent improvements. Medical rationale solid: corticosteroids treat autoimmune blood disorders but not genetic ones. Pattern: when a drug class has clear category-specific efficacy differences, category-specific tier rules are justified.",
+      "implication": "Consider similar category-specific rules for other drug-category pairs with heterogeneous outcomes."
     }
   ],
   "collaborations": [
