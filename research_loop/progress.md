@@ -1,6 +1,79 @@
 # Research Loop Progress
 
-## Current Session: h592/h593 - Composite Quality + GT Gap Detection (2026-02-06)
+## Current Session: h550/h598 - Antibiotic Spectrum + Targeted Cancer Expansion (2026-02-06)
+
+### h550: Antibiotic Spectrum Validation — INVALIDATED
+
+Tested whether within-antibacterial spectrum mismatches (gram-positive drugs for gram-negative diseases and vice versa) could filter MEDIUM infectious predictions.
+
+**Key Results:**
+- Built spectrum classification for 48 antibacterial drugs and pathogen type mapping for 38 infectious diseases
+- Only 22 spectrum mismatches found in MEDIUM+ tier (4.8% of antibacterial-infectious predictions)
+- **53% false positive rate** — many "mismatches" are medically valid:
+  - Azithromycin→CF Pseudomonas = standard of care (anti-inflammatory + biofilm disruption)
+  - Gentamicin→S. aureus = synergistic with beta-lactams (used in bacteremia)
+  - Cephalexin→UTI = first-line treatment (1st-gen ceph covers E. coli)
+- Only 7 genuine mismatches — far below n≈30 threshold for reliable holdout
+- Full-data precision of mismatches (27.3%) still above LOW (15.6%)
+
+**Conclusion:** Within-antibacterial spectrum matching is too nuanced for rule-based classification. The broad antimicrobial-pathogen mismatch from h560 already catches clear biological errors.
+
+### h598: Expand CANCER_TARGETED_THERAPY — VALIDATED (+3.3pp MEDIUM)
+
+Error analysis of MEDIUM false positives revealed 15 targeted cancer drugs missing from the cancer_targeted_therapy demotion list, despite being target/biomarker-specific drugs that should NOT generalize across cancer subtypes.
+
+**Drugs Added (15 total):**
+| Category | Drugs | Mechanism |
+|----------|-------|-----------|
+| Anti-HER2 mAbs | trastuzumab, pertuzumab | HER2+ cancers only |
+| Anti-EGFR mAb | cetuximab | KRAS wild-type CRC, SCCHN |
+| Anti-VEGFR2 mAb | ramucirumab | Anti-angiogenic, target-specific |
+| PARP inhibitors | olaparib, niraparib, rucaparib | BRCA/HRD-mutant only |
+| BTK inhibitors | tirabrutinib, acalabrutinib, zanubrutinib | B-cell malignancies only |
+| IDH1 inhibitor | ivosidenib | IDH1-mutant AML/cholangiocarcinoma |
+| mTOR inhibitor | everolimus | Tumor-specific mTOR |
+| Narrow cytotoxic | trabectedin, eribulin, lanreotide | Very narrow indications |
+
+**Holdout Validation (5-seed):**
+| Group | Holdout | n/seed |
+|-------|---------|--------|
+| New targeted drugs | 6.1% ± 5.2% | 32.6 |
+| Existing cancer_same_type | 40.2% ± 6.5% | 85.8 |
+| Gap | 34.1pp | — |
+
+**Impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| MEDIUM | 38.1% ± 2.1% | 41.4% ± 2.0% | **+3.3pp** |
+| Predictions moved | — | 202 MEDIUM→LOW | — |
+
+### New Hypotheses Generated (3)
+- h599: Obsolete tetracycline demotion (demeclocycline/oxytetracycline) — P4, medium
+- h600: Low-precision infectious drug demotion (cefuroxime/streptomycin) — P5, low
+- h601: Cancer same-type precision by drug class (remaining drugs) — P5, medium
+
+### Session Tier Performance (h598 update)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 70.3% ± 17.8% | 280 |
+| HIGH | 54.7% ± 4.5% | 736 |
+| MEDIUM | 41.4% ± 2.0% | 1899 |
+| LOW | 13.4% ± 1.8% | 3935 |
+| FILTER | 10.4% ± 1.3% | 7300 |
+
+### Key Learnings
+1. CANCER_TARGETED_THERAPY was incomplete — missing anti-target mAbs, PARP inhibitors, BTK inhibitors. When building drug class lists, check ALL therapeutic classes in the area.
+2. Within-antibacterial spectrum matching fails because many antibiotics have secondary activities (synergy, anti-inflammatory) that simple classification misses. Only broad-category mismatches are clean enough for filtering.
+3. Error analysis by drug (not by rule/category) is an effective way to find improvement opportunities that rule-level analysis misses.
+
+### Recommended Next Steps
+1. **h599**: Obsolete tetracycline demotion — demeclocycline and oxytetracycline have 80+ FP in MEDIUM
+2. **h601**: Check remaining cancer_same_type for more low-quality drug classes
+3. Consider external data integration (LINCS, PubMed mining) for fundamentally new signals
+
+---
+
+## Previous Session: h592/h593 - Composite Quality + GT Gap Detection (2026-02-06)
 
 ### h592: Experimental Validation Priority List — VALIDATED
 

@@ -147,12 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h597 update, 2026-02-06):**
-- GOLDEN: 69.9% ± 17.9% holdout (280 predictions)
-- HIGH: 58.9% ± 6.0% holdout (736 predictions)
-- MEDIUM: 37.0% ± 2.8% holdout (2101 predictions)
-- LOW: 15.6% ± 2.4% holdout (3733 predictions)
-- FILTER: 10.6% ± 1.3% holdout (7300 predictions)
+**Tier System (h598 update, 2026-02-06):**
+- GOLDEN: 70.3% ± 17.8% holdout (280 predictions)
+- HIGH: 54.7% ± 4.5% holdout (736 predictions)
+- MEDIUM: 41.4% ± 2.0% holdout (1899 predictions)
+- LOW: 13.4% ± 1.8% holdout (3935 predictions)
+- FILTER: 10.4% ± 1.3% holdout (7300 predictions)
+- **h598:** Expanded CANCER_TARGETED_THERAPY: +15 drugs (trastuzumab, pertuzumab, cetuximab, ramucirumab, olaparib, niraparib, rucaparib, tirabrutinib, acalabrutinib, zanubrutinib, ivosidenib, everolimus, trabectedin, eribulin, lanreotide). 6.1% holdout vs 40.2% existing cancer_same_type. 202 preds MEDIUM→LOW. **MEDIUM +3.3pp**.
 - **h592:** Composite quality score (rank+TransE+gene_overlap+mechanism+disease_holdout+non_SR) beats kNN rank by +2.6pp for Q1 MEDIUM. Added to deliverable as `composite_quality_score`.
 - **h593+h596+h597:** GT gap expansion: 18 FDA-approved pairs added (antifungals, cancer drugs). MEDIUM +1.2pp.
 - **h560:** Antimicrobial-pathogen mismatch filter: 0% holdout for all mismatches. Antibacterial→fungal/parasitic/viral, antifungal→parasitic/viral/bacterial. Dual-activity drugs handled. ~30 MEDIUM→LOW. +0.9pp MEDIUM. Also fixed target_overlap rescue leakage.

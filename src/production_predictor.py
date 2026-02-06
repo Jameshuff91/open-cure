@@ -444,10 +444,19 @@ CANCER_TARGETED_THERAPY = (
      'entrectinib', 'larotrectinib', 'capmatinib', 'tepotinib', 'tucatinib',
      'neratinib', 'lorlatinib', 'alectinib', 'brigatinib', 'ceritinib',
      'encorafenib', 'binimetinib', 'futibatinib', 'infigratinib',
-     'pemigatinib', 'erdafitinib', 'abemaciclib'}
+     'pemigatinib', 'erdafitinib', 'abemaciclib',
+     'ivosidenib', 'everolimus'}
     # Immunotherapy (PD-1/PD-L1/CTLA-4 — tumor-specific immune activation)
     | {'nivolumab', 'pembrolizumab', 'atezolizumab', 'ipilimumab',
        'durvalumab', 'avelumab', 'tremelimumab', 'cemiplimab'}
+    # h598: Anti-HER2/EGFR/VEGFR mAbs (target-specific, biomarker-dependent)
+    | {'trastuzumab', 'pertuzumab', 'cetuximab', 'ramucirumab'}
+    # h598: PARP inhibitors (BRCA/HRD-specific)
+    | {'olaparib', 'niraparib', 'rucaparib'}
+    # h598: BTK inhibitors (B-cell malignancy specific, same class as ibrutinib)
+    | {'tirabrutinib', 'acalabrutinib', 'zanubrutinib'}
+    # h598: Other mechanism-specific (6.1% holdout vs 40.2% existing cancer_same_type)
+    | {'trabectedin', 'eribulin', 'lanreotide'}
 )
 
 # Ophthalmic drugs
@@ -3975,14 +3984,27 @@ class DrugRepurposingPredictor:
                         tier = ConfidenceTier.LOW
                         cat_specific = 'hematological_corticosteroid_demotion'
 
+                    # h559: Corticosteroid→TB hierarchy demotion HIGH→MEDIUM
+                    # CS→TB HIGH = 33.3% full-data (6/18) vs non-CS infectious HIGH = 76.9%
+                    # Dexamethasone for TB meningitis is WHO-recommended, but other CS→TB are weak
+                    # 33.3% is at MEDIUM level, not HIGH. n=18 too small for holdout.
+                    if (tier == ConfidenceTier.HIGH
+                            and category == 'infectious'
+                            and drug_name.lower() in _CORTICOSTEROID_LOWER
+                            and cat_specific and 'tuberculosis' in cat_specific):
+                        tier = ConfidenceTier.MEDIUM
+                        cat_specific = 'infectious_cs_tb_demotion'
+
                     # h557: Corticosteroid→infectious demotion MEDIUM→LOW
                     # CS→infectious MEDIUM = 2.1% ± 2.5% holdout (5-seed, 11.6/seed)
                     # Even medically valid CS uses (ABPA, zoster, leprosy) = 2.9% holdout
                     # Non-CS infectious MEDIUM = 18.7% ± 5.2% — 16.6pp gap
                     # CS predicted for infections due to KG co-occurrence, not therapeutic use
+                    # h559: Exclude CS→TB hierarchy demotions (stay at MEDIUM — strongest evidence)
                     if (tier == ConfidenceTier.MEDIUM
                             and category == 'infectious'
-                            and drug_name.lower() in _CORTICOSTEROID_LOWER):
+                            and drug_name.lower() in _CORTICOSTEROID_LOWER
+                            and cat_specific != 'infectious_cs_tb_demotion'):
                         tier = ConfidenceTier.LOW
                         cat_specific = 'infectious_corticosteroid_demotion'
 

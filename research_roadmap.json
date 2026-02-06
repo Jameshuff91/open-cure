@@ -11482,7 +11482,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Build antibiotic\u2192spectrum mapping (gram-positive/negative/anaerobe/atypical)",
         "Build disease\u2192primary pathogen mapping for infectious diseases",
@@ -11490,8 +11490,8 @@
         "Validate with holdout: do spectrum-mismatched predictions have lower precision?",
         "Implement spectrum mismatch demotion if validated"
       ],
-      "findings": null,
-      "result_metric": null,
+      "findings": "INVALIDATED: Antibiotic spectrum mismatch filter is NOT actionable.\n\nAnalysis of 458 MEDIUM+ antibacterial\u2192infectious predictions:\n- Built spectrum classification for 48 antibacterial drugs (narrow GP, narrow GN, broad, macrolide, tetracycline, FQ, etc.)\n- Built pathogen type classification for 38 infectious diseases (gram+, gram-, Pseudomonas, mycobacterium, atypical, mixed)\n- Only 22 spectrum mismatches found (4.8% of predictions)\n- Full-data precision: mismatched 27.3% vs matched 47.2% (20pp gap)\n- BUT 53% of \"mismatches\" are medically FALSE POSITIVES:\n  * Azithromycin\u2192CF Pseudomonas = STANDARD OF CARE (anti-inflammatory)\n  * Gentamicin\u2192S. aureus = synergistic (used in bacteremia)\n  * Cephalexin\u2192UTI = first-line treatment (1st-gen ceph covers E. coli)\n  * Minocycline\u2192Pseudomonas = has MDR-PA activity\n- Only 7 genuine mismatches \u2014 far below n\u224830 threshold for reliable holdout\n- Maximum impact: negligible (7 predictions out of 2083 MEDIUM)\n\nKey insight: Within-antibacterial spectrum matching is too nuanced for rule-based classification. Many antibiotics have secondary activities (synergy, anti-inflammatory) that make strict spectrum classification medically inaccurate. The broad antimicrobial-pathogen mismatch from h560 (antibacterial\u2192fungal/viral/parasitic) already catches the clear biological errors.",
+      "result_metric": "Not actionable: only 7 genuine mismatches, 53% FP rate",
       "category": "meta-analysis",
       "rationale": ""
     },
@@ -12375,6 +12375,69 @@
       "rationale": "h593 showed cancer drug GT gaps are common. Doxorubicin alone treats 40+ cancer types in GT but choriocarcinoma was missing.",
       "findings": "VALIDATED: Cancer drug GT expansion adds 5 FDA/guideline-approved pairs.\n\nPAIRS ADDED:\n1. Paclitaxel \u2192 larynx cancer (head/neck SCC, TPF regimen)\n2. Paclitaxel \u2192 vulva cancer (NCCN recommended, paclitaxel/cisplatin)\n3. Cisplatin \u2192 uterine cancer (carcinosarcoma regimens)\n4. Bortezomib \u2192 Burkitt lymphoma (relapsed aggressive NHL)\n5. Bortezomib \u2192 anaplastic large cell lymphoma (NCCN for relapsed ALCL)\n\nNOT APPROVED (correctly excluded):\n- Bleomycin \u2192 uterine/endometrial/rectal/fallopian (not standard)\n- Doxorubicin \u2192 medulloblastoma (not SOC)\n- Paclitaxel \u2192 rectal cancer (5-FU based SOC)\n\nHOLDOUT IMPACT: MEDIUM 36.6% \u2192 37.0% (+0.4pp)\n\nCUMULATIVE GT EXPANSION (h593+h596+h597): 18 pairs added, MEDIUM 35.8% \u2192 37.0% (+1.2pp)\n\nKEY INSIGHT: Cancer drug GT has fewer gaps than expected. Most broad-spectrum chemo drugs (cisplatin, gemcitabine, carboplatin) already have comprehensive cancer subtype GT. The remaining gaps are for newer/specialty drugs (bortezomib, bevacizumab) and specific cancer subtypes.",
       "result_metric": "5 GT pairs added, MEDIUM 36.6% \u2192 37.0% (+0.4pp)"
+    },
+    {
+      "id": "h598",
+      "title": "Expand CANCER_TARGETED_THERAPY: mAbs, PARP, BTK, and Narrow-Indication Drugs",
+      "description": "Error analysis revealed 15 targeted/mechanism-specific cancer drugs missing from the CANCER_TARGETED_THERAPY demotion list, despite having 6.1% holdout precision (vs 40.2% for existing cancer_same_type). These drugs have specific targets (HER2, EGFR, VEGFR2, BRCA, BTK, IDH1) that don't generalize across cancer subtypes.",
+      "status": "validated",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Error analysis of MEDIUM false positives by drug",
+        "Identify low-precision cancer drugs in cancer_same_type",
+        "Medical assessment of each candidate (is it truly targeted?)",
+        "Holdout validation: new targeted 6.1% vs existing 40.2% (34.1pp gap)",
+        "Add 15 drugs to CANCER_TARGETED_THERAPY",
+        "Regenerate deliverable"
+      ],
+      "findings": "VALIDATED: 15 targeted cancer drugs added to CANCER_TARGETED_THERAPY list.\n\nDrugs added (by mechanism class):\n- Anti-HER2 mAbs: trastuzumab, pertuzumab\n- Anti-EGFR mAb: cetuximab\n- Anti-VEGFR2 mAb: ramucirumab\n- PARP inhibitors: olaparib, niraparib, rucaparib\n- BTK inhibitors: tirabrutinib, acalabrutinib, zanubrutinib\n- Other targeted: ivosidenib (IDH1), everolimus (mTOR)\n- Narrow-indication cytotoxic: trabectedin (sarcoma only), eribulin (breast/liposarcoma), lanreotide (neuroendocrine)\n\nHoldout validation (5-seed):\n- New targeted drugs: 6.1% \u00b1 5.2% (n=32.6/seed) \u2014 well below LOW threshold\n- Existing cancer_same_type: 40.2% \u00b1 6.5% (n=85.8/seed) \u2014 at MEDIUM level\n- Gap: 34.1pp\n\nImpact on MEDIUM tier:\n- Before: 38.1% \u00b1 2.1% (2101 predictions)\n- After: 41.4% \u00b1 2.0% (1899 predictions)\n- Delta: +3.3pp\n- 202 predictions moved MEDIUM \u2192 LOW\n\nKey insight: CANCER_TARGETED_THERAPY was incomplete. The original list focused on kinase inhibitors and checkpoint inhibitors but missed anti-target mAbs (HER2/EGFR/VEGFR), PARP inhibitors, and BTK inhibitors. These drug classes have specific biomarker requirements that prevent cross-cancer generalization.",
+      "result_metric": "MEDIUM 38.1% \u2192 41.4% (+3.3pp), 202 preds MEDIUM\u2192LOW"
+    },
+    {
+      "id": "h599",
+      "title": "Obsolete Tetracycline Demotion: Demeclocycline and Oxytetracycline Predictions",
+      "description": "Error analysis found demeclocycline (28.6% full-data, 40 FP) and oxytetracycline (21.2% full-data, 41 FP) are major sources of MEDIUM false positives. These are rarely-used tetracyclines with modern alternatives. Many predictions are for diseases where doxycycline (the modern equivalent) is already predicted. Could demoting predictions for these obsolete drugs improve MEDIUM precision?",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Compute holdout precision for demeclocycline and oxytetracycline MEDIUM predictions vs doxycycline/minocycline",
+        "Check if diseases with these drugs also have doxycycline predictions",
+        "If lower precision, implement obsolete tetracycline demotion",
+        "Medical validation: are any demeclocycline/oxytetracycline predictions uniquely valuable?"
+      ]
+    },
+    {
+      "id": "h600",
+      "title": "Low-Precision Infectious Drug Demotion: Cefuroxime and Streptomycin",
+      "description": "Cefuroxime has 10.5% full-data precision in MEDIUM (17 FP, 2 TP) and streptomycin is mainly used for TB but predicts broadly across infections. Both entered MEDIUM through atc_coherent_infectious. Check if their holdout precision justifies demotion.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Compute holdout precision for cefuroxime and streptomycin MEDIUM predictions",
+        "Compare with other drugs in atc_coherent_infectious",
+        "If clearly lower, implement drug-specific demotion"
+      ]
+    },
+    {
+      "id": "h601",
+      "title": "Cancer Same-Type Precision by Drug Class: Cytotoxic vs Remaining",
+      "description": "After h598, remaining cancer_same_type (625 predictions) should be higher quality. Analyze precision by drug class (anthracyclines, antimetabolites, platinum, alkylating agents) to identify any further low-quality groups.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Classify remaining cancer_same_type drugs by mechanism class",
+        "Compute holdout precision per class",
+        "Identify any sub-classes below MEDIUM threshold",
+        "Medical assessment of candidates"
+      ]
     }
   ],
   "completed": [
@@ -14397,6 +14460,18 @@
       "hypothesis_id": "h597",
       "learning": "Cancer chemotherapy GT is more complete than expected. Cisplatin/gemcitabine/carboplatin already have 29-39 cancer subtypes in GT. GT gaps are concentrated in newer/specialty drugs (bortezomib, bevacizumab) and rare cancer subtypes. Cumulative GT expansion (h593-h597): 18 pairs, MEDIUM +1.2pp.",
       "implication": "GT expansion has diminishing returns. The 18 most obvious gaps are fixed. Remaining gaps require drug-specific FDA label cross-referencing rather than systematic class-level detection."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h598",
+      "learning": "CANCER_TARGETED_THERAPY was incomplete \u2014 missing anti-target mAbs (HER2/EGFR/VEGFR), PARP inhibitors, and BTK inhibitors. These drug classes have 6.1% holdout vs 40.2% for remaining cancer_same_type (34.1pp gap). Adding 15 drugs improved MEDIUM by +3.3pp.",
+      "implication": "When creating drug class lists, check ALL drug classes in the same therapeutic area, not just the most obvious ones. mAbs and novel targeted agents are easily missed because they have different naming conventions than small-molecule kinase inhibitors."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h550",
+      "learning": "Within-antibacterial spectrum matching (gram+/gram-) is NOT actionable. Only 22 mismatches (4.8%), 53% are medically false positives (aminoglycoside synergy, azithromycin anti-inflammatory use, 1st-gen ceph UTI coverage). The broad antimicrobial-pathogen mismatch (h560) is sufficient.",
+      "implication": "Drug spectrum classification is too nuanced for rule-based approaches. Many antibiotics have secondary activities (synergy, anti-inflammatory, biofilm disruption) that rule-based classification misses. Only broad category mismatches (antibacterial\u2192viral/fungal/parasitic) are clean enough for automated filtering."
     }
   ],
   "collaborations": [
