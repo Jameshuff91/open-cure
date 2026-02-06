@@ -9738,7 +9738,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all cardiovascular ATC coherent predictions and their diseases",
         "Check which diseases drive the gap (cardiac arrest vs others)",
@@ -9746,7 +9746,9 @@
         "If cardiac arrest cluster, consider specific exclusion"
       ],
       "category": "confidence_system",
-      "parent_hypothesis": "h487"
+      "parent_hypothesis": "h487",
+      "findings": "Cardiovascular ATC coherent full-to-holdout gap investigation revealed key insights:\n\n1. FULL-DATA CV TIER BREAKDOWN (39 diseases):\n   - GOLDEN: 73.1% (n=26), HIGH: 62.7% (n=118), MEDIUM: 32.7% (n=245), LOW: 20.0% (n=230)\n\n2. CV MEDIUM SUB-RULE HOLDOUT ANALYSIS (5-seed):\n   - cv_pathway_comprehensive: 21.4% \u00b1 12.7% (n=14/seed) - GOOD, 44pp gap from disease selection variance\n   - target_overlap_promotion: 16.2% \u00b1 14.9% (n=8/seed) - OK\n   - atc_coherent_cardiovascular: 8.4% \u00b1 10.4% (n=5/seed) - BAD, below LOW avg (14.8%)\n   - standard: 2.0% \u00b1 4.0% (n=17/seed) - VERY BAD, essentially random\n\n3. CV PATHWAY COMPREHENSIVE 44pp GAP EXPLAINED:\n   - NOT overfitting (hardcoded set, not recomputed)\n   - Disease selection variance: only 5/39 CV diseases have high PC overlap\n   - When CHF/MI/stroke in holdout: high precision. When PAH/cardiac arrest: near 0%\n\n4. SELF-REFERENTIAL PATTERNS FOUND:\n   - Pulmonary arterial hypertension: 100% self-referential (ALL 26 GT drugs from self only!)\n   - Angioedema: 90%, Hereditary angioedema: 80%, Peripheral vascular disease: 80%\n   - Ischemic stroke: 55% (borderline)\n\n5. ACTION TAKEN: Added 'cardiovascular' to MEDIUM_DEMOTED_CATEGORIES\n   - CV standard (2.0%) and ATC coherent (8.4%) \u2192 LOW (114 predictions)\n   - cv_pathway_comprehensive (21.4%) \u2192 PRESERVED (returns before demotion check)\n   - target_overlap_promotion (16.2%) \u2192 PRESERVED (post-hoc rescue from LOW\u2192MEDIUM, 56 preds)\n   \n6. HOLDOUT IMPACT: MEDIUM +0.4pp (31.7% \u2192 32.1%), tier counts: MEDIUM 3566\u21923452, LOW 2341\u21922455",
+      "result_metric": "MEDIUM holdout +0.4pp (31.7% \u2192 32.1%). 114 CV predictions MEDIUM\u2192LOW."
     },
     {
       "id": "h491",
@@ -9995,6 +9997,60 @@
       "priority": 5,
       "status": "pending",
       "category": "meta"
+    },
+    {
+      "id": "h504",
+      "title": "PAH Self-Referential Filter: Exclude 100% Self-Referential Diseases from MEDIUM+",
+      "hypothesis": "Pulmonary arterial hypertension (PAH) has 100% self-referential GT (all 26 drugs from self in kNN). This inflates full-data precision but provides 0% holdout value. Should we filter or demote predictions for 100% self-referential diseases?",
+      "steps": [
+        "Identify all diseases where >80% of GT comes from self in kNN",
+        "Check if these overlap with the immunological pattern (h465)",
+        "Measure holdout precision for these diseases specifically",
+        "If consistently low, implement demotion rule"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h490"
+      ]
+    },
+    {
+      "id": "h505",
+      "title": "CV Target Overlap Rescue Precision: Should CV Be Blocked from LOW\u2192MEDIUM Rescue?",
+      "hypothesis": "CV target_overlap_promotion rescues 56 predictions from LOW\u2192MEDIUM at 16.2% holdout. This is just above LOW average (14.8%). Should cardiovascular be added to the blocked categories for target_overlap rescue?",
+      "steps": [
+        "Get exact holdout precision for the 56 CV target_overlap rescued predictions",
+        "Compare to MEDIUM without these predictions",
+        "If precision < 15%, add CV to blocked categories",
+        "Measure MEDIUM holdout impact"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "depends_on": [
+        "h490"
+      ]
+    },
+    {
+      "id": "h506",
+      "title": "CV Hierarchy Rules Holdout Validation: Are CV Hierarchy HIGH Predictions Genuine?",
+      "hypothesis": "CV has ~105 hierarchy-based HIGH predictions (arrhythmia, coronary, hypertension, atherosclerosis groups). These have 62.7% full-data but likely lower holdout. Given the 28.2pp HIGH full-to-holdout gap for CV, are these hierarchy rules reliable?",
+      "steps": [
+        "Extract all CV hierarchy HIGH predictions",
+        "Run 5-seed holdout specifically for CV hierarchy sub-rules",
+        "Compare to non-CV hierarchy HIGH predictions",
+        "If any specific group has <30% holdout, consider demotion to MEDIUM"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "depends_on": [
+        "h490"
+      ]
     }
   ],
   "completed": [
@@ -11698,6 +11754,12 @@
       "hypothesis_id": "h501",
       "learning": "kNN predictions were non-deterministic across Python processes due to dict iteration order for tied scores. Fixed with drug_id tiebreaker.",
       "implication": "Always use a deterministic tiebreaker when sorting by float scores. Python dict ordering is process-dependent."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h490",
+      "learning": "CV standard MEDIUM has 2.0% holdout (essentially random). cv_pathway_comprehensive 44pp gap is from disease selection variance, NOT overfitting. PAH is 100% self-referential.",
+      "implication": "Category-level MEDIUM demotions should check sub-rule granularity. Self-referential diseases need systematic identification."
     }
   ],
   "collaborations": [

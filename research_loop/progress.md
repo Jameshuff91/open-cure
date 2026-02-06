@@ -1,6 +1,53 @@
 # Research Loop Progress
 
-## Current Session: h497/h501/h498 - GOLDEN Validation + Determinism Fix + Precision Recalibration (2026-02-06)
+## Current Session: h490 - CV ATC Coherent Full-to-Holdout Gap Investigation (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h490: Cardiovascular ATC Coherent Full-to-Holdout Gap Investigation - **VALIDATED**
+
+### h490: Cardiovascular Full-to-Holdout Gap - VALIDATED
+
+**Objective:** Investigate why cardiovascular ATC coherent predictions have a large full-to-holdout precision gap.
+
+**Key findings:**
+
+1. **CV MEDIUM sub-rule holdout analysis:**
+   - cv_pathway_comprehensive: 21.4% ± 12.7% (n=14/seed) — legitimate signal
+   - target_overlap_promotion: 16.2% ± 14.9% (n=8/seed) — OK
+   - atc_coherent_cardiovascular: 8.4% ± 10.4% (n=5/seed) — below LOW avg
+   - standard: 2.0% ± 4.0% (n=17/seed) — essentially random
+
+2. **cv_pathway_comprehensive 44pp gap explained:**
+   - NOT overfitting (hardcoded set, not recomputed on holdout)
+   - Disease selection variance: only 5/39 CV diseases have high PC drug overlap
+   - When CHF/MI/stroke in holdout: high precision. When PAH/cardiac arrest: near 0%
+
+3. **Self-referential diseases discovered:**
+   - PAH: 100% self-referential (ALL 26 GT drugs from self in kNN)
+   - Angioedema: 90%, Hereditary angioedema: 80%, PVD: 80%
+
+4. **Action taken:** Added 'cardiovascular' to MEDIUM_DEMOTED_CATEGORIES
+   - 114 predictions moved MEDIUM→LOW (84 standard + 66 ATC coherent - 36 rescued by target_overlap)
+   - MEDIUM holdout: +0.4pp (31.7% → 32.1%)
+   - cv_pathway_comprehensive and target_overlap preserved (return before demotion check)
+
+### New Hypotheses Generated (3)
+- h504: PAH Self-Referential Filter (Priority 4)
+- h505: CV Target Overlap Rescue Precision (Priority 5)
+- h506: CV Hierarchy Rules Holdout Validation (Priority 4)
+
+### Recommended Next Steps
+1. **h504:** PAH Self-Referential Filter - systematic identification of 100% self-referential diseases
+2. **h506:** CV Hierarchy Rules Holdout Validation - check if CV hierarchy HIGH predictions are genuine
+3. **h503:** Seed 42 Failure Mode - low effort, could explain variance
+
+---
+
+## Previous Session: h497/h501/h498 - GOLDEN Validation + Determinism Fix + Precision Recalibration (2026-02-06)
 
 ### Session Summary
 

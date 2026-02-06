@@ -150,8 +150,8 @@ vastai destroy instance <INSTANCE_ID>
 **Tier System (h478 GT sync, 2026-02-06):**
 - GOLDEN: 89.2% full / 67.0% ± 20.6% holdout (186 predictions)
 - HIGH: 76.8% full / 60.8% ± 7.2% holdout (514 predictions)
-- MEDIUM: 40.5% full / 30.8% ± 3.4% holdout (3282 predictions)
-- LOW: 21.4% full / 14.8% ± 2.3% holdout (3071 predictions)
+- MEDIUM: 40.5% full / 30.8% ± 3.4% holdout (3452 predictions, h490: -114 from CV demotion)
+- LOW: 21.4% full / 14.8% ± 2.3% holdout (2455 predictions, h490: +114 from CV demotion)
 - FILTER: 16.8% full / 10.3% ± 1.1% holdout (6569 predictions)
 - **NOTE:** Full-data inflated after GT sync (1464 pairs added). Use HOLDOUT as authoritative.
 
@@ -160,6 +160,8 @@ vastai destroy instance <INSTANCE_ID>
 **h497:** Standard GOLDEN (62.2% holdout) ≈ Hierarchy GOLDEN (70.3%), NOT significant (p>0.35). No demotion needed.
 **h501:** Fixed kNN non-determinism: drug_id tiebreaker for tied scores. Predictions now reproducible across processes.
 **h498:** Updated all precision constants to h478 holdout values. Full-data is misleading — use holdout only.
+
+**h490:** CV standard MEDIUM demoted to LOW (2.0% holdout), ATC coherent CV also demoted (8.4%). cv_pathway_comprehensive (21.4%) and target_overlap (16.2%) preserved. MEDIUM +0.4pp. 114 predictions moved. PAH is 100% self-referential.
 
 **h479+h484+h495:** Safety audit: 10 harmful predictions → FILTER.
   - h484: CCB cardiac audit (diltiazem cardiac arrest, verapamil CHF, diltiazem VT, nifedipine ACS)

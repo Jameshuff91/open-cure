@@ -1201,7 +1201,7 @@ CATEGORY_MEDIUM_HOLDOUT_PRECISION: Dict[str, float] = {
     'dermatological': 48.4,    # ±14.5 (biggest beneficiary of GT sync, +19.9pp)
     'autoimmune': 36.4,        # ±7.1
     'psychiatric': 33.3,       # ±5.2 (dropped from 45.7%, seed distribution change)
-    'cardiovascular': 30.7,    # ±10.9
+    'cardiovascular': 19.5,    # h490: standard+ATC demoted to LOW, remaining MEDIUM = PC(21.4%)+overlap(16.2%)
     'respiratory': 30.5,       # ±6.5 (+14.3pp from GT sync)
     'infectious': 27.9,        # ±7.0
     'cancer': 24.5,            # ±3.7 (MOST RELIABLE, largest n)
@@ -2651,13 +2651,15 @@ class DrugRepurposingPredictor:
 
         # MEDIUM tier
         # h462/h463: Category-specific MEDIUM demotions (holdout-validated)
-        # Categories where MEDIUM holdout precision is at or below LOW tier (12.2%):
+        # Categories where MEDIUM holdout precision is at or below LOW tier (14.8%):
         # - GI: 10.9% full-data as LOW; kNN finds wrong drug classes
         # - Immunological: 2.5% ± 3.5% holdout (38.9% full-data = massive overfitting, n=5 diseases)
         # - Reproductive: 0.0% holdout (4.5% full-data, n=5 diseases)
         # - Neurological: 10.2% ± 11.1% holdout (15.7% full-data, n=24 diseases)
+        # - Cardiovascular: h490 standard 2.0% ± 4.0%, ATC coherent 8.4% ± 10.4% holdout
+        #   cv_pathway_comprehensive (21.4%) and target_overlap (16.2%) return BEFORE this check
         # Category-specific rescue rules (h380 GI, hierarchy) still promote valid drugs to HIGH.
-        MEDIUM_DEMOTED_CATEGORIES = {'gastrointestinal', 'immunological', 'reproductive', 'neurological'}
+        MEDIUM_DEMOTED_CATEGORIES = {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cardiovascular'}
         if category in MEDIUM_DEMOTED_CATEGORIES:
             return ConfidenceTier.LOW, False, f'{category}_medium_demotion'
 
