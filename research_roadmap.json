@@ -6525,7 +6525,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Compute precision for endocrine diseases at GOLDEN/HIGH/MEDIUM tiers",
         "Compare with other Tier 2 categories (cancer, cardiovascular, other)",
@@ -6533,7 +6533,9 @@
       ],
       "dependencies": [
         "h323"
-      ]
+      ],
+      "findings": "h324 INCONCLUSIVE: Endocrine Tier Promotion - insufficient sample size.\n\nAnalysis:\n- Endocrine success rate: 75.0% (3/4 diseases)\n- Cardiovascular (Tier 2): 53.8% (7/13)\n- Cancer (Tier 2): 68.6% (35/51)\n\nWhile 75% > 53.8%, the sample size (n=4) is too small for statistical significance.\nNeed more endocrine disease data to validate promotion.\n\nRecommendation: Keep endocrine at Tier 3 until more data collected.",
+      "result_metric": "75% success (n=4), insufficient sample"
     },
     {
       "id": "h325",
@@ -6542,7 +6544,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Compute precision for cancer diseases at GOLDEN tier",
         "Compare with Tier 1 categories (autoimmune, dermatological, psychiatric, ophthalmic)",
@@ -6551,7 +6553,9 @@
       ],
       "dependencies": [
         "h323"
-      ]
+      ],
+      "findings": "h325 INVALIDATED: Cancer should NOT be promoted to Tier 1.\n\nAnalysis:\n- Cancer success rate: 68.6% (35/51)\n- Tier 1 minimum (autoimmune): 93.8% (15/16)\n- Gap: 25.1 pp below Tier 1 minimum\n\nCancer subtype breakdown:\n- Lymphoma: 80.0% (8/10)\n- Other cancer: 66.7% (14/21)\n- Carcinoma: 63.6% (7/11)\n- Leukemia: 62.5% (5/8)\n- Melanoma: 100% (1/1)\n\nWhile cancer outperforms other Tier 2 categories (cardiovascular 53.8%, other 54.4%),\nit is still 25pp below Tier 1 categories. The gap is too large for promotion.\n\nRecommendation: Keep cancer at Tier 2. Consider lymphoma-specific rescue rules.",
+      "result_metric": "68.6% success, 25pp below Tier 1 minimum"
     }
   ],
   "completed": [

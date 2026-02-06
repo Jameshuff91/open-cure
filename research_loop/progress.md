@@ -6,21 +6,23 @@
 
 **Agent Role:** Research Executor
 **Status:** In Progress
-**Hypotheses Tested: 5**
+**Hypotheses Tested: 7**
 - h318: Antibiotic FILTER for Non-Infectious Diseases - **VALIDATED** (+180 filtered, 0 hits lost)
 - h319: Comprehensive Low-Precision ATC Filter (Batch 2) - **VALIDATED** (+703 filtered, 0 hits lost)
 - h320/h321/h322: Class-specific filters - **VALIDATED** (subsumed by h319)
 - h323: Cohort Analysis of kNN Success Predictors - **VALIDATED** (AUC=0.649, bimodal)
+- h324: Endocrine Tier Promotion - **INCONCLUSIVE** (n=4 too small)
+- h325: Cancer Tier Promotion - **INVALIDATED** (68.6% vs 93.8% Tier 1 min)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
 | Validated | 191 |
-| Invalidated | 63 |
-| Inconclusive | 10 |
+| Invalidated | 64 |
+| Inconclusive | 11 |
 | Blocked | 21 |
 | Deprioritized | 3 |
-| Pending | 37 |
+| Pending | 35 |
 | **Total** | **325**
 
 ### KEY SESSION FINDINGS
@@ -100,9 +102,19 @@ Building on h316's zero-precision filter, expand comprehensive filtering for J d
 - Consider promoting 'cancer' to Tier 1 (h325)
 - Existing category precision (h165) already captures this signal
 
+#### h324: Endocrine Tier Promotion - INCONCLUSIVE
+- Endocrine: 75% (n=4) - sample too small
+- Need more endocrine disease data
+
+#### h325: Cancer Tier Promotion - INVALIDATED
+- Cancer: 68.6% (35/51)
+- Tier 1 minimum: 93.8%
+- Gap: 25pp - too large for promotion
+- Lymphoma shows promise (80%) but other subtypes are 62-67%
+
 ### Recommended Next Steps
-1. h324/h325: Evaluate category tier promotions (low effort)
-2. High-effort hypotheses available: h91 (literature mining), h55 (gene expression)
+1. h272: GT Expansion (medium effort) - potential quick win
+2. High-effort hypotheses: h91 (literature mining), h55 (gene expression)
 
 ---
 
