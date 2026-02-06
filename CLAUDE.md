@@ -145,9 +145,18 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h111, h106)
+### Confidence System Summary (h135, h111, h106, h378, h387)
 
-**Tier System:** GOLDEN (57.7%) → HIGH (20.9%) → MEDIUM (14.3%) → LOW (6.4%) → FILTER (3.2%)
+**Tier System (updated 2026-02-05):**
+- GOLDEN: 40.7% (was 35.8%, +4.9pp after h387/h385 fixes)
+- HIGH: 55.2%
+- MEDIUM: 31.0%
+- LOW: 21.3%
+- FILTER: 18.1%
+
+**h387:** Removed infectious GOLDEN rule (was 5.3% precision)
+**h385:** Demoted thyroid hierarchy to HIGH (was 20.6% precision)
+
 **Key signals:** Drug frequency (+9.4pp), Mechanism support (+6.5pp), Category tier
 
 ### Mechanism & ATC Integration (h96, h259, h152, h189)

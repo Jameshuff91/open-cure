@@ -1,16 +1,17 @@
 # Research Loop Progress
 
-## Current Session: h376, h378, h386, h387 (2026-02-05)
+## Current Session: h376, h378, h386, h387, h385 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 4**
+**Hypotheses Tested: 5**
 - h376: Ensemble Coverage Analysis - **VALIDATED**
 - h378: Tier Precision Analysis - **VALIDATED**
 - h386: Fix Infectious GOLDEN Rule - **VALIDATED**
 - h387: Remove Infectious GOLDEN Rule - **VALIDATED** (+4.6pp GOLDEN precision)
+- h385: Demote Thyroid Hierarchy to HIGH - **VALIDATED** (+0.3pp GOLDEN)
 
 ### h386: Fix Infectious GOLDEN Rule - VALIDATED
 
@@ -98,15 +99,28 @@ Analyzed infectious disease predictions by tier and rule:
 - **h385:** Demote Thyroid Hierarchy to HIGH - Priority 3
 - **h387:** Remove Infectious GOLDEN Rule - Priority 2
 
+### h385: Demote Thyroid Hierarchy to HIGH - VALIDATED
+
+**Implementation:**
+Added HIERARCHY_DEMOTE_TO_HIGH check before GOLDEN assignment.
+
+**Impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 40.4% | 40.7% | +0.3pp |
+| HIGH | 58.1% | 55.2% | -2.9pp |
+
+**Rationale:** Thyroid at 20.6% precision was incorrectly in GOLDEN (40% avg).
+
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 240 |
+| Validated | 241 |
 | Invalidated | 71 |
 | Inconclusive | 14 |
 | Blocked | 21 |
 | Deprioritized | 7 |
-| Pending | 32 |
+| Pending | 31 |
 | **Total** | **385** |
 
 ---
