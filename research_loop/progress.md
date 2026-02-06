@@ -1,6 +1,73 @@
 # Research Loop Progress
 
-## Current Session: h537+h540 - Deliverable Quality Audit + LA Demotion (2026-02-06)
+## Current Session: h408 - Ryland Collaboration Brief + Anti-TNF Safety Filter (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h408: [RYLAND] Transcriptomic Validation of Top Predictions in Skin/Inflammatory Diseases - **VALIDATED**
+
+### Key Findings
+
+#### 1. Collaboration Brief Prepared
+- **Output**: `data/analysis/h408_ryland_collaboration_brief.md` (comprehensive 5-section brief)
+- **Output**: `data/analysis/h408_ryland_predictions.xlsx` (407 curated predictions with drug mechanisms, gene overlap)
+- 227 novel GOLDEN/HIGH predictions across 40 derm/autoimmune diseases
+- 93/407 predictions have drug-target/disease-gene overlap (molecular support)
+
+#### 2. Corticosteroid Dominance
+- **86% of novel GOLDEN/HIGH predictions are corticosteroids** — clinically valid but not novel
+- Only 15 non-CS GOLDEN predictions: adalimumab (9), azathioprine (2), rituximab (2), corticotropin (2), methotrexate (1)
+
+#### 3. Literature Validation of Top Non-CS Predictions
+| Prediction | Status | Evidence |
+|------------|--------|----------|
+| Azathioprine → Alopecia Areata | **VALIDATED** | 10-year cohort, 92.7% regrowth |
+| Corticotropin → Alopecia Areata | Mechanistic only | ACTH upregulated in lesions, no trials |
+| Adalimumab → SLE | **HARMFUL** | Anti-TNF INDUCES lupus (12K FAERS reports) |
+| Adalimumab → MG | **HARMFUL** | Anti-TNF CAUSES MG (case reports) |
+| Adalimumab → MS | **HARMFUL** | Paradoxical demyelination |
+| Adalimumab → GCA | Failed RCT | Phase 2: no benefit vs placebo |
+| Etanercept → SLE | **HARMFUL** | Same drug-induced lupus class effect |
+
+#### 4. Safety Fix: Anti-TNF Inverse Indications
+Added to INVERSE_INDICATION_PAIRS in production_predictor.py:
+- Adalimumab → SLE, MG, MS (3 pairs)
+- Etanercept → SLE, MS (2 pairs)
+- Infliximab → SLE, MS (2 pairs)
+- **Impact**: 4 predictions GOLDEN/MEDIUM → FILTER
+- **Holdout**: HIGH 58.9% (+0.1pp), MEDIUM 30.3% (+0.1pp)
+
+#### 5. Collaboration Opportunities Identified
+- Ryland's spatial transcriptomics can provide gene signatures for gene-poor diseases (ichthyosis=8, TEN=2, HS=2 genes)
+- Drug-target database (11,656 pairs) can prioritize drugs for cell culture testing
+- Azathioprine and ACTH for alopecia areata are strongest testable predictions
+
+### Current Tier Performance (h408)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 69.9% ± 17.9% | 282 |
+| HIGH | 58.9% ± 6.2% | 791 |
+| MEDIUM | 30.3% ± 2.5% | 2655 |
+| LOW | 16.2% ± 2.7% | 3140 |
+| FILTER | 10.3% ± 1.4% | 7282 |
+
+### New Hypotheses Generated (4)
+- h544: Anti-TNF paradoxical autoimmunity comprehensive audit (P4, medium)
+- h545: Gene-poor disease expansion from DisGeNET/OMIM (P4, medium)
+- h546: Drug-target/disease-gene overlap as confidence signal (P4, low)
+- h547: Corticosteroid prediction deduplication for deliverable (P5, medium)
+
+### Recommended Next Steps
+1. **h544**: Anti-TNF paradoxical autoimmunity audit (could find more harmful predictions)
+2. **h546**: Drug-target/disease-gene overlap as confidence signal (low effort, potentially useful)
+3. **h542**: MEDIUM tier quality audit round 2
+
+---
+
+## Previous Session: h537+h540 - Deliverable Quality Audit + LA Demotion (2026-02-06)
 
 ### Session Summary
 

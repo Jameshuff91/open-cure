@@ -848,6 +848,24 @@ INVERSE_INDICATION_PAIRS = {
     # Especially dangerous in hereditary angioedema (already bradykinin-mediated)
     'benazepril': {'angioedema', 'hereditary angioedema'},
     'quinapril': {'angioedema'},
+    # h408: Anti-TNF biologics INDUCE autoimmune conditions
+    # Adalimumab/etanercept/infliximab → SLE: 12,080 FAERS reports of TNF-inhibitor-induced lupus
+    #   >90% serious outcomes including death. Median onset 7+ months. Well-documented class effect.
+    # Adalimumab → MG: Case reports of adalimumab-induced myasthenia gravis (after 18mo RA treatment)
+    # Adalimumab → MS: Paradoxical demyelination — anti-TNF WORSENS MS (FDA black box warning)
+    'adalimumab': {
+        'systemic lupus erythematosus',
+        'systemic myasthenia gravis',
+        'multiple sclerosis',
+    },
+    'etanercept': {
+        'systemic lupus erythematosus',
+        'multiple sclerosis',
+    },
+    'infliximab': {
+        'systemic lupus erythematosus',
+        'multiple sclerosis',
+    },
     # h537: Statins CAUSE diabetes (2024 Lancet IPD meta-analysis: 10-36% increase in new-onset
     # diabetes, dose-dependent). Predicting statins as diabetes TREATMENT is inverse indication.
     # Note: diabetic complications (nephropathy, neuropathy) excluded — statins may help those.

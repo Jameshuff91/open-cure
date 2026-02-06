@@ -8212,7 +8212,7 @@
       "title": "[RYLAND] Transcriptomic Validation of Top Predictions in Skin/Inflammatory Diseases",
       "description": "Collaboration task for Ryland Mortlock meeting (Feb 10). Ryland studies genetic skin diseases and inflammation using spatial transcriptomics. Prepare a curated list of our highest-confidence predictions for dermatological and inflammatory diseases, with gene expression rationale. His expertise can: (1) validate whether predicted drug mechanisms align with disease transcriptional signatures, (2) identify predictions testable in his lab's cell culture models, (3) bring clinical genetics perspective to prediction quality.",
       "hypothesis": "Our dermatological GOLDEN/HIGH tier predictions can be cross-validated against transcriptomic data from Ryland's research. Predictions where drug targets overlap with disease-dysregulated genes (from spatial transcriptomics) will have higher precision than those without overlap.",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "high",
       "effort": "medium",
@@ -8226,8 +8226,8 @@
         "Step 7: Identify what transcriptomic data from Ryland's work could improve our model",
         "Step 8: Success criteria: Curated list ready for Monday meeting with actionable next steps"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Ryland collaboration brief prepared (data/analysis/h408_ryland_collaboration_brief.md + h408_ryland_predictions.xlsx).\n\nKey findings:\n1. 227 novel GOLDEN/HIGH predictions for 40 derm/autoimmune diseases, but 86% are corticosteroids\n2. 15 non-CS GOLDEN predictions: dominated by adalimumab (anti-TNF), azathioprine, rituximab, corticotropin\n3. Literature validation of top 12 non-CS GOLDEN: 1 validated (azathioprine\u2192AA), 4 HARMFUL (anti-TNF\u2192SLE/MG/MS), 2 failed RCTs, 1 off-target\n4. 93/407 predictions have drug-target/disease-gene overlap (Etanercept\u2192SLE has 9 shared genes)\n5. Many skin diseases have very few DRKG gene associations (ichthyosis=8, TEN=2, HS=2) \u2014 spatial transcriptomics could expand these\n\nSafety fix: Added anti-TNF\u2192SLE/MG/MS to inverse indication filter (4 predictions: 3 GOLDEN \u2192 FILTER, 1 MEDIUM \u2192 FILTER).\nHoldout: HIGH 58.9% (+0.1pp), MEDIUM 30.3% (+0.1pp), others unchanged.\n\nCollaboration opportunities:\n- Ryland's spatial transcriptomics can provide disease gene signatures for gene-poor diseases\n- Our drug-target database (11,656 pairs) can prioritize drugs for his cell culture experiments\n- Azathioprine\u2192Alopecia Areata and ACTH\u2192Alopecia Areata are the strongest testable novel predictions",
+      "result_metric": "4 harmful predictions filtered (3 GOLDEN + 1 MEDIUM \u2192 FILTER), collaboration brief ready"
     },
     {
       "id": "h409",
@@ -10724,6 +10724,82 @@
       ],
       "findings": "HIGH tier is 74.6% corticosteroid novel predictions (311/417).\nDriven by h520 corticosteroid SOC promotion MEDIUM\u2192HIGH (231 predictions).\nEach disease gets avg 4.2 corticosteroid variants (methylprednisolone, dexamethasone, etc.).\nThis is medically valid - corticosteroids genuinely treat many autoimmune/dermatological diseases\nwith ~50% holdout precision.\nNon-CS HIGH predictions only 106 (25.4%) covering 45 unique diseases.\nGOLDEN less saturated: 41.6% CS novel (42/101).\nMEDIUM+LOW balanced: 9-11.5% CS.\nRecommendation: Drug class annotation for deliverable users to filter, NOT a tier change.",
       "result_metric": "HIGH 74.6% CS, GOLDEN 41.6% CS, MEDIUM 9.0% CS"
+    },
+    {
+      "id": "h544",
+      "title": "Anti-TNF Paradoxical Autoimmunity: Comprehensive Audit",
+      "description": "h408 literature validation revealed adalimumab INDUCES SLE, MG, and worsens MS. This is a CLASS EFFECT of TNF inhibitors. Audit ALL anti-TNF predictions (adalimumab, etanercept, infliximab, golimumab, certolizumab) across ALL autoimmune diseases for potential paradoxical autoimmune induction. TNF inhibitors can induce: lupus, vasculitis, psoriasis (paradoxical), demyelination, sarcoidosis, ILD. Some of these (like psoriasis) are diseases the drugs also TREAT \u2014 need to distinguish.",
+      "hypothesis": "Anti-TNF biologics have additional inverse indication pairs beyond SLE/MG/MS that should be filtered",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Get complete list of all anti-TNF drugs in our model",
+        "Cross-reference with FAERS database reports of anti-TNF-induced autoimmune conditions",
+        "Check for paradoxical psoriasis induction (well-documented with anti-TNF)",
+        "Check for anti-TNF-induced ILD, vasculitis, sarcoidosis",
+        "Distinguish treatment vs induction (psoriasis is BOTH treated and induced by anti-TNF)",
+        "Add confirmed inverse indications to filter"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h545",
+      "title": "Gene-Poor Disease Expansion: DRKG vs Disease Ontology Gene Counts",
+      "description": "h408 revealed many skin diseases have very few DRKG gene associations (ichthyosis=8, TEN=2, HS=2, eczema=2). These gene-poor diseases may benefit from external gene-disease databases (DisGeNET, OMIM, ClinVar, HPO gene associations). Expanding disease gene sets could improve drug-target overlap scoring and help predict which drugs target disease-relevant pathways.",
+      "hypothesis": "External gene-disease databases contain significantly more gene associations for DRKG gene-poor diseases, and enriching them would improve prediction quality",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Identify diseases with <10 DRKG gene associations",
+        "Query DisGeNET API for additional gene-disease associations",
+        "Compare gene counts: DRKG vs DisGeNET for key diseases",
+        "Calculate drug-target/disease-gene overlap with enriched gene sets",
+        "Assess whether enriched overlap predicts holdout precision better"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h546",
+      "title": "Drug-Target/Disease-Gene Overlap as Confidence Signal",
+      "description": "h408 computed drug-target/disease-gene overlap for 407 skin/autoimmune predictions. 93/407 had overlap. If overlap correlates with holdout precision, it could be used as a confidence signal for tier assignment or annotation. Etanercept\u2192SLE had 9 shared genes (Fc receptors + complement) \u2014 the strongest molecular support.",
+      "hypothesis": "Predictions with drug-target/disease-gene overlap have higher holdout precision than those without, controlling for tier",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Compute drug-target/disease-gene overlap for ALL 14,150 predictions (not just derm/autoimmune)",
+        "Split predictions by overlap (>0 vs 0) within each tier",
+        "Run holdout evaluation separately for overlap vs no-overlap groups",
+        "Check if overlap predicts precision after controlling for tier, category, and other signals",
+        "If validated, implement as annotation or tier adjustment"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h547",
+      "title": "Corticosteroid Prediction Deduplication: Are 86% CS Predictions Adding Value?",
+      "description": "h408 showed 86% of novel GOLDEN/HIGH derm/autoimmune predictions are corticosteroids. This is clinically unsurprising \u2014 corticosteroids ARE used for most inflammatory skin diseases. For the deliverable to be maximally useful to collaborators, we should annotate or deduplicate: instead of listing 7 corticosteroids for each disease, present one 'corticosteroid class' prediction with the individual drugs as sub-entries. This would make non-CS predictions (the truly novel ones) more visible.",
+      "hypothesis": "Grouping corticosteroid predictions by class rather than individual drugs would improve deliverable usability without losing information",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Count how many diseases have >3 corticosteroid predictions in GOLDEN/HIGH",
+        "Design a class-level prediction format (one row per drug class per disease)",
+        "Create alternative deliverable view with class grouping",
+        "Compare presentation: drug-level vs class-level for clarity"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
@@ -12547,6 +12623,18 @@
       "hypothesis_id": "h543",
       "learning": "HIGH tier is 74.6% corticosteroid novel predictions due to h520 SOC promotion. This is correct (50% holdout) but poor diversity. Users need drug class annotation to filter. Not an error to fix.",
       "implication": "Consider adding drug_class column to deliverable. Also consider limiting corticosteroid predictions to max 2-3 per disease to improve diversity without losing precision."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h408",
+      "learning": "Anti-TNF biologics (adalimumab, etanercept, infliximab) INDUCE autoimmune conditions including SLE (12K FAERS reports), MG (case reports), and MS (paradoxical demyelination). These are NOT treatments but inverse indications. Must add to INVERSE_INDICATION_PAIRS.",
+      "implication": "All anti-TNF predictions for autoimmune diseases should be scrutinized for paradoxical autoimmune induction. Need comprehensive anti-TNF audit (h544)."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h408",
+      "learning": "86% of novel GOLDEN/HIGH skin/autoimmune predictions are corticosteroids \u2014 clinically valid but not novel. Only 14% are mechanistically specific (anti-TNF, anti-CD20, immunosuppressants). For collaboration value, focus on non-corticosteroid predictions.",
+      "implication": "Deliverable utility is diluted by corticosteroid dominance. Consider class-level grouping (h547) to highlight genuinely novel predictions."
     }
   ],
   "collaborations": [
