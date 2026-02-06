@@ -1,27 +1,28 @@
 # Research Loop Progress
 
-## Current Session: h329, h331, h330, h315 (2026-02-05)
+## Current Session: h329, h331, h330, h315, h335 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 4**
+**Status:** Complete
+**Hypotheses Tested: 5**
 - h329: Drug Class Width Analysis - **VALIDATED** (class width NOT predictive, r=0.33)
 - h331: Platinum Agent Isolation Boost - **VALIDATED** (justified but not implemented, 0.21% impact)
 - h330: Formulation-Specific Prediction Analysis - **VALIDATED** (combos not a significant error source)
 - h315: Category-Specific Coherence Thresholds - **VALIDATED** (gaps from +25pp to -7pp)
+- h335: Cancer Coherence Investigation - **VALIDATED** (non-L cancer drugs are legitimate)
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 201 |
+| Validated | 199 |
 | Invalidated | 64 |
 | Inconclusive | 12 |
 | Blocked | 21 |
 | Deprioritized | 4 |
 | Pending | 35 |
-| **Total** | **337**
+| **Total** | **335**
 
 ### KEY SESSION FINDINGS
 
@@ -93,17 +94,32 @@
 - Category-specific rules could improve precision
 - Implementation deferred (complexity vs gain)
 
+#### h335: Cancer Coherence Investigation - VALIDATED
+
+**Question:** Why does cancer have nearly zero coherence signal (+0.8 pp)?
+
+**Answer:** Non-L cancer drugs ARE legitimate cancer treatments!
+
+**Non-L cancer hits breakdown (71 total):**
+- Corticosteroids (26): dexamethasone/prednisone in treatment protocols (ALL, lymphoma)
+- Diagnostic agents (23): FDG-PET for staging
+- Novel biologics (14): ATC classification lag
+- Other legitimate (9): thyroid hormone for thyroid cancer, allopurinol for tumor lysis
+
+**Conclusion:** Cancer is multi-modal (chemo + steroids + hormones + diagnostics).
+Don't demote non-L cancer predictions - both L and non-L are legitimate.
+
 ### New Hypotheses Added
 - h331: Platinum Isolation Boost (tested this session)
 - h332: Cancer-Selective Drug Class Analysis
 - h333: Statin Broad Class Re-evaluation
 - h334: Renal Disease Incoherence Boost
-- h335: Cancer Coherence Investigation
+- h335: Cancer Coherence Investigation (tested this session)
 
 ### Recommended Next Steps
-1. h335: Cancer Coherence Investigation (understand why L drugs don't help for cancer)
-2. h334: Renal Incoherence Analysis (understand inverted signal)
-3. h272: GT Expansion (medium effort potential win)
+1. h334: Renal Incoherence Analysis (understand inverted signal, -7.3 pp gap)
+2. h272: GT Expansion (medium effort potential win)
+3. h332: Cancer-Selective Drug Class Analysis (follow-up to h329 platinum finding)
 
 ---
 
