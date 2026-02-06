@@ -1,17 +1,18 @@
 # Research Loop Progress
 
-## Current Session: h294, h353, h351, h354, h356 (2026-02-05)
+## Current Session: h294, h353, h351, h354, h356, h355 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 5**
+**Hypotheses Tested: 6**
 - h294: Organ-Specific Complication Patterns - **INVALIDATED** (organ proximity doesn't predict, 1.2% novel precision)
 - h353: Complication-Specific Drug Class Filter - **VALIDATED + IMPLEMENTED** (214 preds filtered, 0 GT loss)
-- h351: Pathway-Comprehensive Drug Class Identification - **VALIDATED** (48.8% vs 7.6% for CV complications)
+- h351: Pathway-Comprehensive Drug Class Identification - **VALIDATED** (28.9% vs 1.1% for CV complications)
 - h354: CV Pathway-Comprehensive Drug Boost - **VALIDATED + IMPLEMENTED** (109 drugs → HIGH for CV complications)
 - h356: Non-Pathway-Comprehensive CV Demotion - **VALIDATED** (expanded drug set 109→129, no demotion needed)
+- h355: Metabolic Pathway-Comprehensive Analysis - **INVALIDATED** (0% vs 2.7%, pathway is WORSE for metabolic)
 
 ### KEY SESSION FINDINGS
 
@@ -131,11 +132,11 @@ CV is special because drugs treat underlying vascular pathology.
 | Status | Count |
 |--------|-------|
 | Validated | 221 |
-| Invalidated | 68 |
+| Invalidated | 69 |
 | Inconclusive | 13 |
 | Blocked | 21 |
 | Deprioritized | 7 |
-| Pending | 26 |
+| Pending | 25 |
 | **Total** | **356**
 
 ### KEY SESSION FINDINGS

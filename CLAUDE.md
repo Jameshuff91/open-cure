@@ -136,31 +136,13 @@ vastai destroy instance <INSTANCE_ID>
 ### What Works
 1. **kNN Collaborative Filtering** (h39) - **37.04% ± 5.81% R@30** — BEST METHOD
    - k=20 nearest diseases by Node2Vec cosine, rank drugs by weighted frequency
-   - No ML model needed — purely similarity-based
-   - +10.47 pp over XGBoost (p=0.002, highly significant)
-2. **Fuzzy Disease Matching** - 41.8% R@30 (pair-level, inflated but useful for within-dist)
-3. **Disease holdout splits** - Required for honest novel discovery evaluation
-4. **Multi-seed evaluation** (h40) - Single-seed has ±4 pp noise; must use 5+ seeds
-5. **Node2Vec embeddings** - Best disease similarity measure for kNN (vs gene overlap, etc.)
+   - +10.47 pp over XGBoost (p=0.002)
+2. **Fuzzy Disease Matching** - 41.8% R@30 (pair-level, inflated)
+3. **Multi-seed evaluation** (h40) - Must use 5+ seeds (±4 pp noise)
 
-### CRITICAL: Paradigm Shift (2026-01-27)
-- **kNN collaborative filtering outperforms ALL ML models** by >10 pp (h39)
-- "Similar diseases share treatments" is the dominant signal for drug repurposing
-- XGBoost model adds ZERO value on top of kNN (h42 hybrid = pure kNN)
-- kNN is limited: can only recommend drugs from similar training diseases' GT
-- 44% of test diseases have 0% GT drug coverage in kNN pool
-- Node2Vec cosine is the best fair disease similarity measure (h41; gene overlap hurts)
-- kNN parameters already optimal: k=20, raw scores, linear weighting (h43)
-
-### Generalization Gap
-- **GB + TransE does NOT generalize**: 3-12% R@30 on disease holdout (h5)
-- **Node2Vec XGBoost**: 25.85% ± 4.06% mean (5-seed honest, h40)
-- Previously reported 31.09%/28.73% were from lucky seed 42
-
-### What Fails (Summary)
+### What Fails
 - **37% = DRKG ceiling** - kNN at 37%, oracle 60%; gap needs external data
-- **ML on top of kNN** - XGBoost/gene features add nothing (h41-h45)
-- **Explicit traversal** - Gene/Pathway: 3.5% R@30 (h93, h95). Embeddings >> symbolic
+- **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
 ### Confidence System Summary (h135, h111, h106)
@@ -175,61 +157,40 @@ vastai destroy instance <INSTANCE_ID>
 **ATC rescue:** L04AX (82%), H02AB (77%); EXCLUDE biologics L04AB/L04AC (<17%)
 **Details:** `docs/archive/experiment_history.md`
 
-### Disease Hierarchy Matching (h273/h276/h278 validated 2026-02-05)
+### Disease Hierarchy Matching (h273/h276/h278)
+Subtype refinements (psoriasis → plaque psoriasis): Metabolic/Neuro 63-65% → GOLDEN; Autoimmune/Resp/CV/Inf 22-45% → HIGH
+**Impl:** `DISEASE_HIERARCHY_GROUPS` + `_check_disease_hierarchy_match()`
 
-**Subtype refinements** (e.g., psoriasis → plaque psoriasis) have high precision:
-| Category | Hierarchy Precision | Tier |
-|----------|---------------------|------|
-| Metabolic | 65.2% | GOLDEN |
-| Neurological | 63.3% | GOLDEN |
-| Autoimmune | 44.7% | HIGH |
-| Respiratory | 40.4% | HIGH |
-| Cardiovascular | 22.6% | HIGH |
-| Infectious | 22.1% | HIGH |
+### Key Filters (all validated 2026-02-05)
+- **Domain-Isolated (h271):** 828 drugs treat ONE category. Cross-domain = 0% precision. `_is_cross_domain_isolated()`
+- **Broad Class Isolation (h307/h326/h328):** IL/TNF/anesthetics/steroids alone = 0-3%. `_is_broad_class_isolated()` demotes to LOW
+- **Cancer-Only (h346):** 69 drugs (BRAF,PD-1,BCL2,PARP,etc.) = 0% non-cancer. `CANCER_ONLY_DRUGS` → FILTER
 
-**Implementation:** `DISEASE_HIERARCHY_GROUPS` + `_check_disease_hierarchy_match()`
+### CV Pathway-Comprehensive Boost (h351/h354/h356)
 
-### Domain-Isolated Drug Filter (h271 validated 2026-02-05)
+Drugs with GT for BOTH CV base (hypertension/lipids) AND CV complications perform much better:
+- **Pathway-comprehensive: 28.9%** vs Non-pathway: **1.1%** (+27.8 pp, 26x lift!)
+- 129 CV pathway-comprehensive drugs identified (statins, ACEi, ARBs, anticoagulants, etc.)
 
-828 drugs only treat ONE disease category. Cross-domain predictions = **0% precision**.
-- Same-domain precision: 17.2%
-- Cross-domain precision: 0.7%
-- Filter: 273 predictions (2.1%), 99.3% accuracy
+**Why CV is special:** Shared vascular pathology - statins treat atherosclerosis → also treat MI/stroke/HF
 
-**Implementation:** `_is_cross_domain_isolated()` → FILTER tier
+**Implementation:** `CV_PATHWAY_COMPREHENSIVE_DRUGS` + `_is_cv_pathway_comprehensive()` → HIGH tier
 
-### Broad Class Isolation Demotion (h307/h326/h328 validated 2026-02-05)
+### Complication Drug Class Filter (h353)
 
-Drugs from "broad" therapeutic classes (anesthetics, steroids, TNFi, NSAIDs, IL-inhibitors) predicted **alone** (no classmates) have very low precision:
-| Class | Alone | With Classmates | Difference |
-|-------|-------|-----------------|------------|
-| IL Inhibitors | 3% | 50% | **+47 pp** |
-| TNF Inhibitors | 3.4% | 27.3% | +23.8 pp |
-| Local Anesthetics | 1.8% | 15.0% | +13.2 pp |
-| Corticosteroids | 0.0% | 12.6% | +12.6 pp |
-| NSAIDs | 2.4% | 7.1% | +4.7 pp |
+For complication diseases, only validated drug classes have non-zero precision:
+| Complication | Validated | Non-validated | Filter |
+|--------------|-----------|---------------|--------|
+| Nephrotic | 69.2% | 0.0% | 17 preds |
+| Retinopathy | 33.3% | 0.0% | 57 preds |
+| Cardiomyopathy | 12.5% | 0.0% | 52 preds |
 
-**Exception:** Statins - alone is BETTER (37.5% vs 29.3%)
+**Implementation:** `COMPLICATION_VALIDATED_DRUGS` + `_is_complication_non_validated_class()` → FILTER
 
-**Implementation:** `_is_broad_class_isolated()` demotes HIGH→LOW, MEDIUM→LOW
-- 213 predictions affected (151 original + 62 IL inhibitors)
-- 0% HIGH tier precision for isolated broad-class drugs
+### Key Finding: Organ Proximity Doesn't Transfer (h294)
 
-### Cancer-Only Drug Filter (h346 validated 2026-02-05)
-
-69 cancer-only drugs have **0% precision for non-cancer predictions** (115 preds, 0 GT hits).
-Drug classes: BRAF, PD-1, BCL2, PARP, proteasome, HDAC, CDK, BCR-ABL, BTK, ALK, EGFR, HER2, TKIs.
-**Excludes:** mTOR inhibitors (transplant), imatinib (GIST), ranibizumab/aflibercept (ophthalmic).
-
-**Implementation:** `CANCER_ONLY_DRUGS` set + `_is_cancer_only_drug_non_cancer()` → FILTER tier
-- 115 predictions → FILTER with ZERO GT loss
-
-### Key Finding: kNN Limitation (h342 2026-02-05)
-
-kNN predicts by **disease similarity**, NOT drug mechanism. Cancer drugs with valid non-cancer uses
-(mTOR for transplant/TSC) still have low precision because:
-- Transplant rejection diseases aren't similar to cancer diseases in the graph
-- The 2 mTOR GT hits (lymphangioma, hemangioendothelioma) are similar to cancer
+Within-organ novel predictions have **1.2% precision** (was circular signal at 12%).
+Only **pathway-comprehensive mechanisms** transfer (CV only, NOT metabolic/renal).
 
 ## Performance Gaps & Error Patterns
 
