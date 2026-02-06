@@ -7254,7 +7254,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Extract unique drugs from GT file",
@@ -7263,7 +7263,9 @@
         "Step 4: Quantify impact on prediction coverage",
         "Success criteria: Identify coverage gap"
       ],
-      "dependencies": []
+      "dependencies": [],
+      "findings": "Quantified DRKG coverage gap:\n\nDRUG COVERAGE: Only 33.5% of GT drugs (793/2,367) have predictions\nPAIR COVERAGE: 59.5% of GT pairs (6,084/10,224) are covered\n\nCoverage by drug type (best to worst):\n- Fusion proteins: 87.5% (excellent)\n- Statins/ACE-i: 78-82% (good)\n- mAbs: 54.5% (moderate)\n- Kinase inhibitors: 34.9% (poor)\n- SGLT2i: 26.3% (poor)\n- DPP4i: 5.3% (worst!)\n\nRoot causes:\n1. DRKG built ~2020 - newer drugs missing\n2. Biologics have different naming conventions\n3. Combination products often missing\n\nBuilds on h206 analysis with additional drug-type stratification.",
+      "result_metric": "33.5% drug coverage, 59.5% pair coverage"
     },
     {
       "id": "h360",
@@ -7283,6 +7285,26 @@
       ],
       "dependencies": [
         "h357"
+      ]
+    },
+    {
+      "id": "h361",
+      "title": "DPP4 Inhibitor Coverage Gap Investigation",
+      "description": "h359 found DPP4 inhibitors have only 5.3% coverage - the worst of any drug class. Why? Are they missing from DRKG entirely or just not matching?",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 6,
+      "status": "pending",
+      "created_date": "2026-02-05",
+      "steps": [
+        "Step 1: List all DPP4 inhibitors in GT",
+        "Step 2: Search DRKG for each drug name and DrugBank ID",
+        "Step 3: Identify if missing from DRKG or just name mismatch",
+        "Step 4: Propose fix if feasible",
+        "Success criteria: Understand DPP4 coverage gap root cause"
+      ],
+      "dependencies": [
+        "h359"
       ]
     }
   ],
@@ -8609,6 +8631,12 @@
       "hypothesis_id": "h357",
       "learning": "SGLT2\u2192HF 'gap' was a misunderstanding. Empagliflozin HF is in GT, so correctly filtered from novel predictions. Canagliflozin\u2192chronic HF IS predicted at HIGH. Deliverables may need regeneration to reflect latest GOLDEN rules.",
       "implication": "Check assumptions before investigating gaps. Known indications are correctly filtered from deliverables."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h359",
+      "learning": "DRKG coverage gap is 66.5% of GT drugs (1,574/2,367) missing. Gap is structural - DRKG vintage (~2020) misses newer drugs. Best coverage for established classes (statins 82%, ACE-i 78%), worst for newer classes (DPP4i 5.3%, SGLT2i 26.3%).",
+      "implication": "Model limitations are primarily coverage, not algorithm. Consider manual rules for high-impact missing drug classes or DRKG update."
     }
   ],
   "collaborations": [
