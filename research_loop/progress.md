@@ -1,29 +1,104 @@
 # Research Loop Progress
 
-## Current Session: h337, h338, h272, h178, h340, h339 (2026-02-05)
+## Current Session: h343, h344, h237, h336, h342 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 6**
+**Hypotheses Tested: 5**
+- h343: Anti-VEGF Psoriasis/Inflammatory Boost - **INVALIDATED** (0% precision, case reports don't justify GOLDEN)
+- h344: TKI Psoriasis Off-Target Effects - **VALIDATED** (TKIs correctly limited to cancer, no psoriasis predictions)
+- h237: Indication-Weighted Drug Boosting - **INVALIDATED** (signal already captured by tier system)
+- h336: Disease Name Standardization for GT Matching - **VALIDATED** (+25 GT hits from 5 synonym mappings)
+- h342: Cancer Drug Cross-Activity Patterns - **VALIDATED** (0-2.6% non-cancer precision across all mechanisms)
+
+### Cumulative Statistics
+| Status | Count |
+|--------|-------|
+| Validated | 215 |
+| Invalidated | 67 |
+| Inconclusive | 13 |
+| Blocked | 21 |
+| Deprioritized | 8 |
+| Pending | 21 |
+| **Total** | **345**
+
+### KEY SESSION FINDINGS
+
+#### h343: Anti-VEGF Psoriasis/Inflammatory Boost - INVALIDATED
+
+**Hypothesis:** Boost anti-VEGF + psoriasis to GOLDEN tier based on h339 case reports
+
+**Analysis:**
+- Anti-VEGF overall precision: 3.1% (5/162 predictions)
+- Anti-VEGF autoimmune precision: 0% (0/5)
+- Anti-VEGF dermatological precision: 0% (0/1)
+- Only 2 predictions affected: Bevacizumab→PsA (HIGH), Aflibercept→psoriasis (HIGH)
+
+**Decision:** Current HIGH tier is appropriate for case-report-level evidence.
+GOLDEN tier (57.7%) requires stronger evidence than case reports.
+
+#### h344: TKI Psoriasis Off-Target Effects - VALIDATED
+
+**Result:** VEGFR TKIs have ZERO predictions for psoriasis or inflammatory diseases.
+- Total TKI predictions: 43
+- All predictions are for cancer (MEDIUM: 33, LOW: 6, HIGH: 4)
+
+**Conclusion:** kNN model correctly limits TKIs to cancer domain. No boost needed.
+
+#### h237: Indication-Weighted Drug Boosting - INVALIDATED
+
+**Key finding:** Indication count adds signal WITHIN tiers:
+- HIGH tier: 4.7% (low-ind) → 22.7% (high-ind) = +18 pp gap
+- MEDIUM tier: 2.3% (low-ind) → 10.8% (high-ind) = +8.5 pp gap
+- LOW tier: 0.4% → 0.4% = NO signal (high-ind drugs are noise!)
+
+**Top LOW tier high-indication drugs:** Levofloxacin (0%), Prednisone (0%), Azithromycin (0%)
+These are correctly in LOW tier - they appear everywhere but predict nothing.
+
+**Decision:** Don't implement boost. The tier system already captures this via knn_score.
+
+#### h336: Disease Name Standardization - VALIDATED
+
+**Finding:** 128 prediction diseases NOT in GT by exact match.
+Conservative normalization finds 25 additional VALID GT hits (+3.2%).
+
+**5 synonym mappings needed:**
+1. 'acquired hemolytic anemia' → 'anemia, hemolytic, acquired'
+2. 'pure red cell aplasia' → 'pure red-cell aplasia'
+3. 'zollinger ellison syndrome' → 'zollinger-ellison syndrome'
+4. 'graft versus host disease gvhd' → 'graft versus host disease'
+5. 'diffuse large b cell lymphoma dlbcl' → 'diffuse large b-cell lymphoma'
+
+**Recommendation:** Add to DISEASE_SYNONYMS in disease_name_matcher.py (LOW priority)
+
+#### h342: Cancer Drug Cross-Activity Patterns - VALIDATED
+
+**ALL cancer drug mechanisms have 0-2.5% precision for non-cancer predictions:**
+| Mechanism | Non-Cancer Preds | Precision |
+|-----------|------------------|-----------|
+| mTOR inhibitors | 78 | 2.6% |
+| VEGF inhibitors | 103 | 1.0% |
+| MEK inhibitors | 26 | 0.0% |
+| BRAF inhibitors | 3 | 0.0% |
+| Proteasome inhibitors | 21 | 0.0% |
+| Immunotherapy | 42 | 0.0% |
+
+**Key insight:** Even mTOR inhibitors with FDA-approved non-cancer uses (transplant, TSC) have only 2.6%.
+The kNN model predicts based on disease similarity, not drug mechanism.
+
+---
+
+## Previous Session: h337, h338, h272, h178, h340, h339 (2026-02-05)
+
+### Previous Session Summary (6 hypotheses tested)
 - h337: ACE Inhibitor Broad Class Analysis - **INCONCLUSIVE** (opposite pattern to statins, but tiny sample)
 - h338: NRTI HBV Cross-Activity Boost - **INVALIDATED** (already in GT, nothing to boost)
 - h272: GT Expansion: Cancer Drug Repurposing - **VALIDATED** (Bevacizumab → PsA literature confirmed)
 - h178: DiseaseMatcher Performance Optimization - **DEPRIORITIZED** (0.02ms/lookup, not needed)
 - h340: MEK Inhibitor Non-Cancer Filter - **VALIDATED + IMPLEMENTED** (0% precision → LOW tier)
 - h339: Anti-VEGF Drug Non-Cancer Repurposing - **VALIDATED** (psoriasis case reports confirmed)
-
-### Cumulative Statistics
-| Status | Count |
-|--------|-------|
-| Validated | 210 |
-| Invalidated | 65 |
-| Inconclusive | 13 |
-| Blocked | 21 |
-| Deprioritized | 8 |
-| Pending | 29 |
-| **Total** | **346**
 
 ### KEY SESSION FINDINGS
 

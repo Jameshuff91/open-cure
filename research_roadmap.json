@@ -4720,13 +4720,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "For each predicted disease, boost scores of drugs with many GT indications",
         "Test boost formula: score \u00d7 (1 + log(indication_count) / 10)",
         "Evaluate impact on recall",
         "Check if this causes false positive inflation"
-      ]
+      ],
+      "findings": "Indication-weighted drug boosting analysis:\n\nKey finding: Indication count adds signal WITHIN tiers:\n- HIGH tier: 4.7% (low-ind) \u2192 22.7% (high-ind) = +18 pp gap\n- MEDIUM tier: 2.3% (low-ind) \u2192 10.8% (high-ind) = +8.5 pp gap\n- LOW tier: 0.4% (low-ind) \u2192 0.4% (high-ind) = 0 pp gap (no signal!)\n\nBUT this doesn't justify boosting because:\n1. HIGH tier + indication>=50: 22.7% precision \u2248 HIGH baseline (20.9%) - marginal\n2. The tier system already captures this via knn_score (which correlates with drug frequency)\n3. For LOW tier, high indication count is NOISE (drugs appearing everywhere but correct nowhere)\n   - Top LOW tier high-indication drugs: antibiotics, steroids, anesthetics\n   - These are put in LOW tier CORRECTLY because they're noise for specific diseases\n\nTop high-indication drugs in HIGH tier: Prednisolone (28%), Methylprednisolone (28%), \nDoxycycline (33%), Dexamethasone (22%) - steroids and antibiotics dominate.\n\nConclusion: Do NOT implement indication-weighted boosting. The signal is already captured \nby the existing tier system, and boosting would not materially improve precision.",
+      "result_metric": "HIGH+indication>=50: 22.7% vs HIGH baseline 20.9% (+1.8pp, not significant)"
     },
     {
       "id": "h238",
@@ -6821,7 +6823,7 @@
       "id": "h336",
       "title": "Disease Name Standardization for GT Matching",
       "description": "h222 showed 73% vs 42% precision due to name variations. Investigate systematic name standardization.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -6830,7 +6832,9 @@
         "Build canonical name mapper for GT diseases",
         "Re-evaluate precision with improved matching",
         "Quantify improvement opportunity"
-      ]
+      ],
+      "findings": "Disease name standardization analysis:\n\n128 prediction diseases NOT in GT by exact match.\nConservative normalization (abbreviations, hyphens, comma reordering) finds 25 additional VALID GT hits (+3.2%).\n\n5 unique disease mappings needed:\n1. 'acquired hemolytic anemia' \u2192 'anemia, hemolytic, acquired' (comma reordering)\n2. 'pure red cell aplasia' \u2192 'pure red-cell aplasia' (hyphen)\n3. 'zollinger ellison syndrome' \u2192 'zollinger-ellison syndrome' (hyphen)\n4. 'graft versus host disease gvhd' \u2192 'graft versus host disease' (abbreviation)\n5. 'diffuse large b cell lymphoma dlbcl' \u2192 'diffuse large b-cell lymphoma' (hyphen + abbreviation)\n\nImplementation recommendation:\n- Add these 5 synonyms to DISEASE_SYNONYMS in src/disease_name_matcher.py\n- Consider adding comma-reversal logic to normalize_disease_name()\n\nNote: The existing disease_name_matcher.py already handles hyphen\u2192space normalization (line 137).\nThe is_known_indication column in predictions uses this matcher, so some matching is already done.\n\nImpact: +25 GT hits / 784 = +3.2% improvement in measured precision.\nPriority: LOW - small improvement, production code change required.",
+      "result_metric": "+25 GT hits (+3.2%) from 5 disease synonym mappings"
     },
     {
       "id": "h337",
@@ -6921,14 +6925,16 @@
       "description": "h272 found cancer drugs with non-cancer mechanisms (VEGF inhibition) can work for inflammatory diseases. Identify other cancer drugs with dual mechanisms.",
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "steps": [
         "Categorize cancer drugs by mechanism (VEGF, mTOR, kinase, etc)",
         "Map mechanisms to non-cancer pathways",
         "Identify high-confidence non-cancer predictions",
         "Prioritize by mechanism plausibility"
-      ]
+      ],
+      "findings": "Cancer Drug Cross-Activity Patterns Analysis:\n\nALL cancer drug mechanisms have 0-2.5% precision for non-cancer predictions:\n| Mechanism | Non-Cancer Preds | Precision |\n|-----------|------------------|-----------|\n| mTOR inhibitors | 78 | 2.6% |\n| VEGF inhibitors | 103 | 1.0% |\n| MEK inhibitors | 26 | 0.0% |\n| BRAF inhibitors | 3 | 0.0% |\n| Proteasome inhibitors | 21 | 0.0% |\n| Immunotherapy | 42 | 0.0% |\n| BCL2/PARP inhibitors | 13 | 0.0% |\n\nKey insight: Even mTOR inhibitors (sirolimus, everolimus) which have FDA-approved non-cancer uses \n(transplant rejection, LAM, tuberous sclerosis) have only 2.6% precision.\n\nWhy? The kNN model predicts based on disease similarity, not drug mechanism.\n- Organ transplant rejection isn't similar to cancer diseases in the graph\n- The few GT hits (lymphangioma, hemangioendothelioma) happen to be similar to cancer diseases\n\nOnly 2 GT hits from 78 non-cancer mTOR predictions:\n- Sirolimus \u2192 lymphangioma \u2713\n- Sirolimus \u2192 hemangioendothelioma \u2713\n\nMany GT indications are MISSED (tuberous sclerosis marked \u2717 due to name mismatch: \nGT='tuberous sclerosis' vs pred='tuberous sclerosis complex').\n\nConclusion: Cancer drug cross-activity is NOT a reliable signal for boosting.\nThe kNN model fundamentally cannot capture mechanism-based repurposing across disease domains.\nConsider filtering cancer drug non-cancer predictions to LOW tier (but would lose 2 valid hits).",
+      "result_metric": "0-2.6% precision for cancer drug non-cancer predictions"
     },
     {
       "id": "h343",
@@ -6936,14 +6942,16 @@
       "description": "h339 validated anti-VEGF for psoriasis (case reports). Add boost rule: anti-VEGF + psoriasis/psoriatic disease = GOLDEN tier",
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "steps": [
         "Define ANTI_VEGF_MAB set (bevacizumab, aflibercept, ranibizumab)",
         "Define PSORIATIC_DISEASES set",
         "Add boost rule in _apply_category_rescue()",
         "Verify impact on predictions"
-      ]
+      ],
+      "findings": "Evidence review:\n- Anti-VEGF overall precision: 3.1% (5/162 predictions)\n- Anti-VEGF autoimmune precision: 0% (0/5)\n- Anti-VEGF dermatological precision: 0% (0/1)\n- Case reports (PMC4248526) are Grade D evidence\n- Only 2 predictions affected: Bevacizumab\u2192PsA (HIGH), Aflibercept\u2192psoriasis (HIGH)\n\nDecision: Do NOT implement GOLDEN boost. Current HIGH tier is appropriate.\nCase reports + mechanism \u2248 20-30% confidence, matching HIGH tier (20.9%).\nGOLDEN tier (57.7%) requires stronger evidence.",
+      "result_metric": "No change - HIGH tier appropriate for case-report-level evidence"
     },
     {
       "id": "h344",
@@ -6951,13 +6959,15 @@
       "description": "h339 found sunitinib/sorafenib clear psoriasis as side effect. Are TKIs with VEGFR activity predicted for psoriasis?",
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "steps": [
         "List all VEGFR-targeting TKIs",
         "Check their psoriasis predictions",
         "Validate precision against case reports"
-      ]
+      ],
+      "findings": "TKI psoriasis off-target effect analysis:\n\nResult: VEGFR TKIs have ZERO predictions for psoriasis or inflammatory diseases.\n- Total TKI predictions: 43\n- TKI \u2192 psoriasis: 0\n- TKI \u2192 inflammatory/autoimmune: 0\n- All 43 predictions are for cancer (MEDIUM: 33, LOW: 6, HIGH: 4)\n\nThis explains why h343 found 0% precision for TKIs.\nThe kNN model correctly limits TKIs to their known indication domain (cancer).\nCase reports of psoriasis clearance are incidental observations, not predictable by kNN.\n\nConclusion: No boost rule needed. kNN correctly excludes TKIs from inflammatory diseases.\nThis is actually a GOOD feature - prevents false positives from off-target effects.",
+      "result_metric": "0 TKI predictions for psoriasis/inflammatory (correct behavior)"
     },
     {
       "id": "h345",
@@ -6973,6 +6983,53 @@
         "Cross-reference with model predictions",
         "Validate top candidates"
       ]
+    },
+    {
+      "id": "h346",
+      "title": "Cancer Drug Filter Expansion",
+      "description": "h342 found ALL cancer drug mechanisms have 0-2.5% non-cancer precision. Consider implementing broad filter for cancer drugs \u2192 non-cancer predictions.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "priority": 4,
+      "steps": [
+        "Define comprehensive list of cancer-only drug classes (VEGF, MEK, BRAF, PD-1, PARP, BCL2)",
+        "Calculate precision for each class on non-cancer predictions",
+        "Implement filter: cancer drug + non-cancer = LOW tier (or FILTER)",
+        "Evaluate impact on recall (may lose valid mTOR hits)"
+      ],
+      "source": "h342 cross-activity analysis"
+    },
+    {
+      "id": "h347",
+      "title": "Disease Name Synonym Implementation",
+      "description": "h336 identified 5 disease synonym mappings worth +25 GT hits. Implement in disease_name_matcher.py.",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "priority": 5,
+      "steps": [
+        "Add 5 validated synonym mappings to DISEASE_SYNONYMS",
+        "Add comma-reversal logic to normalize_disease_name()",
+        "Add abbreviation-stripping (gvhd, dlbcl, bcc, etc.)",
+        "Re-run predictions and verify +25 GT hits"
+      ],
+      "source": "h336 standardization analysis"
+    },
+    {
+      "id": "h348",
+      "title": "Mechanism-Based Repurposing vs kNN Comparison",
+      "description": "h342 showed kNN fails for mechanism-based repurposing (mTOR \u2192 transplant). Compare kNN vs pathway-based approaches for specific drug classes.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "status": "pending",
+      "priority": 3,
+      "steps": [
+        "Identify drugs with known dual mechanisms (mTOR, JAK, etc.)",
+        "Compare kNN recall vs manual pathway annotation",
+        "Quantify gap between kNN (disease similarity) and mechanism (pathway sharing)"
+      ],
+      "source": "h342 mTOR analysis"
     }
   ],
   "completed": [
@@ -8268,6 +8325,12 @@
       ],
       "learning": "Anti-VEGF drugs (bevacizumab, sunitinib, sorafenib) have case report evidence for psoriasis efficacy. MEK inhibitors are cancer-specific (0% non-cancer precision). Drug mechanism class determines repurposing potential.",
       "implication": "VEGF inhibition is a valid mechanism for psoriasis repurposing. MEK inhibition is not. Mechanism-based drug classification improves prediction quality."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h342/h343/h237",
+      "learning": "Cancer drug cross-activity patterns: ALL mechanisms show 0-2.6% non-cancer precision. kNN predicts by disease similarity, not drug mechanism. High-indication drugs (steroids, antibiotics) are noise in LOW tier, signal in HIGH tier.",
+      "implication": "Consider cancer drug filter; avoid indication-count boosting; kNN fundamentally limited for mechanism-based repurposing"
     }
   ],
   "collaborations": [
