@@ -150,8 +150,8 @@ vastai destroy instance <INSTANCE_ID>
 **Tier System (h478 GT sync, 2026-02-06):**
 - GOLDEN: 89.2% full / 67.0% ± 20.6% holdout (186 predictions)
 - HIGH: 76.8% full / 60.8% ± 7.2% holdout (514 predictions)
-- MEDIUM: 40.5% full / 30.8% ± 3.4% holdout (3452 predictions, h490: -114 from CV demotion)
-- LOW: 21.4% full / 14.8% ± 2.3% holdout (2455 predictions, h490: +114 from CV demotion)
+- MEDIUM: 40.5% full / 32.1% ± 3.6% holdout (3396 predictions, h490+h505: -170 from CV demotion)
+- LOW: 21.4% full / 12.9% ± 1.4% holdout (2511 predictions, h490+h505: +170 from CV demotion)
 - FILTER: 16.8% full / 10.3% ± 1.1% holdout (6569 predictions)
 - **NOTE:** Full-data inflated after GT sync (1464 pairs added). Use HOLDOUT as authoritative.
 

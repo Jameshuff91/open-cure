@@ -1,13 +1,27 @@
 # Research Loop Progress
 
-## Current Session: h490 - CV ATC Coherent Full-to-Holdout Gap Investigation (2026-02-06)
+## Current Session: h490/h504/h503/h505 - CV Gap + Self-Referential + Seed Analysis (2026-02-06)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 1**
-- h490: Cardiovascular ATC Coherent Full-to-Holdout Gap Investigation - **VALIDATED**
+**Hypotheses Tested: 4**
+- h490: CV ATC Coherent Full-to-Holdout Gap - **VALIDATED** (CV standard MEDIUM→LOW, +0.4pp)
+- h504: Self-Referential Disease Analysis - **VALIDATED** (31.6% diseases are 100% self-ref)
+- h503: Seed 42 Failure Mode - **VALIDATED** (sampling variance, no fix needed)
+- h505: CV Target Overlap Rescue Block - **VALIDATED** (56 preds MEDIUM→LOW)
+
+### Combined Impact (h490 + h505)
+| Tier | Before | After | Change |
+|------|--------|-------|--------|
+| GOLDEN | 68.3% | 68.3% | 0.0pp |
+| HIGH | 55.3% | 55.3% | 0.0pp |
+| **MEDIUM** | **31.7%** | **32.1%** | **+0.4pp** |
+| LOW | 12.0% | 12.9% | +0.9pp |
+| FILTER | 10.3% | 10.3% | 0.0pp |
+
+170 predictions moved MEDIUM→LOW. Tier counts: MEDIUM 3566→3396, LOW 2341→2511.
 
 ### h490: Cardiovascular Full-to-Holdout Gap - VALIDATED
 
