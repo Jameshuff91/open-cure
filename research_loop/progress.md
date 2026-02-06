@@ -1,6 +1,73 @@
 # Research Loop Progress
 
-## Current Session: h490/h504/h503/h505 - CV Gap + Self-Referential + Seed Analysis (2026-02-06)
+## Current Session: h507/h492/h509/h515 - Self-Referentiality + GT Expansion + Baseline Re-Calibration (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 5**
+- h507: Predictable Self-Referentiality - **INVALIDATED** (GT-free features reverse on holdout)
+- h492: GT Expansion for FDA-Approved Pairs - **VALIDATED** (15 pairs added, negligible impact)
+- h509: CV Coronary Hierarchy Demotion - **INVALIDATED** (small-n, do not demote)
+- h509 extended: HIGH Tier Per-Rule Holdout Audit - **VALIDATED** (identified underperforming rules)
+- h515: Diabetes Hierarchy Split - **INVALIDATED** (only 8 complication predictions)
+
+### Key Findings
+
+#### 1. Self-Referentiality is NOT Predictable (h507)
+- Best GT-free feature: same_cat_frac (AUC=0.734 on full data)
+- Combined features: AUC=0.781
+- **REVERSES on holdout**: -6.0pp ± 12.9pp gap (inconsistent direction)
+- Root cause: low same_cat_frac captures TWO opposite populations
+  - 58% truly self-referential (bad on holdout)
+  - 42% genuine cross-category transfer (good on holdout)
+- No GT-free feature can separate them
+
+#### 2. GT is Already Complete (h492)
+- Audited 20 major diseases across 7 categories (167 pairs checked)
+- Only 15 FDA-approved pairs missing
+- 14/15 NOT in model's top-30 predictions
+- **GT incompleteness is NOT the precision bottleneck**
+- Model limitations are structural (kNN coverage)
+
+#### 3. Holdout Baseline Has Drifted (h492 discovery)
+| Tier | Previous (CLAUDE.md) | Current (h492 re-baseline) | Delta |
+|------|---------------------|---------------------------|-------|
+| GOLDEN | 67.0% ± 20.6% | 63.3% ± 23.2% | -3.7pp |
+| HIGH | 60.8% ± 7.2% | 51.5% ± 5.3% | -9.3pp |
+| MEDIUM | 32.1% ± 3.6% | 29.9% ± 2.8% | -2.2pp |
+| LOW | 12.9% ± 1.4% | 12.3% ± 1.4% | -0.6pp |
+| FILTER | 10.3% ± 1.1% | 8.9% ± 1.1% | -1.4pp |
+
+Drift caused by accumulated code changes since h478 (69 insertions, 45 deletions).
+
+#### 4. CV Hierarchy Groups All Too Small (h509)
+- Coronary: 5 diseases, arrhythmia: 3, hypertension: 4
+- Full-data precision high (65-93%) but holdout unreliable (n≈1/seed)
+- DO NOT demote — these encode genuine medical knowledge
+
+#### 5. HIGH Tier Per-Rule Audit (h509 extended)
+- Several rules underperforming: respiratory (20%), thyroid (26%), diabetes (21%)
+- But most have n<15 across 5 seeds → too small for reliable demotion
+- Diabetes hierarchy: only 8 complication predictions → not worth splitting (h515)
+
+### New Hypotheses Generated (5)
+- h510: Cross-Category Transfer Disease Identification (P5, low)
+- h511: Embedding Norm as Disease Confidence Annotation (P5, low)
+- h512: HPO/Gene External Similarity for Self-Referential Diseases (P3, high)
+- h513: Periodic Holdout Re-Baseline Policy (P4, low)
+- h514: Migraine Drug Coverage Gap Analysis (P5, low)
+- h515: Diabetes Hierarchy Split [COMPLETED - INVALIDATED]
+
+### Recommended Next Steps
+1. **h512:** HPO phenotype similarity as alternative for 144 self-referential diseases (high impact, high effort)
+2. **h481:** Deliverable annotation with literature validation status (medium impact, medium effort)
+3. **h257:** IV vs oral formulation safety distinction (medium impact, medium effort)
+
+---
+
+## Previous Session: h490/h504/h503/h505 - CV Gap + Self-Referential + Seed Analysis (2026-02-06)
 
 ### Session Summary
 
@@ -22,149 +89,6 @@
 | FILTER | 10.3% | 10.3% | 0.0pp |
 
 170 predictions moved MEDIUM→LOW. Tier counts: MEDIUM 3566→3396, LOW 2341→2511.
-
-### h490: Cardiovascular Full-to-Holdout Gap - VALIDATED
-
-**Objective:** Investigate why cardiovascular ATC coherent predictions have a large full-to-holdout precision gap.
-
-**Key findings:**
-
-1. **CV MEDIUM sub-rule holdout analysis:**
-   - cv_pathway_comprehensive: 21.4% ± 12.7% (n=14/seed) — legitimate signal
-   - target_overlap_promotion: 16.2% ± 14.9% (n=8/seed) — OK
-   - atc_coherent_cardiovascular: 8.4% ± 10.4% (n=5/seed) — below LOW avg
-   - standard: 2.0% ± 4.0% (n=17/seed) — essentially random
-
-2. **cv_pathway_comprehensive 44pp gap explained:**
-   - NOT overfitting (hardcoded set, not recomputed on holdout)
-   - Disease selection variance: only 5/39 CV diseases have high PC drug overlap
-   - When CHF/MI/stroke in holdout: high precision. When PAH/cardiac arrest: near 0%
-
-3. **Self-referential diseases discovered:**
-   - PAH: 100% self-referential (ALL 26 GT drugs from self in kNN)
-   - Angioedema: 90%, Hereditary angioedema: 80%, PVD: 80%
-
-4. **Action taken:** Added 'cardiovascular' to MEDIUM_DEMOTED_CATEGORIES
-   - 114 predictions moved MEDIUM→LOW (84 standard + 66 ATC coherent - 36 rescued by target_overlap)
-   - MEDIUM holdout: +0.4pp (31.7% → 32.1%)
-   - cv_pathway_comprehensive and target_overlap preserved (return before demotion check)
-
-### New Hypotheses Generated (3)
-- h504: PAH Self-Referential Filter (Priority 4)
-- h505: CV Target Overlap Rescue Precision (Priority 5)
-- h506: CV Hierarchy Rules Holdout Validation (Priority 4)
-
-### h504: PAH Self-Referential Filter - VALIDATED
-
-**Objective:** Systematically identify diseases with >80% self-referential GT.
-
-**Key findings:**
-1. ALL 455 diseases are their own #1 kNN neighbor
-2. 144 (31.6%) are 100% self-referential → FLOOR of kNN performance
-3. 27.5pp MEDIUM holdout gap: <50% self-ref (40.8%) vs 100% (13.3%)
-4. NOT actionable as demotion (requires GT knowledge, already handled indirectly by low freq)
-5. Self-referentiality is the DOMINANT source of full-to-holdout gap
-
-### New Hypotheses Generated (5 total)
-- h504-h506 from h490, h507-h508 from h504
-
-### Recommended Next Steps
-1. **h506:** CV Hierarchy Rules Holdout Validation - check if CV hierarchy HIGH predictions are genuine
-2. **h507:** Predictable Self-Referentiality - can we detect self-ref from embedding features?
-3. **h503:** Seed 42 Failure Mode - low effort, could explain variance
-
----
-
-## Previous Session: h497/h501/h498 - GOLDEN Validation + Determinism Fix + Precision Recalibration (2026-02-06)
-
-### Session Summary
-
-**Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested: 3**
-- h497: GOLDEN Standard vs Hierarchy Holdout Validation - **VALIDATED** (no demotion needed)
-- h501: kNN Tie-Breaking Determinism Fix - **VALIDATED** (predictions now reproducible)
-- h498: Full-Data Precision Recalibration - **VALIDATED** (constants updated to h478 holdout values)
-
-### h497: GOLDEN Standard vs Hierarchy Holdout - VALIDATED
-
-**Objective:** Test whether non-hierarchy GOLDEN predictions ("standard" rule) have significantly lower holdout precision than hierarchy-based GOLDEN predictions.
-
-**Key findings:**
-- Standard GOLDEN holdout: 62.2% ± 31.3% (n=26/seed)
-- Hierarchy GOLDEN holdout: 70.3% ± 19.1% (n=19/seed)
-- Difference: +8.1pp (NOT significant, t=1.01, p>0.35)
-- Excluding seed 42 outlier (0/4 standard): standard 77.7% vs hierarchy 78.6% (+0.9pp)
-- Full-data gap (standard 55.7% vs hierarchy 89.5%) is mostly hierarchy overfitting
-
-**Decision:** No demotion needed. Standard GOLDEN holdout (62.2%) exceeds HIGH avg (60.8%).
-
-### h501: kNN Tie-Breaking Determinism Fix - VALIDATED
-
-**Objective:** Fix non-reproducible predictions across Python processes.
-
-**Root cause:** `sorted(drug_scores.items(), key=lambda x: x[1], reverse=True)` relied on dict iteration order for tied scores. Python hash randomization causes dict order to vary between processes.
-
-**Fix:** Added drug_id as secondary sort key: `key=lambda x: (-x[1], x[0])`
-Applied to 4 sort operations in predict().
-
-**Verification:** 3 independent Python processes produce identical hash (970d4f6e16b8c82dc5dd438466117732). Tier counts: GOLDEN=286, HIGH=507, MEDIUM=3566, LOW=2341, FILTER=6922 — identical across all runs.
-
-### h498: Full-Data Precision Recalibration - VALIDATED
-
-**Objective:** Update all precision constants from stale h402 values to h478 holdout-validated values.
-
-**Changes:**
-- DEFAULT_TIER_PRECISION: GOLDEN 53→67, HIGH 51→61, MEDIUM 21→31, LOW 12→15, FILTER 7→10
-- get_category_holdout_precision() tier_defaults: same update
-- CATEGORY_MEDIUM_HOLDOUT_PRECISION: updated from h462 to h499 corrected values
-  - Major changes: dermatological 23→48, musculoskeletal 30→56
-  - Demoted categories confirmed: neuro 10→6, GI 11→5
-- Module docstring updated
-
-### New Hypotheses Generated (3)
-- h501: kNN Tie-Breaking Determinism [COMPLETED]
-- h502: GOLDEN Full-Data vs Holdout Gap: Hierarchy Overfitting Quantification (Priority 5)
-- h503: Seed 42 Failure Mode: Why Does One Seed Have 0% Standard GOLDEN? (Priority 5)
-
-### Recommended Next Steps
-1. **h492:** GT Expansion for psychiatric drug-disease pairs (Priority 4, medium effort)
-2. **h486:** Systematic SIDER-based adverse effect mining (Priority 3, high effort)
-3. **h257:** IV vs Oral formulation safety distinction (Priority 4, medium effort)
-
----
-
-## Previous Session: h489/h494/h484/h495 - Safety Audit & Meta-Science (2026-02-06)
-
-### Session Summary
-
-**Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested: 4**
-- h489: Mechanism-Required ATC Coherent for Psychiatric/Respiratory - **INVALIDATED**
-- h494: Systematic Small-n Holdout Audit - **VALIDATED** (no reversals needed)
-- h484: CCB Cardiac Arrest Audit - **VALIDATED** (4 harmful predictions removed)
-- h495: Confidence Filter Integration - **VALIDATED** (5 more harmful predictions removed)
-
-### Combined Impact (h484 + h495)
-
-| Tier | Before | After | Δ |
-|------|--------|-------|---|
-| GOLDEN | 284, 64.1% | 284, 64.1% | unchanged |
-| HIGH | 516, 56.6% | 504, 57.7% | -12, **+1.1pp** |
-| MEDIUM | 3620, 29.5% | 3613, 29.5% | -7, +0.0pp |
-| LOW | 2439, 11.4% | 2426, 11.5% | -13, +0.1pp |
-| FILTER | 7288, 11.3% | 7323, 11.3% | +35, 0.0pp |
-
-9 harmful predictions removed from HIGH/MEDIUM tiers.
-
----
-
-## Previous Session: h493/h499 - Respiratory ATC + Category Re-Validation (2026-02-06)
-
-### Session Summary
-- h493: Respiratory ATC coherent literature validation - **VALIDATED** (8 corticosteroid→IPF filtered)
-- h499: Category MEDIUM demotions re-validated with corrected GT - **VALIDATED** (all justified)
 
 ---
 
