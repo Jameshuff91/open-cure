@@ -10444,10 +10444,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h486"
-      ]
+      ],
+      "findings": "Systematic audit found ZERO unfiltered corticosteroid\u2192iatrogenic predictions.\n\nAll corticosteroid iatrogenic diseases checked:\n- Diabetes/hyperglycemia: no corticosteroid predictions in top-30\n- Hypertension: no corticosteroid predictions in top-30\n- Peptic ulcer: no corticosteroid predictions in top-30\n- Obesity: no corticosteroid predictions in top-30\n- Cardiomyopathy: keyword match but corticosteroid myopathy \u2260 cardiomyopathy\n\nExisting h486 filters (TB, glaucoma, osteoporosis, MG, pancreatitis, IPF, adrenal insufficiency) \nplus other filter rules already cover all corticosteroid iatrogenic predictions.\nNo additional filters needed.",
+      "result_metric": "0 unfiltered predictions \u2014 already fully covered"
     },
     {
       "id": "h528",
@@ -10462,10 +10464,12 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "depends_on": [
         "h486"
-      ]
+      ],
+      "findings": "Systematic NSAID iatrogenic audit found 1 unfiltered prediction: Celecoxib\u2192ischemic stroke (LOW).\n\nAdded 'ischemic stroke' to celecoxib inverse indications (already had 'ischemic cerebrovascular disorder' \nbut 'ischemic stroke' is a separate disease entry in our dataset).\n\nAll other NSAID iatrogenic concerns (renal failure, hyperkalemia, asthma, GI bleeding, MI, HF) \neither have no NSAID predictions in top-30 or are already handled by other filter rules.",
+      "result_metric": "+1 celecoxib\u2192ischemic stroke filter"
     }
   ],
   "completed": [

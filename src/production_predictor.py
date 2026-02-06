@@ -778,6 +778,7 @@ INVERSE_INDICATION_PAIRS = {
     },
     'celecoxib': {
         'toxic epidermal necrolysis', 'ischemic cerebrovascular disorder',
+        'ischemic stroke',  # h528: COX-2 inhibitors increase stroke risk
     },
     'diclofenac': {
         'toxic epidermal necrolysis', 'chronic peptic ulcer disease',
