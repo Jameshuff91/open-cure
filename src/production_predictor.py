@@ -3118,8 +3118,14 @@ class DrugRepurposingPredictor:
         #   cv_pathway_comprehensive (21.4%) and target_overlap (16.2%) return BEFORE this check
         # - Hematological: h553 10.0% ± 20.0% holdout (27.6% full-data, n=8/seed)
         #   default sub-reason: 0% holdout (n=6/seed × 4 seeds), target_overlap: 25% ± 43% (n=1.2/seed)
+        # - Metabolic: h603 standard holdout 8.3% ± 14.4% (n=3.8/seed), total demotion 10.3% ± 4.7%
+        #   holdout (n=39 across 5 seeds). Statin/TZD rescued to LOW by _apply_category_rescue;
+        #   hierarchy rules (diabetes/thyroid) return GOLDEN/HIGH before this check.
+        #   Already excluded from ATC coherent rescue (h395).
+        # h603: Respiratory (22.3% holdout) and endocrine (24.5% holdout) NOT demoted — precision
+        #   is below MEDIUM avg but above LOW avg, making demotion marginal. Small n = unreliable.
         # Category-specific rescue rules (h380 GI, hierarchy) still promote valid drugs to HIGH.
-        MEDIUM_DEMOTED_CATEGORIES = {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cardiovascular', 'hematological'}
+        MEDIUM_DEMOTED_CATEGORIES = {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cardiovascular', 'hematological', 'metabolic'}
         if category in MEDIUM_DEMOTED_CATEGORIES:
             return ConfidenceTier.LOW, False, f'{category}_medium_demotion'
 

@@ -1,0 +1,159 @@
+================================================================================
+h603: MEDIUM Standard Rule Category Analysis
+================================================================================
+
+--- Step 1: Full-data MEDIUM analysis ---
+Total diseases with GT: 479
+
+Total MEDIUM predictions: 1668
+
+MEDIUM by sub_reason:
+  standard                                   630 preds,  26.5% (167 hits)
+  cancer_same_type                           608 preds,  43.9% (267 hits)
+  target_overlap_promotion                   197 preds,  48.7% (96 hits)
+  cv_pathway_comprehensive                   104 preds,  65.4% (68 hits)
+  local_anesthetic_procedural                 41 preds,  31.7% (13 hits)
+  cardiovascular                              21 preds,  23.8% (5 hits)
+  infectious_cs_tb_demotion                   18 preds,  33.3% (6 hits)
+  infectious_hierarchy_pneumonia              15 preds,  73.3% (11 hits)
+  mechanism_specific                          15 preds,  73.3% (11 hits)
+  highly_repurposable                          8 preds,   0.0% (0 hits)
+  metabolic                                    7 preds,   0.0% (0 hits)
+  neurological_hierarchy_parkinsons            2 preds, 100.0% (2 hits)
+  neurological_hierarchy_migraine              2 preds, 100.0% (2 hits)
+
+
+Standard MEDIUM predictions: 630
+
+Standard MEDIUM by disease category (full-data precision):
+  infectious                       314 preds,  28.0% (88 hits)
+  dermatological                   101 preds,  26.7% (27 hits)
+  musculoskeletal                   38 preds,  28.9% (11 hits)
+  ophthalmic                        36 preds,  33.3% (12 hits)
+  other                             33 preds,  24.2% (8 hits)
+  renal                             32 preds,  25.0% (8 hits)
+  autoimmune                        21 preds,  33.3% (7 hits)
+  metabolic                         20 preds,  10.0% (2 hits)
+  respiratory                       17 preds,   5.9% (1 hits)
+  endocrine                         13 preds,  23.1% (3 hits)
+  psychiatric                        5 preds,   0.0% (0 hits)
+
+
+================================================================================
+Step 2: 5-seed holdout validation for standard MEDIUM by category
+================================================================================
+
+--- Seed 42 ---
+  autoimmune                  0/3    =   0.0%
+  dermatological              6/19   =  31.6%
+  endocrine                   0/0    =   0.0%
+  infectious                 12/61   =  19.7%
+  metabolic                   0/0    =   0.0%
+  musculoskeletal             0/5    =   0.0%
+  ophthalmic                  0/3    =   0.0%
+  renal                       1/3    =  33.3%
+  respiratory                 0/4    =   0.0%
+  OVERALL                    19/98   =  19.4%
+
+--- Seed 123 ---
+  dermatological              4/15   =  26.7%
+  endocrine                   0/4    =   0.0%
+  infectious                 11/55   =  20.0%
+  metabolic                   1/3    =  33.3%
+  musculoskeletal             8/9    =  88.9%
+  ophthalmic                  2/6    =  33.3%
+  other                       0/1    =   0.0%
+  psychiatric                 0/2    =   0.0%
+  renal                       2/5    =  40.0%
+  respiratory                 0/3    =   0.0%
+  OVERALL                    28/103  =  27.2%
+
+--- Seed 456 ---
+  autoimmune                  0/4    =   0.0%
+  dermatological             11/34   =  32.4%
+  endocrine                   2/7    =  28.6%
+  infectious                  2/35   =   5.7%
+  metabolic                   0/2    =   0.0%
+  ophthalmic                  0/1    =   0.0%
+  other                       1/3    =  33.3%
+  renal                       0/3    =   0.0%
+  respiratory                 1/10   =  10.0%
+  OVERALL                    17/99   =  17.2%
+
+--- Seed 789 ---
+  autoimmune                  5/13   =  38.5%
+  dermatological              2/19   =  10.5%
+  endocrine                   0/0    =   0.0%
+  infectious                 15/52   =  28.8%
+  metabolic                   0/5    =   0.0%
+  musculoskeletal             0/16   =   0.0%
+  other                       0/5    =   0.0%
+  psychiatric                 0/4    =   0.0%
+  renal                       1/5    =  20.0%
+  respiratory                 0/2    =   0.0%
+  OVERALL                    23/121  =  19.0%
+
+--- Seed 2024 ---
+  autoimmune                  3/7    =  42.9%
+  dermatological              4/14   =  28.6%
+  endocrine                   0/6    =   0.0%
+  infectious                 13/33   =  39.4%
+  metabolic                   0/5    =   0.0%
+  musculoskeletal             8/9    =  88.9%
+  ophthalmic                  1/4    =  25.0%
+  other                       0/7    =   0.0%
+  respiratory                 0/1    =   0.0%
+  OVERALL                    29/86   =  33.7%
+
+
+================================================================================
+Step 3: 5-Seed Holdout Summary
+================================================================================
+
+Category                             Holdout %   ±    Std   n/seed
+-----------------------------------------------------------------
+ALL STANDARD MEDIUM                       23.3   ±    6.2    101.4
+
+  infectious                              22.7   ±   11.1     47.2 ***
+  dermatological                          25.9   ±    8.0     20.2
+  musculoskeletal                         44.4   ±   44.4      9.8
+  autoimmune                              20.3   ±   20.4      6.8 ***
+  endocrine                                9.5   ±   13.5      5.7
+  other                                    8.3   ±   14.4      4.0
+  renal                                   23.3   ±   15.3      4.0
+  respiratory                              2.0   ±    4.0      4.0
+  metabolic                                8.3   ±   14.4      3.8
+  ophthalmic                              14.6   ±   14.9      3.5
+  psychiatric                              0.0   ±    0.0      3.0
+
+Pooled groups:
+  metabolic+respiratory+endocrine          5.2   ±    6.6     10.4 ***
+  all_other_standard                      25.2   ±    8.0     91.0
+
+
+================================================================================
+Step 4: Demotion Analysis
+================================================================================
+
+Pooled met+resp+endo: 5.2% ± 6.6% (n=10.4/seed)
+All other standard:   25.2% ± 8.0% (n=91.0/seed)
+Gap:                  20.1pp
+
+Predictions that would move MEDIUM→LOW: 50
+
+Full-data MEDIUM: 38.8% → 39.7% (+0.8pp)
+
+>>> MARGINAL: Pool precision (5.2%) < 25% but n=10.4/seed
+
+Individual categories:
+  metabolic                    8.3% ±  14.4% (n=  3.8/seed) → LOW-N
+  respiratory                  2.0% ±   4.0% (n=  4.0/seed) → LOW-N
+  endocrine                    9.5% ±  13.5% (n=  5.7/seed) → LOW-N
+  autoimmune                  20.3% ±  20.4% (n=  6.8/seed) → DEMOTE
+  dermatological              25.9% ±   8.0% (n= 20.2/seed) → OK
+  infectious                  22.7% ±  11.1% (n= 47.2/seed) → DEMOTE
+  musculoskeletal             44.4% ±  44.4% (n=  9.8/seed) → OK
+  ophthalmic                  14.6% ±  14.9% (n=  3.5/seed) → LOW-N
+  psychiatric                  0.0% ±   0.0% (n=  3.0/seed) → LOW-N
+  renal                       23.3% ±  15.3% (n=  4.0/seed) → LOW-N
+  other                        8.3% ±  14.4% (n=  4.0/seed) → LOW-N

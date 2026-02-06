@@ -1,6 +1,48 @@
 # Research Loop Progress
 
-## Current Session: h550/h598 - Antibiotic Spectrum + Targeted Cancer Expansion (2026-02-06)
+## Current Session: h603 - MEDIUM Standard Rule Category Refinement (2026-02-06)
+
+### h603: Standard MEDIUM Category Analysis — VALIDATED (marginal)
+
+Analyzed all 630 standard MEDIUM predictions by disease category. Found that metabolic (10.0% full-data, 8.3% holdout), respiratory (5.9% full-data, 2.0% holdout), and endocrine (23.1% full-data, 9.5% holdout) perform far below the MEDIUM average in the standard pathway.
+
+**Key Results:**
+- Pooled met+resp+endo standard: 5.2% ± 6.6% holdout (n=10.4/seed) vs 25.2% other standard
+- 20.1pp gap between these categories and the rest
+- MEDIUM_DEMOTED_CATEGORIES interaction: adding categories also blocks ATC coherent pathway
+  - metabolic: already excluded from ATC coherent → clean demotion (10.3% holdout)
+  - respiratory: NOT excluded from ATC coherent → demotion includes ATC rescue preds (22.3% holdout)
+  - endocrine: NOT excluded from ATC coherent → demotion includes ATC rescue preds (24.5% holdout)
+
+**Implementation:** Added metabolic only to MEDIUM_DEMOTED_CATEGORIES. Respiratory and endocrine NOT demoted (holdout precision above LOW when including ATC coherent predictions).
+
+**Impact:** MEDIUM 41.3% ± 2.8% (vs 41.4% baseline). Within noise. 20 predictions MEDIUM→LOW.
+
+**Critical learning:** MEDIUM_DEMOTED_CATEGORIES intercepts predictions BEFORE the ATC coherent rescue pathway. Only add categories that are already in ATC_COHERENT_EXCLUDED or where combined standard+ATC precision is clearly LOW.
+
+### Session Tier Performance (h603 update)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 69.9% ± 17.9% | ~280 |
+| HIGH | 58.9% ± 6.0% | ~720 |
+| MEDIUM | 41.3% ± 2.8% | ~1879 |
+| LOW | 15.1% ± 2.4% | ~3955 |
+| FILTER | 10.6% ± 1.3% | ~7300 |
+
+### New Hypotheses Generated (4)
+- h604: Standard MEDIUM infectious drug-class stratification (P4, medium)
+- h605: Highly repurposable MEDIUM demotion (P5, low)
+- h606: ATC coherent respiratory/endocrine validation (P4, low)
+- h607: Standard MEDIUM autoimmune quality (P5, low)
+
+### Recommended Next Steps
+1. **h604**: Largest remaining standard MEDIUM category (infectious, 314 preds, 22.7% holdout). Per-drug analysis may find demotable drug classes.
+2. **h606**: Quick check — are atc_coherent respiratory/endocrine worth the ATC rescue or should they be excluded?
+3. External data integration (h91/h92) for fundamentally new signals.
+
+---
+
+## Previous Session: h550/h598 - Antibiotic Spectrum + Targeted Cancer Expansion (2026-02-06)
 
 ### h550: Antibiotic Spectrum Validation — INVALIDATED
 

@@ -12464,7 +12464,7 @@
       "id": "h603",
       "title": "MEDIUM Standard Rule Category Refinement: Metabolic/Respiratory/Endocrine Sub-Analysis",
       "description": "Within the 'standard' MEDIUM rule (615 preds, 41% precision), metabolic (30%), respiratory (29.4%), and endocrine (30.8%) categories are below average but have small n. Pool these categories and test holdout to see if combined they justify demotion.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12472,6 +12472,69 @@
         "Pool metabolic + respiratory + endocrine within standard MEDIUM",
         "Compute holdout precision for pooled group",
         "If n >= 30/seed and precision < 25%, implement category-specific standard demotion"
+      ],
+      "findings": "VALIDATED (marginal): Standard MEDIUM by category analysis reveals metabolic/respiratory/endocrine\nhave 5.2% \u00b1 6.6% pooled holdout (n=10.4/seed) vs 25.2% for other standard categories.\n\nFull-data standard MEDIUM by category:\n- infectious: 314 preds, 28.0%\n- dermatological: 101 preds, 26.7%\n- musculoskeletal: 38 preds, 28.9%\n- ophthalmic: 36 preds, 33.3%\n- other: 33 preds, 24.2%\n- renal: 32 preds, 25.0%\n- autoimmune: 21 preds, 33.3%\n- metabolic: 20 preds, 10.0%\n- respiratory: 17 preds, 5.9%\n- endocrine: 13 preds, 23.1%\n- psychiatric: 5 preds, 0.0%\n\nHoldout validation (5-seed):\n- metabolic_medium_demotion: 10.3% \u00b1 4.7% (n=39, clearly LOW)\n- respiratory_medium_demotion: 22.3% \u00b1 5.0% (n=41, between LOW and MEDIUM \u2014 NOT demoted)\n- endocrine_medium_demotion: 24.5% \u00b1 8.7% (n=14, between LOW and MEDIUM \u2014 NOT demoted)\n\nImplementation: Added metabolic to MEDIUM_DEMOTED_CATEGORIES. Respiratory and endocrine NOT demoted because holdout precision (22.3%, 24.5%) is above LOW avg (15.3%) and catches ATC coherent predictions. Only metabolic was already excluded from ATC coherent (h395).\n\nImpact: MEDIUM 41.3% \u00b1 2.8% (vs 41.4% \u00b1 2.0% baseline). Within noise. 20 predictions MEDIUM\u2192LOW.\nTier ordering preserved. GOLDEN=69.9% > HIGH=58.9% > MEDIUM=41.3% > LOW=15.1% > FILTER=10.6%.",
+      "result_metric": "MEDIUM 41.3% \u00b1 2.8% (within noise of 41.4% baseline)"
+    },
+    {
+      "id": "h604",
+      "title": "Standard MEDIUM Infectious Sub-Analysis: Drug-Class Stratification",
+      "description": "Standard MEDIUM infectious is the largest sub-category (314 preds, 22.7% holdout, n=47.2/seed). This is below MEDIUM avg (41.3%) but above LOW (15.1%). Can we stratify by drug class to find specific demotable groups within infectious? E.g., beta-lactams for non-bacterial diseases, aminoglycosides for wrong pathogen types, etc. Per-drug analysis (h598 approach) may find 5-10 specific drugs dragging down the average.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Break down standard MEDIUM infectious by drug class (antibiotic, antifungal, antiviral, corticosteroid, other)",
+        "Compute holdout precision for each drug class \u00d7 infectious sub-reason",
+        "Identify drug classes with <15% holdout (LOW-quality within standard MEDIUM infectious)",
+        "For promising candidates, implement drug-class-specific demotion",
+        "Run holdout validation to confirm MEDIUM improvement"
+      ]
+    },
+    {
+      "id": "h605",
+      "title": "Highly Repurposable MEDIUM Demotion: 0% Full-Data, 8 Predictions",
+      "description": "The 'highly_repurposable' MEDIUM sub-reason has 8 predictions with 0% full-data precision and 0% holdout (n=2, small). These diseases have high drug sharing but the kNN predictions still fail. Consider demoting to LOW since the highly_repurposable flag doesn't actually help prediction quality. Need larger n to validate but directionally wrong.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Examine which diseases and drugs are in highly_repurposable MEDIUM",
+        "Compute holdout precision with more seeds or across more diseases",
+        "If consistently 0-5%, remove highly_repurposable MEDIUM pathway",
+        "Expected impact: ~8 MEDIUM\u2192LOW, negligible precision change"
+      ]
+    },
+    {
+      "id": "h606",
+      "title": "ATC Coherent Respiratory/Endocrine: Validate or Exclude",
+      "description": "h603 found respiratory (22.3%) and endocrine (24.5%) demotion holdout includes ATC coherent predictions that inflate precision above what standard-only would show. The ATC coherent rescue at line 3146-3149 produces atc_coherent_respiratory and atc_coherent_endocrine predictions. Should these be added to ATC_COHERENT_EXCLUDED like metabolic already is? Need per-pathway holdout to decide.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Compute holdout precision for atc_coherent_respiratory and atc_coherent_endocrine separately",
+        "Compare vs atc_coherent for other categories (infectious 27.8%, dermatological 25.6% etc.)",
+        "If respiratory/endocrine atc_coherent < 15%, add to ATC_COHERENT_EXCLUDED",
+        "Expected: small impact (few predictions) but improves tier calibration"
+      ]
+    },
+    {
+      "id": "h607",
+      "title": "Standard MEDIUM Autoimmune Quality: 20.3% Holdout at n=6.8",
+      "description": "Standard MEDIUM autoimmune has 20.3% \u00b1 20.4% holdout (n=6.8/seed). High variance suggests a mix of good and bad predictions. The 21 full-data predictions (33.3%) include 7 GT hits. If autoimmune standard MEDIUM is truly ~20%, it should be demoted to LOW. But the high variance (\u00b120.4%) means the true precision could be 0-40%. Need more data or different analysis approach to resolve.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Examine the 21 autoimmune standard MEDIUM predictions: which drugs and diseases?",
+        "Check if specific drug classes drive the variance (e.g., DMARDs vs other)",
+        "If n is too small for reliable demotion, annotate as 'uncertain' quality",
+        "Revisit if GT expansion adds more autoimmune diseases"
       ]
     }
   ],
@@ -14507,6 +14570,12 @@
       "hypothesis_id": "h550",
       "learning": "Within-antibacterial spectrum matching (gram+/gram-) is NOT actionable. Only 22 mismatches (4.8%), 53% are medically false positives (aminoglycoside synergy, azithromycin anti-inflammatory use, 1st-gen ceph UTI coverage). The broad antimicrobial-pathogen mismatch (h560) is sufficient.",
       "implication": "Drug spectrum classification is too nuanced for rule-based approaches. Many antibiotics have secondary activities (synergy, anti-inflammatory, biofilm disruption) that rule-based classification misses. Only broad category mismatches (antibacterial\u2192viral/fungal/parasitic) are clean enough for automated filtering."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h603",
+      "learning": "Standard MEDIUM analysis: metabolic (10.3%) is the only cleanly demotable category remaining. Respiratory (22.3%) and endocrine (24.5%) are borderline \u2014 between LOW and MEDIUM. The MEDIUM_DEMOTED_CATEGORIES check intercepts ALL predictions before ATC coherent rescue, so adding categories there also blocks ATC coherent pathway. Only add categories that are already excluded from ATC coherent or where the combined precision is clearly LOW.",
+      "implication": "Future MEDIUM demotion attempts must account for interaction with ATC coherent pathway. Categories NOT in ATC_COHERENT_EXCLUDED will lose their ATC rescue predictions when added to MEDIUM_DEMOTED_CATEGORIES."
     }
   ],
   "collaborations": [
