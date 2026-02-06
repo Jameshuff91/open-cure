@@ -1,0 +1,820 @@
+{
+  "knn_only": {
+    "ensemble_categories": [],
+    "n_evaluated": 300,
+    "overall": {
+      "knn_recall": 0.61,
+      "routed_recall": 0.61,
+      "delta_pp": 0.0,
+      "rescued": 0,
+      "hurt": 0
+    },
+    "by_category": {
+      "autoimmune": {
+        "n": 13,
+        "knn_recall": 0.846,
+        "routed_recall": 0.846,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "cancer": {
+        "n": 49,
+        "knn_recall": 0.694,
+        "routed_recall": 0.694,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "cardiovascular": {
+        "n": 14,
+        "knn_recall": 0.714,
+        "routed_recall": 0.714,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "dermatological": {
+        "n": 10,
+        "knn_recall": 0.8,
+        "routed_recall": 0.8,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "gastrointestinal": {
+        "n": 7,
+        "knn_recall": 0.286,
+        "routed_recall": 0.286,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "genetic": {
+        "n": 14,
+        "knn_recall": 0.286,
+        "routed_recall": 0.286,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "hematological": {
+        "n": 5,
+        "knn_recall": 0.4,
+        "routed_recall": 0.4,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "immune": {
+        "n": 8,
+        "knn_recall": 0.625,
+        "routed_recall": 0.625,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "infectious": {
+        "n": 21,
+        "knn_recall": 0.762,
+        "routed_recall": 0.762,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "metabolic": {
+        "n": 12,
+        "knn_recall": 0.667,
+        "routed_recall": 0.667,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "musculoskeletal": {
+        "n": 5,
+        "knn_recall": 0.2,
+        "routed_recall": 0.2,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "neurological": {
+        "n": 9,
+        "knn_recall": 0.333,
+        "routed_recall": 0.333,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "ophthalmological": {
+        "n": 9,
+        "knn_recall": 0.889,
+        "routed_recall": 0.889,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "other": {
+        "n": 103,
+        "knn_recall": 0.563,
+        "routed_recall": 0.563,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "psychiatric": {
+        "n": 5,
+        "knn_recall": 1.0,
+        "routed_recall": 1.0,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "rare_genetic": {
+        "n": 4,
+        "knn_recall": 0.5,
+        "routed_recall": 0.5,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "renal": {
+        "n": 4,
+        "knn_recall": 0.25,
+        "routed_recall": 0.25,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "respiratory": {
+        "n": 6,
+        "knn_recall": 0.667,
+        "routed_recall": 0.667,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      }
+    },
+    "changes": []
+  },
+  "conservative": {
+    "ensemble_categories": [
+      "autoimmune",
+      "cancer",
+      "metabolic"
+    ],
+    "n_evaluated": 300,
+    "overall": {
+      "knn_recall": 0.61,
+      "routed_recall": 0.62,
+      "delta_pp": 1.0,
+      "rescued": 6,
+      "hurt": 3
+    },
+    "by_category": {
+      "autoimmune": {
+        "n": 13,
+        "knn_recall": 0.846,
+        "routed_recall": 0.923,
+        "delta_pp": 7.7,
+        "ensemble_applied": true
+      },
+      "cancer": {
+        "n": 49,
+        "knn_recall": 0.694,
+        "routed_recall": 0.714,
+        "delta_pp": 2.0,
+        "ensemble_applied": true
+      },
+      "cardiovascular": {
+        "n": 14,
+        "knn_recall": 0.714,
+        "routed_recall": 0.714,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "dermatological": {
+        "n": 10,
+        "knn_recall": 0.8,
+        "routed_recall": 0.8,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "gastrointestinal": {
+        "n": 7,
+        "knn_recall": 0.286,
+        "routed_recall": 0.286,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "genetic": {
+        "n": 14,
+        "knn_recall": 0.286,
+        "routed_recall": 0.286,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "hematological": {
+        "n": 5,
+        "knn_recall": 0.4,
+        "routed_recall": 0.4,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "immune": {
+        "n": 8,
+        "knn_recall": 0.625,
+        "routed_recall": 0.625,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "infectious": {
+        "n": 21,
+        "knn_recall": 0.762,
+        "routed_recall": 0.762,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "metabolic": {
+        "n": 12,
+        "knn_recall": 0.667,
+        "routed_recall": 0.75,
+        "delta_pp": 8.3,
+        "ensemble_applied": true
+      },
+      "musculoskeletal": {
+        "n": 5,
+        "knn_recall": 0.2,
+        "routed_recall": 0.2,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "neurological": {
+        "n": 9,
+        "knn_recall": 0.333,
+        "routed_recall": 0.333,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "ophthalmological": {
+        "n": 9,
+        "knn_recall": 0.889,
+        "routed_recall": 0.889,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "other": {
+        "n": 103,
+        "knn_recall": 0.563,
+        "routed_recall": 0.563,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "psychiatric": {
+        "n": 5,
+        "knn_recall": 1.0,
+        "routed_recall": 1.0,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "rare_genetic": {
+        "n": 4,
+        "knn_recall": 0.5,
+        "routed_recall": 0.5,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "renal": {
+        "n": 4,
+        "knn_recall": 0.25,
+        "routed_recall": 0.25,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "respiratory": {
+        "n": 6,
+        "knn_recall": 0.667,
+        "routed_recall": 0.667,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      }
+    },
+    "changes": [
+      {
+        "disease": "malignant hyperthermia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "bilateral micro or macronodular adrenal hyperplasia idiopathic hyperaldosteronism",
+        "category": "metabolic",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "larynx cancer",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "germ cell testicular cancer",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "soft tissue sarcoma",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "acute promyelocytic leukemia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "mast cell leukemia",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "autoimmune pulmonary alveolar proteinosis",
+        "category": "autoimmune",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "acute erythroid leukemia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      }
+    ]
+  },
+  "aggressive": {
+    "ensemble_categories": [
+      "autoimmune",
+      "cancer",
+      "hematological",
+      "metabolic",
+      "musculoskeletal",
+      "rare_genetic"
+    ],
+    "n_evaluated": 300,
+    "overall": {
+      "knn_recall": 0.61,
+      "routed_recall": 0.63,
+      "delta_pp": 2.0,
+      "rescued": 9,
+      "hurt": 3
+    },
+    "by_category": {
+      "autoimmune": {
+        "n": 13,
+        "knn_recall": 0.846,
+        "routed_recall": 0.923,
+        "delta_pp": 7.7,
+        "ensemble_applied": true
+      },
+      "cancer": {
+        "n": 49,
+        "knn_recall": 0.694,
+        "routed_recall": 0.714,
+        "delta_pp": 2.0,
+        "ensemble_applied": true
+      },
+      "cardiovascular": {
+        "n": 14,
+        "knn_recall": 0.714,
+        "routed_recall": 0.714,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "dermatological": {
+        "n": 10,
+        "knn_recall": 0.8,
+        "routed_recall": 0.8,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "gastrointestinal": {
+        "n": 7,
+        "knn_recall": 0.286,
+        "routed_recall": 0.286,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "genetic": {
+        "n": 14,
+        "knn_recall": 0.286,
+        "routed_recall": 0.286,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "hematological": {
+        "n": 5,
+        "knn_recall": 0.4,
+        "routed_recall": 0.6,
+        "delta_pp": 20.0,
+        "ensemble_applied": true
+      },
+      "immune": {
+        "n": 8,
+        "knn_recall": 0.625,
+        "routed_recall": 0.625,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "infectious": {
+        "n": 21,
+        "knn_recall": 0.762,
+        "routed_recall": 0.762,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "metabolic": {
+        "n": 12,
+        "knn_recall": 0.667,
+        "routed_recall": 0.75,
+        "delta_pp": 8.3,
+        "ensemble_applied": true
+      },
+      "musculoskeletal": {
+        "n": 5,
+        "knn_recall": 0.2,
+        "routed_recall": 0.4,
+        "delta_pp": 20.0,
+        "ensemble_applied": true
+      },
+      "neurological": {
+        "n": 9,
+        "knn_recall": 0.333,
+        "routed_recall": 0.333,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "ophthalmological": {
+        "n": 9,
+        "knn_recall": 0.889,
+        "routed_recall": 0.889,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "other": {
+        "n": 103,
+        "knn_recall": 0.563,
+        "routed_recall": 0.563,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "psychiatric": {
+        "n": 5,
+        "knn_recall": 1.0,
+        "routed_recall": 1.0,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "rare_genetic": {
+        "n": 4,
+        "knn_recall": 0.5,
+        "routed_recall": 0.75,
+        "delta_pp": 25.0,
+        "ensemble_applied": true
+      },
+      "renal": {
+        "n": 4,
+        "knn_recall": 0.25,
+        "routed_recall": 0.25,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "respiratory": {
+        "n": 6,
+        "knn_recall": 0.667,
+        "routed_recall": 0.667,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      }
+    },
+    "changes": [
+      {
+        "disease": "malignant hyperthermia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "osteoporosis",
+        "category": "musculoskeletal",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "bilateral micro or macronodular adrenal hyperplasia idiopathic hyperaldosteronism",
+        "category": "metabolic",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "thalassemia syndromes",
+        "category": "hematological",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "larynx cancer",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "germ cell testicular cancer",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "soft tissue sarcoma",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "acute promyelocytic leukemia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "neurofibromatosis type 1",
+        "category": "rare_genetic",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "mast cell leukemia",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "autoimmune pulmonary alveolar proteinosis",
+        "category": "autoimmune",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "acute erythroid leukemia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      }
+    ]
+  },
+  "all_positive": {
+    "ensemble_categories": [
+      "autoimmune",
+      "cancer",
+      "dermatological",
+      "gastrointestinal",
+      "genetic",
+      "hematological",
+      "metabolic",
+      "musculoskeletal",
+      "ophthalmological",
+      "psychiatric",
+      "rare_genetic",
+      "renal"
+    ],
+    "n_evaluated": 300,
+    "overall": {
+      "knn_recall": 0.61,
+      "routed_recall": 0.63,
+      "delta_pp": 2.0,
+      "rescued": 9,
+      "hurt": 3
+    },
+    "by_category": {
+      "autoimmune": {
+        "n": 13,
+        "knn_recall": 0.846,
+        "routed_recall": 0.923,
+        "delta_pp": 7.7,
+        "ensemble_applied": true
+      },
+      "cancer": {
+        "n": 49,
+        "knn_recall": 0.694,
+        "routed_recall": 0.714,
+        "delta_pp": 2.0,
+        "ensemble_applied": true
+      },
+      "cardiovascular": {
+        "n": 14,
+        "knn_recall": 0.714,
+        "routed_recall": 0.714,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "dermatological": {
+        "n": 10,
+        "knn_recall": 0.8,
+        "routed_recall": 0.8,
+        "delta_pp": 0.0,
+        "ensemble_applied": true
+      },
+      "gastrointestinal": {
+        "n": 7,
+        "knn_recall": 0.286,
+        "routed_recall": 0.286,
+        "delta_pp": 0.0,
+        "ensemble_applied": true
+      },
+      "genetic": {
+        "n": 14,
+        "knn_recall": 0.286,
+        "routed_recall": 0.286,
+        "delta_pp": 0.0,
+        "ensemble_applied": true
+      },
+      "hematological": {
+        "n": 5,
+        "knn_recall": 0.4,
+        "routed_recall": 0.6,
+        "delta_pp": 20.0,
+        "ensemble_applied": true
+      },
+      "immune": {
+        "n": 8,
+        "knn_recall": 0.625,
+        "routed_recall": 0.625,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "infectious": {
+        "n": 21,
+        "knn_recall": 0.762,
+        "routed_recall": 0.762,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "metabolic": {
+        "n": 12,
+        "knn_recall": 0.667,
+        "routed_recall": 0.75,
+        "delta_pp": 8.3,
+        "ensemble_applied": true
+      },
+      "musculoskeletal": {
+        "n": 5,
+        "knn_recall": 0.2,
+        "routed_recall": 0.4,
+        "delta_pp": 20.0,
+        "ensemble_applied": true
+      },
+      "neurological": {
+        "n": 9,
+        "knn_recall": 0.333,
+        "routed_recall": 0.333,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "ophthalmological": {
+        "n": 9,
+        "knn_recall": 0.889,
+        "routed_recall": 0.889,
+        "delta_pp": 0.0,
+        "ensemble_applied": true
+      },
+      "other": {
+        "n": 103,
+        "knn_recall": 0.563,
+        "routed_recall": 0.563,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      },
+      "psychiatric": {
+        "n": 5,
+        "knn_recall": 1.0,
+        "routed_recall": 1.0,
+        "delta_pp": 0.0,
+        "ensemble_applied": true
+      },
+      "rare_genetic": {
+        "n": 4,
+        "knn_recall": 0.5,
+        "routed_recall": 0.75,
+        "delta_pp": 25.0,
+        "ensemble_applied": true
+      },
+      "renal": {
+        "n": 4,
+        "knn_recall": 0.25,
+        "routed_recall": 0.25,
+        "delta_pp": 0.0,
+        "ensemble_applied": true
+      },
+      "respiratory": {
+        "n": 6,
+        "knn_recall": 0.667,
+        "routed_recall": 0.667,
+        "delta_pp": 0.0,
+        "ensemble_applied": false
+      }
+    },
+    "changes": [
+      {
+        "disease": "malignant hyperthermia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "osteoporosis",
+        "category": "musculoskeletal",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "bilateral micro or macronodular adrenal hyperplasia idiopathic hyperaldosteronism",
+        "category": "metabolic",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "thalassemia syndromes",
+        "category": "hematological",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "larynx cancer",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "germ cell testicular cancer",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "soft tissue sarcoma",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "acute promyelocytic leukemia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "neurofibromatosis type 1",
+        "category": "rare_genetic",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "mast cell leukemia",
+        "category": "cancer",
+        "knn_hit": true,
+        "routed_hit": false,
+        "direction": "hurt"
+      },
+      {
+        "disease": "autoimmune pulmonary alveolar proteinosis",
+        "category": "autoimmune",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      },
+      {
+        "disease": "acute erythroid leukemia",
+        "category": "cancer",
+        "knn_hit": false,
+        "routed_hit": true,
+        "direction": "rescued"
+      }
+    ]
+  }
+}

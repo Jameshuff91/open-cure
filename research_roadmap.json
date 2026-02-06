@@ -7665,7 +7665,7 @@
       "title": "Category-Specific Ensemble Routing",
       "description": "Apply MinRank ensemble only to autoimmune/metabolic/cancer categories where it helps (+7-8pp). Disable for CV/neuro/immune where it hurts.",
       "hypothesis": "Selective ensemble routing will improve overall R@30 by +1-2 pp by capturing ensemble benefits while avoiding harms.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -7674,7 +7674,9 @@
         "Evaluate on full disease set with LOO",
         "Compare to baseline kNN-only production predictor",
         "Success: +1 pp overall R@30 improvement"
-      ]
+      ],
+      "findings": "INVALIDATED: Category-specific ensemble routing improves raw LOO but HURTS production predictions.\n\nRAW LOO EVALUATION (no tier rules):\n- kNN only: 60.7% R@30\n- Conservative (autoimmune/metabolic/cancer): 61.5% (+0.9 pp, 8 rescued, 4 hurt)\n- Aggressive (+rare_genetic/hematological/musculoskeletal): 62.2% (+1.5 pp, 11 rescued, 4 hurt)\n- All positive: 62.2% (+1.5 pp, same as aggressive)\n\nPRODUCTION CONTEXT (with tier rules):\n- Baseline (no ensemble): 79.4% R@30 (359/452)\n- Conservative: 76.8% (-2.7 pp)\n- Aggressive: 76.5% (-2.9 pp)\n\nROOT CAUSE: Production tier rules (h274 cancer_same_type, drug class rescue, etc.) already capture target overlap signal. Adding MinRank ensemble disrupts established rank ordering, causing tier assignment rules to misfire.\n\nKEY LEARNING: LOO evaluation without tier rules measures raw ranking quality. Production performance depends on rank ordering interacting with tier assignment rules. An improvement in raw ranking can HURT when it changes which drugs land in top-30 and how tiers are assigned.\n\nCATEGORY DETAIL (raw LOO, all 455 diseases):\n- Autoimmune: +5.9 pp (88.2% \u2192 94.1%, n=17)\n- Metabolic: +5.6 pp (61.1% \u2192 66.7%, n=18)  \n- Cancer: +3.1 pp (67.2% \u2192 70.3%, n=64)\n- Hematological: +10.0 pp (30.0% \u2192 40.0%, n=10)\n- Musculoskeletal: +12.5 pp (37.5% \u2192 50.0%, n=8)\n- Rare_genetic: +25.0 pp (50.0% \u2192 75.0%, n=4)\n\nHURT CASES: All 4 are cancer (prostate, larynx, sarcoma, cholangiocarcinoma). GT drugs have borderline kNN ranks (17-30) that get pushed out when target overlap promotes noisy competitors.\n\nCONFIRMS: h374 finding that MinRank ensemble is redundant in production context.",
+      "result_metric": "LOO: +1.5pp aggressive; Production: -2.9pp aggressive"
     },
     {
       "id": "h382",
@@ -7713,7 +7715,7 @@
       "title": "Tighten CV Pathway Comprehensive Rule",
       "description": "h378 found cv_pathway_comprehensive has 38% precision vs 59.9% HIGH tier avg. Rule h351 may be too broad.",
       "hypothesis": "Restricting cv_pathway_comprehensive to specific drug classes (statins only?) will improve precision.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -7776,6 +7778,57 @@
       ],
       "findings": "VALIDATED: Removed infectious GOLDEN rule and viral hierarchy groups.\n\nCHANGES MADE:\n1. Removed infectious GOLDEN/HIGH case from get_category_tier()\n2. Removed 'hepatitis' and 'hiv' from DISEASE_HIERARCHY_GROUPS['infectious']\n3. Kept bacterial hierarchy groups: UTI, tuberculosis, pneumonia, sepsis, skin_infection, respiratory_infection\n\nIMPACT ON TIER PRECISION:\n| Tier | Before | After | Delta |\n|------|--------|-------|-------|\n| GOLDEN | 35.8% | 40.4% | **+4.6pp** |\n| HIGH | 59.9% | 58.1% | -1.8pp |\n| MEDIUM | 30.0% | 30.9% | +0.9pp |\n| LOW | 24.0% | 21.7% | -2.3pp |\n| FILTER | 17.9% | 17.9% | 0.0pp |\n\nMAIN SUCCESS: GOLDEN tier precision improved by +4.6 pp by removing low-quality infectious predictions.\n\nNOTE: HIGH tier dropped slightly (-1.8pp) because hepatitis hierarchy predictions moved to lower tiers.\nThis is acceptable since those had 0% precision anyway.",
       "result_metric": "GOLDEN +4.6pp (35.8% \u2192 40.4%)"
+    },
+    {
+      "id": "h388",
+      "title": "Target Overlap as Tier Promotion Signal (not Rank Change)",
+      "description": "h381 showed ensemble improves raw LOO but hurts production because rank changes disrupt tier rules. Instead of changing ranks, use target overlap to PROMOTE tier for drugs that already rank well in kNN. This captures the ensemble benefit without the rank disruption.",
+      "hypothesis": "Promoting drugs with high target overlap from MEDIUM\u2192HIGH or HIGH\u2192GOLDEN will improve tier precision without hurting R@30.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For each prediction, compute drug-disease target overlap count",
+        "If overlap >= threshold AND rank <= 30, promote by one tier",
+        "Evaluate tier precision before/after promotion",
+        "Verify R@30 is unchanged (ranks not modified)",
+        "Success: +2pp precision for promoted predictions, R@30 unchanged"
+      ]
+    },
+    {
+      "id": "h389",
+      "title": "Rescued Disease Analysis: What Makes Diseases Ensemble-Rescuable?",
+      "description": "h381 identified 11 diseases rescued by ensemble (osteoporosis, thalassemia, neurofibromatosis, etc). Analyze what they share - likely: diseases where kNN misses because neighbors are dissimilar but target overlap is strong. This could inform new tier rules.",
+      "hypothesis": "Rescued diseases have low kNN neighbor similarity but high target overlap for GT drugs, suggesting a complementary signal pathway.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "For each of the 11 rescued diseases, compute: avg neighbor similarity, GT drug kNN rank, GT drug target overlap",
+        "Compare to non-rescued diseases in same categories",
+        "Identify distinguishing features of rescuable diseases",
+        "If pattern found, design tier rule to capture it",
+        "Success: identify actionable pattern for 5+ diseases"
+      ]
+    },
+    {
+      "id": "h390",
+      "title": "Production Tier Rule Coverage Analysis",
+      "description": "h381 and h374 show production tier rules ALREADY capture target overlap signal. But which rules exactly? Understanding rule coverage could reveal gaps where NEW rules could help without ensemble noise.",
+      "hypothesis": "Production tier rules cover 80%+ of ensemble benefit cases. The remaining 20% represent genuine opportunities for new targeted rules.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For each disease where ensemble helps in LOO, check which production tier rules fire",
+        "Identify diseases where ensemble helps AND no tier rule covers them",
+        "Design targeted tier rules for uncovered cases",
+        "Evaluate precision of new rules",
+        "Success: identify 3+ actionable tier rule opportunities"
+      ]
     }
   ],
   "completed": [
@@ -9185,6 +9238,12 @@
       "hypothesis_id": "h387",
       "learning": "Removing low-precision rules (infectious GOLDEN at 5.3%, viral hierarchies at 0%) improved GOLDEN tier precision by +4.6pp.",
       "implication": "Continue auditing and removing problem rules identified in h378."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h381",
+      "learning": "Category-specific ensemble routing improves raw LOO (+1.5pp) but HURTS production (-2.9pp) because rank changes disrupt tier rules. Production tier rules already capture target overlap signal.",
+      "implication": "Never evaluate rank-changing interventions with raw LOO alone - must test in full production context with tier rules. Use target overlap as tier signal, not rank modifier."
     }
   ],
   "collaborations": [
