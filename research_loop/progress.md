@@ -32,10 +32,20 @@ Tested whether fraction of same-category among k=20 kNN neighbors predicts preci
 - h574: Drug-sharing density as disease quality signal (P5, low)
 - h575: Methotrexate cancer subtype specificity (P5, medium)
 
+### h573: kNN Score Gap as Prediction Confidence — VALIDATED
+
+kNN norm_score adds signal beyond rank for prediction quality:
+- Within-rank: high-score vs low-score = +9.2pp for rank 1-5, +8.8pp for rank 6-10
+- Within MEDIUM: Q4 (highest score) 28.2% vs Q1 (lowest) 12.6% (+15.6pp)
+- Score gap Q4: 29.2% within MEDIUM
+- NOT circular with GT size (r=-0.009)
+- Q4 MEDIUM (28.2%) << HIGH (59.5%) — useful as annotation, not promotable
+- norm_score already stored in deliverable; no code change needed
+
 ### Recommended Next Steps
-1. **h573**: kNN score gap as confidence signal (measures margin, not just rank)
-2. **h571**: Therapeutic island rescue (P3, high impact but high effort)
-3. **h545**: Gene-poor disease expansion (P4, medium)
+1. **h571**: Therapeutic island rescue (P3, high impact but high effort)
+2. **h545**: Gene-poor disease expansion (P4, medium)
+3. **h574**: Drug-sharing density as disease quality signal (P5, low)
 
 ### Key Learning
 MEDIUM demotion is exhausted at 35.8%. All major drug-class × category mismatches are filtered.

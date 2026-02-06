@@ -11211,7 +11211,7 @@
       "id": "h573",
       "title": "kNN Score Gap as Prediction Confidence: Top Drug vs Runner-Up",
       "hypothesis": "The normalized score gap between a drug's kNN score and the next-ranked drug predicts holdout precision. Large gaps indicate high-confidence predictions where the drug dominates the neighborhood. This is NOT circular with kNN rank since it measures MARGIN, not position.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -11221,8 +11221,8 @@
         "Test if gap adds information beyond kNN rank alone",
         "If validated, add as annotation to deliverable"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "kNN norm_score (score/max_score per disease) adds signal beyond rank for predicting holdout hits. Within-rank analysis: high-score vs low-score = +9.2pp for rank 1-5, +8.8pp for rank 6-10. Overall quartiles: Q1 4.4% \u2192 Q4 18.5%. Within MEDIUM: Q1 12.6% \u2192 Q4 28.2% (+15.6pp). Score gap similarly shows signal: Q4 29.2% within MEDIUM. Correlations: r(score,hit)=0.191, r(rank,hit)=-0.185, r(score,rank)=-0.716. NOT circular with GT size: r(mean_score, GT_size)=-0.009. Score captures neighborhood consensus strength, not disease specificity. Within MEDIUM Q4 (28.2%) << HIGH (59.5%) \u2014 not promotable, but useful as annotation. norm_score already stored in deliverable; no code change needed.",
+      "result_metric": "MEDIUM Q4 28.2% vs Q1 12.6% (+15.6pp). Annotation validated."
     },
     {
       "id": "h574",
@@ -13170,6 +13170,12 @@
       "hypothesis_id": "h567",
       "learning": "Comprehensive drug-class \u00d7 disease-category mismatch scan found NO new actionable rules beyond existing filters (ATC mismatch, domain-isolated, antimicrobial, CS\u2192infectious, statin/TZD). MEDIUM demotion ceiling confirmed at ~35.8%. Further MEDIUM improvement requires promotions or entirely new signals.",
       "implication": "Demotion-based MEDIUM improvement is exhausted. Future work should focus on: (1) annotation quality signals, (2) novel prediction strategies, or (3) external data integration."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h573",
+      "learning": "kNN norm_score adds signal beyond rank for prediction quality. Within MEDIUM: Q4 (high score) = 28.2% vs Q1 (low score) = 12.6%. Not GT-size proxy (r\u22480). Captures neighborhood consensus. Already in deliverable as annotation.",
+      "implication": "Users can use norm_score to prioritize within-tier. High norm_score predictions are more reliable. Score gap is redundant with norm_score (r=-0.716 with rank)."
     }
   ],
   "collaborations": [
