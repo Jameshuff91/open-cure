@@ -126,79 +126,94 @@ class ConfidenceTier(Enum):
 # Key finding: Overall tier precision is massively miscalibrated by category
 # Psychiatric MEDIUM = 85% vs Other MEDIUM = 17%
 CATEGORY_PRECISION = {
+    # h398: All values measured with current code on full dataset (455 diseases)
+    # Replaces stale h165/h136/h150 estimates. Only entries with n>=10 included.
     # Format: (category, tier) -> precision percentage
-    # From h165 analysis: 5 seeds, 101,939 predictions, 2,455 diseases
-    # GOLDEN/HIGH values from h136/h144/h150/h154/h157 rescue criteria validation
     #
-    # GOLDEN tier values (h396: updated from h393 holdout + h387/h395 demotions):
-    ("autoimmune", "GOLDEN"): 75.4,   # h157: DMARD + rank<=10 (genuine)
-    # ("infectious", "GOLDEN"): removed by h387 (was 5.3%, not 55.6%)
-    # ("metabolic", "GOLDEN"): h395 demoted statins/TZDs to MEDIUM (was 60.0%)
-    ("metabolic", "GOLDEN"): 55.0,    # h396: lipid hierarchy (53.8%) + diabetes hierarchy (34.2%)
-    ("ophthalmic", "GOLDEN"): 62.5,   # h150: antibiotic + rank<=15
-    ("dermatological", "GOLDEN"): 63.6,  # h150: topical_steroid + rank<=5
-    # HIGH tier values (h396: updated):
-    ("cardiovascular", "HIGH"): 38.2, # h136: rank<=5 + mech OR h154/h266: beta_blocker + rank<=10 (42.1%)
-    ("respiratory", "HIGH"): 35.0,    # h136: rank<=10 + freq>=15 + mech
-    # h396: cancer_same_type demoted to MEDIUM (was GOLDEN at 24.5%)
-    ("cancer", "GOLDEN"): 55.0,       # h197: colorectal + mAb = 50-60% precision (still valid for specific rules)
-    ("cancer", "HIGH"): 40.0,         # h150: taxane + rank<=5
-    ("cancer", "MEDIUM"): 24.5,       # h396: cancer_same_type = 24.5% (was in GOLDEN)
-    ("ophthalmic", "HIGH"): 48.0,     # h150: steroid + rank<=15
-    ("hematological", "HIGH"): 19.1,  # h395: demoted from 48.6% (actual measured precision)
-    #
-    # MEDIUM tier values (from h165):
-    ("psychiatric", "MEDIUM"): 85.0,
-    ("psychiatric", "LOW"): None,  # No data
-    ("psychiatric", "FILTER"): 90.0,  # Very high!
-    ("autoimmune", "MEDIUM"): 77.8,
-    ("autoimmune", "LOW"): 46.2,
-    ("autoimmune", "FILTER"): 45.9,
-    ("respiratory", "MEDIUM"): 54.2,
-    ("respiratory", "LOW"): 11.1,
-    ("respiratory", "FILTER"): 35.7,
-    ("dermatological", "MEDIUM"): 49.0,
-    ("dermatological", "LOW"): 28.6,
-    ("dermatological", "FILTER"): 17.5,
-    ("metabolic", "MEDIUM"): 47.6,
-    ("metabolic", "LOW"): 35.9,
-    ("metabolic", "FILTER"): 21.6,
-    ("cancer", "MEDIUM"): 45.7,
-    ("cancer", "LOW"): 12.3,
-    ("cancer", "FILTER"): 30.6,
-    ("gastrointestinal", "MEDIUM"): 41.3,
-    ("gastrointestinal", "LOW"): 22.2,
-    ("gastrointestinal", "FILTER"): 18.3,
-    ("hematological", "MEDIUM"): 37.5,
-    ("hematological", "LOW"): 0.0,
-    ("hematological", "FILTER"): 13.6,
-    ("infectious", "MEDIUM"): 38.4,
-    ("infectious", "LOW"): 6.2,
-    ("infectious", "FILTER"): 19.0,
-    ("ophthalmic", "MEDIUM"): 36.1,
-    ("ophthalmic", "LOW"): 67.9,  # Higher than MEDIUM!
-    ("ophthalmic", "FILTER"): 19.9,
-    ("cardiovascular", "MEDIUM"): 36.4,
-    ("cardiovascular", "LOW"): 17.6,
-    ("cardiovascular", "FILTER"): 26.4,
-    ("neurological", "GOLDEN"): 58.8,  # h187: anticonvulsant + rank<=10 + mech
-    ("neurological", "MEDIUM"): 26.1,
-    ("neurological", "LOW"): 15.0,
-    ("neurological", "FILTER"): 12.5,
-    ("other", "MEDIUM"): 17.3,
-    ("other", "LOW"): 4.9,
-    ("other", "FILTER"): 6.2,
-    # h169: New categories - using conservative estimates (similar to gastrointestinal)
-    # until we have calibration data
-    ("renal", "MEDIUM"): 40.0,  # Similar to gastrointestinal
-    ("renal", "LOW"): 20.0,
-    ("renal", "FILTER"): 15.0,
-    ("musculoskeletal", "MEDIUM"): 35.0,  # Conservative estimate
-    ("musculoskeletal", "LOW"): 15.0,
-    ("musculoskeletal", "FILTER"): 10.0,
-    ("immunological", "MEDIUM"): 45.0,  # Similar to autoimmune-related
-    ("immunological", "LOW"): 25.0,
-    ("immunological", "FILTER"): 20.0,
+    # Autoimmune
+    ("autoimmune", "GOLDEN"): 72.0,   # n=93
+    ("autoimmune", "HIGH"): 70.0,     # n=120
+    ("autoimmune", "MEDIUM"): 28.7,   # n=240
+    ("autoimmune", "LOW"): 9.9,       # n=81
+    ("autoimmune", "FILTER"): 16.6,   # n=362
+    # Cancer (GOLDEN/HIGH have n<10, use tier defaults)
+    ("cancer", "MEDIUM"): 23.4,       # n=1321 (includes cancer_same_type)
+    ("cancer", "LOW"): 7.2,           # n=209
+    ("cancer", "FILTER"): 5.7,        # n=653
+    # Cardiovascular
+    ("cardiovascular", "GOLDEN"): 58.6,  # n=29
+    ("cardiovascular", "HIGH"): 43.2,    # n=229
+    ("cardiovascular", "MEDIUM"): 25.0,  # n=200
+    ("cardiovascular", "LOW"): 15.2,     # n=145
+    ("cardiovascular", "FILTER"): 16.0,  # n=567
+    # Dermatological
+    ("dermatological", "GOLDEN"): 45.2,  # n=42
+    ("dermatological", "MEDIUM"): 29.4,  # n=255
+    ("dermatological", "LOW"): 9.4,      # n=117
+    ("dermatological", "FILTER"): 8.5,   # n=484
+    # Endocrine
+    ("endocrine", "MEDIUM"): 24.0,    # n=25
+    ("endocrine", "LOW"): 25.0,       # n=12 (inversion, small n)
+    ("endocrine", "FILTER"): 19.6,    # n=51
+    # Gastrointestinal
+    ("gastrointestinal", "HIGH"): 31.4,   # n=35
+    ("gastrointestinal", "MEDIUM"): 12.3, # n=122
+    ("gastrointestinal", "LOW"): 9.3,     # n=54
+    ("gastrointestinal", "FILTER"): 10.8, # n=509
+    # Hematological
+    ("hematological", "MEDIUM"): 20.5,  # n=215
+    ("hematological", "LOW"): 6.5,      # n=93
+    ("hematological", "FILTER"): 5.4,   # n=349
+    # Immunological
+    ("immunological", "MEDIUM"): 35.3,  # n=34
+    ("immunological", "LOW"): 9.1,      # n=22
+    ("immunological", "FILTER"): 16.0,  # n=94
+    # Infectious
+    ("infectious", "HIGH"): 53.7,     # n=95
+    ("infectious", "MEDIUM"): 27.4,   # n=797
+    ("infectious", "LOW"): 14.0,      # n=463
+    ("infectious", "FILTER"): 11.9,   # n=1156
+    # Metabolic
+    ("metabolic", "GOLDEN"): 42.7,    # n=157
+    ("metabolic", "HIGH"): 17.6,      # n=51
+    ("metabolic", "MEDIUM"): 15.1,    # n=86
+    ("metabolic", "LOW"): 6.1,        # n=196
+    ("metabolic", "FILTER"): 9.1,     # n=822
+    # Musculoskeletal
+    ("musculoskeletal", "MEDIUM"): 38.9,  # n=54
+    ("musculoskeletal", "LOW"): 9.7,      # n=31
+    ("musculoskeletal", "FILTER"): 0.9,   # n=117
+    # Neurological
+    ("neurological", "GOLDEN"): 50.0,  # n=20
+    ("neurological", "MEDIUM"): 18.6,  # n=43
+    ("neurological", "LOW"): 9.2,      # n=76
+    ("neurological", "FILTER"): 5.9,   # n=576
+    # Ophthalmic
+    ("ophthalmic", "GOLDEN"): 50.0,   # n=12
+    ("ophthalmic", "MEDIUM"): 29.0,   # n=138
+    ("ophthalmic", "LOW"): 5.6,       # n=54
+    ("ophthalmic", "FILTER"): 7.2,    # n=305
+    # Other
+    ("other", "MEDIUM"): 30.0,        # n=50
+    ("other", "LOW"): 8.5,            # n=59
+    ("other", "FILTER"): 11.6,        # n=249
+    # Psychiatric
+    ("psychiatric", "MEDIUM"): 52.1,   # n=117
+    ("psychiatric", "LOW"): 7.1,       # n=14
+    ("psychiatric", "FILTER"): 26.3,   # n=167
+    # Renal
+    ("renal", "MEDIUM"): 23.1,        # n=39
+    ("renal", "LOW"): 15.2,           # n=46
+    ("renal", "FILTER"): 17.0,        # n=212
+    # Reproductive
+    ("reproductive", "MEDIUM"): 5.0,   # n=20
+    ("reproductive", "LOW"): 17.4,     # n=23 (inversion, small n)
+    ("reproductive", "FILTER"): 4.0,   # n=101
+    # Respiratory
+    ("respiratory", "HIGH"): 48.8,    # n=41
+    ("respiratory", "MEDIUM"): 17.9,  # n=123
+    ("respiratory", "LOW"): 5.6,      # n=107
+    ("respiratory", "FILTER"): 16.3,  # n=203
 }
 
 # Default tier-only precision (fallback)
