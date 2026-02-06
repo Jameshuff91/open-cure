@@ -336,6 +336,7 @@ STATIN_DRUGS = {
 CORTICOSTEROID_DRUGS = {
     'prednisone', 'prednisolone', 'methylprednisolone', 'dexamethasone', 'hydrocortisone',
     'betamethasone', 'triamcinolone', 'fluticasone', 'budesonide', 'beclomethasone',
+    'cortisone', 'fludrocortisone', 'mometasone',  # h476: added missing corticosteroids
 }
 
 # h150: Drug class rescue criteria
@@ -2409,13 +2410,16 @@ class DrugRepurposingPredictor:
         # - Dermatological: steroid rosacea (h476)
         # - Musculoskeletal: osteoporosis, avascular necrosis (h476)
         # - Ophthalmic: glaucoma, cataracts (h476)
+        # - GI: pancreatitis (h476 - steroids cause drug-induced pancreatitis; they
+        #   treat autoimmune pancreatitis but generic "pancreatitis" is not autoimmune)
+        # - Endocrine: Cushing syndrome (h476 - exogenous steroids ARE the cause)
         drug_lower = drug_name.lower()
         if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
             if category == 'metabolic':
                 return ConfidenceTier.FILTER, False, None
             disease_lower = disease_name.lower()
             steroid_iatrogenic = ['rosacea', 'osteoporosis', 'avascular necrosis',
-                                  'glaucoma', 'cataract']
+                                  'glaucoma', 'cataract', 'pancreatitis', 'cushing']
             if any(iatrogen in disease_lower for iatrogen in steroid_iatrogenic):
                 return ConfidenceTier.FILTER, False, 'corticosteroid_iatrogenic'
 

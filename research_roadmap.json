@@ -9475,8 +9475,10 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
-      "category": "safety"
+      "status": "validated",
+      "category": "safety",
+      "findings": "h476 Corticosteroid Iatrogenic Condition Filter Expansion - VALIDATED\n\n1. Added cortisone, fludrocortisone, mometasone to CORTICOSTEROID_DRUGS set (were missing)\n   - Cortisone \u2192 neovascular glaucoma was escaping MEDIUM filter because cortisone not in set\n\n2. Added pancreatitis to steroid_iatrogenic filter:\n   - 12 steroid\u2192pancreatitis predictions moved to FILTER (4 were at HIGH!)\n   - Evidence: Steroids cause drug-induced pancreatitis (0.1-2% of all pancreatitis, JAMA)\n   - Exception: Steroids treat autoimmune pancreatitis, but generic \"pancreatitis\" is not autoimmune\n   \n3. Added cushing to steroid_iatrogenic filter:\n   - Exogenous Cushing syndrome is CAUSED by corticosteroid use\n   - No predictions found (no Cushing disease in deliverable)\n\n4. Impact: 28 predictions moved to FILTER total\n   - HIGH: -8 predictions (steroid\u2192pancreatitis)\n   - MEDIUM: -6 (cortisone now caught by filter)\n   - LOW: -16 (chronic pancreatitis)\n   - GOLDEN: +2 (upstream redistribution)\n   - 0 GT loss (none of the filtered predictions were in GT)\n\n5. All existing iatrogenic conditions (rosacea, osteoporosis, glaucoma, cataracts, AVN) \n   were already correctly filtered except for cortisone/mometasone/fludrocortisone drugs.\n",
+      "result_metric": "28 predictions moved to FILTER (4 from HIGH), 0 GT loss. Added pancreatitis + cushing + 3 missing steroids."
     },
     {
       "id": "h477",
@@ -11306,6 +11308,12 @@
       "hypothesis_id": "h483",
       "learning": "MEDIUM tier has 52% clinical support (GT_GAP 40% + PROMISING 12%), 8% HARMFUL, 16% NO_EVIDENCE. Standard rule has 100% GT_GAP rate (7/7). Target overlap promotion and ATC coherent rules have highest false positive rates. Metronidazole\u2192myopia and verapamil\u2192cardiac arrest are new inverse indications.",
       "implication": "Standard rule predictions are the most reliable in MEDIUM tier. Target overlap promotion needs audit. Literature validation should continue for cancer_same_type and ATC coherent rules. SIDER database could systematically identify inverse indications."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h476",
+      "learning": "Corticosteroid iatrogenic filter was incomplete: cortisone/mometasone/fludrocortisone missing from CORTICOSTEROID_DRUGS. Pancreatitis is a dual case (steroids cause drug-induced pancreatitis but treat autoimmune pancreatitis). Generic pancreatitis \u2192 FILTER is correct since autoimmune pancreatitis is a specific subtype.",
+      "implication": "When adding drugs to reference sets, verify completeness. Drug classes often have members that were missed in initial curation. Dual-use drugs (cause and treat related conditions) need careful handling."
     }
   ],
   "collaborations": [
