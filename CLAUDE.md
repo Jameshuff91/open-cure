@@ -147,14 +147,20 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480)
 
-**Tier System (h485 updated 2026-02-06):**
-- GOLDEN: 64.6% full / ~62% holdout
-- HIGH: 57.2% full / ~51% holdout
-- MEDIUM: 28.9% full / ~24% holdout (h485: +1.4pp from cancer cross-type block)
-- LOW: 11.6% full / ~10% holdout
-- FILTER: 11.2% full / ~8% holdout
+**Tier System (h487/h488 updated 2026-02-06):**
+- GOLDEN: 64.1% full / ~62% holdout
+- HIGH: 56.6% full / ~52% holdout
+- MEDIUM: 29.5% full / ~23% holdout (h487+h488: +1.8pp from incoherent+hematological demotions)
+- LOW: 11.4% full / ~13% holdout
+- FILTER: 11.3% full / ~8% holdout
 
-**h485 (LATEST):** Target overlap promotion audit + cancer cross-type demotion.
+**h487+h488 (LATEST):** Incoherent demotion + ATC hematological demotion.
+  - h488: Incoherent MEDIUM→LOW (50 preds, 3.6% holdout). Blocked target_overlap rescue.
+  - h487: Hematological ATC coherent added to excluded set (44 preds, 5.0% holdout).
+  - h487: Mechanism matters: psychiatric 35.1% with mech vs 0% without; respiratory 38.9% vs 6.7%.
+  - Combined: MEDIUM +1.8pp full-data, +0.1pp holdout.
+
+**h485:** Target overlap promotion audit + cancer cross-type demotion.
   - Target overlap = 3rd best MEDIUM rule (35.9% holdout, genuine)
   - Cancer cross-type overlap = 0.3% holdout → blocked: MEDIUM +1.4pp, HIGH +1.3pp
   - h476: Added pancreatitis/cushing to steroid iatrogenic + 3 missing steroids

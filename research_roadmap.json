@@ -9494,7 +9494,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 3,
-      "status": "in_progress",
+      "status": "pending",
       "category": "data_quality"
     },
     {
@@ -9666,7 +9666,92 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
+      "status": "validated",
+      "findings": "ATC coherent rule holdout analysis (5-seed):\n- ophthalmic: 48.3% holdout (BEST, but n=2.1/seed)\n- psychiatric: 29.5% holdout (good, mechanism-dependent: 35.1% with mech, 0% without)\n- infectious: 18.6% holdout (above LOW avg)\n- dermatological: 18.2% holdout (volatile, n=3.9/seed)  \n- cardiovascular: 14.3% holdout (borderline)\n- respiratory: 11.7% holdout (borderline)\n- hematological: 5.0% holdout \u2192 DEMOTED to excluded set (18.2% full-data was misleading)\n- renal/endocrine/musculoskeletal: n too small\n\nAction: Added hematological to ATC_COHERENT_EXCLUDED set.\nImpact: 44 predictions MEDIUM\u2192LOW, MEDIUM full-data +0.14pp.\nCombined with h488: MEDIUM +1.8pp full-data (29.5% from 27.7%), holdout +0.1pp (23.4%).",
+      "result_metric": "hematological ATC coherent: 5.0% holdout \u2192 demoted. MEDIUM +0.14pp"
+    },
+    {
+      "id": "h488",
+      "title": "Incoherent Demotion MEDIUM\u2192LOW: 3.6% Holdout Rule",
+      "description": "h485 audit found incoherent_demotion at MEDIUM has 3.6% holdout precision (n=47, 2 GT hits). These are drug-disease pairs that qualified for HIGH but failed ATC coherence checks and were demoted to MEDIUM. At 3.6%, they should be demoted further to LOW. Main pattern: corticosteroids for infectious diseases (chronic hepatitis C, leprosy, herpes encephalitis).",
+      "steps": [
+        "Change incoherent_demotion from MEDIUM to LOW in _assign_confidence_tier",
+        "Regenerate deliverable",
+        "Verify MEDIUM precision improvement and GT impact",
+        "Check if any demoted predictions are clinically valid (dexamethasone + herpes zoster)"
+      ],
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "validated",
+      "findings": "Incoherent demotion predictions (ATC mismatch, freq>=15+mech but wrong category) demoted from MEDIUM to LOW. 50 predictions affected, 3 GT (6.0% full-data, 3.6% holdout per h485). Required blocking target_overlap_promotion rescue for incoherent drugs. MEDIUM full-data +1.7pp (29.4% from 27.7%), holdout unchanged (-0.3pp, within noise). HIGH incoherent_demotion (GOLDEN->HIGH path) has 45.7% holdout - NOT demoted further. Note: mostly corticosteroids for infectious diseases and bupivacaine/lidocaine for non-matching categories.",
+      "result_metric": "MEDIUM full-data 29.4% (+1.7pp), holdout 23.0% (-0.3pp noise)"
+    },
+    {
+      "id": "h489",
+      "title": "Cancer Rule MEDIUM Audit: 0.3% Holdout Cross-Type Remnants",
+      "description": "After h485 blocked cancer from target overlap promotion, check if any cancer cross-type predictions are still reaching MEDIUM through other paths. The cancer cross-type route should consistently yield LOW, not MEDIUM. Also check if any cross-type cancer drugs at LOW have specific mechanisms that warrant rescue (e.g., pembrolizumab for MSI-high tumors across cancer types).",
+      "steps": [
+        "Count remaining cancer MEDIUM predictions by rule",
+        "Check if any non-cancer_same_type cancer MEDIUM predictions exist after h485 fix",
+        "Evaluate if MSI-H immunotherapy cross-type has higher holdout precision",
+        "Consider rule for MSI-H/TMB-H agnostic cancer drugs if data supports"
+      ],
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
       "status": "pending"
+    },
+    {
+      "id": "h489",
+      "title": "Mechanism-Required ATC Coherent Rules for Psychiatric and Respiratory",
+      "description": "h487 found psychiatric ATC coherent: 35.1% holdout WITH mechanism, 0% WITHOUT. Respiratory: 38.9% with mechanism, 6.7% without. Test requiring mechanism_support for these ATC coherent categories.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Add mechanism requirement for atc_coherent_psychiatric and atc_coherent_respiratory",
+        "Regenerate deliverable and measure MEDIUM precision change",
+        "Run 5-seed holdout to validate",
+        "Check GT loss (how many valid predictions lose MEDIUM status)"
+      ],
+      "category": "confidence_system",
+      "parent_hypothesis": "h487"
+    },
+    {
+      "id": "h490",
+      "title": "Cardiovascular ATC Coherent Full-to-Holdout Gap Investigation",
+      "description": "Cardiovascular ATC coherent has 43.9% full-data but only 14.3% holdout (29.6pp gap, second largest after cancer). Investigate: is this the cardiac arrest cluster? Are CV drugs promoted by frequency inflation?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Extract all cardiovascular ATC coherent predictions and their diseases",
+        "Check which diseases drive the gap (cardiac arrest vs others)",
+        "Analyze whether frequency inflation (drug freq drops on holdout) causes the gap",
+        "If cardiac arrest cluster, consider specific exclusion"
+      ],
+      "category": "confidence_system",
+      "parent_hypothesis": "h487"
+    },
+    {
+      "id": "h491",
+      "title": "HIGH Incoherent Demotion = Hidden GOLDEN Signal",
+      "description": "h488 found GOLDEN\u2192HIGH incoherent_demotion has 46.1% holdout (above HIGH avg 52%). These are drugs that would be GOLDEN but have wrong ATC code. Yet they still perform well - the GOLDEN-qualifying signals (disease_tier=1, freq>=10, mechanism) are strong enough to overcome ATC mismatch. Consider promoting these back or investigating what makes them resilient.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "List all 11 HIGH incoherent_demotion predictions",
+        "Check if any are clinically validated (literature search)",
+        "Analyze: what ATC codes do these drugs have? Why are they incoherent but still good?",
+        "If consistently good, consider removing the incoherent demotion for GOLDEN\u2192HIGH path"
+      ],
+      "category": "confidence_system",
+      "parent_hypothesis": "h488"
     }
   ],
   "completed": [

@@ -2581,14 +2581,14 @@ class DrugRepurposingPredictor:
 
         # HIGH tier
         if train_frequency >= 15 and mechanism_support:
-            # h311: Demote incoherent HIGH to MEDIUM
+            # h311/h488: Demote incoherent HIGH to LOW (3.6% holdout, 6.0% full-data, n=50)
             if not is_coherent:
-                return ConfidenceTier.MEDIUM, False, 'incoherent_demotion'
+                return ConfidenceTier.LOW, False, 'incoherent_demotion'
             return ConfidenceTier.HIGH, False, None
         if rank <= 5 and train_frequency >= 10 and mechanism_support:
-            # h311: Demote incoherent HIGH to MEDIUM
+            # h311/h488: Demote incoherent HIGH to LOW (3.6% holdout, 6.0% full-data, n=50)
             if not is_coherent:
-                return ConfidenceTier.MEDIUM, False, 'incoherent_demotion'
+                return ConfidenceTier.LOW, False, 'incoherent_demotion'
             return ConfidenceTier.HIGH, False, None
 
         # MEDIUM tier
@@ -2617,7 +2617,8 @@ class DrugRepurposingPredictor:
         # Coherent predictions have 35.5% precision vs 18.7% for incoherent
         # Boost coherent LOW→MEDIUM when drug has good rank and some support
         # h395: Exclude metabolic (4.3%) and neurological (10.8%) — below MEDIUM avg
-        ATC_COHERENT_EXCLUDED = {'metabolic', 'neurological'}
+        # h487: Exclude hematological (5.0% holdout, 18.2% full-data, n=44)
+        ATC_COHERENT_EXCLUDED = {'metabolic', 'neurological', 'hematological'}
         if drug_name and category and category not in ATC_COHERENT_EXCLUDED and self._is_atc_coherent(drug_name, category):
             # Only boost if there's some additional evidence
             if rank <= 10 and (mechanism_support or train_frequency >= 3):
@@ -3417,7 +3418,9 @@ class DrugRepurposingPredictor:
                             and target_overlap >= TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM
                             # h462: Block LOW→MEDIUM for categories with poor MEDIUM holdout
                             # h485: Block cancer (cross-type overlap=0.3% holdout, n=197)
-                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer'}):
+                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer'}
+                            # h488: Block rescue of incoherent demotions (3.6% holdout)
+                            and cat_specific != 'incoherent_demotion'):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 

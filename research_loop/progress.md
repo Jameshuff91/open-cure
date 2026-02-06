@@ -1,6 +1,74 @@
 # Research Loop Progress
 
-## Current Session: h483 - MEDIUM Novel Literature Validation (2026-02-06)
+## Current Session: h487 + h488 - ATC Coherent & Incoherent Demotion (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 2**
+- h488: Incoherent Demotion MEDIUM→LOW - **VALIDATED** (50 predictions demoted, MEDIUM +1.7pp full-data)
+- h487: ATC Coherent Rule False Positive Analysis - **VALIDATED** (hematological demoted, MEDIUM +0.14pp)
+
+### h488: Incoherent Demotion MEDIUM→LOW - VALIDATED
+
+**Objective:** Demote incoherent_demotion predictions (ATC mismatch drugs that would be HIGH) from MEDIUM to LOW.
+
+**Discovery:** Target overlap promotion was RESCUING incoherent drugs back to MEDIUM (LOW→MEDIUM promotion for overlap≥1). Required blocking this rescue path specifically for incoherent_demotion predictions.
+
+**Key findings:**
+- 50 predictions at MEDIUM with incoherent_demotion (6.0% full-data, 3.6% holdout per h485)
+- Mostly corticosteroids for infectious diseases + bupivacaine/lidocaine for non-matching categories
+- HIGH incoherent_demotion (GOLDEN→HIGH path): 46.1% holdout - **left unchanged** (performing well)
+- MEDIUM full-data: 27.7% → 29.4% (+1.7pp)
+- MEDIUM holdout: 23.3% → 23.0% (-0.3pp, noise)
+
+### h487: ATC Coherent Rule False Positive Analysis - VALIDATED
+
+**Objective:** Holdout-validate each ATC coherent subcategory.
+
+**5-seed holdout by ATC category:**
+| Category | n/seed | Holdout | Full-Data | Decision |
+|----------|--------|---------|-----------|----------|
+| ophthalmic | 2.1 | 48.3% | 78.6% | KEEP |
+| psychiatric | 6.7 | 29.5% | 46.0% | KEEP |
+| infectious | 34.1 | 18.6% | 25.6% | KEEP |
+| dermatological | 3.9 | 18.2% | 46.2% | KEEP |
+| cardiovascular | 9.3 | 14.3% | 43.9% | Borderline |
+| respiratory | 4.3 | 11.7% | 34.1% | Borderline |
+| **hematological** | **4.9** | **5.0%** | **18.2%** | **DEMOTED** |
+
+**Mechanism matters:**
+- Psychiatric: 35.1% with mech, 0% without
+- Respiratory: 38.9% with mech, 6.7% without
+
+**Action:** Added hematological to ATC_COHERENT_EXCLUDED set. 44 predictions MEDIUM→LOW.
+
+### Combined Impact (h487 + h488)
+
+| Tier | Before (h485) | After | Δ |
+|------|--------------|-------|---|
+| GOLDEN | 288, 64.4% | 287, 64.1% | -1, -0.3pp |
+| HIGH | 553, 55.6% | 516, 56.6% | -37, +1.0pp |
+| MEDIUM | 3918, 27.7% | 3620, 29.5% | -298, **+1.8pp** |
+| LOW | 2160, 12.2% | 2439, 11.4% | +279, -0.8pp |
+| FILTER | 7231, 11.4% | 7288, 11.3% | +57, -0.1pp |
+
+Holdout: MEDIUM 23.3% → 23.4% (+0.1pp), HIGH 51.1% → 52.0% (+0.9pp)
+
+### New Hypotheses Generated
+- h489: Mechanism-Required ATC Coherent for Psychiatric/Respiratory (Priority 4)
+- h490: Cardiovascular ATC Coherent Full-to-Holdout Gap Investigation (Priority 5)
+- h491: HIGH Incoherent Demotion = Hidden GOLDEN Signal (Priority 5)
+
+### Recommended Next Steps
+1. **h489:** Require mechanism for psychiatric/respiratory ATC coherent (quick win, low effort)
+2. **h486:** Systematic SIDER-based adverse effect mining (high effort, high impact)
+3. **h477:** GT expansion for corticosteroids (medium effort, addresses GT gap)
+
+---
+
+## Previous Session: h483 - MEDIUM Novel Literature Validation (2026-02-06)
 
 ### Session Summary
 
