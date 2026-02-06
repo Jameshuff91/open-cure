@@ -118,6 +118,23 @@ DISEASE_SYNONYMS: Dict[str, str] = {
     "crohns disease": "crohn disease",
     "inflammatory bowel disease": "inflammatory bowel disease",
     "ibd": "inflammatory bowel disease",
+
+    # h336/h347: Additional synonyms for GT matching (+25 GT hits)
+    # These were found by analyzing prediction-GT mismatches
+    "acquired hemolytic anemia": "anemia, hemolytic, acquired",  # Comma reordering
+    "pure red cell aplasia": "pure red-cell aplasia",  # Hyphen variant
+    "zollinger ellison syndrome": "zollinger-ellison syndrome",  # Hyphen variant
+    "graft versus host disease gvhd": "graft versus host disease",  # Abbreviation removal
+    "diffuse large b cell lymphoma dlbcl": "diffuse large b-cell lymphoma",  # Hyphen + abbrev
+
+    # Additional common abbreviations (discovered during h336 analysis)
+    "attention deficit hyperactivity disorder adhd": "attention deficit-hyperactivity disorder",
+    "atypical hemolytic uremic syndrome": "atypical hemolytic-uremic syndrome",
+    "autosomal dominant polycystic kidney disease adpkd": "autosomal dominant polycystic kidney disease",
+    "basal cell carcinoma bcc": "basal cell carcinoma",
+    "central precocious puberty cpp": "central precocious puberty",
+    "common variable immunodeficiency cvid": "common variable immunodeficiency",
+    "disseminated intravascular coagulation dic": "disseminated intravascular coagulation",
 }
 
 
