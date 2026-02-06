@@ -1,13 +1,14 @@
 # Research Loop Progress
 
-## Current Session: h269 (2026-02-05)
+## Current Session: h269, h366 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** Complete
-**Hypotheses Tested: 1**
+**Status:** In Progress
+**Hypotheses Tested: 2**
 - h269: Cancer-Specific Target-Based Scoring - **INCONCLUSIVE** (equivalent to kNN baseline)
+- h366: Target+kNN Ensemble for Cancer - **VALIDATED** (76.3% R@30, +10.5 pp improvement)
 
 ### KEY SESSION FINDINGS
 
@@ -44,22 +45,41 @@
 
 **Conclusion:** Target-based scoring is NOT superior to kNN for cancer, but captures different signal. Worth exploring ensemble approach.
 
+#### h366: Target+kNN Ensemble for Cancer - VALIDATED
+
+**Hypothesis:** Combining target overlap and kNN scores will capture complementary signals.
+
+**Results (LOO CV on 38 cancer diseases):**
+| Method | R@30 | Hits |
+|--------|------|------|
+| **Max Ensemble** | **76.3%** | 29/38 |
+| Score Fusion (any α) | 73.7% | 28/38 |
+| Rank Fusion α=0.5 | 68.4% | 26/38 |
+| Target Only | 65.8% | 25/38 |
+| kNN Only | 63.2% | 24/38 |
+
+**Key findings:**
+- Max ensemble: take max(normalized_target, normalized_kNN) per drug
+- Captures complementary signals: wins on 5 Target-failed and 6 kNN-failed diseases
+- Only loses 2 diseases compared to single methods
+- +10.5 pp improvement over best single method
+
 ### New Hypotheses Generated
 
-- **h366:** Target+kNN Ensemble for Cancer - combine complementary signals
 - **h367:** Disease-Specific Gene Weighting - weight genes by DRKG edge type
 - **h368:** Cancer Subtype-Specific Target Scoring - identify subtypes where target scoring excels
+- **h369:** Apply Max Ensemble to Non-Cancer Categories - test if pattern generalizes
 
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 230 |
+| Validated | 231 |
 | Invalidated | 70 |
 | Inconclusive | 14 |
 | Blocked | 21 |
 | Deprioritized | 7 |
 | Pending | 26 |
-| **Total** | **368** |
+| **Total** | **369** |
 
 ---
 

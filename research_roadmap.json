@@ -7392,7 +7392,7 @@
       "title": "Target+kNN Ensemble for Cancer",
       "description": "Combine target overlap and kNN scores for cancer predictions. Since they win on different diseases (7 vs 6), ensemble could capture complementary signals.",
       "hypothesis": "Ensemble of target overlap and kNN will outperform either method alone on cancer diseases.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -7402,7 +7402,9 @@
         "Test linear combinations and rank fusion",
         "Evaluate on cancer diseases with LOO CV",
         "Success: >70% R@30 (vs 65.8% target, 63.2% kNN)"
-      ]
+      ],
+      "findings": "Max Ensemble achieves 76.3% R@30 vs Target 65.8% and kNN 63.2% (+10.5 pp improvement).\n\nLeave-one-out CV on 38 cancer diseases:\n- Max Ensemble: 29/38 hits (76.3%)\n- Score Fusion (any \u03b1): 28/38 hits (73.7%)\n- Rank Fusion \u03b1=0.5: 26/38 hits (68.4%)\n- Target Only: 25/38 hits (65.8%)\n- kNN Only: 24/38 hits (63.2%)\n\nEnsemble wins on 5 diseases where Target failed, 6 where kNN failed.\nOnly loses 1 disease each (Plexosarcoma for Target, glioma for kNN).\n\nMcNemar p>0.05 due to small sample size (n=38), but effect is consistent.\nMax ensemble (take max of normalized scores) outperforms weighted combinations.",
+      "result_metric": "Max Ensemble 76.3% R@30 (+10.5 pp over best single method)"
     },
     {
       "id": "h367",
@@ -7434,6 +7436,24 @@
         "Calculate per-subtype R@30 for target and kNN methods",
         "Identify subtypes where target scoring outperforms",
         "Success: Identify subtype with >80% target R@30"
+      ]
+    },
+    {
+      "id": "h369",
+      "title": "Apply Max Ensemble to Non-Cancer Categories",
+      "description": "h366 showed max(target, kNN) improves cancer R@30 by 10.5 pp. Test if this pattern generalizes to autoimmune, cardiovascular, and neurological categories.",
+      "hypothesis": "Max ensemble of target overlap and kNN will improve predictions across disease categories, not just cancer.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Identify diseases with DRKG gene associations for each category",
+        "Compute target overlap scores using disease-specific genes",
+        "Compute kNN scores using Node2Vec embeddings",
+        "Test max ensemble on each category",
+        "Compare to single-method baselines",
+        "Success: >5 pp improvement in at least 2 categories"
       ]
     }
   ],
@@ -8784,6 +8804,12 @@
       "hypothesis_id": "h269",
       "learning": "Target-based scoring and kNN achieve equivalent performance on cancer diseases (65.8% vs 63.2%), but win on different diseases (18 shared, 7 target-only, 6 kNN-only). This suggests complementary signals worth ensembling.",
       "implication": "Focus on ensembling rather than replacing kNN with target-based approach."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h366",
+      "learning": "Max ensemble of target overlap and kNN achieves 76.3% R@30 on cancer diseases (+10.5 pp over best single method). Taking the max of normalized scores outperforms weighted averages or rank fusion.",
+      "implication": "For cancer predictions, use max(target_score, kNN_score) to capture complementary signals from both methods."
     }
   ],
   "collaborations": [
