@@ -12480,7 +12480,7 @@
       "id": "h604",
       "title": "Standard MEDIUM Infectious Sub-Analysis: Drug-Class Stratification",
       "description": "Standard MEDIUM infectious is the largest sub-category (314 preds, 22.7% holdout, n=47.2/seed). This is below MEDIUM avg (41.3%) but above LOW (15.1%). Can we stratify by drug class to find specific demotable groups within infectious? E.g., beta-lactams for non-bacterial diseases, aminoglycosides for wrong pathogen types, etc. Per-drug analysis (h598 approach) may find 5-10 specific drugs dragging down the average.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12490,7 +12490,9 @@
         "Identify drug classes with <15% holdout (LOW-quality within standard MEDIUM infectious)",
         "For promising candidates, implement drug-class-specific demotion",
         "Run holdout validation to confirm MEDIUM improvement"
-      ]
+      ],
+      "findings": "INCONCLUSIVE: Per-drug-class analysis of standard MEDIUM infectious (314 preds, 22.7% holdout) reveals significant heterogeneity but no clean demotable group with sufficient n.\n\nDrug class holdout (5-seed):\n- tetracycline CLASS: 32.3% \u00b1 18.2% (n=28/seed) \u2014 genuine MEDIUM\n- fluoroquinolone: 11.4% \u00b1 12.2% (n=9.6/seed) \u2014 below MEDIUM but marginal n\n- macrolide_antibiotic: 10.6% \u00b1 13.6% (n=4.5/seed) \u2014 LOW-N\n- aminoglycoside: 30.0% \u00b1 21.2% (n=4.0/seed) \u2014 LOW-N\n- antifungal: 0.0% \u00b1 0.0% (n=3.0/seed) \u2014 suspicious but LOW-N\n\nPer-drug analysis (within standard MEDIUM infectious):\n- tetracycline (drug): 0.0% holdout (n=7/seed), 36 preds \u2014 CLEAR signal but narrow\n- erythromycin: 0.0% holdout (n=4.5/seed), 34 preds \u2014 borderline n\n- oxytetracycline: 8.3% (n=4.5/seed), 33 preds \u2014 borderline\n- ciprofloxacin: 0.0% (n=2.7/seed) \u2014 too small n\nvs:\n- doxycycline: 35.4% (n=8.2) \u2014 genuine MEDIUM\n- minocycline: 36.6% (n=7.4) \u2014 genuine MEDIUM\n- demeclocycline: 31.2% (n=7.8) \u2014 genuine MEDIUM\n- levofloxacin: 12.9% (n=7.6) \u2014 borderline\n\nDecision: NOT implementing per-drug demotions. Reasons:\n1. Individual drug n is too small (7/seed max) for reliable rules\n2. Tetracycline-the-drug at 0% is clear but requires exact-match logic (oxytetracycline contains 'tetracycline')\n3. Marginal MEDIUM improvement (~1-2pp) doesn't justify granularity\n4. Risk of overfitting to specific drug-disease intersections\n\nKey finding: Standard MEDIUM infectious is driven by tetracycline CLASS (32.3%, n=28/seed). Fluoroquinolone and macrolide classes underperform but have insufficient n for class-level demotion. The 22.7% overall represents a genuine mix, not a uniformly low-quality group.",
+      "result_metric": "Tetracycline class 32.3%, fluoroquinolone 11.4%, macrolide 10.6% holdout. No action."
     },
     {
       "id": "h605",
@@ -12535,6 +12537,34 @@
         "Check if specific drug classes drive the variance (e.g., DMARDs vs other)",
         "If n is too small for reliable demotion, annotate as 'uncertain' quality",
         "Revisit if GT expansion adds more autoimmune diseases"
+      ]
+    },
+    {
+      "id": "h608",
+      "title": "Fluoroquinolone Standard Infectious MEDIUM Demotion with Larger Holdout",
+      "description": "h604 found fluoroquinolone standard MEDIUM infectious at 11.4% holdout (n=9.6/seed, below n\u224830 threshold). With more seeds (10 seeds) or a larger holdout fraction, could we get enough n to confirm this is LOW-quality? If confirmed at 11.4% with n\u226530, demoting 48 fluoroquinolone preds would give MEDIUM +1.0pp.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Run 10-seed holdout for fluoroquinolone standard MEDIUM infectious",
+        "If n\u226530/seed and holdout <15%, implement fluoroquinolone infectious demotion",
+        "Check interaction with fluoroquinolone\u2192HIGH respiratory rescue"
+      ]
+    },
+    {
+      "id": "h609",
+      "title": "Legacy Antibiotic Annotation: Flag Tetracycline and Erythromycin as Redundant",
+      "description": "h604 found tetracycline (0% holdout) and erythromycin (0% holdout) are always co-predicted with their modern successors (doxycycline, azithromycin) for the same diseases. Rather than demoting, annotate these as 'legacy_redundant' in the deliverable so collaborators know doxycycline/azithromycin predictions are equivalent but higher confidence.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Verify co-prediction overlap: what % of tetracycline diseases also have doxycycline MEDIUM?",
+        "Add 'legacy_redundant' boolean to deliverable for these drugs",
+        "Document in deliverable metadata"
       ]
     }
   ],
@@ -14576,6 +14606,12 @@
       "hypothesis_id": "h603",
       "learning": "Standard MEDIUM analysis: metabolic (10.3%) is the only cleanly demotable category remaining. Respiratory (22.3%) and endocrine (24.5%) are borderline \u2014 between LOW and MEDIUM. The MEDIUM_DEMOTED_CATEGORIES check intercepts ALL predictions before ATC coherent rescue, so adding categories there also blocks ATC coherent pathway. Only add categories that are already excluded from ATC coherent or where the combined precision is clearly LOW.",
       "implication": "Future MEDIUM demotion attempts must account for interaction with ATC coherent pathway. Categories NOT in ATC_COHERENT_EXCLUDED will lose their ATC rescue predictions when added to MEDIUM_DEMOTED_CATEGORIES."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h604",
+      "learning": "Standard MEDIUM infectious (22.7% holdout) is heterogeneous: tetracycline class performs well (32.3%) while fluoroquinolone (11.4%) and macrolide (10.6%) underperform. Per-drug analysis shows tetracycline-the-drug has 0% holdout (vs doxycycline 35.4%, minocycline 36.6%). Legacy antibiotics (tetracycline, erythromycin) contribute most false positives but per-drug n is too small for reliable demotion rules.",
+      "implication": "Diminishing returns on MEDIUM demotion. Individual drug holdout requires n>30/drug for reliability. Standard MEDIUM infectious at 22.7% is below MEDIUM avg (41.3%) but above LOW (15.1%) \u2014 demoting the entire category would lose genuine MEDIUM predictions from doxycycline/minocycline."
     }
   ],
   "collaborations": [

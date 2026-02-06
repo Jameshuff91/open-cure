@@ -1,6 +1,18 @@
 # Research Loop Progress
 
-## Current Session: h603 - MEDIUM Standard Rule Category Refinement (2026-02-06)
+## Current Session: h603/h604 - MEDIUM Standard Rule Refinement (2026-02-06)
+
+### h604: Standard MEDIUM Infectious Drug-Class Stratification — INCONCLUSIVE
+
+Per-drug-class analysis of the 314 standard MEDIUM infectious predictions reveals significant heterogeneity but no cleanly demotable group with sufficient n.
+
+**Drug class holdout:** tetracycline CLASS 32.3% (genuine MEDIUM), fluoroquinolone 11.4% (below MEDIUM, n=9.6), macrolide 10.6% (LOW-N).
+
+**Per-drug insight:** tetracycline-the-drug has 0% holdout (n=7/seed) while doxycycline (35.4%), minocycline (36.6%), demeclocycline (31.2%) are genuine MEDIUM. Legacy drugs (tetracycline, erythromycin) at 0% but per-drug n too small.
+
+**Decision:** NOT implementing per-drug demotions. n too small, marginal impact, risk of overfitting.
+
+---
 
 ### h603: Standard MEDIUM Category Analysis — VALIDATED (marginal)
 

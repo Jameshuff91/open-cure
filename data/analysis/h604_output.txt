@@ -1,0 +1,120 @@
+================================================================================
+h604: Standard MEDIUM Infectious Drug-Class Stratification
+================================================================================
+
+--- Step 1: Full-data standard MEDIUM infectious by drug class ---
+
+Total standard MEDIUM infectious: 314
+
+Drug Class                 Preds  Hits  Precision
+--------------------------------------------------
+  tetracycline               173    57      32.9%
+  fluoroquinolone             48     8      16.7%
+  macrolide_antibiotic        45    10      22.2%
+  antifungal                  28    10      35.7%
+  aminoglycoside              14     3      21.4%
+  other                        3     0       0.0%
+  sulfonamide                  1     0       0.0%
+  beta_lactam                  1     0       0.0%
+  antiparasitic                1     0       0.0%
+
+
+--- Step 2: Per-drug analysis (drugs with >=5 predictions) ---
+
+Drug                            Preds  Hits  Precision Class               
+---------------------------------------------------------------------------
+  doxycycline                      37    13      35.1% tetracycline        
+  tetracycline                     36     9      25.0% tetracycline        
+  demeclocycline                   35    12      34.3% tetracycline        
+  erythromycin                     34     8      23.5% macrolide_antibiotic
+  levofloxacin                     33     6      18.2% fluoroquinolone     
+  oxytetracycline                  33     9      27.3% tetracycline        
+  minocycline                      32    14      43.8% tetracycline        
+  amphotericin b                   27    10      37.0% antifungal          
+  gentamicin                       14     3      21.4% aminoglycoside      
+  ciprofloxacin                    11     2      18.2% fluoroquinolone     
+  azithromycin                     10     2      20.0% macrolide_antibiotic
+  ofloxacin                         3     0       0.0% fluoroquinolone     
+
+
+================================================================================
+Step 3: 5-seed holdout validation by drug class
+================================================================================
+
+--- Seed 42 ---
+  aminoglycoside              0/7    =   0.0%
+  antifungal                  0/5    =   0.0%
+  fluoroquinolone             0/15   =   0.0%
+  other                       0/2    =   0.0%
+  tetracycline               12/32   =  37.5%
+  OVERALL                    12/61   =  19.7%
+
+--- Seed 123 ---
+  aminoglycoside              1/2    =  50.0%
+  beta_lactam                 0/1    =   0.0%
+  fluoroquinolone             1/9    =  11.1%
+  macrolide_antibiotic        1/3    =  33.3%
+  other                       0/2    =   0.0%
+  tetracycline                8/38   =  21.1%
+  OVERALL                    11/55   =  20.0%
+
+--- Seed 456 ---
+  aminoglycoside              1/2    =  50.0%
+  fluoroquinolone             0/7    =   0.0%
+  macrolide_antibiotic        0/1    =   0.0%
+  tetracycline                1/25   =   4.0%
+  OVERALL                     2/35   =   5.7%
+
+--- Seed 789 ---
+  aminoglycoside              1/5    =  20.0%
+  antifungal                  0/1    =   0.0%
+  antiparasitic               0/1    =   0.0%
+  beta_lactam                 0/1    =   0.0%
+  fluoroquinolone             3/9    =  33.3%
+  macrolide_antibiotic        1/11   =   9.1%
+  tetracycline               10/24   =  41.7%
+  OVERALL                    15/52   =  28.8%
+
+--- Seed 2024 ---
+  fluoroquinolone             1/8    =  12.5%
+  macrolide_antibiotic        0/3    =   0.0%
+  other                       0/1    =   0.0%
+  tetracycline               12/21   =  57.1%
+  OVERALL                    13/33   =  39.4%
+
+
+================================================================================
+Step 4: Holdout Summary by Drug Class
+================================================================================
+
+Drug Class                 Holdout %   ±    Std   n/seed    Full%
+-----------------------------------------------------------------
+ALL INFECTIOUS STD              22.7   ±   11.1     47.2
+
+  tetracycline                  32.3   ±   18.2     28.0    32.9%
+  fluoroquinolone               11.4   ±   12.2      9.6    16.7% ***
+  macrolide_antibiotic          10.6   ±   13.6      4.5    22.2%
+  aminoglycoside                30.0   ±   21.2      4.0    21.4%
+  antifungal                     0.0   ±    0.0      3.0    35.7%
+  other                          0.0   ±    0.0      1.7     0.0%
+  antiparasitic                  0.0   ±    0.0      1.0     0.0%
+  beta_lactam                    0.0   ±    0.0      1.0     0.0%
+
+
+================================================================================
+Step 5: Per-Drug Holdout (drugs with avg n>=2/seed)
+================================================================================
+
+Drug                            Holdout %   ±    Std   n/seed Class          
+---------------------------------------------------------------------------
+  doxycycline                        35.4   ±   19.7      8.2 tetracycline   
+  demeclocycline                     31.2   ±   18.7      7.8 tetracycline   
+  levofloxacin                       12.9   ±   13.7      7.6 fluoroquinolone
+  minocycline                        36.6   ±   12.4      7.4 tetracycline   
+  tetracycline                        0.0   ±    0.0      7.0 tetracycline    ***
+  erythromycin                        0.0   ±    0.0      4.5 macrolide_antibiotic ***
+  oxytetracycline                     8.3   ±    8.3      4.5 tetracycline    ***
+  gentamicin                         30.0   ±   21.2      4.0 aminoglycoside 
+  amphotericin b                      0.0   ±    0.0      3.0 antifungal      ***
+  ciprofloxacin                       0.0   ±    0.0      2.7 fluoroquinolone
+  azithromycin                       31.2   ±   41.0      2.0 macrolide_antibiotic
