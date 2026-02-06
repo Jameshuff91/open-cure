@@ -1,6 +1,74 @@
 # Research Loop Progress
 
-## Current Session: h576/h577/h579 - LOW Promotion + CS Artifact + Novel Precision (2026-02-06)
+## Current Session: h571 - Therapeutic Island Rescue Analysis (2026-02-06)
+
+### h571: Therapeutic Island Disease Rescue — INVALIDATED
+
+Comprehensive analysis of 9 "therapeutic island" diseases (GT>=5, 0% holdout) to determine whether alternative prediction strategies could rescue them.
+
+**Islands Analyzed:**
+| Disease | GT | Self-Ref | MEDIUM+ Preds | Failure Mode |
+|---------|-----|---------|---------------|-------------|
+| Immunodeficiency | 268 | 100% | 0 | immunological demotion |
+| ADHD | 87 | 100% | 18 | hierarchy+ATC works, kNN blind |
+| HCV | 50 | 100% | 2 | disease-specific antivirals |
+| PAH | 36 | 100% | 11 | different paradigm than hypertension |
+| Migraine | 35 | 100% | 2 | triptans/CGRPs not in kNN |
+| Agranulocytosis | 31 | 83% | 0 | hematological demotion |
+| Narcolepsy | 26 | 75% | 2 | stimulants unique to cluster |
+| DKA | 12 | 100% | 0 | base_to_complication filter |
+| Scabies | 9 | 80% | 2 | antiparasitic drugs unique |
+
+**Key Finding 1: NOT drug uniqueness, but neighbor drug mismatch**
+- All 9 islands have 67-100% of GT drugs shared with other diseases
+- But kNN neighbors have VERY low drug overlap: mean 0.3-7.2 drugs (vs 6.2-22.6 for high performers)
+- Islands are embedded NEAR other diseases (sim 0.498-0.791) but treated with DIFFERENT drugs
+- e.g., PAH is near hypertension (uses PDE5i/ERA/prostacyclins) but neighbors use ACEi/ARBs/CCBs
+
+**Key Finding 2: Alternative signals cannot help**
+- TransE consilience: 0% for most island GT predictions
+- Gene overlap: Present for ADHD/immunodeficiency but circular with kNN
+- Drug class: Already exploited by hierarchy rules and ATC coherence
+- All signals annotate EXISTING kNN predictions, cannot generate NEW ones
+
+**Key Finding 3: System already works for some islands via non-kNN paths**
+- ADHD: 18 MEDIUM+ predictions (8 known GT drugs) via psychiatric ATC + target overlap
+- PAH: 11 HIGH predictions (all known) via cardiovascular hierarchy
+- These non-kNN paths work; kNN just adds no value for these diseases
+
+**Key Finding 4: 0% holdout is misleading for self-referential diseases**
+- PAH has 11 correct HIGH predictions but holdout = 0%
+- Holdout penalizes self-referential diseases because GT contributions vanish when held out
+- The deliverable is actually CORRECT for these diseases
+
+**Conclusion: No rescue possible within kNN architecture. Need fundamentally different approach.**
+
+### New Hypotheses Generated (4)
+- h580: Drug class expansion for migraine (P3, high impact)
+- h581: Holdout metric correction excluding self-ref diseases (P4, medium, low effort)
+- h582: kNN neighbor drug overlap as quality signal (P4, low, medium effort)
+- h583: Treatment paradigm mismatch detection (P4, medium)
+
+### Session Tier Performance (unchanged from h560)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 69.9% ± 17.9% | 280 |
+| HIGH | 59.5% ± 6.2% | 754 |
+| MEDIUM | 35.8% ± 2.8% | 2083 |
+| LOW | 15.5% ± 2.4% | 3733 |
+| FILTER | 10.6% ± 1.3% | 7300 |
+
+### Recommended Next Steps
+1. **h581**: Corrected holdout excluding self-referential diseases (quick, informative)
+2. **h580**: Drug class expansion for islands (high effort but could generate genuinely new predictions)
+3. **h583**: Paradigm mismatch as quality signal (novel metric)
+
+### Key Learning
+Therapeutic islands fail because kNN neighbors treat with different drug classes, not because drugs are unique. The embedding space captures disease similarity but NOT treatment paradigm similarity. This is a fundamental limitation of Node2Vec embeddings trained on DRKG: they capture knowledge graph structure but not clinical treatment patterns.
+
+---
+
+## Previous Session: h576/h577/h579 - LOW Promotion + CS Artifact + Novel Precision (2026-02-06)
 
 ### h576: LOW Tier Promotion Analysis — INVALIDATED
 

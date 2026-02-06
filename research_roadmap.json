@@ -10240,25 +10240,6 @@
     },
     {
       "id": "h489",
-      "title": "Cancer Rule MEDIUM Audit: 0.3% Holdout Cross-Type Remnants",
-      "description": "After h485 blocked cancer from target overlap promotion, check if any cancer cross-type predictions are still reaching MEDIUM through other paths. The cancer cross-type route should consistently yield LOW, not MEDIUM. Also check if any cross-type cancer drugs at LOW have specific mechanisms that warrant rescue (e.g., pembrolizumab for MSI-high tumors across cancer types).",
-      "steps": [
-        "Count remaining cancer MEDIUM predictions by rule",
-        "Check if any non-cancer_same_type cancer MEDIUM predictions exist after h485 fix",
-        "Evaluate if MSI-H immunotherapy cross-type has higher holdout precision",
-        "Consider rule for MSI-H/TMB-H agnostic cancer drugs if data supports"
-      ],
-      "expected_impact": "low",
-      "effort": "medium",
-      "priority": 5,
-      "status": "invalidated",
-      "findings": "Psychiatric no-mechanism 0% holdout is a SMALL-N ARTIFACT (n=1.3/seed):\n- Full-data: 13 predictions, 5 GT (38.5%) - all clinically valid (paroxetine/sertraline/venlafaxine for depression/anxiety)\n- P(all 5 seeds 0 GT | n=1.3/seed, base_rate=38.5%) = 8.8% \u2014 not surprising\n- Requiring mechanism would lose 5 valid GT hits for psychiatric\n- Respiratory: same issue (n=1.0 mech/seed, n=3.4 nomech/seed)\n- LESSON: Holdout with <5 predictions/seed is unreliable. Do NOT make demotion decisions based on it.",
-      "result_metric": "No change. Small-n holdout artifact (n<5/seed unreliable).",
-      "category": "meta-analysis",
-      "rationale": "After h485 blocked cancer from target overlap promotion, check if any cancer cross-type predictions are still reaching MEDIUM through other paths. The cancer cross-type route should consistently yield LOW, not MEDIUM. Also check if any cross-type cancer drugs at LOW have specific mechanisms that warrant rescue (e.g., pembrolizumab for MSI-high tumors across cancer types)."
-    },
-    {
-      "id": "h489",
       "title": "Mechanism-Required ATC Coherent Rules for Psychiatric and Respiratory",
       "description": "h487 found psychiatric ATC coherent: 35.1% holdout WITH mechanism, 0% WITHOUT. Respiratory: 38.9% with mechanism, 6.7% without. Test requiring mechanism_support for these ATC coherent categories.",
       "expected_impact": "medium",
@@ -10435,26 +10416,6 @@
       "findings": "h497 VALIDATED: GOLDEN Standard vs Hierarchy Holdout Validation\n\nStandard GOLDEN (freq>=10 + mechanism + tier1) holdout: 62.2% \u00b1 31.3% (n=26/seed)\nHierarchy GOLDEN holdout: 70.3% \u00b1 19.1% (n=19/seed)\nDifference: +8.1pp (NOT significant, t=1.01, p>0.35)\n\nExcluding seed 42 outlier (0/4 standard): standard 77.7% vs hierarchy 78.6% (+0.9pp)\n\nDECISION: No demotion needed. Standard GOLDEN holdout (62.2%) exceeds HIGH avg (60.8%).\nFull-data gap (standard 55.7% vs hierarchy 89.5%) is mostly hierarchy overfitting.\n\nKey finding: kNN has non-deterministic tie-breaking between process invocations.",
       "result_metric": "Standard GOLDEN 62.2% \u00b1 31.3% holdout (NOT significantly different from hierarchy 70.3%)",
       "rationale": "h479 found 34% of GOLDEN predictions come from the 'standard' rule (no disease hierarchy match). Of 6 uncertain novels, 4 were false positives (all standard rule). Run holdout validation specifically for standard vs hierarchy GOLDEN to measure whether standard rule GOLDEN has significantly lower holdout precision. If so, consider demoting standard-rule GOLDEN to HIGH (or raising the frequency threshold from 10 to 15)."
-    },
-    {
-      "id": "h497",
-      "title": "Reverse GT Sync: Expanded GT \u2192 Production Predictor",
-      "description": "h478 synced production GT \u2192 expanded GT (1464 pairs). But the expanded GT has 58K pairs vs production GT's 3K. Many expanded GT pairs may be from external sources (DRKG treatment edges, etc.) that the production predictor doesn't know about. If we add expanded GT pairs to the production predictor's training data (via a supplemental mapping), drug_train_freq would be more accurate, potentially improving tier assignments. Specifically: drugs appearing in more diseases = higher train_frequency = different tier handling.",
-      "expected_impact": "medium",
-      "effort": "high",
-      "priority": 3,
-      "status": "pending",
-      "steps": [
-        "Compare expanded GT vs production GT: how many expanded pairs have no production mapping?",
-        "Identify drug classes most affected by the discrepancy",
-        "Test if updating train_frequency with expanded GT changes tier assignments",
-        "Run holdout validation to measure impact",
-        "Implement if beneficial"
-      ],
-      "findings": "",
-      "result_metric": "",
-      "category": "meta-analysis",
-      "rationale": "h478 synced production GT \u2192 expanded GT (1464 pairs). But the expanded GT has 58K pairs vs production GT's 3K. Many expanded GT pairs may be from external sources (DRKG treatment edges, etc.) that the production predictor doesn't know about. If we add expanded GT pairs to the production predictor's training data (via a supplemental mapping), drug_train_freq would be more accurate, potentially improving tier assignments. Specifically: drugs appearing in more diseases = higher train_frequency = different tier handling."
     },
     {
       "id": "h498",
@@ -11903,15 +11864,15 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "For each therapeutic island, analyze WHY kNN fails (drug specificity vs embedding isolation)",
         "Test if target overlap or pathway analysis identifies any GT drugs",
         "Test if TransE consilience has signal for these diseases",
         "If any alternative approach works, implement disease-specific prediction strategy"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "Therapeutic islands (9 diseases with GT>=5 and 0% holdout) fail because of LOW DRUG SHARING with kNN neighbors (mean overlap 0.3-7.2 drugs vs 6.2-22.6 for high performers), NOT drug uniqueness (67-100% shared). All 9 are 75-100% self-referential. Alternative signals (TransE 0%, gene overlap circular, drug class already exploited) cannot generate NEW predictions. System still works via hierarchy/ATC rules (ADHD: 18 MEDIUM+, PAH: 11 HIGH) but these are from non-kNN paths. No actionable rescue within kNN architecture.",
+      "result_metric": "0% holdout confirmed structural; no rescue possible",
       "category": "meta-analysis",
       "rationale": "For the 8 large-GT therapeutic islands (PAH, HCV, migraine, narcolepsy, ADHD, DKA, agranulocytosis, DMD), kNN fails because drugs are disease-specific. Could mechanism-based approaches (target overlap, pathway analysis) work better for these diseases? These are high-value diseases where predictions would be most impactful."
     },
@@ -12069,107 +12030,67 @@
       "rationale": "MEDIUM holdout is 36.5% but what fraction are novel predictions? If most hits are known indications, the novel prediction precision could be much lower. Understanding the novel vs known split helps assess true discovery potential."
     },
     {
-      "id": "h577",
-      "title": "Corticosteroid Holdout Artifact: Quantify CS Inflation Across All Tiers",
-      "description": "High-frequency CS (freq 30-42) inflate holdout precision in any subgroup. Quantify the CS artifact across all tiers.",
-      "priority": 4,
-      "expected_impact": "medium",
-      "effort": "medium",
-      "status": "pending",
+      "id": "h580",
+      "title": "Drug Class Expansion for Migraine: Predict All Triptans and CGRPs",
+      "description": "Migraine is a therapeutic island where kNN fails (0% holdout). But 7 of 35 GT drugs are triptans, 3 are CGRP antibodies. If the system knew ONE triptan treats migraine, it could predict ALL triptans. ATC class-based expansion could generate predictions independent of kNN. Requires mapping ATC classes to drug IDs.",
       "steps": [
-        "1. For each tier, compute holdout precision separately for CS and non-CS",
-        "2. Check if removing CS changes tier ordering",
-        "3. Consider reporting CS-excluded precision as supplemental metric"
+        "For each island disease, identify the dominant drug classes in GT",
+        "Map ATC L4/L5 classes to all drugs in the system",
+        "If any drug from class X is in GT for disease Y, predict all other class X drugs for Y",
+        "Compute holdout precision of class expansion predictions",
+        "Compare with kNN top-30 for these diseases"
       ],
-      "findings": "",
-      "result_metric": "",
-      "category": "meta-analysis",
-      "rationale": "High-frequency CS (freq 30-42) inflate holdout precision in any subgroup. Quantify the CS artifact across all tiers."
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "high"
     },
     {
-      "id": "h578",
-      "title": "LOW Tier TransE Annotation: Flag Best LOW for Manual Review",
-      "description": "TransE+LOW=21.4% vs 14.8%. Not promotable but useful annotation.",
-      "priority": 5,
+      "id": "h581",
+      "title": "Holdout Metric Correction for Self-Referential Diseases",
+      "description": "144 diseases (31.6%) are 100% self-referential, meaning holdout precision is always 0% for them. This distorts tier-level holdout statistics. Compute 'corrected' holdout precision that excludes self-referential diseases. This gives a more honest measure of the system's true discovery potential. The current 35.8% MEDIUM holdout includes these 0% diseases dragging down the average.",
+      "steps": [
+        "Identify all 100% self-referential diseases from deliverable annotations",
+        "Recompute tier holdout precision excluding self-referential diseases",
+        "Compare corrected vs uncorrected precision per tier",
+        "Report the 'true discovery rate' for non-self-referential diseases",
+        "Document whether this changes any tier boundary decisions"
+      ],
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low"
+    },
+    {
+      "id": "h582",
+      "title": "kNN Neighbor Drug Overlap as Pre-Filter Quality Signal",
+      "description": "h571 found that mean GT overlap per kNN neighbor is the key predictor of holdout success. High performers have 6.2-22.6 drugs shared per neighbor; islands have 0.3-7.2. This could be computed WITHOUT GT (just count overlapping drugs between disease and its neighbors). If drug overlap per neighbor predicts holdout precision, it could be used to identify which diseases have reliable vs unreliable predictions.",
+      "steps": [
+        "For each disease, compute mean drug overlap between its GT and its k=20 kNN neighbors",
+        "Correlate with holdout precision (controlling for GT size)",
+        "Test if this signal is available at prediction time (without GT knowledge)",
+        "If yes, add as deliverable annotation; if no, explain why"
+      ],
+      "status": "pending",
+      "priority": 4,
       "expected_impact": "low",
-      "effort": "low",
-      "status": "pending",
-      "steps": [
-        "1. Add low_quality_signal column to deliverable",
-        "2. Document for manual review prioritization"
-      ],
-      "findings": "",
-      "result_metric": "",
-      "category": "meta-analysis",
-      "rationale": "TransE+LOW=21.4% vs 14.8%. Not promotable but useful annotation."
+      "effort": "medium"
     },
     {
-      "id": "h579",
-      "title": "MEDIUM Novel-Only Precision: Known vs Novel Split",
-      "description": "What fraction of MEDIUM holdout hits are novel discoveries vs known indications?",
+      "id": "h583",
+      "title": "Treatment Paradigm Mismatch Detection: Embedding vs Drug Profile Distance",
+      "description": "h571 revealed that islands are embedded NEAR other diseases (high cosine sim) but treat with DIFFERENT drugs (low drug overlap). This 'paradigm mismatch' \u2014 diseases close in embedding space but far in drug space \u2014 is a novel signal. Diseases where embedding distance and drug-profile distance disagree are likely self-referential. Could be computed as: cos_sim(disease embeddings) vs Jaccard(drug sets).",
+      "steps": [
+        "For each disease pair in kNN neighborhood, compute embedding distance AND drug Jaccard distance",
+        "Define 'paradigm mismatch score' as high embedding similarity + low drug Jaccard",
+        "Test if high mismatch predicts 0% holdout",
+        "Compare with self_referential_pct as quality signal",
+        "If informative, add as deliverable annotation"
+      ],
+      "status": "pending",
       "priority": 4,
       "expected_impact": "medium",
-      "effort": "low",
-      "status": "pending",
-      "steps": [
-        "1. Split MEDIUM holdout hits into known vs novel",
-        "2. Compute holdout precision for novel-only",
-        "3. Compare across tiers"
-      ],
-      "findings": "",
-      "result_metric": "",
-      "category": "meta-analysis",
-      "rationale": "What fraction of MEDIUM holdout hits are novel discoveries vs known indications?"
-    },
-    {
-      "id": "h577",
-      "title": "Corticosteroid Holdout Artifact: Quantify CS Inflation Across All Tiers",
-      "category": "meta-analysis",
-      "rationale": "High-frequency CS (freq 30-42) inflate holdout precision in any subgroup. Quantify the CS artifact across all tiers.",
-      "expected_impact": "medium",
-      "effort": "medium",
-      "priority": 4,
-      "status": "pending",
-      "steps": [
-        "1. For each tier, compute holdout precision separately for CS and non-CS",
-        "2. Check if removing CS changes tier ordering",
-        "3. Consider reporting CS-excluded precision as supplemental metric"
-      ],
-      "findings": "",
-      "result_metric": ""
-    },
-    {
-      "id": "h578",
-      "title": "LOW Tier TransE Annotation: Flag Best LOW for Manual Review",
-      "category": "deliverable",
-      "rationale": "TransE+LOW=21.4% vs 14.8%. Not promotable but useful annotation.",
-      "expected_impact": "low",
-      "effort": "low",
-      "priority": 5,
-      "status": "pending",
-      "steps": [
-        "1. Add low_quality_signal column to deliverable",
-        "2. Document for manual review prioritization"
-      ],
-      "findings": "",
-      "result_metric": ""
-    },
-    {
-      "id": "h579",
-      "title": "MEDIUM Novel-Only Precision: Known vs Novel Split",
-      "category": "meta-analysis",
-      "rationale": "What fraction of MEDIUM holdout hits are novel discoveries vs known indications?",
-      "expected_impact": "medium",
-      "effort": "low",
-      "priority": 4,
-      "status": "pending",
-      "steps": [
-        "1. Split MEDIUM holdout hits into known vs novel",
-        "2. Compute holdout precision for novel-only",
-        "3. Compare across tiers"
-      ],
-      "findings": "",
-      "result_metric": ""
+      "effort": "medium"
     }
   ],
   "completed": [
@@ -14126,6 +14047,12 @@
       "date": "2026-02-06",
       "finding": "CS inflation quantified: HIGH tier is 69% corticosteroids. Non-CS HIGH = 48.5% (vs 58.8% total). MEDIUM barely affected (6% CS, non-CS 34.8% vs 36.5%). Tier ordering preserved for non-CS. Report CS-free precision as supplemental metric.",
       "source": "h577"
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h571",
+      "learning": "Therapeutic islands fail not because of drug uniqueness (67-100% shared) but because kNN neighbors use DIFFERENT drug classes (mean overlap 0.3-7.2 vs 6.2-22.6 for high performers). Embedding similarity is fine; treatment paradigm is different. Alternative signals (TransE, gene overlap) cannot generate NEW predictions. System still works for some islands via hierarchy/ATC rules (ADHD: 18 MEDIUM+, PAH: 11 HIGH). Holdout metric is misleading for self-referential diseases.",
+      "implication": "No rescue possible within kNN architecture. Need non-kNN prediction strategies (drug class expansion, literature mining) for island diseases. Consider correcting holdout metric to exclude self-referential diseases."
     }
   ],
   "collaborations": [

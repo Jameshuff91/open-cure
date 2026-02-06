@@ -1,0 +1,97 @@
+{
+  "hypothesis": "h571",
+  "title": "Therapeutic Island Disease Rescue: Alternative Prediction Strategy",
+  "status": "invalidated",
+  "date": "2026-02-06",
+  "summary": "Therapeutic islands fail because of low drug-sharing with kNN neighbors, NOT drug uniqueness. All 9 islands are 75-100% self-referential. Alternative signals (TransE, gene overlap, drug class) cannot generate NEW predictions \u2014 they only annotate existing kNN predictions. No actionable rescue within current architecture.",
+  "islands": [
+    {
+      "disease": "immunodeficiency",
+      "gt_size": 268,
+      "holdout": 0,
+      "self_ref": 100,
+      "medium_plus_preds": 0,
+      "failure_mode": "immunological_demotion + rank>20"
+    },
+    {
+      "disease": "ADHD",
+      "gt_size": 87,
+      "holdout": 0,
+      "self_ref": 100,
+      "medium_plus_preds": 18,
+      "failure_mode": "hierarchy+ATC rules work but kNN is blind"
+    },
+    {
+      "disease": "HCV",
+      "gt_size": 50,
+      "holdout": 0,
+      "self_ref": 100,
+      "medium_plus_preds": 2,
+      "failure_mode": "disease-specific antivirals not in kNN pool"
+    },
+    {
+      "disease": "PAH",
+      "gt_size": 36,
+      "holdout": 0,
+      "self_ref": 100,
+      "medium_plus_preds": 11,
+      "failure_mode": "different treatment paradigm than general hypertension"
+    },
+    {
+      "disease": "migraine",
+      "gt_size": 35,
+      "holdout": 0,
+      "self_ref": 100,
+      "medium_plus_preds": 2,
+      "failure_mode": "triptans/CGRPs not in kNN neighbor pool"
+    },
+    {
+      "disease": "agranulocytosis",
+      "gt_size": 31,
+      "holdout": 0,
+      "self_ref": 83,
+      "medium_plus_preds": 0,
+      "failure_mode": "hematological_demotion removes all predictions"
+    },
+    {
+      "disease": "narcolepsy",
+      "gt_size": 26,
+      "holdout": 0,
+      "self_ref": 75,
+      "medium_plus_preds": 2,
+      "failure_mode": "stimulants unique to narcolepsy/ADHD cluster"
+    },
+    {
+      "disease": "DKA",
+      "gt_size": 12,
+      "holdout": 0,
+      "self_ref": 100,
+      "medium_plus_preds": 0,
+      "failure_mode": "base_to_complication filter + acute vs chronic distinction"
+    },
+    {
+      "disease": "scabies",
+      "gt_size": 9,
+      "holdout": 0,
+      "self_ref": 80,
+      "medium_plus_preds": 2,
+      "failure_mode": "antiparasitic drugs unique to few diseases"
+    }
+  ],
+  "key_findings": {
+    "drug_sharing_not_the_problem": "All 9 diseases have 67-100% of GT drugs shared with other diseases. Drugs ARE in the system.",
+    "neighbor_mismatch_IS_the_problem": "kNN neighbors have mean GT overlap of only 0.3-7.2 drugs (vs 6.2-22.6 for high performers). Nearby diseases use different drugs.",
+    "embedding_similarity_is_fine": "Islands have mean neighbor similarity 0.498-0.791 (vs 0.412-0.775 for high performers). The embeddings are fine.",
+    "alternative_signals_dont_help": "TransE 0%, gene overlap circular with kNN, drug class already exploited. No new signal available.",
+    "self_referentiality_confirmed": "All 9 islands are 75-100% self-referential. Predictions vanish entirely when disease is held out.",
+    "system_still_works_via_rules": "ADHD has 18 MEDIUM+ predictions, PAH has 11 HIGH predictions \u2014 from hierarchy/ATC rules, not kNN.",
+    "holdout_underestimates_quality": "0% holdout is misleading \u2014 PAH has 11 correct HIGH predictions. Holdout penalizes self-referential diseases."
+  },
+  "implications": [
+    "Therapeutic islands require NON-kNN prediction strategy (literature mining, clinical trial data)",
+    "Current architecture structurally cannot rescue these diseases",
+    "Holdout metric is not appropriate for self-referential diseases \u2014 need alternative quality measure",
+    "Drug class expansion (e.g., all triptans for migraine) could help but requires new data infrastructure",
+    "Island annotation in deliverable is the best current approach (already implemented)"
+  ]
+}
