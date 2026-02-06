@@ -12200,7 +12200,7 @@
     {
       "id": "h590",
       "title": "Hetionet Disease-Resembles as Augmented kNN Signal",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12210,7 +12210,9 @@
         "For diseases with resembles edges NOT in kNN top-20, test drug prediction quality",
         "If Hetionet-confirmed neighbors predict better drugs, consider augmenting kNN with resembles",
         "Count affected predictions and estimate holdout impact"
-      ]
+      ],
+      "findings": "Hetionet disease-resembles edges CANNOT augment kNN neighborhoods.\n\nKEY RESULTS:\n1. Coverage: 33/312 holdout diseases (10.6%) \u2014 too sparse\n2. 80.8% of resembles neighbors already in kNN top-20 \u2014 no novelty\n3. Drug overlap: resembles 0.036 < kNN 0.045 \u2014 kNN finds BETTER drug-sharing neighbors\n4. Unique GT hits: only 4/33 diseases gain any new GT drugs from resembles\n5. Mean unique hits: 0.2 per disease \u2014 negligible\n6. Embedding sim: resembles 0.398 < kNN 0.476 \u2014 kNN already captures closer neighbors\n\nWHY: Node2Vec embeddings are trained ON the DRKG, which includes Hetionet resembles edges.\nThe embedding already incorporates this information. kNN top-20 is a SUPERSET of the\nresembles signal. Adding resembles neighbors just dilutes the better kNN neighbors.\n\nIMPLICATION: Curated disease similarity (Hetionet) is already captured by the embedding.\nAny augmentation must come from EXTERNAL knowledge not already in DRKG.",
+      "result_metric": "80.8% resembles already in kNN. 0.2 unique GT hits/disease. No augmentation value."
     }
   ],
   "completed": [
@@ -14203,6 +14205,12 @@
       "hypothesis_id": "h589",
       "learning": "ATC hierarchy is the best proxy for drug Jaccard (L3 r=0.737), far exceeding gene overlap (r=0.086) and HPO (r=0.390). But it adds ZERO signal beyond drug Jaccard (partial_r=-0.013). ATC is a noisy version of drug Jaccard, not an independent signal. This closes the search for GT-free treatment paradigm proxies within DRKG: no DRKG-derived signal can independently predict treatment similarity.",
       "implication": "Treatment paradigm information is ONLY available from treatment data itself. No amount of biological (genes), phenotypic (HPO), or therapeutic classification (ATC) information provides an INDEPENDENT signal beyond drug Jaccard. The paradigm mismatch concept (h583) is fundamentally a GT-dependent metric. Future quality signals must come from entirely external sources (clinical practice guidelines, expert curation, or RWD prescribing patterns)."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h590",
+      "learning": "Hetionet disease-resembles edges are 80% already in kNN top-20 (the embedding captures them). Resembles neighbors have LOWER drug overlap (0.036 vs kNN 0.045) and provide only 0.2 unique GT hits per disease. No augmentation value \u2014 kNN already uses this information.",
+      "implication": "DRKG-derived auxiliary signals (resembles, gene overlap, HPO phenotype) are all subsumed by or redundant with what Node2Vec embeddings already capture. Any improvement must come from truly external data sources."
     }
   ],
   "collaborations": [

@@ -75,10 +75,43 @@ ATC codes are the best proxy for drug Jaccard (treatment paradigm similarity):
 
 **This closes the GT-free treatment paradigm proxy search.** No DRKG-derived signal (genes, HPO, ATC) provides independent information beyond drug Jaccard. Treatment paradigm knowledge requires treatment data.
 
+### h590: Hetionet Disease-Resembles as Augmented kNN Signal — INVALIDATED
+
+Tested whether Hetionet DrD (disease resembles disease) edges can augment kNN neighborhoods with curated medical knowledge.
+
+**Findings:**
+- Only 33/312 holdout diseases have resembles edges (10.6%)
+- 80.8% of resembles neighbors are already in kNN top-20
+- Drug overlap: resembles 0.036 < kNN 0.045 (kNN finds BETTER drug neighbors)
+- Only 4/33 diseases gain ANY new GT drugs from resembles (mean 0.2/disease)
+- Embedding already captures resembles (trained on same DRKG graph)
+
+**Conclusion:** No augmentation value. Node2Vec embeddings subsume Hetionet edges.
+
+### Session Summary: GT-Free Quality Signal Arc (h586→h588→h589→h590)
+
+This session systematically explored whether DRKG-derived signals can independently predict treatment paradigm similarity:
+
+| Signal | r with Drug Jaccard | r with Holdout | Independent? |
+|--------|-------------------|---------------|-------------|
+| Drug Jaccard (oracle) | 1.000 | +0.251 | GT-dependent |
+| ATC L3 (h589) | +0.737 | +0.180 | Circular (GT) |
+| HPO phenotype (h588) | +0.390 | +0.243 | Modest (+0.9% R²) |
+| Gene overlap (h586) | +0.086 | +0.079 | None |
+| Resembles (h590) | — | — | Subsumed by kNN |
+
+**Key insight:** Treatment paradigm information exists ONLY in treatment data. No biological (genes), phenotypic (HPO), or graph-structural (resembles) signal provides independent prediction of treatment similarity. ATC hierarchy is a strong proxy but fully circular with drug Jaccard.
+
+**The only partially independent signal is HPO phenotype similarity**, but at +0.9% incremental R², it's not actionable for tier changes.
+
 ### Recommended Next Steps
-1. **h590**: Hetionet disease-resembles augmentation (low effort, might augment kNN)
-2. **h534**: TransE FILTER annotation for manual review
-3. Consider external data integration (clinical practice guidelines, RWD prescribing patterns)
+1. **h534**: TransE FILTER annotation for manual review (low effort)
+2. **h539**: Cancer drug class annotation (low effort, deliverable improvement)
+3. Consider pivoting to entirely external data (clinical guidelines, RWD, LINCS)
+
+---
+
+## Previous Session: h571 - Therapeutic Island Rescue Analysis (2026-02-06)
 
 ---
 
