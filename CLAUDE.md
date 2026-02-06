@@ -147,12 +147,14 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h544 update, 2026-02-06):**
+**Tier System (h552 update, 2026-02-06):**
 - GOLDEN: 69.9% ± 17.9% holdout (280 predictions)
-- HIGH: 58.9% ± 6.2% holdout (791 predictions)
-- MEDIUM: 30.3% ± 2.5% holdout (2653 predictions)
-- LOW: 16.2% ± 2.7% holdout (3139 predictions)
-- FILTER: 10.3% ± 1.4% holdout (7287 predictions)
+- HIGH: 58.7% ± 6.1% holdout (794 predictions)
+- MEDIUM: 29.9% ± 2.4% holdout (2609 predictions)
+- LOW: 16.2% ± 2.7% holdout (3119 predictions)
+- FILTER: 10.5% ± 1.3% holdout (7348 predictions)
+- **h542:** MEDIUM tier quality audit: 59 predictions validated. 25% validated, 31% plausible, 44% implausible (vs 88% reasonable for GOLDEN/HIGH). Fixes: corticosteroid→adrenocortical insufficiency inverse indication (6 preds), FDG PET tracer filter (55 preds).
+- **h552:** Non-therapeutic compound audit: indocyanine green (diagnostic dye) 10 preds → FILTER. Total 66 non-therapeutic predictions removed.
 - **h544:** Anti-TNF paradoxical autoimmunity audit: +15 inverse indication pairs (AIH 389 cases, sarcoidosis 90+, vasculitis 113). 5 predictions → FILTER. Golimumab filters added.
 - **h408:** Ryland collaboration brief. Anti-TNF→SLE/MG/MS inverse indications (7 pairs, 4 GOLDEN/MEDIUM → FILTER). 86% of derm/autoimmune GOLDEN/HIGH are corticosteroids.
 - **h546:** Gene overlap annotation: drug-target/disease-gene overlap as confidence signal. +11.4pp MEDIUM novel holdout. NOT promotable (partially circular with kNN). `gene_overlap_count` column in deliverable.
