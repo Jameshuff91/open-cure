@@ -147,59 +147,24 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480)
 
-**Tier System (h487/h488 updated 2026-02-06):**
-- GOLDEN: 64.1% full / ~62% holdout
-- HIGH: 56.6% full / ~52% holdout
-- MEDIUM: 29.5% full / ~23% holdout (h487+h488: +1.8pp from incoherent+hematological demotions)
-- LOW: 11.4% full / ~13% holdout
-- FILTER: 11.3% full / ~8% holdout
+**Tier System (h479/h484/h495 updated 2026-02-06):**
+- GOLDEN: 64.7% full / ~62% holdout (283 predictions)
+- HIGH: 56.6% full / ~52% holdout (511 predictions)
+- MEDIUM: 29.6% full / ~23% holdout (3603 predictions)
+- LOW: 11.4% full / ~13% holdout (2439 predictions)
+- FILTER: 11.4% full / ~8% holdout (7314 predictions)
 
-**h487+h488 (LATEST):** Incoherent demotion + ATC hematological demotion.
-  - h488: Incoherent MEDIUM→LOW (50 preds, 3.6% holdout). Blocked target_overlap rescue.
-  - h487: Hematological ATC coherent added to excluded set (44 preds, 5.0% holdout).
-  - h487: Mechanism matters: psychiatric 35.1% with mech vs 0% without; respiratory 38.9% vs 6.7%.
-  - Combined: MEDIUM +1.8pp full-data, +0.1pp holdout.
+**h479+h484+h495 (LATEST):** Safety audit: 10 harmful predictions → FILTER.
+  - h484: CCB cardiac audit (diltiazem cardiac arrest, verapamil CHF, diltiazem VT, nifedipine ACS)
+  - h495: confidence_filter.py NOT used by production_predictor.py (12/15 rules uncovered).
+    Flecainide/propafenone VT/MI (CAST trial), empagliflozin hypoglycemia (inverse indication)
+  - h479: Minocycline→urticaria (drug CAUSES urticaria). GOLDEN 64.1→64.7%
+  - h489 INVALIDATED: h487's 0% psych nomech was small-n artifact (n=1.3/seed)
+  - h494: Small-n holdout audit - no reversals needed, system robust
 
-**h485:** Target overlap promotion audit + cancer cross-type demotion.
-  - Target overlap = 3rd best MEDIUM rule (35.9% holdout, genuine)
-  - Cancer cross-type overlap = 0.3% holdout → blocked: MEDIUM +1.4pp, HIGH +1.3pp
-  - h476: Added pancreatitis/cushing to steroid iatrogenic + 3 missing steroids
+**Prior confidence system work:** h487/h488 (incoherent+ATC demotion, MEDIUM +1.8pp), h485 (cancer cross-type blocked, MEDIUM +1.4pp), h483/h473/h480 (literature validation, 29 inverse indications found), h469 (parathyroid fix), h410 (3 substring bugs), h462 (4 categories demoted MEDIUM→LOW), h402 (83 rules audited, 1 bad), h393 (holdout validates tier system), h396/h395/h388/h387 (tier adjustments).
 
-**h483:** MEDIUM novel prediction literature validation (top 25).
-  - 52% clinical support (40% GT gaps, 12% promising, 8% HARMFUL)
-  - 2 HARMFUL found: verapamil→cardiac arrest, metronidazole→myopia. 29 inverse indications total.
-
-**h473/h480:** Literature validation of GOLDEN/HIGH novel predictions + inverse-indication safety fix.
-  - GOLDEN novels: 75% clinical support (55% GT gaps, 20% promising, 0% harmful)
-  - HIGH novels: 65% clinical support (35% GT gaps, 30% promising, 10% HARMFUL)
-  - Found 26 inverse-indication predictions (drug causes predicted disease):
-    anti-thyroid→hypothyroidism, thyroid hormone→hyperthyroidism, sulfonylureas/insulin→hypoglycemia
-  - h482: Expanded to all diabetes hierarchy inverses + diabetes insipidus false match
-  - Implemented INVERSE_INDICATION_PAIRS filter: 26 predictions → FILTER (HIGH +1.8pp)
-  - GT incompleteness (corticosteroids 37%, lipid drugs 27%) is main source of "novel" predictions
-
-**h469:** Parathyroid false match fix + holdout script bug (GOLDEN +8.8pp). Word-boundary regex NOT suitable for medical terms.
-
-**h410:** 3 string-matching bugs fixed ('sle'→sleep, 'cystitis'→cholecystitis, 'fibrosis'→cystic fibrosis). MEDIUM +1.1pp, 14/20 rules CONFIRMED.
-
-**h462/h463:** Category-specific MEDIUM demotions. 3 categories demoted MEDIUM→LOW:
-  - Immunological: 2.5% holdout (36pp overfitting gap, self-referential kNN, h465)
-  - Neurological: 10.2% holdout
-  - Reproductive: 0.0% holdout
-  - GI: already demoted (h463, 10.9% as LOW)
-  No categories qualify for HIGH promotion (psychiatric 45.7% closest but p=0.232, h464).
-**h466:** Added `category_holdout_precision` column to deliverable (19 columns total).
-**h402:** Comprehensive rule audit of 83 rule-tier pairs. Only 1 clearly bad (pneumonia 6.7% holdout). 21 too small to evaluate. Demoted 3 marginal rules: pneumonia HIGH→MEDIUM, diabetes GOLDEN→HIGH, cv_pathway HIGH→MEDIUM.
-**h399/h418 (IMPORTANT):** rank>20 filter shadows 332 hierarchy predictions. Attempted fix FAILED holdout: HIGH -6.2pp. REVERTED.
-**h393 (CRITICAL):** Holdout validation proves tier system IS genuine.
-**h396:** Resolved GOLDEN<HIGH inversion by demoting cancer_same_type to MEDIUM.
-**h395:** Demoted 7 below-tier rules: metabolic GOLDEN→MEDIUM, cancer cross-type MEDIUM→LOW, etc.
-**h388:** Target overlap tier promotion: HIGH+overlap≥3→GOLDEN (rule-guarded), LOW+overlap≥1→MEDIUM
-**h387:** Removed infectious GOLDEN rule (was 5.3% precision)
-
-**Key learning (h402):** Only 1 of 83 rules clearly bad. Code complexity is from many small rules (41 rules handle 7% of predictions), not bad rules. Focus on consolidation, not pruning. Min n≈30 for reliable holdout validation.
-**Key learning (h399):** Full-data precision can be misleading. Always validate with holdout.
-**Key learning (h393):** Most "overfitted" hierarchy rules are actually 1-disease groups (structural absence, not overfitting).
+**Key learnings:** (1) Min n≈30 for reliable holdout; sub-rule splits often hit n<5. (2) Full-data precision can mislead; always validate with holdout. (3) Most "overfitted" hierarchy rules are 1-disease groups (structural absence). (4) confidence_filter.py is a separate system from production_predictor.py.
 
 ### TransE Consilience (h405/h439/h440 - NEW 2026-02-06)
 

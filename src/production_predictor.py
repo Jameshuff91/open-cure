@@ -710,6 +710,9 @@ INVERSE_INDICATION_PAIRS = {
     'empagliflozin': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
     'dapagliflozin': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
     'canagliflozin': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    # h479: Minocycline CAUSES urticaria as adverse effect (case reports: acute severe urticaria
+    # developing 3-28 days after initiation, can recur >12 months after discontinuation)
+    'minocycline': {'urticaria'},
 }
 
 # h280/h281: Complication vs Subtype relationship mapping

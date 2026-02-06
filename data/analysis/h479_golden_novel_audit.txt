@@ -1,0 +1,75 @@
+======================================================================
+h479: Uncertain GOLDEN Novel Demotion
+======================================================================
+Date: 2026-02-06
+Status: VALIDATED (1 harmful found, 4 false positives documented)
+
+HYPOTHESIS: h473 identified 8 GOLDEN novel predictions with no/weak clinical
+evidence. Investigate whether any have hidden clinical support and handle
+false positives.
+
+======================================================================
+FINDINGS
+======================================================================
+
+Of the original 8 uncertain predictions:
+- 2 already moved to FILTER by recent changes (phentermine, quinaprilat → FH)
+- 6 still at GOLDEN
+
+Literature validation of 6 remaining:
+
+| Drug | Disease | Evidence | Action |
+|------|---------|----------|--------|
+| Semaglutide | Familial hypercholesterolemia | PROMISING | KEEP (lipid-lowering evidence) |
+| Minocycline | Urticaria | HARMFUL (CAUSES it) | → INVERSE_INDICATION_PAIRS |
+| Lidocaine | Keratosis pilaris | NO_EVIDENCE | Document as false positive |
+| Levofloxacin | Glaucoma | NO_EVIDENCE | Document as false positive |
+| Lidocaine | ADHD | NO_EVIDENCE | Document as false positive |
+| Lidocaine | Retinitis | NO_EVIDENCE | Document as false positive |
+
+Summary: 1/6 promising (17%), 1/6 harmful (17%), 4/6 false positives (67%)
+
+======================================================================
+MINOCYCLINE → URTICARIA: INVERSE INDICATION
+======================================================================
+
+Added to INVERSE_INDICATION_PAIRS.
+Evidence: Case reports document acute severe urticaria developing 3-28 days
+after minocycline initiation. Can recur >12 months after discontinuation.
+(MDedge, Cureus case reports)
+
+Impact: GOLDEN 283 predictions, 64.7% full-data precision (+0.6pp)
+
+======================================================================
+FALSE POSITIVE ANALYSIS
+======================================================================
+
+The 4 no-evidence predictions share a pattern:
+- ALL from "standard" GOLDEN rule (disease_tier=1, freq≥10, mechanism_support)
+- Lidocaine has freq=43 (highest in GOLDEN, treats many conditions)
+- The standard rule doesn't validate disease-specific relevance
+
+34% of GOLDEN predictions (97/285) come from the "standard" rule.
+These are higher risk for false positives than hierarchy rules.
+
+However, many standard-rule GOLDEN are correct:
+- Lidocaine → neuropathy (FDA-approved)
+- Lidocaine → diabetic neuropathy (FDA-approved)
+- Lidocaine → atopic dermatitis (used for itch)
+- Minocycline → rosacea (FDA-approved as Oracea)
+
+DECISION: Do NOT add specific exclusions for the 4 false positives.
+- GOLDEN claims ~62% holdout precision → ~38% expected false positives
+- Individual case exclusions = overfitting
+- The false positive rate is within expected bounds
+- Would need a systematic approach (e.g., "standard" rule holdout audit) to improve
+
+======================================================================
+TIER PRECISION AFTER h479
+======================================================================
+
+GOLDEN: 64.7% (283 predictions) - +0.6pp from minocycline removal
+HIGH: 56.6% (511)
+MEDIUM: 29.6% (3603)
+LOW: 11.4% (2439)
+FILTER: 11.4% (7314)

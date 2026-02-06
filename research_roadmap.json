@@ -9530,8 +9530,10 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "pending",
-      "category": "validation"
+      "status": "validated",
+      "category": "validation",
+      "findings": "VALIDATED: Literature validation of 6 GOLDEN uncertain predictions. 1 HARMFUL (minocycline\u2192urticaria = inverse indication, drug CAUSES urticaria). 1 PROMISING (semaglutide\u2192FH has lipid-lowering evidence). 4 NO_EVIDENCE (lidocaine\u2192ADHD/keratosis pilaris/retinitis, levofloxacin\u2192glaucoma). Added minocycline\u2192urticaria to INVERSE_INDICATION_PAIRS. GOLDEN +0.6pp (64.7%). 34% of GOLDEN from 'standard' rule (higher false positive risk) but individual exclusions would be overfitting. 2 of original 8 already at FILTER.",
+      "result_metric": "1 harmful removed; GOLDEN 64.7% (+0.6pp); 4 false positives within expected bounds"
     },
     {
       "id": "h480",
@@ -9850,6 +9852,23 @@
       "priority": 5,
       "status": "pending",
       "category": "safety"
+    },
+    {
+      "id": "h497",
+      "title": "GOLDEN Standard Rule Holdout: Are Non-Hierarchy GOLDEN Predictions Overfitting?",
+      "description": "h479 found 34% of GOLDEN predictions come from the 'standard' rule (no disease hierarchy match). Of 6 uncertain novels, 4 were false positives (all standard rule). Run holdout validation specifically for standard vs hierarchy GOLDEN to measure whether standard rule GOLDEN has significantly lower holdout precision. If so, consider demoting standard-rule GOLDEN to HIGH (or raising the frequency threshold from 10 to 15).",
+      "steps": [
+        "Run 5-seed holdout splitting GOLDEN by standard vs hierarchy rule",
+        "Measure holdout precision for each group",
+        "Check if standard rule GOLDEN has >10pp lower holdout than hierarchy GOLDEN",
+        "If yes, consider demoting standard-rule GOLDEN to HIGH",
+        "Estimate impact on tier distribution"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "category": "precision"
     }
   ],
   "completed": [
@@ -11529,6 +11548,12 @@
       "hypothesis_id": "h495",
       "learning": "confidence_filter.py and production_predictor.py are independent systems with 80% safety rule gap. Class Ic antiarrhythmics (CAST trial) and SGLT2i\u2192hypoglycemia were the main uncovered harmful patterns. Always cross-reference safety systems after changes.",
       "implication": "When adding inverse indication rules, check BOTH systems. Consider migrating all confidence_filter.py rules to INVERSE_INDICATION_PAIRS for single source of truth."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h479",
+      "learning": "GOLDEN 'standard' rule (34% of GOLDEN) has higher false positive risk than hierarchy rules. Lidocaine freq=43 leads to many false positives but also many correct predictions. Individual prediction exclusions = overfitting. Minocycline CAUSES urticaria (case reports).",
+      "implication": "Consider a holdout audit specifically for 'standard' rule GOLDEN predictions vs hierarchy GOLDEN. May warrant a slight frequency threshold increase for standard rule."
     }
   ],
   "collaborations": [
