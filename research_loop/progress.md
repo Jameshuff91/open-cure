@@ -1,6 +1,81 @@
 # Research Loop Progress
 
-## Current Session: h526/h529/h531/h257 - Inverse Indication Taxonomy + GT Audit (2026-02-06)
+## Current Session: h533 - FILTER Tier Precision Audit (2026-02-06)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 1**
+- h533: FILTER Tier Precision Audit - **VALIDATED** (FILTER well-calibrated, no rescue opportunity)
+
+### Key Findings
+
+#### 1. FILTER Tier Is Well-Calibrated
+- 7,322 FILTER predictions, 10.2% ± 1.4% holdout precision
+- No sub-population exceeds 15% holdout with sufficient n (>= 30/seed)
+- The tier boundary is robust across all analyses
+
+#### 2. Rank>20 Dominates FILTER (~80% of predictions)
+- rank>20 predictions are reliably low-precision across ALL categories
+- No category-specific rescue possible (confirms CLOSED status of rank>20 rescue)
+- Best category within rank>20: respiratory 27.6% holdout — but driven by very few diseases
+
+#### 3. Category Patterns Within FILTER
+Holdout precision by category:
+- respiratory: 27.6% ± 9.4% (55/seed) — best, but driven by rank>20
+- cardiovascular: 20.3% ± 12.3% (117/seed) — high variance
+- endocrine: 17.2% ± 5.1% (26/seed) — small n
+- autoimmune: 15.2% ± 7.7% (91/seed) — borderline LOW-level
+- Most other categories: 4-12% (well below LOW threshold)
+
+#### 4. Standard Filter Sub-Reasons (Cross-Tabulation)
+Only 1 sub-reason × category exceeds 15% holdout:
+- **low_freq_no_mech × respiratory: 23.3% ± 9.2%** (19/seed, 22 full predictions)
+  - Too few predictions to impact tier metrics
+  - Mostly genuine drug-disease pairs (COPD drugs for COPD, sleep apnea drugs for OSA)
+  - Holdout wildly variable (0-50% across seeds)
+
+#### 5. TransE Consilience in FILTER (**Key Finding**)
+- FILTER + TransE top-30: **16.3% ± 2.9%** holdout vs 10.0% without (+6.3pp)
+- 264 full-data predictions (~53/seed)
+- **Full-data shows NO signal** (16.7% vs 16.8%) — only holdout differentiates
+- 16.3% ≈ LOW (15.6%) → marginal, not sufficient for tier promotion
+- TransE consilience identifies better FILTER predictions but not enough to rescue
+
+#### 6. FILTER Reason Breakdown
+| Reason | Holdout | Full | n/seed |
+|--------|---------|------|--------|
+| standard_filter | 10.4% | 17.6% | 1213 |
+| cross_domain_isolated | 10.7% | 11.3% | 65 |
+| corticosteroid_iatrogenic | 39.6%* | 22.2% | 2** |
+| base_to_complication | 10.0% | 37.5% | 6 |
+| inverse_indication | 8.7% | 10.3% | 19 |
+| cancer_no_gt | 7.1% | 5.8% | 72 |
+| cancer_only_non_cancer | 3.6% | 14.3% | 8 |
+| complication_non_validated | 3.4% | 21.1% | 10 |
+
+*High variance (37.0% std), **too small for reliable measurement
+
+#### 7. Verdict
+- **FILTER tier is appropriately calibrated** — no over-filtering
+- The ~755 GT hits in FILTER (10.2% × ~7400) are structural: these drugs DO treat the disease, but our model correctly identifies them as low-confidence
+- TransE consilience annotated as a flag (already implemented), not promoted
+
+### New Hypotheses Generated (4)
+- h534: TransE FILTER annotation for manual review (P5, low)
+- h535: FILTER category analysis — why respiratory/autoimmune perform better (P5, medium)
+- h536: FILTER precision stability monitoring (P6, low)
+- h537: Deliverable quality audit — sample-based validation of top 50 (P4, medium)
+
+### Recommended Next Steps
+1. **h537**: Deliverable quality audit — validate top 50 predictions against literature
+2. **h408**: Ryland collaboration prep (approaching deadline)
+3. **h521**: Cancer drug same-category SOC promotion
+
+---
+
+## Previous Session: h526/h529/h531/h257 - Inverse Indication Taxonomy + GT Audit (2026-02-06)
 
 ### Session Summary
 

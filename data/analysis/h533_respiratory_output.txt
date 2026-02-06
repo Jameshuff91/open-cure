@@ -1,0 +1,46 @@
+================================================================================
+h533 Respiratory Rescue: Characterize & Validate
+================================================================================
+
+--- Respiratory FILTER (low_freq_no_mech) Predictions ---
+Total: 22 predictions
+GT hits: 8 (36.4%)
+Corticosteroids: 3
+
+Drug                           Disease                             Rank Freq Mech Tgt Hit
+------------------------------------------------------------------------------------------
+  Armodafinil                  obstructive sleep apnea              9    2    N   Y HIT
+  Aclidinium                   chronic obstructive pulmonary dis    9    2    N   Y HIT
+  Solriamfetol                 obstructive sleep apnea             10    2    N   Y HIT
+  Umeclidinium                 chronic obstructive pulmonary dis   10    2    N   Y HIT
+  Tirzepatide                  obstructive sleep apnea             11    3    N   N HIT
+  Beclomethasone               seasonal allergic rhinitis          16    2    N   Y HIT
+  Doxapram                     chronic obstructive pulmonary dis   17    1    N   Y HIT
+  Revefenacin                  chronic obstructive pulmonary dis   18    1    N   Y HIT
+  Armodafinil                  silicosis                            8    2    N   Y    
+  Solriamfetol                 silicosis                            9    2    N   Y    
+  Tirzepatide                  silicosis                           10    3    N   N    
+  Ranibizumab                  silicosis                           12    2    N   Y    
+  Beclomethasone               systemic sclerosis associated int   14    2    N   Y    
+  Armodafinil                  laryngitis                          14    2    N   Y    
+  Solriamfetol                 laryngitis                          15    2    N   Y    
+  Tirzepatide                  laryngitis                          16    3    N   N    
+  Choline                      obstructive sleep apnea             17    1    N   Y    
+  Beclomethasone               bronchopulmonary dysplasia          17    2    N   Y    
+  Loratadine                   systemic sclerosis associated int   17    1    N   Y    
+  Futibatinib                  pleural mesothelioma                18    2    N   N    
+  Theophylline                 obstructive sleep apnea             20    2    N   Y    
+  Ciclesonide                  bronchopulmonary dysplasia          20    2    N   Y    
+
+--- Holdout Impact Simulation ---
+If respiratory low_freq_no_mech FILTER → LOW:
+  Seed 42: rescued 12 preds (6 hits = 50% if filter_n > 0 else 0%)
+    LOW before: 16.8% (788), after: 17.2% (800)
+  Seed 123: rescued 14 preds (0 hits = 0% if filter_n > 0 else 0%)
+    LOW before: 13.9% (626), after: 13.6% (640)
+  Seed 456: rescued 12 preds (3 hits = 25% if filter_n > 0 else 0%)
+    LOW before: 15.9% (687), after: 16.0% (699)
+  Seed 789: rescued 17 preds (3 hits = 18% if filter_n > 0 else 0%)
+    LOW before: 19.6% (735), after: 19.5% (752)
+  Seed 2024: rescued 4 preds (0 hits = 0% if filter_n > 0 else 0%)
+    LOW before: 11.9% (663), after: 11.8% (667)

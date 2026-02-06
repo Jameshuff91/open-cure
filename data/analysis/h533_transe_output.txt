@@ -1,0 +1,78 @@
+================================================================================
+h533 TransE Consilience in FILTER Tier
+================================================================================
+Loading TransE model...
+Building TransE top-30 per disease...
+  TransE candidate drugs: 11745
+TransE top-30 available for 455/455 diseases
+
+================================================================================
+FULL-DATA: TransE Consilience in FILTER Tier
+================================================================================
+
+  FILTER + TransE top-30: 16.7% (264 predictions)
+  FILTER - TransE top-30: 16.8% (6308 predictions)
+  Delta: -0.1pp
+
+--- FILTER + TransE by Category (Full-Data) ---
+Category                  With  nWith    W/o   nW/o  Delta
+  autoimmune             20.0%    15  32.7%   336 -12.7
+  cancer                 14.3%    28   6.8%   630  +7.5
+  cardiovascular         27.3%    22  27.3%   534  -0.1
+  dermatological         11.1%    18  15.5%   401  -4.4
+  gastrointestinal       21.1%    19  14.4%   369  +6.7
+  hematological          12.5%     8  12.3%   333  +0.2
+  immunological          20.0%     5  23.6%    72  -3.6
+  infectious             17.5%    57  16.6%  1082  +0.9
+  metabolic              13.3%    30  15.0%   800  -1.7
+  neurological           14.3%     7  12.4%   526  +1.9
+  ophthalmic             13.3%    15   8.0%   250  +5.3
+  other                  12.5%     8  14.4%   216  -1.9
+  renal                  14.3%     7  26.6%   158 -12.3
+  reproductive           20.0%     5   6.5%    93 +13.5
+  respiratory             9.1%    11  25.1%   199 -16.0
+
+--- FILTER + TransE by Reason (Full-Data) ---
+  cancer_no_gt                       17.6% (  17) vs   5.2% ( 291) delta=+12.5
+  cross_domain_isolated              11.6% (  43) vs  11.3% ( 239) delta=+0.3
+  inverse_indication                  0.0% (   5) vs  10.8% ( 111) delta=-10.8
+  standard_filter                    18.3% ( 197) vs  17.6% (5531) delta=+0.7
+
+================================================================================
+HOLDOUT: TransE Consilience in FILTER Tier (5 seeds)
+================================================================================
+  Seed 42: FILTER+TransE=13.7% (51), FILTER-TransE=7.9% (1414)
+  Seed 123: FILTER+TransE=12.8% (47), FILTER-TransE=10.6% (1332)
+  Seed 456: FILTER+TransE=17.0% (53), FILTER-TransE=9.2% (1308)
+  Seed 789: FILTER+TransE=20.9% (43), FILTER-TransE=10.5% (1273)
+  Seed 2024: FILTER+TransE=17.1% (70), FILTER-TransE=11.9% (1350)
+
+--- Aggregate Holdout ---
+  FILTER + TransE:  16.3% ± 2.9% (avg 53/seed)
+  FILTER - TransE:  10.0% ± 1.3% (avg 1335/seed)
+  Delta: +6.3pp
+
+--- FILTER + TransE by Category (Holdout) ---
+Category                  With     ±    W/o  nWith  Delta Rescue?
+----------------------------------------------------------------------
+  autoimmune             10.0% 20.0%  15.6%   3.4  -5.6  
+  cancer                 10.3% 13.5%   7.8%   5.8  +2.5  maybe
+  cardiovascular         26.0% 17.4%  20.0%   4.2  +6.0  maybe
+  dermatological         17.7% 15.8%   8.6%   5.6  +9.2  YES
+  gastrointestinal       10.4% 14.7%   6.5%   5.0  +3.8  maybe
+  infectious             15.2% 14.3%   9.8%  10.2  +5.4  YES
+  metabolic              24.7% 16.0%  11.5%   4.0 +13.2  maybe
+  respiratory            35.0% 37.4%  26.7%   3.0  +8.3  maybe
+
+================================================================================
+CONCLUSION
+================================================================================
+
+  ** FILTER + TransE = 16.3% holdout → LOW-level promotion candidate **
+  Would rescue 53 predictions per seed from FILTER to LOW
+
+  Category-specific rescue candidates (>15% holdout + TransE):
+    dermatological: 17.7% ± 15.8% holdout (6/seed)
+    infectious: 15.2% ± 14.3% holdout (10/seed)
+
+Saved to data/analysis/h533_transe_in_filter.json

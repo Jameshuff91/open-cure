@@ -10552,13 +10552,77 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Stratify FILTER predictions by rule (standard, inverse_indication, cross_domain, etc.)",
         "Check holdout precision for each sub-rule",
         "Identify FILTER sub-populations with >15% holdout (LOW-level)",
         "Test if TransE consilience + FILTER \u2192 should be LOW/MEDIUM",
         "Note: rank>20 rescue has been tried 7 times and failed (CLOSED)"
+      ],
+      "findings": "FILTER tier audit complete. Key findings:\n\n1. FILTER by reason (holdout): standard_filter 10.4%, cross_domain_isolated 10.7%, cancer_no_gt 7.1%, inverse_indication 8.7%, complication_non_validated 3.4%. NO reason exceeds 15% with sufficient n.\n\n2. FILTER by category (holdout): respiratory 27.6%, cardiovascular 20.3%, endocrine 17.2%, autoimmune 15.2% \u2014 driven by rank>20 predictions in good categories (rank>20 rescue is CLOSED).\n\n3. Only one sub-population exceeds threshold: low_freq_no_mech \u00d7 respiratory = 23.3% \u00b1 9.2% holdout, but only 22 full-data predictions \u2192 negligible impact on tier metrics.\n\n4. TransE consilience within FILTER: 16.3% \u00b1 2.9% holdout vs 10.0% for non-TransE (+6.3pp). 264 predictions (~53/seed). Marginal \u2014 comparable to LOW (15.6%), not above it. Full-data shows NO signal (16.7% vs 16.8%), only holdout differentiates.\n\n5. CONCLUSION: FILTER tier is well-calibrated. No actionable rescue opportunity. The rank>20 boundary accounts for ~80% of FILTER predictions and is robustly validated. TransE consilience already annotated as flag; no tier promotion warranted.",
+      "result_metric": "FILTER holdout 10.2% \u00b1 1.4%. No rescue >15% with n>=30. TransE in FILTER: 16.3% \u00b1 2.9% (marginal)."
+    },
+    {
+      "id": "h534",
+      "title": "TransE FILTER Annotation: Flag High-Value FILTER Predictions for Manual Review",
+      "hypothesis": "TransE consilience identifies a subset of FILTER predictions with 16.3% holdout precision (vs 10.0% without). While not enough for tier promotion, these could be flagged in the deliverable for manual expert review, especially for rare diseases where any lead matters.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Add a deliverable column: transe_filter_flag (boolean) for FILTER predictions with TransE consilience",
+        "Document the 264 predictions that would be flagged",
+        "Verify that the existing transe_consilience flag works for FILTER predictions (may only be computed for non-FILTER)",
+        "Success: deliverable annotated, no tier change"
+      ]
+    },
+    {
+      "id": "h535",
+      "title": "FILTER Category Analysis: Why Do Respiratory/Autoimmune FILTER Predictions Perform Well?",
+      "hypothesis": "Respiratory FILTER has 27.6% holdout and autoimmune 15.2%. These are driven by rank>20 predictions (CLOSED for rescue), but understanding WHY these categories perform better could inform future model improvements. Are there category-specific signals that the kNN model misses?",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Extract respiratory and autoimmune FILTER predictions",
+        "Compare kNN rank distribution vs other categories",
+        "Check if rank 21-30 predictions in these categories cluster around rank 21 (near-miss) vs rank 30 (truly bad)",
+        "Test whether a category-specific rank cutoff would improve precision without losing too much recall",
+        "CAUTION: rank>20 rescue has failed 7 times (CLOSED). Only investigate for understanding, not for rescue."
+      ]
+    },
+    {
+      "id": "h536",
+      "title": "FILTER Precision Stability: Monitor Across Deliverable Regenerations",
+      "hypothesis": "FILTER tier at 10.2% holdout may drift as rules accumulate. Track FILTER precision across deliverable regenerations to detect any degradation. If FILTER precision drops below 8%, some rules may be too aggressive.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 6,
+      "status": "pending",
+      "steps": [
+        "Add FILTER precision to standard validation metrics",
+        "Compare current 10.2% against historical values",
+        "Set up alert: if FILTER holdout < 8%, audit recent rule changes"
+      ]
+    },
+    {
+      "id": "h537",
+      "title": "Deliverable Quality Audit: Sample-Based Validation of Top 50 Predictions",
+      "hypothesis": "The deliverable has never been validated at the individual prediction level. Taking the top 50 GOLDEN/HIGH predictions and checking each against ClinicalTrials.gov and PubMed would give a concrete precision estimate and identify any systematic errors missed by the holdout framework.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Extract top 50 GOLDEN + HIGH predictions from deliverable",
+        "For each: search ClinicalTrials.gov for active/completed trials",
+        "For each: search PubMed for preclinical/clinical evidence",
+        "Classify as: validated (trial/evidence), plausible (mechanistic rationale), implausible (no evidence or contradicting)",
+        "Compute real-world precision estimate",
+        "Identify any systematic errors (e.g., disease name mismatches, drug-disease confusion)"
       ]
     }
   ],
@@ -12353,6 +12417,12 @@
       "hypothesis_id": "h529",
       "learning": "DRKG associations \u2260 treatments. 19 DRKG-derived GT entries were actually inverse indications (drug causes disease). Always validate DRKG associations against clinical evidence before including in GT.",
       "implication": "Future GT expansion should cross-check against inverse indication list. Every Cure GT has ~5 incorrect entries (adverse effects labeled as indications) and ~8 disease name mismatch errors."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h533",
+      "learning": "FILTER tier is well-calibrated. rank>20 = 80% of FILTER, no category rescue works. TransE consilience provides +6.3pp holdout within FILTER but only 16.3% total (= LOW level, not worth promoting). Full-data TransE shows no signal; only holdout differentiates.",
+      "implication": "FILTER tier boundary is robust. Future improvements must come from improving the underlying kNN model, not from reclassifying existing FILTER predictions."
     }
   ],
   "collaborations": [

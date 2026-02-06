@@ -1,0 +1,176 @@
+================================================================================
+h533 Deep Dive: FILTER Reason × Category Cross-Analysis
+================================================================================
+
+Loading predictor...
+Diseases: 455
+
+================================================================================
+FULL-DATA: Standard Filter Sub-Reasons × Category
+================================================================================
+
+--- Standard Filter Sub-Reasons ---
+
+  no_targets: 18.5% (74/401)
+    autoimmune             :  50.0% (  20)
+    cancer                 :   0.0% (  57)
+    cardiovascular         :  47.1% (  17)
+    dermatological         :  22.5% (  40)
+    gastrointestinal       :  17.2% (  29)
+    hematological          :  16.7% (  18)
+    infectious             :  13.9% ( 101)
+    metabolic              :  20.0% (  40)
+    neurological           :  33.3% (  15)
+    ophthalmic             :   0.0% (  17)
+    other                  :  25.0% (  12)
+    renal                  :  33.3% (  18)
+
+  low_freq_no_mech: 17.8% (469/2634)
+    autoimmune             :  21.7% (  92)
+    cancer                 :   3.1% (  65)
+    cardiovascular         :  27.0% ( 174)
+    dermatological         :  13.6% ( 154)
+    endocrine              :  33.3% (  27)
+    gastrointestinal       :  18.2% ( 176)
+    hematological          :  13.2% ( 190)
+    immunological          :  20.6% (  34)
+    infectious             :  20.3% ( 459)
+    metabolic              :  13.8% ( 427)
+    musculoskeletal        :  20.9% (  43)
+    neurological           :  13.0% ( 385)
+    ophthalmic             :  15.6% (  77)
+    other                  :  17.5% ( 103)
+    psychiatric            :  36.0% (  86)
+    renal                  :  28.6% (  49)
+    reproductive           :   8.3% (  48)
+    respiratory            :  35.6% (  45)
+
+  other_standard: 17.3% (466/2693)
+    autoimmune             :  35.9% ( 231)
+    cancer                 :  12.2% ( 213)
+    cardiovascular         :  28.4% ( 289)
+    dermatological         :  16.6% ( 175)
+    endocrine              :  17.6% (  17)
+    gastrointestinal       :  10.8% ( 139)
+    hematological          :   9.9% ( 121)
+    immunological          :  28.6% (  35)
+    infectious             :  14.8% ( 553)
+    metabolic              :  14.6% ( 301)
+    musculoskeletal        :   0.0% (  43)
+    neurological           :   2.3% (  86)
+    ophthalmic             :   6.5% ( 123)
+    other                  :  12.3% (  73)
+    psychiatric            :  29.7% (  64)
+    renal                  :  22.4% (  76)
+    reproductive           :   4.0% (  25)
+    respiratory            :  18.6% ( 129)
+
+--- ATC Coherence within Standard Filter ---
+
+  incoherent: 17.6% (1009/5728)
+    autoimmune             :  32.9% ( 343)
+    cancer                 :   8.4% ( 335)
+    cardiovascular         :  28.5% ( 480)
+    dermatological         :  16.0% ( 369)
+    endocrine              :  26.7% (  45)
+    gastrointestinal       :  15.1% ( 344)
+    hematological          :  12.2% ( 329)
+    immunological          :  23.9% (  71)
+    infectious             :  17.0% (1113)
+    metabolic              :  14.5% ( 768)
+    musculoskeletal        :  10.3% (  87)
+    neurological           :  11.7% ( 486)
+    ophthalmic             :   9.2% ( 217)
+    other                  :  16.0% ( 188)
+    psychiatric            :  33.3% ( 150)
+    renal                  :  25.9% ( 143)
+    reproductive           :   6.4% (  78)
+    respiratory            :  23.6% ( 182)
+
+--- Frequency Bucket within Standard Filter ---
+
+  freq 0-2: 19.0% (612/3218)
+
+  freq 3-5: 17.0% (232/1361)
+
+  freq 6-10: 13.4% (100/746)
+
+  freq 11+: 16.1% (65/403)
+
+================================================================================
+HOLDOUT: Standard Filter Sub-Reasons × Category (5 seeds)
+================================================================================
+
+  Seed 42 (1/5)
+
+  Seed 123 (2/5)
+
+  Seed 456 (3/5)
+
+  Seed 789 (4/5)
+
+  Seed 2024 (5/5)
+
+================================================================================
+AGGREGATE HOLDOUT: Sub-Reason × Category
+================================================================================
+
+--- rank_gt20 × Category (Holdout) ---
+Category                    Hold   ±std   Full  n/seed Rescue?
+-----------------------------------------------------------------
+
+  === no_targets ===
+  cardiovascular           15.7%  13.5%  47.1%    5.0  maybe
+  dermatological            6.7%   9.7%  22.5%    7.6  
+  cancer                    3.0%   3.8%   0.0%   12.6  
+  infectious                2.9%   4.1%  13.9%   19.8  
+  gastrointestinal          2.5%   5.0%  17.2%    7.4  
+  hematological             0.0%   0.0%  16.7%    5.6  
+  ophthalmic                0.0%   0.0%   0.0%    5.0  
+
+  === low_freq_no_mech ===
+  respiratory              23.3%   9.2%  35.6%   19.2  YES
+  cardiovascular           12.6%   6.3%  27.0%   41.2  maybe
+  infectious               12.6%   3.4%  20.3%  106.8  maybe
+  psychiatric              10.2%   6.4%  36.0%   35.4  maybe
+  autoimmune                9.3%  10.8%  21.7%   26.4  
+  dermatological            8.7%   6.0%  13.6%   38.2  
+  metabolic                 7.5%   2.7%  13.8%   74.6  
+  other                     6.1%   5.1%  17.5%   21.0  
+  neurological              5.5%   2.7%  13.0%   73.6  
+  immunological             4.9%   7.0%  20.6%   15.3  
+  gastrointestinal          3.5%   2.9%  18.2%   42.6  
+  cancer                    3.0%   2.8%   3.1%   21.4  
+  renal                     2.9%   3.4%  28.6%   17.5  
+  ophthalmic                2.7%   3.4%  15.6%   14.8  
+  hematological             2.5%   1.6%  13.2%   57.6  
+  musculoskeletal           0.7%   1.3%  20.9%   10.2  
+
+--- ATC Coherence × Category within Standard Filter (Holdout) ---
+
+  === incoherent ===
+  respiratory              27.3%   9.5%   49.8
+  cardiovascular           20.6%  12.2%  102.0
+  autoimmune               15.8%   8.1%   87.0
+  metabolic                12.1%   3.8%  119.2
+  infectious               10.3%   1.4%  233.6
+  psychiatric               9.8%   6.8%   46.6
+  dermatological            9.3%   3.0%   85.2
+  cancer                    9.2%   3.5%   74.6
+  other                     8.7%   6.9%   31.6
+  ophthalmic                8.2%   7.5%   42.8
+  gastrointestinal          6.6%   3.4%   78.4
+  renal                     4.6%   5.4%   33.5
+  neurological              4.6%   2.4%   92.6
+  immunological             4.5%   6.4%   25.7
+  hematological             4.0%   2.0%   83.6
+  musculoskeletal           1.6%   2.3%   22.4
+
+================================================================================
+RESCUE CANDIDATE SUMMARY
+================================================================================
+
+Sub-populations with >15% holdout precision AND n>=10/seed:
+  low_freq_no_mech × respiratory: 23.3% ± 9.2% holdout (19/seed, 45 full)
+
+Saved to data/analysis/h533_deep_dive.json

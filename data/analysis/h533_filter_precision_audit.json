@@ -1,0 +1,99 @@
+{
+  "full_data": {
+    "filter_by_reason": {
+      "inverse_indication": {
+        "precision": 10.344827586206897,
+        "n": 116
+      },
+      "standard_filter": {
+        "precision": 17.61522346368715,
+        "n": 5728
+      },
+      "complication_non_validated": {
+        "precision": 21.052631578947366,
+        "n": 76
+      },
+      "cross_domain_isolated": {
+        "precision": 11.347517730496454,
+        "n": 282
+      },
+      "base_to_complication": {
+        "precision": 37.5,
+        "n": 32
+      },
+      "cancer_no_gt": {
+        "precision": 5.844155844155844,
+        "n": 308
+      },
+      "corticosteroid_iatrogenic": {
+        "precision": 22.22222222222222,
+        "n": 9
+      },
+      "cancer_only_non_cancer": {
+        "precision": 14.285714285714285,
+        "n": 21
+      }
+    }
+  },
+  "holdout": {
+    "filter_by_reason": {
+      "corticosteroid_iatrogenic": {
+        "holdout_prec": 39.58333333333333,
+        "std": 36.9754986443726,
+        "full_prec": 22.22222222222222,
+        "avg_n": 2.25,
+        "rescue": "maybe"
+      },
+      "cross_domain_isolated": {
+        "holdout_prec": 10.67713811680282,
+        "std": 1.43562480514641,
+        "full_prec": 11.347517730496454,
+        "avg_n": 64.8,
+        "rescue": "maybe"
+      },
+      "standard_filter": {
+        "holdout_prec": 10.412085064905817,
+        "std": 1.4108859361299078,
+        "full_prec": 17.61522346368715,
+        "avg_n": 1212.8,
+        "rescue": "maybe"
+      },
+      "base_to_complication": {
+        "holdout_prec": 10.0,
+        "std": 10.0,
+        "full_prec": 37.5,
+        "avg_n": 6.0,
+        "rescue": "no"
+      },
+      "inverse_indication": {
+        "holdout_prec": 8.705882352941178,
+        "std": 10.720739529312485,
+        "full_prec": 10.344827586206897,
+        "avg_n": 19.0,
+        "rescue": "no"
+      },
+      "cancer_no_gt": {
+        "holdout_prec": 7.054264073230537,
+        "std": 3.7405763776754006,
+        "full_prec": 5.844155844155844,
+        "avg_n": 71.6,
+        "rescue": "no"
+      },
+      "cancer_only_non_cancer": {
+        "holdout_prec": 3.571428571428571,
+        "std": 6.1858957413174185,
+        "full_prec": 14.285714285714285,
+        "avg_n": 7.5,
+        "rescue": "no"
+      },
+      "complication_non_validated": {
+        "holdout_prec": 3.4385964912280698,
+        "std": 4.384701572438823,
+        "full_prec": 21.052631578947366,
+        "avg_n": 9.8,
+        "rescue": "no"
+      }
+    }
+  },
+  "rescue_candidates": []
+}
