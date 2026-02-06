@@ -8013,7 +8013,7 @@
         "Step 6: If significant, propose reordering for better precision",
         "Step 7: Success criteria: Document all interactions, fix cases where reordering improves precision by >2pp"
       ],
-      "findings": "Rule interaction audit of _assign_confidence_tier (15+ return paths, 13622 predictions).\n\nKey Findings:\n1. 88.2% of predictions match 2+ rules (12014/13622) - rule interactions are pervasive\n2. rank>20 filter shadowed 332 hierarchy-matched predictions with 60.5% precision (201 GT hits)\n3. CV pathway-comprehensive at rank>20 had 44.6% precision (25/56 GT)\n4. cancer_same_type shadows standard HIGH (48.1% precision, n=79) - marginal impact\n5. zero_precision_mismatch catches 126 GT hits - may be too aggressive (deferred)\n6. mechanism_specific cap at LOW is appropriate (14.5% precision)\n\nImplementation:\n- Moved hierarchy match check BEFORE rank>20 filter (capped at HIGH for rank>20)\n- Moved CV pathway-comprehensive check BEFORE rank>20 filter\n\nImpact on tier precision:\n- GOLDEN: 61.8% \u2192 63.9% (+2.1pp) \u2014 improved via h388 overlap promotions from newly-HIGH\n- HIGH: 54.6% \u2192 54.8% (+0.2pp) \u2014 stable despite 323 added predictions\n- MEDIUM: 26.4% \u2192 26.2% (-0.2pp) \u2014 negligible\n- LOW: 12.2% \u2192 12.7% (+0.5pp) \u2014 stable\n- FILTER: 12.2% \u2192 9.6% (-2.6pp) \u2014 expected, removed high-precision predictions\n- R@30: 79.1% (unchanged)\n\nThe change recovers 201 GT hits from FILTER without hurting any tier precision.",
+      "findings": "Rule interaction audit of _assign_confidence_tier (15+ return paths, 13622 predictions).\n\nKey Findings:\n1. 88.2% of predictions match 2+ rules (12014/13622) - rule interactions are pervasive\n2. rank>20 filter shadowed 332 hierarchy-matched predictions with 60.5% precision (201 GT hits)\n3. CV pathway-comprehensive at rank>20 had 44.6% precision (25/56 GT)\n4. cancer_same_type shadows standard HIGH (48.1% precision, n=79) - marginal impact\n5. zero_precision_mismatch catches 126 GT hits - may be too aggressive (deferred)\n6. mechanism_specific cap at LOW is appropriate (14.5% precision)\n\nImplementation:\n- Moved hierarchy match check BEFORE rank>20 filter (capped at HIGH for rank>20)\n- Moved CV pathway-comprehensive check BEFORE rank>20 filter\n\nImpact on tier precision:\n- GOLDEN: 61.8% \u2192 63.9% (+2.1pp) \u2014 improved via h388 overlap promotions from newly-HIGH\n- HIGH: 54.6% \u2192 54.8% (+0.2pp) \u2014 stable despite 323 added predictions\n- MEDIUM: 26.4% \u2192 26.2% (-0.2pp) \u2014 negligible\n- LOW: 12.2% \u2192 12.7% (+0.5pp) \u2014 stable\n- FILTER: 12.2% \u2192 9.6% (-2.6pp) \u2014 expected, removed high-precision predictions\n- R@30: 79.1% (unchanged)\n\nThe change recovers 201 GT hits from FILTER without hurting any tier precision.\n\nUPDATE (h418 holdout validation):\nImplementation was REVERTED after holdout showed HIGH -6.2pp (48.1% \u2192 41.9%).\nThe hierarchy rules at rank>20 don't generalize to unseen diseases.\nMany hierarchy groups have 1-2 diseases, so holdout often excludes them entirely.\nThe audit findings remain valid - rule ordering matters and interactions are pervasive.\nHowever, the specific fix (hierarchy before rank>20) is not safe for deployment.",
       "result_metric": "GOLDEN +2.1pp, HIGH +0.2pp, R@30 unchanged (79.1%)"
     },
     {
@@ -8403,14 +8403,16 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Run 80/20 holdout split across 5 random seeds",
         "Compute tier precision on holdout for current (h399) code",
         "Compare to pre-h399 holdout baselines from h393",
         "Focus on GOLDEN and HIGH tier stability",
         "Success: holdout shows GOLDEN/HIGH retained or improved vs h393 baselines"
-      ]
+      ],
+      "findings": "Holdout validation (80/20, 5 seeds) of h399 hierarchy-before-rank reordering.\n\nResults (h399 code):\n- GOLDEN: 57.4% full / 52.6% \u00b1 14.0% holdout (-4.8pp delta)\n- HIGH: 44.2% full / 41.9% \u00b1 6.4% holdout (-2.3pp delta)\n- MEDIUM: 24.6% full / 22.6% \u00b1 3.3% holdout (-2.0pp)\n- LOW: 13.3% full / 10.9% \u00b1 1.6% holdout (-2.4pp)\n- FILTER: 9.0% full / 7.4% \u00b1 0.8% holdout (-1.6pp)\n\nTier ordering maintained: GOLDEN > HIGH > MEDIUM > LOW > FILTER \u2713\n\nComparison to h396 baselines:\n- GOLDEN holdout: 55.4% (h396) \u2192 52.6% (h399) = -2.8pp (within noise)\n- HIGH holdout: 48.1% (h396) \u2192 41.9% (h399) = -6.2pp (SIGNIFICANT DEGRADATION)\n\nHierarchy rules at rank>20 show mixed holdout performance:\n- 12/52 rules flagged as \"overfitted\" (>15pp drop)\n- Most are 1-disease groups with n=0 on holdout (structural absence, not overfitting)\n- High-volume rules degraded: diabetes 29%\u219213%, coronary 40%\u219219%\n\nDecision: REVERTED h399 implementation. Rank>20 filter preserved.\nThe audit findings (rule interactions are pervasive) remain valid.",
+      "result_metric": "HIGH holdout -6.2pp \u2192 h399 reordering REVERTED"
     }
   ],
   "completed": [

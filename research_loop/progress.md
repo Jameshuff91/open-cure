@@ -1,13 +1,14 @@
 # Research Loop Progress
 
-## Current Session: h399 (2026-02-05)
+## Current Session: h399, h418 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
 **Status:** Complete
-**Hypotheses Tested: 1**
-- h399: Rule Interaction Audit - **VALIDATED**
+**Hypotheses Tested: 2**
+- h399: Rule Interaction Audit - **VALIDATED** (findings valid, implementation REVERTED)
+- h418: Holdout Validation of h399 - **VALIDATED** (showed fix fails holdout)
 
 ### h399: Rule Interaction Audit - VALIDATED
 
@@ -44,10 +45,28 @@
 - **h417:** Rank 21-30 Rule Coverage Gap Analysis - Priority 3
 - **h418:** Holdout Validation of h399 Changes - Priority 2
 
+### h418: Holdout Validation of h399 Changes - VALIDATED (showed regression)
+
+**Hypothesis:** Verify h399 hierarchy-before-rank reordering holds on 80/20 holdout.
+
+**Results:**
+| Tier | Full (h399 code) | Holdout (h399 code) | h396 Holdout Baseline | Delta vs h396 |
+|------|-------------------|--------------------|-----------------------|---------------|
+| GOLDEN | 57.4% | 52.6% ± 14.0% | 55.4% ± 12.1% | -2.8pp |
+| HIGH | 44.2% | 41.9% ± 6.4% | 48.1% ± 6.1% | **-6.2pp** |
+| MEDIUM | 24.6% | 22.6% ± 3.3% | 22.4% ± 3.0% | +0.2pp |
+| LOW | 13.3% | 10.9% ± 1.6% | 11.0% ± 1.7% | -0.1pp |
+| FILTER | 9.0% | 7.4% ± 0.8% | 8.1% ± 0.9% | -0.7pp |
+
+**Decision:** REVERTED h399 implementation. HIGH -6.2pp on holdout is unacceptable.
+Hierarchy rules at rank>20 don't generalize. Many are 1-disease groups.
+
+**Key Learning:** Full-data precision can be misleading for rule changes. Always validate with holdout before deploying.
+
 ### Recommended Next Steps
-1. **h418:** Holdout validation of h399 changes - Priority 2 (verify on holdout)
-2. **h415:** Zero-precision mismatch refinement - Priority 3 (recover 126 GT hits)
-3. **h417:** Rank 21-30 coverage gap - Priority 3 (find more rescuable FILTER predictions)
+1. **h415:** Zero-precision mismatch refinement - Priority 3 (recover 126 GT hits)
+2. **h417:** Rank 21-30 coverage gap - Priority 3 (selective, holdout-validated rescues)
+3. **h402:** Simplify Production Predictor - Priority 3 (prune to top validated rules)
 
 ---
 

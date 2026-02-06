@@ -2149,25 +2149,11 @@ class DrugRepurposingPredictor:
                 return ConfidenceTier.FILTER, False, 'cancer_no_gt'
             # Cross-type: continue to standard filtering, will get MEDIUM in _apply_category_rescue
 
-        # h399: Disease hierarchy match BEFORE rank>20 filter
-        # Hierarchy matches at rank 21-30 have ~60.5% precision (201/332 GT hits)
-        # and should be promoted to HIGH (capped, never GOLDEN for rank>20)
-        # This recovers 201 GT hits that were incorrectly filtered
-        HIERARCHY_DEMOTE_TO_MEDIUM_EARLY = {'parkinsons', 'migraine'}
-        if rank > 20 and category in DISEASE_HIERARCHY_GROUPS and drug_id:
-            has_cat_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(
-                drug_id, disease_name, category
-            )
-            if same_group_match:
-                if matching_group in HIERARCHY_DEMOTE_TO_MEDIUM_EARLY:
-                    return ConfidenceTier.MEDIUM, True, f'{category}_hierarchy_{matching_group}'
-                # Cap at HIGH for rank>20 (never GOLDEN, even for metabolic/neurological)
-                return ConfidenceTier.HIGH, True, f'{category}_hierarchy_{matching_group}'
-
-        # h399: CV pathway-comprehensive BEFORE rank>20 filter
-        # CV pathway-comprehensive at rank 21-30 has 44.6% precision (25/56 GT hits)
-        if rank > 20 and self._is_cv_complication(disease_name) and self._is_cv_pathway_comprehensive(drug_name):
-            return ConfidenceTier.HIGH, True, 'cv_pathway_comprehensive'
+        # h399/h418: Hierarchy-before-rank reordering was REVERTED after holdout validation.
+        # Full-data showed GOLDEN +2.1pp, HIGH +0.2pp but holdout showed HIGH -6.2pp
+        # (48.1% → 41.9%). The hierarchy rules at rank>20 don't generalize to unseen diseases.
+        # Many hierarchy groups have only 1-2 diseases, so holdout often excludes them entirely.
+        # The rank>20 filter remains the correct default for now.
 
         # FILTER tier (h123 negative signals)
         if rank > 20:

@@ -147,21 +147,21 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399)
 
-**Tier System (h399 updated 2026-02-05):**
-- GOLDEN: 63.9% full (h399: +2.1pp via hierarchy→overlap→GOLDEN chain)
-- HIGH: 54.8% full (h399: +0.2pp, hierarchy rescue at rank 21-30)
-- MEDIUM: 26.2% full
-- LOW: 12.7% full
-- FILTER: 9.6% full
+**Tier System (h396 holdout-validated 2026-02-05):**
+- GOLDEN: 53.6% full / 55.4% ± 12.1% holdout (h396: cancer_same_type demoted to MEDIUM)
+- HIGH: 47.7% full / 48.1% ± 6.1% holdout (genuine, stable)
+- MEDIUM: 25.6% full / 22.4% ± 3.0% holdout (includes cancer_same_type now)
+- LOW: 10.1% full / 11.0% ± 1.7% holdout
+- FILTER: 10.5% full / 8.1% ± 0.9% holdout
 
-**h399 (IMPORTANT):** Rule interaction audit found rank>20 filter shadowed 332 hierarchy-matched predictions at 60.5% precision. Moved hierarchy/CV pathway checks before rank filter, capped at HIGH for rank>20. GOLDEN improved via h388 overlap promotion chain.
+**h399/h418 (IMPORTANT):** Rule interaction audit found 88.2% of predictions match 2+ rules. rank>20 filter shadows 332 high-precision hierarchy predictions. Attempted fix (hierarchy before rank>20) improved full-data but FAILED holdout: HIGH dropped -6.2pp. **REVERTED.** The rank>20 filter is necessary even for hierarchy matches.
 **h393 (CRITICAL):** Holdout validation proves tier system IS genuine. HIGH/MED/LOW retain >80% precision on holdout.
 **h396:** Resolved GOLDEN<HIGH inversion by demoting cancer_same_type to MEDIUM.
 **h395:** Demoted 7 below-tier rules: metabolic GOLDEN→MEDIUM, cancer cross-type MEDIUM→LOW, etc.
 **h388:** Target overlap tier promotion: HIGH+overlap≥3→GOLDEN (rule-guarded), LOW+overlap≥1→MEDIUM
 **h387:** Removed infectious GOLDEN rule (was 5.3% precision)
 
-**Key learning (h399):** Rule ordering matters critically. High-precision domain rules (hierarchy, pathway) should fire BEFORE generic filters (rank>20). When adding rules, always check interaction with rank filter.
+**Key learning (h399):** Full-data precision can be misleading. Hierarchy matches at rank>20 look great on full data (60% precision) but fail holdout (-6.2pp). Always validate with holdout before deploying rule reorderings.
 **Key learning (h393):** Most "overfitted" hierarchy rules are actually 1-disease groups (structural absence, not overfitting).
 **Key learning (h396):** High-volume mediocre rules dilute tier precision. Volume ≠ quality for tier assignment.
 
