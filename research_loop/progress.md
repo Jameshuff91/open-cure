@@ -1,6 +1,69 @@
 # Research Loop Progress
 
-## Current Session: h417, h421, h423 (2026-02-05)
+## Current Session: h427, h402 (2026-02-05)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypotheses Tested: 2**
+- h427: Psychiatric Target Overlap → GOLDEN Promotion - **INCONCLUSIVE** (signal real but n too small)
+- h402: Simplify Production Predictor - **VALIDATED** (3 demotions, holdout stable)
+
+### h427: Psychiatric Target Overlap → GOLDEN Promotion - INCONCLUSIVE
+
+**Hypothesis:** Psychiatric MEDIUM has 55.3% precision. Promote to HIGH or GOLDEN.
+
+**Key Findings:**
+1. Only 10 psychiatric diseases total — too few for reliable holdout validation
+2. Holdout: 40.9% ± 20.9% (massive variance from seed 456 having only 1 disease in holdout)
+3. Per-rule: atc_coherent_psychiatric 42.0% ± 23.8%, target_overlap_promotion 36.4% ± 22.2%
+4. Per-disease: schizophrenia 90%, social_anxiety 78%, hyperactive_children 0%
+5. Signal IS real (4/5 seeds >30%) but sample too small to distinguish from MEDIUM baseline (22.4%)
+
+**NOT IMPLEMENTED:** Psychiatric category too small (n=10) for reliable holdout validation.
+
+### h402: Simplify Production Predictor - VALIDATED
+
+**Hypothesis:** Prune to top validated rules only, reducing code by 50%+.
+
+**Key Findings:**
+1. Comprehensive audit of 83 rule-tier pairs across 51 unique rule names
+2. **Only 1 rule clearly fails holdout** (pneumonia hierarchy: 36.4% full → 6.7% holdout)
+3. **21 rules are TOO_SMALL to evaluate** (each covers 1-2 diseases)
+4. **18 rules are KEEP** with solid holdout validation
+5. **5 rules are MARGINAL** (borderline)
+6. Volume: top 3 rules = 82% of predictions, 41 rules handle only 7%
+7. **Hypothesis PARTIALLY WRONG:** Can't prune 50% of rules. Code complexity is from many small rules, not bad rules.
+
+**Demotions Implemented:**
+1. pneumonia hierarchy: HIGH → MEDIUM (6.7% holdout)
+2. diabetes hierarchy: GOLDEN → HIGH (31.5% ± 13.8% holdout, below GOLDEN threshold)
+3. cv_pathway_comprehensive: HIGH → MEDIUM (26.0% ± 4.9% holdout, below HIGH threshold)
+
+**Holdout Results:**
+| Tier | h396 Baseline | h402 After | Delta |
+|------|---------------|------------|-------|
+| GOLDEN | 55.4% ± 12.1% | 52.9% ± 6.0% | -2.5pp (lower variance!) |
+| HIGH | 48.1% ± 6.1% | 50.6% ± 10.4% | **+2.5pp** |
+| MEDIUM | 22.4% ± 3.0% | 21.2% ± 1.9% | -1.2pp |
+| LOW | 11.0% ± 1.7% | 12.2% ± 1.9% | +1.2pp |
+| FILTER | 8.1% ± 0.9% | 7.0% ± 1.5% | -1.1pp |
+
+Tier ordering MAINTAINED: GOLDEN > HIGH > MEDIUM > LOW > FILTER.
+
+### New Hypotheses Generated
+- **h432:** Consolidate Small Hierarchy Rules into Generic Category Groups - Priority 4
+- **h433:** Full-Data vs Holdout Precision Degradation Predictors - Priority 4
+
+### Recommended Next Steps
+1. **h430:** Narrow Diabetes Hierarchy Match to T2D/DM Only - Priority 4, low effort
+2. **h428:** Category-Specific Incoherent Demotion Tiers - Priority 4
+3. **h407:** Build Comprehensive Drug/Disease ID Mapping Infrastructure - Priority 2 (high effort but unblocks many)
+
+---
+
+## Previous Session: h417, h421, h423 (2026-02-05)
 
 ### Session Summary
 

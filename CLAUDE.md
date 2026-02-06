@@ -145,25 +145,26 @@ vastai destroy instance <INSTANCE_ID>
 - **ML on top of kNN** adds nothing (h41-h45)
 - Details: `docs/archive/experiment_history.md`
 
-### Confidence System Summary (h135, h378, h393, h396, h399)
+### Confidence System Summary (h135, h378, h393, h396, h399, h402)
 
-**Tier System (h396 holdout-validated 2026-02-05):**
-- GOLDEN: 53.6% full / 55.4% ± 12.1% holdout (h396: cancer_same_type demoted to MEDIUM)
-- HIGH: 47.7% full / 48.1% ± 6.1% holdout (genuine, stable)
-- MEDIUM: 25.6% full / 22.4% ± 3.0% holdout (includes cancer_same_type now)
-- LOW: 10.1% full / 11.0% ± 1.7% holdout
-- FILTER: 10.5% full / 8.1% ± 0.9% holdout
+**Tier System (h402 holdout-validated 2026-02-05):**
+- GOLDEN: 64.4% full / 52.9% ± 6.0% holdout (h402: diabetes demoted to HIGH)
+- HIGH: 50.8% full / 50.6% ± 10.4% holdout (h402: gained diabetes, +2.5pp)
+- MEDIUM: 25.3% full / 21.2% ± 1.9% holdout (h402: gained cv_pathway + pneumonia)
+- LOW: 13.0% full / 12.2% ± 1.9% holdout
+- FILTER: 10.8% full / 7.0% ± 1.5% holdout
 
-**h399/h418 (IMPORTANT):** Rule interaction audit found 88.2% of predictions match 2+ rules. rank>20 filter shadows 332 high-precision hierarchy predictions. Attempted fix (hierarchy before rank>20) improved full-data but FAILED holdout: HIGH dropped -6.2pp. **REVERTED.** The rank>20 filter is necessary even for hierarchy matches.
-**h393 (CRITICAL):** Holdout validation proves tier system IS genuine. HIGH/MED/LOW retain >80% precision on holdout.
+**h402 (LATEST):** Comprehensive rule audit of 83 rule-tier pairs. Only 1 clearly bad (pneumonia 6.7% holdout). 21 too small to evaluate. Demoted 3 marginal rules: pneumonia HIGH→MEDIUM, diabetes GOLDEN→HIGH, cv_pathway HIGH→MEDIUM.
+**h399/h418 (IMPORTANT):** rank>20 filter shadows 332 hierarchy predictions. Attempted fix FAILED holdout: HIGH -6.2pp. REVERTED.
+**h393 (CRITICAL):** Holdout validation proves tier system IS genuine.
 **h396:** Resolved GOLDEN<HIGH inversion by demoting cancer_same_type to MEDIUM.
 **h395:** Demoted 7 below-tier rules: metabolic GOLDEN→MEDIUM, cancer cross-type MEDIUM→LOW, etc.
 **h388:** Target overlap tier promotion: HIGH+overlap≥3→GOLDEN (rule-guarded), LOW+overlap≥1→MEDIUM
 **h387:** Removed infectious GOLDEN rule (was 5.3% precision)
 
-**Key learning (h399):** Full-data precision can be misleading. Hierarchy matches at rank>20 look great on full data (60% precision) but fail holdout (-6.2pp). Always validate with holdout before deploying rule reorderings.
+**Key learning (h402):** Only 1 of 83 rules clearly bad. Code complexity is from many small rules (41 rules handle 7% of predictions), not bad rules. Focus on consolidation, not pruning. Min n≈30 for reliable holdout validation.
+**Key learning (h399):** Full-data precision can be misleading. Always validate with holdout.
 **Key learning (h393):** Most "overfitted" hierarchy rules are actually 1-disease groups (structural absence, not overfitting).
-**Key learning (h396):** High-volume mediocre rules dilute tier precision. Volume ≠ quality for tier assignment.
 
 ### Mechanism & ATC Integration (h96, h259, h152, h189)
 

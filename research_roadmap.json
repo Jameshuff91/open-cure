@@ -7820,7 +7820,7 @@
       "title": "Production Tier Rule Coverage Analysis",
       "description": "h381 and h374 show production tier rules ALREADY capture target overlap signal. But which rules exactly? Understanding rule coverage could reveal gaps where NEW rules could help without ensemble noise.",
       "hypothesis": "Production tier rules cover 80%+ of ensemble benefit cases. The remaining 20% represent genuine opportunities for new targeted rules.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -7830,7 +7830,9 @@
         "Design targeted tier rules for uncovered cases",
         "Evaluate precision of new rules",
         "Success: identify 3+ actionable tier rule opportunities"
-      ]
+      ],
+      "findings": "Full rule coverage analysis of 13,622 predictions across 455 diseases.\n\nKEY FINDINGS:\n1. metabolic_hierarchy_diabetes (GOLDEN 32.4%): Bimodal - T2D=73%, diabetes_mellitus=55% BUT hypoglycemia=20%, hyperinsulinemic=10%. Keyword \"diabetes\" too broad.\n2. psychiatric MEDIUM (53.3%): 100/105 from target_overlap_promotion. Schizophrenia 90%, bipolar 58%, social anxiety 86%. GOLDEN-level precision at MEDIUM tier.\n3. incoherent_demotion (HIGH 33.5%): Category-dependent: ophthalmic 56%, renal 55%, autoimmune 51% vs infectious 13%, hematological 0%. Needs category-specific handling.\n4. infectious LOW (20.5%, n=667): Rank 1-5 has 43% precision! Strong low-rank signal. All 137 GT hits are antibiotics with no mechanism data.\n5. cardiovascular LOW (19.4%, n=216): DVT 50%, PE 46%, atrial flutter 44%, edema 57%. Disease-specific rescue possible.\n6. metabolic HIGH (17.3%): Mostly metabolic_hierarchy_thyroid (16.7%) - already known weak.\n\nRULE DISTRIBUTION: 23 rules for GOLDEN, 29 for HIGH, 13 for MEDIUM, 4 for LOW, 6 for FILTER. 9,699 predictions (71%!) go through standard path (no specific rule fires).\n\nRESCUE OPPORTUNITY: 318 GT hits in LOW tier. Largest: infectious 137, cardiovascular 42, dermatological 17, GI 17.",
+      "result_metric": "6 actionable tier anomalies found, 318 GT hits at LOW eligible for rescue"
     },
     {
       "id": "h391",
@@ -8064,7 +8066,7 @@
       "title": "Simplify Production Predictor: Prune to Top Validated Rules Only",
       "description": "PROMISING DIRECTION: The production predictor has 3100 lines with 40+ hand-crafted rules. After h393 (holdout validation) identifies which rules are genuine vs overfitted, prune to only top-performing rules. A simpler system with 5-10 well-validated rules should perform as well or better. DEPENDS ON h393, h395.",
       "hypothesis": "Removing all rules that fail holdout validation (h391) or perform below their tier average (h378) will improve tier precision by removing noise and reduce code complexity by 50%+.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -8078,8 +8080,8 @@
         "Step 7: Run final 5-seed evaluation confirming no regression",
         "Step 8: Success criteria: < 1500 lines of code, tier precision equal or better than current"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Comprehensive rule-by-rule precision audit with holdout validation.\n\nINITIAL AUDIT (51 unique rule names, 83 total rule-tier pairs):\n- KEEP: 18 rules (holdout precision above tier threshold)\n- MARGINAL: 5 rules (holdout within noise of threshold)\n- PRUNE: 1 rule (infectious_hierarchy_pneumonia: 36.4% full \u2192 6.7% holdout)\n- TOO_SMALL: 21 rules (n_holdout < 3, structurally absent from holdout)\n- FILTER OK: 6 rules (correctly filtering low-precision predictions)\n\nKEY FINDING: The hypothesis that 50%+ of rules could be pruned was WRONG.\nOnly 1 rule clearly fails holdout. 21 rules are too small to evaluate.\nThe code complexity comes from MANY small rules (41 rules handle only 7% of predictions)\nnot from bad rules.\n\nACTIONABLE DEMOTIONS IMPLEMENTED:\n1. pneumonia hierarchy: HIGH \u2192 MEDIUM (6.7% holdout vs HIGH avg 44.1%, n=22)\n2. metabolic diabetes hierarchy: GOLDEN \u2192 HIGH (31.5% \u00b1 13.8% holdout vs GOLDEN avg 46.3%, n=72)\n3. cv_pathway_comprehensive: HIGH \u2192 MEDIUM (26.0% \u00b1 4.9% holdout vs HIGH avg 44.1%, n=105)\n   Also removed from TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES.\n\nHOLDOUT VALIDATION (after demotions):\n| Tier | Before (h396) | After (h402) | Delta |\n|------|---------------|--------------|-------|\n| GOLDEN | 55.4% \u00b1 12.1% | 52.9% \u00b1 6.0% | -2.5pp (lower variance!) |\n| HIGH | 48.1% \u00b1 6.1% | 50.6% \u00b1 10.4% | +2.5pp |\n| MEDIUM | 22.4% \u00b1 3.0% | 21.2% \u00b1 1.9% | -1.2pp |\n| LOW | 11.0% \u00b1 1.7% | 12.2% \u00b1 1.9% | +1.2pp |\n| FILTER | 8.1% \u00b1 0.9% | 7.0% \u00b1 1.5% | -1.1pp |\n\nTier ordering MAINTAINED: GOLDEN > HIGH > MEDIUM > LOW > FILTER.\nGOLDEN variance reduced (12.1% \u2192 6.0%) by removing marginal diabetes group.\nHIGH gained +2.5pp from diabetes demotion adding genuine HIGH-level predictions.\n\nDID NOT implement cancer/metabolic category MEDIUM\u2192LOW demotions because v1 audit\nhad a bug (one rule name maps to multiple tiers). These are marginal and within noise.",
+      "result_metric": "GOLDEN 52.9%\u00b16.0% (was 55.4%\u00b112.1%), HIGH 50.6%\u00b110.4% (was 48.1%\u00b16.1%)"
     },
     {
       "id": "h403",
@@ -8333,7 +8335,7 @@
       "title": "h170 Boosting Strength Optimization",
       "description": "h400 showed h170 selective boosting (alpha=0.5) already provides category-focus. The alpha value was set somewhat arbitrarily. Optimizing alpha per category could improve R@30. Higher alpha = more category focus (like lower k), lower alpha = more diversity.",
       "hypothesis": "Category-specific alpha values could achieve the same benefit h66 was targeting. E.g., cancer might benefit from lower alpha (more diverse neighbors), while autoimmune might benefit from higher alpha.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8343,8 +8345,8 @@
         "Step 3: Compare category-specific alpha vs uniform alpha=0.5",
         "Step 4: If improvement > 1pp, deploy"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Full-data: alpha range 20.5-20.9% R@30 (0.4pp total range, alpha=0.5 marginally best). Holdout (5-seed): alpha=0.0 is best at 15.1%\u00b12.3%, alpha=0.5 gives 14.8%\u00b12.1% (delta=-0.3pp, within noise). The selective boost has negligible impact on R@30 (<0.5pp either direction). Category-specific: neurological HURT by boost (11.3\u21927.9%), metabolic HURT (9.9\u21928.1%), only renal mildly helped (5.4\u21926.5%). Conclusion: alpha=0.5 is near-optimal but boost itself is essentially neutral.",
+      "result_metric": "alpha=0.5: 14.8%\u00b12.1% holdout R@30 (vs alpha=0.0: 15.1%\u00b12.3%), delta=-0.3pp within noise"
     },
     {
       "id": "h415",
@@ -8553,6 +8555,117 @@
         "Re-evaluate h423 rescue rules with LOO features",
         "Compare full-data vs holdout precision gap",
         "Success: full-data and holdout precision within 3pp for rescue rules"
+      ]
+    },
+    {
+      "id": "h427",
+      "title": "Psychiatric Target Overlap \u2192 GOLDEN Promotion",
+      "description": "h390 found psychiatric MEDIUM is 53.3% precision (100/105 from target_overlap_promotion). Schizophrenia 90%, bipolar 58%, social anxiety 86%. These are GOLDEN-level. Test promoting psychiatric+target_overlap>=3 from MEDIUM to HIGH or GOLDEN. Need holdout validation.",
+      "status": "inconclusive",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Check if psychiatric target_overlap promotion survives holdout (5-seed)",
+        "If holdout precision > 40%, promote to HIGH; if > 50%, promote to GOLDEN",
+        "Measure tier-level impact on existing predictions",
+        "Deploy if holdout-validated"
+      ],
+      "findings": "Psychiatric MEDIUM has 55.3% full-data precision (62/114), driven by atc_coherent_psychiatric (52.4%) and target_overlap_promotion (56.5%). \n\nPer-disease: schizophrenia 90%, social_anxiety 78%, MDD 75%, alcohol_withdrawal 67%, bipolar 58%, ADHD 53%, agoraphobia 50%, OCD 40%, bulimia 17%, hyperactive_children 0%.\n\nHoldout (5-seed): atc_coherent_psychiatric 42.0% \u00b1 23.8%, target_overlap_promotion 36.4% \u00b1 22.2%. Combined psychiatric MEDIUM 40.9% \u00b1 20.9%.\n\nMASSIVE variance because only 10 psychiatric diseases. Seed 456 had just 1 disease (acute alcohol withdrawal) in holdout \u2192 0%.\n\nSignal is HIGH-level (~40% holdout) but variance too large to distinguish from MEDIUM baseline (22.4%). 4/5 seeds show >30% but sample too small for formal promotion.\n\nNOT IMPLEMENTED: Psychiatric category too small (n=10) for reliable holdout validation.",
+      "result_metric": "Psych MEDIUM holdout: 40.9% \u00b1 20.9% (HIGH-level but \u00b123% variance)"
+    },
+    {
+      "id": "h428",
+      "title": "Category-Specific Incoherent Demotion Tiers",
+      "description": "h390 found incoherent_demotion at HIGH has massive category variation: ophthalmic 56%, renal 55%, autoimmune 51% vs infectious 13%, hematological 0%. Category-specific demotion could improve tier ordering. Keep autoimmune/ophthalmic/renal/dermatological at HIGH, demote infectious/hematological to MEDIUM.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Implement category-specific incoherent demotion tiers",
+        "Holdout validation (5-seed)",
+        "Check if HIGH precision improves when low-performing categories are removed",
+        "Deploy if holdout validates"
+      ]
+    },
+    {
+      "id": "h429",
+      "title": "Infectious Low-Rank Rescue (Rank 1-5 = 43%)",
+      "description": "h390 found infectious LOW rank 1-5 has 43% precision (46/107) \u2014 nearly HIGH level! These are antibiotics with no mechanism data (freq=5.9, 0% mechanism). The issue is they fail mechanism_support requirement. Test rescuing infectious rank<=5 predictions from LOW to MEDIUM or HIGH.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Analyze infectious LOW rank 1-5: which drugs/diseases?",
+        "Test rank<=5 + freq>=3 + infectious \u2192 MEDIUM rescue rule",
+        "Holdout validation (5-seed)",
+        "Deploy if precision > 25% on holdout"
+      ]
+    },
+    {
+      "id": "h430",
+      "title": "Narrow Diabetes Hierarchy Match to T2D/DM Only",
+      "description": "h390 found metabolic_hierarchy_diabetes at GOLDEN (32.4%) is bimodal: T2D=73%, diabetes_mellitus=55% are good, but hypoglycemia=20%, hyperinsulinemic=10%, diabetes_insipidus=0% are bad. The \"diabetes\" keyword matches too broadly. Narrowing to only T2D and \"diabetes mellitus\" (not insipidus/hypoglycemia/hyperglycemia) should improve GOLDEN precision.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Examine DISEASE_HIERARCHY_GROUPS[\"metabolic\"][\"diabetes\"] keywords",
+        "Split into T2D-specific group (narrow keywords) and broader metabolic group",
+        "T2D group \u2192 GOLDEN, broader group \u2192 MEDIUM",
+        "Measure precision impact",
+        "Holdout validation"
+      ]
+    },
+    {
+      "id": "h431",
+      "title": "CV Disease-Specific LOW Rescue (DVT/PE/Flutter)",
+      "description": "h390 found CV LOW has 19.4% overall but specific diseases are much higher: DVT 50%, PE 46%, atrial flutter 44%, edema 57%. These are diseases with well-known drug classes. Test disease-specific rescue rules for high-precision CV diseases at LOW tier.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Identify drug classes for DVT/PE (anticoagulants), flutter (antiarrhythmics)",
+        "Test disease-specific rescue: DVT/PE + anticoagulant \u2192 MEDIUM",
+        "Holdout validation",
+        "Assess whether these are already partially covered by hierarchy rules"
+      ]
+    },
+    {
+      "id": "h432",
+      "title": "Consolidate Small Hierarchy Rules into Generic Category Groups",
+      "description": "h402 found 21 rules are TOO_SMALL to validate on holdout (each covers 1-2 diseases). Instead of individual hierarchy groups like scleroderma, lupus, spondylitis, consolidate into generic category-level rules that aggregate across groups. This would reduce code complexity while maintaining the precision signal.",
+      "hypothesis": "Consolidating small hierarchy rules into category-level groups will maintain holdout precision while reducing code from 83 to ~40 rule-tier pairs.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Group all 1-disease hierarchy rules by category",
+        "Measure precision of consolidated groups",
+        "Compare to individual group precision",
+        "If equivalent, simplify DISEASE_HIERARCHY_GROUPS",
+        "Validate on holdout"
+      ]
+    },
+    {
+      "id": "h433",
+      "title": "Full-Data vs Holdout Precision Degradation Predictors",
+      "description": "h402 showed some rules have positive delta (holdout > full-data) while others degrade significantly. Understanding what predicts holdout degradation could set minimum sample sizes for future rules. Key pattern: rules with n<30 predictions show extreme variance.",
+      "hypothesis": "Rules with n<30 full-data predictions will have >15pp holdout degradation on average, while rules with n>100 will have <5pp degradation.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Analyze h402 rule_audit_v2 data",
+        "Correlate full_n with holdout delta",
+        "Identify the sample size threshold for reliable rules",
+        "Use this to set minimum n for future rule additions"
       ]
     }
   ],
@@ -10029,6 +10142,18 @@
       "hypothesis_id": "h412",
       "learning": "FILTER and LOW precision converge at ~12% because rank>20 predictions (13.1% precision) dominate FILTER. The genuine FILTER patterns (cross_domain 0%, cancer_no_gt 1.6%) are diluted by the high-volume standard FILTER. The tier distinction is still meaningful for the specific zero-precision patterns.",
       "implication": "Report FILTER precision excluding the standard rank>20 pool to give users a more accurate picture of what FILTER means."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h390",
+      "learning": "Rule coverage analysis revealed: 71% of predictions go through standard path (no specific rule fires). Psychiatric category is dramatically under-served by rules (53% MEDIUM precision via overlap promotion should be HIGH/GOLDEN). Incoherent_demotion needs category-specific handling. Infectious low-rank (1-5) has 43% precision despite being in LOW tier.",
+      "implication": "Focus new rules on under-served high-precision categories: psychiatric, infectious low-rank. Category-specific rule refinements have more potential than new global rules."
+    },
+    {
+      "date": "2026-02-05",
+      "hypothesis_id": "h402",
+      "learning": "Rule audit found only 1 of 83 rules is clearly bad (pneumonia hierarchy). 21 rules are too small to evaluate. Code complexity comes from many small rules, not bad rules. Demoting 3 marginal rules improved HIGH by +2.5pp while maintaining tier ordering.",
+      "implication": "Focus on rule CONSOLIDATION rather than pruning. Many small rules work individually but create code complexity. Minimum sample size ~30 for reliable holdout validation."
     }
   ],
   "collaborations": [

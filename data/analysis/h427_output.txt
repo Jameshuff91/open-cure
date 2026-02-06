@@ -1,0 +1,40 @@
+Loading predictor...
+Total diseases: 455
+
+=== PHASE 1: Full-data baseline ===
+
+Baseline tier precision:
+  GOLDEN: 148/267 = 55.4%
+  HIGH: 310/622 = 49.8%
+  MEDIUM: 928/3747 = 24.8%
+  LOW: 320/2446 = 13.1%
+  FILTER: 691/6390 = 10.8%
+
+Psychiatric MEDIUM: 57/103 = 55.3%
+Rule 'target_overlap_promotion': 135/275 = 49.1%
+Rule 'incoherent_demotion': 86/259 = 33.2%
+
+=== PHASE 2: Holdout Validation (5-seed) ===
+  Seed 42: tiers=[GOLDEN=43.3%, HIGH=50.7%, MEDIUM=23.5%, LOW=10.5%, FILTER=6.1%] psych_med=50.0% target_overlap=24.4% incoh=39.6%
+  Seed 123: tiers=[GOLDEN=53.5%, HIGH=39.8%, MEDIUM=23.4%, LOW=11.2%, FILTER=10.0%] psych_med=55.6% target_overlap=30.6% incoh=40.0%
+  Seed 456: tiers=[GOLDEN=39.5%, HIGH=46.4%, MEDIUM=19.5%, LOW=9.8%, FILTER=5.1%] psych_med=0.0% target_overlap=11.1% incoh=41.2%
+  Seed 789: tiers=[GOLDEN=42.9%, HIGH=51.5%, MEDIUM=19.0%, LOW=15.1%, FILTER=6.7%] psych_med=55.6% target_overlap=41.5% incoh=50.9%
+  Seed 2024: tiers=[GOLDEN=38.1%, HIGH=33.3%, MEDIUM=20.8%, LOW=13.8%, FILTER=6.9%] psych_med=43.5% target_overlap=32.4% incoh=44.4%
+
+======================================================================
+=== HOLDOUT SUMMARY ===
+======================================================================
+
+Tier precision (holdout, 5-seed):
+  GOLDEN: 43.5% ± 5.4%
+  HIGH: 44.4% ± 6.9%
+  MEDIUM: 21.2% ± 1.9%
+  LOW: 12.1% ± 2.0%
+  FILTER: 7.0% ± 1.6%
+
+Psychiatric MEDIUM holdout: 40.9% ± 20.9%
+  Full-data: 55.3%
+  Delta: -14.4pp
+  → HIGH level (>35%): PROMOTE to HIGH
+
+Saved to /Users/jimhuff/github/open-cure/data/analysis/h427_psychiatric_promotion.json

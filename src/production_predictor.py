@@ -78,12 +78,12 @@ USAGE:
     python -m src.production_predictor "rheumatoid arthritis"
     python -m src.production_predictor --disease "type 2 diabetes" --top-k 30
 
-TIER SYSTEM (h393 holdout-validated, h396 inversion-fixed):
-- GOLDEN (~56%):  High-precision rescue rules (DMARD, lipid/diabetes hierarchy, etc.)
-- HIGH (~49%):    freq>=15 + mechanism OR rank<=5 + freq>=10 + mechanism
-- MEDIUM (~23%):  freq>=5 + mechanism OR freq>=10 OR cancer_same_type
-- LOW (~11%):     All else passing filter
-- FILTER (~8%):   rank>20 OR no_targets OR (freq<=2 AND no_mechanism)
+TIER SYSTEM (h393/h396/h402 holdout-validated):
+- GOLDEN (~53%):  High-precision rescue rules (DMARD, lipid hierarchy, etc.)
+- HIGH (~51%):    freq>=15 + mechanism OR rank<=5 + freq>=10 + mechanism + hierarchy
+- MEDIUM (~21%):  freq>=5 + mechanism OR freq>=10 OR cancer_same_type + cv_pathway
+- LOW (~12%):     All else passing filter
+- FILTER (~7%):   rank>20 OR no_targets OR (freq<=2 AND no_mechanism)
 """
 
 import hashlib
@@ -217,14 +217,14 @@ CATEGORY_PRECISION = {
 }
 
 # Default tier-only precision (fallback)
-# h396: Updated from h393 holdout validation (5-seed 80/20 split)
-# These replace stale h135 values
+# h402: Updated from h402 holdout validation after rule demotions
+# Previous: h396 values from h393 holdout
 DEFAULT_TIER_PRECISION = {
-    "GOLDEN": 56.0,   # h396: After cancer_same_type demotion (was 57.7 from h135)
-    "HIGH": 49.0,     # h393 holdout: 49.1% ± 6.4% (was 20.9 from h135)
-    "MEDIUM": 23.0,   # h393 holdout: 23.3% ± 3.6% (was 19.3 from h165)
-    "LOW": 11.0,      # h393 holdout: 11.0% ± 1.6% (was 5.7 from h135)
-    "FILTER": 8.0,    # h393 holdout: 8.2% ± 0.9% (was 7.6 from h135)
+    "GOLDEN": 53.0,   # h402: 52.9% ± 6.0% (was 56.0 from h396, diabetes demoted to HIGH)
+    "HIGH": 51.0,     # h402: 50.6% ± 10.4% (was 49.0, gained diabetes hierarchy)
+    "MEDIUM": 21.0,   # h402: 21.2% ± 1.9% (was 23.0, gained cv_pathway + pneumonia)
+    "LOW": 12.0,      # h402: 12.2% ± 1.9% (was 11.0)
+    "FILTER": 7.0,    # h402: 7.0% ± 1.5% (was 8.0)
 }
 
 
@@ -1007,7 +1007,7 @@ TARGET_OVERLAP_PROMOTE_HIGH_TO_GOLDEN = 3  # Minimum overlap for HIGH→GOLDEN
 TARGET_OVERLAP_PROMOTE_LOW_TO_MEDIUM = 1   # Minimum overlap for LOW→MEDIUM
 # Rules eligible for HIGH→GOLDEN promotion (demonstrated >33% precision with overlap>=3)
 TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES: set[str] = {
-    'cv_pathway_comprehensive',
+    # h402: cv_pathway_comprehensive removed (demoted from HIGH to MEDIUM)
     'cardiovascular_hierarchy_hypertension',
     'cardiovascular_hierarchy_arrhythmia',
     'cardiovascular_hierarchy_coronary',
@@ -2235,8 +2235,9 @@ class DrugRepurposingPredictor:
         # Boost pathway-comprehensive to HIGH for CV complications
         if self._is_cv_complication(disease_name):
             if self._is_cv_pathway_comprehensive(drug_name):
-                # Pathway-comprehensive: 48.8% precision → HIGH tier
-                return ConfidenceTier.HIGH, True, 'cv_pathway_comprehensive'
+                # h402: 26.0% ± 4.9% holdout precision (n=105) vs HIGH avg 44.1%
+                # Demoted from HIGH to MEDIUM
+                return ConfidenceTier.MEDIUM, True, 'cv_pathway_comprehensive'
             # Non-pathway-comprehensive CV complication: 7.6% precision
             # Don't filter (some GT hits exist), but don't boost either
             # Standard tier assignment will apply (likely MEDIUM/LOW)
@@ -2259,9 +2260,11 @@ class DrugRepurposingPredictor:
         # - Infectious: 22.1% → HIGH
         HIERARCHY_GOLDEN_CATEGORIES = {'metabolic', 'neurological'}
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
-        HIERARCHY_DEMOTE_TO_HIGH = {'thyroid'}
+        # h402: Diabetes hierarchy 31.5% holdout ± 13.8% (n=72) vs GOLDEN avg 46.3% - demote to HIGH
+        HIERARCHY_DEMOTE_TO_HIGH = {'thyroid', 'diabetes'}
         # h396: These hierarchy groups have 0% precision (n>=2) - demote to MEDIUM
-        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine'}
+        # h402: pneumonia 6.7% holdout precision (n=22) vs HIGH avg 44.1% - demote to MEDIUM
+        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine', 'pneumonia'}
 
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(

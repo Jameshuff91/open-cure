@@ -1,0 +1,183 @@
+Loading predictor...
+Total diseases: 455
+
+=== PHASE 1: Full-data (after h402 demotions) ===
+
+Tier precision:
+  GOLDEN: 121/188 = 64.4%
+  HIGH: 290/571 = 50.8%
+  MEDIUM: 978/3864 = 25.3%
+  LOW: 319/2446 = 13.0%
+  FILTER: 692/6403 = 10.8%
+
+Rules by (rule, tier):
+  (cardiovascular_hierarchy_hypertension, GOLDEN): 12/12 = 100.0%
+  (autoimmune_hierarchy_spondylitis, GOLDEN): 2/2 = 100.0%
+  (autoimmune_hierarchy_lupus, GOLDEN): 8/8 = 100.0%
+  (respiratory_hierarchy_asthma, GOLDEN): 3/3 = 100.0%
+  (respiratory_hierarchy_copd, GOLDEN): 2/2 = 100.0%
+  (autoimmune_hierarchy_rheumatoid_arthritis, GOLDEN): 19/20 = 95.0%
+  (autoimmune_hierarchy_colitis, GOLDEN): 8/10 = 80.0%
+  (autoimmune_hierarchy_multiple_sclerosis, GOLDEN): 6/8 = 75.0%
+  (cardiovascular_hierarchy_arrhythmia, GOLDEN): 2/3 = 66.7%
+  (comp_to_base_high_87, GOLDEN): 4/7 = 57.1%
+  (metabolic_hierarchy_lipid, GOLDEN): 35/65 = 53.8%
+  (infectious_hierarchy_tuberculosis, GOLDEN): 2/4 = 50.0%
+  (neurological_hierarchy_epilepsy, GOLDEN): 8/16 = 50.0%
+  (neurological_hierarchy_alzheimers, GOLDEN): 1/2 = 50.0%
+  (neurological_hierarchy_neuropathy, GOLDEN): 1/2 = 50.0%
+  (metabolic_hierarchy_obesity, GOLDEN): 3/7 = 42.9%
+  (statin_cv_event, GOLDEN): 2/5 = 40.0%
+  (metabolic_hierarchy_thyroid, GOLDEN): 2/5 = 40.0%
+  (cardiovascular_hierarchy_coronary, GOLDEN): 1/3 = 33.3%
+  (cardiovascular, GOLDEN): 0/3 = 0.0%
+  (cancer, GOLDEN): 0/1 = 0.0%
+  (gastrointestinal, HIGH): 1/1 = 100.0%
+  (cancer, HIGH): 2/2 = 100.0%
+  (respiratory_hierarchy_pulmonary_fibrosis, HIGH): 1/1 = 100.0%
+  (neurological, HIGH): 4/5 = 80.0%
+  (autoimmune_hierarchy_spondylitis, HIGH): 14/18 = 77.8%
+  (cardiovascular_hierarchy_arrhythmia, HIGH): 34/44 = 77.3%
+  (infectious_hierarchy_uti, HIGH): 12/16 = 75.0%
+  (autoimmune_hierarchy_rheumatoid_arthritis, HIGH): 41/57 = 71.9%
+  (autoimmune_hierarchy_lupus, HIGH): 4/6 = 66.7%
+  (respiratory_hierarchy_copd, HIGH): 4/6 = 66.7%
+  (infectious_hierarchy_respiratory_infection, HIGH): 6/9 = 66.7%
+  (respiratory_hierarchy_asthma, HIGH): 11/17 = 64.7%
+  (infectious_hierarchy_tuberculosis, HIGH): 20/31 = 64.5%
+  (autoimmune_hierarchy_colitis, HIGH): 16/25 = 64.0%
+  (autoimmune_hierarchy_multiple_sclerosis, HIGH): 3/5 = 60.0%
+  (infectious_hierarchy_sepsis, HIGH): 2/4 = 50.0%
+  (autoimmune_hierarchy_scleroderma, HIGH): 1/2 = 50.0%
+  (incoherent_demotion, HIGH): 51/104 = 49.0%
+  (cardiovascular, HIGH): 6/16 = 37.5%
+  (metabolic_hierarchy_diabetes, HIGH): 25/72 = 34.7%
+  (cardiovascular_hierarchy_coronary, HIGH): 10/30 = 33.3%
+  (respiratory, HIGH): 4/12 = 33.3%
+  (cardiovascular_hierarchy_hypertension, HIGH): 7/24 = 29.2%
+  (comp_to_base_high_87, HIGH): 3/14 = 21.4%
+  (cardiovascular_hierarchy_atherosclerosis, HIGH): 1/6 = 16.7%
+  (metabolic_hierarchy_thyroid, HIGH): 6/36 = 16.7%
+  (reproductive, HIGH): 1/6 = 16.7%
+  (cardiovascular_hierarchy_heart_failure, HIGH): 0/2 = 0.0%
+  (target_overlap_promotion, MEDIUM): 129/273 = 47.3%
+  (respiratory, MEDIUM): 3/8 = 37.5%
+  (cv_pathway_comprehensive, MEDIUM): 40/107 = 37.4%
+  (infectious_hierarchy_pneumonia, MEDIUM): 8/22 = 36.4%
+  (hematological, MEDIUM): 29/96 = 30.2%
+  (cardiovascular, MEDIUM): 6/21 = 28.6%
+  (mechanism_specific, MEDIUM): 7/25 = 28.0%
+  (highly_repurposable, MEDIUM): 3/11 = 27.3%
+  (cancer_same_type, MEDIUM): 285/1091 = 26.1%
+  (incoherent_demotion, MEDIUM): 34/148 = 23.0%
+  (standard, MEDIUM): 404/1836 = 22.0%
+  (cancer, MEDIUM): 27/190 = 14.2%
+  (metabolic, MEDIUM): 3/32 = 9.4%
+  (neurological_hierarchy_parkinsons, MEDIUM): 0/2 = 0.0%
+  (neurological_hierarchy_migraine, MEDIUM): 0/2 = 0.0%
+  (standard, LOW): 294/2081 = 14.1%
+  (broad_class_isolated, LOW): 10/112 = 8.9%
+  (mechanism_specific, LOW): 5/82 = 6.1%
+  (cancer, LOW): 10/171 = 5.8%
+  (base_to_complication, FILTER): 5/32 = 15.6%
+  (complication_non_validated, FILTER): 11/75 = 14.7%
+  (cancer_only_non_cancer, FILTER): 3/21 = 14.3%
+  (cross_domain_isolated, FILTER): 31/272 = 11.4%
+  (standard, FILTER): 628/5703 = 11.0%
+  (cancer_no_gt, FILTER): 14/300 = 4.7%
+
+================================================================================
+=== PHASE 2: Holdout Validation (5-seed) ===
+  Seed 42...
+  Seed 123...
+  Seed 456...
+  Seed 789...
+  Seed 2024...
+
+================================================================================
+=== HOLDOUT SUMMARY ===
+  GOLDEN: 52.9% ± 6.0%
+  HIGH: 50.6% ± 10.4%
+  MEDIUM: 21.2% ± 1.9%
+  LOW: 12.2% ± 1.9%
+  FILTER: 7.0% ± 1.5%
+
+========================================================================================================================
+Rule                                               Tier         Full      n    Holdout     ±      Δ
+========================================================================================================================
+  cardiovascular_hierarchy_hypertension            GOLDEN     100.0%    12      77.5%   2.5 -22.5
+  autoimmune_hierarchy_spondylitis                 GOLDEN     100.0%     2       0.0%   0.0 -100.0
+  autoimmune_hierarchy_lupus                       GOLDEN     100.0%     8       0.0%   0.0 -100.0
+  respiratory_hierarchy_asthma                     GOLDEN     100.0%     3       0.0%   0.0 -100.0
+  respiratory_hierarchy_copd                       GOLDEN     100.0%     2       0.0%   0.0 -100.0
+  autoimmune_hierarchy_rheumatoid_arthritis        GOLDEN      95.0%    20      83.3%   0.0 -11.7
+  autoimmune_hierarchy_colitis                     GOLDEN      80.0%    10     100.0%   0.0 +20.0
+  autoimmune_hierarchy_multiple_sclerosis          GOLDEN      75.0%     8       0.0%   0.0 -75.0
+  cardiovascular_hierarchy_arrhythmia              GOLDEN      66.7%     3      50.0%   0.0 -16.7
+  comp_to_base_high_87                             GOLDEN      57.1%     7      53.3%  37.7  -3.8
+  metabolic_hierarchy_lipid                        GOLDEN      53.8%    65      55.0%   5.0  +1.2
+  infectious_hierarchy_tuberculosis                GOLDEN      50.0%     4      66.7%  47.1 +16.7
+  neurological_hierarchy_epilepsy                  GOLDEN      50.0%    16       0.0%   0.0 -50.0
+  neurological_hierarchy_alzheimers                GOLDEN      50.0%     2       0.0%   0.0 -50.0
+  neurological_hierarchy_neuropathy                GOLDEN      50.0%     2       0.0%   0.0 -50.0
+  metabolic_hierarchy_obesity                      GOLDEN      42.9%     7       0.0%   0.0 -42.9
+  statin_cv_event                                  GOLDEN      40.0%     5       0.0%   0.0 -40.0
+  metabolic_hierarchy_thyroid                      GOLDEN      40.0%     5      50.0%   0.0 +10.0
+  cardiovascular_hierarchy_coronary                GOLDEN      33.3%     3       0.0%   0.0 -33.3
+  cardiovascular                                   GOLDEN       0.0%     3       6.2%  10.8  +6.2
+  cancer                                           GOLDEN       0.0%     1       0.0%   0.0  +0.0
+  gastrointestinal                                 HIGH       100.0%     1     100.0%   0.0  +0.0
+  cancer                                           HIGH       100.0%     2      83.3%  16.7 -16.7
+  respiratory_hierarchy_pulmonary_fibrosis         HIGH       100.0%     1       0.0%   0.0 -100.0
+  neurological                                     HIGH        80.0%     5       0.0%   0.0 -80.0
+  autoimmune_hierarchy_spondylitis                 HIGH        77.8%    18       0.0%   0.0 -77.8
+  cardiovascular_hierarchy_arrhythmia              HIGH        77.3%    44      78.6%   0.0  +1.3
+  infectious_hierarchy_uti                         HIGH        75.0%    16       0.0%   0.0 -75.0
+  autoimmune_hierarchy_rheumatoid_arthritis        HIGH        71.9%    57      71.1%   2.2  -0.8
+  autoimmune_hierarchy_lupus                       HIGH        66.7%     6       0.0%   0.0 -66.7
+  respiratory_hierarchy_copd                       HIGH        66.7%     6       0.0%   0.0 -66.7
+  infectious_hierarchy_respiratory_infection       HIGH        66.7%     9       0.0%   0.0 -66.7
+  respiratory_hierarchy_asthma                     HIGH        64.7%    17       0.0%   0.0 -64.7
+  infectious_hierarchy_tuberculosis                HIGH        64.5%    31      29.3%  22.5 -35.2
+  autoimmune_hierarchy_colitis                     HIGH        64.0%    25      50.0%   0.0 -14.0
+  autoimmune_hierarchy_multiple_sclerosis          HIGH        60.0%     5       0.0%   0.0 -60.0
+  infectious_hierarchy_sepsis                      HIGH        50.0%     4       0.0%   0.0 -50.0
+  autoimmune_hierarchy_scleroderma                 HIGH        50.0%     2       0.0%   0.0 -50.0
+  incoherent_demotion                              HIGH        49.0%   104      54.3%   8.6  +5.2
+  cardiovascular                                   HIGH        37.5%    16      47.8%  22.8 +10.3
+  metabolic_hierarchy_diabetes                     HIGH        34.7%    72      24.1%  19.9 -10.6
+  cardiovascular_hierarchy_coronary                HIGH        33.3%    30       0.0%   0.0 -33.3
+  respiratory                                      HIGH        33.3%    12      27.0%  23.0  -6.3
+  cardiovascular_hierarchy_hypertension            HIGH        29.2%    24     100.0%   0.0 +70.8
+  comp_to_base_high_87                             HIGH        21.4%    14      27.8%  39.3  +6.3
+  cardiovascular_hierarchy_atherosclerosis         HIGH        16.7%     6       0.0%   0.0 -16.7
+  metabolic_hierarchy_thyroid                      HIGH        16.7%    36       0.0%   0.0 -16.7
+  reproductive                                     HIGH        16.7%     6     100.0%   0.0 +83.3
+  cardiovascular_hierarchy_heart_failure           HIGH         0.0%     2       0.0%   0.0  +0.0
+  target_overlap_promotion                         MEDIUM      47.3%   273      24.8%   7.5 -22.5
+  respiratory                                      MEDIUM      37.5%     8      39.5%   9.1  +2.0
+  cv_pathway_comprehensive                         MEDIUM      37.4%   107      25.6%   4.6 -11.8
+  infectious_hierarchy_pneumonia                   MEDIUM      36.4%    22       6.7%   9.4 -29.7
+  hematological                                    MEDIUM      30.2%    96      18.0%  14.8 -12.2
+  cardiovascular                                   MEDIUM      28.6%    21      19.0%   9.7  -9.6
+  mechanism_specific                               MEDIUM      28.0%    25      11.0%  11.1 -17.0
+  highly_repurposable                              MEDIUM      27.3%    11      34.3%  25.3  +7.0
+  cancer_same_type                                 MEDIUM      26.1%  1091      20.2%   4.9  -6.0
+  incoherent_demotion                              MEDIUM      23.0%   148      30.1%   6.3  +7.1
+  standard                                         MEDIUM      22.0%  1836      20.4%   1.3  -1.6
+  cancer                                           MEDIUM      14.2%   190      16.1%   5.3  +1.9
+  metabolic                                        MEDIUM       9.4%    32       9.9%  12.2  +0.5
+  neurological_hierarchy_parkinsons                MEDIUM       0.0%     2       0.0%   0.0  +0.0
+  neurological_hierarchy_migraine                  MEDIUM       0.0%     2       0.0%   0.0  +0.0
+  standard                                         LOW         14.1%  2081      13.2%   2.1  -0.9
+  broad_class_isolated                             LOW          8.9%   112       4.8%   2.9  -4.1
+  mechanism_specific                               LOW          6.1%    82       4.8%   5.1  -1.3
+  cancer                                           LOW          5.8%   171       8.2%   6.2  +2.4
+  base_to_complication                             FILTER      15.6%    32       0.0%   0.0 -15.6
+  complication_non_validated                       FILTER      14.7%    75       1.9%   3.8 -12.8
+  cancer_only_non_cancer                           FILTER      14.3%    21       5.0%  10.0  -9.3
+  cross_domain_isolated                            FILTER      11.4%   272      10.9%   5.8  -0.5
+  standard                                         FILTER      11.0%  5703       7.0%   1.4  -4.0
+  cancer_no_gt                                     FILTER       4.7%   300       5.1%   4.5  +0.4
+
+Saved to /Users/jimhuff/github/open-cure/data/analysis/h402_rule_audit_v2.json
