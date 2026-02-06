@@ -1,6 +1,64 @@
 # Research Loop Progress
 
-## Current Session: h408+h546+h544 - Ryland Brief + Gene Overlap + Anti-TNF Audit (2026-02-06)
+## Current Session: h542 - MEDIUM Tier Quality Audit Round 2 (2026-02-06)
+
+### h542: Deliverable Quality Audit Round 2: MEDIUM Tier Top 59 — VALIDATED
+
+Literature validation of 59 diverse MEDIUM novel predictions against PubMed/clinical guidelines:
+
+**Overall Results:**
+| Rating | Count | % | Comparison (GOLDEN/HIGH h537) |
+|--------|-------|---|------------------------------|
+| VALIDATED | 15 | 25.4% | 58.0% |
+| PLAUSIBLE | 18 | 30.5% | 30.0% |
+| IMPLAUSIBLE | 26 | 44.1% | 12.0% |
+| **Reasonable** | **33** | **55.9%** | **88.0%** |
+
+**Error Patterns (26 implausible):**
+1. **Wrong cancer type/mechanism** (7): cancer_same_type overgeneralizes (hematologic→solid, bleomycin→non-SCC)
+2. **Wrong antibiotic spectrum** (6): tetracyclines for resistant Shigella, bacteriostatic for meningococcal, poor urinary excretion for pyelonephritis
+3. **Wrong drug class** (6): PTU→acromegaly, phenobarbital→pain/agoraphobia
+4. **Local anesthetic artifact** (5): already handled by h540
+5. **Inverse indication** (1): betamethasone CAUSES adrenocortical insufficiency
+6. **Non-therapeutic compound** (1): FDG PET tracer is diagnostic, not drug
+
+**By Drug Group:**
+| Group | n | Reasonable% |
+|-------|---|------------|
+| Corticosteroids | 6 | 83% |
+| Other drugs | 9 | 67% |
+| Antifungals | 7 | 57% |
+| Tetracyclines | 16 | 56% |
+| Cancer drugs | 15 | 53% |
+| Local anesthetics | 6 | 17% |
+
+**Fixes Implemented:**
+1. **Corticosteroid→adrenocortical insufficiency inverse indication**: 6 predictions (1 HIGH + 5 MEDIUM) → FILTER. Long-acting CS cause HPA suppression. Hydrocortisone/cortisone/corticotropin preserved as legitimate replacement.
+2. **Fludeoxyglucose (18F) non-therapeutic compound filter**: 55 predictions (29 MEDIUM + 20 LOW) → FILTER. PET radiotracer, not a drug.
+
+**Holdout After Fixes:**
+| Tier | Holdout | Change |
+|------|---------|--------|
+| GOLDEN | 69.9% ± 17.9% | 0.0pp |
+| HIGH | 58.7% ± 6.1% | -0.2pp |
+| MEDIUM | 29.9% ± 2.4% | -0.4pp |
+| LOW | 16.2% ± 2.7% | 0.0pp |
+| FILTER | 10.5% ± 1.3% | +0.2pp |
+
+**New Hypotheses Generated (4):**
+- h550: Antibiotic spectrum validation (wrong-pathogen filter) — P4, high effort
+- h551: Cancer same-type hematologic vs solid drug specificity — P4, medium effort
+- h552: Non-therapeutic compound audit (other diagnostic agents) — P5, low effort
+- h553: MEDIUM precision by category analysis — P5, medium effort
+
+**Recommended Next Steps:**
+1. **h551**: Cancer hematologic vs solid drug specificity (could fix 7+ cancer_same_type errors)
+2. **h550**: Antibiotic spectrum validation (6+ wrong-pathogen errors)
+3. **h552**: Non-therapeutic compound audit (quick, could find more FDG-like compounds)
+
+---
+
+## Previous Session: h408+h546+h544 - Ryland Brief + Gene Overlap + Anti-TNF Audit (2026-02-06)
 
 ### h544: Anti-TNF Paradoxical Autoimmunity Audit — VALIDATED
 

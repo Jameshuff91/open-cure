@@ -772,14 +772,30 @@ INVERSE_INDICATION_PAIRS = {
         'idiopathic pulmonary fibrosis', 'extrapulmonary tuberculosis',
         'systemic myasthenia gravis',
         'neovascular glaucoma', 'osteoporosis',
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
     },
     'hydrocortisone': {'idiopathic pulmonary fibrosis'},
     'mometasone': {'idiopathic pulmonary fibrosis'},
     'fluticasone': {'idiopathic pulmonary fibrosis'},
     'cortisone': {'idiopathic pulmonary fibrosis', 'neovascular glaucoma'},
+    # Note: hydrocortisone, cortisone, fludrocortisone, corticotropin are legitimate
+    # replacement therapy for adrenocortical insufficiency — NOT inverse indications
+    'methylprednisolone': {
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+    },
+    'prednisolone': {
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+    },
+    'prednisone': {
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+    },
+    'betamethasone': {
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+    },
     'triamcinolone': {
         'extrapulmonary tuberculosis',
         'neovascular glaucoma', 'osteoporosis',
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
     },
     'budesonide': {
         'neovascular glaucoma',
@@ -2726,6 +2742,13 @@ class DrugRepurposingPredictor:
             if inv_drug in drug_lower:
                 if any(inv_d in disease_lower for inv_d in inv_diseases):
                     return ConfidenceTier.FILTER, False, 'inverse_indication'
+
+        # h542: Non-therapeutic compounds → FILTER
+        # These are diagnostic/imaging agents in DRKG, not therapeutic drugs.
+        # All predictions are artifacts of diagnostic co-occurrence.
+        NON_THERAPEUTIC_COMPOUNDS = ('fludeoxyglucose',)
+        if any(ntc in drug_lower for ntc in NON_THERAPEUTIC_COMPOUNDS):
+            return ConfidenceTier.FILTER, False, 'non_therapeutic_compound'
 
         # h540: Local anesthetic procedural artifact demotion
         # Lidocaine/bupivacaine appear in disease contexts due to PROCEDURAL use

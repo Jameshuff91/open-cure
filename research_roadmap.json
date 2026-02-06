@@ -10700,13 +10700,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract top 50 MEDIUM novel predictions (diverse sample)",
         "Validate each against PubMed/ClinicalTrials.gov",
         "Compare error patterns with GOLDEN/HIGH audit",
         "Identify MEDIUM-specific systematic errors"
-      ]
+      ],
+      "findings": "MEDIUM tier quality audit: 59 predictions validated against PubMed/clinical guidelines.\n\nOVERALL RESULTS:\n- VALIDATED: 15/59 (25.4%)\n- PLAUSIBLE: 18/59 (30.5%)\n- IMPLAUSIBLE: 26/59 (44.1%)\n- REASONABLE (V+P): 33/59 (55.9%)\n\nCOMPARISON WITH GOLDEN/HIGH (h537):\n- GOLDEN/HIGH: 88% reasonable, 12% implausible\n- MEDIUM: 56% reasonable, 44% implausible\n- Gap confirms tier system is well-calibrated\n\nERROR PATTERNS (26 implausible):\n1. Wrong cancer type/mechanism: 7 (cancer_same_type overgeneralizes)\n2. Wrong antibiotic spectrum/resistance: 6 (tetracyclines for resistant/wrong organisms)\n3. Wrong drug class for disease: 6 (PTU\u2192acromegaly, phenobarbital\u2192pain/agoraphobia)\n4. Local anesthetic procedural artifact: 5 (already handled by h540)\n5. Inverse indication: 1 (betamethasone\u2192adrenocortical insufficiency)\n6. Non-therapeutic compound: 1 (FDG PET tracer)\n\nBY DRUG GROUP:\n- Corticosteroids: 83% reasonable (best)\n- Other drugs: 67% reasonable\n- Tetracyclines: 56% reasonable\n- Antifungals: 57% reasonable\n- Cancer drugs: 53% reasonable\n- Local anesthetics: 17% reasonable (worst, already handled)\n\nFIXES IMPLEMENTED:\n1. Corticosteroid\u2192adrenocortical insufficiency inverse indication: 6 preds (1 HIGH, 5 MEDIUM) \u2192 FILTER\n   Long-acting CS (dexamethasone, methylprednisolone, etc.) cause HPA suppression.\n   Hydrocortisone/cortisone/fludrocortisone/corticotropin preserved (legitimate replacement).\n2. Fludeoxyglucose (18F) non-therapeutic compound filter: 55 preds (29 MEDIUM, 20 LOW) \u2192 FILTER\n   PET radiotracer, not a drug. All predictions are diagnostic co-occurrence artifacts.\n\nHOLDOUT IMPACT:\n- GOLDEN: 69.9% (unchanged)\n- HIGH: 58.7% (-0.2pp, within noise)\n- MEDIUM: 29.9% (-0.4pp, within noise)\n- LOW: 16.2% (unchanged)\n- FILTER: 10.5% (+0.2pp)",
+      "result_metric": "55.9% reasonable (vs 88% GOLDEN/HIGH); 61 predictions fixed"
     },
     {
       "id": "h543",
@@ -10831,6 +10833,75 @@
         "Bucket predictions by overlap count (0, 1-2, 3-10, 11+)",
         "Compute holdout precision for each bucket within MEDIUM tier",
         "Check for dose-response relationship"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h550",
+      "title": "Antibiotic Spectrum Validation: Systematic Wrong-Pathogen Filter",
+      "hypothesis": "h542 found 6/59 MEDIUM predictions are antibiotics for wrong organisms (meningococcal needs bactericidal, Shigella has 40%+ tetracycline resistance, Pseudomonas inherently resistant). A systematic antibiotic-pathogen spectrum check could filter 50-100+ implausible infectious predictions.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Build antibiotic\u2192spectrum mapping (gram-positive/negative/anaerobe/atypical)",
+        "Build disease\u2192primary pathogen mapping for infectious diseases",
+        "Cross-reference predictions against spectrum match",
+        "Validate with holdout: do spectrum-mismatched predictions have lower precision?",
+        "Implement spectrum mismatch demotion if validated"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h551",
+      "title": "Cancer Same-Type Cytotoxic vs Hematologic Drug Specificity",
+      "hypothesis": "h542 found cancer_same_type has 47% implausible rate. Key pattern: hematologic drugs (fludarabine, cladribine) predicted for solid tumors and vice versa. Hematologic vs solid tumor drug classification could improve cancer_same_type precision.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Classify cancer drugs as hematologic vs solid tumor specialists",
+        "Check holdout precision for hematologic\u2192solid and solid\u2192hematologic predictions",
+        "If significant gap, implement cross-type demotion within cancer_same_type",
+        "Validate that same-type-same-subclass predictions are better"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h552",
+      "title": "Non-Therapeutic Compound Audit: Other Diagnostic/Contrast Agents in DRKG",
+      "hypothesis": "h542 found fludeoxyglucose (PET tracer) had 55 false predictions. DRKG may contain other non-therapeutic compounds (contrast agents, diagnostic reagents) that generate artifact predictions. A systematic audit could remove more noise.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "List all drugs in DRKG with no known indications in GT",
+        "Check DrugBank classification for diagnostic/contrast agents",
+        "Filter any non-therapeutic compounds found",
+        "Validate holdout impact"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h553",
+      "title": "MEDIUM Tier Precision by Category: Which Categories Are Over-Represented in Errors?",
+      "hypothesis": "h542 showed infectious category dominates MEDIUM (542/1482 novel). If infectious predictions have lower quality than other categories, category-specific MEDIUM thresholds could improve overall MEDIUM precision.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Compute holdout precision for MEDIUM by category",
+        "Compare with overall MEDIUM average (30.1%)",
+        "Identify categories significantly below average",
+        "Assess whether category-specific demotion improves MEDIUM"
       ],
       "findings": null,
       "result_metric": null
@@ -12681,6 +12752,12 @@
       "hypothesis_id": "h544",
       "learning": "Anti-TNF paradoxical autoimmunity is a CLASS EFFECT: all agents (adalimumab, etanercept, infliximab, golimumab) can induce SLE, MS, autoimmune hepatitis, sarcoidosis, vasculitis. Drug-specific effects exist too (adalimumab\u2192polymyositis/lichen planus). Etanercept has highest sarcoidosis/vasculitis risk, infliximab has highest AIH risk. Anti-TNF can paradoxically both TREAT and INDUCE eczema, but eczema is manageable with topicals.",
       "implication": "Every anti-TNF prediction for autoimmune conditions should be scrutinized. Some diseases (GVHD, TEN) are correctly TREATED by anti-TNF despite being autoimmune/immune-mediated."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h542",
+      "learning": "MEDIUM tier is 56% reasonable vs 88% for GOLDEN/HIGH - confirming tier system calibration. Main MEDIUM error patterns: wrong cancer subtype (cancer_same_type overgeneralizes), wrong antibiotic spectrum, and diagnostic agent artifacts. FDG (PET tracer) had 55 false predictions.",
+      "implication": "Cancer same-type and antibiotic spectrum are the two biggest remaining quality gaps in MEDIUM tier."
     }
   ],
   "collaborations": [
