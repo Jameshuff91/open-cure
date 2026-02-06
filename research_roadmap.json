@@ -10713,13 +10713,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Count drug class distribution in GOLDEN and HIGH tiers",
         "Compare with MEDIUM for corticosteroid representation",
         "Assess if corticosteroid dominance masks other drug discoveries",
         "Consider diversification annotation for deliverable users"
-      ]
+      ],
+      "findings": "HIGH tier is 74.6% corticosteroid novel predictions (311/417).\nDriven by h520 corticosteroid SOC promotion MEDIUM\u2192HIGH (231 predictions).\nEach disease gets avg 4.2 corticosteroid variants (methylprednisolone, dexamethasone, etc.).\nThis is medically valid - corticosteroids genuinely treat many autoimmune/dermatological diseases\nwith ~50% holdout precision.\nNon-CS HIGH predictions only 106 (25.4%) covering 45 unique diseases.\nGOLDEN less saturated: 41.6% CS novel (42/101).\nMEDIUM+LOW balanced: 9-11.5% CS.\nRecommendation: Drug class annotation for deliverable users to filter, NOT a tier change.",
+      "result_metric": "HIGH 74.6% CS, GOLDEN 41.6% CS, MEDIUM 9.0% CS"
     }
   ],
   "completed": [
@@ -12537,6 +12539,12 @@
       "hypothesis_id": "h540",
       "learning": "Local anesthetic (lidocaine/bupivacaine) predictions in non-pain disease categories are procedural artifacts from KG co-occurrence. Demoting to LOW improved all tiers (HIGH +0.3pp, MEDIUM +0.2pp). 132 predictions moved. GT itself has ~16 false LA indications from DRKG.",
       "implication": "KG procedural co-occurrence is a systematic bias. Consider auditing other drug classes with primarily procedural use (contrast agents, surgical drugs, etc.)."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h543",
+      "learning": "HIGH tier is 74.6% corticosteroid novel predictions due to h520 SOC promotion. This is correct (50% holdout) but poor diversity. Users need drug class annotation to filter. Not an error to fix.",
+      "implication": "Consider adding drug_class column to deliverable. Also consider limiting corticosteroid predictions to max 2-3 per disease to improve diversity without losing precision."
     }
   ],
   "collaborations": [
