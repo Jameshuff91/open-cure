@@ -1,16 +1,17 @@
 # Research Loop Progress
 
-## Current Session: h294, h353, h351, h354 (2026-02-05)
+## Current Session: h294, h353, h351, h354, h356 (2026-02-05)
 
 ### Session Summary
 
 **Agent Role:** Research Executor
-**Status:** In Progress
-**Hypotheses Tested: 4**
+**Status:** Complete
+**Hypotheses Tested: 5**
 - h294: Organ-Specific Complication Patterns - **INVALIDATED** (organ proximity doesn't predict, 1.2% novel precision)
 - h353: Complication-Specific Drug Class Filter - **VALIDATED + IMPLEMENTED** (214 preds filtered, 0 GT loss)
 - h351: Pathway-Comprehensive Drug Class Identification - **VALIDATED** (48.8% vs 7.6% for CV complications)
 - h354: CV Pathway-Comprehensive Drug Boost - **VALIDATED + IMPLEMENTED** (109 drugs → HIGH for CV complications)
+- h356: Non-Pathway-Comprehensive CV Demotion - **VALIDATED** (expanded drug set 109→129, no demotion needed)
 
 ### KEY SESSION FINDINGS
 
@@ -84,14 +85,29 @@ CV is special because drugs treat underlying vascular pathology.
 
 **Drug classes included:** Statins, ACEi, ARBs, beta-blockers, anticoagulants, SGLT2i, nitrates, diuretics
 
-### New Hypotheses Generated (5)
+### h356: Non-Pathway-Comprehensive CV Demotion - VALIDATED
 
-1. **h351: Pathway-Comprehensive Drug Class Identification** - ✓ VALIDATED
-2. **h352: Disease Mechanism Overlap as Transfer Predictor** (Priority 4)
-3. **h353: Complication-Specific Drug Class Filter** - ✓ IMPLEMENTED
-4. **h354: CV Pathway-Comprehensive Drug Boost** - ✓ IMPLEMENTED
-5. **h355: Metabolic Pathway-Comprehensive Analysis** (Priority 4)
-6. **h356: Non-Pathway-Comprehensive CV Demotion** (Priority 3)
+**Analysis:**
+- Original set (109 drugs): 5 GT hits would be lost (5.9%)
+- Found that antiplatelets (clopidogrel, aspirin, vorapaxar) have 2+ CV complication types but no CV base
+
+**Expanded criteria:**
+- Original: CV base + CV complication
+- NEW: ALSO include drugs with 2+ CV complication types (CV specialty drugs)
+
+**Results with expanded set (129 drugs):**
+- Pathway-comprehensive: 28.9% precision (26/90)
+- Non-pathway: 1.1% precision (1/90)
+- GT loss drops from 5 to 1
+
+**20 drugs added:** aspirin, clopidogrel, prasugrel, vorapaxar, alteplase, etc.
+**Decision:** No demotion needed - boost is sufficient
+
+### Remaining Pending Hypotheses
+1. **h352: Disease Mechanism Overlap as Transfer Predictor** (Priority 4)
+2. **h355: Metabolic Pathway-Comprehensive Analysis** (Priority 4)
+3. **h180: Batch Prediction API** (Priority 4)
+4. **h245: Emerging Treatments Validation** (Priority 4)
 
 ---
 
@@ -114,12 +130,12 @@ CV is special because drugs treat underlying vascular pathology.
 ### Cumulative Statistics
 | Status | Count |
 |--------|-------|
-| Validated | 220 |
+| Validated | 221 |
 | Invalidated | 68 |
 | Inconclusive | 13 |
 | Blocked | 21 |
 | Deprioritized | 7 |
-| Pending | 27 |
+| Pending | 26 |
 | **Total** | **356**
 
 ### KEY SESSION FINDINGS
