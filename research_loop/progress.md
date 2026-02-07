@@ -1,6 +1,36 @@
 # Research Loop Progress
 
-## Current Session: h707 - Zero-Prediction Disease Rescue (2026-02-07)
+## Current Session: h708 - Anti-VEGF Retinal Disease Whitelist (2026-02-07)
+
+### h708: Anti-VEGF Retinal Disease Whitelist — VALIDATED (Deliverable Quality)
+
+**Methodology:** Added validated complication drug bypass before freq<=2 filter and zero_precision_mismatch filter in `_assign_confidence_tier()`. Used existing `COMPLICATION_VALIDATED_DRUGS` infrastructure.
+
+**Key findings:**
+1. **3 predictions rescued from FILTER:**
+   - Ranibizumab → PDR: FILTER → HIGH (R2, via diabetes hierarchy)
+   - Ranibizumab → ROP: FILTER → LOW (R1, standard tier)
+   - Aflibercept → ROP: FILTER → MEDIUM (R4, via ATC coherent ophthalmic)
+2. **All 3 are genuine GT drugs at top ranks (R1-R4)**
+3. **Root cause:** Anti-VEGF drugs have tiny GT footprint (2-3 diseases) → low kNN frequency. Aflibercept also caught by ATC L→ophthalmic mismatch (first ATC=L01, second=S01).
+4. **Holdout unchanged:** All tier precisions within normal variance. Deliverable quality improvement only.
+
+### Tier Status (post h708)
+| Tier | Holdout | Std | Previous |
+|------|---------|-----|----------|
+| GOLDEN | 72.5% | ± 6.5% | 72.5% |
+| HIGH | 61.0% | ± 7.7% | 61.0% |
+| MEDIUM | 37.9% | ± 5.0% | 37.9% |
+| LOW | 14.4% | ± 1.2% | 14.4% |
+| FILTER | 9.5% | ± 1.0% | 9.5% |
+
+### Recommended Next Steps
+1. Continue with remaining low-effort hypotheses (h710, h704, h702)
+2. Deliverable regeneration to capture all recent fixes
+
+---
+
+## Previous Session: h707 - Zero-Prediction Disease Rescue (2026-02-07)
 
 ### h707: Zero-Prediction Disease Rescue — VALIDATED (Meta-Analysis)
 

@@ -14387,7 +14387,7 @@
     {
       "id": "h708",
       "title": "Anti-VEGF Retinal Disease Whitelist: Rescue Ranibizumab/Aflibercept for Diabetic Retinopathy and ROP",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -14399,7 +14399,9 @@
         "Run holdout validation"
       ],
       "created": "2026-02-07",
-      "parent_hypothesis": "h707"
+      "parent_hypothesis": "h707",
+      "findings": "VALIDATED (Deliverable Quality). Added validated complication drug bypass for both freq<=2 filter and zero_precision_mismatch filter. \n\n3 predictions rescued from FILTER:\n1. Ranibizumab \u2192 PDR: FILTER \u2192 HIGH (via diabetes hierarchy match, R2)\n2. Ranibizumab \u2192 ROP: FILTER \u2192 LOW (standard tier, R1)  \n3. Aflibercept \u2192 ROP: FILTER \u2192 MEDIUM (via ATC coherent ophthalmic, R4)\n\nAll 3 are genuine GT drugs at top ranks (R1-R4). Medical evidence: ranibizumab and aflibercept are standard of care for retinal neovascular diseases. The rescue uses existing COMPLICATION_VALIDATED_DRUGS infrastructure \u2014 no new drug lists needed.\n\nRoot cause: Anti-VEGF drugs have very small GT footprint (2-3 diseases), causing low kNN frequency. Aflibercept also caught by ATC L\u2192ophthalmic mismatch (first ATC code is L01 antineoplastic, second is S01 ophthalmic).\n\nHoldout impact: ZERO (all tier precisions unchanged within noise). These are deliverable quality improvements only \u2014 in holdout, these drugs have freq=0-1 so predictions don't appear.",
+      "result_metric": "3 GT drugs rescued from FILTER, holdout unchanged"
     },
     {
       "id": "h709",
@@ -16743,6 +16745,12 @@
       "hypothesis_id": "h707",
       "learning": "28 zero-prediction diseases: 24 absent from DRKG (newer MESH terms), 4 have correct predictions incorrectly filtered. Anti-VEGF drugs for retinal diseases (PDR, ROP) are the highest-impact rescue. Parent disease transfer works for 5/9 subtypes (HoFH best at 100% GT capture).",
       "implication": "DRKG disease coverage has a systematic gap for post-2016 MESH terms. Filter rules can create false negatives for niche but correct predictions. Parent disease fallback mechanism could rescue ~8 diseases."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h708",
+      "learning": "Anti-VEGF drugs (ranibizumab, aflibercept) have tiny GT footprint (2-3 diseases), causing freq<=2 in kNN. The COMPLICATION_VALIDATED_DRUGS list already included them but the freq filter was applied BEFORE the complication check. Moving the complication bypass upstream rescued 3 correct predictions without holdout regression.",
+      "implication": "The freq<=2 filter is a blunt instrument. Drugs with legitimate but narrow indications (anti-VEGF, orphan drugs) may be systematically penalized. The validated complication bypass is a principled way to rescue known-good drugs."
     }
   ],
   "collaborations": [

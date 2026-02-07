@@ -3409,8 +3409,22 @@ class DrugRepurposingPredictor:
             return ConfidenceTier.FILTER, False, None
         if not has_targets:
             return ConfidenceTier.FILTER, False, None
+
+        # h708: Validated complication drugs bypass freq<=2 filter.
+        # Anti-VEGF drugs (ranibizumab, aflibercept) have small GT footprint (2-3 diseases)
+        # → low kNN frequency, but are standard of care for retinal diseases.
+        # Only applies to rank<=20 drugs matching COMPLICATION_VALIDATED_DRUGS.
+        # Rescues: ranibizumab→PDR (R2), ranibizumab→ROP (R1), aflibercept→ROP (R4).
+        is_validated_complication_drug = False
+        for comp_term, validated_drugs in COMPLICATION_VALIDATED_DRUGS.items():
+            if comp_term in disease_lower:
+                if any(v in drug_lower for v in validated_drugs):
+                    is_validated_complication_drug = True
+                    break
+
         if train_frequency <= 2 and not mechanism_support:
-            return ConfidenceTier.FILTER, False, None
+            if not is_validated_complication_drug:
+                return ConfidenceTier.FILTER, False, None
 
         # h153/h476: Corticosteroids for iatrogenic conditions = FILTER
         # Corticosteroids CAUSE these conditions (inverse indications):
@@ -3583,7 +3597,9 @@ class DrugRepurposingPredictor:
 
         # h316: Zero-precision mismatches are always FILTER (0-3% precision)
         # These are patterns that NEVER work: A→cancer, J→cancer, N→cancer, etc.
-        if is_zero_prec_mismatch:
+        # h708: Exception for validated complication drugs (e.g., aflibercept ATC=L for ophthalmic)
+        # Some drugs have dual ATC codes (L + S) but only the first is checked.
+        if is_zero_prec_mismatch and not is_validated_complication_drug:
             return ConfidenceTier.FILTER, False, 'zero_precision_mismatch'
 
         # GOLDEN tier (Tier1 + freq>=10 + mechanism)
