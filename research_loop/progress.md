@@ -1,6 +1,20 @@
 # Research Loop Progress
 
-## Current Session: h708 - Anti-VEGF Retinal Disease Whitelist (2026-02-07)
+## Current Session: h710 - Hemangioendothelioma Cancer Type Fix (2026-02-07)
+
+### h710: Hemangioendothelioma Category Fix — VALIDATED (Deliverable Quality)
+
+**Methodology:** Added 'vascular_proliferative' cancer type to CANCER_TYPE_KEYWORDS for hemangioendothelioma, lymphangioleiomyomatosis, and lymphangioma. These benign/intermediate proliferative disorders are categorized as cancer but weren't recognized by extract_cancer_types(), causing their GT drug (sirolimus) to be blocked by cancer_no_gt filter.
+
+**Key findings:**
+1. Sirolimus → hemangioendothelioma: FILTER → LOW (cancer_same_type_no_mechanism)
+2. Sirolimus → lymphangioma: FILTER → LOW (same)
+3. Everolimus → LAM: correctly typed as vascular_proliferative
+4. Holdout unchanged (all tiers within normal variance)
+
+---
+
+## Previous Session: h708 - Anti-VEGF Retinal Disease Whitelist (2026-02-07)
 
 ### h708: Anti-VEGF Retinal Disease Whitelist — VALIDATED (Deliverable Quality)
 

@@ -14424,7 +14424,7 @@
     {
       "id": "h710",
       "title": "Hemangioendothelioma Category Reclassification: Vascular Tumor Not Traditional Cancer",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14435,7 +14435,9 @@
         "Verify prediction tier after fix"
       ],
       "created": "2026-02-07",
-      "parent_hypothesis": "h707"
+      "parent_hypothesis": "h707",
+      "findings": "VALIDATED (Deliverable Quality). Added 'vascular_proliferative' cancer type to CANCER_TYPE_KEYWORDS for hemangioendothelioma, lymphangioleiomyomatosis, and lymphangioma. This allows sirolimus (their standard-of-care mTOR inhibitor) to get has_cancer_gt=True and same_type_match=True.\n\n3 predictions rescued from FILTER \u2192 LOW:\n1. Sirolimus \u2192 hemangioendothelioma: FILTER \u2192 LOW (cancer_same_type_no_mechanism)\n2. Sirolimus \u2192 lymphangioma: FILTER \u2192 LOW (cancer_same_type_no_mechanism)  \n3. Everolimus \u2192 LAM: was already passing, now correctly typed as vascular_proliferative\n\nRoot cause: extract_cancer_types() didn't recognize benign/intermediate proliferative disorders as cancer types, so sirolimus had has_cancer_gt=False \u2192 cancer_no_gt \u2192 FILTER. Adding 'vascular_proliferative' type resolves this for all 3 diseases.\n\nHoldout impact: ZERO (all tier precisions unchanged). These are LOW-quality predictions with no mechanism support, correctly placed at LOW rather than FILTER.",
+      "result_metric": "3 sirolimus/everolimus predictions rescued FILTER\u2192LOW, holdout unchanged"
     },
     {
       "id": "h711",
@@ -16751,6 +16753,12 @@
       "hypothesis_id": "h708",
       "learning": "Anti-VEGF drugs (ranibizumab, aflibercept) have tiny GT footprint (2-3 diseases), causing freq<=2 in kNN. The COMPLICATION_VALIDATED_DRUGS list already included them but the freq filter was applied BEFORE the complication check. Moving the complication bypass upstream rescued 3 correct predictions without holdout regression.",
       "implication": "The freq<=2 filter is a blunt instrument. Drugs with legitimate but narrow indications (anti-VEGF, orphan drugs) may be systematically penalized. The validated complication bypass is a principled way to rescue known-good drugs."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h710",
+      "learning": "Benign/intermediate proliferative disorders (hemangioendothelioma, LAM, lymphangioma) are categorized as cancer but not recognized as cancer types by extract_cancer_types(). This caused their GT drug (sirolimus) to be incorrectly filtered by cancer_no_gt. Adding a new 'vascular_proliferative' cancer type resolved the issue.",
+      "implication": "When adding diseases to the cancer category keyword list, always verify that extract_cancer_types() also recognizes them. Cancer category + unrecognized cancer type = systematic false FILTER."
     }
   ],
   "collaborations": [

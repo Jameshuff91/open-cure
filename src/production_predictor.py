@@ -1348,6 +1348,10 @@ CANCER_TYPE_KEYWORDS = {
     # This captures "breast cancer", "lung cancer", etc. that don't specify histology
     'solid_tumor': ['cancer', 'tumor', 'tumour', 'neoplasm', 'malignant', 'metastatic',
                     'oncology', 'glioma', 'glioblastoma', 'neuroblastoma', 'blastoma'],
+    # h710: Benign/intermediate proliferative disorders treated with mTOR inhibitors.
+    # These are categorized as cancer but extract_cancer_types didn't recognize them,
+    # causing cancer_no_gt filter to block sirolimus (standard of care).
+    'vascular_proliferative': ['hemangioendothelioma', 'lymphangioma', 'lymphangioleiomyomatosis'],
 }
 
 # h273: Disease hierarchy groups for cross-category matching
