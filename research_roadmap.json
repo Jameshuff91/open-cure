@@ -13863,7 +13863,7 @@
       "id": "h678",
       "title": "Combo Product Drug Mismatch Audit: Beyond Lidocaine/Bupivacaine",
       "description": "h677 found lidocaine and bupivacaine had corticosteroid text due to combo products (lidocaine/hydrocortisone, bupivacaine/dexamethasone). Other combo products likely have the same problem. Check all FDA combo products: aminoglycoside/steroid ear drops, antibiotic/steroid eye drops, etc. Each combo might have one component inheriting the other's indications.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13872,7 +13872,9 @@
         "For each combo, check if one component's text matches the other's indications",
         "Quantify false GT entries from combo product misattribution",
         "Remove confirmed false entries"
-      ]
+      ],
+      "findings": "h678 VALIDATED (Data Cleanliness, No Metric Impact)\n\nComprehensive audit of combo product drug mismatch patterns beyond lidocaine/bupivacaine (h677).\n\nMETHODOLOGY:\n1. Identified 71 indication texts shared by multiple drugs in EC data\n2. Found 35 shared-text groups involving DRKG drugs\n3. Classified each as legitimate (combo therapy approval) vs contamination (excipient/preservative inheriting active drug's indications)\n\nKEY FINDINGS:\n1. The h677 fix already caught the ONLY TWO impactful cases:\n   - Lidocaine (DB00281): ~78 false CS indications from lidocaine/hydrocortisone cream\n   - Bupivacaine (DB00297): ~61 false CS indications from bupivacaine/dexamethasone injection\n   Both have many DRKG edges, so their false GT entries affected predictions.\n\n2. Four additional non-DRKG drugs had false expanded GT entries (45 total):\n   - Edetic acid (DB00974): 22 false entries (preservative in prednisolone/labetalol/naloxone/levalbuterol formulations). 0 DRKG edges.\n   - Chloride ion (DB14547): 13 false entries (ion component, not a drug). 0 DRKG edges.\n   - Calcium carbonate (DB06724): 6 false entries (pancreatic cancer from FOLFOX combo, gallstones, calcinosis, hypercalcemia, diarrhea). 14 legitimate kept.\n   - Zinc oxide (DB09321): 4 false entries (melasma/infection from hydroquinone cream combo). 2 legitimate kept.\n\n3. Excipients/preservatives in EC data: ~98 rows (1.0%) from non-drug substances (croscarmellose, allergenic extracts, etc.). None have DRKG IDs or expanded GT entries.\n\n4. Combo products in EC use separate drug names (e.g., \"Acetaminophen; Codeine Phosphate\") that don't map to individual DRKG compound IDs, preventing cross-contamination.\n\nIMPACT:\n- Expanded GT: 57,538 \u2192 57,493 (-45 entries)\n- No holdout precision change (all tiers within \u00b10.1pp)\n- Data cleanliness improvement only \u2014 non-DRKG drugs don't affect predictions\n\nCONCLUSION: h677 comprehensively addressed the only impactful combo product contamination. This audit confirms no additional metric-affecting cases exist.",
+      "result_metric": "No holdout change. 45 non-DRKG false GT entries removed for cleanliness. GT: 57,538\u219257,493."
     },
     {
       "id": "h679",
@@ -14117,6 +14119,64 @@
         "Assess: diagnostic angiography context vs therapeutic use",
         "Remove confirmed false entries if any"
       ]
+    },
+    {
+      "id": "h694",
+      "title": "Excipient Detection in EC Data: Systematic Non-Drug Substance Filter",
+      "description": "h678 found 98 EC rows (1.0%) from non-drug substances (croscarmellose=42, edetic acid=13, allergenic extracts, etc.). While these don't affect DRKG predictions, they represent systematic data quality issues. A comprehensive filter (ATC classification, molecular weight, therapeutic use verification) could flag all non-drug substances for EC data quality reporting.",
+      "hypothesis": "Systematic classification of EC drug entries into therapeutic vs non-therapeutic would identify additional data quality issues beyond what manual review catches.",
+      "status": "pending",
+      "priority": 6,
+      "expected_impact": "low",
+      "effort": "medium",
+      "category": "gt_quality",
+      "steps": [
+        "Build comprehensive list of pharmaceutical excipients from public databases",
+        "Cross-reference with EC drug list to find all matches",
+        "Check if any newly-found excipients have DRKG presence",
+        "Report findings for EC data quality feedback"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h695",
+      "title": "Japanese PMDA Shared-Text GT Expansion: Drug-Class Level Indications",
+      "description": "h678 found many PMDA (Japanese regulatory) entries where multiple drugs share identical text ('A drug with a new active ingredient indicated for...'). These represent drug-class level approvals (e.g., all SGLT2 inhibitors for T2DM, all anti-PD1s for same cancers). This shared-text pattern could systematically identify drug-class GT gaps: if Drug A and Drug B share PMDA approval text but Drug C (same class) doesn't have it, Drug C is likely a GT gap.",
+      "hypothesis": "PMDA shared-text patterns can identify drug-class GT gaps by finding drugs in the same ATC class that are missing shared indications.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "category": "gt_quality",
+      "steps": [
+        "Extract all PMDA shared-text drug groups from EC data",
+        "Map each group to ATC classes",
+        "Find drugs in same ATC class with missing shared indications",
+        "Verify missing indications are genuine GT gaps",
+        "Add confirmed gaps to expanded GT"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h696",
+      "title": "Croscarmellose Signal: What Other Excipients Have DRKG Edges?",
+      "description": "Croscarmellose (a tablet disintegrant) has 42 EC rows but 0 DRKG edges. However, edetic acid (a preservative) DOES have a DrugBank ID (DB00974). Other excipients/preservatives might have DRKG edges, meaning their false EC indications could contaminate the internal GT. Check benzalkonium chloride, methylparaben, propylparaben, polysorbate 80, and other common excipients for DRKG presence.",
+      "hypothesis": "Some pharmaceutical excipients may have DRKG edges from co-occurrence in clinical literature, creating false internal GT entries similar to the lidocaine/bupivacaine issue.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "gt_quality",
+      "steps": [
+        "List all common pharmaceutical excipients with DrugBank IDs",
+        "Check which have DRKG edges (would generate predictions)",
+        "For those with edges, audit their internal GT entries",
+        "Remove false entries if found"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
@@ -16361,6 +16421,12 @@
       "hypothesis_id": "h688",
       "learning": "Two-drug disease GT error rate = 0% (0/30), much better than single-drug 5.3%. GT error rate decreases with disease drug count. Single-drug diseases are the dominant error source. DrugBank duplicate naming (methylene blue = methylthioninium) can inflate apparent drug count.",
       "implication": "GT quality auditing has diminishing returns beyond single-drug diseases. Focus remaining audit effort on expanded GT or newly added entries."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h678",
+      "learning": "Combo product contamination in EC data only affects predictions when the contaminated drug has DRKG edges. The h677 fix (lidocaine/bupivacaine allowlists) was comprehensive \u2014 these were the only DRKG drugs with combo product contamination. Non-DRKG substances (edetic acid, zinc oxide, calcium carbonate, chloride ion) had 45 false expanded GT entries but zero prediction impact. EC data contains ~1% non-drug substance rows (excipients, preservatives, allergenic extracts) that don't affect our system.",
+      "implication": "No further combo product fixes needed for DRKG drugs. Future GT quality work should focus on DRKG-present drugs only. The expanded GT is now cleaner (57,493 pairs) but this is a data cleanliness improvement, not a prediction improvement."
     }
   ],
   "collaborations": [

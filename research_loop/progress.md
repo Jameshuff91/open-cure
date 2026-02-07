@@ -1,6 +1,47 @@
 # Research Loop Progress
 
-## Current Session: h685-h691 - GT Quality Audit Series (2026-02-06)
+## Current Session: h678 - Combo Product Drug Mismatch Audit (2026-02-06)
+
+### h678: Combo Product Drug Mismatch Audit — VALIDATED (Data Cleanliness, No Metric Impact)
+Comprehensive audit extending h677 (lidocaine/bupivacaine combo product fix) to all drugs.
+
+**Methodology:** Identified 71 shared-text groups in EC data, 35 involving DRKG drugs. Classified each as legitimate (combo therapy approval) vs contamination (excipient/preservative inheriting active drug indications).
+
+**Key finding:** h677 already caught the ONLY two impactful cases (lidocaine and bupivacaine). All other contamination involves non-DRKG drugs:
+- Edetic acid: 22 false GT entries (preservative in eye drops, injectables). 0 DRKG edges.
+- Chloride ion: 13 false GT entries (ion component, not a drug). 0 DRKG edges.
+- Calcium carbonate: 6 false GT entries (from chemo combo text). 14 legitimate kept.
+- Zinc oxide: 4 false GT entries (from hydroquinone cream). 2 legitimate kept.
+
+**Impact:** 45 false expanded GT entries removed (57,538→57,493). No holdout change.
+
+**Additional findings:**
+- 98 EC rows (1.0%) are from non-drug substances (croscarmellose=42, allergenic extracts, etc.)
+- Combo products use separate names that don't cross-contaminate DRKG IDs
+- Only varicella zoster vaccine overlaps between combo and individual drug DRKG IDs (legitimate)
+
+### Tier Status (post h678 — unchanged from h685)
+| Tier | Holdout | Std |
+|------|---------|-----|
+| GOLDEN | 71.8% | ± 7.1% |
+| HIGH | 61.4% | ± 7.9% |
+| MEDIUM | 38.4% | ± 4.3% |
+| LOW | 14.4% | ± 1.2% |
+| FILTER | 9.5% | ± 0.9% |
+
+### New Hypotheses Generated (3)
+- h694: Excipient Detection in EC Data (systematic non-drug filter)
+- h695: Japanese PMDA Shared-Text GT Expansion (drug-class gaps)
+- h696: Croscarmellose Signal (other excipients with DRKG edges)
+
+### Recommended Next Steps
+1. **h696**: Quick check — do any excipients have DRKG edges? (low effort, could find hidden contamination)
+2. **h675**: FDA label contraindication mining (safety improvement)
+3. **h672**: CS GT gap expansion for remaining PLAUSIBLE diseases
+
+---
+
+## Previous Session: h685-h691 - GT Quality Audit Series (2026-02-06)
 
 ### h679: Lidocaine GOLDEN Quality — INVALIDATED (already resolved by h677)
 ### h682: Mesothelioma GT Gap — INVALIDATED (adequate via disease hierarchy)
