@@ -13825,7 +13825,7 @@
       "title": "CS Promotion Rule Disease-Level Exclusions: Beyond Category-Level SOC",
       "description": "h673 found that the h520 corticosteroid_soc_promotion rule promotes ALL CS\u2192respiratory and CS\u2192ophthalmic predictions to HIGH, but this creates safety issues for specific diseases (OSA, PAP). The current fix uses inverse indications, but a more principled approach would add disease-level exclusions to the CS SOC promotion logic itself. This would prevent CS from being promoted to HIGH for diseases where CS are ineffective or harmful, even if they don't meet the threshold for inverse indication filtering.",
       "hypothesis": "Adding disease-level exclusions to corticosteroid_soc_promotion (e.g., OSA, PAP, specific infections) would improve HIGH tier quality by preventing inappropriate promotions at the source.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13836,8 +13836,8 @@
         "Add exclusion list to corticosteroid_soc_promotion logic",
         "Verify holdout impact"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Reviewed all 287 CS SOC promotion predictions across 4 categories (autoimmune, dermatological, ophthalmic, respiratory). Only 6 of ~40 unique diseases are potentially questionable for CS treatment: corneal ulcer, dacryocystitis, empyema, sinusitis, silicosis, BPD. All are medical grey areas (CS have some evidence even for these). h673 already caught the 3 clear safety issues (OSA, PAP, TEN) via inverse indications. Adding disease-level exclusions would be over-engineering for ~20-30 predictions with minimal holdout impact.",
+      "result_metric": "No action \u2014 6 edge cases out of ~40 diseases, h673 sufficient"
     },
     {
       "id": "h677",
