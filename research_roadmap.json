@@ -12513,7 +12513,7 @@
       "id": "h606",
       "title": "ATC Coherent Respiratory/Endocrine: Validate or Exclude",
       "description": "h603 found respiratory (22.3%) and endocrine (24.5%) demotion holdout includes ATC coherent predictions that inflate precision above what standard-only would show. The ATC coherent rescue at line 3146-3149 produces atc_coherent_respiratory and atc_coherent_endocrine predictions. Should these be added to ATC_COHERENT_EXCLUDED like metabolic already is? Need per-pathway holdout to decide.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -12522,7 +12522,9 @@
         "Compare vs atc_coherent for other categories (infectious 27.8%, dermatological 25.6% etc.)",
         "If respiratory/endocrine atc_coherent < 15%, add to ATC_COHERENT_EXCLUDED",
         "Expected: small impact (few predictions) but improves tier calibration"
-      ]
+      ],
+      "findings": "ATC coherent category validation across all 9 categories. Full-data found 292 ATC coherent MEDIUM predictions. Key findings:\n\n1. Respiratory (27 preds): 25.0% \u00b1 43.3% holdout, n=4/seed. Too noisy to act on. KEEP.\n2. Endocrine (1 pred): Only 1 prediction. Not actionable.\n3. Psychiatric (60 preds): 17.2% \u00b1 5.8% holdout, n=13.4/seed. Significantly below MEDIUM (p=0.0006). EXCLUDED from ATC coherent rescue.\n4. Infectious (163 preds): 27.6% \u00b1 6.3%, n=41/seed. Adequate MEDIUM quality.\n5. Dermatological (13 preds): 29.9% \u00b1 18.7%, n=6.6/seed. High variance but adequate.\n6. Ophthalmic (14 preds): 19.4% \u00b1 14.2%, n=2.7/seed. Too small.\n7. Musculoskeletal (4 preds): 0% holdout, n=3/seed. Too small to act on.\n\nImplementation: Added 'psychiatric' to ATC_COHERENT_EXCLUDED. 47 predictions moved MEDIUM\u2192LOW. Tier-level impact unmeasurable (MEDIUM stays 41.3%) because only ~3 predictions per holdout seed affected.",
+      "result_metric": "MEDIUM 41.3% (unchanged, 47 predictions moved to LOW)"
     },
     {
       "id": "h607",
@@ -12565,6 +12567,52 @@
         "Verify co-prediction overlap: what % of tetracycline diseases also have doxycycline MEDIUM?",
         "Add 'legacy_redundant' boolean to deliverable for these drugs",
         "Document in deliverable metadata"
+      ]
+    },
+    {
+      "id": "h610",
+      "title": "ATC Coherent Infectious Per-Drug Quality: Fluoroquinolone/Macrolide Demotions",
+      "description": "h606 confirmed infectious is the largest ATC coherent category (163 preds, 27.6% holdout). h604 found within this, fluoroquinolone (11.4%) and macrolide (10.6%) classes underperform but had n too small per-drug. A per-drug-CLASS approach for ATC coherent infectious may be more reliable than per-drug since it pools. Should fluoroquinolone and macrolide ATC coherent infectious predictions be demoted?",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Within the 163 atc_coherent_infectious predictions, stratify by drug class (fluoroquinolone, macrolide, tetracycline, penicillin, etc.)",
+        "Compute holdout precision per drug class within atc_coherent_infectious",
+        "If fluoroquinolone/macrolide atc_coherent < 15% with n >= 10, consider class-specific demotion",
+        "Expected: marginal impact (~5-10 predictions) but improves precision calibration"
+      ]
+    },
+    {
+      "id": "h611",
+      "title": "MEDIUM Sub-Pathway Quality Map: Rank All MEDIUM Entry Paths by Holdout",
+      "description": "h606 revealed the ATC coherent MEDIUM pathway has highly heterogeneous quality across categories. The same likely applies to ALL MEDIUM entry paths (standard, highly_repurposable, target_overlap_promotion, etc.). Build a comprehensive holdout precision map for every MEDIUM sub-pathway \u00d7 category combination to identify remaining low-quality pockets.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For each MEDIUM prediction, record (category_specific_tier, category) combination",
+        "Run 5-seed holdout to compute precision per (sub-pathway, category) pair",
+        "Identify any (sub-pathway, category) pairs with holdout < 15% and n >= 10",
+        "Rank all pairs by holdout precision to create a quality map",
+        "Expected: may find 2-3 more demotable pockets worth ~1-2pp MEDIUM improvement"
+      ]
+    },
+    {
+      "id": "h612",
+      "title": "Deliverable Regeneration: Incorporate All h598-h606 Changes",
+      "description": "Multiple changes since last deliverable regeneration: h598 (targeted cancer expansion), h603 (metabolic standard demotion), h606 (psychiatric ATC coherent exclusion). The deliverable file needs regeneration to reflect current tier assignments, composite_quality_score, and updated prediction counts.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Run scripts/h420_regenerate_deliverable.py to regenerate the deliverable",
+        "Verify prediction counts match expected: MEDIUM ~1832, LOW ~3850",
+        "Spot-check a few psychiatric predictions that should now be LOW instead of MEDIUM",
+        "Verify composite_quality_score column is populated"
       ]
     }
   ],
@@ -14612,6 +14660,12 @@
       "hypothesis_id": "h604",
       "learning": "Standard MEDIUM infectious (22.7% holdout) is heterogeneous: tetracycline class performs well (32.3%) while fluoroquinolone (11.4%) and macrolide (10.6%) underperform. Per-drug analysis shows tetracycline-the-drug has 0% holdout (vs doxycycline 35.4%, minocycline 36.6%). Legacy antibiotics (tetracycline, erythromycin) contribute most false positives but per-drug n is too small for reliable demotion rules.",
       "implication": "Diminishing returns on MEDIUM demotion. Individual drug holdout requires n>30/drug for reliability. Standard MEDIUM infectious at 22.7% is below MEDIUM avg (41.3%) but above LOW (15.1%) \u2014 demoting the entire category would lose genuine MEDIUM predictions from doxycycline/minocycline."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h606",
+      "learning": "ATC coherent rescue pathway has highly heterogeneous quality across categories. Only infectious (n=41/seed, 27.6%) is statistically reliable. Psychiatric confirmed below MEDIUM (17.2%, p<0.001). Most categories have n<5/seed \u2014 too small for reliable holdout. Category-specific ATC coherent analysis requires pooling across categories or very large holdout.",
+      "implication": "Per-category ATC coherent quality varies from 0% to 30%. Should systematically evaluate ALL MEDIUM sub-pathways \u00d7 categories for remaining low-quality pockets."
     }
   ],
   "collaborations": [

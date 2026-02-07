@@ -3148,7 +3148,8 @@ class DrugRepurposingPredictor:
         # Boost coherent LOW→MEDIUM when drug has good rank and some support
         # h395: Exclude metabolic (4.3%) and neurological (10.8%) — below MEDIUM avg
         # h487: Exclude hematological (5.0% holdout, 18.2% full-data, n=44)
-        ATC_COHERENT_EXCLUDED = {'metabolic', 'neurological', 'hematological'}
+        # h606: Exclude psychiatric (17.2% ± 5.8% holdout, n=13.4/seed, p=0.0006 < MEDIUM avg)
+        ATC_COHERENT_EXCLUDED = {'metabolic', 'neurological', 'hematological', 'psychiatric'}
         if drug_name and category and category not in ATC_COHERENT_EXCLUDED and self._is_atc_coherent(drug_name, category):
             # Only boost if there's some additional evidence
             if rank <= 10 and (mechanism_support or train_frequency >= 3):
