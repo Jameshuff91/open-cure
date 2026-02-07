@@ -13065,7 +13065,7 @@
       "title": "Bevacizumab Cross-Cancer Transferability Validation",
       "description": "Bevacizumab (anti-VEGF) was promoted by h633 (14 cancer_same_type_mech_rank10 preds). Unlike kinase inhibitors in CANCER_TARGETED_THERAPY, VEGF inhibition has broader applicability. Validate these predictions against clinical trial data.",
       "hypothesis": "Bevacizumab cancer_same_type predictions are clinically valid because VEGF-driven angiogenesis is common across solid tumors.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13075,8 +13075,8 @@
         "Check ClinicalTrials.gov for bevacizumab trials in predicted diseases",
         "Determine if any should be added to expanded GT"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED: Bevacizumab cross-cancer predictions are clinically well-supported.\n\nKEY RESULTS:\n- 23 total bevacizumab predictions: 14 HIGH, 1 MEDIUM, 7 LOW, 1 FILTER\n- 8/23 already in expanded GT (rectal, ovarian, cervical, fallopian tube, glioma, colorectal, cancer)\n- 15 novel predictions assessed:\n  - ESTABLISHED: 1 (lung cancer, FDA 2006 \u2014 CLEAR GT GAP)\n  - CLINICAL_EVIDENCE: 9 (larynx, uterine, esophageal, head&neck, melanoma, mesothelioma, ependymoma, gastric, leiomyosarcoma)\n  - PLAUSIBLE_NO_EVIDENCE: 5 (skin, testicular, thyroid, medulloblastoma, vulva)\n  - Literature-validated: 10/15 = 66.7%\n\nClinicalTrials.gov: 13 trials for lung cancer, 2 for uterine, 1 each for larynx/esophageal/gastric/head&neck, 4 for leiomyosarcoma.\n\nTIER ACCURACY: \n- HIGH predictions: 7 novel, of which 1 ESTABLISHED (lung) + 4 CLINICAL = 71.4% validated\n- LOW predictions: 7 novel, of which 5 CLINICAL = 71.4% validated (surprisingly high for LOW!)\n- This suggests bevacizumab LOW predictions are systematically underranked\n\nGT GAPS FILLED: \n- Bevacizumab \u2192 lung cancer (FDA 2006, HIGH prediction)\n- Bevacizumab \u2192 pleural mesothelioma (MAPS trial Phase III)\n- Bevacizumab \u2192 head and neck cancers (NCCN guideline option)\n- Ramucirumab \u2192 lung cancer (FDA 2014, LOW prediction)\n\nBROADER INSIGHT: Anti-VEGF drugs have broad cross-cancer applicability due to VEGF-driven angiogenesis being a common tumor hallmark. Our kNN correctly identifies this pattern. Bevacizumab's 14 HIGH predictions (cancer_same_type_mech_rank10) are well-calibrated \u2014 the drug genuinely transfers across solid tumors.",
+      "result_metric": "66.7% literature-validated (10/15 novel), 4 GT gaps filled",
       "category": "validation",
       "rationale": "Bevacizumab is FDA-approved for colorectal, lung, renal, cervical, ovarian, HCC. If promoted preds match these, they are GT gaps."
     },
@@ -15826,6 +15826,12 @@
       "hypothesis_id": "h666",
       "learning": "GT gap expansion for holdout-invisible predictions has zero holdout impact (as expected). The value is in GT quality improvement and full-data precision accuracy. For holdout-affecting GT gaps, need to target predictions that survive holdout freq threshold. Diminishing returns: most common antibiotic/antifungal GT gaps are now covered.",
       "implication": "Future GT gap efforts should focus on categories that affect holdout (non-ATC-coherent predictions)."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h636",
+      "learning": "Anti-VEGF drugs (bevacizumab, ramucirumab) have high cross-cancer transferability because VEGF angiogenesis is a pan-tumor hallmark. kNN correctly captures this. Bevacizumab LOW predictions (rank 5-30) are surprisingly well-validated (71.4% CLINICAL_EVIDENCE) suggesting systematic underranking. Key GT gaps: bevacizumab\u2192lung cancer (FDA 2006!), ramucirumab\u2192lung cancer (FDA 2014). Literature validation hits ClinicalTrials.gov better for cancer drugs than for antibiotics (13 lung trials vs 0 for most antibiotic pairs).",
+      "implication": "Cancer drug literature validation via ClinicalTrials.gov is more effective than antibiotic validation. Anti-VEGF LOW predictions may deserve reexamination for promotion."
     }
   ],
   "collaborations": [
