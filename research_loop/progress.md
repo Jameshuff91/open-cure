@@ -1,6 +1,39 @@
 # Research Loop Progress
 
-## Current Session: h700 - NLP Limitation-of-Use Boilerplate (2026-02-07)
+## Current Session: h703 - Drug DRKG Coverage Gap (2026-02-07)
+
+### h703: Drug DRKG Coverage Gap Analysis — VALIDATED (Meta-Analysis)
+
+**Methodology:** Ran predictions for all 497 diseases using correct API (disease names, not IDs). Tracked which of 1,158 GT drugs appear in predictions. Analyzed prediction rate by GT size, drug class, and disease characteristics.
+
+**Key findings:**
+1. **730 unique drugs** generate predictions across all diseases (7% of 10,474 DRKG compounds, 63% of 1,158 GT drugs)
+2. **478 GT drugs (41.3%) are invisible** — they never generate predictions for any disease
+3. **Critical mass threshold:**
+   - GT=1 disease: 31.8% prediction rate (386 drugs invisible)
+   - GT=2: 59.1%
+   - GT≥3: 83.6%
+   - GT≥6: 100%
+4. **Corticosteroid dominance:** Top 9 of 20 most-predicted drugs are CS. Prednisolone predicted for 143/469 diseases (30.5%)
+5. **Largest invisible drug classes:** Biologics (54 drugs), antihypertensives (20), antibiotics (17), antidiabetics (10)
+6. **28 diseases generate zero predictions** — mostly rare/specific: poisonings, rare cancers (mesothelioma, lip cancer), rare syndromes (Bardet-Biedl)
+7. **Non-predicting drugs have mean GT=1.3** vs 3.6 for predicting drugs
+
+**Actionable insight:** GT expansion for single-indication drugs is highest-ROI improvement. Adding just 1 indication to GT=1 drugs doubles prediction rate (31.8%→59.1%).
+
+### New Hypotheses Generated (3)
+- h705: GT expansion for single-indication drugs (highest-ROI GT expansion)
+- h706: Corticosteroid prediction concentration analysis
+- h707: Zero-prediction disease rescue via alternative methods
+
+### Recommended Next Steps
+1. **h705**: GT expansion for single-indication drugs (high impact, high effort)
+2. **h707**: Zero-prediction disease rescue (medium impact, medium effort)
+3. Continue with remaining low/medium-effort data quality hypotheses
+
+---
+
+## Previous Session: h700 - NLP Limitation-of-Use Boilerplate (2026-02-07)
 
 ### h700: NLP Limitation-of-Use Boilerplate — VALIDATED (Data Quality, Zero Metric Impact)
 

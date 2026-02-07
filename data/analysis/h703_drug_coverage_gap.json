@@ -1,0 +1,75 @@
+{
+  "hypothesis": "h703",
+  "title": "Drug DRKG Coverage Gap Analysis",
+  "summary": {
+    "total_drkg_compounds": 10474,
+    "compounds_with_embeddings": 10056,
+    "compounds_with_gt": 1158,
+    "compounds_generating_predictions": 730,
+    "gt_compounds_not_predicting": 478,
+    "diseases_total": 497,
+    "diseases_with_predictions": 469,
+    "diseases_with_zero_predictions": 28,
+    "total_predictions": 6958
+  },
+  "drug_prediction_rate_by_gt_size": {
+    "gt_1": {
+      "total": 566,
+      "predicting": 180,
+      "rate_pct": 31.8
+    },
+    "gt_2": {
+      "total": 242,
+      "predicting": 143,
+      "rate_pct": 59.1
+    },
+    "gt_3": {
+      "total": 122,
+      "predicting": 102,
+      "rate_pct": 83.6
+    },
+    "gt_4": {
+      "total": 79,
+      "predicting": 73,
+      "rate_pct": 92.4
+    },
+    "gt_5": {
+      "total": 52,
+      "predicting": 50,
+      "rate_pct": 96.2
+    },
+    "gt_6_10": {
+      "total": 70,
+      "predicting": 70,
+      "rate_pct": 100.0
+    },
+    "gt_11_20": {
+      "total": 17,
+      "predicting": 17,
+      "rate_pct": 100.0
+    },
+    "gt_21_plus": {
+      "total": 10,
+      "predicting": 10,
+      "rate_pct": 100.0
+    }
+  },
+  "non_predicting_drug_classes": {
+    "biologics": 54,
+    "antihypertensives": 20,
+    "antibiotics": 17,
+    "antidiabetics": 10,
+    "antiepileptics": 5,
+    "steroids": 4,
+    "antipsychotics": 4,
+    "unclassified": 399
+  },
+  "key_insights": [
+    "GT>=3 diseases is the critical mass for drug prediction (83.6%+ rate)",
+    "41.3% of GT drugs never generate predictions due to insular disease neighborhoods",
+    "Biologics are the largest invisible drug class (54 non-predicting drugs)",
+    "Corticosteroids dominate predictions (top 9 of 20 most-predicted drugs)",
+    "28 diseases generate zero predictions \u2014 mostly rare/specific conditions",
+    "kNN is structurally a 'shared treatment' engine \u2014 drugs must treat multiple diseases to transfer"
+  ]
+}
