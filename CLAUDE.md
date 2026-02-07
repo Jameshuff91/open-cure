@@ -147,12 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h633 update, 2026-02-06):**
+**Tier System (h634 update, 2026-02-06):**
 - GOLDEN: 71.6% ± 4.3% holdout (419 predictions)
-- HIGH: 54.5% ± 9.0% holdout (876 predictions)
-- MEDIUM: 36.8% ± 2.5% holdout (1972 predictions)
-- LOW: 14.2% ± 2.0% holdout (3622 predictions)
+- HIGH: 54.7% ± 9.3% holdout (~866 predictions)
+- MEDIUM: 38.1% ± 2.5% holdout (~1806 predictions)
+- LOW: 14.5% ± 1.9% holdout (~3788 predictions)
 - FILTER: 10.6% ± 1.3% holdout (7274 predictions)
+- **h634:** Cancer same-type without mechanism → LOW demotion. 166 preds demoted. 23.6% ± 7.7% holdout. MEDIUM +1.3pp (36.8→38.1%), recovers h633 dilution.
 - **h633:** Cancer same-type + mechanism + rank≤10 → HIGH promotion. Reopened CLOSED direction #4 via expanded GT re-evaluation. 181 preds promoted. 62.4% ± 10.7% holdout. HIGH +1.4pp, variance ↓3.2%. MEDIUM -1.9pp. Top drugs: doxorubicin, paclitaxel, bevacizumab.
 - **h630:** TransE MEDIUM → HIGH promotion: TransE + (mechanism OR rank≤5) non-CS. 115 preds promoted. transe_medium_promotion: 56.1% ± 11.9% holdout. HIGH +0.3pp, variance ↓1.3%. MEDIUM -0.8pp.
 - **h629:** MEDIUM quality stratification: TransE+mechanism+rank≤10 = 71.9% holdout (GOLDEN-level). +19.3pp TransE differential is GT-independent. Expanded GT resolves h439 blocker (34.7% → 56.5%).
@@ -187,17 +188,9 @@ vastai destroy instance <INSTANCE_ID>
 
 **h490:** CV standard MEDIUM demoted to LOW (2.0% holdout), ATC coherent CV also demoted (8.4%). cv_pathway_comprehensive (21.4%) and target_overlap (16.2%) preserved. MEDIUM +0.4pp. 114 predictions moved. PAH is 100% self-referential.
 
-**h479+h484+h495:** Safety audit: 10 harmful predictions → FILTER.
-  - h484: CCB cardiac audit (diltiazem cardiac arrest, verapamil CHF, diltiazem VT, nifedipine ACS)
-  - h495: confidence_filter.py NOT used by production_predictor.py (12/15 rules uncovered).
-    Flecainide/propafenone VT/MI (CAST trial), empagliflozin hypoglycemia (inverse indication)
-  - h479: Minocycline→urticaria (drug CAUSES urticaria). GOLDEN 64.1→64.7%
-  - h489 INVALIDATED: h487's 0% psych nomech was small-n artifact (n=1.3/seed)
-  - h494: Small-n holdout audit - no reversals needed, system robust
-
-**Prior confidence system work:** h487/h488 (incoherent+ATC demotion, MEDIUM +1.8pp), h485 (cancer cross-type blocked, MEDIUM +1.4pp), h483/h473/h480 (literature validation, 29 inverse indications found), h469 (parathyroid fix), h410 (3 substring bugs), h462 (4 categories demoted MEDIUM→LOW), h402 (83 rules audited, 1 bad), h393 (holdout validates tier system), h396/h395/h388/h387 (tier adjustments).
-
-**Key learnings:** (1) Min n≈30 for reliable holdout; sub-rule splits often hit n<5. (2) Full-data precision can mislead; always validate with holdout. (3) Most "overfitted" hierarchy rules are 1-disease groups (structural absence). (4) confidence_filter.py is a separate system from production_predictor.py.
+**Safety audits (h479-h495):** 10 harmful preds → FILTER. CCBs+HF, antiarrhythmics+VT (CAST), inverse indications.
+**Prior work:** h487/h488 demotions (+1.8pp), h485 cross-type (+1.4pp), h462 category demotions, h393 holdout validation.
+**Key learnings:** Min n≈30 for reliable holdout. Full-data inflated; use holdout only. confidence_filter.py separate from production_predictor.py.
 
 ### TransE Consilience (h405/h439/h440 - NEW 2026-02-06)
 

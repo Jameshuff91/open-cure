@@ -55,9 +55,24 @@ Reopened CLOSED direction #4. Original closure (h416/h447) used internal GT show
 4. Drug class stratification reveals: broad-spectrum cytotoxics (taxane, anthracycline, platinum) transfer across cancer types much better than alkylating agents or vinca alkaloids.
 
 ### Recommended Next Steps
-1. **h634**: Demote cancer_same_type without mechanism (18.3%) to LOW
-2. **h637**: Systematically check all 16 CLOSED directions for GT-dependency
-3. Regenerate deliverable with h633 updates
+### h634: Cancer Same-Type No-Mechanism Demotion — VALIDATED
+
+**Key Results:**
+- cancer_same_type_no_mechanism: 23.6% ± 7.7% holdout (n=23/seed) → demoted to LOW
+- 166 predictions demoted
+
+**Tier impact (cumulative h633+h634):**
+| Tier | Before | After h633+h634 | Net Delta |
+|------|--------|-----------------|-----------|
+| GOLDEN | 71.6% ± 4.3% | 71.6% ± 4.3% | 0 |
+| HIGH | 53.1% ± 12.2% | 54.7% ± 9.3% | +1.6pp |
+| MEDIUM | 38.7% ± 3.3% | 38.1% ± 2.5% | -0.6pp |
+| LOW | 14.2% ± 2.0% | 14.5% ± 1.9% | +0.3pp |
+
+### Recommended Next Steps
+1. **h637**: Systematically check all 16 CLOSED directions for GT-dependency
+2. Regenerate deliverable with h633+h634 updates
+3. **h635**: Investigate cytotoxic drug class as quality signal
 
 ---
 

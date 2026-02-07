@@ -1,0 +1,46 @@
+======================================================================
+h634: Cancer Same-Type No-Mechanism Demotion Analysis
+======================================================================
+
+=== Phase 1: Production Predictions ===
+Remaining cancer_same_type MEDIUM: 395
+  With mechanism: 229
+  Without mechanism: 166
+
+  No-mechanism rank distribution:
+    Rank 1-5: 20
+    Rank 6-10: 34
+    Rank 11-15: 24
+    Rank 16-20: 31
+
+  No-mechanism top drugs:
+    Bleomycin: 14
+    Methotrexate: 10
+    Cisplatin: 9
+    Fludarabine: 6
+    Bendamustine: 6
+    Lenalidomide: 6
+    Cladribine: 6
+    Zolbetuximab: 4
+    Gemcitabine: 4
+    Oxaliplatin: 4
+
+=== Phase 2: Holdout Confirmation ===
+
+Group                                          Holdout     ±std   N/seed
+-------------------------------------------------------------------------
+cancer_same_type_mech                            33.8%    12.7%    44.6
+cancer_same_type_nomech                          17.9%     4.2%    29.0 *** BELOW MEDIUM ***
+cancer_same_type_nomech_rank11_20                13.8%    10.9%    20.4 *** BELOW MEDIUM ***
+cancer_same_type_nomech_rank1_10                 31.3%    16.1%     8.6
+
+=== Phase 3: Tier Impact Simulation ===
+No-mechanism holdout: 17.9%
+Current MEDIUM: 36.8% (1972 preds)
+Current LOW: 14.2% (3622 preds)
+
+If demotion applied (166 preds):
+  MEDIUM: 36.8% → ~38.5% (1806 preds)
+  LOW: 14.2% → ~14.4% (3788 preds)
+
+Results saved to data/analysis/h634_cancer_nomech_demotion.json

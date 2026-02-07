@@ -3037,6 +3037,10 @@ class DrugRepurposingPredictor:
                 # Non-circular: mechanism is drug-target/disease-gene overlap, rank is kNN score.
                 if mechanism_support and rank <= 10:
                     return ConfidenceTier.HIGH, True, 'cancer_same_type_mech_rank10'
+                # h634: cancer_same_type without mechanism = 17.9% ± 4.2% holdout (below MEDIUM)
+                # Demote to LOW. With mechanism but rank>10 stays MEDIUM (33.8%).
+                if not mechanism_support:
+                    return ConfidenceTier.LOW, False, 'cancer_same_type_no_mechanism'
                 # h396: Demoted from GOLDEN to MEDIUM (24.5% full, 19.2% holdout)
                 # cancer_same_type was 57% of GOLDEN predictions, dragging GOLDEN below HIGH
                 return ConfidenceTier.MEDIUM, True, 'cancer_same_type'

@@ -1,0 +1,137 @@
+======================================================================
+h637: Systematic CLOSED Direction Re-evaluation
+======================================================================
+Expanded GT: 59584 pairs
+Diseases: 455
+
+  Processing seed 42...
+
+  Processing seed 123...
+
+  Processing seed 456...
+
+  Processing seed 789...
+
+  Processing seed 2024...
+
+======================================================================
+TIER OVERVIEW (5-seed holdout)
+======================================================================
+  GOLDEN      71.6% ±  4.2% (n=46/seed)
+  HIGH        54.7% ±  9.3% (n=154/seed)
+  MEDIUM      38.1% ±  2.5% (n=264/seed)
+  LOW         14.5% ±  2.0% (n=889/seed)
+  FILTER      10.6% ±  1.3% (n=1372/seed)
+
+======================================================================
+CLOSED #8: incoherent_demotion (post h618/h625/h633/h634)
+======================================================================
+
+  OVERALL: 59.2% ± 7.3% (n=58.8/seed)
+
+  By disease category:
+    autoimmune                    70.4% ± 35.9% (n=20.0/seed)
+    cardiovascular                23.3% ± 20.0% (n=4.6/seed)
+    dermatological                30.7% ± 40.4% (n=4.0/seed)
+    endocrine                      0.0% ±  0.0% (n=0.2/seed)
+    gastrointestinal              13.7% ± 22.2% (n=5.8/seed)
+    hematological                  0.0% ±  0.0% (n=0.4/seed)
+    immunological                  3.3% ±  6.7% (n=1.2/seed)
+    infectious                    53.3% ± 15.9% (n=10.4/seed)
+    musculoskeletal               20.0% ± 40.0% (n=1.2/seed)
+    neurological                  20.0% ± 40.0% (n=0.2/seed)
+    ophthalmic                    25.0% ± 31.6% (n=1.4/seed)
+    other                          0.0% ±  0.0% (n=1.6/seed)
+    renal                         52.5% ± 42.9% (n=4.8/seed)
+    reproductive                   0.0% ±  0.0% (n=0.2/seed)
+    respiratory                   42.7% ± 26.1% (n=2.8/seed)
+
+  CS:     61.3% ± 6.7% (n=49.8/seed)
+  Non-CS: 46.1% ± 11.5% (n=9.0/seed)
+  CS fraction: 249/294 = 84.7%
+
+  Non-CS incoherent_demotion drugs (all seeds):
+    Levofloxacin                    33.3% (4/12) cats: autoimmune, gastrointestinal, infectious, musculoskeletal, ophthalmic, renal
+    Doxycycline                     14.3% (1/7) cats: autoimmune, gastrointestinal, immunological, infectious
+    Minocycline                     83.3% (5/6) cats: dermatological, gastrointestinal, immunological, infectious
+    Corticotropin                   40.0% (2/5) cats: autoimmune
+    Methotrexate                    80.0% (4/5) cats: autoimmune, dermatological, gastrointestinal, musculoskeletal
+    Azithromycin                    50.0% (1/2) cats: ophthalmic, respiratory
+    Lidocaine                      100.0% (2/2) cats: dermatological, neurological
+    Azathioprine                   100.0% (2/2) cats: autoimmune
+    Rituximab                        0.0% (0/2) cats: autoimmune
+    Adalimumab                       0.0% (0/1) cats: gastrointestinal
+    Erythromycin                     0.0% (0/1) cats: immunological
+
+======================================================================
+LOW TIER BY RULE (non-CS, 5-seed holdout)
+======================================================================
+  default                                     20.1% ±   4.5% (n=266/seed)
+  cancer                                      13.9% ±   2.3% (n=75/seed)
+  antimicrobial_pathogen_mismatch              2.6% ±   2.3% (n=69/seed)
+  cancer_targeted_therapy                      8.7% ±   4.6% (n=69/seed)
+  local_anesthetic_procedural                 23.8% ±   5.9% (n=52/seed)
+  gastrointestinal_medium_demotion             5.3% ±   1.5% (n=47/seed)
+  default_no_mech_high_rank                   17.6% ±   9.8% (n=35/seed)
+  metabolic_medium_demotion                    5.6% ±   2.5% (n=32/seed)
+  hematological_medium_demotion                5.3% ±   3.9% (n=31/seed)
+  neurological_medium_demotion                 5.6% ±   4.5% (n=28/seed)
+  cancer_same_type_no_mechanism               23.6% ±   7.7% (n=23/seed)
+  cardiovascular_medium_demotion               2.3% ±   3.0% (n=22/seed)
+  immunological_medium_demotion                4.9% ±   6.6% (n=10/seed)
+  mechanism_specific                           5.7% ±  11.4% (n=10/seed)
+  reproductive_medium_demotion                 0.6% ±   1.2% (n=6/seed)
+  broad_class_isolated                        21.0% ±  22.0% (n=6/seed)
+  incoherent_demotion                         48.6% ±  10.5% (n=5/seed) *** PROMOTE?
+  metabolic                                    6.7% ±  13.3% (n=2/seed)
+
+======================================================================
+MEDIUM TIER BY RULE (non-CS, 5-seed holdout)
+======================================================================
+  default                                     36.9% ±   5.3% (n=84/seed)
+  cv_established_drug_rescue                  30.6% ±  21.0% (n=43/seed)
+  target_overlap_promotion                    49.2% ±   5.9% (n=35/seed)
+  cancer_same_type                            31.2% ±   8.1% (n=34/seed)
+  cv_pathway_comprehensive                    31.8% ±  17.4% (n=12/seed)
+  local_anesthetic_procedural                 50.5% ±  11.0% (n=11/seed) *** PROMOTE TO HIGH?
+  cardiovascular                              36.4% ±  34.5% (n=7/seed)
+  metabolic_medium_demotion                   21.2% ±  20.0% (n=7/seed)
+  metabolic                                    0.0% ±   0.0% (n=2/seed)
+  mechanism_specific                          13.3% ±  26.7% (n=1/seed)
+  infectious_hierarchy_pneumonia               3.3% ±   6.7% (n=1/seed)
+  highly_repurposable                          0.0% ±   0.0% (n=1/seed)
+
+--- Hematological MEDIUM drugs (all seeds) ---
+  Hydrocortisone                       42.9% (3/7) [CS]
+  Prednisolone                         85.7% (6/7) [CS]
+  Methylprednisolone                   71.4% (5/7) [CS]
+  Dexamethasone                        42.9% (3/7) [CS]
+  Betamethasone                        50.0% (3/6) [CS]
+  Triamcinolone                        33.3% (2/6) [CS]
+  Prednisone                           83.3% (5/6) [CS]
+  Cortisone                            16.7% (1/6) [CS]
+
+======================================================================
+ACTIONABLE SUMMARY
+======================================================================
+
+Evaluation of 4 POSSIBLY GT-dependent CLOSED directions:
+
+#5 (SOC class expansion): REMAINS CLOSED
+  - h516 found 0% precision for all 7 proposed classes
+  - Even with expanded GT, these drugs aren't predicted for the right diseases
+  - Structural mismatch between kNN predictions and SOC class coverage
+
+#8 (LOW→MEDIUM promotion via incoherent_demotion): RE-EVALUATE
+  - Non-CS incoherent_demotion: check stats above
+  - Key question: are there specific non-CS drugs being unfairly demoted?
+
+#9 (MEDIUM demotion category-level): CHECK sub-rules
+  - Look for MEDIUM sub-rules below 20% (demotable) or above 55% (promotable)
+
+#14 (Non-CV demotion rescue): REMAINS CLOSED
+  - h622 already used expanded GT and found no drug-class subsets
+  - The CV case was genuinely special (pathway-comprehensive drugs)
+
+NEW FINDING: Check if hematological MEDIUM should be promoted to HIGH
+

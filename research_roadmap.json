@@ -13025,7 +13025,7 @@
       "title": "Remaining Cancer Same-Type MEDIUM Quality: Identify Demotable Subsets",
       "description": "After h633 promotion, remaining cancer_same_type MEDIUM has 27.5% holdout (below MEDIUM 36.8%). Are there identifiable subsets that should be demoted to LOW? Key candidates: no-mechanism predictions (18.3% holdout), rank 11-20 (29.1%), vinca_alkaloid/alkylating drug classes.",
       "hypothesis": "Cancer same-type predictions without mechanism support AND rank>10 have LOW-level precision (<20%) and should be demoted.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -13035,8 +13035,8 @@
         "Check drug class specifics for worst performers",
         "Run h393 evaluator if demotion is implemented"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED: Cancer same-type without mechanism support has 23.6% \u00b1 7.7% holdout (h393 evaluator, expanded GT) \u2014 below MEDIUM threshold (38.1%). Demoted to LOW.\n\nProduction impact: 166 predictions demoted cancer_same_type \u2192 cancer_same_type_no_mechanism (LOW).\n\nTier impact (combined with h633):\n- HIGH: 53.1% \u2192 54.7% (+1.6pp net)\n- MEDIUM: 38.7% \u2192 38.1% (-0.6pp net)\n- LOW: 14.2% \u2192 14.5% (+0.3pp)\n\nKey drug classes in no-mechanism group: bleomycin (14), methotrexate (10), cisplatin (9).\n\nRemaining cancer_same_type MEDIUM (mechanism + rank>10): 229 preds, 31.2% holdout. Below MEDIUM average but above LOW \u2014 kept as MEDIUM given genuine biological signal from mechanism.",
+      "result_metric": "cancer_same_type_no_mechanism: 23.6% holdout \u2192 LOW. MEDIUM +1.3pp (36.8\u219238.1%)",
       "category": "tier-optimization",
       "rationale": "h633 created a quality split: promoted preds at 62.4% vs residual at 27.5%. The residual drags MEDIUM down 1.9pp. Targeted demotion could recover some of this."
     },
@@ -13085,7 +13085,7 @@
       "title": "Systematic CLOSED Direction Re-evaluation with Expanded GT",
       "description": "h633 reopened CLOSED direction #4 (cancer_same_type\u2192HIGH) by using expanded GT. Which other CLOSED directions were closed based on internal GT evaluation and might reopen? Candidates: #1 (rank>20, 7 failures), #6 (kNN-derived metrics), #8 (LOW\u2192MEDIUM promotion).",
       "hypothesis": "At least one other CLOSED direction reopens when re-evaluated with expanded GT (59,584 pairs vs 3,070).",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -13095,10 +13095,106 @@
         "Re-evaluate top 3 candidates with expanded GT",
         "Document which remain closed and why"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "Systematic review of all 16 CLOSED directions for GT-dependency.\n\nCLASSIFICATION:\n- 12/16 NOT GT-dependent (structural, statistical, or biological closures)\n- 1/16 ALREADY REOPENED (#4 cancer same-type, h633)\n- 4/16 POSSIBLY GT-dependent (#5 SOC expansion, #8 LOW\u2192MEDIUM, #9 MEDIUM demotion, #14 non-CV rescue)\n\nRE-EVALUATION of 4 candidates (all were already evaluated with expanded GT):\n- #5 (SOC expansion): REMAINS CLOSED. h516 used full-data but 0% for all 7 classes is structural.\n- #8 (LOW\u2192MEDIUM incoherent_demotion): REMAINS CLOSED. Non-CS holdout: 48.6% \u00b1 10.5% but n=5/seed (marginal). Specific drugs (Minocycline 83%, Methotrexate 80%) are genuinely multi-system but too few for reliable promotion.\n- #9 (MEDIUM demotion): REMAINS CLOSED. Sub-rule analysis shows no new demotable rules. All sub-rules at expected precision.\n- #14 (Non-CV rescue): REMAINS CLOSED. h622 already used expanded GT. No drug-class subsets found.\n\nNEW FINDINGS (not closures but observations):\n1. MEDIUM target_overlap_promotion (non-CS): 49.2% \u00b1 5.9% (n=35/seed) \u2014 near HIGH but below threshold\n2. MEDIUM target_overlap psychiatric: 53.3% \u00b1 8.8% (n=18.2/seed) \u2014 SSRIs for anxiety, genuine but small n\n3. MEDIUM LA procedural: Lidocaine 70.0% \u00b1 18.7% (n=4.6/seed) vs Bupivacaine 36.9% (n=6.6/seed)\n4. MEDIUM hematological: 100% corticosteroids \u2014 no non-CS predictions to analyze\n5. LOW incoherent_demotion non-CS: 48.6% but n=5/seed \u2014 too small for action\n\nCONCLUSION: h633 was a special case. The cancer same-type direction was uniquely suited to reopening because:\n(a) The original closure used INTERNAL GT (h416/h447) \u2014 wrong GT\n(b) Cancer has abundant expanded GT coverage\n(c) The mechanism+rank signal was strong enough to overcome noise\n\nNo other CLOSED direction meets all three conditions. The expanded GT lesson from h629 applies selectively, not broadly.",
+      "result_metric": "No additional reopened directions. 4/16 candidates evaluated; all remain closed.",
       "category": "meta-analysis",
       "rationale": "h629 lesson: expanded GT preferentially lifts signal-rich predictions. CLOSED directions that failed by small margins with internal GT may succeed with expanded GT."
+    },
+    {
+      "id": "h638",
+      "title": "MEDIUM Target Overlap \u2192 HIGH Promotion for High-Signal Subset",
+      "description": "h637 found target_overlap_promotion MEDIUM (non-CS) = 49.2% \u00b1 5.9% (n=35/seed). Psychiatric subset: 53.3% \u00b1 8.8% (n=18.2/seed). These are near-HIGH quality. Can we identify a signal-enriched subset (TransE + mechanism + rank) within target_overlap that crosses the HIGH 55% threshold? Current data shows ALL target_overlap are Mech=Y+Rank>10+TransE=N (47.4%, n=30.8/seed). Adding TransE or better rank could identify a promotable subset.",
+      "hypothesis": "Target_overlap predictions with additional quality signals (TransE consilience OR rank<=10) have holdout precision >55%, qualifying for HIGH promotion.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Stratify target_overlap_promotion MEDIUM by TransE + rank combination",
+        "Check if any subset exceeds 55% holdout with n>=10/seed",
+        "If yes, implement promotion rule",
+        "Verify no dilution to HIGH tier"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h639",
+      "title": "Multi-System Drug Rescue: Methotrexate/Minocycline Incoherent Demotion Override",
+      "description": "h637 found non-CS incoherent_demotion has 48.6% \u00b1 10.5% holdout but n=5/seed. Key drugs: Minocycline (83%, n=1.2/seed), Methotrexate (80%, n=1/seed), Azathioprine (100%, n=0.4/seed). These are multi-system drugs (DMARDs, immunomodulators) that genuinely cross disease categories. Could we create an explicit 'multi-system drug' list that overrides incoherent demotion for these specific drugs?",
+      "hypothesis": "A curated list of 5-10 multi-system drugs (methotrexate, minocycline, azathioprine, etc.) can be rescued from incoherent_demotion LOW\u2192MEDIUM with holdout >30%.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Identify all non-CS drugs in incoherent_demotion with >0 hits",
+        "Research each drug's multi-system therapeutic profile",
+        "Create MULTI_SYSTEM_DRUGS list with evidence-based cross-domain validity",
+        "Implement rescue: if drug in MULTI_SYSTEM_DRUGS and incoherent_demotion \u2192 MEDIUM",
+        "Validate holdout precision of rescued predictions"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h640",
+      "title": "Lidocaine MEDIUM \u2192 HIGH Promotion for Non-Procedural Categories",
+      "description": "h637 found lidocaine in MEDIUM LA procedural has 70.0% \u00b1 18.7% holdout (n=4.6/seed). By category: autoimmune 72.7% (8/11), respiratory 100% (5/5). Lidocaine has genuine therapeutic uses beyond local anesthesia: IV lidocaine for chronic pain, nebulized for refractory asthma, topical for neuropathic pain. Could promote lidocaine MEDIUM for specific categories to HIGH.",
+      "hypothesis": "Lidocaine MEDIUM predictions for autoimmune and respiratory diseases have holdout >55%, qualifying for HIGH promotion.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Verify lidocaine respiratory and autoimmune holdout with full h393 evaluator",
+        "Check which specific diseases (autoimmune arthritis, asthma, etc.)",
+        "If holdout >55% with n>=5, implement lidocaine-specific promotion",
+        "Assess impact on MEDIUM and HIGH tiers"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h641",
+      "title": "CV Established Drug Rescue Precision: Why Is It Only 30.6%?",
+      "description": "h637 found cv_established_drug_rescue MEDIUM = 30.6% \u00b1 21.0% (n=43.4/seed) for non-CS \u2014 below MEDIUM average (38.1%). This was implemented in h618 based on 30.9% \u00b1 20.9% holdout. The high variance (\u00b121%) suggests some drug classes perform well and others poorly. Should we tighten the rescue criteria or split into sub-classes?",
+      "hypothesis": "CV established drug rescue contains a sub-population below LOW threshold (15%) that should be re-demoted, and a sub-population above MEDIUM that could be promoted.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Stratify cv_established_drug_rescue by drug class (anticoagulants, CCBs, etc.)",
+        "Identify drug classes below 20% holdout for re-demotion",
+        "Identify drug classes above 45% holdout for annotation",
+        "Implement tightened rescue if significant drug classes underperform"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h642",
+      "title": "MEDIUM Default Sub-Stratification: Mechanism \u00d7 Rank \u00d7 TransE Quality Tiers",
+      "description": "h637 confirmed MEDIUM 'default' rule (non-CS) = 36.9% \u00b1 5.3% (n=84/seed) is the largest MEDIUM sub-rule. h629/h631 already showed MEDIUM quality quartiles (Q1 60-72% to Q4 ~31%). But those quartiles are annotations, not tier assignments. Can we split MEDIUM default into sub-tiers and promote the top quartile (Q1: TransE+mechanism+rank<=10) to HIGH?",
+      "hypothesis": "MEDIUM default Q1 (TransE + mechanism OR rank<=5) has holdout >55% and n>=10/seed, qualifying for HIGH promotion.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Extract MEDIUM default predictions with Q1 signals",
+        "Compute holdout precision for Q1 subset",
+        "If >55%, implement promotion to HIGH",
+        "Check overlap with existing TransE promotions (h630)"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
     }
   ],
   "completed": [
