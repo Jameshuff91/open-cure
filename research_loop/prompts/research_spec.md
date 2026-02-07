@@ -21,6 +21,29 @@ Improve drug repurposing predictions using the DRKG knowledge graph and machine 
 - `src/external_validation.py` - Clinical trials & PubMed validation
 - `src/confounding_detector.py` - Detects false positive patterns
 
+### Literature Mining Tools
+- `src/literature_miner.py` - Automated PubMed + ClinicalTrials.gov mining with optional Claude Haiku abstract classification
+- `scripts/run_literature_mining.py` - CLI runner for batch literature mining
+- `scripts/validate_literature_evidence.py` - Holdout validation of literature evidence levels
+- Cache: `data/validation/literature_mining_cache.json` (reuses existing `validation_cache.json` with 1,052 entries)
+
+**Usage for hypothesis validation:**
+```bash
+# Mine literature for NOVEL predictions in a tier
+python scripts/run_literature_mining.py --tier MEDIUM --status NOVEL --top 200
+
+# Mine with LLM abstract classification (detects adverse effects)
+python scripts/run_literature_mining.py --tier HIGH --status NOVEL --use-llm
+
+# View cached results summary
+python scripts/run_literature_mining.py --summary
+
+# Validate evidence levels against holdout precision
+python scripts/validate_literature_evidence.py --tier MEDIUM
+```
+
+**When to use:** Run literature mining when investigating GT gaps, validating novel predictions, or detecting adverse effects. Evidence levels (STRONG/MODERATE/WEAK/ADVERSE/NO_EVIDENCE) are added to the deliverable via `literature_evidence_level` and `literature_evidence_score` columns.
+
 ### Data
 - `data/reference/everycure/indicationList.xlsx` - Ground truth
 - `data/reference/disease_ontology_mapping.json` - DRKG disease mappings

@@ -14790,6 +14790,28 @@
       "findings": "INVALIDATED. No sub-class of cancer targeted therapy reaches MEDIUM on holdout. Checkpoint inhibitors: 10.1% \u00b1 9.4% (n=24.2/seed). Kinase inhibitors: 5.9% \u00b1 4.3% (n=53.2/seed). Anti-target mAbs: 2.7% \u00b1 3.3% (n=10.4/seed). PARP inhibitors: 0.0% (n=8.8/seed). R1-10+mech checkpoint subset: 31.7% \u00b1 36.7% but n=6.2/seed (unreliable). Even pembrolizumab (pan-cancer approval) doesn't transfer via kNN to holdout cancer diseases. The biological explanation: kNN neighbors share disease embedding proximity, not biomarker profiles. Checkpoint inhibitor efficacy depends on MSI-high/TMB-high/PD-L1 expression status, which is NOT captured in DRKG disease embeddings. All targeted therapy sub-classes are correctly demoted to LOW.",
       "result_metric": "Checkpoint=10.1%\u00b19.4%, Kinase=5.9%\u00b14.3%, mAb=2.7%, PARP=0% \u2014 all LOW",
       "category": "precision-improvement"
+    },
+    {
+      "id": "h731",
+      "title": "Run automated literature mining on GOLDEN/HIGH/MEDIUM NOVEL predictions",
+      "category": "validation",
+      "rationale": "Automated literature mining pipeline now available (src/literature_miner.py). Reuses 1,052 cached validation entries. Will generate evidence scores for all high-tier NOVEL predictions, detect GT gaps (strong evidence for pairs not in GT), and flag adverse effects. Manual validation (h658/h636/h668) found 54 GT gaps and +3.2pp HIGH \u2014 automation should find more.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Step 1: Run literature mining on all GOLDEN+HIGH NOVEL predictions: python scripts/run_literature_mining.py --tier GOLDEN,HIGH --status NOVEL",
+        "Step 2: Run literature mining on top 500 MEDIUM NOVEL by composite score: python scripts/run_literature_mining.py --tier MEDIUM --status NOVEL --top 500",
+        "Step 3: Run holdout validation: python scripts/validate_literature_evidence.py",
+        "Step 4: Review STRONG_EVIDENCE predictions not in GT \u2014 these are GT gap candidates. Add confirmed pairs to expanded_ground_truth.json",
+        "Step 5: Review ADVERSE_EFFECT detections \u2014 add confirmed pairs to INVERSE_INDICATION_PAIRS in production_predictor.py",
+        "Step 6: If evidence level independently predicts holdout precision, consider using it for tier adjustments",
+        "Success criteria: >30 GT gap candidates identified, >5 new adverse effects detected, evidence level correlates with holdout precision"
+      ],
+      "dependencies": [],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
