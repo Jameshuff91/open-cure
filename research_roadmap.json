@@ -13182,7 +13182,7 @@
       "title": "MEDIUM Default Sub-Stratification: Mechanism \u00d7 Rank \u00d7 TransE Quality Tiers",
       "description": "h637 confirmed MEDIUM 'default' rule (non-CS) = 36.9% \u00b1 5.3% (n=84/seed) is the largest MEDIUM sub-rule. h629/h631 already showed MEDIUM quality quartiles (Q1 60-72% to Q4 ~31%). But those quartiles are annotations, not tier assignments. Can we split MEDIUM default into sub-tiers and promote the top quartile (Q1: TransE+mechanism+rank<=10) to HIGH?",
       "hypothesis": "MEDIUM default Q1 (TransE + mechanism OR rank<=5) has holdout >55% and n>=10/seed, qualifying for HIGH promotion.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13192,9 +13192,47 @@
         "If >55%, implement promotion to HIGH",
         "Check overlap with existing TransE promotions (h630)"
       ],
+      "findings": "MEDIUM Default Sub-Stratification: Key finding is that ALL remaining non-CS MEDIUM predictions are rank 16-20.\n\nMEDIUM COMPOSITION (non-CS, after all promotions):\n1. Mech+NoTransE+Rank16-20: 39.7% (n=124/seed) \u2014 at MEDIUM average\n2. NoMech+NoTransE+Rank16-20: 33.6% (n=145/seed) \u2014 below MEDIUM avg but 2.3x above LOW\n3. TransE+NoMech+Rank>5: 24.4% (n=3/seed) \u2014 tiny, unreliable\n\nMech+Rank<=10 bucket is EMPTY \u2014 all such predictions already promoted by h630, cancer rules, or hierarchy.\n\nSUB-RULE \u00d7 MECHANISM analysis revealed:\n- cv_established_drug_rescue NoMech: 22.5% \u00b1 14.7% (n=29/seed) \u2014 weakest MEDIUM sub-population\n- cv_established_drug_rescue Mech: 40.4% \u00b1 20.5% (n=14/seed) \u2014 at MEDIUM average\n- default NoMech: 34.4% (n=65/seed) \u2014 below avg but not demotable (still 2.3x above LOW)\n- target_overlap_promotion Mech: 47.4% (n=31/seed) \u2014 near-HIGH quality\n- atc_coherent_infectious NoMech: 42.4% (n=34/seed) \u2014 above MEDIUM avg\n\nCONCLUSION: No clear-cut HIGH promotion from MEDIUM default (all rank 16-20).\nCV rescue NoMech (22.5%) is borderline \u2014 3/5 seeds show LOW-level precision.\nWould need mechanism-gated CV rescue to tighten, but impact uncertain.",
+      "result_metric": "No MEDIUM\u2192HIGH promotion found. CV rescue NoMech 22.5% is borderline.",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h643",
+      "title": "CV Rescue Mechanism-Gating: Require Mechanism for CV Drug Rescue",
+      "description": "h642 found cv_established_drug_rescue without mechanism: 22.5% \u00b1 14.7% (n=29/seed) \u2014 borderline LOW. With mechanism: 40.4% \u00b1 20.5% (n=14/seed). 3/5 seeds show LOW-level precision for no-mech CV rescue. The no-mech drugs are mostly newer anticoagulants (DOACs) and PCSK9 inhibitors whose KG mechanism paths are incomplete. Requiring mechanism would tighten CV rescue but at cost of 29 preds/seed.",
+      "hypothesis": "Requiring mechanism support for cv_established_drug_rescue will improve MEDIUM precision by removing LOW-performing no-mechanism CV drugs.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Implement mechanism gate in cv_established_drug_rescue",
+        "Run h393 evaluator to measure impact",
+        "Verify MEDIUM improvement and LOW not significantly diluted",
+        "Check if any genuine HIGH-quality CV drugs are lost"
+      ],
       "findings": "",
       "result_metric": "",
       "category": "precision-improvement"
+    },
+    {
+      "id": "h644",
+      "title": "ATC Coherent Infectious Quality: Why 42.4% Without Mechanism?",
+      "description": "h642 found atc_coherent_infectious NoMech = 42.4% (n=34/seed) \u2014 above MEDIUM average despite no mechanism support. This is surprising because infectious disease drugs typically need mechanism for precision. What drugs are driving this? Are they genuinely good predictions or artifact?",
+      "hypothesis": "ATC coherent infectious no-mechanism predictions are driven by broad-spectrum antibiotics that treat many infectious diseases, inflating precision through high GT coverage.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "List top drugs in atc_coherent_infectious NoMech",
+        "Check if dominated by broad-spectrum antibiotics",
+        "Verify these aren't self-referential artifacts",
+        "Determine if this sub-rule should be annotated differently"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "error-analysis"
     }
   ],
   "completed": [
