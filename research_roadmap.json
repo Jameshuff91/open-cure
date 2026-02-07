@@ -14442,7 +14442,7 @@
     {
       "id": "h711",
       "title": "DRKG Disease Coverage Gap Quantification: Which EC Diseases Are Missing from DRKG?",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14454,7 +14454,56 @@
         "Determine if DRKG update or external KG supplementation would help"
       ],
       "created": "2026-02-07",
-      "parent_hypothesis": "h707"
+      "parent_hypothesis": "h707",
+      "findings": "DRKG disease coverage gap is SMALL: 24/497 predictor diseases (4.8%) missing, only 46/3055 internal GT pairs affected (1.5%). 22 diseases completely absent from DRKG (mostly newer MESH terms post-2016), 1 in raw DRKG but no embedding. 15 could be recovered via parent disease transfer (36 GT pairs). The REAL data gap is in EC disease NAME MATCHING: 56.9% of EC disease names fail to map to MESH IDs, losing 50.9% of EC drug-disease pairs (5199/10224). Most unmapped names are synonyms of already-mapped diseases (e.g. 'migraine' vs 'migraine disorders'). Better name matching could potentially double internal GT from 3055 to ~6000 pairs.",
+      "result_metric": "4.8% DRKG gap (small) vs 56.9% name matching gap (large)"
+    },
+    {
+      "id": "h712",
+      "title": "Disease Name Synonym Expansion: Add Top 50 Common Disease Names to DISEASE_SYNONYMS",
+      "description": "h711 found that 56.9% of EC disease names fail to map to MESH IDs, losing 50.9% of EC pairs. Many are simple synonyms: 'migraine' (16 GT drugs), 'emphysema' (24 GT), 'nausea' (21 GT), 'depression' (26 GT), 'insomnia' (18 GT). These all have MESH IDs already in DRKG but the DiseaseMatcher doesn't recognize the synonym. Adding the top 50 unmapped disease names to DISEASE_SYNONYMS would be a quick win for internal GT expansion.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Identify top 50 unmapped EC disease names by GT drug count",
+        "For each, find the correct MESH ID and verify it's in DRKG",
+        "Add to DISEASE_SYNONYMS or hardcoded mappings in disease_name_matcher.py",
+        "Regenerate GT cache and measure internal GT expansion",
+        "Run holdout validation to check tier impact",
+        "CAUTION: Some 'diseases' are symptoms (nausea, vomiting, pain) - assess if appropriate for predictions"
+      ]
+    },
+    {
+      "id": "h713",
+      "title": "Symptom vs Disease Filter: Should Symptoms Like Nausea/Vomiting/Pain Have Drug Predictions?",
+      "description": "h711 found many top unmapped EC entries are symptoms rather than diseases: nausea (21 GT), vomiting (21 GT), acute pain (17 GT), depression (26 GT). Drug repurposing for symptoms raises different considerations than for diseases. Should we: (a) map them and treat them like diseases, (b) map them but annotate as 'symptom', (c) exclude them? The predictor currently generates predictions only for MESH-mapped diseases, so adding symptoms would expand the prediction space.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Categorize top 30 unmapped EC entries as disease vs symptom vs syndrome",
+        "Check whether symptoms have meaningful DRKG graph structure for kNN",
+        "Assess whether symptom predictions would add value or noise",
+        "Recommend inclusion/exclusion policy"
+      ]
+    },
+    {
+      "id": "h714",
+      "title": "Internal GT Doubling Impact Assessment: How Would 2x GT Affect Tier Precision?",
+      "description": "h711 showed that better disease name matching could double internal GT from 3055 to ~6000 pairs. But CRITICAL question: would more internal GT help or hurt? The expanded_ground_truth.json already has ~57K pairs and is used for holdout evaluation. Internal GT is only used for: (1) frequency counting in kNN (higher freq = more likely MEDIUM+), (2) hierarchy matching (needs GT to identify base diseases), (3) some sub-reason assignments. More internal GT means more drugs pass freq>=5 threshold, potentially diluting MEDIUM tier. Or it could improve coverage of genuine GT gaps.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Simulate what happens to frequency distribution if internal GT doubles",
+        "Check: how many more predictions would pass freq>=5 threshold?",
+        "Estimate impact on MEDIUM tier size and precision",
+        "Determine if expanded GT would also need updating in parallel"
+      ]
     }
   ],
   "completed": [
@@ -16765,6 +16814,12 @@
       "hypothesis_id": "h704",
       "learning": "DPP-4i and GLP-1 drugs don't appear in pancreatitis predictions despite having DRKG embeddings \u2014 their kNN neighborhoods are diabetes-centric, not GI-centric. Only 1 pancreatitis-causing drug (azathioprine) was predicted for chronic pancreatitis. Corticosteroids and everolimus were already handled by prior inverse indication work.",
       "implication": "Drug-induced pancreatitis is well-covered by existing inverse indications (h476/h486) plus the azathioprine addition. kNN self-selects against most problematic drug-disease pairs because they inhabit different embedding neighborhoods."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h711",
+      "learning": "DRKG disease coverage is 95.2% (453/476 predictor diseases have embeddings). The real data gap is disease NAME MATCHING: DiseaseMatcher maps only 43.1% of EC disease names (1159/2688). This loses 50.9% of EC drug-disease pairs. Most failures are simple synonyms (migraine, emphysema, nausea, depression) that have MESH IDs in DRKG but aren't in the matcher. Better matching could double internal GT.",
+      "implication": "h407 (Comprehensive ID Mapping) and h712 (Synonym Expansion) are highest-ROI. DRKG updating is NOT a priority."
     }
   ],
   "collaborations": [

@@ -1,0 +1,49 @@
+{
+  "hypothesis": "h711",
+  "title": "DRKG Disease Coverage Gap Quantification",
+  "status": "validated",
+  "findings": {
+    "drkg_coverage": {
+      "total_drkg_disease_embeddings": 4067,
+      "total_drkg_raw_disease_ids": 5103,
+      "predictor_diseases_with_gt": 476,
+      "predictor_diseases_with_embedding": 453,
+      "predictor_diseases_in_raw_only": 1,
+      "predictor_diseases_absent": 22,
+      "gt_pairs_with_embedding": 3009,
+      "gt_pairs_without_embedding": 46,
+      "pct_diseases_missing": 4.8,
+      "pct_gt_pairs_missing": 1.5
+    },
+    "disease_name_matching_gap": {
+      "total_ec_disease_names": 2688,
+      "mapped_to_mesh": 1159,
+      "unmapped": 1529,
+      "pct_unmapped": 56.9,
+      "ec_pairs_total": 10224,
+      "ec_pairs_mapped": 5025,
+      "ec_pairs_unmapped": 5199,
+      "pct_pairs_lost": 50.9
+    },
+    "missing_disease_classification": {
+      "recoverable_via_parent": 15,
+      "recoverable_gt_pairs": 36,
+      "truly_absent_from_drkg": 9,
+      "top_absent": [
+        "methanol poisoning (2 GT)",
+        "vomiting from duodenal obstruction (2 GT)",
+        "ethylene glycol poisoning (1 GT)",
+        "paraplegia (1 GT)",
+        "bardet biedl syndrome (1 GT)",
+        "congenital factor vii deficiency (1 GT)"
+      ]
+    },
+    "key_insight": "The DRKG disease coverage gap is SMALL (4.8% diseases, 1.5% GT pairs). The REAL data gap is in EC disease name\u2192MESH ID matching: 56.9% of EC disease names fail to map, losing 50.9% of EC drug-disease pairs from internal GT. Most unmapped names are SYNONYMS of already-mapped diseases (e.g. 'migraine' vs 'migraine disorders', 'emphysema' vs 'pulmonary emphysema'). Better name matching could potentially double internal GT."
+  },
+  "implications": [
+    "h407 (Comprehensive ID Mapping) is the highest-ROI remaining improvement",
+    "Quick win: add ~50 common disease name synonyms to DISEASE_SYNONYMS in disease_name_matcher.py",
+    "h709 (parent disease transfer) would recover at most 36 GT pairs for 15 diseases",
+    "DRKG updating is NOT a priority - only 22 diseases fully absent, most with tiny GT"
+  ]
+}
