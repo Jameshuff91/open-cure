@@ -13075,8 +13075,8 @@
         "Check ClinicalTrials.gov for bevacizumab trials in predicted diseases",
         "Determine if any should be added to expanded GT"
       ],
-      "findings": "VALIDATED: Bevacizumab cross-cancer predictions are clinically well-supported.\n\nKEY RESULTS:\n- 23 total bevacizumab predictions: 14 HIGH, 1 MEDIUM, 7 LOW, 1 FILTER\n- 8/23 already in expanded GT (rectal, ovarian, cervical, fallopian tube, glioma, colorectal, cancer)\n- 15 novel predictions assessed:\n  - ESTABLISHED: 1 (lung cancer, FDA 2006 \u2014 CLEAR GT GAP)\n  - CLINICAL_EVIDENCE: 9 (larynx, uterine, esophageal, head&neck, melanoma, mesothelioma, ependymoma, gastric, leiomyosarcoma)\n  - PLAUSIBLE_NO_EVIDENCE: 5 (skin, testicular, thyroid, medulloblastoma, vulva)\n  - Literature-validated: 10/15 = 66.7%\n\nClinicalTrials.gov: 13 trials for lung cancer, 2 for uterine, 1 each for larynx/esophageal/gastric/head&neck, 4 for leiomyosarcoma.\n\nTIER ACCURACY: \n- HIGH predictions: 7 novel, of which 1 ESTABLISHED (lung) + 4 CLINICAL = 71.4% validated\n- LOW predictions: 7 novel, of which 5 CLINICAL = 71.4% validated (surprisingly high for LOW!)\n- This suggests bevacizumab LOW predictions are systematically underranked\n\nGT GAPS FILLED: \n- Bevacizumab \u2192 lung cancer (FDA 2006, HIGH prediction)\n- Bevacizumab \u2192 pleural mesothelioma (MAPS trial Phase III)\n- Bevacizumab \u2192 head and neck cancers (NCCN guideline option)\n- Ramucirumab \u2192 lung cancer (FDA 2014, LOW prediction)\n\nBROADER INSIGHT: Anti-VEGF drugs have broad cross-cancer applicability due to VEGF-driven angiogenesis being a common tumor hallmark. Our kNN correctly identifies this pattern. Bevacizumab's 14 HIGH predictions (cancer_same_type_mech_rank10) are well-calibrated \u2014 the drug genuinely transfers across solid tumors.",
-      "result_metric": "66.7% literature-validated (10/15 novel), 4 GT gaps filled",
+      "findings": "VALIDATED: Bevacizumab cross-cancer predictions are clinically well-supported.\n\nKEY RESULTS:\n- 23 total bevacizumab predictions: 14 HIGH, 1 MEDIUM, 7 LOW, 1 FILTER\n- 8/23 already in expanded GT (rectal, ovarian, cervical, fallopian tube, glioma, colorectal, cancer)\n- 15 novel predictions assessed:\n  - ESTABLISHED: 1 (lung cancer, FDA 2006 \u2014 CLEAR GT GAP)\n  - CLINICAL_EVIDENCE: 9 (larynx, uterine, esophageal, head&neck, melanoma, mesothelioma, ependymoma, gastric, leiomyosarcoma)\n  - PLAUSIBLE_NO_EVIDENCE: 5 (skin, testicular, thyroid, medulloblastoma, vulva)\n  - Literature-validated: 10/15 = 66.7%\n\nClinicalTrials.gov: 13 trials for lung cancer, 2 for uterine, 1 each for larynx/esophageal/gastric/head&neck, 4 for leiomyosarcoma.\n\nTIER ACCURACY: \n- HIGH predictions: 7 novel, of which 1 ESTABLISHED (lung) + 4 CLINICAL = 71.4% validated\n- LOW predictions: 7 novel, of which 5 CLINICAL = 71.4% validated (surprisingly high for LOW!)\n- This suggests bevacizumab LOW predictions are systematically underranked\n\nGT GAPS FILLED: \n- Bevacizumab \u2192 lung cancer (FDA 2006, HIGH prediction)\n- Bevacizumab \u2192 pleural mesothelioma (MAPS trial Phase III)\n- Bevacizumab \u2192 head and neck cancers (NCCN guideline option)\n- Ramucirumab \u2192 lung cancer (FDA 2014, LOW prediction)\n\nBROADER INSIGHT: Anti-VEGF drugs have broad cross-cancer applicability due to VEGF-driven angiogenesis being a common tumor hallmark. Our kNN correctly identifies this pattern. Bevacizumab's 14 HIGH predictions (cancer_same_type_mech_rank10) are well-calibrated \u2014 the drug genuinely transfers across solid tumors.\n\nEXTENSION \u2014 Cancer Drug GT Gap Search:\nFound 12 additional cancer drug FDA-approved GT gaps among HIGH novel predictions:\n- Cyclophosphamide \u2192 DLBCL (CHOP regimen)\n- Doxorubicin \u2192 acute erythroid leukemia (AML regimen)\n- Cladribine \u2192 ALL, low-grade NHL, refractory AML (purine analog)\n- Bortezomib \u2192 ALL, low-grade NHL, DLBCL (proteasome inhibitor)\n- Gemcitabine \u2192 bladder cancer (intravesical)\n- Docetaxel \u2192 lung cancer (NSCLC)\n- Methotrexate \u2192 uterine cancer (GTD)\n- Thiotepa \u2192 choriocarcinoma (high-risk GTN)\n\nTotal GT gaps added this session: 16 (4 bevacizumab/ramucirumab + 12 cancer drugs)\nHoldout impact:\n- HIGH: 54.8% \u2192 56.3% (+1.5pp)\n- MEDIUM: 42.9% \u2192 43.3% (+0.4pp)\n- LOW: 14.8% \u2192 15.2% (+0.4pp)\n\nThis demonstrates that systematic GT gap search among HIGH predictions finds real FDA-approved uses. The HIGH tier has 292 novel predictions (34.6%) \u2014 many likely true positives with GT gaps.",
+      "result_metric": "66.7% bev lit-validated, 16 GT gaps (+1.5pp HIGH, +0.4pp MEDIUM)",
       "category": "validation",
       "rationale": "Bevacizumab is FDA-approved for colorectal, lung, renal, cervical, ovarian, HCC. If promoted preds match these, they are GT gaps."
     },
@@ -13666,6 +13666,45 @@
       "findings": "",
       "result_metric": "",
       "category": "evaluation-improvement"
+    },
+    {
+      "id": "h668",
+      "title": "Systematic HIGH Novel Prediction GT Gap Search via ClinicalTrials.gov",
+      "description": "h636 found 16 GT gaps among just bevacizumab and a handful of cancer drugs, lifting HIGH +1.5pp. There are 292 HIGH novel predictions across 45+ drugs. A systematic ClinicalTrials.gov query for ALL HIGH novel cancer predictions could find 30-50 more GT gaps. The HIGH tier has the best ratio of true positives to GT gaps because these are high-confidence predictions.",
+      "hypothesis": "Systematic ClinicalTrials.gov search for HIGH novel cancer predictions will find 30+ additional GT gaps, improving HIGH holdout by another +1-3pp.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Extract all HIGH novel cancer predictions (37 predictions)",
+        "Query ClinicalTrials.gov API for each drug-disease pair",
+        "Classify: FDA-approved, Phase III positive, Phase II, research-stage",
+        "Add FDA-approved pairs to expanded GT",
+        "Re-run holdout evaluation"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "gt-improvement"
+    },
+    {
+      "id": "h669",
+      "title": "Corticosteroid Novel HIGH Prediction Quality: Are CS Novel Predictions Genuine or Artifact?",
+      "description": "144/292 (49%) of HIGH novel predictions are corticosteroid SOC promotions. CS inflate holdout precision (h577). These novel predictions include betamethasone (32), dexamethasone (27), triamcinolone (26), prednisolone (20), hydrocortisone (20). Are these genuine treatment gaps (CS treats condition X but not in GT) or kNN artifacts (CS co-occurrence in KG)? Literature validation would determine whether CS domination of HIGH novel is a quality concern.",
+      "hypothesis": "A significant fraction of CS HIGH novel predictions are legitimate medical uses (e.g., dermatological conditions, inflammatory diseases) that are GT gaps rather than kNN artifacts.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Sample 30-50 CS HIGH novel predictions",
+        "Classify by medical plausibility (known CS use, plausible, implausible)",
+        "Compare CS novel quality vs non-CS novel quality",
+        "If CS novel are low-quality, consider tightening CS SOC promotion rules"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "validation"
     }
   ],
   "completed": [

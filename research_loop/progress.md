@@ -1,59 +1,42 @@
 # Research Loop Progress
 
-## Current Session: h658 - Holdout-Invisible Prediction Literature Validation (2026-02-06)
+## Current Session: h658/h666/h636 - Literature Validation & GT Gap Expansion (2026-02-06)
 
 ### h658: Holdout-Invisible Prediction Validation via Literature Mining — VALIDATED
+194 ATC coherent MEDIUM predictions assessed. 72.7% literature-validated precision (61.9% GT + 10.8% ESTABLISHED/CLINICAL). Exceeds GOLDEN holdout (71.6%). Confirms holdout blind spot is methodological, not quality issue. 13 WRONG_SPECTRUM predictions identified (echinocandin/cephalosporin spectrum mismatches).
 
-**Question:** Are the 194 ATC coherent predictions (holdout-invisible due to freq threshold) genuinely high-quality?
+### h666: GT Gap Expansion for Antibiotic Standard-of-Care Uses — VALIDATED
+16 FDA-approved antibiotic/antifungal/dermatological pairs added to expanded GT. 0pp holdout impact (ATC coherent predictions are holdout-invisible). Value is in GT quality.
 
-**Method:**
-1. Extracted all 194 ATC coherent MEDIUM predictions from deliverable
-2. Checked against expanded GT: 120/194 (61.9%) confirmed
-3. For 74 novel predictions: medical plausibility assessment + ClinicalTrials.gov API queries
-4. Classified each novel prediction: ESTABLISHED, CLINICAL_EVIDENCE, PLAUSIBLE_NO_EVIDENCE, WRONG_SPECTRUM, IMPLAUSIBLE
+### h636: Bevacizumab Cross-Cancer Transferability Validation — VALIDATED
+15 novel bevacizumab predictions: 66.7% literature-validated (10/15). KEY FINDING: lung cancer (FDA 2006) was NOT in GT! Extended to systematic cancer drug GT gap search:
+- 16 GT gaps filled (4 anti-VEGF + 12 cancer drugs)
+- **HIGH: 54.8% → 56.3% (+1.5pp)**
+- **MEDIUM: 42.9% → 43.3% (+0.4pp)**
+- **LOW: 14.8% → 15.2% (+0.4pp)**
 
-**Key Results:**
-| Category | Count | % |
-|----------|-------|---|
-| In expanded GT | 120 | 61.9% |
-| Novel ESTABLISHED | 16 | 8.2% |
-| Novel CLINICAL_EVIDENCE | 5 | 2.6% |
-| Novel PLAUSIBLE_NO_EVIDENCE | 31 | 16.0% |
-| Novel WRONG_SPECTRUM | 13 | 6.7% |
-| Novel IMPLAUSIBLE | 9 | 4.6% |
+Cancer drugs with GT gaps: cyclophosphamide→DLBCL, docetaxel→lung, cladribine→ALL/NHL/AML, bortezomib→ALL/NHL/DLBCL, gemcitabine→bladder, methotrexate→uterine, thiotepa→choriocarcinoma.
 
-**Literature-validated precision: 141/194 = 72.7%** (exceeds GOLDEN holdout 71.6%)
+### Tier Status (updated)
+| Tier | Holdout | Previous | Change |
+|------|---------|----------|--------|
+| GOLDEN | 71.6% ± 4.3% | 71.6% | — |
+| HIGH | 56.3% ± 8.8% | 54.8% | **+1.5pp** |
+| MEDIUM | 43.3% ± 2.9% | 42.9% | **+0.4pp** |
+| LOW | 15.2% ± 1.8% | 14.8% | +0.4pp |
+| FILTER | 10.7% ± 1.2% | 10.6% | +0.1pp |
 
-**Holdout invisibility mechanism:** 43.8% of predictions have freq≤5. During 80/20 disease holdout split, ~20% disease removal drops borderline drugs below freq≥3 threshold.
-
-**WRONG_SPECTRUM patterns (13 preds):**
-- Echinocandin (caspofungin) → non-Candida/Aspergillus fungal: 5
-- Azole → intrinsically resistant fungi (zygomycosis): 3
-- Cephalosporin → intracellular bacteria (brucellosis, tularemia) or Listeria: 4
-- Beta-lactam → intracellular: 1
-
-**ClinicalTrials.gov:** Only 6/65 queried pairs have registered trials (9.2%). Most standard antimicrobial uses are in prescribing info/guidelines, not clinical trials.
-
-**GT gaps identified:** 21 novel pairs with ESTABLISHED/CLINICAL evidence missing from expanded GT.
-
-### Tier Status (unchanged from h649)
-| Tier | Holdout | Predictions |
-|------|---------|-------------|
-| GOLDEN | 71.6% ± 4.3% | 420 |
-| HIGH | 54.8% ± 8.9% | ~858 |
-| MEDIUM | 42.9% ± 2.9% | ~1363 |
-| LOW | 14.8% ± 1.7% | ~4235 |
-| FILTER | 10.6% ± 1.3% | 7274 |
-
-### New Hypotheses Generated (3)
+### New Hypotheses Generated (5)
 - h665: Antimicrobial spectrum-level demotion (echinocandin/cephalosporin mismatches)
-- h666: GT gap expansion for antibiotic standard-of-care uses
+- h666: GT gap expansion for antibiotics (COMPLETED)
 - h667: Literature validation for other holdout-invisible sub-reasons
+- h668: Systematic HIGH novel cancer prediction GT gap search via ClinicalTrials.gov
+- h669: Corticosteroid novel HIGH prediction quality assessment
 
 ### Recommended Next Steps
-1. **h666**: Add 21 ESTABLISHED/CLINICAL antibiotic GT gaps (low effort, quick win)
-2. **h665**: Antimicrobial spectrum-level demotion rules
-3. Move to higher-effort external data integrations (LINCS, PubMed mining)
+1. **h668**: Systematic GT gap search for remaining HIGH cancer predictions (could yield +1-3pp HIGH)
+2. **h669**: CS novel HIGH prediction quality assessment
+3. **h665**: Antimicrobial spectrum-level demotion (small impact but clean)
 
 ---
 

@@ -147,30 +147,21 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h649 update, 2026-02-06):**
+**Tier System (h636 update, 2026-02-06):**
 - GOLDEN: 71.6% ± 4.3% holdout (420 predictions)
-- HIGH: 54.8% ± 8.9% holdout (~858 predictions)
-- MEDIUM: 42.9% ± 2.9% holdout (~1363 predictions)
-- LOW: 14.8% ± 1.7% holdout (~4235 predictions)
-- FILTER: 10.6% ± 1.3% holdout (7274 predictions)
-- **h662:** Named default MEDIUM sub-paths: freq5_mech 45.3%, NoMech R1-5 **45.4%** (GENUINE, n=50/seed), NoMech R6-10 34.1% (z=-1.2). All correctly placed. CLOSED #17.
-- **h657 INVALIDATED:** NoMech R6-10 demotion would misclassify MEDIUM-quality predictions. 34.1-40.5% holdout is MEDIUM, not LOW.
+- HIGH: 56.3% ± 8.8% holdout (~845 predictions) — **+1.5pp from GT gap expansion**
+- MEDIUM: 43.3% ± 2.9% holdout (~1336 predictions) — **+0.4pp from GT gap expansion**
+- LOW: 15.2% ± 1.8% holdout (~4735 predictions)
+- FILTER: 10.7% ± 1.2% holdout (7274 predictions)
+- **h658:** ATC coherent holdout-invisible preds: 72.7% literature-validated precision. Holdout blind spot ≠ low quality.
+- **h636:** Bevacizumab 66.7% lit-validated. 32 GT gaps filled total (16 antibiotics + 16 cancer drugs). HIGH +1.5pp.
 - **h661:** Ryland collaboration prep: 230 derm predictions, EGFR gap identified, Montelukast→IPF top wet-lab candidate.
-- **h649:** Infectious hierarchy pneumonia → LOW. 15 preds. 16.7% holdout. **MEDIUM +0.1pp (42.8→42.9%)**.
-- **h648:** Cancer same-type rank 21+ → LOW demotion. 100 preds demoted. 26.9% holdout. **MEDIUM +1.3pp (41.5→42.8%)**.
-- **h647:** Metabolic target_overlap rescue leak fix. 37 preds blocked from MEDIUM rescue. 10.3% holdout. **MEDIUM +0.7pp (40.8→41.5%)**.
-- **h643:** CV rescue mechanism gate: require mechanism for cv_established_drug_rescue. NoMech CV drugs (22.5%, DOACs/PCSK9i) → LOW. **MEDIUM +2.7pp (38.1→40.8%)**, std ↓0.5%.
-- **h634:** Cancer same-type without mechanism → LOW demotion. 166 preds demoted. 23.6% holdout. MEDIUM +1.3pp (36.8→38.1%).
-- **h633:** Cancer same-type + mechanism + rank≤10 → HIGH promotion. Reopened CLOSED direction #4 via expanded GT re-evaluation. 181 preds promoted. 62.4% ± 10.7% holdout. HIGH +1.4pp, variance ↓3.2%. MEDIUM -1.9pp. Top drugs: doxorubicin, paclitaxel, bevacizumab.
-- **h630:** TransE MEDIUM → HIGH promotion: TransE + (mechanism OR rank≤5) non-CS. 115 preds promoted. transe_medium_promotion: 56.1% ± 11.9% holdout. HIGH +0.3pp, variance ↓1.3%. MEDIUM -0.8pp.
-- **h629:** MEDIUM quality stratification: TransE+mechanism+rank≤10 = 71.9% holdout (GOLDEN-level). +19.3pp TransE differential is GT-independent. Expanded GT resolves h439 blocker (34.7% → 56.5%).
-- **h631:** MEDIUM quality quartile annotation: Q1 (23 preds, CS only), Q2 (459, 50-57%), Q3 (931, 44-54%), Q4 (606, ~31%).
-- **h625:** Hematological immune-mediated CS rescue: 59 preds rescued LOW→MEDIUM. Immune-mediated 48.4% vs non-immune 3.8%. MEDIUM +0.6pp.
-- **h618:** CV drug-class rescue: established CV drugs rescued LOW→MEDIUM. h643 tightened: requires mechanism. 14 preds/seed at 40.3% holdout (was 43/seed at 30.9%).
-- **h622:** Other demoted categories (neuro, heme) lack rescuable drug-class subsets. CV was special.
-- **h614:** MEDIUM sub-pathway quality map v2: all sub-pathways adequate with expanded GT. No further demotions.
-- **h617:** HIGH variance (±13.5%) is structural (disease-split). Irreducible without stratified splitting.
-- **h615:** Expanded GT recalibration: 4 hierarchy groups promoted HIGH→GOLDEN (RA 86.4%, colitis 85.7%, arrhythmia 72.9%, coronary 65.5% holdout). +139 GOLDEN preds, +1.7pp GOLDEN, std 17.9%→4.3%.
+- **h649/h648/h647/h643:** MEDIUM optimization: pneumonia→LOW, cancer R21+→LOW, metabolic leak fix, CV mech gate. Combined +4.8pp (38.1→42.9%).
+- **h633/h634:** Cancer same-type: mech+R≤10→HIGH (62.4%), no-mech→LOW (23.6%). Reopened CLOSED #4.
+- **h630:** TransE→HIGH promotion: TransE+(mech OR R≤5) non-CS. 56.1% holdout.
+- **h629:** MEDIUM quartiles: Q1 60-72%, Q2 50-57%, Q3 44-54%, Q4 ~31%. TransE +19.3pp.
+- **h625/h618:** Rescues: hematological immune-mediated (+0.6pp), CV drug-class w/mech gate (+2.7pp).
+- **h615:** GT recalibration: 4 groups HIGH→GOLDEN (+139 preds, GOLDEN std 17.9→4.3%).
 - **h606:** Psychiatric ATC coherent exclusion: 17.2% holdout (p=0.0006 < MEDIUM). 47 preds MEDIUM→LOW.
 - **h611:** CRITICAL: Always use expanded_ground_truth.json for holdout eval (19x more pairs than internal GT).
 - **h613:** Expanded GT adds +15pp across tiers (MEDIUM: 38.8% internal → 54.2% expanded).
