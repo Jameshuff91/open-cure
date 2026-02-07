@@ -1,6 +1,6 @@
 # Research Loop Progress
 
-## Current Session: h618 - CV Medium Demotion Drug-Class Stratification (2026-02-06)
+## Current Session: h618/h622/h614/h617/h624 - CV Rescue + Tier Calibration (2026-02-06)
 
 ### h618: CV Medium Demotion Reversal — VALIDATED
 
@@ -31,15 +31,43 @@ h462 demoted ALL cardiovascular MEDIUM→LOW based on internal GT (2.0% holdout)
 
 **Key insight:** Internal GT systematically underestimates CV drug precision. Expanded GT reveals drug-class stratification cleanly separates genuine CV drugs (30.9%) from non-CV drugs predicted for CV diseases (4.6%).
 
-### New Hypotheses (3)
-- h622: Expanded GT recalibration of other demoted categories
+### h622: Expanded GT Recalibration of Other Demoted Categories — INVALIDATED
+No other demoted category has a drug-class subset with both >=25% holdout AND n>=5/seed. Best candidate: heme antineoplastic_heme 31.9% but n=4.8/seed (marginal). The CV case was special due to anticoagulant dominance (n=14.2/seed).
+
+### h614: MEDIUM Sub-Pathway Quality Map v2 — VALIDATED
+No demotable MEDIUM sub-pathways with expanded GT. All sub-pathways with n>=3/seed above 25% holdout. MEDIUM overall: 51.8% ± 5.5%. Metabolic target_overlap leak (45 preds) is correct behavior (48.9% holdout).
+
+### h617: HIGH Tier Stabilization — INCONCLUSIVE
+HIGH variance (±13.5%) is structural — driven by disease-split randomness. Seed 42 has fewer hierarchy-matching diseases in holdout. comp_to_base_high_87 = 0% holdout (n=5/seed, too small). Cannot be fixed without stratified splitting.
+
+### h624: Deliverable Regeneration — VALIDATED
+Deliverable regenerated. GOLDEN 420, HIGH 604, MEDIUM 2075, LOW 3777, FILTER 7274.
+
+### Session Tier Performance (post-h618)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 71.6% ± 4.3% | 420 |
+| HIGH | 52.8% ± 13.5% | 604 |
+| MEDIUM | 38.9% ± 4.0% | 2075 |
+| LOW | 14.6% ± 2.4% | 3777 |
+| FILTER | 10.6% ± 1.3% | 7274 |
+
+### New Hypotheses Generated (3)
+- h622: Expanded GT recalibration of other demoted categories (INVALIDATED)
 - h623: MEDIUM precision recovery: tighten CV rescue criteria
-- h624: Deliverable regeneration with h618 changes
+- h624: Deliverable regeneration (VALIDATED)
+
+### Key Insights
+1. Internal GT systematically underestimates CV drug precision; expanded GT reveals 30.9% holdout
+2. Drug-class stratification can find quality subsets within category demotions
+3. Category demotions well-calibrated for all non-CV categories
+4. MEDIUM tier is fully optimized at sub-pathway level
+5. HIGH variance is structural, irreducible with current methodology
 
 ### Recommended Next Steps
-1. **h624**: Regenerate deliverable with h618 changes (quick)
-2. **h622**: Apply same drug-class stratification to other demoted categories
-3. **h623**: Tighten rescue criteria to recover MEDIUM precision if needed
+1. **h623**: Tighten CV rescue criteria to recover MEDIUM precision
+2. **h534/h578**: TransE annotation for FILTER/LOW tiers (deliverable quality)
+3. External data integration (h91/h92) for fundamentally new signals
 
 ---
 
