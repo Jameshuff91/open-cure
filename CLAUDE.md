@@ -147,12 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h671 update, 2026-02-06):**
+**Tier System (h677 update, 2026-02-06):**
 - GOLDEN: 71.6% ± 4.8% holdout (415 predictions)
-- HIGH: 61.8% ± 7.5% holdout (808 predictions) — **+0.3pp from safety fixes**
-- MEDIUM: 43.5% ± 2.9% holdout (1333 predictions)
-- LOW: 15.3% ± 1.8% holdout (4306 predictions)
+- HIGH: 61.8% ± 7.5% holdout (808 predictions)
+- MEDIUM: 43.0% ± 3.4% holdout (~1276 predictions) — **honest** (was 43.5% with false GT inflation)
+- LOW: 14.1% ± 1.7% holdout (~4363 predictions) — **honest** (was 15.3% with false GT inflation)
 - FILTER: 10.7% ± 1.2% holdout (7288 predictions)
+- **h677:** GT quality audit: 6% error rate in EC data. 82 false lidocaine/bupivacaine + 3 B12 GT entries removed (combo product drug mismatch). Blocked LA rescue via target_overlap. GT: 59,626→59,541.
 - **h673/h670/h671:** Safety fixes: CS→TEN/PAP/OSA filtered (15 preds), 18 false GT removed (NLP extraction errors), AmB antiparasitic spectrum narrowed (3 HIGH→LOW). Fixed duplicate dict key bug in INVERSE_INDICATION_PAIRS. HIGH +0.3pp.
 - **h669:** CS HIGH novel quality audit: 97.2% medically acceptable. Fixed DI comp_to_base bug (9 wrong HIGH), removed 6 false GT (NLP errors), +12 CS GT gaps. HIGH +3.5pp (58.0→61.5%).
 - **h658/h636/h668:** Literature validation + GT gap search: 54 pairs added. HIGH +3.2pp (54.8→58.0%). Key: DOACs→atrial flutter, cancer drugs→subtypes, antibiotics→prescribing info uses.

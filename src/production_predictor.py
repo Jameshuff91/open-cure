@@ -714,6 +714,11 @@ FALSE_GT_PAIRS = {
     # adrenal hyperplasia, testotoxicosis must be excluded" — CAH is a differential,
     # not an indication for GnRH agonist therapy
     'nafarelin': {'congenital adrenal hyperplasia'},
+    # h677: B12 supplements list diseases that CAUSE B12 deficiency, not diseases treated BY B12.
+    # Label text: "conditions associated with B12 deficiency: hypothyroidism, multiple sclerosis,
+    # iron deficiency" — these are differential diagnoses, not indications.
+    'cyanocobalamin': {'multiple sclerosis', 'iron deficiency', 'thyrotoxicosis'},
+    'hydroxocobalamin': {'folate deficiency', 'multiple sclerosis', 'iron deficiency'},
 }
 
 # h480: Inverse-indication FILTER
@@ -986,6 +991,9 @@ INVERSE_INDICATION_PAIRS = {
     'pravastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
     'fluvastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
     'pitavastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    # h674: Defensive coverage for withdrawn/research statins (no current predictions but prevents future leakage)
+    'cerivastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    'mevastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
 }
 
 # h481: Drug class → disease category standard-of-care mappings
@@ -4254,7 +4262,10 @@ class DrugRepurposingPredictor:
                             # h560: Block rescue of antimicrobial-pathogen mismatches (0% holdout)
                             and cat_specific != 'antimicrobial_pathogen_mismatch'
                             # h649: Block rescue of hierarchy-demoted pneumonia (16.7% holdout)
-                            and cat_specific != 'infectious_hierarchy_pneumonia'):
+                            and cat_specific != 'infectious_hierarchy_pneumonia'
+                            # h677: Block rescue of LA procedural demotions (bupivacaine/lidocaine)
+                            # LA drugs demoted by h540 should not be rescued via target overlap
+                            and cat_specific != 'local_anesthetic_procedural'):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 

@@ -1,6 +1,57 @@
 # Research Loop Progress
 
-## Current Session: h673/h670/h671 - Safety Audit, False GT Cleanup, TransE Fix (2026-02-06)
+## Current Session: h674/h677 - Statin Safety + GT Quality Audit (2026-02-06)
+
+### h674: Statin → Diabetes Inverse Indication Expansion — VALIDATED (No Impact)
+All 7 major statins already covered in INVERSE_INDICATION_PAIRS for diabetes/hyperglycemia. Added cerivastatin and mevastatin defensively (no current predictions). All statin→diabetes predictions already at FILTER tier.
+
+### h677: Every Cure GT Quality Audit — VALIDATED (Major Finding)
+Random sample audit of 100 Every Cure indication rows. **6% strict error rate** (95% CI: 2.8%-12.5%).
+
+**KEY FINDING: Drug mismatch from combo products**
+- Lidocaine (78 rows) and bupivacaine (61 rows) have corticosteroid indication text wrongly assigned
+- Source: NLP pipeline mapped combo product labels (lidocaine/hydrocortisone, bupivacaine/dexamethasone) to wrong component
+- This propagated to expanded GT: 82 false lidocaine/bupivacaine entries removed, 3 B12 false entries removed
+- GT: 59,626 → 59,541 (-85 entries)
+
+**BUG FIX: Target overlap rescue leaking LA procedural demotions**
+- ~57 bupivacaine/lidocaine predictions were being rescued from LOW→MEDIUM via target_overlap
+- Same pattern as h560/h647 leakage. Fixed by blocking 'local_anesthetic_procedural' from rescue.
+
+**Error taxonomy (100-sample audit):**
+| Error Type | Count | Rate |
+|------------|-------|------|
+| Drug mismatch (combo product) | 4 | 4% |
+| False indication (differential dx) | 2 | 2% |
+| Risk reduction ≠ treatment | 1 | 1% |
+| Diagnostic agent confusion | 2 | 2% |
+| **Correct** | **91** | **91%** |
+
+### Tier Status (post h674/h677)
+| Tier | Previous (h671) | Current | Change |
+|------|-----------------|---------|--------|
+| GOLDEN | 71.6% ± 4.8% | 71.6% ± 4.8% | — |
+| HIGH | 61.8% ± 7.5% | 61.8% ± 7.5% | — |
+| MEDIUM | 43.5% ± 2.9% | 43.0% ± 3.4% | -0.5pp (honesty) |
+| LOW | 15.3% ± 1.8% | 14.1% ± 1.7% | -1.2pp (honesty) |
+| FILTER | 10.7% ± 1.2% | 10.7% ± 1.2% | — |
+
+**Note:** MEDIUM/LOW decreases are HONESTY improvements. Previous numbers were inflated by false GT entries for lidocaine/bupivacaine. The remaining predictions are evaluated against a more accurate standard.
+
+### New Hypotheses Generated (4)
+- h678: Combo product drug mismatch audit beyond lidocaine/bupivacaine
+- h679: Lidocaine GOLDEN prediction quality audit (psychiatric tier appropriateness)
+- h680: DRKG internal GT false entry systematic scan
+- h681: B12 supplement false GT audit (cyanocobalamin/hydroxocobalamin)
+
+### Recommended Next Steps
+1. **h680**: DRKG internal GT false entry scan — highest impact, affects kNN training
+2. **h678**: Combo product drug mismatch audit — likely more errors beyond lidocaine/bupivacaine
+3. **h679**: Lidocaine GOLDEN quality — quick check if psychiatric predictions are appropriate
+
+---
+
+## Previous Session: h673/h670/h671 - Safety Audit, False GT Cleanup, TransE Fix (2026-02-06)
 
 ### h673: CS Safety Audit — VALIDATED
 4 implausible CS HIGH predictions assessed. 3 genuinely harmful, 1 legitimate adjunctive use:

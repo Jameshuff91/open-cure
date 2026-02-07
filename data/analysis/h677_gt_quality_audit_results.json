@@ -1,0 +1,55 @@
+{
+  "sample_size": 100,
+  "total_dataset": 10224,
+  "errors_found": {
+    "drug_mismatch": {
+      "count": 4,
+      "description": "Corticosteroid indication text assigned to non-CS drugs (lidocaine, bupivacaine)",
+      "dataset_estimate": 139,
+      "details": [
+        "Lidocaine: 78 rows have CS indication text (psoriasis, ITP, asthma, SLE, etc.)",
+        "Bupivacaine: 61 rows have CS indication text (similar diseases)",
+        "Likely source: combo products (lidocaine/hydrocortisone, bupivacaine/dexamethasone)",
+        "Also affects expanded GT: 104 lidocaine + 63 bupivacaine = 167 false GT entries from EC"
+      ]
+    },
+    "false_indication": {
+      "count": 2,
+      "description": "Disease mentioned in differential diagnosis/exclusion context, not treatment",
+      "dataset_estimate": "Unknown (B12\u2192folate/iron deficiency pattern)",
+      "details": [
+        "Hydroxocobalamin \u2192 folate deficiency: B12 doesnt treat folate deficiency",
+        "Hydroxocobalamin \u2192 iron deficiency: B12 doesnt treat iron deficiency"
+      ]
+    },
+    "risk_reduction": {
+      "count": 1,
+      "description": "Drug reduces risk of disease but isnt indicated FOR the disease",
+      "dataset_estimate": "Small, likely < 50 rows",
+      "details": [
+        "HCTZ/telmisartan \u2192 stroke: indicated for hypertension, reduces stroke risk"
+      ]
+    },
+    "questionable": {
+      "count": 2,
+      "description": "Diagnostic agents or drug components listed as treatments",
+      "dataset_estimate": "Small, ~30-50 rows",
+      "details": [
+        "Isosulfan blue \u2192 chylous ascites: diagnostic dye, not treatment",
+        "Calcium \u2192 acute renal failure: component of dialysis solution"
+      ]
+    }
+  },
+  "error_rates": {
+    "strict": "6% (95% CI: 2.8%-12.5%) - drug mismatch + false indication",
+    "broad": "9% (95% CI: 4.8%-16.2%) - all categories"
+  },
+  "key_finding": "Drug mismatch is the dominant error type. 139/10224 rows (1.4%) have corticosteroid text assigned to lidocaine/bupivacaine. This propagates to expanded GT (167 false entries) and potentially to DRKG internal GT (43 lidocaine + 28 bupivacaine false entries).",
+  "impact": "False GT entries inflate holdout precision for predictions involving lidocaine/bupivacaine as neighbors. Since both drugs are in LOW tier (procedural LA demotion from h540), impact on MEDIUM+ tiers is minimal.",
+  "action_items": [
+    "Add lidocaine/bupivacaine corticosteroid-indication false GT entries to FALSE_GT_PAIRS",
+    "Check if DRKG internal GT also has these errors",
+    "Investigate other potential combo-product drug mismatch patterns",
+    "Check cyanocobalamin/hydroxocobalamin false GT entries"
+  ]
+}

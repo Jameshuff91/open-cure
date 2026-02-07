@@ -13787,7 +13787,7 @@
       "title": "Statin \u2192 Diabetes Inverse Indication Expansion: All Statins Increase Diabetes Risk",
       "description": "h670 found statins in false GT for diabetes. But beyond GT cleanup, statins are known to INCREASE diabetes risk (2024 Lancet meta-analysis: 10-36% increase). Currently only the statin\u2192diabetes inverse indication exists implicitly through category demotion (metabolic MEDIUM\u2192LOW). Should explicitly add all statins to INVERSE_INDICATION_PAIRS for diabetes/hyperglycemia, similar to how CS are filtered for TEN/OSA. This would prevent any future rescue pathway from accidentally promoting statin\u2192diabetes predictions.",
       "hypothesis": "Adding explicit statin\u2192diabetes inverse indications will prevent rescue pathway leakage and document the medical rationale.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13798,8 +13798,8 @@
         "Add statin\u2192diabetes/hyperglycemia to INVERSE_INDICATION_PAIRS",
         "Verify no rescue pathway leakage"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "All 7 major statins already covered in INVERSE_INDICATION_PAIRS. Cerivastatin and mevastatin added defensively (no current predictions). All statin\u2192diabetes predictions already at FILTER. Lovastatin\u2192diabetes insipidus correctly at LOW (different disease). No rescue pathway leakage found.",
+      "result_metric": "No tier impact \u2014 already handled. +2 defensive entries added."
     },
     {
       "id": "h675",
@@ -13844,7 +13844,7 @@
       "title": "Every Cure GT Quality: Quantify Total NLP Extraction Error Rate",
       "description": "h669 found 6 false entries, h670 found 18 more. Total: 24 false GT entries out of ~10,224 indication rows (0.23%). But this is only from two specific patterns (secondary causes + differential diagnosis). Other NLP extraction errors likely exist: adverse effects extracted as indications, drug interactions extracted as treatments, warnings extracted as uses. A systematic random sample audit of 100 Every Cure indication rows could estimate the overall error rate and identify additional error patterns.",
       "hypothesis": "A random sample audit of 100 Every Cure indication rows will reveal an overall NLP extraction error rate of 1-5%, with additional error patterns beyond secondary causes.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13856,8 +13856,68 @@
         "Estimate total error rate with confidence interval",
         "Identify new error patterns for systematic correction"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Random sample audit of 100 Every Cure indication rows found 6% strict error rate (95% CI: 2.8%-12.5%).\n\nKEY FINDING: Drug mismatch is the dominant error type. 139/10224 rows (1.4%) have corticosteroid indication text wrongly assigned to lidocaine (78 rows) and bupivacaine (61 rows). Source: NLP pipeline mapped combo product label text (lidocaine/hydrocortisone, bupivacaine/dexamethasone) to wrong drug component.\n\nThis propagated to expanded GT: 82 false entries removed (36 lidocaine + 46 bupivacaine). Additionally, found target_overlap rescue was leaking LA procedural demotions back to MEDIUM (~57 predictions). Fixed by blocking 'local_anesthetic_procedural' from target overlap rescue.\n\nOther error types found: false indications (B12\u2192folate/iron deficiency: 2%), risk reduction vs treatment (HCTZ\u2192stroke: 1%), diagnostic agent confusion (isosulfan blue: 1%).\n\nError patterns:\n- Drug mismatch (combo product text): 4/100 (4%) \n- False indication (differential diagnosis context): 2/100 (2%)\n- Risk reduction confused with treatment: 1/100 (1%)\n- Diagnostic agent listed as treatment: 2/100 (2%)\n- Correct: 91/100 (91%)",
+      "result_metric": "GT: 59,626\u219259,544 (-82 false entries). MEDIUM 43.5\u219243.0% (honest, removing false inflation). LOW 15.3\u219214.1%. Code fix: blocked LA rescue via target_overlap."
+    },
+    {
+      "id": "h678",
+      "title": "Combo Product Drug Mismatch Audit: Beyond Lidocaine/Bupivacaine",
+      "description": "h677 found lidocaine and bupivacaine had corticosteroid text due to combo products (lidocaine/hydrocortisone, bupivacaine/dexamethasone). Other combo products likely have the same problem. Check all FDA combo products: aminoglycoside/steroid ear drops, antibiotic/steroid eye drops, etc. Each combo might have one component inheriting the other's indications.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Identify all combo products in Every Cure dataset",
+        "For each combo, check if one component's text matches the other's indications",
+        "Quantify false GT entries from combo product misattribution",
+        "Remove confirmed false entries"
+      ]
+    },
+    {
+      "id": "h679",
+      "title": "Lidocaine GOLDEN Prediction Quality: Are Psychiatric/Dermatological Tiers Appropriate?",
+      "description": "h677 found lidocaine has 9 GOLDEN predictions including psychiatric (ADHD, bipolar, depression) and dermatological (atopic dermatitis, keratosis pilaris). While dermatological uses are legitimate (topical lidocaine), psychiatric uses are driven by inflated kNN frequency from false GT (43 diseases instead of ~10 real ones). Should we restrict lidocaine GOLDEN to only neurological/CV/dermatological and exclude psychiatric?",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "List all lidocaine GOLDEN/HIGH predictions",
+        "Assess medical plausibility of each",
+        "Check if inflated train_frequency (43 vs ~10 real) affects tier assignment",
+        "Consider adding lidocaine-specific frequency correction or psychiatric exclusion"
+      ]
+    },
+    {
+      "id": "h680",
+      "title": "DRKG Internal GT False Entries: Systematic Drug-Text Mismatch Scan",
+      "description": "h677 found 43 lidocaine + 28 bupivacaine false entries in DRKG INTERNAL GT (not just expanded). These come from DRKG treatment edges that are actually co-occurrence artifacts from combo products. A systematic scan of all DRKG treatment edges for drug-indication text mismatches could identify more false internal GT entries. This would improve both evaluation honesty AND kNN prediction quality.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "For each drug with GT, check if drug treats diseases from its own pharmacological class",
+        "Flag drugs with GT entries from a very different class (e.g., LA with autoimmune diseases)",
+        "Cross-reference with DRKG edge types to identify co-occurrence vs treatment edges",
+        "Remove confirmed false internal GT entries"
+      ]
+    },
+    {
+      "id": "h681",
+      "title": "B12 Supplement False GT Audit: Cyanocobalamin/Hydroxocobalamin Disease Misattribution",
+      "description": "h677 found B12 supplements (cyanocobalamin, hydroxocobalamin) listed as treating diseases mentioned in their label as DIFFERENTIAL DIAGNOSES (folate deficiency, iron deficiency, multiple sclerosis, thyrotoxicosis, hepatic disease, renal disease). These are diseases that can CAUSE B12 deficiency, not diseases treated BY B12. Pattern: NLP extracted diseases mentioned in \"conditions associated with B12 deficiency\" context.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "List all cyanocobalamin/hydroxocobalamin GT entries",
+        "Classify: genuine B12 deficiency treatment vs causative condition",
+        "Remove false entries (folate deficiency, iron deficiency, MS, etc.)",
+        "Check for similar pattern in other vitamin supplements"
+      ]
     }
   ],
   "completed": [
@@ -16054,6 +16114,12 @@
       "hypothesis_id": "h671",
       "learning": "Amphotericin B's antiparasitic activity is narrow (Leishmania only), not blanket. _DUAL_ACTIVITY tags should match actual spectrum, not broad class. Use _LEGITIMATE_CROSS_PAIRS for specific exceptions rather than broad dual-activity tags.",
       "implication": "Review other dual-activity drugs for similarly narrow spectra. Blanket activity tags can mask spectrum mismatches."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h677",
+      "learning": "Every Cure GT has ~6% error rate from NLP extraction. Dominant error: combo product drug mismatch (lidocaine/bupivacaine inheriting corticosteroid indications). 139 rows in source, 82 false GT entries removed. Also found target_overlap rescue was leaking LA procedural demotions back to MEDIUM \u2014 same pattern as h560/h647.",
+      "implication": "Always check for rescue pathway leakage after implementing demotions. Combo product NLP errors likely affect other drug pairs too. GT quality directly affects holdout evaluation honesty."
     }
   ],
   "collaborations": [
