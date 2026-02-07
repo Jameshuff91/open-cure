@@ -12534,7 +12534,7 @@
       "id": "h607",
       "title": "Standard MEDIUM Autoimmune Quality: 20.3% Holdout at n=6.8",
       "description": "Standard MEDIUM autoimmune has 20.3% \u00b1 20.4% holdout (n=6.8/seed). High variance suggests a mix of good and bad predictions. The 21 full-data predictions (33.3%) include 7 GT hits. If autoimmune standard MEDIUM is truly ~20%, it should be demoted to LOW. But the high variance (\u00b120.4%) means the true precision could be 0-40%. Need more data or different analysis approach to resolve.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12659,7 +12659,7 @@
       "id": "h615",
       "title": "Expanded GT-Based Tier Recalibration: Are Tier Boundaries Optimal for Expanded GT?",
       "description": "h613 showed expanded GT adds ~15pp precision across tiers. The tier boundaries (GOLDEN/HIGH/MEDIUM/LOW/FILTER) were calibrated using holdout with expanded GT via h393, but the full-data precision used for rule development (e.g., 'this rule has 43% full-data precision') was computed with internal GT. Since expanded GT shows 54.2% MEDIUM precision, some rules previously considered MEDIUM-quality may actually be HIGH-quality under expanded GT evaluation.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -12668,7 +12668,9 @@
         "Identify rules where expanded GT precision crosses tier boundaries (e.g., MEDIUM rule with HIGH-level expanded precision)",
         "Compare rule ordering between internal and expanded GT - are any rules misordered?",
         "Assess whether any tier boundaries should be adjusted"
-      ]
+      ],
+      "findings": "Expanded GT (59,584 pairs vs 3,070 internal) reveals 26 tier boundary crossings.\n5-seed holdout confirmed 4 HIGH\u2192GOLDEN promotions for hierarchy groups:\n- autoimmune_hierarchy_rheumatoid_arthritis: 86.4% \u00b1 8.7% holdout (n=23/seed)\n- autoimmune_hierarchy_colitis: 85.7% \u00b1 0.0% holdout (n=7/seed)\n- cardiovascular_hierarchy_arrhythmia: 72.9% \u00b1 1.5% holdout (n=11/seed)\n- cardiovascular_hierarchy_coronary: 65.5% \u00b1 1.2% holdout (n=13/seed)\n\nImplementation: Added HIERARCHY_PROMOTE_TO_GOLDEN set with these 4 groups.\n\nImpact: GOLDEN 69.9%\u219271.6% (+1.7pp), std 17.9%\u21924.3% (much more stable).\nHIGH 58.8%\u219252.8% (-6.0pp, seed 42 outlier, n=40). Tier ordering preserved.\nGOLDEN +139 preds (280\u2192419), HIGH -139 preds (736\u2192597).\nMEDIUM/LOW/FILTER unchanged.\n\nOther crossings NOT actionable:\n- cardiovascular_medium_demotion (LOW\u2192MEDIUM): 25.1% \u00b1 19.4% holdout \u2014 too high variance\n- non_therapeutic_compound (FILTER\u2192MEDIUM): 28.8% holdout but should stay FILTER (safety)\n- inverse_indication (FILTER\u2192LOW): 14.4% holdout but should stay FILTER (safety)\n- default (FILTER\u2192LOW): 14.0% holdout but this is the catch-all bucket",
+      "result_metric": "GOLDEN 71.6% \u00b1 4.3% (+1.7pp), 419 preds (+50%); HIGH 52.8% \u00b1 13.5% (-6.0pp)"
     },
     {
       "id": "h616",
@@ -12683,6 +12685,64 @@
         "Add a 'gt_completeness_ratio' column to the deliverable",
         "Flag diseases where ratio < 5 (potentially low GT coverage)",
         "Correlate GT completeness with per-disease holdout precision"
+      ]
+    },
+    {
+      "id": "h617",
+      "title": "HIGH Tier Stabilization: Reduce Seed-42 Outlier Variance After h615 Promotions",
+      "description": "After h615 promoted 139 HIGH\u2192GOLDEN, HIGH holdout dropped to 52.8% \u00b1 13.5% (from 58.8% \u00b1 6.1%). Seed 42 is the outlier (30.0%, n=40 vs mean 137 other seeds). Investigate whether the remaining HIGH tier has structural instabilities that could be addressed. Possible approaches: (1) check if other hierarchy groups with small-n but good quality should be promoted to reduce the remaining HIGH pool to more consistent rules, (2) check if seed 42 is an inherent disease-split issue.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Analyze seed 42 holdout diseases to understand why HIGH n=40 vs others n=113-167",
+        "Check which HIGH rules contribute predictions on seed 42 vs others",
+        "Determine if the variance is structural (disease split) or addressable"
+      ]
+    },
+    {
+      "id": "h618",
+      "title": "CV Medium Demotion Reversal: Cardiovascular Predictions at MEDIUM Level With Expanded GT",
+      "description": "h615 found cardiovascular_medium_demotion holdout = 25.1% \u00b1 19.4% (n=69/seed) \u2014 above the MEDIUM boundary (25%) but with very high variance. These 319 predictions are currently LOW (demoted from MEDIUM by h462). The high variance suggests some CV drugs are genuinely MEDIUM-quality while others are LOW. A drug-class stratification within this group could identify promotable subsets.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Stratify cardiovascular_medium_demotion by drug class (ACE inhibitors, ARBs, beta-blockers, etc.)",
+        "Compute per-drug-class holdout precision with expanded GT",
+        "Identify drug classes with holdout > 30% (genuine MEDIUM) vs < 15% (genuine LOW)",
+        "If split found, implement drug-class-specific handling within CV demotion"
+      ]
+    },
+    {
+      "id": "h619",
+      "title": "Deliverable Regeneration: Apply h615 Hierarchy Promotions",
+      "description": "Regenerate the deliverable with h615 HIERARCHY_PROMOTE_TO_GOLDEN changes. 139 predictions move from HIGH to GOLDEN. Update prediction counts and tier annotations.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Run scripts/h420_regenerate_deliverable.py",
+        "Verify GOLDEN count increased by ~139 predictions",
+        "Verify tier ordering in deliverable"
+      ]
+    },
+    {
+      "id": "h620",
+      "title": "Expanded GT Safety Filter Audit: Are FILTER Predictions Actually Valid?",
+      "description": "h615 showed several FILTER rules with surprisingly high expanded GT precision: non_therapeutic_compound (33.3%), base_to_complication (37.5%), inverse_indication (16.9%). If expanded GT includes associations beyond therapeutic use (diagnostic, causal, etc.), some of these hits may be false positives in the GT rather than true therapeutic predictions. Audit 10-20 specific hits from each FILTER rule to verify GT quality.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For non_therapeutic_compound FILTER hits, check if expanded GT includes diagnostic associations",
+        "For inverse_indication FILTER hits, check if expanded GT double-counts drugs that both cause and treat conditions",
+        "For base_to_complication FILTER hits, check if expanded GT includes indirect associations",
+        "If GT contamination found, clean expanded_ground_truth.json and re-evaluate"
       ]
     }
   ],
@@ -14748,6 +14808,12 @@
       "hypothesis_id": "h613",
       "learning": "Expanded GT has 19x more pairs. Cancer=13.2x ratio (highest). Per-tier inflation: GOLDEN +12.9pp, HIGH +16.8pp, MEDIUM +15.4pp, LOW +6.3pp. Higher tiers benefit proportionally more from expanded GT.",
       "implication": "Inline evaluations must ALWAYS use expanded GT. The internal GT significantly understates system quality. Cancer predictions especially affected."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h615",
+      "learning": "Internal GT (3,070 pairs) systematically underestimates hierarchy group precision. With expanded GT (59,584 pairs), 4 hierarchy groups (RA, colitis, coronary, arrhythmia) are GOLDEN-quality despite being classified HIGH based on internal GT analysis. Per-group holdout validation is essential for tier assignment.",
+      "implication": "All future tier decisions should use expanded GT for evaluation. Category-level precision analysis can miss group-level quality differences."
     }
   ],
   "collaborations": [

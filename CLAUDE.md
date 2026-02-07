@@ -147,12 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h606 update, 2026-02-06):**
-- GOLDEN: 69.9% ± 17.9% holdout (280 predictions)
-- HIGH: 58.9% ± 6.0% holdout (732 predictions)
+**Tier System (h615 update, 2026-02-06):**
+- GOLDEN: 71.6% ± 4.3% holdout (419 predictions)
+- HIGH: 52.8% ± 13.5% holdout (597 predictions)
 - MEDIUM: 41.3% ± 2.8% holdout (1876 predictions)
 - LOW: 15.1% ± 2.4% holdout (3958 predictions)
 - FILTER: 10.6% ± 1.3% holdout (7300 predictions)
+- **h615:** Expanded GT recalibration: 4 hierarchy groups promoted HIGH→GOLDEN (RA 86.4%, colitis 85.7%, arrhythmia 72.9%, coronary 65.5% holdout). +139 GOLDEN preds, +1.7pp GOLDEN, std 17.9%→4.3%.
 - **h606:** Psychiatric ATC coherent exclusion: 17.2% holdout (p=0.0006 < MEDIUM). 47 preds MEDIUM→LOW.
 - **h611:** CRITICAL: Always use expanded_ground_truth.json for holdout eval (19x more pairs than internal GT).
 - **h613:** Expanded GT adds +15pp across tiers (MEDIUM: 38.8% internal → 54.2% expanded).
@@ -162,9 +163,8 @@ vastai destroy instance <INSTANCE_ID>
 - **h560:** Antimicrobial-pathogen mismatch filter: 0% holdout for all mismatches. Antibacterial→fungal/parasitic/viral, antifungal→parasitic/viral/bacterial. Dual-activity drugs handled. ~30 MEDIUM→LOW. +0.9pp MEDIUM. Also fixed target_overlap rescue leakage.
 - **h562:** extract_cancer_types bug fix: 'ALL' substring matched 'small','fallopian','allergic'. Word boundary regex for <=4 char keywords. 39 false cancer_same_type removed. MEDIUM +0.7pp.
 - **h557:** CS→infectious MEDIUM demotion: 2.1% holdout (even VALID uses = 2.9%). 59 preds MEDIUM→LOW. MEDIUM +0.3pp.
-- **h553+h555+h556:** MEDIUM precision session: hematological→LOW, metabolic statin/TZD→LOW, antibiotic→viral→LOW, default no-mech rank 11-20→LOW. Cumulative MEDIUM +3.8pp (30.1%→33.9%). 311+35+21 preds moved to LOW. target_overlap_promotion (43%) best MEDIUM sub-reason but not promotable (h554 inconclusive).
-- **h542:** MEDIUM tier quality audit: 59 predictions validated. 25% validated, 31% plausible, 44% implausible (vs 88% reasonable for GOLDEN/HIGH). Fixes: corticosteroid→adrenocortical insufficiency inverse indication (6 preds), FDG PET tracer filter (55 preds).
-- **h552:** Non-therapeutic compound audit: indocyanine green (diagnostic dye) 10 preds → FILTER. Total 66 non-therapeutic predictions removed.
+- **h553+h555+h556:** MEDIUM precision session: hematological/metabolic statin/TZD/antibiotic→viral/no-mech rank 11-20 all→LOW. MEDIUM +3.8pp (30.1%→33.9%).
+- **h542+h552:** MEDIUM quality audit + non-therapeutic compound filter (FDG PET, ICG dye). 66 preds→FILTER.
 - **h544:** Anti-TNF paradoxical autoimmunity audit: +15 inverse indication pairs (AIH 389 cases, sarcoidosis 90+, vasculitis 113). 5 predictions → FILTER. Golimumab filters added.
 - **h408:** Ryland collaboration brief. Anti-TNF→SLE/MG/MS inverse indications (7 pairs, 4 GOLDEN/MEDIUM → FILTER). 86% of derm/autoimmune GOLDEN/HIGH are corticosteroids.
 - **h546:** Gene overlap annotation: drug-target/disease-gene overlap as confidence signal. +11.4pp MEDIUM novel holdout. NOT promotable (partially circular with kNN). `gene_overlap_count` column in deliverable.

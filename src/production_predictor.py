@@ -3036,6 +3036,12 @@ class DrugRepurposingPredictor:
         # - Cardiovascular: 22.6% → HIGH
         # - Infectious: 22.1% → HIGH
         HIERARCHY_GOLDEN_CATEGORIES = {'metabolic', 'neurological'}
+        # h615: Group-level GOLDEN promotions validated with expanded GT holdout
+        # coronary: 65.5% ± 1.2% holdout (n=13/seed), arrhythmia: 72.9% ± 1.5% (n=11/seed)
+        # rheumatoid_arthritis: 86.4% ± 8.7% (n=23/seed), colitis: 85.7% ± 0.0% (n=7/seed)
+        HIERARCHY_PROMOTE_TO_GOLDEN = {
+            'coronary', 'arrhythmia', 'rheumatoid_arthritis', 'colitis',
+        }
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
         # h402: Diabetes hierarchy 31.5% holdout ± 13.8% (n=72) vs GOLDEN avg 46.3% - demote to HIGH
         # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
@@ -3056,6 +3062,9 @@ class DrugRepurposingPredictor:
                 # h430: Attempted T2D→GOLDEN rescue, failed holdout (42.1%, caused GOLDEN<HIGH)
                 if matching_group in HIERARCHY_DEMOTE_TO_HIGH:
                     return ConfidenceTier.HIGH, True, f'{category}_hierarchy_{matching_group}'
+                # h615: Group-level GOLDEN promotion (holdout-validated with expanded GT)
+                if matching_group in HIERARCHY_PROMOTE_TO_GOLDEN:
+                    return ConfidenceTier.GOLDEN, True, f'{category}_hierarchy_{matching_group}'
                 # h276: Use GOLDEN for high-precision categories (>70%), HIGH otherwise
                 if category in HIERARCHY_GOLDEN_CATEGORIES:
                     return ConfidenceTier.GOLDEN, True, f'{category}_hierarchy_{matching_group}'

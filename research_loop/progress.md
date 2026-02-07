@@ -1,6 +1,57 @@
 # Research Loop Progress
 
-## Current Session: h606/h611/h612/h613/h605 - ATC Coherent + GT Methodology (2026-02-06)
+## Current Session: h615 - Expanded GT Tier Recalibration (2026-02-06)
+
+### h615: Expanded GT-Based Tier Recalibration — VALIDATED
+
+Compared per-rule precision using internal GT (3,070 pairs) vs expanded GT (59,584 pairs, 19x more). Found 26 tier boundary crossings. 5-seed holdout validated 4 HIGH→GOLDEN hierarchy group promotions.
+
+**Key Results:**
+- Internal GT systematically underestimates hierarchy group precision by 15-30pp
+- 4 groups have GOLDEN-level holdout precision but were assigned HIGH based on internal GT analysis:
+  - autoimmune_hierarchy_rheumatoid_arthritis: 86.4% ± 8.7% holdout (n=23/seed)
+  - autoimmune_hierarchy_colitis: 85.7% ± 0.0% holdout (n=7/seed)
+  - cardiovascular_hierarchy_arrhythmia: 72.9% ± 1.5% holdout (n=11/seed)
+  - cardiovascular_hierarchy_coronary: 65.5% ± 1.2% holdout (n=13/seed)
+
+**Implementation:** Added `HIERARCHY_PROMOTE_TO_GOLDEN` set in `_assign_confidence_tier()`. 139 predictions promoted.
+
+**Impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 69.9% ± 17.9% (280 preds) | 71.6% ± 4.3% (419 preds) | +1.7pp, +139 preds, std -13.6pp |
+| HIGH | 58.8% ± 6.1% (736 preds) | 52.8% ± 13.5% (597 preds) | -6.0pp, -139 preds |
+| MEDIUM | 41.3% ± 2.8% | 41.3% ± 2.8% | unchanged |
+| LOW | 15.1% ± 2.4% | 15.1% ± 2.4% | unchanged |
+| FILTER | 10.6% ± 1.3% | 10.6% ± 1.3% | unchanged |
+
+Tier ordering preserved. HIGH drop due to removing best predictions. Seed 42 outlier (HIGH=30%, n=40) drives HIGH variance.
+
+**Other findings NOT acted on:**
+- cardiovascular_medium_demotion: 25.1% ± 19.4% holdout (above MEDIUM boundary but too variable)
+- FILTER rules (non_therapeutic_compound, inverse_indication): expanded GT shows higher precision but safety filters should remain regardless
+- Many FILTER rules show elevated expanded GT precision — suggests expanded GT may include non-therapeutic associations
+
+**New Hypotheses (4):** h617-h620 (HIGH stabilization, CV medium demotion stratification, deliverable regeneration, expanded GT safety audit)
+
+### Session Tier Performance (h615 update)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 71.6% ± 4.3% | ~419 |
+| HIGH | 52.8% ± 13.5% | ~597 |
+| MEDIUM | 41.3% ± 2.8% | ~1876 |
+| LOW | 15.1% ± 2.4% | ~3958 |
+| FILTER | 10.6% ± 1.3% | ~7300 |
+
+### Recommended Next Steps
+1. **h619**: Regenerate deliverable with h615 changes (quick win)
+2. **h620**: Audit expanded GT quality for FILTER rules
+3. **h618**: CV medium demotion drug-class stratification
+4. External data integration (h91/h92) for new signals
+
+---
+
+## Previous Session: h606/h611/h612/h613/h605 - ATC Coherent + GT Methodology (2026-02-06)
 
 ### h606: ATC Coherent Respiratory/Endocrine Validation — VALIDATED
 Comprehensive ATC coherent category analysis. Found 292 ATC coherent MEDIUM predictions across 9 categories. Psychiatric ATC coherent holdout = 17.2% ± 5.8% (p=0.0006 below MEDIUM avg). Added psychiatric to ATC_COHERENT_EXCLUDED. 47 predictions MEDIUM→LOW. Tier-level impact unmeasurable.
