@@ -13192,7 +13192,7 @@
         "If >55%, implement promotion to HIGH",
         "Check overlap with existing TransE promotions (h630)"
       ],
-      "findings": "MEDIUM Default Sub-Stratification: Key finding is that ALL remaining non-CS MEDIUM predictions are rank 16-20.\n\nMEDIUM COMPOSITION (non-CS, after all promotions):\n1. Mech+NoTransE+Rank16-20: 39.7% (n=124/seed) \u2014 at MEDIUM average\n2. NoMech+NoTransE+Rank16-20: 33.6% (n=145/seed) \u2014 below MEDIUM avg but 2.3x above LOW\n3. TransE+NoMech+Rank>5: 24.4% (n=3/seed) \u2014 tiny, unreliable\n\nMech+Rank<=10 bucket is EMPTY \u2014 all such predictions already promoted by h630, cancer rules, or hierarchy.\n\nSUB-RULE \u00d7 MECHANISM analysis revealed:\n- cv_established_drug_rescue NoMech: 22.5% \u00b1 14.7% (n=29/seed) \u2014 weakest MEDIUM sub-population\n- cv_established_drug_rescue Mech: 40.4% \u00b1 20.5% (n=14/seed) \u2014 at MEDIUM average\n- default NoMech: 34.4% (n=65/seed) \u2014 below avg but not demotable (still 2.3x above LOW)\n- target_overlap_promotion Mech: 47.4% (n=31/seed) \u2014 near-HIGH quality\n- atc_coherent_infectious NoMech: 42.4% (n=34/seed) \u2014 above MEDIUM avg\n\nCONCLUSION: No clear-cut HIGH promotion from MEDIUM default (all rank 16-20).\nCV rescue NoMech (22.5%) is borderline \u2014 3/5 seeds show LOW-level precision.\nWould need mechanism-gated CV rescue to tighten, but impact uncertain.",
+      "findings": "MEDIUM Default Sub-Stratification: Key finding is that ALL remaining non-CS MEDIUM predictions are rank 16-20.\n\nMEDIUM COMPOSITION (non-CS, after all promotions):\n1. Mech+NoTransE+Rank16-20: 39.7% (n=124/seed) \u2014 at MEDIUM average\n2. NoMech+NoTransE+Rank16-20: 33.6% (n=145/seed) \u2014 below MEDIUM avg but 2.3x above LOW\n3. TransE+NoMech+Rank>5: 24.4% (n=3/seed) \u2014 tiny, unreliable\n\nMech+Rank<=10 bucket is EMPTY \u2014 all such predictions already promoted by h630, cancer rules, or hierarchy.\n\nSUB-RULE \u00d7 MECHANISM analysis revealed:\n- cv_established_drug_rescue NoMech: 22.5% \u00b1 14.7% (n=29/seed) \u2014 weakest MEDIUM sub-population\n- cv_established_drug_rescue Mech: 40.4% \u00b1 20.5% (n=14/seed) \u2014 at MEDIUM average\n- default NoMech: 34.4% (n=65/seed) \u2014 below avg but not demotable (still 2.3x above LOW)\n- target_overlap_promotion Mech: 47.4% (n=31/seed) \u2014 near-HIGH quality\n- atc_coherent_infectious NoMech: 42.4% (n=34/seed) \u2014 above MEDIUM avg\n\nCONCLUSION: No clear-cut HIGH promotion from MEDIUM default (all rank 16-20).\nCV rescue NoMech (22.5%) is borderline \u2014 3/5 seeds show LOW-level precision.\nWould need mechanism-gated CV rescue to tighten, but impact uncertain.\n\nCORRECTION: The rank analysis was FLAWED. `knn_rank` attribute doesn't exist on DrugPrediction (defaults to 99). The 'ALL rank 16-20' finding was an artifact. The mechanism split analysis was still valid (mechanism_support attribute exists). h643's CV rescue mechanism gate was correctly validated.",
       "result_metric": "No MEDIUM\u2192HIGH promotion found. CV rescue NoMech 22.5% is borderline.",
       "category": "precision-improvement"
     },
@@ -13239,7 +13239,7 @@
       "title": "Mechanism-Gate Other Rescue Rules: Hematological CS Rescue, LA Procedural",
       "description": "h643 showed mechanism gating improves cv_established_drug_rescue by +2.7pp MEDIUM. The same principle may apply to other rescue rules: hematological_corticosteroid_rescue (h625), local_anesthetic_procedural MEDIUM. Check if mechanism gating these rules further improves MEDIUM.",
       "hypothesis": "Applying mechanism gates to other MEDIUM rescue rules (heme CS, LA procedural) will improve MEDIUM precision by an additional +0.5-1pp.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13249,8 +13249,8 @@
         "Implement gates for rules where no-mech is below MEDIUM avg",
         "Run h393 evaluator"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "INVALIDATED: Mechanism gating other rescue rules is not needed.\n\nAnalysis found that h642's rank analysis was FLAWED \u2014 `knn_rank` attribute doesn't exist on DrugPrediction. \nThe 'ALL MEDIUM are rank 16-20' finding was an artifact of defaulting to 99 for a non-existent attribute.\n\nThe h643 change (CV rescue mechanism gate) was STILL VALID because it was based on mechanism split (correctly read attribute), not rank.\n\nFor other rescue rules:\n- Hematological rescue: 100% corticosteroids (mechanism gating N/A)\n- LA procedural MEDIUM: Already has mechanism (51.8%, n=11/seed)\n- ATC coherent sub-rules: Too small sample sizes (n<3/seed) for reliable mechanism split\n- No other rescue rule has both sufficient sample size AND significant mechanism split.",
+      "result_metric": "No additional mechanism gates needed. h642 rank analysis was flawed.",
       "category": "precision-improvement"
     },
     {
