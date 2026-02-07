@@ -3301,6 +3301,9 @@ class DrugRepurposingPredictor:
             # — near LOW level (16.2%). Demote to LOW. Rank 1-10 stays MEDIUM (24-38.7%).
             if rank >= 11 and not mechanism_support:
                 return ConfidenceTier.LOW, False, 'default_no_mech_high_rank'
+            # h657 INVALIDATED: With expanded GT, NoMech R6-10 = 40.5% ± 9.4% holdout
+            # (n=14.6/seed). This is MEDIUM-quality (z=-0.4 vs MEDIUM avg). Original 30.0%
+            # was from internal GT. Expanded GT lifts signal-rich predictions. Keep as MEDIUM.
             return ConfidenceTier.MEDIUM, False, None
 
         # h297: Highly repurposable diseases get MEDIUM instead of LOW

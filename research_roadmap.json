@@ -13387,7 +13387,7 @@
       "title": "ATC Coherent Remaining Categories Quality Map",
       "description": "h651 excluded 4 low-performing ATC coherent categories but kept autoimmune (50%), dermatological (45.2%), infectious (46.9%), ophthalmic (75%), and cardiovascular/oncological (implied by code). The remaining categories have very different holdout precision. A systematic quality map would identify: (1) which remaining ATC coherent categories are genuinely strong, (2) whether any should be promoted from MEDIUM to HIGH, (3) whether the ophthalmic 75% (n=2/seed) is real signal or noise.",
       "hypothesis": "A systematic quality map of remaining ATC coherent categories will reveal promotion opportunities (ophthalmic) or hidden weaknesses.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13396,8 +13396,8 @@
         "Identify any with holdout > 55% and sufficient n for HIGH promotion",
         "Check ophthalmic specifically (75% n=2 \u2014 likely noise)"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED (informative): ATC coherent remaining categories quality map shows clear quality separation. Remaining categories have 59-86% full-data precision: ophthalmic 85.7% (14 preds), autoimmune 66.7% (3), infectious 59.6% (161), dermatological 58.3% (12). Total 190 predictions at 61.6% full-data. Excluded categories had 0-19% (metabolic, neurological, psychiatric, etc.). KEY FINDING: ATC coherent predictions are holdout-invisible because freq drops below 3 during holdout evaluation. This is a known evaluation limitation \u2014 the boost is medically sound and full-data precision confirms quality. No further exclusions needed.",
+      "result_metric": "190 ATC coherent preds, 61.6% full-data. Holdout-invisible (eval limitation). No changes needed.",
       "category": "precision-improvement"
     },
     {
@@ -13405,7 +13405,7 @@
       "title": "Train Frequency Threshold Sensitivity: freq>=3 vs freq>=2",
       "description": "h651 revealed that GT recomputation reduces train_frequency below the ATC coherent threshold (>=3), making holdout insensitive to ATC coherent changes. This suggests the freq>=3 threshold may be too high \u2014 many borderline drugs (freq=2-3) lose eligibility during holdout evaluation. Lowering to freq>=2 would retain more predictions in holdout. But would these predictions be quality? Drugs with freq=2 have very limited cross-disease evidence.",
       "hypothesis": "Lowering the ATC coherent train_frequency threshold from 3 to 2 would increase holdout sensitivity without hurting precision, because ATC coherence is the primary quality signal.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13414,8 +13414,8 @@
         "Compare precision and n vs freq>=3",
         "Check if this addresses the holdout-insensitivity finding"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "INVALIDATED: 22% of freq>=3 drugs (74.6/343) drop below threshold during holdout evaluation due to 80/20 disease split. This makes holdout a conservative lower-bound estimate, which is desirable. Production predictions are unaffected (use full-data freq). Lowering to freq>=2 would admit drugs with only 2 disease associations \u2014 weak evidence. The freq>=3 threshold is correctly calibrated: strict enough for quality, and holdout conservatism prevents overestimation.",
+      "result_metric": "74.6 drugs lose freq>=3 in holdout (22%). Conservative estimate is a feature.",
       "category": "evaluation-improvement"
     },
     {
@@ -13460,7 +13460,7 @@
       "title": "Default MEDIUM NoMech Rank 6-10 Demotion to LOW",
       "description": "The comprehensive MEDIUM sub-reason quality map found default MEDIUM NoMech R6-10 at 30.0% \u00b1 9.3% holdout (n=25.8/seed). This is 13pp below MEDIUM average and the single largest low-quality bucket (129 predictions in deliverable). h555 already demotes NoMech R11-20. Extending to R6-10 would remove borderline predictions. However, 30% is 2x LOW average, creating the same grey-zone tension as h650 (cancer R16-20 at 31.9%).",
       "hypothesis": "Demoting default MEDIUM NoMech R6-10 from MEDIUM to LOW will improve MEDIUM precision by +1-2pp.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -13470,9 +13470,87 @@
         "Compare against alternative: tighter mechanism gate on default MEDIUM",
         "Decide if 30% predictions belong in MEDIUM or LOW"
       ],
+      "findings": "INVALIDATED: With expanded GT (h611), NoMech R6-10 has 40.5% \u00b1 9.4% holdout (n=14.6/seed, 391 full-data predictions). This is MEDIUM-quality: z=-0.4 vs MEDIUM avg (42.9%), 2.7x LOW avg (14.8%). The original 30.0% estimate from h555-era analysis used internal GT, which systematically underestimates signal-rich predictions (h629). Demoting would game MEDIUM headline (+1.6pp to 44.5%) but misclassify genuinely MEDIUM-quality predictions as LOW. Code reverted.",
+      "result_metric": "NoMech R6-10: 40.5% \u00b1 9.4% holdout (MEDIUM-quality, not LOW). MEDIUM stays at 42.9%.",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h658",
+      "title": "Holdout-Invisible Prediction Validation via Literature Mining",
+      "description": "h653 revealed 190 ATC coherent predictions that are holdout-invisible (freq drops below threshold during holdout). These have 61.6% full-data precision but can't be validated via holdout. Literature mining (ClinicalTrials.gov, PubMed) could provide independent validation for these predictions. This addresses a systematic blind spot in our evaluation methodology \u2014 predictions that are high-quality but invisible to holdout because they involve borderline-frequency drugs.",
+      "hypothesis": "Literature validation of the 190 holdout-invisible ATC coherent predictions will confirm that their true precision is closer to full-data (61.6%) than to LOW average (14.8%), validating the ATC coherent boost.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Extract all 190 ATC coherent predictions with drug names and disease names",
+        "Query ClinicalTrials.gov API for each drug-disease pair",
+        "Classify: FDA-approved, in-trial, published-evidence, no-evidence",
+        "Compare literature hit rate vs holdout precision for other MEDIUM sub-reasons",
+        "If literature validation is strong, this validates the evaluation blind spot"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "evaluation-improvement"
+    },
+    {
+      "id": "h659",
+      "title": "Expanded GT Impact on Internal GT Precision Estimates",
+      "description": "h657 invalidation revealed that internal GT (30.0% for NoMech R6-10) and expanded GT (40.5%) give very different precision estimates. This +10.5pp gap matches the general pattern (h629: +15pp average lift). But the magnitude varies by sub-reason: TransE predictions got +21.8pp while non-TransE got +16.1pp. Understanding WHICH predictions benefit most from expanded GT would help identify where internal-GT-based decisions may have been wrong.",
+      "hypothesis": "Sub-reasons that showed the largest expanded-GT lift (e.g., cancer_same_type, target_overlap) were systematically undervalued by internal GT. Re-examining old INVALIDATED hypotheses that used internal GT may reveal additional valid improvements.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Compute internal GT vs expanded GT precision for each MEDIUM sub-reason",
+        "Identify sub-reasons with the largest GT-dependent lift",
+        "Cross-reference against INVALIDATED hypotheses that used internal GT",
+        "Flag any invalidated hypotheses that should be re-evaluated with expanded GT"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "evaluation-improvement"
+    },
+    {
+      "id": "h660",
+      "title": "MEDIUM Default NoMech R1-5 Quality Characterization",
+      "description": "h657 found NoMech R6-10 at 40.5% holdout (MEDIUM-quality). h555 found NoMech R1-5 at 38.7% (pre-expanded-GT). With expanded GT, R1-5 may be higher. If R1-5 NoMech has >50% expanded-GT holdout, these might be promotable to HIGH. Alternatively, understanding what makes R1-5 NoMech predictions successful could inform new promotion rules.",
+      "hypothesis": "Default NoMech rank 1-5 predictions may have >50% holdout precision with expanded GT, potentially qualifying for HIGH tier promotion.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Extract holdout precision for default NoMech R1-5 from current validation",
+        "If >50%, analyze drugs/diseases for common patterns",
+        "If <50%, characterize what makes these predictions successful vs failing"
+      ],
       "findings": "",
       "result_metric": "",
       "category": "precision-improvement"
+    },
+    {
+      "id": "h661",
+      "title": "Ryland Collaboration Prep: Dermatological/Genetic Disease Predictions",
+      "description": "Ryland Mortlock (Yale) specializes in genetic skin diseases, EGFR signaling, and spatial transcriptomics. Meeting is Monday Feb 10. Prepare a focused analysis of our best dermatological and genetic disease predictions for discussion. Identify predictions where his wet-lab validation capabilities could confirm or refute our computational results.",
+      "hypothesis": "A curated set of high-confidence dermatological/genetic disease predictions, annotated with mechanism-of-action and gene overlap, will provide concrete starting points for Ryland's wet-lab validation work.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Extract all GOLDEN/HIGH/MEDIUM predictions for dermatological diseases",
+        "Annotate with mechanism paths, gene overlap, and TransE consilience",
+        "Identify predictions involving EGFR signaling (Ryland's specialty)",
+        "Create a prioritized list: predictions most amenable to cell culture validation",
+        "Document known limitations (self-referentiality, CS inflation)",
+        "Prepare summary for Monday meeting"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "collaboration"
     }
   ],
   "completed": [
