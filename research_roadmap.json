@@ -12579,7 +12579,7 @@
       "id": "h610",
       "title": "ATC Coherent Infectious Per-Drug Quality: Fluoroquinolone/Macrolide Demotions",
       "description": "h606 confirmed infectious is the largest ATC coherent category (163 preds, 27.6% holdout). h604 found within this, fluoroquinolone (11.4%) and macrolide (10.6%) classes underperform but had n too small per-drug. A per-drug-CLASS approach for ATC coherent infectious may be more reliable than per-drug since it pools. Should fluoroquinolone and macrolide ATC coherent infectious predictions be demoted?",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -12588,7 +12588,9 @@
         "Compute holdout precision per drug class within atc_coherent_infectious",
         "If fluoroquinolone/macrolide atc_coherent < 15% with n >= 10, consider class-specific demotion",
         "Expected: marginal impact (~5-10 predictions) but improves precision calibration"
-      ]
+      ],
+      "findings": "Full-data precision by drug class within ATC coherent infectious:\n- Azole antifungals: 85.0% (60 preds, 5 drugs) \u2014 drives quality\n- Penicillins: 77.8% (18 preds, 3 drugs)\n- Nitroimidazole (metronidazole): 66.7% (6 preds)\n- Aminoglycoside (streptomycin): 54.5% (11 preds)\n- Fluoroquinolones: 50.0% (20 preds, 5 drugs)\n- Echinocandin (caspofungin): 37.5% (8 preds) \u2014 borderline\n- Cephalosporins: 30.0% (20 preds) \u2014 weak, driven by cefuroxime (18%)\n- Macrolide: 100% (1 pred, tiny-n)\n\nCefuroxime specifically: 3/17 GT hits (18% full-data). 14 predictions for diseases like syphilis, cholera, Q fever that cefuroxime doesn't treat.\n\nHowever, ATC coherent is holdout-invisible (h653) \u2014 190 preds disappear in holdout. Can't validate class-specific demotions. Impact of cefuroxime demotion: 14 preds moved, ~0.1pp MEDIUM at best. Not worth implementing.",
+      "result_metric": "No action \u2014 14 cefuroxime preds (0.1pp impact), ATC coherent holdout-invisible"
     },
     {
       "id": "h611",
@@ -16538,6 +16540,12 @@
       "hypothesis_id": "h699",
       "learning": "Expanded GT for T1D includes 96 drugs from clinical co-occurrence (ClinicalTrials.gov), many not T1D treatments. Sulfonylureas/TZDs are in expanded GT despite being biologically ineffective for T1D. The expanded GT conflates \"drug prescribed in T1D context\" with \"drug treats T1D.\"",
       "implication": "Disease-specific expanded GT quality varies. For diseases with many comorbidity drugs, expanded GT holdout evaluation is unreliable. Inverse indication filtering is the right tool for medically incorrect predictions rather than hierarchy changes."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h610",
+      "learning": "Within ATC coherent infectious: azole antifungals (85%) drive quality, cefuroxime (18%) is weakest. But ATC coherent is holdout-invisible (h653), so class-specific demotion can't be validated. Full-data precision is the only signal.",
+      "implication": "ATC coherent quality is drug-class dependent. Antifungals >> antibacterials. But volume too small for actionable drug-level demotions."
     }
   ],
   "collaborations": [
