@@ -1,6 +1,32 @@
 # Research Loop Progress
 
-## Current Session: h633 - Cancer Same-Type Expanded GT Re-evaluation (2026-02-06)
+## Current Session: h637/h642/h643 - Closed Direction Re-evaluation & MEDIUM Optimization (2026-02-06)
+
+### h637: Systematic CLOSED Direction Re-evaluation — VALIDATED
+Reviewed all 16 CLOSED directions for GT-dependency. 12/16 not GT-dependent. 4 candidates re-evaluated: all remain closed. h633 was a special case (wrong GT + abundant expanded GT + strong signal). No other CLOSED direction meets all conditions for reopening.
+
+### h642: MEDIUM Default Sub-Stratification — INCONCLUSIVE
+ALL remaining non-CS MEDIUM predictions are rank 16-20. Mech+Rank<=10 bucket is EMPTY (fully captured by h630/hierarchy/cancer rules). Found cv_established_drug_rescue NoMech = 22.5% (borderline LOW), leading to h643.
+
+### h643: CV Rescue Mechanism-Gating — VALIDATED
+Require mechanism support for cv_established_drug_rescue. NoMech CV drugs (22.5%, DOACs/PCSK9i) → LOW.
+
+**Tier Impact:**
+| Tier | Before | After h643 | Delta |
+|------|--------|------------|-------|
+| GOLDEN | 71.6% ± 4.3% | 71.6% ± 4.2% | 0 |
+| HIGH | 54.7% ± 9.3% | 54.6% ± 9.3% | -0.1pp |
+| MEDIUM | 38.1% ± 2.5% | **40.8% ± 2.0%** | **+2.7pp** |
+| LOW | 14.5% ± 2.0% | 14.5% ± 2.0% | 0 |
+
+### Recommended Next Steps
+1. **h645**: Mechanism-gate other rescue rules (heme CS, LA procedural)
+2. **h641**: CV rescue further stratification
+3. Regenerate deliverable with h643 update
+
+---
+
+## Previous Session: h633 - Cancer Same-Type Expanded GT Re-evaluation (2026-02-06)
 
 ### h633: Cancer Same-Type + Mechanism + Rank≤10 → HIGH Promotion — VALIDATED
 

@@ -13201,7 +13201,7 @@
       "title": "CV Rescue Mechanism-Gating: Require Mechanism for CV Drug Rescue",
       "description": "h642 found cv_established_drug_rescue without mechanism: 22.5% \u00b1 14.7% (n=29/seed) \u2014 borderline LOW. With mechanism: 40.4% \u00b1 20.5% (n=14/seed). 3/5 seeds show LOW-level precision for no-mech CV rescue. The no-mech drugs are mostly newer anticoagulants (DOACs) and PCSK9 inhibitors whose KG mechanism paths are incomplete. Requiring mechanism would tighten CV rescue but at cost of 29 preds/seed.",
       "hypothesis": "Requiring mechanism support for cv_established_drug_rescue will improve MEDIUM precision by removing LOW-performing no-mechanism CV drugs.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13211,8 +13211,8 @@
         "Verify MEDIUM improvement and LOW not significantly diluted",
         "Check if any genuine HIGH-quality CV drugs are lost"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED: Requiring mechanism support for cv_established_drug_rescue improves MEDIUM precision by +2.7pp.\n\nBEFORE h643: cv_established_drug_rescue has 30.9% holdout (all, n=43/seed)\n  - With mechanism: 40.4% \u00b1 20.5% (n=14/seed)\n  - Without mechanism: 22.5% \u00b1 14.7% (n=29/seed)\n\nAFTER h643: cv_established_drug_rescue requires mechanism. NoMech \u2192 cardiovascular_medium_demotion (LOW).\n\nTIER IMPACT:\n| Tier | Before | After | Delta |\n|------|--------|-------|-------|\n| GOLDEN | 71.6% \u00b1 4.3% | 71.6% \u00b1 4.2% | 0 |\n| HIGH | 54.7% \u00b1 9.3% | 54.6% \u00b1 9.3% | -0.1pp |\n| MEDIUM | 38.1% \u00b1 2.5% | 40.8% \u00b1 2.0% | +2.7pp |\n| LOW | 14.5% \u00b1 2.0% | 14.5% \u00b1 2.0% | 0 |\n| FILTER | 10.6% \u00b1 1.3% | 10.6% \u00b1 1.3% | 0 |\n\n~29 predictions/seed moved from MEDIUM to LOW. MEDIUM variance also decreased.\n\nThe no-mechanism CV drugs are mostly newer anticoagulants (DOACs: rivaroxaban 9.1%, dabigatran 14.3%) and PCSK9 inhibitors (evolocumab 14.3%) whose KG mechanism paths are incomplete. These are real drugs for real CV diseases but the lack of mechanism evidence in DRKG correctly flags them as lower confidence.",
+      "result_metric": "MEDIUM +2.7pp (38.1% \u2192 40.8%), std \u21930.5%. ~29 preds/seed demoted.",
       "category": "precision-improvement"
     },
     {
@@ -13229,6 +13229,44 @@
         "Check if dominated by broad-spectrum antibiotics",
         "Verify these aren't self-referential artifacts",
         "Determine if this sub-rule should be annotated differently"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "error-analysis"
+    },
+    {
+      "id": "h645",
+      "title": "Mechanism-Gate Other Rescue Rules: Hematological CS Rescue, LA Procedural",
+      "description": "h643 showed mechanism gating improves cv_established_drug_rescue by +2.7pp MEDIUM. The same principle may apply to other rescue rules: hematological_corticosteroid_rescue (h625), local_anesthetic_procedural MEDIUM. Check if mechanism gating these rules further improves MEDIUM.",
+      "hypothesis": "Applying mechanism gates to other MEDIUM rescue rules (heme CS, LA procedural) will improve MEDIUM precision by an additional +0.5-1pp.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Check heme CS rescue with/without mechanism",
+        "Check LA procedural MEDIUM with/without mechanism",
+        "Implement gates for rules where no-mech is below MEDIUM avg",
+        "Run h393 evaluator"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h646",
+      "title": "MEDIUM Rank 16-20 Decomposition: Why Are All Remaining MEDIUM Predictions Low-Rank?",
+      "description": "h642 discovered ALL remaining non-CS MEDIUM predictions are rank 16-20 (bottom of top-20 kNN). This means the tier system has extracted all high-rank value. What does this mean for the deliverable? Should rank be more prominently featured? Are rank 16-20 predictions less clinically useful despite acceptable holdout precision?",
+      "hypothesis": "Rank 16-20 MEDIUM predictions have different error patterns (more wrong drug class, more wrong disease subtype) than rank 1-10 predictions in higher tiers, suggesting a quality difference not fully captured by holdout precision.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Compare error patterns of rank 1-5 (HIGH) vs rank 16-20 (MEDIUM)",
+        "Check if rank 16-20 MEDIUM has more 'wrong drug class' errors",
+        "Determine if rank should be a more prominent deliverable annotation",
+        "Consider whether rank-based sub-tiers add information"
       ],
       "findings": "",
       "result_metric": "",
@@ -15357,6 +15395,12 @@
       "hypothesis_id": "h632",
       "learning": "Mechanism+rank<=10 within MEDIUM is NOT independently promotable. The 52.5% holdout is an average of heterogeneous groups: some would benefit (cancer_same_type 40.2%, target_overlap 51.2%) but others are correctly at MEDIUM/LOW (procedural artifacts 24, metabolic demotions 15). Mechanism is already incorporated into tier logic, so MEDIUM+mechanism predictions are there because they lack OTHER promoting signals.",
       "implication": "Signal combination analysis (h629) is valuable for IDENTIFYING opportunities but each promotion must be validated against tier_rule context. TransE was safe because it's an INDEPENDENT model. Mechanism is NOT independent of the tier system."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h643",
+      "learning": "CV rescue without mechanism was 22.5% (borderline LOW). Mechanism gating improved MEDIUM by +2.7pp. Rescue rules should be gated on mechanism when holdout shows significant split.",
+      "implication": "Check all rescue rules for mechanism split. Also: ALL remaining non-CS MEDIUM are rank 16-20."
     }
   ],
   "collaborations": [

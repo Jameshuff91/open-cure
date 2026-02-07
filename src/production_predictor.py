@@ -3276,7 +3276,10 @@ class DrugRepurposingPredictor:
             # (expanded GT, 5-seed) while non-CV drugs (antibiotics, biologics, corticosteroids)
             # have <3-18%. Rescue anticoagulants/antiplatelets (32.6%, n=14.2/seed) and
             # other established CV classes to MEDIUM; keep non-CV drugs as LOW.
-            if category == 'cardiovascular' and self._is_established_cv_drug(drug_name):
+            # h643: Mechanism gate — CV rescue with mechanism: 40.4% ± 20.5% (n=14/seed).
+            # CV rescue without mechanism: 22.5% ± 14.7% (n=29/seed, 3/5 seeds at LOW-level).
+            # Require mechanism for rescue; no-mech CV drugs stay as LOW.
+            if category == 'cardiovascular' and self._is_established_cv_drug(drug_name) and mechanism_support:
                 return ConfidenceTier.MEDIUM, False, 'cv_established_drug_rescue'
             return ConfidenceTier.LOW, False, f'{category}_medium_demotion'
 
