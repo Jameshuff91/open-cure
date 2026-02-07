@@ -3028,7 +3028,11 @@ class DrugRepurposingPredictor:
                 'sulfadiazine': {'antibacterial', 'antiparasitic'},
                 'doxycycline': {'antibacterial', 'antiparasitic'},
                 'tetracycline': {'antibacterial', 'antiparasitic'},
-                'amphotericin b': {'antifungal', 'antiparasitic'},
+                # h671: Amphotericin B is primarily antifungal with NARROW antiparasitic
+                # activity (Leishmania only). Removed blanket 'antiparasitic' tag.
+                # Leishmania exceptions added to _LEGITIMATE_CROSS_PAIRS below.
+                # Does NOT work against: schistosomes, T. cruzi, Toxoplasma, malaria
+                'amphotericin b': {'antifungal'},
             }
             _ANTIBACTERIAL_DRUGS = {
                 'erythromycin', 'azithromycin', 'clarithromycin',
@@ -3072,6 +3076,11 @@ class DrugRepurposingPredictor:
                 ('ketoconazole', 'visceral leishmaniasis caused by leishmania donovani'),
                 ('demeclocycline', 'malaria'),
                 ('oxytetracycline', 'malaria'),
+                # h671: Amphotericin B has genuine activity against Leishmania only
+                # (FDA-approved for visceral leishmaniasis, guideline-recommended for cutaneous)
+                ('amphotericin b', 'cutaneous leishmaniasis caused by leishmania braziliensis'),
+                ('amphotericin b', 'visceral leishmaniasis caused by leishmania donovani'),
+                ('amphotericin b', 'mycetoma'),  # Some fungal mycetoma responds to AmB
             }
             # Disease → pathogen type
             _VIRAL_KEYWORDS = [
