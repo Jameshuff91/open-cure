@@ -682,6 +682,22 @@ CV_COMPLICATION_KEYWORDS = {'heart failure', 'stroke', 'myocardial infarction', 
 # Others: various reasons for 0% precision in evaluation
 # h397: CV_PATHWAY_EXCLUDE removed (was dead code from h384, never referenced in tier logic)
 
+# h669: False GT entries in indicationList.xlsx (Every Cure data quality issue)
+# These drugs are NOT treatments for the listed diseases. The FDA label mentions
+# the disease as a differential diagnosis/exclusion criterion, NOT an indication.
+# Example: "secondary causes such as hypothyroidism should be excluded before starting
+# lipid therapy" → NLP incorrectly extracts hypothyroidism as an indication.
+# Format: {drug_name_lower: {disease_name_lower, ...}}
+FALSE_GT_PAIRS = {
+    # Lipid drugs mention hypothyroidism as a secondary cause to rule out, not treat
+    'fenofibrate': {'hypothyroidism'},
+    'gemfibrozil': {'hypothyroidism'},
+    'lovastatin': {'hypothyroidism'},
+    'cholestyramine': {'hypothyroidism'},  # Also an inverse: reduces T4 absorption
+    'lomitapide': {'hypothyroidism'},
+    'omega-3 fatty acids': {'hypothyroidism'},
+}
+
 # h480: Inverse-indication FILTER
 # Drugs that treat condition A should NOT be predicted for the OPPOSITE of A
 # These are HARMFUL predictions (drug causes/worsens the predicted disease)
@@ -2064,6 +2080,8 @@ class DrugRepurposingPredictor:
                         k: set(v) for k, v in cached_data["ground_truth"].items()
                     }
                     self.disease_names = cached_data["disease_names"]
+                    # h669: Apply false GT removal even on cached data
+                    self._remove_false_gt_pairs()
                     cache_valid = True
             except (json.JSONDecodeError, KeyError):
                 pass  # Invalid cache, regenerate
@@ -2101,6 +2119,9 @@ class DrugRepurposingPredictor:
 
         self.ground_truth = dict(self.ground_truth)
 
+        # h669: Remove false GT entries (NLP extraction errors in indicationList.xlsx)
+        self._remove_false_gt_pairs()
+
         # Save to cache
         cache_data = {
             "cache_key": current_key,
@@ -2109,6 +2130,32 @@ class DrugRepurposingPredictor:
         }
         with open(cache_path, "w") as f:
             json.dump(cache_data, f)
+
+    def _remove_false_gt_pairs(self) -> None:
+        """h669: Remove known false GT entries from ground truth.
+
+        These are NLP extraction errors where FDA labels mention a disease as a
+        differential diagnosis/exclusion criterion, not as an indication.
+        """
+        # Build reverse lookup: drug_name_lower → drug_id
+        name_to_id = {}
+        for drug_id, name in self.drug_id_to_name.items():
+            name_to_id[name.lower()] = drug_id
+
+        removed = 0
+        for drug_name_lower, false_diseases in FALSE_GT_PAIRS.items():
+            drug_id = name_to_id.get(drug_name_lower)
+            if not drug_id:
+                continue
+            for disease_id, drug_ids in self.ground_truth.items():
+                disease_name = self.disease_names.get(disease_id, '').lower()
+                if disease_name in false_diseases and drug_id in drug_ids:
+                    drug_ids.discard(drug_id)
+                    removed += 1
+
+        if removed > 0:
+            # Remove empty disease entries
+            self.ground_truth = {k: v for k, v in self.ground_truth.items() if v}
 
     def _build_knn_index(self) -> None:
         """Build index for kNN lookups."""
@@ -2406,6 +2453,12 @@ class DrugRepurposingPredictor:
         drug_name = self._get_drug_name(drug_id).lower()
 
         # Check if drug treats a complication and prediction is for a base
+        # h669: Exclusions for base disease matching — diseases that contain
+        # the base term but are medically unrelated
+        COMP_TO_BASE_EXCLUSIONS = {
+            'diabetes': ['diabetes insipidus', 'central diabetes insipidus',
+                         'nephrogenic diabetes insipidus'],
+        }
         for comp, transferability in COMPLICATION_TRANSFERABILITY.items():
             comp_lower = comp.lower()
             # Does drug treat this complication?
@@ -2417,6 +2470,10 @@ class DrugRepurposingPredictor:
                     if comp_lower in [c.lower() for c in complications]:
                         # comp is a complication of base_disease
                         base_lower = base_disease.lower()
+                        # h669: Check exclusions before matching
+                        exclusions = COMP_TO_BASE_EXCLUSIONS.get(base_lower, [])
+                        if any(excl in pred_lower for excl in exclusions):
+                            continue
                         if base_lower in pred_lower or pred_lower in base_lower:
                             # This is a comp→base prediction
                             # h296: Check statin rule for CV events

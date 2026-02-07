@@ -1,6 +1,39 @@
 # Research Loop Progress
 
-## Current Session: h658/h666/h636 - Literature Validation & GT Gap Expansion (2026-02-06)
+## Current Session: h669 - CS HIGH Novel Prediction Quality Audit (2026-02-06)
+
+### h669: CS HIGH Novel Prediction Quality Assessment — VALIDATED
+144 CS truly novel HIGH predictions assessed against medical literature. **97.2% medically acceptable** (64.3% GENUINE first-line treatments, 32.9% PLAUSIBLE adjunctive uses, 2.8% IMPLAUSIBLE). CS novel quality dramatically outperforms non-CS (62.3% acceptable).
+
+**Bugs found and fixed:**
+1. **Diabetes insipidus comp_to_base bug**: "diabetes" substring matched "diabetes insipidus" in `_is_comp_to_base()`, promoting 9 completely wrong diabetes drug→DI predictions to HIGH. Fixed with COMP_TO_BASE_EXCLUSIONS.
+2. **False GT from NLP extraction errors**: 6 lipid drugs (fenofibrate, gemfibrozil, lovastatin, cholestyramine, lomitapide, omega-3 FA) → hypothyroidism. FDA labels mention hypothyroidism as "secondary cause to exclude before starting therapy" — NLP incorrectly extracts as indication. Fixed with FALSE_GT_PAIRS exclusion.
+
+**GT changes:** -6 false entries removed, +12 CS GT gaps added. Net +6. Expanded GT: 59,644.
+
+### Tier Status (h669 update)
+| Tier | Holdout | Previous | Change |
+|------|---------|----------|--------|
+| GOLDEN | 71.9% ± 4.7% | 71.6% | +0.3pp |
+| HIGH | 61.5% ± 7.2% | 58.0% | **+3.5pp** |
+| MEDIUM | 43.4% ± 2.9% | 43.3% | +0.1pp |
+| LOW | 15.3% ± 1.9% | 15.3% | — |
+| FILTER | 10.7% ± 1.2% | 10.7% | — |
+
+### New Hypotheses Generated (4)
+- h670: NLP differential diagnosis extraction error audit (systematic false GT search)
+- h671: TransE antimicrobial mismatch gate for HIGH predictions
+- h672: CS GT gap expansion for 15 PLAUSIBLE diseases
+- h673: Safety audit of 4 implausible CS HIGH predictions (TEN, PAP, dacryocystitis, OSA)
+
+### Recommended Next Steps
+1. **h670**: Systematic NLP false GT audit — likely more false entries beyond hypothyroidism
+2. **h673**: Safety audit — TEN CS predictions may be harmful
+3. **h671**: TransE antimicrobial mismatch gate — quick fix for 5-7 implausible TransE-promoted predictions
+
+---
+
+## Previous Session: h658/h666/h636 - Literature Validation & GT Gap Expansion (2026-02-06)
 
 ### h658: Holdout-Invisible Prediction Validation via Literature Mining — VALIDATED
 194 ATC coherent MEDIUM predictions assessed. 72.7% literature-validated precision (61.9% GT + 10.8% ESTABLISHED/CLINICAL). Exceeds GOLDEN holdout (71.6%). Confirms holdout blind spot is methodological, not quality issue. 13 WRONG_SPECTRUM predictions identified (echinocandin/cephalosporin spectrum mismatches).

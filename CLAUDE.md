@@ -147,12 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h668 update, 2026-02-06):**
-- GOLDEN: 71.6% ± 4.3% holdout (420 predictions)
-- HIGH: 58.0% ± 7.7% holdout (~845 predictions) — **+3.2pp from GT gap expansion**
-- MEDIUM: 43.3% ± 2.9% holdout (~1336 predictions) — **+0.4pp from GT gap expansion**
-- LOW: 15.3% ± 1.8% holdout (~4735 predictions)
-- FILTER: 10.7% ± 1.2% holdout (7274 predictions)
+**Tier System (h669 update, 2026-02-06):**
+- GOLDEN: 71.9% ± 4.7% holdout (419 predictions)
+- HIGH: 61.5% ± 7.2% holdout (825 predictions) — **+3.5pp from CS quality audit**
+- MEDIUM: 43.4% ± 2.9% holdout (~1336 predictions)
+- LOW: 15.3% ± 1.9% holdout (~4294 predictions)
+- FILTER: 10.7% ± 1.2% holdout (7276 predictions)
+- **h669:** CS HIGH novel quality audit: 97.2% medically acceptable. Fixed DI comp_to_base bug (9 wrong HIGH), removed 6 false GT (NLP errors), +12 CS GT gaps. HIGH +3.5pp (58.0→61.5%).
 - **h658/h636/h668:** Literature validation + GT gap search: 54 pairs added. HIGH +3.2pp (54.8→58.0%). Key: DOACs→atrial flutter, cancer drugs→subtypes, antibiotics→prescribing info uses.
 - **h661:** Ryland collaboration prep: 230 derm predictions, EGFR gap identified, Montelukast→IPF top wet-lab candidate.
 - **h649/h648/h647/h643:** MEDIUM optimization: pneumonia→LOW, cancer R21+→LOW, metabolic leak fix, CV mech gate. Combined +4.8pp (38.1→42.9%).

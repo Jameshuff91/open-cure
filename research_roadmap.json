@@ -13692,7 +13692,7 @@
       "title": "Corticosteroid Novel HIGH Prediction Quality: Are CS Novel Predictions Genuine or Artifact?",
       "description": "144/292 (49%) of HIGH novel predictions are corticosteroid SOC promotions. CS inflate holdout precision (h577). These novel predictions include betamethasone (32), dexamethasone (27), triamcinolone (26), prednisolone (20), hydrocortisone (20). Are these genuine treatment gaps (CS treats condition X but not in GT) or kNN artifacts (CS co-occurrence in KG)? Literature validation would determine whether CS domination of HIGH novel is a quality concern.",
       "hypothesis": "A significant fraction of CS HIGH novel predictions are legitimate medical uses (e.g., dermatological conditions, inflammatory diseases) that are GT gaps rather than kNN artifacts.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13702,9 +13702,85 @@
         "Compare CS novel quality vs non-CS novel quality",
         "If CS novel are low-quality, consider tightening CS SOC promotion rules"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "CS HIGH novel predictions are dramatically higher quality than non-CS:\n- CS truly novel: 144 predictions, 97.2% medically acceptable (64.3% GENUINE, 32.9% PLAUSIBLE, 2.8% IMPLAUSIBLE)\n- Non-CS truly novel: 114 predictions, 62.3% medically acceptable (33.3% GENUINE, 28.9% PLAUSIBLE, 28.1% IMPLAUSIBLE)\n- CS predictions are NOT artifacts \u2014 they are genuine GT gaps for established CS uses\n\nBUGS FOUND AND FIXED:\n1. Diabetes insipidus comp_to_base bug: 'diabetes' substring matched 'diabetes insipidus', promoting 9 wrong predictions to HIGH. Fixed with exclusion list.\n2. False GT in indicationList.xlsx: 6 lipid drugs (fenofibrate, gemfibrozil, lovastatin, cholestyramine, lomitapide, omega-3 FA) \u2192 hypothyroidism. FDA labels mention hypothyroidism as differential diagnosis to exclude, NOT as indication. NLP extraction error in Every Cure data. Fixed by adding FALSE_GT_PAIRS exclusion.\n\nGT GAPS FILLED: +12 CS GT gap entries (established treatments). -6 false GT entries removed. Net +6.\n\nIMPACT: HIGH 58.0% \u2192 61.5% (+3.5pp). MEDIUM 43.3% \u2192 43.4% (+0.1pp). Other tiers unchanged.",
+      "result_metric": "HIGH +3.5pp (58.0\u219261.5%), CS 97.2% acceptable vs non-CS 62.3%",
       "category": "validation"
+    },
+    {
+      "id": "h670",
+      "title": "NLP Differential Diagnosis Extraction Error Audit: Systematic Search for False GT",
+      "description": "h669 found 6 false GT entries where NLP extracted differential diagnosis mentions as indications. The pattern \"secondary causes such as [disease] should be excluded\" is common in FDA labels for metabolic drugs. Systematically search indicationList.xlsx for this pattern across all metabolic drugs to find and remove additional false GT entries.",
+      "hypothesis": "There are additional false GT entries from NLP misinterpreting differential diagnosis exclusions as treatment indications, particularly for metabolic drugs mentioning hypothyroidism, diabetes, and obesity as secondary causes.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "category": "data_quality",
+      "steps": [
+        "Search indicationList.xlsx indications_text for \"secondary causes\" and \"should be excluded\" patterns",
+        "Cross-reference extracted disease with actual drug indication",
+        "Identify false GT entries where disease is mentioned as exclusion not treatment",
+        "Remove false entries and measure holdout impact"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h671",
+      "title": "Non-CS HIGH Novel Prediction Cleanup: TransE Antimicrobial Mismatch Gate",
+      "description": "h669 found 7/16 TransE-promoted HIGH predictions are implausible (antimicrobial spectrum mismatches: amphotericin B\u2192Chagas/schistosomiasis, erythromycin\u2192TB/Pseudomonas, azithromycin\u2192mercury poisoning). TransE promotion should be gated on antimicrobial spectrum rules (h560 already exists for MEDIUM).",
+      "hypothesis": "Applying antimicrobial spectrum mismatch rules to TransE-promoted HIGH predictions will remove ~5-7 implausible predictions without losing genuine ones.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "precision",
+      "steps": [
+        "Check if antimicrobial_pathogen_mismatch filter runs before transe_medium_promotion",
+        "If not, ensure antimicrobial mismatch check applies to TransE-promoted predictions",
+        "Verify no genuine predictions are lost",
+        "Measure holdout impact"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h672",
+      "title": "CS GT Gap Expansion for Remaining 15 PLAUSIBLE Diseases",
+      "description": "h669 identified 27 GENUINE and 15 PLAUSIBLE CS disease-CS pairs. The 12 GENUINE CS GT gaps were filled. The 15 PLAUSIBLE diseases (familial cold autoinflammatory syndrome, familial mediterranean fever, psoriasis vulgaris, scleroderma, hidradenitis suppurativa, pityriasis rubra pilaris, pruritus, pruritus ani, corneal ulcer, retinitis, bronchiectasis, empyema, laryngitis, silicosis, SSc-ILD) could potentially have CS added to GT after more careful literature review.",
+      "hypothesis": "Some PLAUSIBLE CS uses have sufficient evidence (randomized trials, guidelines) to add to GT, while others are too weak.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "category": "gt_quality",
+      "steps": [
+        "Literature search each PLAUSIBLE disease for CS treatment evidence",
+        "Classify: FDA-approved, guideline-recommended, RCT-supported, expert opinion only",
+        "Add pairs with FDA/guideline/RCT support to expanded GT",
+        "Measure holdout impact"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h673",
+      "title": "Safety Audit: 4 Implausible CS HIGH Predictions",
+      "description": "h669 found 4 implausible CS predictions: budesonide\u2192autoimmune PAP (rank 7), triamcinolone\u2192TEN (rank 7), methylprednisolone\u2192dacryocystitis (rank 3), prednisolone\u2192OSA (rank 1). TEN is potentially harmful (CS controversial in TEN). These should be investigated for inverse indication filtering or specific demotions.",
+      "hypothesis": "At least 1-2 of these are safety-critical (especially TEN) and should be filtered.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "safety",
+      "steps": [
+        "Review medical literature for CS in TEN (controversy)",
+        "Check if TEN is already in inverse_indication_pairs",
+        "Add safety filters for genuinely harmful CS predictions",
+        "Check if OSA or dacryocystitis CS predictions should be demoted"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
@@ -15877,6 +15953,12 @@
       "hypothesis_id": "h668",
       "learning": "Systematic GT gap search across HIGH predictions is high-ROI: 54 pairs yielded +3.2pp HIGH, +0.4pp MEDIUM. Key gap patterns: (1) DOACs\u2192atrial flutter (4 FDA drugs, all gaps), (2) cancer drugs\u2192specific subtypes, (3) common antibiotics\u2192prescribing-info uses, (4) basic SOC missing (thyroid hormone\u2192hypothyroidism). GT gap search is more impactful for HIGH (3.2pp) than MEDIUM (0.4pp) because HIGH predictions are higher confidence and more likely to be true positives with missing GT.",
       "implication": "Further GT gap search should focus on remaining 200+ HIGH novel predictions. DOAC gaps suggest systematic mapping issues (disease term variants). Cancer drug gaps cluster around specific subtypes not in reference DBs."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h669",
+      "learning": "CS HIGH novel predictions are 97.2% medically acceptable (vs 62.3% non-CS). CS domination of HIGH novel is a QUALITY feature, not an artifact. Found 2 bugs: (1) diabetes insipidus matched via \"diabetes\" substring in comp_to_base (9 wrong HIGH preds), (2) 6 false GT entries from NLP misinterpreting \"secondary causes to exclude\" as indications in Every Cure data.",
+      "implication": "Always validate HIGH novel predictions by medical literature \u2014 it catches both bugs and GT gaps. NLP-extracted GT databases have systematic errors from differential diagnosis patterns. CS predictions should NOT be treated as lower quality than non-CS."
     }
   ],
   "collaborations": [
