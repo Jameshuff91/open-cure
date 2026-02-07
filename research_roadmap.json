@@ -14508,7 +14508,7 @@
     {
       "id": "h715",
       "title": "Antihistamine \u2192 Fibrotic Disease Mismatch: Demote Antihistamines for Non-Allergic Respiratory Diseases",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14519,7 +14519,9 @@
         "Assess expanded GT: do antihistamines have ANY evidence for fibrotic diseases?",
         "If systematic mismatch confirmed, implement antihistamine \u2192 fibrotic demotion rule",
         "Run holdout evaluation to measure MEDIUM impact"
-      ]
+      ],
+      "findings": "INVALIDATED: Antihistamine \u2192 fibrotic disease mismatch is real but too small for action.\n\nKey findings:\n1. IPF is the ONLY disease with \u22653 antihistamine predictions at MEDIUM+ (7 total, 10 out of 15 predictions overall)\n2. No other fibrotic/ILD disease has any antihistamine predictions at MEDIUM+ (sarcoidosis 0, IIP 0, BOOP 0, HP 0)\n3. Antihistamines have ZERO evidence for ANY fibrotic disease (confirmed in expanded GT)\n4. Root cause: IPF's kNN neighbors are dominated by allergic diseases (seasonal allergic rhinitis shares 12/28 drugs with IPF's prediction set)\n5. Impact of demoting: 7 MEDIUM \u2192 LOW = +0.18pp MEDIUM precision. Not worth a code change.\n6. Even for allergic diseases where antihistamines ARE appropriate, only 2 reach MEDIUM (urticaria).\n7. Target overlap is incidental (1-6 genes from IPF's 557 disease genes).\n\nConclusion: This is an IPF-specific kNN embedding artifact. The antihistamine predictions are false positives but the impact is too small (7/1521 MEDIUM, 0.46%) to justify a rule. Better to document as a known limitation of IPF predictions in the deliverable.",
+      "result_metric": "+0.18pp MEDIUM (too small to implement)"
     },
     {
       "id": "h716",
