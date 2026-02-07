@@ -13768,7 +13768,7 @@
       "title": "Safety Audit: 4 Implausible CS HIGH Predictions",
       "description": "h669 found 4 implausible CS predictions: budesonide\u2192autoimmune PAP (rank 7), triamcinolone\u2192TEN (rank 7), methylprednisolone\u2192dacryocystitis (rank 3), prednisolone\u2192OSA (rank 1). TEN is potentially harmful (CS controversial in TEN). These should be investigated for inverse indication filtering or specific demotions.",
       "hypothesis": "At least 1-2 of these are safety-critical (especially TEN) and should be filtered.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13779,8 +13779,8 @@
         "Add safety filters for genuinely harmful CS predictions",
         "Check if OSA or dacryocystitis CS predictions should be demoted"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Safety audit of 4 implausible CS HIGH predictions from h669:\n\n1. Triamcinolone \u2192 TEN: HARMFUL. No RCT evidence for CS in TEN, 40% mortality in CS-treated patients, infection risk in skin-barrier-compromised patients. Network meta-analysis shows NO treatment beats supportive care. Added TEN to inverse indications for ALL systemic CS (prednisolone, prednisone, methylprednisolone, dexamethasone, hydrocortisone, cortisone, betamethasone, triamcinolone, budesonide).\n\n2. Budesonide \u2192 autoimmune PAP: HARMFUL. 74% of patients deteriorated on CS in largest retrospective study (n=31). CS suppress already-impaired alveolar macrophages. Standard treatment is whole lung lavage and inhaled GM-CSF. Added PAP to inverse indications for all CS.\n\n3. Prednisolone \u2192 OSA: HARMFUL. CS increase OSA risk (HR 1.40), cause weight gain (70% on chronic CS), increase airway fat by 20.6%. Systemic CS are NOT indicated for OSA. Added OSA to inverse indications for systemic CS (excluding inhaled-only formulations).\n\n4. Methylprednisolone \u2192 dacryocystitis: ACCEPTABLE. Legitimate adjunctive use with antibiotics for anti-inflammatory effect. 8-12mg oral methylprednisolone alongside systemic antibiotics is documented. No change needed.\n\nBUG FIX DISCOVERED: Duplicate dict keys for prednisolone, prednisone, and methylprednisolone in INVERSE_INDICATION_PAIRS caused h542 entries (secondary adrenocortical insufficiency) to silently overwrite h486/h493 entries (IPF, glaucoma, osteoporosis, pancreatitis). This meant 3 HIGH predictions of CS \u2192 IPF were NOT being filtered despite the PANTHER-IPF trial (NEJM 2012) showing increased mortality. All entries merged into single dict entries per drug.\n\nTotal affected: 15 predictions newly filtered (8 TEN, 3 PAP, 3 OSA, 1 IPF-already-filtered-by-other-rule) + 3 HIGH CS\u2192IPF predictions restored to proper filtering via bug fix.\nHoldout impact: HIGH +0.3pp (61.5\u219261.8%), MEDIUM +0.1pp.",
+      "result_metric": "HIGH +0.3pp (61.5\u219261.8%), MEDIUM +0.1pp. 3 harmful GOLDEN removed, 3 harmful HIGH removed, bug fix restored 3 HIGH\u2192FILTER"
     }
   ],
   "completed": [

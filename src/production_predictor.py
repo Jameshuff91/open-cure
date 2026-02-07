@@ -780,50 +780,78 @@ INVERSE_INDICATION_PAIRS = {
     # PANTHER-IPF trial (NEJM 2012): prednisone+azathioprine+NAC INCREASED mortality
     # Standard of care is pirfenidone/nintedanib, NOT corticosteroids
     # h486: Added TB reactivation, steroid-induced MG crisis, glaucoma, osteoporosis, pancreatitis
+    # h542/h673: Merged CS inverse indications (h542 HPA suppression + h486/h493 original + h673 safety audit)
+    # BUG FIX: Previously had duplicate dict keys for prednisolone/prednisone/methylprednisolone,
+    # causing h542 entries to silently overwrite h486/h493 entries (IPF, glaucoma, osteoporosis LOST)
+    # h673: Added TEN (no proven efficacy, infection risk in skin-barrier-compromised patients),
+    #   autoimmune PAP (74% deteriorate on CS, suppresses already-impaired alveolar macrophages),
+    #   OSA (CS increase OSA risk HR 1.40, weight gain + airway fat deposition)
     'prednisolone': {
         'idiopathic pulmonary fibrosis',
         'neovascular glaucoma', 'osteoporosis', 'pancreatitis',
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+        'toxic epidermal necrolysis',  # h673: no proven efficacy, infection risk, 40% mortality on CS
+        'obstructive sleep apnea',  # h673: CS increase OSA risk (HR 1.40), weight gain worsens OSA
+        'pulmonary alveolar proteinosis',  # h673: 74% deteriorate on CS, macrophage suppression
     },
     'prednisone': {
         'idiopathic pulmonary fibrosis', 'extrapulmonary tuberculosis',
         'neovascular glaucoma', 'osteoporosis', 'pancreatitis',
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+        'toxic epidermal necrolysis',  # h673
+        'obstructive sleep apnea',  # h673
+        'pulmonary alveolar proteinosis',  # h673
     },
     'methylprednisolone': {
         'idiopathic pulmonary fibrosis',
         'neovascular glaucoma', 'osteoporosis',
+        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+        'toxic epidermal necrolysis',  # h673
+        'obstructive sleep apnea',  # h673
+        'pulmonary alveolar proteinosis',  # h673
     },
     'dexamethasone': {
         'idiopathic pulmonary fibrosis', 'extrapulmonary tuberculosis',
         'systemic myasthenia gravis',
         'neovascular glaucoma', 'osteoporosis',
         'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+        'toxic epidermal necrolysis',  # h673
+        'obstructive sleep apnea',  # h673
+        'pulmonary alveolar proteinosis',  # h673
     },
-    'hydrocortisone': {'idiopathic pulmonary fibrosis'},
+    'hydrocortisone': {
+        'idiopathic pulmonary fibrosis',
+        'toxic epidermal necrolysis',  # h673
+        'pulmonary alveolar proteinosis',  # h673
+    },
     'mometasone': {'idiopathic pulmonary fibrosis'},
     'fluticasone': {'idiopathic pulmonary fibrosis'},
-    'cortisone': {'idiopathic pulmonary fibrosis', 'neovascular glaucoma'},
+    'cortisone': {
+        'idiopathic pulmonary fibrosis', 'neovascular glaucoma',
+        'toxic epidermal necrolysis',  # h673
+        'pulmonary alveolar proteinosis',  # h673
+    },
     # Note: hydrocortisone, cortisone, fludrocortisone, corticotropin are legitimate
     # replacement therapy for adrenocortical insufficiency — NOT inverse indications
-    'methylprednisolone': {
-        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
-    },
-    'prednisolone': {
-        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
-    },
-    'prednisone': {
-        'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
-    },
     'betamethasone': {
         'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+        'toxic epidermal necrolysis',  # h673
+        'obstructive sleep apnea',  # h673
+        'pulmonary alveolar proteinosis',  # h673
     },
     'triamcinolone': {
         'extrapulmonary tuberculosis',
         'neovascular glaucoma', 'osteoporosis',
         'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
+        'toxic epidermal necrolysis',  # h673: controversial, no RCT evidence, infection risk
+        'obstructive sleep apnea',  # h673
+        'pulmonary alveolar proteinosis',  # h673
     },
     'budesonide': {
         'neovascular glaucoma',
         'secondary adrenocortical insufficiency',
+        'toxic epidermal necrolysis',  # h673
+        'pulmonary alveolar proteinosis',  # h673: autoimmune PAP, 74% deteriorate on CS
     },
     # h486: Azathioprine causes TEN, erythema multiforme, hepatitis B reactivation,
     # interstitial pneumonia, cholestasis (well-documented immunosuppressant AEs)
