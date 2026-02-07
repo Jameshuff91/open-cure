@@ -14496,7 +14496,7 @@
       "id": "h714",
       "title": "Internal GT Doubling Impact Assessment: How Would 2x GT Affect Tier Precision?",
       "description": "h711 showed that better disease name matching could double internal GT from 3055 to ~6000 pairs. But CRITICAL question: would more internal GT help or hurt? The expanded_ground_truth.json already has ~57K pairs and is used for holdout evaluation. Internal GT is only used for: (1) frequency counting in kNN (higher freq = more likely MEDIUM+), (2) hierarchy matching (needs GT to identify base diseases), (3) some sub-reason assignments. More internal GT means more drugs pass freq>=5 threshold, potentially diluting MEDIUM tier. Or it could improve coverage of genuine GT gaps.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14505,7 +14505,9 @@
         "Check: how many more predictions would pass freq>=5 threshold?",
         "Estimate impact on MEDIUM tier size and precision",
         "Determine if expanded GT would also need updating in parallel"
-      ]
+      ],
+      "findings": "VALIDATED (Simulation): 2x internal GT would have small impact (~50-90 MEDIUM additions). Frequency is NOT the binding constraint.\n\nKey findings:\n1. 277 drugs at F=3-4 would cross F\u22655 threshold with 2x GT.\n2. But only 255/1096 (23%) of their LOW predictions have mechanism support.\n3. With-mechanism quality: R1-5 = 39% GT (matches MEDIUM), R6-10 = 20% (below MEDIUM), R11-20 = 17% (LOW).\n4. Realistic MEDIUM additions: ~50-90 predictions (+3-6% of current MEDIUM tier).\n5. The REAL constraints on MEDIUM tier size are:\n   a) Mechanism support (77% of freq-eligible LOW preds lack it)\n   b) Category demotions (51% of LOW preds demoted for non-frequency reasons)\n   c) Rank quality (only R1-5 match MEDIUM precision)\n6. Surprising: cancer_targeted_therapy LOW at F3-4 has 34.0% GT hit rate \u2014 close to MEDIUM quality.\n7. cancer_same_type_no_mechanism at 46.4% GT \u2014 mechanism is the bottleneck, not frequency.\n\nConclusion: Pursuing more internal GT has diminishing returns. The bottleneck is mechanism path coverage in DRKG, not drug observation frequency.",
+      "result_metric": "+50-90 MEDIUM predictions with 2x GT (3-6% increase, small impact)"
     },
     {
       "id": "h715",
@@ -14554,6 +14556,36 @@
         "Identify cross-subtype drug class mismatches (e.g., antihistamines for fibrotic)",
         "Assess holdout precision by subtype",
         "Implement subtype-specific filters if justified"
+      ]
+    },
+    {
+      "id": "h718",
+      "title": "Cancer Targeted Therapy LOW Re-evaluation: 34% GT Hit Rate Suggests Some Should Be MEDIUM",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h714 found that cancer_targeted_therapy LOW predictions at F=3-4 have 34.0% expanded GT hit rate \u2014 close to current MEDIUM precision (38.3%). These are targeted cancer drugs (mAbs, kinase inhibitors, etc.) predicted for cross-cancer diseases. The h598 CANCER_TARGETED_THERAPY demotion may be too aggressive for drugs with F\u22653 and high rank. A rank+frequency gated subset might qualify for MEDIUM.",
+      "steps": [
+        "Analyze cancer_targeted_therapy LOW predictions by rank, frequency, and cancer subtype",
+        "Check if high-rank (R1-5) cancer_targeted_therapy LOW has MEDIUM-quality GT hit rate",
+        "Compare with cancer_same_type_no_mechanism (46.4% GT) \u2014 could mechanism paths be found?",
+        "If justified, create a targeted rescue for high-rank, high-freq cancer_targeted_therapy"
+      ]
+    },
+    {
+      "id": "h719",
+      "title": "DRKG Mechanism Path Coverage: Which Drug-Disease Pairs Lack Mechanism Paths and Why?",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h714 showed 77% of freq-eligible LOW predictions lack mechanism support. Mechanism coverage is the binding constraint on MEDIUM tier size, not frequency. Understanding WHY mechanism paths are missing (DRKG graph structure vs genuine lack of mechanism) could identify targetable improvements. Some drug-disease pairs may have indirect mechanisms through pathways not captured by the current mechanism check.",
+      "steps": [
+        "Sample 50 LOW predictions without mechanism at F\u22653, R1-5",
+        "For each, check DRKG edge types between drug targets and disease genes",
+        "Classify: (a) genuine no mechanism, (b) indirect mechanism (2-hop), (c) missing DRKG edges",
+        "If many are (b) or (c), propose mechanism path expansion"
       ]
     }
   ],
@@ -16883,6 +16915,12 @@
       "hypothesis_id": "h663",
       "learning": "The +55.6pp expanded GT lift for infectious_cs_tb is explained by 54 CS-infectious pairs across 25 diseases. Most are legitimate (WHO TB guidelines, Surviving Sepsis Campaign, de Gans meningitis trial). CS + chronic HBV is a historical practice now considered dangerous. Autoimmune hepatitis despite its name is correctly treated with CS (first-line therapy).",
       "implication": "CS adjunctive therapy for infections is a well-established medical practice. The internal GT is simply incomplete for this pattern. No action needed \u2014 the expanded GT correctly captures clinical practice."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h714",
+      "learning": "Internal GT frequency is NOT the binding constraint on MEDIUM tier size. 2x GT would only add 50-90 MEDIUM predictions (3-6%). The real bottlenecks are: (1) mechanism support (77% of eligible LOW lack it), (2) category-specific demotions (51%), (3) rank quality (only R1-5 match MEDIUM). Cancer targeted therapy at LOW has surprising 34% GT hit rate.",
+      "implication": "Pursuing more internal GT has diminishing returns. Focus should be on mechanism path coverage in DRKG and re-evaluating category-specific demotion thresholds."
     }
   ],
   "collaborations": [
