@@ -13144,7 +13144,7 @@
       "title": "Lidocaine MEDIUM \u2192 HIGH Promotion for Non-Procedural Categories",
       "description": "h637 found lidocaine in MEDIUM LA procedural has 70.0% \u00b1 18.7% holdout (n=4.6/seed). By category: autoimmune 72.7% (8/11), respiratory 100% (5/5). Lidocaine has genuine therapeutic uses beyond local anesthesia: IV lidocaine for chronic pain, nebulized for refractory asthma, topical for neuropathic pain. Could promote lidocaine MEDIUM for specific categories to HIGH.",
       "hypothesis": "Lidocaine MEDIUM predictions for autoimmune and respiratory diseases have holdout >55%, qualifying for HIGH promotion.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13154,8 +13154,8 @@
         "If holdout >55% with n>=5, implement lidocaine-specific promotion",
         "Assess impact on MEDIUM and HIGH tiers"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "Lidocaine MEDIUM (LA procedural): 70.0% \u00b1 18.7% but n=4.6/seed (23 total preds across 5 seeds). Per-category: autoimmune 72.7% (n=11 total), respiratory 100% (n=5 total). Too small for reliable promotion. Moving ~5 preds/seed from MEDIUM\u2192HIGH would have negligible tier impact.",
+      "result_metric": "n=4.6/seed too small for action.",
       "category": "precision-improvement"
     },
     {
