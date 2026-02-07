@@ -1043,6 +1043,10 @@ INVERSE_INDICATION_PAIRS = {
     'carbamazepine': {'dyskinesia'},
     # h486: Sulfadiazine nephrotoxicity → nephrotic syndrome
     'sulfadiazine': {'nephrotic syndrome'},
+    # h731: Aminoglycoside nephrotoxicity — dose-dependent renal tubular damage
+    # Gentamicin is the most nephrotoxic aminoglycoside (10-25% incidence)
+    # Predicting nephrotoxic drugs for kidney failure is inverse
+    'gentamicin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury'},
     # h486: GnRH agonists cause ovarian hyperstimulation syndrome
     'nafarelin': {'ovarian hyperstimulation syndrome'},
     # h486: Everolimus causes acute pancreatitis

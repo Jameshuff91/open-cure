@@ -1,6 +1,96 @@
 # Research Loop Progress
 
-## Current Session: h720+h723 - Gene-Poor Disease Supplementation + Antimicrobial Spectrum Matching (2026-02-07)
+## Current Session: h731 - Automated Literature Mining Validation (2026-02-07)
+
+### h731: Automated Literature Mining on GOLDEN/HIGH/MEDIUM NOVEL predictions — VALIDATED
+
+**Methodology:** Analyzed 590 pre-mined predictions from automated literature mining pipeline (PubMed + ClinicalTrials.gov). Ran holdout evaluation by evidence level. Identified and validated GT gaps. Added confirmed pairs to expanded GT.
+
+**Key findings:**
+1. **Literature evidence independently predicts holdout precision** — strongest signal we've found
+2. STRONG_EVIDENCE: 78.7% ± 2.6% holdout (after 31 GT fixes; 67.0% before)
+3. MODERATE_EVIDENCE: 32.1% ± 7.5% (below MEDIUM)
+4. WEAK/NO_EVIDENCE: 10-20% (LOW quality)
+5. Evidence score quartile gradient: Q1=82.5%, Q2=56.7%, Q3=16.9%, Q4=19.5%
+
+**Cross-tabulation (breakthrough):**
+- MEDIUM + STRONG_EVIDENCE: **67.4% ± 5.1%** — clearly HIGH-tier quality (139 predictions)
+- HIGH + STRONG_EVIDENCE: 91.2% ± 2.2% — GOLDEN-tier quality
+- MEDIUM + NO_EVIDENCE: 16.5% ± 4.4% — LOW-tier quality
+
+**GT gaps added:** 31 new pairs (13 from GOLDEN/HIGH + 19 from MEDIUM − 1 removed invalid)
+- Key additions: bevacizumab→esophageal/uterine cancer, azathioprine/tacrolimus→alopecia areata, multiple chemotherapy→cancer subtype pairs, antifungals→specific infections, antibiotics→specific infections
+
+**Inverse indication found:** Gentamicin → kidney failure/CKD/AKI (aminoglycoside nephrotoxicity)
+
+**False positive patterns in STRONG_EVIDENCE:**
+- Procedural co-occurrence (lidocaine→edema)
+- Macrolide spectrum mismatch (erythromycin→TB, meningitis)
+- Adverse effect mimicking indication (CS→edema)
+
+### New Hypotheses Generated (4)
+- h732: Literature evidence tier promotion MEDIUM+STRONG → HIGH (priority 3)
+- h733: Mine remaining 13,500 LOW/FILTER predictions (priority 4)
+- h734: MEDIUM NO_EVIDENCE demotion to LOW (priority 4)
+- h735: False positive analysis in STRONG_EVIDENCE (priority 5)
+
+### Recommended Next Steps
+1. h732: Implement literature evidence as tier rule (HIGH impact but needs full mining)
+2. h712: Disease name synonym expansion (high priority, in-progress)
+3. h734: Quick check on MEDIUM NO_EVIDENCE demotion
+4. Continue low-effort in-progress hypotheses (h681, h706, h727)
+
+---
+
+## Previous Session: h718+h730+h686 - Cancer Targeted Therapy Analysis + Drug Name Aliasing (2026-02-07)
+
+### h718: Cancer Targeted Therapy LOW Re-evaluation — INVALIDATED
+
+**Methodology:** Analyzed 496 cancer_targeted_therapy LOW predictions by rank, mechanism, and frequency. Full-data precision=36.0% suggested possible rescue for high-rank+mechanism subset. Ran 5-seed holdout evaluation across all subsets.
+
+**Key findings:**
+1. Full-data to holdout inflation is 5.9x (36.0% → 6.1%) — worst in entire tier system
+2. Even best subset R1-5+mech: 19.3% ± 16.6% (n=10.6/seed, unreliable)
+3. R1-10+mech: 13.6% ± 9.7% — z=-2.55 vs MEDIUM, consistent with LOW
+4. Biological explanation: targeted therapies work via specific biomarkers (BRAF, HER2, BRCA) not captured in DRKG disease embeddings
+5. h598 demotion CONFIRMED correct — no rescue possible via kNN
+
+### h730: Immunotherapy vs Kinase Inhibitor Split — INVALIDATED
+
+**Methodology:** Split CANCER_TARGETED_THERAPY into sub-classes and ran per-class holdout.
+
+**Key findings:**
+1. Checkpoint inhibitors: 10.1% ± 9.4% (n=24.2/seed) — LOW
+2. Kinase inhibitors: 5.9% ± 4.3% (n=53.2/seed) — firmly LOW
+3. Anti-target mAbs: 2.7% ± 3.3% — very LOW
+4. PARP inhibitors: 0.0% — zero holdout hits
+5. Even pan-cancer immunotherapy doesn't transfer via kNN
+
+### h686: Drug Name Aliasing — VALIDATED
+
+**Methodology:** Systematic discovery of EC→DrugBank drug name mismatches. Built 34 new aliases covering INN variants, salt forms, combo products, biologic variants.
+
+**Key findings:**
+1. +85 GT pairs recovered across +10 diseases (4884→4969 pairs, +1.7%)
+2. Key drugs: piperacillin (F=16), HCTZ (F=11), clopidogrel (F=9), iodoquinol (F=9)
+3. **MEDIUM: 42.8% ± 1.8% (was 38.3% ± 4.7%)** — recovered and more stable
+4. **GOLDEN: 82.9% ± 10.6% (was 71.8% ± 8.0%)**
+5. HIGH: 57.6% ± 6.3% (was 61.4%) — slight drop but within noise
+6. LOW/FILTER: unchanged
+
+### New Hypotheses Generated (3)
+- h728: Biomarker-matched targeted therapy rescue via DRKG mutation edges (priority 4)
+- h729: Full-data inflation index for deliverable quality auditing (priority 5)
+- h730: Immunotherapy vs kinase inhibitor split (completed/invalidated)
+
+### Recommended Next Steps
+1. Continue with remaining in-progress hypotheses (h712, h717, h727)
+2. h728: Biomarker-based targeted therapy rescue (fundamentally different from kNN)
+3. Priority 4 medium-effort hypotheses (h367, h375)
+
+---
+
+## Previous Session: h720+h723 - Gene-Poor Disease Supplementation + Antimicrobial Spectrum Matching (2026-02-07)
 
 ### h720: Gene-Poor Disease Supplementation via External Databases — INVALIDATED
 
