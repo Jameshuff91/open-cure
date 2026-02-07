@@ -13479,7 +13479,7 @@
       "title": "Holdout-Invisible Prediction Validation via Literature Mining",
       "description": "h653 revealed 190 ATC coherent predictions that are holdout-invisible (freq drops below threshold during holdout). These have 61.6% full-data precision but can't be validated via holdout. Literature mining (ClinicalTrials.gov, PubMed) could provide independent validation for these predictions. This addresses a systematic blind spot in our evaluation methodology \u2014 predictions that are high-quality but invisible to holdout because they involve borderline-frequency drugs.",
       "hypothesis": "Literature validation of the 190 holdout-invisible ATC coherent predictions will confirm that their true precision is closer to full-data (61.6%) than to LOW average (14.8%), validating the ATC coherent boost.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13490,8 +13490,8 @@
         "Compare literature hit rate vs holdout precision for other MEDIUM sub-reasons",
         "If literature validation is strong, this validates the evaluation blind spot"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED: Literature validation of 194 holdout-invisible ATC coherent predictions confirms high quality.\n\nKEY RESULTS:\n- 120/194 (61.9%) are in expanded GT (full-data precision)\n- 21 additional pairs (10.8%) have ESTABLISHED (16) or CLINICAL_EVIDENCE (5) from medical knowledge + ClinicalTrials.gov\n- Literature-validated precision: 141/194 = 72.7% (exceeds GOLDEN holdout 71.6%)\n- 31 pairs (16.0%) are PLAUSIBLE_NO_EVIDENCE (right drug class, right pathogen type, but no specific trial)\n- 13 pairs (6.7%) are WRONG_SPECTRUM (right drug class, but wrong coverage - e.g., caspofungin\u2192zygomycosis)\n- 9 pairs (4.6%) are IMPLAUSIBLE (drug class inappropriate for disease type)\n\nHOLDOUT-INVISIBLE MECHANISM:\n- 43.8% of predictions have train_freq<=5, dropping below freq>=3 threshold during disease holdout splits\n- The ATC coherent boost requires rank<=10 AND (mechanism OR freq>=3)\n- During holdout, ~20% diseases removed \u2192 borderline freq drugs lose 1-2 counts \u2192 lose eligibility\n\nClinicalTrials.gov: Only 6/65 queried pairs have registered trials (9.2%), but most are standard antimicrobial uses documented in prescribing info and guidelines, not clinical trials.\n\nWRONG_SPECTRUM PATTERNS (13 predictions):\n- Echinocandin\u2192non-Candida/Aspergillus fungal: 5 (caspofungin narrow spectrum)\n- Azole\u2192intrinsically resistant fungi: 3 (zygomycosis, fusariosis)\n- Cephalosporin\u2192intracellular bacteria: 2 (brucellosis, tularemia)\n- Cephalosporin\u2192Listeria: 1 (intrinsic resistance)\n- Cephalosporin\u2192spirochete: 1, Beta-lactam\u2192intracellular: 1\n\nGT GAP IDENTIFICATION: 21 novel pairs with ESTABLISHED/CLINICAL evidence represent genuine expanded GT incompleteness for common antibiotics.\n\nCONCLUSION: ATC coherent predictions are genuinely high-quality (72.7% validated). The holdout evaluation blind spot is a methodological limitation, not a quality issue. No tier changes needed.",
+      "result_metric": "72.7% literature-validated precision (vs 61.9% GT, vs 42.9% MEDIUM holdout avg)",
       "category": "evaluation-improvement"
     },
     {
@@ -13608,6 +13608,64 @@
       "findings": "VALIDATED: Deliverable regenerated with h657 reverted. Tier counts: GOLDEN 420, HIGH 845, MEDIUM 1336, LOW 4275, FILTER 7274. Total 14,150 predictions. MEDIUM now correctly includes the ~391 NoMech R6-10 predictions that h657 had incorrectly demoted to LOW. Known indication rates: GOLDEN 66.2%, HIGH 47.2%, MEDIUM 36.1%, LOW 15.2%, FILTER 11.5%.",
       "result_metric": "Deliverable regenerated. MEDIUM: 1336 preds (includes h657 revert). Total: 14,150.",
       "category": "maintenance"
+    },
+    {
+      "id": "h665",
+      "title": "Antimicrobial Spectrum-Level Demotion: Echinocandin and Cephalosporin Mismatches",
+      "description": "h658 identified 13 WRONG_SPECTRUM predictions within ATC coherent MEDIUM. The largest pattern is echinocandins (caspofungin) predicted for non-Candida/Aspergillus fungal diseases (5 preds), and cephalosporins predicted for intracellular bacteria or Listeria (4 preds). These are right drug CLASS but wrong drug SPECTRUM. Could implement spectrum-level demotion rules: echinocandin\u2192non-target-organism, cephalosporin\u2192Listeria (intrinsic resistance). This extends h560 antimicrobial mismatch to within-class spectrum matching.",
+      "hypothesis": "Implementing spectrum-level antimicrobial rules could demote 6-13 WRONG_SPECTRUM ATC coherent predictions from MEDIUM to LOW, improving MEDIUM precision by ~0.1-0.3pp.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Check how many echinocandin/cephalosporin predictions exist beyond ATC coherent",
+        "Define echinocandin target organisms (Candida, Aspergillus only)",
+        "Define cephalosporin-resistant organisms (Listeria, intracellular bacteria)",
+        "Implement demotion rules and measure MEDIUM holdout impact",
+        "Verify no false demotions (e.g., ceftriaxone HAS some Listeria activity)"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h666",
+      "title": "GT Gap Expansion: Antibiotic Standard-of-Care Uses Missing from Expanded GT",
+      "description": "h658 identified 21 drug-disease pairs with ESTABLISHED or CLINICAL evidence that are NOT in expanded GT. Most are standard antibiotic uses (ampicillin\u2192meningococcal infection, cefuroxime\u2192pneumococcal infections, etc.) documented in prescribing info but missing from our reference databases. This represents systematic GT incompleteness for common antimicrobials. Adding these could improve MEDIUM holdout slightly and improve GT quality for future analyses.",
+      "hypothesis": "Adding 21 ESTABLISHED/CLINICAL antibiotic pairs to expanded GT will improve overall GT completeness and slightly improve MEDIUM holdout precision.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Verify each of the 21 pairs against FDA labels or WHO guidelines",
+        "Add verified pairs to expanded_ground_truth.json",
+        "Run holdout evaluation to measure impact",
+        "Check if similar gaps exist for other drug classes beyond antimicrobials"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "gt-improvement"
+    },
+    {
+      "id": "h667",
+      "title": "Literature Validation for Other Holdout-Invisible Sub-Reasons",
+      "description": "h658 showed that literature validation can assess prediction quality for holdout-invisible predictions. The same approach could be applied to other sub-reasons with small n/seed in holdout: local_anesthetic_procedural (41 preds), infectious_cs_tb_demotion (18 preds), mechanism_specific (11 preds), highly_repurposable (4 preds). These all have limited holdout sample sizes. Literature validation could give independent quality estimates.",
+      "hypothesis": "Literature validation of other small-n MEDIUM sub-reasons will provide more reliable quality estimates than holdout for predictions with n<10/seed.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Extract predictions for each small-n sub-reason",
+        "Classify novel predictions by medical plausibility and clinical evidence",
+        "Compare literature precision vs holdout precision",
+        "Identify any sub-reasons where literature contradicts holdout"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "evaluation-improvement"
     }
   ],
   "completed": [
@@ -15756,6 +15814,12 @@
       "hypothesis_id": "h655",
       "learning": "Cancer same-type rank 11-15 at 55.8% was inflated by n=1 outlier (seed 42 at 100%). Excluding the outlier: 44.7% \u00b1 8.6%, not promotable to HIGH. Always exclude n=1 outlier seeds before reporting means.",
       "implication": "Small n with outlier seeds can inflate means by 10+ pp. Report medians or exclude n<3 seeds."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h658",
+      "learning": "Literature validation (medical knowledge + ClinicalTrials.gov) provides independent quality assessment for holdout-invisible predictions. ATC coherent predictions: 72.7% literature-validated precision (61.9% GT + 10.8% ESTABLISHED/CLINICAL). Holdout invisibility is a methodological limitation, not quality issue. ClinicalTrials.gov only captures 9.2% of standard antimicrobial uses \u2014 most are in prescribing info/guidelines.",
+      "implication": "Literature validation can supplement holdout for small-n sub-reasons. Spectrum-level antimicrobial rules could catch 13 wrong-spectrum predictions. 21 GT gaps identified."
     }
   ],
   "collaborations": [

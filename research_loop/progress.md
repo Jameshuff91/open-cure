@@ -1,6 +1,63 @@
 # Research Loop Progress
 
-## Current Session: h657/h654/h653/h661 - MEDIUM Calibration & Ryland Prep (2026-02-06)
+## Current Session: h658 - Holdout-Invisible Prediction Literature Validation (2026-02-06)
+
+### h658: Holdout-Invisible Prediction Validation via Literature Mining — VALIDATED
+
+**Question:** Are the 194 ATC coherent predictions (holdout-invisible due to freq threshold) genuinely high-quality?
+
+**Method:**
+1. Extracted all 194 ATC coherent MEDIUM predictions from deliverable
+2. Checked against expanded GT: 120/194 (61.9%) confirmed
+3. For 74 novel predictions: medical plausibility assessment + ClinicalTrials.gov API queries
+4. Classified each novel prediction: ESTABLISHED, CLINICAL_EVIDENCE, PLAUSIBLE_NO_EVIDENCE, WRONG_SPECTRUM, IMPLAUSIBLE
+
+**Key Results:**
+| Category | Count | % |
+|----------|-------|---|
+| In expanded GT | 120 | 61.9% |
+| Novel ESTABLISHED | 16 | 8.2% |
+| Novel CLINICAL_EVIDENCE | 5 | 2.6% |
+| Novel PLAUSIBLE_NO_EVIDENCE | 31 | 16.0% |
+| Novel WRONG_SPECTRUM | 13 | 6.7% |
+| Novel IMPLAUSIBLE | 9 | 4.6% |
+
+**Literature-validated precision: 141/194 = 72.7%** (exceeds GOLDEN holdout 71.6%)
+
+**Holdout invisibility mechanism:** 43.8% of predictions have freq≤5. During 80/20 disease holdout split, ~20% disease removal drops borderline drugs below freq≥3 threshold.
+
+**WRONG_SPECTRUM patterns (13 preds):**
+- Echinocandin (caspofungin) → non-Candida/Aspergillus fungal: 5
+- Azole → intrinsically resistant fungi (zygomycosis): 3
+- Cephalosporin → intracellular bacteria (brucellosis, tularemia) or Listeria: 4
+- Beta-lactam → intracellular: 1
+
+**ClinicalTrials.gov:** Only 6/65 queried pairs have registered trials (9.2%). Most standard antimicrobial uses are in prescribing info/guidelines, not clinical trials.
+
+**GT gaps identified:** 21 novel pairs with ESTABLISHED/CLINICAL evidence missing from expanded GT.
+
+### Tier Status (unchanged from h649)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 71.6% ± 4.3% | 420 |
+| HIGH | 54.8% ± 8.9% | ~858 |
+| MEDIUM | 42.9% ± 2.9% | ~1363 |
+| LOW | 14.8% ± 1.7% | ~4235 |
+| FILTER | 10.6% ± 1.3% | 7274 |
+
+### New Hypotheses Generated (3)
+- h665: Antimicrobial spectrum-level demotion (echinocandin/cephalosporin mismatches)
+- h666: GT gap expansion for antibiotic standard-of-care uses
+- h667: Literature validation for other holdout-invisible sub-reasons
+
+### Recommended Next Steps
+1. **h666**: Add 21 ESTABLISHED/CLINICAL antibiotic GT gaps (low effort, quick win)
+2. **h665**: Antimicrobial spectrum-level demotion rules
+3. Move to higher-effort external data integrations (LINCS, PubMed mining)
+
+---
+
+## Previous Session: h657/h654/h653/h661 - MEDIUM Calibration & Ryland Prep (2026-02-06)
 
 ### h657: Default MEDIUM NoMech R6-10 Demotion — INVALIDATED
 With expanded GT, NoMech R6-10 has 40.5% ± 9.4% holdout (n=14.6/seed). This is MEDIUM-quality (z=-0.4 vs MEDIUM avg 42.9%), not LOW-quality. The original 30.0% estimate from h555-era used internal GT, which systematically underestimates signal-rich predictions (h629). Demoting would game MEDIUM headline (+1.6pp to 44.5%) but misclassify genuinely MEDIUM-quality predictions as LOW. Code reverted.
