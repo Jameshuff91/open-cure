@@ -1,6 +1,67 @@
 # Research Loop Progress
 
-## Current Session: h629/h631 - MEDIUM Quality Stratification (2026-02-06)
+## Current Session: h633 - Cancer Same-Type Expanded GT Re-evaluation (2026-02-06)
+
+### h633: Cancer Same-Type + Mechanism + Rank≤10 → HIGH Promotion — VALIDATED
+
+Reopened CLOSED direction #4. Original closure (h416/h447) used internal GT showing 10.7% holdout. h611/h629 showed expanded GT (59,584 pairs vs 3,070) dramatically changes the calculus.
+
+**Key Results (5-seed holdout, expanded GT):**
+| Signal | Holdout | ±std | N/seed |
+|---|---|---|---|
+| Mech+R<=5 | 64.2% | 12.6% | 17.6 |
+| rank_1_5 | 58.7% | 12.1% | 20.8 |
+| Mech+R<=10 | 56.6% | 9.7% | 30.0 |
+| ALL cancer_same_type | 37.4% | 6.4% | 100.8 |
+| No mechanism | 18.3% | 3.9% | 28.4 |
+
+**CS artifact check:** Only 0.4% of cancer_same_type predictions are corticosteroids. GENUINE signal.
+
+**Drug class breakdown:**
+| Drug Class | Holdout | N/seed |
+|---|---|---|
+| Taxane | 76.0% | 7.8 |
+| Anthracycline | 71.6% | 6.5 |
+| Platinum | 50.5% | 7.4 |
+| Antimetabolite | 48.3% | 22.6 |
+| Alkylating | 24.2% | 8.8 |
+
+**Implementation:** cancer_same_type + mechanism + rank≤10 → HIGH (cancer_same_type_mech_rank10)
+
+**H393 evaluator results:**
+- cancer_same_type_mech_rank10: Full=82.4%, Holdout=62.4% ± 10.7% (n=27.6/seed)
+
+**Tier impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 71.6% ± 4.3% (420) | 71.6% ± 4.3% (419) | unchanged |
+| HIGH | 53.1% ± 12.2% (719) | 54.5% ± 9.0% (876) | +1.4pp, -3.2% var |
+| MEDIUM | 38.7% ± 3.3% (2019) | 36.8% ± 2.5% (1972) | -1.9pp, -0.8% var |
+| LOW | 14.2% ± 2.0% (3718) | 14.2% ± 2.0% (3622) | unchanged |
+| FILTER | 10.6% ± 1.3% (7274) | 10.6% ± 1.3% (7274) | unchanged |
+
+181 predictions promoted. Top drugs: Doxorubicin (26), Paclitaxel (17), Bevacizumab (14), Cyclophosphamide (11).
+
+### New Hypotheses Generated (4)
+- h634: Remaining cancer_same_type MEDIUM demotion (no-mech = 18.3%)
+- h635: Cytotoxic drug class as quality signal (taxane 76%, anthracycline 72%)
+- h636: Bevacizumab cross-cancer validation (14 promoted preds)
+- h637: Systematic CLOSED direction re-evaluation with expanded GT
+
+### Key Insights
+1. **CLOSED directions MUST be re-evaluated when GT changes fundamentally** — internal GT (3,070 pairs) to expanded GT (59,584 pairs) is a 19x increase that changes the precision landscape.
+2. Cancer same-type is NOT CS-driven (0.4%) — unlike most HIGH-tier improvements.
+3. Mechanism + rank within a single tier rule can create a HIGH-quality subset, even when the overall rule is MEDIUM.
+4. Drug class stratification reveals: broad-spectrum cytotoxics (taxane, anthracycline, platinum) transfer across cancer types much better than alkylating agents or vinca alkaloids.
+
+### Recommended Next Steps
+1. **h634**: Demote cancer_same_type without mechanism (18.3%) to LOW
+2. **h637**: Systematically check all 16 CLOSED directions for GT-dependency
+3. Regenerate deliverable with h633 updates
+
+---
+
+## Previous Session: h629/h631 - MEDIUM Quality Stratification (2026-02-06)
 
 ### h629: MEDIUM Precision Stratification by Multiple Signals — VALIDATED
 

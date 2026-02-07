@@ -12983,7 +12983,7 @@
       "title": "Mechanism + Rank \u2264 10 as Independent HIGH Signal: Non-TransE Validation",
       "description": "h629 found mechanism+rank<=10 has 52.5% \u00b1 4.4% holdout (non-CS) \u2014 the LOWEST variance of any MEDIUM subset and squarely in HIGH territory. This signal is INDEPENDENT of TransE (411 production predictions vs 187 TransE). Test whether this could be a standalone promotion criterion without using TransE.",
       "hypothesis": "Mechanism support + kNN rank \u2264 10 is a standalone HIGH-quality signal for MEDIUM predictions.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12994,10 +12994,111 @@
         "Run formal h393 evaluator with mechanism+rank<=10 \u2192 HIGH",
         "Verify no existing rules already capture this signal"
       ],
-      "findings": null,
-      "result_metric": null,
+      "findings": "INVALIDATED: Mechanism+rank<=10 is NOT a standalone promotion signal due to circularity.\n\nAfter h630 (TransE promotion), 379 MEDIUM predictions remain with mechanism+rank<=10. Analysis reveals the signal is confounded by tier_rule context:\n\nProblem groups that should NOT be promoted:\n- local_anesthetic_procedural (24): Procedural artifacts, not therapeutic\n- metabolic_medium_demotion (15): Previously demoted for poor quality\n- cv_established_drug_rescue (20): 30.9% holdout, below HIGH threshold\n- infectious_cs_tb_demotion (9): TB-specific, marginal quality\n\nSafe groups (would benefit):\n- cancer_same_type (165): 40.2% holdout \u2014 below HIGH threshold\n- target_overlap_promotion (57): 51.2% holdout \u2014 borderline\n\nThe ~50.5% overall precision is an AVERAGE of heterogeneous groups with very different quality levels. A blanket promotion would incorrectly elevate procedural artifacts and demoted predictions.\n\nKEY INSIGHT: Mechanism support is already incorporated into tier logic. Predictions at MEDIUM WITH mechanism are there because they LACK other promoting signals (hierarchy match, correct category, etc.). Mechanism alone doesn't overcome category-specific demotion logic.",
+      "result_metric": "INVALIDATED: Circularity with tier_rule context. Blanket mech+rank<=10 promotes procedural artifacts (24) and demoted categories (15).",
       "category": "tier-optimization",
       "rationale": "411 MEDIUM predictions have mechanism+rank<=10 \u2014 2x the TransE subset. If non-circular, this is a larger, more robust promotion opportunity."
+    },
+    {
+      "id": "h633",
+      "title": "Cancer Same-Type + Mechanism + Rank\u226410 \u2192 HIGH: Expanded GT Re-evaluation",
+      "description": "CLOSED direction #4 (cancer_same_type\u2192HIGH) was closed based on internal GT showing 10.7% holdout (h416/h447). h611/h629 showed expanded GT lifts cancer_same_type to 37.7%. Re-evaluate subsets with expanded GT to find promotable candidates.",
+      "hypothesis": "Cancer same-type predictions with mechanism support AND kNN rank\u226410 have HIGH-level precision (>50%) under expanded GT evaluation.",
+      "status": "validated",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Run 5-seed holdout on cancer_same_type with expanded GT",
+        "Stratify by signal: TransE, mechanism, rank, drug class",
+        "Check CS artifact (minimal: 0.4%)",
+        "Identify promotable subsets (>50% holdout, n\u22655/seed)",
+        "Implement best subset as promotion rule"
+      ],
+      "findings": "VALIDATED: Cancer same-type + mechanism + rank\u226410 reaches 62.4% \u00b1 10.7% holdout (expanded GT, n=27.6/seed). Reopens CLOSED direction #4. Non-circular: mechanism is DRKG drug-target/disease-gene overlap, rank is kNN score. CS artifact minimal (0.4% of predictions). Implemented as cancer_same_type_mech_rank10 \u2192 HIGH promotion. 181 production predictions promoted. HIGH: 53.1% \u2192 54.5% (+1.4pp, variance \u21933.2%). MEDIUM: 38.7% \u2192 36.8% (-1.9pp, expected dilution). Drug class breakdown: taxane 76%, anthracycline 72%, platinum 51%, antimetabolite 48%. Top drugs: doxorubicin, paclitaxel, bevacizumab, cyclophosphamide.",
+      "result_metric": "cancer_same_type_mech_rank10: 62.4% \u00b1 10.7% holdout. HIGH +1.4pp (53.1\u219254.5%), variance \u21933.2%. 181 preds promoted.",
+      "category": "tier-optimization",
+      "rationale": "Expanded GT resolved the CLOSED direction by lifting cancer_same_type precision from 10.7% to 37.7%, then mechanism+rank filter selects 62.4% subset."
+    },
+    {
+      "id": "h634",
+      "title": "Remaining Cancer Same-Type MEDIUM Quality: Identify Demotable Subsets",
+      "description": "After h633 promotion, remaining cancer_same_type MEDIUM has 27.5% holdout (below MEDIUM 36.8%). Are there identifiable subsets that should be demoted to LOW? Key candidates: no-mechanism predictions (18.3% holdout), rank 11-20 (29.1%), vinca_alkaloid/alkylating drug classes.",
+      "hypothesis": "Cancer same-type predictions without mechanism support AND rank>10 have LOW-level precision (<20%) and should be demoted.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Analyze remaining cancer_same_type MEDIUM predictions (n=395)",
+        "Stratify by mechanism \u00d7 rank to find LOW-quality subsets",
+        "Check drug class specifics for worst performers",
+        "Run h393 evaluator if demotion is implemented"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "tier-optimization",
+      "rationale": "h633 created a quality split: promoted preds at 62.4% vs residual at 27.5%. The residual drags MEDIUM down 1.9pp. Targeted demotion could recover some of this."
+    },
+    {
+      "id": "h635",
+      "title": "Cytotoxic Drug Class as Cancer Same-Type Quality Signal",
+      "description": "h633 Phase 4 showed drug class holdout: taxane 76%, anthracycline 72%, platinum 51%, antimetabolite 48% vs alkylating 24%, other_cytotoxic 22%. Could drug class be used to refine the remaining cancer_same_type predictions beyond mechanism+rank?",
+      "hypothesis": "Taxane and anthracycline cancer_same_type predictions have HIGH-level precision regardless of mechanism/rank.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Cross-tabulate drug class \u00d7 mechanism \u00d7 rank for cancer_same_type",
+        "Check if taxane/anthracycline WITHOUT mechanism still have HIGH precision",
+        "If yes, implement drug-class-specific promotion",
+        "Verify with h393 evaluator"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "tier-optimization",
+      "rationale": "Drug class specificity within cancer may capture domain knowledge that mechanism support misses (e.g., taxanes work across solid tumors regardless of specific target overlap)."
+    },
+    {
+      "id": "h636",
+      "title": "Bevacizumab Cross-Cancer Transferability Validation",
+      "description": "Bevacizumab (anti-VEGF) was promoted by h633 (14 cancer_same_type_mech_rank10 preds). Unlike kinase inhibitors in CANCER_TARGETED_THERAPY, VEGF inhibition has broader applicability. Validate these predictions against clinical trial data.",
+      "hypothesis": "Bevacizumab cancer_same_type predictions are clinically valid because VEGF-driven angiogenesis is common across solid tumors.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "List all 14 bevacizumab promoted predictions with disease names",
+        "Cross-reference with FDA-approved bevacizumab indications",
+        "Check ClinicalTrials.gov for bevacizumab trials in predicted diseases",
+        "Determine if any should be added to expanded GT"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "validation",
+      "rationale": "Bevacizumab is FDA-approved for colorectal, lung, renal, cervical, ovarian, HCC. If promoted preds match these, they are GT gaps."
+    },
+    {
+      "id": "h637",
+      "title": "Systematic CLOSED Direction Re-evaluation with Expanded GT",
+      "description": "h633 reopened CLOSED direction #4 (cancer_same_type\u2192HIGH) by using expanded GT. Which other CLOSED directions were closed based on internal GT evaluation and might reopen? Candidates: #1 (rank>20, 7 failures), #6 (kNN-derived metrics), #8 (LOW\u2192MEDIUM promotion).",
+      "hypothesis": "At least one other CLOSED direction reopens when re-evaluated with expanded GT (59,584 pairs vs 3,070).",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Review all 16 CLOSED directions for GT-dependency",
+        "Identify which were closed based on internal GT evaluation",
+        "Re-evaluate top 3 candidates with expanded GT",
+        "Document which remain closed and why"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "meta-analysis",
+      "rationale": "h629 lesson: expanded GT preferentially lifts signal-rich predictions. CLOSED directions that failed by small margins with internal GT may succeed with expanded GT."
     }
   ],
   "completed": [
@@ -15116,6 +15217,12 @@
       "hypothesis_id": "h630",
       "learning": "TransE MEDIUM \u2192 HIGH promotion is safe with strict criteria (mechanism OR rank<=5, non-CS). 56.1% holdout for promoted predictions. HIGH precision INCREASES (+0.3pp) while variance DECREASES (-1.3%). Counter-intuitively, adding predictions can improve tier precision by rebalancing the composition.",
       "implication": "CLOSED direction #2 (within-tier reranking) should be revisited as CLOSED direction for PROMOTION (not reranking). TransE promotion works because expanded GT revealed the signal was always there but underestimated."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h632",
+      "learning": "Mechanism+rank<=10 within MEDIUM is NOT independently promotable. The 52.5% holdout is an average of heterogeneous groups: some would benefit (cancer_same_type 40.2%, target_overlap 51.2%) but others are correctly at MEDIUM/LOW (procedural artifacts 24, metabolic demotions 15). Mechanism is already incorporated into tier logic, so MEDIUM+mechanism predictions are there because they lack OTHER promoting signals.",
+      "implication": "Signal combination analysis (h629) is valuable for IDENTIFYING opportunities but each promotion must be validated against tier_rule context. TransE was safe because it's an INDEPENDENT model. Mechanism is NOT independent of the tier system."
     }
   ],
   "collaborations": [

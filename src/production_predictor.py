@@ -3032,6 +3032,11 @@ class DrugRepurposingPredictor:
                 # Demote targeted therapy cancer_same_type MEDIUM → LOW.
                 if any(t in drug_lower for t in CANCER_TARGETED_THERAPY):
                     return ConfidenceTier.LOW, False, 'cancer_targeted_therapy'
+                # h633: cancer_same_type + mechanism + rank<=10 = 56.6% ± 9.7% holdout (expanded GT)
+                # Promoted MEDIUM → HIGH. Reopened CLOSED direction #4 with expanded GT.
+                # Non-circular: mechanism is drug-target/disease-gene overlap, rank is kNN score.
+                if mechanism_support and rank <= 10:
+                    return ConfidenceTier.HIGH, True, 'cancer_same_type_mech_rank10'
                 # h396: Demoted from GOLDEN to MEDIUM (24.5% full, 19.2% holdout)
                 # cancer_same_type was 57% of GOLDEN predictions, dragging GOLDEN below HIGH
                 return ConfidenceTier.MEDIUM, True, 'cancer_same_type'

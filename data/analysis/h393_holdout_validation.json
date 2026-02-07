@@ -14,29 +14,29 @@
       ]
     },
     "HIGH": {
-      "full_precision": 63.6,
-      "holdout_mean": 53.1,
-      "holdout_std": 12.2,
-      "delta": -10.5,
+      "full_precision": 66.8,
+      "holdout_mean": 54.5,
+      "holdout_std": 9.0,
+      "delta": -12.3,
       "seed_values": [
-        32.1,
-        57.5,
-        66.9,
-        61.3,
-        47.8
+        40.0,
+        59.4,
+        63.1,
+        62.1,
+        48.0
       ]
     },
     "MEDIUM": {
-      "full_precision": 50.4,
-      "holdout_mean": 38.7,
-      "holdout_std": 3.3,
-      "delta": -11.7,
+      "full_precision": 47.4,
+      "holdout_mean": 36.8,
+      "holdout_std": 2.5,
+      "delta": -10.6,
       "seed_values": [
-        36.9,
-        41.6,
-        33.4,
-        42.6,
-        39.2
+        35.0,
+        37.9,
+        32.8,
+        39.7,
+        38.6
       ]
     },
     "LOW": {
@@ -259,12 +259,12 @@
     },
     "transe_medium_promotion": {
       "tier": "HIGH",
-      "full_precision": 68.8,
-      "full_n": 109,
-      "holdout_mean": 56.1,
-      "holdout_std": 11.9,
-      "delta": -12.7,
-      "mean_n": 14.6,
+      "full_precision": 63.6,
+      "full_n": 88,
+      "holdout_mean": 50.5,
+      "holdout_std": 19.6,
+      "delta": -13.1,
+      "mean_n": 11.6,
       "status": "degraded"
     },
     "cardiovascular_hierarchy_heart_failure": {
@@ -315,6 +315,16 @@
       "holdout_std": 40.9,
       "delta": -39.6,
       "mean_n": 4.7,
+      "status": "OVERFITTED?"
+    },
+    "cancer_same_type_mech_rank10": {
+      "tier": "HIGH",
+      "full_precision": 82.4,
+      "full_n": 182,
+      "holdout_mean": 62.4,
+      "holdout_std": 10.7,
+      "delta": -20.0,
+      "mean_n": 27.6,
       "status": "OVERFITTED?"
     },
     "autoimmune_hierarchy_multiple_sclerosis": {
@@ -659,12 +669,12 @@
     },
     "cancer_same_type": {
       "tier": "MEDIUM",
-      "full_precision": 58.9,
-      "full_n": 560,
-      "holdout_mean": 37.6,
-      "holdout_std": 6.5,
-      "delta": -21.3,
-      "mean_n": 78.4,
+      "full_precision": 49.9,
+      "full_n": 399,
+      "holdout_mean": 27.5,
+      "holdout_std": 6.4,
+      "delta": -22.4,
+      "mean_n": 53.8,
       "status": "OVERFITTED?"
     },
     "target_overlap_promotion": {
@@ -777,6 +787,7 @@
     "cardiovascular_hierarchy_hypertension",
     "comp_to_base_high_87",
     "metabolic_hierarchy_diabetes",
+    "cancer_same_type_mech_rank10",
     "autoimmune_hierarchy_multiple_sclerosis",
     "infectious_hierarchy_uti",
     "autoimmune_hierarchy_spondylitis",
@@ -793,9 +804,9 @@
     "golden_holdout_precision": 71.6,
     "golden_pass": true,
     "tier_ordering_correct": true,
-    "n_rules_tested": 70,
+    "n_rules_tested": 71,
     "n_genuine": 17,
-    "n_overfitted": 19,
+    "n_overfitted": 20,
     "n_degraded": 17,
     "n_small_sample": 17
   }
