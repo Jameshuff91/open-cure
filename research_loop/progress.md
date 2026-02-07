@@ -1,6 +1,49 @@
 # Research Loop Progress
 
-## Current Session: h615/h619/h620/h621/h616 - Expanded GT Analysis (2026-02-06)
+## Current Session: h618 - CV Medium Demotion Drug-Class Stratification (2026-02-06)
+
+### h618: CV Medium Demotion Reversal — VALIDATED
+
+h462 demoted ALL cardiovascular MEDIUM→LOW based on internal GT (2.0% holdout). h615 found 25.1% ± 19.4% with expanded GT. This experiment stratified by drug class:
+
+**Key Results (5-seed holdout, expanded GT):**
+| Drug Class | Holdout | N/seed | Preds | Action |
+|------------|---------|--------|-------|--------|
+| CCB | 49.7% ± 34.6% | 3.4 | 11 | Rescued to MEDIUM |
+| Diuretic | 33.8% ± 32.4% | 3.2 | 12 | Rescued to MEDIUM |
+| Anticoagulant/antiplatelet | 32.6% ± 23.4% | 14.2 | 70 | Rescued to MEDIUM |
+| ARB | 30.0% ± 40.0% | 3.0 | 10 | Rescued to MEDIUM |
+| other_CV (antibiotics/biologics) | 18.3% ± 9.0% | 37.6 | 166 | Stay LOW |
+| Corticosteroid | 2.9% ± 5.7% | 1.4 | 20 | Stay LOW |
+
+**Implementation:** `_is_established_cv_drug()` method identifies genuine CV pharmacotherapy (anticoagulants, CCBs, diuretics, ARBs, statins, beta-blockers, ACE inhibitors, antiarrhythmics, nitrates, etc.). 201 predictions rescued LOW→MEDIUM.
+
+**Holdout validation:** cv_established_drug_rescue = 30.9% ± 20.9% (n=44/seed, Δ=-1.6pp, GENUINE). Remaining cardiovascular_medium_demotion = 4.6% ± 3.8% (correctly LOW).
+
+**Tier impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 71.6% ± 4.3% (420) | 71.6% ± 4.3% (420) | unchanged |
+| HIGH | 52.8% ± 13.5% (604) | 52.8% ± 13.5% (604) | unchanged |
+| MEDIUM | 41.3% ± 2.8% (1874) | 38.9% ± 4.0% (2075) | -2.4pp, +201 preds |
+| LOW | 15.1% ± 2.4% (3978) | 14.6% ± 2.4% (3777) | -0.5pp, -201 preds |
+| FILTER | 10.6% ± 1.3% (7274) | 10.6% ± 1.3% (7274) | unchanged |
+
+**Key insight:** Internal GT systematically underestimates CV drug precision. Expanded GT reveals drug-class stratification cleanly separates genuine CV drugs (30.9%) from non-CV drugs predicted for CV diseases (4.6%).
+
+### New Hypotheses (3)
+- h622: Expanded GT recalibration of other demoted categories
+- h623: MEDIUM precision recovery: tighten CV rescue criteria
+- h624: Deliverable regeneration with h618 changes
+
+### Recommended Next Steps
+1. **h624**: Regenerate deliverable with h618 changes (quick)
+2. **h622**: Apply same drug-class stratification to other demoted categories
+3. **h623**: Tighten rescue criteria to recover MEDIUM precision if needed
+
+---
+
+## Previous Session: h615/h619/h620/h621/h616 - Expanded GT Analysis (2026-02-06)
 
 ### h616: Disease-Specific GT Completeness Score — VALIDATED
 Added `gt_completeness_ratio` column to deliverable. 479 diseases scored. Median 6.0x, mean 11.5x. Weakly negative correlation with holdout precision (r=-0.198) — not predictive of quality, but informative annotation.

@@ -2577,6 +2577,86 @@ class DrugRepurposingPredictor:
                 return True
         return False
 
+    @staticmethod
+    def _is_established_cv_drug(drug_name: str) -> bool:
+        """
+        h618: Check if drug belongs to an established cardiovascular drug class.
+
+        CV drug classes with MEDIUM-level holdout precision (expanded GT, 5-seed):
+        - Anticoagulants/antiplatelets: 32.6% ± 23.4% (n=14.2/seed)
+        - CCBs: 49.7% ± 34.6% (n=3.4/seed)
+        - Diuretics: 33.8% ± 32.4% (n=3.2/seed)
+        - ARBs: 30.0% ± 40.0% (n=3.0/seed)
+        - Statins, beta-blockers, ACE inhibitors, antiarrhythmics: high holdout but small-n
+
+        Non-CV drugs (antibiotics, biologics, corticosteroids) in CV demotion: <3-18% holdout.
+        Corticosteroid CS→CV already handled separately by h557/h520.
+
+        Returns True if drug is a genuine cardiovascular pharmacotherapy.
+        """
+        drug_lower = drug_name.lower().strip()
+
+        # Anticoagulants/antiplatelets (32.6% holdout, n=14.2/seed)
+        anticoag = ['warfarin', 'heparin', 'enoxaparin', 'rivaroxaban', 'apixaban',
+                    'dabigatran', 'edoxaban', 'clopidogrel', 'ticagrelor', 'prasugrel',
+                    'dipyridamole', 'cilostazol', 'fondaparinux', 'dalteparin',
+                    'tinzaparin', 'eptifibatide', 'vorapaxar']
+
+        # CCBs (49.7% holdout)
+        ccbs = ['amlodipine', 'nifedipine', 'diltiazem', 'verapamil', 'felodipine',
+                'nicardipine', 'nimodipine', 'isradipine', 'clevidipine']
+
+        # Diuretics (33.8% holdout)
+        diuretics = ['hydrochlorothiazide', 'furosemide', 'spironolactone', 'chlorthalidone',
+                     'bumetanide', 'torsemide', 'torasemide', 'amiloride', 'triamterene',
+                     'indapamide', 'metolazone', 'eplerenone']
+
+        # ARBs (30.0% holdout)
+        arbs = ['losartan', 'valsartan', 'irbesartan', 'candesartan', 'telmisartan',
+                'olmesartan', 'eprosartan', 'azilsartan']
+
+        # Statins (56.7% holdout, small-n but consistently high)
+        statins = ['atorvastatin', 'simvastatin', 'rosuvastatin', 'pravastatin',
+                   'lovastatin', 'fluvastatin', 'pitavastatin']
+
+        # Beta-blockers (50.0% holdout, small-n)
+        betas = ['metoprolol', 'atenolol', 'propranolol', 'carvedilol', 'bisoprolol',
+                 'nebivolol', 'labetalol', 'nadolol', 'sotalol', 'timolol',
+                 'acebutolol', 'pindolol', 'esmolol', 'landiolol']
+
+        # ACE inhibitors (18.7% holdout, small-n but genuine CV)
+        ace_inhibitors = ['enalapril', 'lisinopril', 'ramipril', 'captopril', 'perindopril',
+                          'quinapril', 'benazepril', 'fosinopril', 'trandolapril', 'moexipril']
+
+        # Antiarrhythmics (60.0% holdout, small-n)
+        antiarrhythmics = ['amiodarone', 'flecainide', 'propafenone', 'dronedarone',
+                           'dofetilide', 'ibutilide', 'mexiletine', 'procainamide',
+                           'quinidine', 'disopyramide']
+
+        # Nitrates/vasodilators (40.0% holdout, very small-n)
+        nitrates = ['nitroglycerin', 'isosorbide', 'hydralazine', 'minoxidil']
+
+        # Other established CV drugs
+        other_cv = ['digoxin', 'digitoxin', 'milrinone', 'ranolazine', 'ivabradine',
+                    'bosentan', 'ambrisentan', 'macitentan', 'treprostinil', 'epoprostenol',
+                    'iloprost', 'sildenafil', 'tadalafil',  # PAH-indicated PDE5i
+                    'fenofibrate', 'gemfibrozil', 'bezafibrate',  # fibrates
+                    'doxazosin', 'prazosin', 'terazosin',  # alpha blockers
+                    'clonidine', 'methyldopa', 'guanfacine',  # centrally acting
+                    'aliskiren', 'alirocumab', 'evolocumab',  # renin/PCSK9
+                    'cholestyramine', 'colestipol', 'colesevelam',  # bile acid sequestrants
+                    'niacin', 'icosapent', 'papaverine', 'adenosine',
+                    'alteplase', 'tenecteplase', 'reteplase',  # thrombolytics
+                    'pentoxifylline']  # peripheral vascular
+
+        all_cv_drugs = (anticoag + ccbs + diuretics + arbs + statins + betas +
+                        ace_inhibitors + antiarrhythmics + nitrates + other_cv)
+
+        for drug in all_cv_drugs:
+            if drug in drug_lower:
+                return True
+        return False
+
     def _is_atc_coherent(self, drug_name: str, category: str) -> bool:
         """
         h309/h310: Check if drug's ATC code is coherent with disease category.
@@ -3138,6 +3218,12 @@ class DrugRepurposingPredictor:
         # Category-specific rescue rules (h380 GI, hierarchy) still promote valid drugs to HIGH.
         MEDIUM_DEMOTED_CATEGORIES = {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cardiovascular', 'hematological', 'metabolic'}
         if category in MEDIUM_DEMOTED_CATEGORIES:
+            # h618: CV drug-class rescue — established CV drug classes have 32-50% holdout
+            # (expanded GT, 5-seed) while non-CV drugs (antibiotics, biologics, corticosteroids)
+            # have <3-18%. Rescue anticoagulants/antiplatelets (32.6%, n=14.2/seed) and
+            # other established CV classes to MEDIUM; keep non-CV drugs as LOW.
+            if category == 'cardiovascular' and self._is_established_cv_drug(drug_name):
+                return ConfidenceTier.MEDIUM, False, 'cv_established_drug_rescue'
             return ConfidenceTier.LOW, False, f'{category}_medium_demotion'
 
         if train_frequency >= 5 and mechanism_support:

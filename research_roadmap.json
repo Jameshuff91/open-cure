@@ -12708,7 +12708,7 @@
       "id": "h618",
       "title": "CV Medium Demotion Reversal: Cardiovascular Predictions at MEDIUM Level With Expanded GT",
       "description": "h615 found cardiovascular_medium_demotion holdout = 25.1% \u00b1 19.4% (n=69/seed) \u2014 above the MEDIUM boundary (25%) but with very high variance. These 319 predictions are currently LOW (demoted from MEDIUM by h462). The high variance suggests some CV drugs are genuinely MEDIUM-quality while others are LOW. A drug-class stratification within this group could identify promotable subsets.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -12717,7 +12717,9 @@
         "Compute per-drug-class holdout precision with expanded GT",
         "Identify drug classes with holdout > 30% (genuine MEDIUM) vs < 15% (genuine LOW)",
         "If split found, implement drug-class-specific handling within CV demotion"
-      ]
+      ],
+      "findings": "CV medium demotion (h462) was based on internal GT showing 2.0% holdout. \nWith expanded GT (19x more pairs), overall CV demotion = 29.1% \u00b1 7.1% \u2014 actually MEDIUM-quality.\nDrug-class stratification revealed clean split:\n- Established CV drugs (anticoagulants 32.6%, CCBs 49.7%, diuretics 33.8%, ARBs 30.0%): MEDIUM+\n- Non-CV drugs (antibiotics, biologics, corticosteroids): 2.9-18.3% = properly LOW\nImplemented _is_established_cv_drug() rescue: 201 predictions rescued to MEDIUM.\nHoldout-validated: cv_established_drug_rescue = 30.9% \u00b1 20.9% (n=44/seed, \u0394=-1.6pp, GENUINE).\nRemaining cardiovascular_medium_demotion = 4.6% \u00b1 3.8% (correctly LOW).\nMEDIUM tier impact: 41.3% \u2192 38.9% (-2.4pp dilution, but 201 predictions properly classified).",
+      "result_metric": "cv_established_drug_rescue: 30.9% \u00b1 20.9% holdout (GENUINE). 201 preds LOW\u2192MEDIUM. MEDIUM 41.3%\u219238.9%."
     },
     {
       "id": "h619",
@@ -12767,6 +12769,60 @@
       ],
       "findings": "Fixed disease categorization for pleural mesothelioma (was respiratory, now cancer) and retinoblastoma (was ophthalmic, now cancer). Added mesothelioma to cancer keywords, moved retinoblastoma from ophthalmic to cancer. ~28 predictions rescued from FILTER for these 2 diseases. Impact on overall tier counts is tiny. Confirmed no other cancer diseases are miscategorized.",
       "result_metric": "2 diseases recategorized, ~28 predictions rescued from FILTER"
+    },
+    {
+      "id": "h622",
+      "title": "Expanded GT Recalibration of Other Demoted Categories",
+      "description": "h618 showed CV demotion was too aggressive when evaluated with expanded GT (29.1% vs 2.0% with internal GT). The same pattern may apply to other MEDIUM_DEMOTED_CATEGORIES (immunological 7.6%, neurological 5.5%, hematological 4.4%, GI 5.6%, metabolic 10.3%, reproductive 2.9%). Test whether expanded GT reveals drug-class subsets that are genuinely MEDIUM-quality within these categories.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For each MEDIUM_DEMOTED_CATEGORY, compute per-drug-class holdout precision with expanded GT",
+        "Check if any category has drug-class subsets >=25% holdout (like CV had with established drugs)",
+        "Focus on categories where expanded GT gives highest uplift: immunological and hematological showed biggest full-data inflation",
+        "If splits found, implement drug-class-specific rescues analogous to h618"
+      ],
+      "dependencies": [
+        "h618"
+      ]
+    },
+    {
+      "id": "h623",
+      "title": "MEDIUM Tier Precision Recovery: Tighten CV Rescue Criteria",
+      "description": "h618 rescue diluted MEDIUM from 41.3% to 38.9% (-2.4pp). The cv_established_drug_rescue holdout is 30.9% with high variance (\u00b120.9%). Could adding a mechanism_support or rank<10 requirement to the CV rescue improve MEDIUM precision while keeping most rescues? Anticoagulants with mechanism had 27.2% vs without 65.0% \u2014 surprising inversion suggests mechanism flag is noisy for this drug class.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Split cv_established_drug_rescue by mechanism_support and knn_rank",
+        "Compute holdout for each combination",
+        "If rank<10 or mechanism significantly improves rescue precision, add constraint",
+        "Target: MEDIUM >= 40% while keeping majority of rescues"
+      ],
+      "dependencies": [
+        "h618"
+      ]
+    },
+    {
+      "id": "h624",
+      "title": "Deliverable Regeneration with h618 CV Rescue",
+      "description": "Regenerate deliverable with h618 changes. 201 predictions move from LOW to MEDIUM (cv_established_drug_rescue). Verify tier counts match expectations.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Run h420_regenerate_deliverable.py",
+        "Verify tier counts: GOLDEN ~420, HIGH ~604, MEDIUM ~2075, LOW ~3777, FILTER ~7274",
+        "Spot-check some rescued predictions for medical reasonableness",
+        "Commit updated deliverable"
+      ],
+      "dependencies": [
+        "h618"
+      ]
     }
   ],
   "completed": [
@@ -14843,6 +14899,12 @@
       "hypothesis_id": "h620",
       "learning": "Both internal and expanded GT contain non-therapeutic associations (diagnostic use of FDG PET coded as treatment indication). 70.1% of FILTER GT hits come from internal GT. Contamination is minimal (3.3%) and does not affect tier ordering. Disease categorization errors exist for pleural mesothelioma (respiratory instead of cancer) and retinoblastoma (ophthalmic instead of cancer).",
       "implication": "GT quality is adequate for tier evaluation. Disease categorization fixes could rescue a small number of predictions but are low priority."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h618",
+      "learning": "Internal GT (3,070 pairs) systematically underestimates CV drug precision. Expanded GT (59,584) reveals genuine CV drugs have 30.9% holdout in CV demotion group. Drug-class stratification cleanly separates CV pharmacotherapy (30.9%) from non-CV drugs (4.6%).",
+      "implication": "All MEDIUM_DEMOTED_CATEGORIES should be re-evaluated with expanded GT. Category-level demotions may be hiding drug-class-specific quality that only appears with complete GT."
     }
   ],
   "collaborations": [
