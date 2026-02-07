@@ -13940,7 +13940,7 @@
       "id": "h683",
       "title": "Expanded GT ID Format Audit: MESH Compound IDs vs DrugBank IDs",
       "description": "h680 revealed that expanded GT contains 16,316 MESH compound IDs and 2,867 CHEBI IDs alongside 38,403 DrugBank IDs. The model only predicts DrugBank-format IDs (drkg:Compound::DBXXXXX). MESH and CHEBI compound IDs can only match if they're also in the DRKG entity list AND the model predicts them. Question: how many MESH/CHEBI expanded GT entries actually match model predictions? If many don't, the effective expanded GT is smaller than 57,586 and tier precision estimates may be inflated by denominator dilution (more GT = more chances to match).",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13949,7 +13949,9 @@
         "Cross-reference with expanded GT drug IDs to find matchable vs unmatchable entries",
         "Quantify: what fraction of expanded GT entries can ever match a prediction?",
         "If significant unmatchable fraction, assess impact on precision estimates"
-      ]
+      ],
+      "findings": "h683 VALIDATED: Expanded GT ID Format Audit \u2014 Major Finding.\n\nKEY FINDINGS:\n1. ONLY 37% of expanded GT entries (21,282 of 57,586) can ever match a model prediction.\n   - The model only predicts drugs from internal GT (1,125 unique drugs, ALL DrugBank format).\n   - 36,304 expanded GT entries (63%) are unmatchable:\n     - 17,121 DrugBank IDs for drugs NOT in internal GT (2,446 unique drugs)\n     - 16,316 MESH compound IDs\n     - 2,867 CHEBI compound IDs\n\n2. All 2,446 unmatchable DrugBank drugs HAVE DRKG embeddings. They could be predicted if added to internal GT.\n\n3. Precision estimates are UNAFFECTED (precision = hits/predictions, not hits/GT).\n   The unmatchable entries just mean we can't reach 100% recall.\n\n4. CRITICAL FINDING: 859 Every Cure drugs fail to map to DrugBank due to NAME MISMATCHES:\n   - \"Acyclovir\" (EC) vs \"Aciclovir\" (DrugBank): 11 lost rows\n   - \"Aspirin\" vs \"Acetylsalicylic acid\": 5 lost rows\n   - \"co-trimoxazole\" vs \"Sulfamethoxazole\": 18 lost rows\n   - \"Fondaparinux\" vs \"Fondaparinux sodium\": 10 lost rows\n   - Plus 15+ more mismatches totaling ~149 recoverable rows\n\n5. The 149 recoverable rows = +5% internal GT expansion. These are REAL therapeutic drugs\n   (aspirin, acyclovir, rifampicin, clopidogrel, etc.) that are missing from training data\n   because of name format differences (INN vs brand, salt form, spelling variants).\n\nIMPACT: No immediate metric change (expanded GT precision unaffected by unmatchable entries).\nBut the drug name aliasing finding is HIGH PRIORITY \u2014 fixing it would expand internal GT by 5%\nand add important drug-disease pairs to kNN training.\n\nGT FORMAT: 38,403 DrugBank + 16,316 MESH + 2,867 CHEBI = 57,586 total.",
+      "result_metric": "37% of expanded GT matchable. 149 internal GT rows recoverable via name aliasing."
     },
     {
       "id": "h684",
@@ -13978,6 +13980,39 @@
         "For each, verify: is the drug-disease pair legitimate? Is there a better first-line treatment?",
         "Cross-reference with expanded GT for additional coverage",
         "Flag any false pairs for removal and missing pairs for addition"
+      ]
+    },
+    {
+      "id": "h686",
+      "title": "Drug Name Aliasing: Recover 149+ Missing Internal GT Entries",
+      "description": "h683 found that 859 Every Cure drugs fail to map to DrugBank due to name mismatches (INN vs brand name, salt forms, spelling variants). At least 149 indication rows are recoverable with simple aliases (Acyclovir\u2192Aciclovir, Aspirin\u2192Acetylsalicylic acid, Rifampin\u2192Rifampicin, etc.). This would expand internal GT by ~5% with legitimate therapeutic drugs. Impact on kNN: more drugs in training = better frequency estimates for drug repurposing. Expected to improve predictions for diseases currently treated by these 'missing' drugs.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Build comprehensive alias dictionary: EC name \u2192 DrugBank name",
+        "Start with the 20 confirmed aliases from h683 (149 rows)",
+        "Expand using fuzzy matching with manual curation for top 50 unmapped drugs",
+        "Implement aliases in _load_ground_truth (add alias lookup after primary name_to_drug_id check)",
+        "Invalidate GT cache and run holdout evaluation",
+        "Check if any new drugs change tier precision (new training diseases, better frequencies)"
+      ]
+    },
+    {
+      "id": "h687",
+      "title": "Expanded GT \u2192 Internal GT Promotion: Add High-Confidence DRKG Drug-Disease Pairs",
+      "description": "h683 found 2,446 drugs with DRKG embeddings and expanded GT entries but NOT in internal GT. These drugs CAN'T be predicted currently because the kNN model only recommends drugs from the training set. If we promoted high-confidence expanded GT entries (from DRKG treatment edges, not co-occurrence) to internal GT, these drugs could enter the prediction pool. Most impactful drugs: rifampicin (84 diseases), aciclovir (84), isotretinoin (80), propofol (87). Needs careful curation to avoid adding noise.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "high",
+      "steps": [
+        "Identify top 50 drugs by expanded GT count that have DRKG embeddings",
+        "Filter out non-therapeutic compounds (oxygen, ethanol, metabolites)",
+        "For remaining drugs, verify they're real therapeutics with specific indications",
+        "Add verified drug-disease pairs to internal GT (Every Cure format)",
+        "Run holdout evaluation to measure impact on predictions"
       ]
     }
   ],
@@ -16187,6 +16222,12 @@
       "hypothesis_id": "h680",
       "learning": "Internal GT (2,999 pairs) is fairly clean for DrugBank-mapped drugs. Main contamination was combo product NLP mismatch (h677, already fixed). FDG PET tracer had 12 false entries but removal has negligible holdout impact. Expanded GT had 1,905 dead-weight broad drug class entries that never matched predictions. GT cleanup is about honesty, not metric improvement.",
       "implication": "Further internal GT cleaning has diminishing returns. Focus future GT work on: (1) expanded GT ID format audit (MESH/CHEBI vs DrugBank matchability), (2) single-drug disease verification, (3) GT gap filling for rare cancers."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h683",
+      "learning": "63% of expanded GT entries are unmatchable by the model (different ID formats or drugs not in internal GT). This doesn't affect precision estimates but means our GT coverage appears much better than it actually is for practical evaluation. The most actionable finding: 149+ internal GT rows lost to simple drug name mismatches between Every Cure and DrugBank naming conventions.",
+      "implication": "Drug name aliasing should be a HIGH priority fix \u2014 it directly expands the training data with legitimate drug-disease pairs. The 5% internal GT expansion from just 20 aliases suggests there may be many more recoverable entries with broader fuzzy matching."
     }
   ],
   "collaborations": [
