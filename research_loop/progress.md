@@ -19,10 +19,22 @@ Require mechanism support for cv_established_drug_rescue. NoMech CV drugs (22.5%
 | MEDIUM | 38.1% ± 2.5% | **40.8% ± 2.0%** | **+2.7pp** |
 | LOW | 14.5% ± 2.0% | 14.5% ± 2.0% | 0 |
 
+### Additional hypotheses tested this session:
+- h645 INVALIDATED: Other rescue rules don't need mechanism gates
+- h635 INCONCLUSIVE: Cytotoxic drug class too small n per class for tier rules
+- h639 INVALIDATED: Multi-system drug rescue negligible impact (n=5/seed)
+- h640 INVALIDATED: Lidocaine MEDIUM n=4.6/seed too small for promotion
+- h641, h646 INVALIDATED: Superseded by h643 / flawed rank analysis
+
+**Deliverable regenerated** with h643 changes: MEDIUM 1532 preds, LOW 4055 preds.
+
+### Key Insight: h642 rank analysis bug
+`knn_rank` attribute doesn't exist on DrugPrediction. The h642 finding "ALL MEDIUM are rank 16-20" was an artifact of defaulting to 99. Always verify attribute names before analysis.
+
 ### Recommended Next Steps
-1. **h645**: Mechanism-gate other rescue rules (heme CS, LA procedural)
-2. **h641**: CV rescue further stratification
-3. Regenerate deliverable with h643 update
+1. **h638**: MEDIUM target_overlap → HIGH for psychiatric subset (53.3%, n=18/seed)
+2. **h644**: ATC coherent infectious quality investigation (42.4% NoMech, interesting)
+3. Consider higher-effort external data integrations (LINCS, PubMed mining)
 
 ---
 
