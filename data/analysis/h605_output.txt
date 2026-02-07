@@ -1,0 +1,22 @@
+================================================================================
+h605: Highly Repurposable MEDIUM Predictions Analysis
+================================================================================
+
+Total highly_repurposable MEDIUM: 4
+Internal GT hits: 0 (0.0%)
+Expanded GT hits: 1 (25.0%)
+
+All predictions:
+Drug                      Disease                             Cat             Freq Mech IntHit ExpHit
+----------------------------------------------------------------------------------------------------
+  Phenobarbital           chronic pain                      other              7 False  False  False
+  Diazepam                chronic pain                      other              5 False  False  False
+  Penicillin V            chronic pain                      other              8 False  False  False
+  Baclofen                chronic pain                      other              3 True  False   True
+
+
+--- Criteria check ---
+  Phenobarbital -> chronic pain: freq=7, mech=False
+  Diazepam -> chronic pain: freq=5, mech=False
+  Penicillin V -> chronic pain: freq=8, mech=False
+  Baclofen -> chronic pain: freq=3, mech=True

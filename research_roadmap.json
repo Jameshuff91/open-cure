@@ -12498,7 +12498,7 @@
       "id": "h605",
       "title": "Highly Repurposable MEDIUM Demotion: 0% Full-Data, 8 Predictions",
       "description": "The 'highly_repurposable' MEDIUM sub-reason has 8 predictions with 0% full-data precision and 0% holdout (n=2, small). These diseases have high drug sharing but the kNN predictions still fail. Consider demoting to LOW since the highly_repurposable flag doesn't actually help prediction quality. Need larger n to validate but directionally wrong.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12507,7 +12507,9 @@
         "Compute holdout precision with more seeds or across more diseases",
         "If consistently 0-5%, remove highly_repurposable MEDIUM pathway",
         "Expected impact: ~8 MEDIUM\u2192LOW, negligible precision change"
-      ]
+      ],
+      "findings": "Only 4 predictions, ALL for chronic pain. 0% internal GT but 25% expanded GT (Baclofen is confirmed). Holdout with expanded GT = 29.2% \u00b1 4.2% (n=3.5/seed) \u2014 within MEDIUM range. Not actionable: n too small, and expanded GT shows adequate precision. The initial 0% full-data was an artifact of the small internal GT for chronic pain.",
+      "result_metric": "4 predictions, 25% expanded GT, 29.2% holdout - not demotable"
     },
     {
       "id": "h606",
