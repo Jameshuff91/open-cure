@@ -1,6 +1,47 @@
 # Research Loop Progress
 
-## Current Session: h637/h642/h643 - Closed Direction Re-evaluation & MEDIUM Optimization (2026-02-06)
+## Current Session: h638/h644/h647/h648 - Target Overlap Analysis & MEDIUM Optimization (2026-02-06)
+
+### h638: MEDIUM Target Overlap → HIGH Promotion — INVALIDATED
+No subset of target_overlap_promotion MEDIUM exceeds 55% holdout with n>=10/seed. ALL preds are Mech=Y, TransE=N, non-CS. Overall: 49.2% ± 5.9% (n=35/seed). Psychiatric: 53.3% ± 8.8% (n=18.2, near-promotable but 1.7pp below 55%). Rank 1-5: 58.7% (n=6.2, too few). Target_overlap correctly placed as high-quality MEDIUM.
+
+### h644: ATC Coherent Infectious Quality — VALIDATED (informative)
+ATC coherent infectious NoMech = 41.0% ± 7.9% holdout (n=34/seed). Driven by ANTIFUNGAL drugs (64.9% ± 20.4%) vs non-antifungal/antibacterial (33.3% ± 12.8%). Not actionable for tier changes (z=-0.76 vs MEDIUM avg), but informative: antifungal predictions are HIGH-quality, antibacterial (especially cefuroxime 6%) are lower.
+
+### h647: Metabolic Target Overlap Rescue Leak — VALIDATED
+FOUND BUG: 37 metabolic_medium_demotion predictions rescued back to MEDIUM via target_overlap. Metabolic was missing from the rescue blocklist (line 4115). Fixed. These had 10.3% ± 4.7% holdout (clearly LOW).
+
+### h648: Cancer Same-Type Rank 21+ Demotion — VALIDATED
+cancer_same_type rank gradient: R11-15 (55.8%), R16-20 (31.9%), R21-30 (25.5%). Demoted rank 21+ to LOW. 100 predictions affected. Remaining cancer_same_type MEDIUM (R11-20) improved from 31.2% to 40.3%.
+
+**Tier Impact (cumulative h647+h648):**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 71.6% ± 4.2% | 71.6% ± 4.3% | 0 |
+| HIGH | 54.6% ± 9.3% | 54.8% ± 8.9% | +0.2pp |
+| MEDIUM | 40.8% ± 2.0% | **42.8% ± 3.1%** | **+2.0pp** |
+| LOW | 14.5% ± 2.0% | 14.8% ± 1.7% | +0.3pp |
+| FILTER | 10.6% ± 1.3% | 10.6% ± 1.3% | 0 |
+
+### New Hypotheses Generated (4)
+- h649: Infectious hierarchy pneumonia demotion (16.7% holdout)
+- h650: Cancer same-type R16-20 further demotion analysis
+- h651: ATC coherent endocrine/respiratory demotion (0%/23% holdout)
+- h652: Systematic demoted category rescue leak audit
+
+### Key Insights
+1. **Target_overlap rescue leaks demoted predictions** — same pattern as h560. After adding categories to MEDIUM_DEMOTED_CATEGORIES, MUST also update target_overlap blocklist.
+2. **Cancer rank gradient is steep** — within same sub-reason, rank 11-15 can be HIGH quality while rank 21+ is LOW quality. Always check rank gradients.
+3. **Sub-reason map is the most productive analysis** — the comprehensive MEDIUM sub-reason holdout map (run in h647 investigation) directly revealed both h647 and h648 opportunities.
+
+### Recommended Next Steps
+1. **h652**: Audit ALL rescue pathways for demoted category leaks (ATC coherent, highly_repurposable)
+2. **h649**: Infectious hierarchy pneumonia demotion (16.7% holdout, n=6/seed)
+3. **h650**: Cancer same-type R16-20 analysis (31.9%, n=10.2/seed)
+
+---
+
+## Previous Session: h637/h642/h643 - Closed Direction Re-evaluation & MEDIUM Optimization (2026-02-06)
 
 ### h637: Systematic CLOSED Direction Re-evaluation — VALIDATED
 Reviewed all 16 CLOSED directions for GT-dependency. 12/16 not GT-dependent. 4 candidates re-evaluated: all remain closed. h633 was a special case (wrong GT + abundant expanded GT + strong signal). No other CLOSED direction meets all conditions for reopening.

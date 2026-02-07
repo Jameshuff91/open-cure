@@ -3041,6 +3041,11 @@ class DrugRepurposingPredictor:
                 # Demote to LOW. With mechanism but rank>10 stays MEDIUM (33.8%).
                 if not mechanism_support:
                     return ConfidenceTier.LOW, False, 'cancer_same_type_no_mechanism'
+                # h648: cancer_same_type + mechanism + rank 21+ = 25.5% ± 15.2% holdout
+                # Well below MEDIUM avg (41.5%). Rank 11-20 = 42.3% (above MEDIUM).
+                # Demote rank 21+ to LOW.
+                if rank >= 21:
+                    return ConfidenceTier.LOW, False, 'cancer_same_type_high_rank'
                 # h396: Demoted from GOLDEN to MEDIUM (24.5% full, 19.2% holdout)
                 # cancer_same_type was 57% of GOLDEN predictions, dragging GOLDEN below HIGH
                 return ConfidenceTier.MEDIUM, True, 'cancer_same_type'
@@ -4112,7 +4117,8 @@ class DrugRepurposingPredictor:
                             # h485: Block cancer (cross-type overlap=0.3% holdout, n=197)
                             # h505: Block cardiovascular (13.6% holdout < LOW avg 14.8%, n=13/seed)
                             # h553: Block hematological (25% ± 43% holdout, n=1.2/seed — too tiny, default=0%)
-                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer', 'cardiovascular', 'hematological'}
+                            # h647: Block metabolic (22.3% ± 21% holdout, n=6.4/seed — 37 preds leaking)
+                            and category not in {'gastrointestinal', 'immunological', 'reproductive', 'neurological', 'cancer', 'cardiovascular', 'hematological', 'metabolic'}
                             # h488: Block rescue of incoherent demotions (3.6% holdout)
                             and cat_specific != 'incoherent_demotion'
                             # h560: Block rescue of antimicrobial-pathogen mismatches (0% holdout)

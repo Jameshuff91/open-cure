@@ -147,12 +147,14 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h643 update, 2026-02-06):**
-- GOLDEN: 71.6% ± 4.2% holdout (419 predictions)
-- HIGH: 54.6% ± 9.3% holdout (~866 predictions)
-- MEDIUM: 40.8% ± 2.0% holdout (~1650 predictions)
-- LOW: 14.5% ± 2.0% holdout (~3940 predictions)
+**Tier System (h648 update, 2026-02-06):**
+- GOLDEN: 71.6% ± 4.3% holdout (420 predictions)
+- HIGH: 54.8% ± 8.9% holdout (~858 predictions)
+- MEDIUM: 42.8% ± 3.1% holdout (~1378 predictions)
+- LOW: 14.8% ± 1.7% holdout (~4220 predictions)
 - FILTER: 10.6% ± 1.3% holdout (7274 predictions)
+- **h648:** Cancer same-type rank 21+ → LOW demotion. 100 preds demoted. 26.9% holdout. **MEDIUM +1.3pp (41.5→42.8%)**.
+- **h647:** Metabolic target_overlap rescue leak fix. 37 preds blocked from MEDIUM rescue. 10.3% holdout. **MEDIUM +0.7pp (40.8→41.5%)**.
 - **h643:** CV rescue mechanism gate: require mechanism for cv_established_drug_rescue. NoMech CV drugs (22.5%, DOACs/PCSK9i) → LOW. **MEDIUM +2.7pp (38.1→40.8%)**, std ↓0.5%.
 - **h634:** Cancer same-type without mechanism → LOW demotion. 166 preds demoted. 23.6% holdout. MEDIUM +1.3pp (36.8→38.1%).
 - **h633:** Cancer same-type + mechanism + rank≤10 → HIGH promotion. Reopened CLOSED direction #4 via expanded GT re-evaluation. 181 preds promoted. 62.4% ± 10.7% holdout. HIGH +1.4pp, variance ↓3.2%. MEDIUM -1.9pp. Top drugs: doxorubicin, paclitaxel, bevacizumab.

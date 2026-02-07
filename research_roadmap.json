@@ -13105,7 +13105,7 @@
       "title": "MEDIUM Target Overlap \u2192 HIGH Promotion for High-Signal Subset",
       "description": "h637 found target_overlap_promotion MEDIUM (non-CS) = 49.2% \u00b1 5.9% (n=35/seed). Psychiatric subset: 53.3% \u00b1 8.8% (n=18.2/seed). These are near-HIGH quality. Can we identify a signal-enriched subset (TransE + mechanism + rank) within target_overlap that crosses the HIGH 55% threshold? Current data shows ALL target_overlap are Mech=Y+Rank>10+TransE=N (47.4%, n=30.8/seed). Adding TransE or better rank could identify a promotable subset.",
       "hypothesis": "Target_overlap predictions with additional quality signals (TransE consilience OR rank<=10) have holdout precision >55%, qualifying for HIGH promotion.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13115,8 +13115,8 @@
         "If yes, implement promotion rule",
         "Verify no dilution to HIGH tier"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "No subset of target_overlap_promotion MEDIUM exceeds 55% holdout with n>=10/seed. ALL target_overlap preds are Mech=Y, TransE=N, non-CS (confirmed). Overall: 49.2% \u00b1 5.9% (n=35/seed). Psychiatric: 53.3% \u00b1 8.8% (n=18.2, near-promotable but 1.7pp below 55%). Rank 1-5: 58.7% (n=6.2, too few). Rank 16-20: 38.5% (n=13, marginal demotion). Category=other: 85.7% (n=7, pain drugs trivially correct). Promoting psychiatric to HIGH dilutes HIGH by -0.1pp. Demoting R16-20 gains only +0.1pp MEDIUM. Target_overlap is correctly placed as high-quality MEDIUM.",
+      "result_metric": "Overall 49.2% holdout, no promotable subset found",
       "category": "precision-improvement"
     },
     {
@@ -13220,7 +13220,7 @@
       "title": "ATC Coherent Infectious Quality: Why 42.4% Without Mechanism?",
       "description": "h642 found atc_coherent_infectious NoMech = 42.4% (n=34/seed) \u2014 above MEDIUM average despite no mechanism support. This is surprising because infectious disease drugs typically need mechanism for precision. What drugs are driving this? Are they genuinely good predictions or artifact?",
       "hypothesis": "ATC coherent infectious no-mechanism predictions are driven by broad-spectrum antibiotics that treat many infectious diseases, inflating precision through high GT coverage.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13230,8 +13230,8 @@
         "Verify these aren't self-referential artifacts",
         "Determine if this sub-rule should be annotated differently"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "ATC coherent infectious NoMech = 41.0% \u00b1 7.9% holdout (n=34/seed). The precision is driven by ANTIFUNGAL drugs (64.9% \u00b1 20.4%, n=9.8/seed) vs non-antifungal/antibacterial (33.3% \u00b1 12.8%, n=24.8/seed). Antifungals (ketoconazole 74%, itraconazole 76%, posaconazole 87%, miconazole 100%, fluconazole 100%) are correctly predicted for fungal infections (aspergillosis, cryptococcosis, candidiasis, histoplasmosis, etc.). Non-antifungal driven by cefuroxime (1/16=6% full-data, predicted for many wrong infections) and streptomycin (27%). Non-antifungal demotion would gain only +0.6pp MEDIUM, not statistically significant (z=-0.76 vs 40.8%). NOT actionable for tier changes, but informative annotation: antifungal infectious predictions are HIGH-quality, antibacterial predictions are lower quality.",
+      "result_metric": "Antifungal 64.9% vs antibacterial 33.3% holdout (not significant for demotion)",
       "category": "error-analysis"
     },
     {
@@ -13271,6 +13271,116 @@
       "findings": "Based on h642 rank analysis which was FLAWED (knn_rank attr missing, defaulted to 99). The premise \"ALL MEDIUM are rank 16-20\" was incorrect. Cannot proceed without valid rank data.",
       "result_metric": "Based on flawed h642 rank analysis",
       "category": "error-analysis"
+    },
+    {
+      "id": "h647",
+      "title": "Fix Metabolic Target Overlap Rescue Leak",
+      "description": "h644/h647 analysis found 37 metabolic_medium_demotion predictions being rescued back to MEDIUM via target_overlap promotion. Target_overlap rescue at line 4110 blocks incoherent_demotion and antimicrobial_pathogen_mismatch but NOT metabolic_medium_demotion (or any other *_medium_demotion). This is the same pattern as h560 antimicrobial leak. The 22.3% \u00b1 21% holdout for these rescued predictions (n=6.4/seed) confirms they should remain LOW. Fix: block target_overlap rescue for any cat_specific containing _medium_demotion.",
+      "hypothesis": "Blocking target_overlap rescue for metabolic_medium_demotion predictions will improve MEDIUM precision by removing 37 predictions with 22.3% holdout (well below MEDIUM 40.8%).",
+      "status": "validated",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Add _medium_demotion to target_overlap rescue blocklist",
+        "Run h393 holdout validation",
+        "Verify MEDIUM improvement"
+      ],
+      "findings": "CONFIRMED: 37 metabolic_medium_demotion predictions were being rescued back to MEDIUM via target_overlap promotion. metabolic was missing from the category blocklist at line 4115. Added metabolic to the blocklist. Now all 37 predictions correctly stay in LOW (10.3% \u00b1 4.7% holdout, n=39). MEDIUM improved from 40.8% to 41.5% (+0.7pp). Other tiers unchanged.",
+      "result_metric": "MEDIUM 40.8% \u2192 41.5% (+0.7pp), 37 predictions corrected",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h648",
+      "title": "Cancer Same-Type Rank 21+ Demotion to LOW",
+      "description": "h647 analysis found cancer_same_type MEDIUM holdout = 31.2% overall, but with clear rank gradient: R11-15=55.8%, R16-20=31.9%, R21-30=25.5%. The 100 predictions at rank 21+ have 25.5% holdout (15 preds/seed). This is well below MEDIUM average (41.5%) but still above LOW (14.6%). h633 promoted rank<=10 to HIGH. Could demoting rank 21+ to LOW improve MEDIUM while maintaining reasonable prediction quality? The R11-15 subset (55.8%) should remain MEDIUM.",
+      "hypothesis": "Demoting cancer_same_type rank 21+ predictions from MEDIUM to LOW will improve MEDIUM precision by +0.9pp while the 25.5% holdout of demoted predictions is still reasonable for LOW.",
+      "status": "validated",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Implement rank gate: cancer_same_type + mech + rank<=20 stays MEDIUM, rank 21+ goes LOW",
+        "Run h393 holdout validation",
+        "Verify MEDIUM improvement and LOW impact"
+      ],
+      "findings": "cancer_same_type rank 21+ with mechanism demoted from MEDIUM to LOW. 100 predictions (17/seed) at 26.9% \u00b1 17.0% holdout \u2014 correctly below MEDIUM average. Remaining cancer_same_type MEDIUM (rank 11-20): 40.3% \u00b1 6.0% holdout (n=19/seed) \u2014 now at MEDIUM average instead of dragging it down. Combined with h647 (metabolic leak fix), total MEDIUM improvement: 40.8% \u2192 42.8% (+2.0pp). LOW also improved slightly (14.5% \u2192 14.8%) from absorbing better-than-LOW predictions.",
+      "result_metric": "MEDIUM 41.5% \u2192 42.8% (+1.3pp from h648, +2.0pp total session)",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h649",
+      "title": "Infectious Hierarchy Pneumonia Demotion: 16.7% Holdout Below MEDIUM",
+      "description": "h647 sub-reason analysis found infectious_hierarchy_pneumonia MEDIUM at 16.7% holdout (n=6/seed) \u2014 near LOW level (14.8%). This includes antibiotics for pneumonia. Small n but consistently poor. Should be demoted to LOW or investigated further for whether the hierarchy rule is too broad.",
+      "hypothesis": "Demoting infectious_hierarchy_pneumonia MEDIUM to LOW will improve MEDIUM precision by removing 6 low-performing predictions per seed.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Check what drugs/diseases are in infectious_hierarchy_pneumonia MEDIUM",
+        "Verify n>=5 per seed for reliable holdout",
+        "If confirmed poor, add to demotion rules",
+        "Run h393 holdout validation"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h650",
+      "title": "Cancer Same-Type Rank 16-20 Further Demotion Analysis",
+      "description": "h648 demoted rank 21+ cancer_same_type to LOW (25.5% holdout). Rank 16-20 has 31.9% \u00b1 4.9% holdout (n=10.2/seed) \u2014 also below MEDIUM average (42.8%). Should rank 16-20 also be demoted? The holdout at 31.9% is in a grey zone: above LOW (14.8%) but below MEDIUM. Moving the cutoff from rank 21 to rank 16 would remove another ~10 preds/seed.",
+      "hypothesis": "Demoting cancer_same_type rank 16-20 from MEDIUM to LOW will add another +0.4-0.6pp to MEDIUM.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Run holdout eval with rank>=16 cutoff instead of rank>=21",
+        "Compare MEDIUM/LOW precision vs current",
+        "Decide if 31.9% predictions belong in MEDIUM or LOW"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h651",
+      "title": "ATC Coherent Endocrine and Respiratory Demotion: 0% and 23% Holdout",
+      "description": "h647 sub-reason map found atc_coherent_endocrine at 0% holdout (n=3/seed) and atc_coherent_respiratory at 23.4% \u00b1 22.5% (n=4.2/seed). Both are below MEDIUM average. These are small n so individual demotion may be noisy, but they are consistently weak. Could be grouped into a general \"small-n ATC coherent with poor holdout\" demotion rule.",
+      "hypothesis": "Demoting atc_coherent_endocrine and atc_coherent_respiratory from MEDIUM to LOW will provide small but clean improvement to MEDIUM.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Check drugs and diseases in these categories",
+        "Assess whether ATC_COHERENT_EXCLUDED should include endocrine and respiratory",
+        "Implement if justified, run holdout validation"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h652",
+      "title": "Systematic Demoted Category Rescue Leak Audit",
+      "description": "h647 found metabolic_medium_demotion predictions being rescued by target_overlap back to MEDIUM (37 predictions, 22.3% holdout). This was caused by metabolic missing from the target_overlap blocklist. Are there OTHER rescue pathways that could also leak demoted predictions? Check: (1) ATC coherent rescue, (2) highly_repurposable rescue, (3) any other LOW\u2192MEDIUM or LOW\u2192HIGH paths that dont check for _medium_demotion.",
+      "hypothesis": "Other rescue pathways besides target_overlap may be leaking demoted category predictions back to MEDIUM.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Audit all rescue paths in _assign_confidence_tier that promote LOW\u2192MEDIUM",
+        "Check ATC coherent, highly_repurposable, and other boosts",
+        "Verify demoted categories are blocked from each rescue path",
+        "Fix any leaks found"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
     }
   ],
   "completed": [
