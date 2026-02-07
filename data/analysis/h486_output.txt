@@ -1,0 +1,181 @@
+======================================================================
+h486: SIDER Adverse Effect Mining for Inverse Indications
+======================================================================
+
+Loading SIDER data...
+  Drug names: 1430
+  Drugs with AEs: 1344
+  Total AE entries: 158095
+
+Loading predictor...
+Existing inverse indications: 77 pairs
+Our drugs with SIDER AE data: 1037
+
+Cross-referencing predictions with SIDER adverse effects...
+
+Checked 9449 drug-disease predictions with SIDER data
+Found 1472 inverse indication candidates
+  Already known (in INVERSE_INDICATION_PAIRS): 10
+  NEW candidates: 1462
+
+======================================================================
+NEW INVERSE INDICATION CANDIDATES BY TIER
+======================================================================
+
+--- GOLDEN (47 candidates) ---
+  Dexamethasone             → ulcerative colitis, tuberculosis, systemic lupus erythematosus (AE: ['ulcer'])
+  Triamcinolone             → bronchial asthma, systemic lupus erythematosus, pulmonary tuberculosis (AE: ['asthma'])
+  Methylprednisolone        → ulcerative colitis, systemic lupus erythematosus, osteoarthritis (AE: ['ulcer'])
+  Lidocaine                 → neuropathy, transthyretin familial amyloid polyneuro, diabetic neuropathy (AE: ['neuropathy', 'neuropathy peripheral'])
+  Prednisone                → ulcerative colitis, systemic lupus erythematosus (AE: ['ulcer'])
+  Prednisolone              → ulcerative colitis, systemic lupus erythematosus (AE: ['ulcer'])
+  Ezetimibe                 → familial hypercholesterolemia, hypercholesterolemia (AE: ['heterozygous familial hypercholesterolemia'])
+  Glimepiride               → type 1 diabetes mellitus, type 2 diabetes mellitus (AE: ['diabetes mellitus'])
+  Rosiglitazone             → type 1 diabetes mellitus, type 2 diabetes mellitus (AE: ['diabetes mellitus'])
+  Verapamil                 → hypertension, coronary artery disease (AE: ['hypertension'])
+  Budesonide                → ulcerative colitis (AE: ['ulcer'])
+  Tacrolimus                → ulcerative colitis (AE: ['colitis', 'ulcer'])
+  Orlistat                  → obesity (AE: ['obesity'])
+  Flecainide                → tachycardiac atrial fibrillation (AE: ['tachycardia'])
+  Betamethasone             → systemic lupus erythematosus (AE: ['erythema'])
+  Hydrochlorothiazide       → hypertension (AE: ['tension'])
+  Amiloride                 → hypertension (AE: ['tension'])
+  Carvedilol                → hypertension (AE: ['tension', 'hypertension'])
+  Prazosin                  → hypertension (AE: ['tension'])
+  Lisinopril                → hypertension (AE: ['tension'])
+
+--- HIGH (220 candidates) ---
+  Prednisolone              → bullous dermatitis herpetiformis, optic neuritis, tuberculosis (AE: ['dermatitis bullous', 'dermatitis'])
+  Dexamethasone             → bullous dermatitis herpetiformis, optic neuritis, pruritus ani (AE: ['dermatitis bullous', 'dermatitis'])
+  Triamcinolone             → bullous dermatitis herpetiformis, eczema, optic neuritis (AE: ['dermatitis bullous', 'dermatitis'])
+  Prednisone                → bullous dermatitis herpetiformis, optic neuritis, tuberculosis (AE: ['dermatitis'])
+  Methylprednisolone        → bullous dermatitis herpetiformis, optic neuritis, tuberculosis (AE: ['dermatitis'])
+  Betamethasone             → bullous dermatitis herpetiformis, pruritus ani, urticaria (AE: ['dermatitis'])
+  Hydrocortisone            → bullous dermatitis herpetiformis, pruritus ani, pruritus (AE: ['dermatitis'])
+  Verapamil                 → acute coronary syndrome, tachycardiac atrial fibrillation, pulmonary hypertension (AE: ['acute coronary syndrome'])
+  Telmisartan               → acute coronary syndrome, pulmonary hypertension, hypertension (AE: ['acute coronary syndrome'])
+  Cortisone                 → optic neuritis, urticaria, systemic lupus erythematosus (AE: ['optic neuritis'])
+  Lidocaine                 → bronchial asthma, systemic lupus erythematosus, atopic dermatitis (AE: ['asthma'])
+  Adenosine                 → tachyarrhythmia, tachycardiac atrial fibrillation, ventricular tachycardia (AE: ['arrhythmia'])
+  Quinidine                 → tachyarrhythmia, tachycardiac atrial fibrillation, ventricular tachycardia (AE: ['arrhythmia'])
+  Bupivacaine               → systemic myasthenia gravis, systemic lupus erythematosus, osteoarthritis (AE: ['asthenia'])
+  Azathioprine              → ulcerative colitis, alopecia areata (AE: ['colitis'])
+  Eptifibatide              → acute coronary syndrome, coronary artery disease (AE: ['coronary artery occlusion', 'coronary artery disease'])
+  Colesevelam               → diabetes mellitus, type 2 diabetes mellitus (AE: ['diabetes mellitus'])
+  Diltiazem                 → tachyarrhythmia, tachycardiac atrial fibrillation (AE: ['arrhythmia'])
+  Sotalol                   → tachyarrhythmia, ventricular tachycardia (AE: ['tachyarrhythmia', 'arrhythmia'])
+  Propafenone               → tachyarrhythmia, tachycardiac atrial fibrillation (AE: ['arrhythmia'])
+
+--- MEDIUM (269 candidates) ---
+  Azathioprine              → bullous dermatitis herpetiformis, toxic epidermal necrolysis, herpes zoster (AE: ['dermatitis'])
+  Lidocaine                 → bullous dermatitis herpetiformis, cardiac arrest, urticaria (AE: ['dermatitis bullous', 'dermatitis'])
+  Azithromycin              → streptococcal infections, keratitis, pneumococcal infections (AE: ['infection'])
+  Doxycycline               → helicobacter pylori infection, streptococcal infections, pneumococcal infections (AE: ['infection'])
+  Ciprofloxacin             → inhalational anthrax, keratitis, early lyme disease erythema migrans (AE: ['anthrax'])
+  Minocycline               → helicobacter pylori infection, streptococcal infections, pneumococcal infections (AE: ['infection'])
+  Bortezomib                → small lymphocytic lymphoma, anaplastic large cell lymphoma, follicular lymphoma (AE: ['lymphoma'])
+  Lenalidomide              → small lymphocytic lymphoma, anaplastic large cell lymphoma, follicular lymphoma (AE: ['lymphoma'])
+  Methotrexate              → breast cancer, lung cancer, skin cancer (AE: ['breast disorder'])
+  Bupivacaine               → urticaria, pruritus, cryptococcal meningitis (AE: ['urticaria'])
+  Prednisolone              → herpes simplex encephalitis, cytomegalovirus infection, cryptococcal meningitis (AE: ['herpes simplex'])
+  Cyclophosphamide          → renal carcinoma, small lymphocytic lymphoma, carcinoma (AE: ['renal cell carcinoma'])
+  Paclitaxel                → breast cancer, skin cancer, adenocarcinoma (AE: ['breast disorder', 'breast cancer stage iv'])
+  Erythromycin              → streptococcal infections, pruritus ani, urticaria (AE: ['streptococcal infection'])
+  Tacrolimus                → alopecia areata, systemic myasthenia gravis, interstitial pneumonia associated with p (AE: ['alopecia'])
+  Estradiol                 → breast cancer, pruritus, uterine cancer (AE: ['breast cancer', 'breast cancer invasive nos'])
+  Triamcinolone             → bursitis, fungal meningitis, secondary adrenocortical insufficiency (AE: ['bursitis'])
+  Prednisone                → cytomegalovirus infection, cryptococcal meningitis, fungal meningitis (AE: ['infection'])
+  Doxorubicin               → ovarian cancer, breast cancer, persistent recurrent or metastatic carci (AE: ['ovarian cancer'])
+  Docetaxel                 → ovarian cancer, breast cancer, cancer (AE: ['ovarian cancer'])
+
+--- LOW (298 candidates) ---
+  Moxifloxacin              → bullous dermatitis herpetiformis, gingivitis, herpes simplex encephalitis (AE: ['dermatitis bullous', 'dermatitis'])
+  Ofloxacin                 → streptococcal infections, osteomyelitis, keratitis (AE: ['infection'])
+  Celecoxib                 → bullous dermatitis herpetiformis, toxic epidermal necrolysis, ischemic cerebrovascular disorder (AE: ['dermatitis bullous', 'dermatitis'])
+  Diclofenac                → bullous dermatitis herpetiformis, toxic epidermal necrolysis, helicobacter pylori infection (AE: ['dermatitis bullous', 'dermatitis'])
+  Lidocaine                 → angioedema, gingivitis, social anxiety disorder (AE: ['angioedema', 'oedema'])
+  Triamcinolone             → cardiac arrest, angioedema, chronic granulomatous disease (AE: ['cardiac arrest'])
+  Dexamethasone             → angioedema, heparininduced thrombocytopenia hit type, cytomegalovirus infection (AE: ['angioedema', 'oedema'])
+  Gatifloxacin              → blepharitis, keratitis, keratoconjunctivitis (AE: ['blepharitis allergic'])
+  Fluticasone               → chronic bronchitis, seasonal allergic rhinitis, sinusitis (AE: ['bronchitis'])
+  Tacrolimus                → bullous dermatitis herpetiformis, graft versus host disease gvhd, urticaria (AE: ['dermatitis bullous', 'dermatitis'])
+  Naproxen                  → bullous dermatitis herpetiformis, toxic epidermal necrolysis, vernal keratoconjunctivitis (AE: ['dermatitis bullous', 'dermatitis'])
+  Prednisone                → cardiac arrest, angioedema, congenitalidiopathic neutropenia (AE: ['cardiac arrest'])
+  Metronidazole             → opioidinduced constipation, diabetic foot infections of the skin and, hypersensitivity pneumonitis (AE: ['constipation'])
+  Bupivacaine               → cardiac arrest, angioedema, cytomegalovirus infection (AE: ['cardiac arrest', 'cardiac disorder'])
+  Posaconazole              → chronic hepatitis c, cryptococcal meningitis, fungal meningitis (AE: ['hepatitis'])
+  Minocycline               → gingivitis, progressive familial intrahepatic choles, pneumonia (AE: ['gingivitis'])
+  Fludarabine               → heparininduced thrombocytopenia hit type, congenitalidiopathic neutropenia, pure red cell aplasia (AE: ['cytopenia', 'thrombocytopenia'])
+  Mometasone                → chronic bronchitis, seasonal allergic rhinitis, sinusitis (AE: ['bronchitis'])
+  Gemcitabine               → anaplastic large cell lymphoma, lymphoplasmacytic lymphoma, burkitt lymphoma (AE: ['lymphoma'])
+  Indomethacin              → bullous dermatitis herpetiformis, toxic epidermal necrolysis, severe erythema multiforme (AE: ['dermatitis'])
+
+--- FILTER (628 candidates) ---
+  Pramipexole               → chorea, narcolepsy, hordeolum (AE: ['chorea'])
+  Ropinirole                → glossopharyngeal neuralgia, neuropathy, dry skin (AE: ['neuralgia'])
+  Methylprednisolone        → cardiac arrest, proliferative diabetic retinopathy pdr, chronic pancreatitis (AE: ['cardiac arrest', 'cardiac disorder'])
+  Tolcapone                 → glossopharyngeal neuralgia, hepatic encephalopathy, neuropathy (AE: ['neuralgia'])
+  Diclofenac                → angioedema, eczema, basal cell carcinoma bcc (AE: ['angioedema', 'oedema'])
+  Gabapentin                → herpes simplex encephalitis, herpes zoster, cytomegalovirus infection (AE: ['herpes simplex', 'herpes nos'])
+  Prednisone                → pruritus ani, keratitis, chronic pancreatitis (AE: ['pruritus'])
+  Prednisolone              → cardiac arrest, proliferative diabetic retinopathy pdr, chronic pancreatitis (AE: ['cardiac arrest'])
+  Dexamethasone             → cardiac arrest, proliferative diabetic retinopathy pdr, chronic pancreatitis (AE: ['cardiac arrest'])
+  Fluoxetine                → acute alcohol withdrawal, social anxiety disorder, malignant hyperthermia (AE: ['withdrawal syndrome'])
+  Rivastigmine              → glossopharyngeal neuralgia, neuropathy, opioidinduced constipation (AE: ['neuralgia'])
+  Carbidopa                 → chorea, neuropathy, common cold (AE: ['chorea'])
+  Celecoxib                 → systemic mastocytosis with associated he, angioedema, cystitis (AE: ['neoplasm'])
+  Posaconazole              → herpes simplex encephalitis, pruritus ani, chronic pancreatitis (AE: ['herpes simplex'])
+  Pergolide                 → glossopharyngeal neuralgia, opioidinduced constipation, primary hypokalemic periodic paralysis (AE: ['neuralgia'])
+  Zonisamide                → hepatic encephalopathy, neuropathy, opioidinduced constipation (AE: ['encephalopathy'])
+  Everolimus                → pancreatitis, anaplastic large cell lymphoma, carcinoid syndrome diarrhoea (AE: ['pancreatitis acute', 'pancreatitis'])
+  Amantadine                → dry skin, opioidinduced constipation, primary hypokalemic periodic paralysis (AE: ['skin disorder'])
+  Azithromycin              → bullous dermatitis herpetiformis, helicobacter pylori infection, seasonal allergic rhinitis (AE: ['dermatitis bullous', 'dermatitis'])
+  Famciclovir               → herpes zoster, cytomegalovirus infection, vasculitis (AE: ['herpes zoster'])
+
+======================================================================
+SUMMARY
+======================================================================
+
+New candidates by category:
+  cardiovascular: 275
+  dermatological: 233
+  infectious: 212
+  cancer: 132
+  autoimmune: 84
+  respiratory: 83
+  neurological: 78
+  gastrointestinal: 78
+  ophthalmic: 65
+  other: 59
+  metabolic: 53
+  psychiatric: 40
+  hematological: 32
+  immunological: 10
+  musculoskeletal: 9
+  renal: 9
+  endocrine: 7
+  reproductive: 3
+
+Drugs with 3+ inverse indication predictions:
+  Dexamethasone: 44 predictions
+  Prednisolone: 43 predictions
+  Triamcinolone: 41 predictions
+  Prednisone: 40 predictions
+  Methylprednisolone: 36 predictions
+  Lidocaine: 31 predictions
+  Moxifloxacin: 26 predictions
+  Celecoxib: 24 predictions
+  Ofloxacin: 24 predictions
+  Azithromycin: 23 predictions
+  Azathioprine: 22 predictions
+  Diclofenac: 22 predictions
+  Ciprofloxacin: 19 predictions
+  Bupivacaine: 19 predictions
+  Doxycycline: 18 predictions
+  Minocycline: 18 predictions
+  Pramipexole: 16 predictions
+  Betamethasone: 15 predictions
+  Tacrolimus: 15 predictions
+  Naproxen: 15 predictions
+
+Results saved to data/analysis/h486_sider_inverse.json

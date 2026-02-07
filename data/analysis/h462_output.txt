@@ -1,0 +1,186 @@
+======================================================================
+h462: Category-Specific MEDIUM Tier Holdout Validation
+======================================================================
+
+Loading predictor...
+Diseases with GT + embeddings: 455
+
+--- FULL-DATA BASELINE ---
+
+MEDIUM tier precision by category (full-data):
+  Category                   Prec%  Hits  Total Diseases
+  -------------------------------------------------------
+  psychiatric                55.9%    57    102        8
+  other                      35.5%    22     62       11
+  renal                      34.9%    22     63        9
+  musculoskeletal            33.3%    22     66        7
+  dermatological             28.6%    76    266       30
+  autoimmune                 28.3%    67    237       24
+  immunological              27.3%    12     44        5
+  ophthalmic                 27.2%    40    147       16
+  cardiovascular             27.0%    72    267       30
+  endocrine                  25.9%     7     27        3
+  infectious                 24.0%   157    655       83
+  cancer                     23.3%   307   1320       69
+  gastrointestinal           22.9%    11     48       11
+  hematological              22.4%    39    174       20
+  respiratory                22.2%    20     90       15
+  metabolic                  16.7%    18    108       30
+  neurological               16.3%     8     49       14
+  reproductive                5.0%     1     20        5
+
+--- SEED 42 (1/5) ---
+  psychiatric                62.5% (5/8, 1 diseases)
+  renal                      58.8% (10/17, 2 diseases)
+  endocrine                  28.6% (4/14, 2 diseases)
+  neurological               28.6% (4/14, 2 diseases)
+  hematological              28.2% (22/78, 8 diseases)
+  infectious                 27.0% (44/163, 21 diseases)
+  musculoskeletal            25.0% (2/8, 1 diseases)
+  cancer                     19.0% (27/142, 9 diseases)
+  autoimmune                 18.2% (4/22, 2 diseases)
+  respiratory                14.3% (1/7, 2 diseases)
+  metabolic                  13.3% (2/15, 5 diseases)
+  dermatological             11.8% (2/17, 3 diseases)
+  cardiovascular              9.8% (4/41, 8 diseases)
+  ophthalmic                  0.0% (0/1, 1 diseases)
+  other                       0.0% (0/4, 1 diseases)
+  reproductive                0.0% (0/12, 4 diseases)
+
+--- SEED 123 (2/5) ---
+  renal                      58.3% (7/12, 2 diseases)
+  psychiatric                45.0% (9/20, 3 diseases)
+  cardiovascular             29.2% (7/24, 2 diseases)
+  ophthalmic                 28.9% (13/45, 6 diseases)
+  respiratory                28.9% (11/38, 5 diseases)
+  dermatological             25.0% (19/76, 10 diseases)
+  autoimmune                 23.8% (15/63, 8 diseases)
+  metabolic                  22.2% (4/18, 6 diseases)
+  cancer                     19.7% (52/264, 18 diseases)
+  infectious                 16.5% (18/109, 13 diseases)
+  neurological               14.3% (1/7, 2 diseases)
+  hematological               7.4% (2/27, 3 diseases)
+  musculoskeletal             5.6% (1/18, 3 diseases)
+  immunological               0.0% (0/3, 1 diseases)
+  other                       0.0% (0/3, 1 diseases)
+
+--- SEED 456 (3/5) ---
+  autoimmune                 41.8% (23/55, 6 diseases)
+  psychiatric                41.2% (7/17, 1 diseases)
+  musculoskeletal            38.5% (5/13, 1 diseases)
+  ophthalmic                 37.5% (6/16, 2 diseases)
+  other                      36.4% (4/11, 2 diseases)
+  dermatological             30.4% (24/79, 8 diseases)
+  cardiovascular             20.5% (16/78, 9 diseases)
+  respiratory                20.0% (6/30, 4 diseases)
+  endocrine                  18.2% (2/11, 1 diseases)
+  gastrointestinal           18.2% (2/11, 3 diseases)
+  cancer                     17.5% (41/234, 13 diseases)
+  infectious                 14.9% (20/134, 18 diseases)
+  metabolic                   8.3% (1/12, 6 diseases)
+  hematological               4.5% (2/44, 5 diseases)
+
+--- SEED 789 (4/5) ---
+  gastrointestinal           57.1% (8/14, 2 diseases)
+  renal                      57.1% (8/14, 2 diseases)
+  psychiatric                46.2% (12/26, 2 diseases)
+  musculoskeletal            45.5% (5/11, 1 diseases)
+  respiratory                41.7% (15/36, 5 diseases)
+  cardiovascular             38.5% (20/52, 8 diseases)
+  hematological              37.5% (9/24, 3 diseases)
+  dermatological             37.3% (19/51, 6 diseases)
+  infectious                 29.5% (28/95, 16 diseases)
+  cancer                     23.4% (58/248, 13 diseases)
+  other                      23.1% (3/13, 2 diseases)
+  autoimmune                 21.9% (21/96, 10 diseases)
+  metabolic                  21.4% (6/28, 3 diseases)
+  ophthalmic                  8.7% (2/23, 4 diseases)
+  immunological               0.0% (0/1, 1 diseases)
+  neurological                0.0% (0/3, 2 diseases)
+
+--- SEED 2024 (5/5) ---
+  psychiatric                40.7% (11/27, 3 diseases)
+  metabolic                  38.5% (5/13, 4 diseases)
+  ophthalmic                 36.4% (8/22, 2 diseases)
+  respiratory                34.5% (10/29, 3 diseases)
+  musculoskeletal            30.8% (8/26, 3 diseases)
+  cardiovascular             29.4% (20/68, 9 diseases)
+  autoimmune                 25.5% (14/55, 9 diseases)
+  gastrointestinal           20.0% (3/15, 4 diseases)
+  other                      20.0% (3/15, 3 diseases)
+  cancer                     15.2% (28/184, 10 diseases)
+  infectious                 15.2% (16/105, 15 diseases)
+  dermatological             11.9% (5/42, 6 diseases)
+  immunological               7.4% (2/27, 3 diseases)
+  hematological               2.9% (1/35, 5 diseases)
+  neurological                0.0% (0/3, 1 diseases)
+  renal                       0.0% (0/1, 1 diseases)
+
+======================================================================
+AGGREGATE HOLDOUT RESULTS (mean ± std across 5 seeds)
+======================================================================
+
+--- Overall Tier Precision ---
+  GOLDEN  :  56.5% ± 18.5%
+  HIGH    :  49.6% ±  5.9%
+  MEDIUM  :  23.1% ±  3.2%
+  LOW     :  10.7% ±  1.7%
+  FILTER  :   8.3% ±  0.9%
+
+--- MEDIUM Tier by Category: Full-Data vs Holdout ---
+  Category                   Full%   Hold%  ±std       Δ  FullN  HoldN   Decision
+  --------------------------------------------------------------------------------
+  psychiatric                55.9%   47.1% ± 8.0   -8.8pp    102     20       KEEP
+  renal                      34.9%   43.5% ±25.2   +8.6pp     63     11       KEEP
+  gastrointestinal           22.9%   31.8% ±17.9   +8.9pp     48     13       KEEP
+  musculoskeletal            33.3%   29.1% ±13.6   -4.2pp     66     15       KEEP
+  respiratory                22.2%   27.9% ± 9.8   +5.7pp     90     28       KEEP
+  autoimmune                 28.3%   26.2% ± 8.1   -2.1pp    237     58       KEEP
+  cardiovascular             27.0%   25.5% ± 9.7   -1.5pp    267     53       KEEP
+  endocrine                  25.9%   23.4% ± 5.2   -2.5pp     27     12       KEEP
+  dermatological             28.6%   23.3% ±10.1   -5.3pp    266     53       KEEP
+  ophthalmic                 27.2%   22.3% ±15.2   -4.9pp    147     21       KEEP
+  metabolic                  16.7%   20.7% ±10.3   +4.0pp    108     17       KEEP
+  infectious                 24.0%   20.6% ± 6.3   -3.4pp    655    121       KEEP
+  cancer                     23.3%   19.0% ± 2.7   -4.3pp   1320    214       KEEP
+  hematological              22.4%   16.1% ±14.1   -6.3pp    174     42       KEEP
+  other                      35.5%   15.9% ±14.1  -19.6pp     62      9       KEEP
+  neurological               16.3%   10.7% ±11.9   -5.6pp     49      7       →LOW
+  immunological              27.3%    2.5% ± 3.5  -24.8pp     44     10       →LOW
+  reproductive                5.0%    0.0% ± 0.0   -5.0pp     20     12       →LOW
+
+======================================================================
+PROMOTION/DEMOTION RECOMMENDATIONS
+======================================================================
+
+DEMOTE to LOW:
+  immunological: 2.5% ± 3.5% (n=10)
+    Per-seed: [0.0, 0.0, 7.4]
+  neurological: 10.7% ± 11.9% (n=7)
+    Per-seed: [28.6, 14.3, 0.0, 0.0]
+  reproductive: 0.0% ± 0.0% (n=12)
+    Per-seed: [0.0]
+
+KEEP as MEDIUM:
+  autoimmune: 26.2% ± 8.1%
+  cancer: 19.0% ± 2.7%
+  cardiovascular: 25.5% ± 9.7%
+  dermatological: 23.3% ± 10.1%
+  endocrine: 23.4% ± 5.2%
+  gastrointestinal: 31.8% ± 17.9%
+  hematological: 16.1% ± 14.1%
+  infectious: 20.6% ± 6.3%
+  metabolic: 20.7% ± 10.3%
+  musculoskeletal: 29.1% ± 13.6%
+  ophthalmic: 22.3% ± 15.2%
+  other: 15.9% ± 14.1%
+  psychiatric: 47.1% ± 8.0%
+  renal: 43.5% ± 25.2%
+  respiratory: 27.9% ± 9.8%
+
+--- Impact of Category-Specific Rules ---
+  immunological (→LOW): 44 predictions (1.2% of MEDIUM)
+  neurological (→LOW): 49 predictions (1.3% of MEDIUM)
+  reproductive (→LOW): 20 predictions (0.5% of MEDIUM)
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h462_category_medium_holdout.json

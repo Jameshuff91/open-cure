@@ -1,0 +1,70 @@
+================================================================================
+h521: Cancer Drug SOC Stratification in MEDIUM Tier
+================================================================================
+Cancer drugs in SOC: 74
+
+================================================================================
+FULL-DATA: Cancer Drug MEDIUM Predictions
+================================================================================
+
+Total cancer MEDIUM predictions: 1127
+GT hits: 508 (45.1%)
+
+SOC cancer_drugs: 387 preds, 192 hits (49.6% if soc_preds else 0)
+Non-SOC: 740 preds, 316 hits (42.7% if non_soc else 0)
+
+--- By Cancer Subtype ---
+  solid: 354/772 = 45.9%
+  hematologic: 129/292 = 44.2%
+  cns: 25/63 = 39.7%
+
+--- By Drug Class ---
+  other                    : 200/475 = 42.1%
+  antimetabolites          : 77/148 = 52.0%
+  misc_targeted            : 34/111 = 30.6%
+  immunotherapy            : 32/88 = 36.4%
+  kinase_inhibitors        : 37/85 = 43.5%
+  alkylating               : 25/57 = 43.9%
+  anthracyclines           : 31/45 = 68.9%
+  platinum                 : 17/37 = 45.9%
+  taxanes                  : 28/35 = 80.0%
+  proteasome_inhibitors    : 5/14 = 35.7%
+  imids                    : 5/13 = 38.5%
+  hormonal                 : 10/11 = 90.9%
+  vinca_alkaloids          : 7/8 = 87.5%
+
+--- By Category-Specific Tier Rule ---
+  cancer_same_type              : 508/1127 = 45.1%
+
+================================================================================
+HOLDOUT: Cancer Drug MEDIUM Stratification (5 seeds)
+================================================================================
+
+--- By Cancer Subtype (Holdout) ---
+  solid          :  27.6% ±  8.1% (n=116/seed)
+  hematologic    :  17.7% ±  8.0% (n=38/seed)
+  cns            :  23.0% ± 13.9% (n=20/seed)
+
+--- By Drug Class (Holdout) ---
+  alkylating               :  13.8% ±  9.1% (n=9/seed)
+  anthracyclines           :  73.1% ± 20.0% (n=8/seed)
+  antimetabolites          :  47.7% ± 10.7% (n=23/seed)
+  immunotherapy            :  18.3% ± 11.7% (n=13/seed)
+  kinase_inhibitors        :   9.6% ±  6.2% (n=11/seed)
+  misc_targeted            :  17.3% ±  5.4% (n=18/seed)
+  other                    :  14.6% ±  3.1% (n=66/seed)
+  platinum                 :  35.9% ±  7.6% (n=6/seed)
+  taxanes                  :  71.2% ± 14.7% (n=6/seed)
+
+--- SOC Cancer Drugs vs Non-SOC (Holdout) ---
+  cancer_soc     :  29.5% ±  4.4% (n=58/seed)
+  non_soc        :  22.4% ±  5.2% (n=105/seed)
+
+================================================================================
+CONCLUSION
+================================================================================
+  ** taxanes cancer MEDIUM: 71.2% → HIGH candidate **
+  ** antimetabolites cancer MEDIUM: 47.7% → HIGH candidate **
+  ** anthracyclines cancer MEDIUM: 73.1% → HIGH candidate **
+
+Saved to data/analysis/h521_cancer_soc_output.json

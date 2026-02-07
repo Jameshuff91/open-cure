@@ -1,6 +1,53 @@
 # Research Loop Progress
 
-## Current Session: h669 - CS HIGH Novel Prediction Quality Audit (2026-02-06)
+## Current Session: h673/h670/h671 - Safety Audit, False GT Cleanup, TransE Fix (2026-02-06)
+
+### h673: CS Safety Audit — VALIDATED
+4 implausible CS HIGH predictions assessed. 3 genuinely harmful, 1 legitimate adjunctive use:
+- **Triamcinolone → TEN**: HARMFUL. No RCT evidence, 40% mortality on CS, infection risk. → FILTER
+- **Budesonide → autoimmune PAP**: HARMFUL. 74% deteriorate on CS, macrophage suppression. → FILTER
+- **Prednisolone → OSA**: HARMFUL. CS increase OSA risk (HR 1.40), weight gain. → FILTER
+- **Methylprednisolone → dacryocystitis**: Legitimate adjunctive with antibiotics. No change.
+
+**BUG FIX**: Duplicate dict keys in INVERSE_INDICATION_PAIRS silently lost IPF/glaucoma/osteoporosis filters for prednisolone/prednisone/methylprednisolone. 3 HIGH CS→IPF predictions were NOT being filtered despite PANTHER-IPF trial (increased mortality).
+
+Total: 15 newly filtered + 3 bug-fix restored. HIGH +0.3pp (61.5→61.8%).
+
+### h670: NLP Differential Diagnosis False GT Audit — VALIDATED
+Systematic search for NLP extraction errors in Every Cure indicationList.xlsx. Found 18 new false GT entries from 2 patterns:
+- **Pattern 1**: "secondary causes should be excluded" boilerplate in lipid drug labels (17 entries: 10 drugs→diabetes, 6→nephrotic syndrome, 1→hypothyroidism)
+- **Pattern 2**: "must be excluded" differential diagnosis (nafarelin→CAH)
+
+GT: 59,644 → 59,626. Minimal holdout impact but improves GT quality.
+
+### h671: TransE Antimicrobial Mismatch Gate — VALIDATED
+Fixed amphotericin B blanket 'antiparasitic' tag. AmB has narrow antiparasitic activity (Leishmania only), not against schistosomes/trypanosomes/toxoplasma.
+- 3 implausible predictions HIGH→LOW (AmB→Chagas/schistosomiasis/toxoplasmosis)
+- 2 genuine Leishmania predictions preserved at HIGH
+
+### Tier Status (post h673/h670/h671)
+| Tier | Holdout | Previous (h669) | Change |
+|------|---------|-----------------|--------|
+| GOLDEN | 71.6% ± 4.8% | 71.9% ± 4.7% | -0.3pp |
+| HIGH | 61.8% ± 7.5% | 61.5% ± 7.2% | **+0.3pp** |
+| MEDIUM | 43.5% ± 2.9% | 43.4% ± 2.9% | +0.1pp |
+| LOW | 15.3% ± 1.8% | 15.3% ± 1.9% | — |
+| FILTER | 10.7% ± 1.2% | 10.7% ± 1.2% | — |
+
+### New Hypotheses Generated (4)
+- h674: Statin→diabetes inverse indication expansion
+- h675: Systematic FDA label contraindication mining
+- h676: CS promotion rule disease-level exclusions
+- h677: Every Cure GT quality: quantify total NLP error rate
+
+### Recommended Next Steps
+1. **h677**: Random sample audit of 100 Every Cure indication rows to estimate overall error rate
+2. **h675**: Systematic contraindication mining from FDA labels
+3. **h674**: Statin→diabetes explicit inverse indication (quick safety fix)
+
+---
+
+## Previous Session: h669 - CS HIGH Novel Prediction Quality Audit (2026-02-06)
 
 ### h669: CS HIGH Novel Prediction Quality Assessment — VALIDATED
 144 CS truly novel HIGH predictions assessed against medical literature. **97.2% medically acceptable** (64.3% GENUINE first-line treatments, 32.9% PLAUSIBLE adjunctive uses, 2.8% IMPLAUSIBLE). CS novel quality dramatically outperforms non-CS (62.3% acceptable).

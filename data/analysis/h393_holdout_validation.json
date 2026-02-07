@@ -2,66 +2,66 @@
   "tier_comparison": {
     "GOLDEN": {
       "full_precision": 90.5,
-      "holdout_mean": 71.9,
-      "holdout_std": 4.7,
-      "delta": -18.6,
+      "holdout_mean": 71.6,
+      "holdout_std": 4.8,
+      "delta": -18.9,
       "seed_values": [
-        64.6,
+        64.1,
         72.3,
-        71.7,
+        71.1,
         71.4,
         79.3
       ]
     },
     "HIGH": {
-      "full_precision": 73.4,
-      "holdout_mean": 61.5,
-      "holdout_std": 7.2,
-      "delta": -11.9,
+      "full_precision": 74.0,
+      "holdout_mean": 61.8,
+      "holdout_std": 7.5,
+      "delta": -12.2,
       "seed_values": [
         51.7,
-        63.4,
-        70.1,
-        67.7,
-        54.7
+        64.4,
+        70.5,
+        68.1,
+        54.3
       ]
     },
     "MEDIUM": {
-      "full_precision": 51.0,
-      "holdout_mean": 43.4,
+      "full_precision": 51.2,
+      "holdout_mean": 43.5,
       "holdout_std": 2.9,
-      "delta": -7.6,
+      "delta": -7.7,
       "seed_values": [
         45.0,
-        41.3,
-        39.3,
+        41.5,
+        39.5,
         47.8,
-        43.4
+        43.9
       ]
     },
     "LOW": {
-      "full_precision": 23.5,
+      "full_precision": 23.4,
       "holdout_mean": 15.3,
-      "holdout_std": 1.9,
-      "delta": -8.2,
+      "holdout_std": 1.8,
+      "delta": -8.1,
       "seed_values": [
-        14.9,
-        15.1,
+        14.8,
+        15.0,
         15.6,
         18.4,
-        12.6
+        12.7
       ]
     },
     "FILTER": {
-      "full_precision": 17.2,
+      "full_precision": 17.1,
       "holdout_mean": 10.7,
       "holdout_std": 1.2,
-      "delta": -6.5,
+      "delta": -6.4,
       "seed_values": [
-        8.7,
-        10.9,
+        8.8,
+        11.0,
         10.0,
-        11.6,
+        11.5,
         12.2
       ]
     }
@@ -69,22 +69,22 @@
   "rule_comparison": {
     "inverse_indication": {
       "tier": "FILTER",
-      "full_precision": 16.9,
-      "full_n": 130,
-      "holdout_mean": 14.4,
-      "holdout_std": 9.3,
-      "delta": -2.5,
-      "mean_n": 22.2,
+      "full_precision": 15.1,
+      "full_n": 159,
+      "holdout_mean": 13.2,
+      "holdout_std": 7.3,
+      "delta": -1.9,
+      "mean_n": 28.2,
       "status": "GENUINE"
     },
     "default": {
       "tier": "FILTER",
-      "full_precision": 20.2,
-      "full_n": 6773,
+      "full_precision": 20.1,
+      "full_n": 6767,
       "holdout_mean": 12.6,
-      "holdout_std": 0.9,
-      "delta": -7.6,
-      "mean_n": 1450.0,
+      "holdout_std": 0.8,
+      "delta": -7.5,
+      "mean_n": 1447.8,
       "status": "degraded"
     },
     "complication_non_validated": {
@@ -109,11 +109,11 @@
     },
     "base_to_complication": {
       "tier": "FILTER",
-      "full_precision": 37.5,
-      "full_n": 32,
+      "full_precision": 40.0,
+      "full_n": 30,
       "holdout_mean": 10.0,
       "holdout_std": 10.0,
-      "delta": -27.5,
+      "delta": -30.0,
       "mean_n": 6.0,
       "status": "OVERFITTED?"
     },
@@ -129,13 +129,13 @@
     },
     "corticosteroid_iatrogenic": {
       "tier": "FILTER",
-      "full_precision": 10.5,
-      "full_n": 19,
-      "holdout_mean": 32.0,
-      "holdout_std": 39.7,
-      "delta": 21.4,
-      "mean_n": 5.0,
-      "status": "GENUINE"
+      "full_precision": 22.2,
+      "full_n": 9,
+      "holdout_mean": 39.6,
+      "holdout_std": 37.0,
+      "delta": 17.4,
+      "mean_n": 2.2,
+      "status": "small-n"
     },
     "non_therapeutic_compound": {
       "tier": "FILTER",
@@ -201,10 +201,10 @@
       "tier": "GOLDEN",
       "full_precision": 81.5,
       "full_n": 65,
-      "holdout_mean": 53.5,
-      "holdout_std": 17.8,
-      "delta": -28.0,
-      "mean_n": 15.3,
+      "holdout_mean": 51.7,
+      "holdout_std": 18.1,
+      "delta": -29.8,
+      "mean_n": 14.7,
       "status": "OVERFITTED?"
     },
     "autoimmune_hierarchy_colitis": {
@@ -259,11 +259,11 @@
     },
     "transe_medium_promotion": {
       "tier": "HIGH",
-      "full_precision": 77.4,
-      "full_n": 62,
+      "full_precision": 81.4,
+      "full_n": 59,
       "holdout_mean": 51.9,
       "holdout_std": 13.5,
-      "delta": -25.5,
+      "delta": -29.5,
       "mean_n": 7.2,
       "status": "OVERFITTED?"
     },
@@ -276,16 +276,6 @@
       "delta": -50.0,
       "mean_n": 1.0,
       "status": "small-n"
-    },
-    "incoherent_demotion": {
-      "tier": "HIGH",
-      "full_precision": 43.0,
-      "full_n": 207,
-      "holdout_mean": 59.5,
-      "holdout_std": 6.9,
-      "delta": 16.5,
-      "mean_n": 58.8,
-      "status": "GENUINE"
     },
     "cardiovascular_hierarchy_hypertension": {
       "tier": "HIGH",
@@ -309,12 +299,12 @@
     },
     "metabolic_hierarchy_diabetes": {
       "tier": "HIGH",
-      "full_precision": 88.1,
-      "full_n": 42,
-      "holdout_mean": 48.5,
-      "holdout_std": 40.9,
-      "delta": -39.6,
-      "mean_n": 4.7,
+      "full_precision": 89.2,
+      "full_n": 37,
+      "holdout_mean": 70.0,
+      "holdout_std": 30.0,
+      "delta": -19.2,
+      "mean_n": 6.0,
       "status": "OVERFITTED?"
     },
     "cancer_same_type_mech_rank10": {
@@ -339,12 +329,12 @@
     },
     "corticosteroid_soc_promotion": {
       "tier": "HIGH",
-      "full_precision": 55.1,
-      "full_n": 294,
+      "full_precision": 54.7,
+      "full_n": 287,
       "holdout_mean": 56.8,
-      "holdout_std": 11.7,
-      "delta": 1.7,
-      "mean_n": 68.8,
+      "holdout_std": 11.8,
+      "delta": 2.1,
+      "mean_n": 67.8,
       "status": "GENUINE"
     },
     "cardiovascular_hierarchy_atherosclerosis": {
@@ -497,34 +487,44 @@
       "mean_n": 0,
       "status": "small-n"
     },
+    "incoherent_demotion": {
+      "tier": "LOW",
+      "full_precision": 43.6,
+      "full_n": 202,
+      "holdout_mean": 60.6,
+      "holdout_std": 8.7,
+      "delta": 17.0,
+      "mean_n": 58.0,
+      "status": "GENUINE"
+    },
     "local_anesthetic_procedural": {
       "tier": "LOW",
-      "full_precision": 24.6,
-      "full_n": 280,
+      "full_precision": 24.5,
+      "full_n": 282,
       "holdout_mean": 28.6,
       "holdout_std": 4.9,
-      "delta": 4.0,
+      "delta": 4.1,
       "mean_n": 63.6,
       "status": "GENUINE"
     },
     "default_no_mech_high_rank": {
       "tier": "LOW",
-      "full_precision": 24.2,
-      "full_n": 306,
-      "holdout_mean": 17.2,
-      "holdout_std": 5.2,
+      "full_precision": 24.3,
+      "full_n": 305,
+      "holdout_mean": 17.3,
+      "holdout_std": 5.3,
       "delta": -7.0,
-      "mean_n": 46.6,
+      "mean_n": 46.4,
       "status": "degraded"
     },
     "metabolic_medium_demotion": {
       "tier": "LOW",
-      "full_precision": 11.4,
-      "full_n": 254,
-      "holdout_mean": 9.4,
-      "holdout_std": 3.9,
-      "delta": -2.0,
-      "mean_n": 42.4,
+      "full_precision": 10.4,
+      "full_n": 260,
+      "holdout_mean": 9.1,
+      "holdout_std": 4.9,
+      "delta": -1.3,
+      "mean_n": 42.6,
       "status": "GENUINE"
     },
     "broad_class_isolated": {
@@ -579,12 +579,12 @@
     },
     "cardiovascular_medium_demotion": {
       "tier": "LOW",
-      "full_precision": 24.0,
-      "full_n": 267,
-      "holdout_mean": 16.3,
-      "holdout_std": 9.5,
-      "delta": -7.7,
-      "mean_n": 55.4,
+      "full_precision": 24.4,
+      "full_n": 266,
+      "holdout_mean": 16.5,
+      "holdout_std": 9.4,
+      "delta": -7.9,
+      "mean_n": 55.2,
       "status": "degraded"
     },
     "gastrointestinal_medium_demotion": {
@@ -610,11 +610,11 @@
     "antimicrobial_pathogen_mismatch": {
       "tier": "LOW",
       "full_precision": 3.1,
-      "full_n": 287,
-      "holdout_mean": 2.6,
+      "full_n": 293,
+      "holdout_mean": 2.5,
       "holdout_std": 2.3,
-      "delta": -0.5,
-      "mean_n": 68.8,
+      "delta": -0.6,
+      "mean_n": 70.2,
       "status": "GENUINE"
     },
     "immunological_medium_demotion": {
@@ -691,10 +691,10 @@
       "tier": "LOW",
       "full_precision": 16.7,
       "full_n": 102,
-      "holdout_mean": 10.6,
-      "holdout_std": 15.0,
-      "delta": -6.1,
-      "mean_n": 24.0,
+      "holdout_mean": 10.1,
+      "holdout_std": 14.3,
+      "delta": -6.6,
+      "mean_n": 24.3,
       "status": "degraded"
     },
     "cv_pathway_comprehensive": {
@@ -709,11 +709,11 @@
     },
     "default_freq10_nomech_r6_10": {
       "tier": "MEDIUM",
-      "full_precision": 29.4,
-      "full_n": 214,
+      "full_precision": 30.0,
+      "full_n": 210,
       "holdout_mean": 34.1,
       "holdout_std": 7.3,
-      "delta": 4.7,
+      "delta": 4.1,
       "mean_n": 29.6,
       "status": "GENUINE"
     },
@@ -729,21 +729,21 @@
     },
     "target_overlap_promotion": {
       "tier": "MEDIUM",
-      "full_precision": 70.5,
-      "full_n": 156,
+      "full_precision": 70.7,
+      "full_n": 157,
       "holdout_mean": 49.0,
       "holdout_std": 5.9,
-      "delta": -21.5,
+      "delta": -21.7,
       "mean_n": 35.0,
       "status": "OVERFITTED?"
     },
     "default_freq10_nomech_r1_5": {
       "tier": "MEDIUM",
-      "full_precision": 45.0,
-      "full_n": 291,
+      "full_precision": 44.9,
+      "full_n": 292,
       "holdout_mean": 45.4,
       "holdout_std": 10.6,
-      "delta": 0.4,
+      "delta": 0.5,
       "mean_n": 50.0,
       "status": "GENUINE"
     },
@@ -771,10 +771,10 @@
       "tier": "MEDIUM",
       "full_precision": 37.3,
       "full_n": 51,
-      "holdout_mean": 41.2,
-      "holdout_std": 20.2,
-      "delta": 3.9,
-      "mean_n": 14.0,
+      "holdout_mean": 41.8,
+      "holdout_std": 20.0,
+      "delta": 4.5,
+      "mean_n": 14.2,
       "status": "GENUINE"
     },
     "hematological": {
@@ -789,13 +789,13 @@
     },
     "infectious_cs_tb_demotion": {
       "tier": "MEDIUM",
-      "full_precision": 88.9,
-      "full_n": 18,
-      "holdout_mean": 83.3,
-      "holdout_std": 0.0,
-      "delta": -5.6,
-      "mean_n": 6.0,
-      "status": "degraded"
+      "full_precision": 94.1,
+      "full_n": 17,
+      "holdout_mean": 95.8,
+      "holdout_std": 7.2,
+      "delta": 1.7,
+      "mean_n": 5.2,
+      "status": "GENUINE"
     },
     "neurological_hierarchy_parkinsons": {
       "tier": "MEDIUM",
@@ -854,13 +854,13 @@
     "target_overlap_promotion"
   ],
   "summary": {
-    "golden_holdout_precision": 71.9,
+    "golden_holdout_precision": 71.6,
     "golden_pass": true,
     "tier_ordering_correct": true,
     "n_rules_tested": 76,
     "n_genuine": 18,
     "n_overfitted": 23,
-    "n_degraded": 18,
-    "n_small_sample": 17
+    "n_degraded": 17,
+    "n_small_sample": 18
   }
 }

@@ -124,3 +124,30 @@ PART 4: Holdout Validation - n_drugs and unique_top30
 
 --- Seed 2024 ---
   n_drugs: high=45, low=45
+  unique_top30: high=43, low=47
+  ties_at_20: high=41, low=49
+
+--- Holdout Summary (5-seed mean ± std) ---
+
+n_drugs:
+  GOLDEN: +29.5 ± 40.6pp
+  HIGH: -10.3 ± 20.0pp
+  MEDIUM: -0.8 ± 4.7pp
+  LOW: +1.1 ± 2.7pp
+  FILTER: +3.0 ± 2.6pp
+
+unique_top30:
+  GOLDEN: -10.6 ± 46.2pp
+  HIGH: +8.2 ± 13.7pp
+  MEDIUM: +7.8 ± 4.0pp
+  LOW: +3.1 ± 2.2pp
+  FILTER: -1.5 ± 0.5pp
+
+ties_at_20:
+  GOLDEN: +34.0 ± 26.1pp
+  HIGH: -2.4 ± 12.6pp
+  MEDIUM: -2.0 ± 2.3pp
+  LOW: +0.4 ± 3.7pp
+  FILTER: +3.2 ± 1.6pp
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h442_score_margin_v2.json
