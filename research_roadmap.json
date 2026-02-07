@@ -14278,7 +14278,7 @@
       "title": "ICS Bronchospasm Safety Filter: Check If Asthma Controller Drugs Predicted for Acute Conditions",
       "description": "h700 found that inhaled corticosteroids (budesonide, fluticasone, beclomethasone, ciclesonide) and ICS/LABA combos have false GT entries for bronchospasm/acute bronchospasm. While these drugs are not in the predictor's prediction output currently, this pattern raises a broader question: do any asthma CONTROLLER medications get predicted for acute respiratory conditions where they'd be inappropriate? E.g., long-acting bronchodilators predicted for status asthmaticus, or montelukast predicted for acute bronchospasm. These would be analogous to the CS\u2192infectious demotion pattern (h557) - clinically relevant but wrong context.",
       "hypothesis": "Asthma controller medications may be predicted for acute respiratory conditions where they are inappropriate.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14288,8 +14288,8 @@
         "Identify any asthma controller drugs (ICS, LABA, leukotriene inhibitors) in predictions",
         "Assess whether these are clinically inappropriate (controller vs reliever mismatch)"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "INVALIDATED: The ICS/controller \u2192 acute condition safety concern does not exist in our data.\n\nKey findings:\n1. Acute respiratory conditions (status asthmaticus, bronchospasm, respiratory distress syndrome) have NO DRKG embeddings \u2192 0 predictions \u2192 no controller mismatch possible.\n2. Controller drugs (ICS, LABA, LAMA, LTRA, Anti-IgE) appear in 27 MEDIUM+ predictions across respiratory diseases.\n3. 22/27 are medically APPROPRIATE: asthma (7), COPD (8), emphysema (7) \u2014 all chronic diseases where controllers are standard of care.\n4. 2 borderline: montelukast\u2192COPD (some evidence), indacaterol\u2192CF (weak evidence).\n5. 1 inappropriate: formoterol\u2192BPD at MEDIUM (LABA not used in neonates, 1 prediction only).\n6. 1 route mismatch: beclomethasone\u2192ILD (ICS route, systemic CS needed).\n7. Montelukast\u2192IPF at HIGH is actually in expanded GT (clinical trials exist).\n\nNOVEL FINDING: IPF predictions are 67% antihistamines (10/15) \u2014 all false positives. kNN embeds IPF near allergic disease neighborhood. 6 antihistamines at MEDIUM for IPF. Separate hypothesis needed.\n\nNo action taken \u2014 impact too small (1 prediction) for the original hypothesis. The broader antihistamine\u2192fibrotic disease issue is more impactful.",
+      "result_metric": "No change (hypothesis invalidated \u2014 issue does not exist)"
     },
     {
       "id": "h703",
@@ -14462,7 +14462,7 @@
       "id": "h712",
       "title": "Disease Name Synonym Expansion: Add Top 50 Common Disease Names to DISEASE_SYNONYMS",
       "description": "h711 found that 56.9% of EC disease names fail to map to MESH IDs, losing 50.9% of EC pairs. Many are simple synonyms: 'migraine' (16 GT drugs), 'emphysema' (24 GT), 'nausea' (21 GT), 'depression' (26 GT), 'insomnia' (18 GT). These all have MESH IDs already in DRKG but the DiseaseMatcher doesn't recognize the synonym. Adding the top 50 unmapped disease names to DISEASE_SYNONYMS would be a quick win for internal GT expansion.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -14503,6 +14503,53 @@
         "Check: how many more predictions would pass freq>=5 threshold?",
         "Estimate impact on MEDIUM tier size and precision",
         "Determine if expanded GT would also need updating in parallel"
+      ]
+    },
+    {
+      "id": "h715",
+      "title": "Antihistamine \u2192 Fibrotic Disease Mismatch: Demote Antihistamines for Non-Allergic Respiratory Diseases",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h702 discovered IPF predictions are 67% antihistamines (10/15), with 6 at MEDIUM \u2014 all false positives. Antihistamines treat allergic conditions (rhinitis, urticaria) but IPF is a FIBROTIC disease. kNN embeds IPF near allergic respiratory diseases, creating systematic false positives. Other fibrotic/ILD diseases may have the same pattern. A drug-class/disease-type mismatch rule (similar to h560 antimicrobial mismatch) could catch these.",
+      "steps": [
+        "Catalog all ILD/fibrotic diseases: IPF, BOOP, pulmonary fibrosis, ILD subtypes",
+        "Check antihistamine prediction rates across fibrotic vs allergic respiratory diseases",
+        "Assess expanded GT: do antihistamines have ANY evidence for fibrotic diseases?",
+        "If systematic mismatch confirmed, implement antihistamine \u2192 fibrotic demotion rule",
+        "Run holdout evaluation to measure MEDIUM impact"
+      ]
+    },
+    {
+      "id": "h716",
+      "title": "Neonatal Disease Age-Appropriateness: Adult Drug Predictions for Neonatal Conditions",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h702 found formoterol (adult LABA) predicted at MEDIUM for bronchopulmonary dysplasia (neonatal disease). BPD's kNN neighbors include adult airway diseases, pulling in adult-only drugs. Other neonatal diseases (RDS, neonatal jaundice, NEC) may have similar adult-drug contamination. Check if neonatal disease predictions contain age-inappropriate drugs.",
+      "steps": [
+        "Identify all neonatal/pediatric diseases in predictor (BPD, RDS, ROP, NEC, neonatal jaundice, etc.)",
+        "Check predictions for adult-only drugs (LABAs, oral anticoagulants, etc.)",
+        "Assess whether age-inappropriate predictions are at MEDIUM or above",
+        "If systematic issue, consider disease-age annotation or filter"
+      ]
+    },
+    {
+      "id": "h717",
+      "title": "Respiratory Disease Subtype Drug Class Coherence: Do ILD vs Obstructive vs Allergic Need Different Filters?",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h702 revealed that respiratory diseases have very different drug class profiles: (1) Obstructive (asthma/COPD): controllers + relievers, (2) Allergic (rhinitis): antihistamines, (3) Fibrotic (IPF): antifibrotics. The kNN treats them all as 'respiratory' but drug class coherence varies by subtype. Existing category_keywords maps them all to 'respiratory'. A respiratory subtype classification could enable subtype-specific drug class filters.",
+      "steps": [
+        "Classify all respiratory diseases into subtypes: obstructive, allergic, fibrotic, infectious, vascular",
+        "Check drug class distribution by subtype",
+        "Identify cross-subtype drug class mismatches (e.g., antihistamines for fibrotic)",
+        "Assess holdout precision by subtype",
+        "Implement subtype-specific filters if justified"
       ]
     }
   ],
@@ -16820,6 +16867,12 @@
       "hypothesis_id": "h711",
       "learning": "DRKG disease coverage is 95.2% (453/476 predictor diseases have embeddings). The real data gap is disease NAME MATCHING: DiseaseMatcher maps only 43.1% of EC disease names (1159/2688). This loses 50.9% of EC drug-disease pairs. Most failures are simple synonyms (migraine, emphysema, nausea, depression) that have MESH IDs in DRKG but aren't in the matcher. Better matching could double internal GT.",
       "implication": "h407 (Comprehensive ID Mapping) and h712 (Synonym Expansion) are highest-ROI. DRKG updating is NOT a priority."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h702",
+      "learning": "ICS/controller \u2192 acute respiratory condition safety concern does not exist: acute conditions (status asthmaticus, bronchospasm) lack DRKG embeddings. Controller drugs are overwhelmingly predicted for chronic conditions where they're appropriate. However, IPF has 67% antihistamine predictions due to kNN embedding near allergic disease neighborhood \u2014 a new drug-class/disease-subtype mismatch pattern.",
+      "implication": "Respiratory disease subtypes (obstructive/allergic/fibrotic) may need subtype-specific drug class filters, similar to antimicrobial-pathogen mismatch (h560). IPF antihistamine issue is a concrete example."
     }
   ],
   "collaborations": [
