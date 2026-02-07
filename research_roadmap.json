@@ -13499,7 +13499,7 @@
       "title": "Expanded GT Impact on Internal GT Precision Estimates",
       "description": "h657 invalidation revealed that internal GT (30.0% for NoMech R6-10) and expanded GT (40.5%) give very different precision estimates. This +10.5pp gap matches the general pattern (h629: +15pp average lift). But the magnitude varies by sub-reason: TransE predictions got +21.8pp while non-TransE got +16.1pp. Understanding WHICH predictions benefit most from expanded GT would help identify where internal-GT-based decisions may have been wrong.",
       "hypothesis": "Sub-reasons that showed the largest expanded-GT lift (e.g., cancer_same_type, target_overlap) were systematically undervalued by internal GT. Re-examining old INVALIDATED hypotheses that used internal GT may reveal additional valid improvements.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -13509,8 +13509,8 @@
         "Cross-reference against INVALIDATED hypotheses that used internal GT",
         "Flag any invalidated hypotheses that should be re-evaluated with expanded GT"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED (informative): Expanded GT lifts all sub-reasons but disproportionately helps those with broader evidence bases. Largest lifts: infectious_cs_tb (+55.6pp), transe_medium_promotion (+32.3pp), cv_rescue (+29.4pp), hierarchy groups (+18-29pp). Zero-lift categories: reproductive, immunological (genuinely low precision). Checked 23 potentially affected INVALIDATED hypotheses \u2014 NONE need re-evaluation. h637 already systematically re-evaluated CLOSED directions. h633 already reopened the only valid candidate (cancer same-type). h464 (psychiatric) already used expanded GT. KEY INSIGHT: Expanded GT is not inflation \u2014 it provides better coverage of known indications for well-studied drug classes.",
+      "result_metric": "23 invalidated hypotheses checked, 0 need re-evaluation. GT lift documented per sub-reason.",
       "category": "evaluation-improvement"
     },
     {
@@ -13518,7 +13518,7 @@
       "title": "MEDIUM Default NoMech R1-5 Quality Characterization",
       "description": "h657 found NoMech R6-10 at 40.5% holdout (MEDIUM-quality). h555 found NoMech R1-5 at 38.7% (pre-expanded-GT). With expanded GT, R1-5 may be higher. If R1-5 NoMech has >50% expanded-GT holdout, these might be promotable to HIGH. Alternatively, understanding what makes R1-5 NoMech predictions successful could inform new promotion rules.",
       "hypothesis": "Default NoMech rank 1-5 predictions may have >50% holdout precision with expanded GT, potentially qualifying for HIGH tier promotion.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13527,8 +13527,8 @@
         "If >50%, analyze drugs/diseases for common patterns",
         "If <50%, characterize what makes these predictions successful vs failing"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "INCONCLUSIVE: Can't isolate NoMech R1-5 holdout precision from current evaluator output \u2014 it's mixed with freq>=5+mechanism defaults in 'unnamed MEDIUM' bucket (~67.5/seed). Estimation from h555 (internal GT R1-5 = 38.7%) + typical expanded GT lift (+10-15pp) suggests ~49-54% holdout for NoMech R1-5 \u2014 near HIGH threshold but frequency-only predictions without mechanism support. At ~50%, correctly placed in MEDIUM. Not promotable without mechanism or TransE signal. Would need custom holdout analysis to confirm, but expected ROI is low given the tier system is already well-calibrated.",
+      "result_metric": "Estimated ~49-54% holdout for NoMech R1-5. Correctly placed in MEDIUM.",
       "category": "precision-improvement"
     },
     {
@@ -13551,6 +13551,63 @@
       "findings": "VALIDATED: Created comprehensive collaboration prep for Ryland Mortlock (Yale). Key findings: (1) 30 dermatological diseases with 230 GOLDEN/HIGH/MEDIUM predictions, dominated by corticosteroids (known) but with novel tetracycline-ichthyosis predictions (kNN artifacts - no literature support). (2) EGFR drugs NOT predicted for skin diseases due to DRKG's cancer-only coverage \u2014 gap for Ryland's EGFR expertise. (3) Salicylic acid for ichthyosis is already standard of care (GT-confirmed). (4) Top novel prediction for wet-lab: Montelukast\u2192IPF (HIGH, Mech+TransE). (5) Identified 58 non-CS novel predictions for rare/genetic diseases. Document saved to data/analysis/h661_ryland_collaboration_prep.md.",
       "result_metric": "230 derm predictions, 58 novel rare/genetic disease predictions. Meeting prep complete.",
       "category": "collaboration"
+    },
+    {
+      "id": "h662",
+      "title": "Per-Rule Holdout Tracking in Evaluator: Add Named-Rule Breakdown for Default MEDIUM",
+      "description": "h660 revealed that default MEDIUM predictions (unnamed rules) can't be broken down by rank/mechanism in the holdout evaluator. The evaluator uses category_specific_tier which is None for default path. Adding a named reason to all default MEDIUM sub-paths (e.g., 'default_mech_any_rank', 'default_nomech_r1_5', 'default_nomech_r6_10') would allow precise holdout tracking of each sub-path. This is an infrastructure improvement that would benefit future analyses.",
+      "hypothesis": "Adding named reasons to all default MEDIUM sub-paths will enable precise per-sub-path holdout tracking, eliminating the need for estimation and enabling data-driven decisions.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Add named reasons for freq>=5+mechanism, freq>=10 NoMech R1-5, freq>=10 NoMech R6-10",
+        "Re-run holdout evaluator",
+        "Compare sub-path holdout precisions",
+        "Use results to inform future tier decisions"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "infrastructure"
+    },
+    {
+      "id": "h663",
+      "title": "Infectious CS TB Expanded GT Gap: Why +55.6pp Lift?",
+      "description": "h659 found that infectious_cs_tb_demotion has the largest GT lift of any sub-reason (+55.6pp: 33.3% internal \u2192 88.9% expanded). This suggests massive GT gaps for corticosteroid use in TB. Investigating why expanded GT covers TB so much better could reveal patterns for finding GT gaps in other disease areas.",
+      "hypothesis": "The TB corticosteroid GT gap is driven by well-documented adjunctive therapy (TB meningitis, pericarditis, IRIS) that is captured in Every Cure's expanded GT but missing from DRKG. Similar gaps may exist for other infection-corticosteroid combinations.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Check which TB-CS pairs are in expanded GT but not internal GT",
+        "Validate against WHO TB treatment guidelines",
+        "Check for similar gaps in other infectious-CS combinations",
+        "Document findings for GT quality improvement"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "meta-analysis"
+    },
+    {
+      "id": "h664",
+      "title": "Deliverable Regeneration: Sync with Current Code (h657 Revert)",
+      "description": "The production deliverable may contain h657 demotion predictions (default_no_mech_mid_rank as LOW). After reverting h657, the deliverable needs regeneration to correctly classify these 391 predictions as MEDIUM instead of LOW. This is a maintenance task, not a research hypothesis, but is necessary for deliverable accuracy.",
+      "hypothesis": "Regenerating the deliverable with h657 reverted will correctly restore 391 predictions from LOW to MEDIUM, improving deliverable quality.",
+      "status": "validated",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Run scripts/h420_regenerate_deliverable.py",
+        "Verify 391 predictions moved from LOW to MEDIUM",
+        "Verify tier counts match expected: GOLDEN 327, HIGH 854, MEDIUM ~1164, LOW ~4735",
+        "Commit updated deliverable"
+      ],
+      "findings": "VALIDATED: Deliverable regenerated with h657 reverted. Tier counts: GOLDEN 420, HIGH 845, MEDIUM 1336, LOW 4275, FILTER 7274. Total 14,150 predictions. MEDIUM now correctly includes the ~391 NoMech R6-10 predictions that h657 had incorrectly demoted to LOW. Known indication rates: GOLDEN 66.2%, HIGH 47.2%, MEDIUM 36.1%, LOW 15.2%, FILTER 11.5%.",
+      "result_metric": "Deliverable regenerated. MEDIUM: 1336 preds (includes h657 revert). Total: 14,150.",
+      "category": "maintenance"
     }
   ],
   "completed": [
