@@ -13711,7 +13711,7 @@
       "title": "NLP Differential Diagnosis Extraction Error Audit: Systematic Search for False GT",
       "description": "h669 found 6 false GT entries where NLP extracted differential diagnosis mentions as indications. The pattern \"secondary causes such as [disease] should be excluded\" is common in FDA labels for metabolic drugs. Systematically search indicationList.xlsx for this pattern across all metabolic drugs to find and remove additional false GT entries.",
       "hypothesis": "There are additional false GT entries from NLP misinterpreting differential diagnosis exclusions as treatment indications, particularly for metabolic drugs mentioning hypothyroidism, diabetes, and obesity as secondary causes.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13722,8 +13722,8 @@
         "Identify false GT entries where disease is mentioned as exclusion not treatment",
         "Remove false entries and measure holdout impact"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Systematic NLP false GT audit found 18 new false GT entries (12 new drug-disease pairs + 6 additional diseases for drugs already in FALSE_GT_PAIRS).\n\nPATTERN 1: \"Secondary causes\" boilerplate in lipid drug FDA labels (17 entries)\nAll statin/fibrate/bile-acid-sequestrant/niacin labels contain standard text: \"secondary causes for hypercholesterolemia (e.g., poorly controlled diabetes mellitus, hypothyroidism, nephrotic syndrome, dysproteinemias, obstructive liver disease, other drug therapy, alcoholism) should be excluded.\"\nNLP incorrectly extracts the listed secondary cause diseases as drug indications.\n\nNew false GT found:\n- 10 lipid drugs \u2192 diabetes mellitus (fenofibrate, gemfibrozil, lovastatin, cholestyramine, omega-3 FA, simvastatin, pravastatin, pitavastatin, colestipol, niacin)\n- 6 lipid drugs \u2192 nephrotic syndrome (gemfibrozil, lovastatin, cholestyramine, lomitapide, simvastatin, pravastatin)\n- 1 statin \u2192 hypothyroidism (simvastatin \u2014 missed in h669)\nNOTE: cholestyramine \u2192 obstructive liver disease is TRUE (treats biliary pruritus), excluded.\n\nPATTERN 2: \"Must be excluded\" differential diagnosis (1 entry)\n- nafarelin \u2192 congenital adrenal hyperplasia: FDA label says \"other causes of sexual precocity, such as congenital adrenal hyperplasia, testotoxicosis... must be excluded\"\n\nAlso identified but NOT in our GT (no action needed):\n- Fentanyl \u2192 headache/migraine: Lazanda label explicitly CONTRAINDICATES for these\n- Lovastatin \u2192 dysproteinemia, obstructive liver disease: Not in our disease ID mapping\n\nBUG FIX from h673: Also fixed duplicate dict key bug in INVERSE_INDICATION_PAIRS.\n\nHoldout impact: Minimal on tier-level (< 0.1pp each). The false entries were mostly for diseases not in our kNN prediction set. GT quality improved: 59,644 \u2192 59,626 pairs.",
+      "result_metric": "18 false GT entries removed (59,644\u219259,626). GT quality improvement, minimal holdout impact."
     },
     {
       "id": "h671",
@@ -13781,6 +13781,83 @@
       ],
       "findings": "Safety audit of 4 implausible CS HIGH predictions from h669:\n\n1. Triamcinolone \u2192 TEN: HARMFUL. No RCT evidence for CS in TEN, 40% mortality in CS-treated patients, infection risk in skin-barrier-compromised patients. Network meta-analysis shows NO treatment beats supportive care. Added TEN to inverse indications for ALL systemic CS (prednisolone, prednisone, methylprednisolone, dexamethasone, hydrocortisone, cortisone, betamethasone, triamcinolone, budesonide).\n\n2. Budesonide \u2192 autoimmune PAP: HARMFUL. 74% of patients deteriorated on CS in largest retrospective study (n=31). CS suppress already-impaired alveolar macrophages. Standard treatment is whole lung lavage and inhaled GM-CSF. Added PAP to inverse indications for all CS.\n\n3. Prednisolone \u2192 OSA: HARMFUL. CS increase OSA risk (HR 1.40), cause weight gain (70% on chronic CS), increase airway fat by 20.6%. Systemic CS are NOT indicated for OSA. Added OSA to inverse indications for systemic CS (excluding inhaled-only formulations).\n\n4. Methylprednisolone \u2192 dacryocystitis: ACCEPTABLE. Legitimate adjunctive use with antibiotics for anti-inflammatory effect. 8-12mg oral methylprednisolone alongside systemic antibiotics is documented. No change needed.\n\nBUG FIX DISCOVERED: Duplicate dict keys for prednisolone, prednisone, and methylprednisolone in INVERSE_INDICATION_PAIRS caused h542 entries (secondary adrenocortical insufficiency) to silently overwrite h486/h493 entries (IPF, glaucoma, osteoporosis, pancreatitis). This meant 3 HIGH predictions of CS \u2192 IPF were NOT being filtered despite the PANTHER-IPF trial (NEJM 2012) showing increased mortality. All entries merged into single dict entries per drug.\n\nTotal affected: 15 predictions newly filtered (8 TEN, 3 PAP, 3 OSA, 1 IPF-already-filtered-by-other-rule) + 3 HIGH CS\u2192IPF predictions restored to proper filtering via bug fix.\nHoldout impact: HIGH +0.3pp (61.5\u219261.8%), MEDIUM +0.1pp.",
       "result_metric": "HIGH +0.3pp (61.5\u219261.8%), MEDIUM +0.1pp. 3 harmful GOLDEN removed, 3 harmful HIGH removed, bug fix restored 3 HIGH\u2192FILTER"
+    },
+    {
+      "id": "h674",
+      "title": "Statin \u2192 Diabetes Inverse Indication Expansion: All Statins Increase Diabetes Risk",
+      "description": "h670 found statins in false GT for diabetes. But beyond GT cleanup, statins are known to INCREASE diabetes risk (2024 Lancet meta-analysis: 10-36% increase). Currently only the statin\u2192diabetes inverse indication exists implicitly through category demotion (metabolic MEDIUM\u2192LOW). Should explicitly add all statins to INVERSE_INDICATION_PAIRS for diabetes/hyperglycemia, similar to how CS are filtered for TEN/OSA. This would prevent any future rescue pathway from accidentally promoting statin\u2192diabetes predictions.",
+      "hypothesis": "Adding explicit statin\u2192diabetes inverse indications will prevent rescue pathway leakage and document the medical rationale.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "safety",
+      "steps": [
+        "List all statins in our drug set",
+        "Check if any statin\u2192diabetes/hyperglycemia predictions currently exist at MEDIUM+ tier",
+        "Add statin\u2192diabetes/hyperglycemia to INVERSE_INDICATION_PAIRS",
+        "Verify no rescue pathway leakage"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h675",
+      "title": "Systematic FDA Label Contraindication Mining: 'Contraindicated in' Pattern Expansion",
+      "description": "h670 identified fentanyl \u2192 headache/migraine as contraindicated in the FDA label. There may be more drugs where the Every Cure indication list includes disease pairs that are actually CONTRAINDICATED. A systematic search of 'contraindicated in [disease]' patterns in indication text could find more false GT entries and safety-critical inverse indications. The pattern search in h670 found this pattern matches many rows but requires disease-name matching to filter signal from noise.",
+      "hypothesis": "Systematic mining of 'contraindicated in' patterns in indication text will find additional false GT entries and/or safety-critical inverse indications.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "category": "safety",
+      "steps": [
+        "For each row where text contains 'contraindicated in', extract the disease name from the contraindication context",
+        "Check if the row's disease_name matches a disease in the contraindication context",
+        "Classify: false GT (disease mentioned only in contraindication) vs true GT (indicated AND contraindicated for different populations)",
+        "Add confirmed false pairs to FALSE_GT_PAIRS or INVERSE_INDICATION_PAIRS"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h676",
+      "title": "CS Promotion Rule Disease-Level Exclusions: Beyond Category-Level SOC",
+      "description": "h673 found that the h520 corticosteroid_soc_promotion rule promotes ALL CS\u2192respiratory and CS\u2192ophthalmic predictions to HIGH, but this creates safety issues for specific diseases (OSA, PAP). The current fix uses inverse indications, but a more principled approach would add disease-level exclusions to the CS SOC promotion logic itself. This would prevent CS from being promoted to HIGH for diseases where CS are ineffective or harmful, even if they don't meet the threshold for inverse indication filtering.",
+      "hypothesis": "Adding disease-level exclusions to corticosteroid_soc_promotion (e.g., OSA, PAP, specific infections) would improve HIGH tier quality by preventing inappropriate promotions at the source.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "precision",
+      "steps": [
+        "List all diseases currently receiving CS SOC promotion (respiratory + ophthalmic categories)",
+        "Identify which specific diseases CS should NOT be promoted for",
+        "Add exclusion list to corticosteroid_soc_promotion logic",
+        "Verify holdout impact"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h677",
+      "title": "Every Cure GT Quality: Quantify Total NLP Extraction Error Rate",
+      "description": "h669 found 6 false entries, h670 found 18 more. Total: 24 false GT entries out of ~10,224 indication rows (0.23%). But this is only from two specific patterns (secondary causes + differential diagnosis). Other NLP extraction errors likely exist: adverse effects extracted as indications, drug interactions extracted as treatments, warnings extracted as uses. A systematic random sample audit of 100 Every Cure indication rows could estimate the overall error rate and identify additional error patterns.",
+      "hypothesis": "A random sample audit of 100 Every Cure indication rows will reveal an overall NLP extraction error rate of 1-5%, with additional error patterns beyond secondary causes.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "category": "gt_quality",
+      "steps": [
+        "Random sample 100 indication rows",
+        "For each, verify drug\u2192disease is a genuine treatment",
+        "Classify errors: secondary cause, adverse effect, contraindication, drug interaction, other",
+        "Estimate total error rate with confidence interval",
+        "Identify new error patterns for systematic correction"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
@@ -15959,6 +16036,18 @@
       "hypothesis_id": "h669",
       "learning": "CS HIGH novel predictions are 97.2% medically acceptable (vs 62.3% non-CS). CS domination of HIGH novel is a QUALITY feature, not an artifact. Found 2 bugs: (1) diabetes insipidus matched via \"diabetes\" substring in comp_to_base (9 wrong HIGH preds), (2) 6 false GT entries from NLP misinterpreting \"secondary causes to exclude\" as indications in Every Cure data.",
       "implication": "Always validate HIGH novel predictions by medical literature \u2014 it catches both bugs and GT gaps. NLP-extracted GT databases have systematic errors from differential diagnosis patterns. CS predictions should NOT be treated as lower quality than non-CS."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h673",
+      "learning": "CS safety audit: TEN (no RCT evidence, infection risk), PAP (74% deteriorate, macrophage suppression), OSA (HR 1.40 increased risk) are harmful. Dacryocystitis is legitimate adjunctive use. CRITICAL BUG: duplicate dict keys in INVERSE_INDICATION_PAIRS silently overwrote IPF/glaucoma/osteoporosis filters.",
+      "implication": "Always check for duplicate dict keys when adding new inverse indication entries. Python silently takes the last entry."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h670",
+      "learning": "18 false GT entries found from 2 NLP error patterns: (1) 'secondary causes should be excluded' boilerplate in lipid drug labels (17 entries), (2) 'must be excluded' differential diagnosis in nafarelin label (1 entry). Lipid drug labels ALWAYS list hypothyroidism, diabetes, nephrotic syndrome, dysproteinemia, liver disease as exclusion criteria.",
+      "implication": "NLP extraction of FDA labels has systematic false positives wherever diseases are mentioned in exclusion/differential contexts. Standard boilerplate affects all drugs in a class."
     }
   ],
   "collaborations": [

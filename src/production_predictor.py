@@ -682,20 +682,38 @@ CV_COMPLICATION_KEYWORDS = {'heart failure', 'stroke', 'myocardial infarction', 
 # Others: various reasons for 0% precision in evaluation
 # h397: CV_PATHWAY_EXCLUDE removed (was dead code from h384, never referenced in tier logic)
 
-# h669: False GT entries in indicationList.xlsx (Every Cure data quality issue)
+# h669/h670: False GT entries in indicationList.xlsx (Every Cure data quality issue)
 # These drugs are NOT treatments for the listed diseases. The FDA label mentions
 # the disease as a differential diagnosis/exclusion criterion, NOT an indication.
 # Example: "secondary causes such as hypothyroidism should be excluded before starting
 # lipid therapy" → NLP incorrectly extracts hypothyroidism as an indication.
 # Format: {drug_name_lower: {disease_name_lower, ...}}
 FALSE_GT_PAIRS = {
-    # Lipid drugs mention hypothyroidism as a secondary cause to rule out, not treat
-    'fenofibrate': {'hypothyroidism'},
-    'gemfibrozil': {'hypothyroidism'},
-    'lovastatin': {'hypothyroidism'},
-    'cholestyramine': {'hypothyroidism'},  # Also an inverse: reduces T4 absorption
-    'lomitapide': {'hypothyroidism'},
-    'omega-3 fatty acids': {'hypothyroidism'},
+    # h669: Lipid drugs mention hypothyroidism as a secondary cause to rule out, not treat
+    # h670: Extended to ALL secondary cause diseases from standard lipid drug FDA label boilerplate:
+    #   "secondary causes for hypercholesterolemia (e.g., poorly controlled diabetes mellitus,
+    #    hypothyroidism, nephrotic syndrome, dysproteinemias, obstructive liver disease,
+    #    other drug therapy, alcoholism) should be excluded"
+    # These diseases CAUSE hyperlipidemia; lipid drugs do NOT treat them.
+    'fenofibrate': {'hypothyroidism', 'diabetes mellitus'},
+    'gemfibrozil': {'hypothyroidism', 'diabetes mellitus', 'nephrotic syndrome'},
+    'lovastatin': {'hypothyroidism', 'diabetes mellitus', 'nephrotic syndrome'},
+    'cholestyramine': {
+        'hypothyroidism',  # Also an inverse: reduces T4 absorption
+        'diabetes mellitus', 'nephrotic syndrome',
+        # NOTE: cholestyramine → obstructive liver disease is TRUE (treats biliary pruritus)
+    },
+    'lomitapide': {'hypothyroidism', 'nephrotic syndrome'},
+    'omega-3 fatty acids': {'hypothyroidism', 'diabetes mellitus'},
+    'simvastatin': {'hypothyroidism', 'diabetes mellitus', 'nephrotic syndrome'},
+    'pravastatin': {'diabetes mellitus', 'nephrotic syndrome'},
+    'pitavastatin': {'diabetes mellitus'},
+    'colestipol': {'diabetes mellitus'},
+    'niacin': {'diabetes mellitus'},  # Niacin worsens glycemic control
+    # h670: Nafarelin label says "other causes of sexual precocity such as congenital
+    # adrenal hyperplasia, testotoxicosis must be excluded" — CAH is a differential,
+    # not an indication for GnRH agonist therapy
+    'nafarelin': {'congenital adrenal hyperplasia'},
 }
 
 # h480: Inverse-indication FILTER
