@@ -12416,7 +12416,7 @@
       "id": "h600",
       "title": "Low-Precision Infectious Drug Demotion: Cefuroxime and Streptomycin",
       "description": "Cefuroxime has 10.5% full-data precision in MEDIUM (17 FP, 2 TP) and streptomycin is mainly used for TB but predicts broadly across infections. Both entered MEDIUM through atc_coherent_infectious. Check if their holdout precision justifies demotion.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12424,7 +12424,9 @@
         "Compute holdout precision for cefuroxime and streptomycin MEDIUM predictions",
         "Compare with other drugs in atc_coherent_infectious",
         "If clearly lower, implement drug-specific demotion"
-      ]
+      ],
+      "findings": "Full-data expanded GT analysis:\n- Cefuroxime: 16 preds, 6.2% expanded GT (1/16 hit: tonsillitis). Predicts for exotic infections where it's not used.\n- Streptomycin: 11 preds, 27.3% expanded GT (3/11: plague, brucellosis, actinomycosis). Borderline adequate.\n- Moxifloxacin: 5 preds, 0% expanded GT. Also poor.\n\nNOT implementing per-drug demotion:\n1. Per-drug n too small for holdout validation (n\u22483/seed)\n2. Impact negligible: removing 16+11 from ~1876 MEDIUM = 0.3pp max\n3. atc_coherent_infectious overall holdout = 51.9% with expanded GT \u2014 adequate\n4. Risk of overfitting to individual drug idiosyncrasies\n5. Many antifungals in same pathway have 73-88% expanded precision \u2014 strong overall",
+      "result_metric": "Cefuroxime 6.2%, Streptomycin 27.3% expanded GT. Not demotable (n too small)."
     },
     {
       "id": "h601",

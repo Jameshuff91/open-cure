@@ -1,0 +1,73 @@
+================================================================================
+h600: Cefuroxime and Streptomycin MEDIUM Analysis
+================================================================================
+
+atc_coherent_infectious MEDIUM by drug (expanded GT):
+Drug                           Preds   Int%   Exp% ExpHits
+------------------------------------------------------------
+  Ketoconazole                    19  36.8%  73.7%      14
+  Itraconazole                    17  17.6%  76.5%      13
+  Cefuroxime                      16   6.2%   6.2%       1 ***
+  Posaconazole                    16  31.2%  87.5%      14
+  Ampicillin                      12  41.7%  66.7%       8
+  Streptomycin                    11   9.1%  27.3%       3 ***
+  Ofloxacin                       11  18.2%  54.5%       6
+  Caspofungin                      8  25.0%  25.0%       2
+  Metronidazole                    7  28.6%  57.1%       4
+  Miconazole                       6  33.3% 100.0%       6
+  Moxifloxacin                     5   0.0%   0.0%       0
+  Sulfadiazine                     5  60.0%  80.0%       4
+  Piperacillin                     4  25.0%  25.0%       1
+  Fluconazole                      3 100.0% 100.0%       3
+  Sitafloxacin                     3  33.3%  33.3%       1
+  Aztreonam                        2  50.0%  50.0%       1
+  Ivermectin                       2 100.0% 100.0%       2
+  Clindamycin                      2   0.0%  50.0%       1
+  Linezolid                        1 100.0% 100.0%       1
+  Valganciclovir                   1 100.0% 100.0%       1
+  Cidofovir                        1 100.0% 100.0%       1
+  Ganciclovir                      1 100.0% 100.0%       1
+  Trimetrexate                     1 100.0% 100.0%       1
+  Pyrimethamine                    1   0.0% 100.0%       1
+  Ceftriaxone                      1 100.0% 100.0%       1
+  Cefdinir                         1 100.0% 100.0%       1
+  Cefaclor                         1 100.0% 100.0%       1
+  Garenoxacin                      1   0.0%   0.0%       0
+  Mefloquine                       1 100.0% 100.0%       1
+  Quinine                          1 100.0% 100.0%       1
+  Primaquine                       1 100.0% 100.0%       1
+  Miltefosine                      1 100.0% 100.0%       1
+
+
+--- Cefuroxime predictions ---
+  -> q fever: internal=False, expanded=False
+  -> relapsing fever: internal=False, expanded=False
+  -> tularemia: internal=False, expanded=False
+  -> bartonellosis: internal=False, expanded=False
+  -> syphilis: internal=False, expanded=False
+  -> cholera: internal=False, expanded=False
+  -> brucellosis: internal=False, expanded=False
+  -> listeriosis: internal=False, expanded=False
+  -> tonsillitis: internal=True, expanded=True
+  -> gastroenteritis: internal=False, expanded=False
+  -> tetanus: internal=False, expanded=False
+  -> dysentery: internal=False, expanded=False
+  -> diphtheria: internal=False, expanded=False
+  -> streptococcal infections: internal=False, expanded=False
+  -> pneumococcal infections: internal=False, expanded=False
+  -> nocardiosis: internal=False, expanded=False
+
+--- Streptomycin predictions ---
+  -> relapsing fever: internal=False, expanded=False
+  -> plague: internal=True, expanded=True
+  -> bartonellosis: internal=False, expanded=False
+  -> escherichia coli infections: internal=False, expanded=False
+  -> yaws: internal=False, expanded=False
+  -> brucellosis: internal=False, expanded=True
+  -> inhalational anthrax: internal=False, expanded=False
+  -> listeriosis: internal=False, expanded=False
+  -> actinomycosis: internal=False, expanded=True
+  -> dysentery: internal=False, expanded=False
+  -> meningococcal infection: internal=False, expanded=False
+
+Done.
