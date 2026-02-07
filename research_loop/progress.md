@@ -7,11 +7,12 @@ Comprehensive audit extending h677 (lidocaine/bupivacaine combo product fix) to 
 
 **Methodology:** Identified 71 shared-text groups in EC data, 35 involving DRKG drugs. Classified each as legitimate (combo therapy approval) vs contamination (excipient/preservative inheriting active drug indications).
 
-**Key finding:** h677 already caught the ONLY two impactful cases (lidocaine and bupivacaine). All other contamination involves non-DRKG drugs:
-- Edetic acid: 22 false GT entries (preservative in eye drops, injectables). 0 DRKG edges.
-- Chloride ion: 13 false GT entries (ion component, not a drug). 0 DRKG edges.
-- Calcium carbonate: 6 false GT entries (from chemo combo text). 14 legitimate kept.
-- Zinc oxide: 4 false GT entries (from hydroquinone cream). 2 legitimate kept.
+**Key finding:** h677 already caught the ONLY two impactful cases (lidocaine and bupivacaine). Other contamination involves non-EC excipients (inert) or dual-use substances (handled by existing fixes):
+- Edetic acid: 22 false expanded GT entries removed (preservative). Has 247 DRKG edges but only 3 predictions (2 correct).
+- Chloride ion: 13 false expanded GT entries removed (ion, not a drug).
+- Calcium carbonate: 6 false GT entries (from chemo combo text). 14 legitimate kept. Has 515 DRKG edges.
+- Zinc oxide: 4 false GT entries (from hydroquinone cream). 2 legitimate kept. Has 87 DRKG edges.
+- **NOTE (h696):** h678 initially reported "0 DRKG edges" for these — this was WRONG due to checking wrong DRKG path. Corrected in h696.
 
 **Impact:** 45 false expanded GT entries removed (57,538→57,493). No holdout change.
 
@@ -34,10 +35,22 @@ Comprehensive audit extending h677 (lidocaine/bupivacaine combo product fix) to 
 - h695: Japanese PMDA Shared-Text GT Expansion (drug-class gaps)
 - h696: Croscarmellose Signal (other excipients with DRKG edges)
 
+### h696: Excipient DRKG Presence — VALIDATED (Data Cleanliness + DRKG Path Correction)
+CRITICAL: h678 used wrong DRKG path (data/drkg/drkg.tsv → doesn't exist). Correct: data/raw/drkg/drkg.tsv.
+
+15 excipients/preservatives have DRKG edges (up to 1665 each) and Node2Vec embeddings. Only 6 are in EC data. 11 are NOT in EC — their 48 expanded GT entries removed (inert). Dual-use substances handled by existing h677/h678 fixes. GT: 57,493 → 57,445.
+
+### New Hypotheses Generated (5 total: 3 from h678, 2 from h696)
+- h694: Excipient Detection in EC Data
+- h695: Japanese PMDA Shared-Text GT Expansion
+- h696: Croscarmellose Signal (completed)
+- h697: DRKG Excipient Edge Source Analysis
+- h698: Saccharin False GT Audit
+
 ### Recommended Next Steps
-1. **h696**: Quick check — do any excipients have DRKG edges? (low effort, could find hidden contamination)
-2. **h675**: FDA label contraindication mining (safety improvement)
-3. **h672**: CS GT gap expansion for remaining PLAUSIBLE diseases
+1. **h675**: FDA label contraindication mining (safety improvement)
+2. **h672**: CS GT gap expansion for remaining PLAUSIBLE diseases
+3. **h697**: DRKG excipient edge source analysis (understanding KG quality)
 
 ---
 

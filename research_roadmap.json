@@ -14164,7 +14164,7 @@
       "title": "Croscarmellose Signal: What Other Excipients Have DRKG Edges?",
       "description": "Croscarmellose (a tablet disintegrant) has 42 EC rows but 0 DRKG edges. However, edetic acid (a preservative) DOES have a DrugBank ID (DB00974). Other excipients/preservatives might have DRKG edges, meaning their false EC indications could contaminate the internal GT. Check benzalkonium chloride, methylparaben, propylparaben, polysorbate 80, and other common excipients for DRKG presence.",
       "hypothesis": "Some pharmaceutical excipients may have DRKG edges from co-occurrence in clinical literature, creating false internal GT entries similar to the lidocaine/bupivacaine issue.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14174,6 +14174,43 @@
         "Check which have DRKG edges (would generate predictions)",
         "For those with edges, audit their internal GT entries",
         "Remove false entries if found"
+      ],
+      "findings": "h696 VALIDATED: Excipient/Preservative DRKG Presence Audit\n\nCRITICAL CORRECTION: h678 incorrectly checked data/drkg/drkg.tsv (doesn't exist) instead of data/raw/drkg/drkg.tsv. This led to the false conclusion that excipients had 0 DRKG edges.\n\nACTUAL FINDINGS:\n1. 15 pharmaceutical excipients/preservatives have DRKG edges AND Node2Vec embeddings:\n   - Mannitol (1665 edges), Glycerin (853), Sorbitol (1089), Benzyl alcohol (1465)\n   - Chlorobutanol (611), Thimerosal (1117), Benzalkonium chloride (401)\n   - Propylene glycol (750), BHT (779), Sodium hydroxide (464)\n   - Chlorhexidine (150), Phenol (98), Povidone-iodine (58)\n   - Edetic acid (247), Zinc oxide (87), Calcium carbonate (515)\n\n2. Only 6 of these are in EC data (can enter internal GT and be predicted):\n   - Edetic acid (13 rows, mostly contaminated), Zinc oxide (5 rows, some contaminated)\n   - Calcium carbonate (1 row, contaminated), Chlorhexidine (10 rows, legitimate)\n   - Mannitol (4 rows, legitimate), Saccharin (1 row)\n\n3. 11 excipients NOT in EC: their 48 expanded GT entries are INERT (never predicted).\n   Removed for data cleanliness: chlorobutanol (36), thimerosal (6), benzalkonium (1),\n   benzyl alcohol (3), BHT (1), propylene glycol (1).\n\n4. Deliverable impact: edetic acid (3 preds, 1 GOLDEN for VT is actually correct for\n   digitalis toxicity), zinc oxide (7 preds, mostly FILTER), calcium carbonate (1 pred, LOW).\n   These substances have GENUINE therapeutic uses alongside excipient roles.\n\n5. NOT adding to NON_THERAPEUTIC_COMPOUNDS filter \u2014 these are dual-use substances\n   with legitimate indications. The h677/h678 internal GT cleanup already handles\n   the false entries. Remaining predictions are few and mostly correct or FILTER.\n\nEXPANDED GT: 57,493 \u2192 57,445 (-48 entries from inert non-EC excipients)",
+      "result_metric": "No holdout change. 48 inert excipient GT entries removed. 15 excipients found in DRKG (correcting h678 error)."
+    },
+    {
+      "id": "h697",
+      "title": "DRKG Excipient Edge Source Analysis: Why Do Preservatives Have 1000+ KG Edges?",
+      "description": "Chlorobutanol has 611 DRKG edges, thimerosal has 1117, benzyl alcohol has 1465. These are primarily preservatives, not therapeutic drugs. The DRKG edges likely come from PubMed co-occurrence mining (drugs mentioned in same abstracts as diseases) or from pharmacological studies of their toxicity/side effects. Understanding why these compounds have so many KG edges could reveal systematic DRKG quality issues that affect other drug predictions.",
+      "hypothesis": "DRKG edges for excipients primarily come from toxicological co-occurrence (side effects, adverse reactions), not therapeutic associations. This same pattern may inflate kNN scores for other drugs via shared graph neighborhoods.",
+      "status": "pending",
+      "priority": 6,
+      "expected_impact": "low",
+      "effort": "medium",
+      "category": "gt_quality",
+      "steps": [
+        "For chlorobutanol (611 edges), analyze edge type distribution (DRUGBANK, GNBR, etc.)",
+        "Check if edges are primarily 'side_effect', 'causes', or 'treats' type",
+        "Compare to known therapeutic drug edge distributions",
+        "If excipient edges are from toxicology, check if similar patterns affect real drugs"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h698",
+      "title": "Saccharin False GT Audit: Is the Single EC Row Legitimate?",
+      "description": "Saccharin has 1 EC row and 4 DRKG edges. It's an artificial sweetener, not a drug. What disease is it listed for in EC? Is this a legitimate use (e.g., as a flavoring agent in a pharmaceutical formulation) or another NLP extraction error?",
+      "hypothesis": "Saccharin's EC entry is likely a false positive from NLP extraction of a pharmaceutical formulation description.",
+      "status": "pending",
+      "priority": 6,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "gt_quality",
+      "steps": [
+        "Check saccharin's EC row: what disease and what indication text?",
+        "Determine if this is a legitimate therapeutic use or formulation artifact",
+        "If false, add to false GT removal"
       ],
       "findings": "",
       "result_metric": ""
@@ -16427,6 +16464,12 @@
       "hypothesis_id": "h678",
       "learning": "Combo product contamination in EC data only affects predictions when the contaminated drug has DRKG edges. The h677 fix (lidocaine/bupivacaine allowlists) was comprehensive \u2014 these were the only DRKG drugs with combo product contamination. Non-DRKG substances (edetic acid, zinc oxide, calcium carbonate, chloride ion) had 45 false expanded GT entries but zero prediction impact. EC data contains ~1% non-drug substance rows (excipients, preservatives, allergenic extracts) that don't affect our system.",
       "implication": "No further combo product fixes needed for DRKG drugs. Future GT quality work should focus on DRKG-present drugs only. The expanded GT is now cleaner (57,493 pairs) but this is a data cleanliness improvement, not a prediction improvement."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h696",
+      "learning": "CRITICAL: Always use data/raw/drkg/drkg.tsv for DRKG queries, NOT data/drkg/drkg.tsv (which doesn't exist). The h678 analysis was partially incorrect because grep returned 0 by default for the wrong path. Many pharmaceutical excipients/preservatives (chlorobutanol, thimerosal, benzalkonium chloride, etc.) ARE in DRKG with hundreds/thousands of edges, but they don't affect predictions because they're not in EC data (thus not in internal GT). Dual-use substances (edetic acid, zinc oxide, calcium carbonate) need careful handling \u2014 they have genuine therapeutic uses alongside excipient roles.",
+      "implication": "The expanded GT is now cleaner (57,445 pairs) after removing 48 inert excipient entries. Future DRKG queries must use the correct path. No code changes needed \u2014 existing filters handle all impactful cases."
     }
   ],
   "collaborations": [
