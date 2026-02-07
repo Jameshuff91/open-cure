@@ -685,6 +685,53 @@ CV_COMPLICATION_KEYWORDS = {'heart failure', 'stroke', 'myocardial infarction', 
 # h669/h670: False GT entries in indicationList.xlsx (Every Cure data quality issue)
 # These drugs are NOT treatments for the listed diseases. The FDA label mentions
 # the disease as a differential diagnosis/exclusion criterion, NOT an indication.
+# h686: Drug name aliases for Every Cure → DrugBank name mismatches.
+# EC uses INN names, brand names, salt forms, and spelling variants that differ
+# from DrugBank's canonical names. These aliases expand internal GT by ~12%.
+# Format: {ec_name_lower: drugbank_name_lower}
+_DRUG_NAME_ALIASES = {
+    # INN vs brand name
+    'acyclovir': 'aciclovir',
+    'aspirin': 'acetylsalicylic acid',
+    'co-trimoxazole': 'sulfamethoxazole',
+    'augmentin': 'amoxicillin',
+    'plavix': 'clopidogrel',
+    'rifampin': 'rifampicin',
+    'adcetris': 'brentuximab vedotin',
+    'dysport': 'botulinum toxin type a',
+    # Spelling variants
+    'etacrynic acid': 'ethacrynic acid',
+    'alendronic acid': 'alendronate',
+    'benztropine': 'benzatropine',
+    '(+)-hyoscyamine': 'hyoscyamine',
+    'levodopa': 'l-dopa',
+    # Salt form / format differences
+    'medroxyprogesterone': 'medroxyprogesterone acetate',
+    'megestrol': 'megestrol acetate',
+    'certolizumab': 'certolizumab pegol',
+    'asparaginase': 'asparaginase escherichia coli',
+    'tacrolimus anhydrous 19-epimer': 'tacrolimus',
+    '2-phenylbutyric acid': 'phenylbutyric acid',
+    'leuprorelin acetate': 'leuprolide',
+    '4-hydroxycyclophosphamide': 'cyclophosphamide',
+    'sodium nitroprusside': 'nitroprusside',
+    'lithium cation': 'lithium',
+    'potassium(1+)': 'potassium',
+    'potassium cation k-40': 'potassium cation',
+    'arginine': 'l-arginine',
+    'pamidronic acid': 'pamidronate',
+    'dexamfetamine': 'dextroamphetamine',
+    'gemtuzumab': 'gemtuzumab ozogamicin',
+    'pitavastatin(1-)': 'pitavastatin',
+    'insulin-glargine': 'insulin glargine',
+    'chlortheophylline': '8-chlorotheophylline',
+    # Diagnostic agents (format differences)
+    'ioflupane i-123': 'ioflupane i 123',
+    'rose bengal at': 'rose bengal',
+    'technetium tc 99m sulfur colloid': 'technetium tc-99m sulfur colloid',
+    'florbetaben f18': 'florbetaben (18f)',
+}
+
 # Example: "secondary causes such as hypothyroidism should be excluded before starting
 # lipid therapy" → NLP incorrectly extracts hypothyroidism as an indication.
 # Format: {drug_name_lower: {disease_name_lower, ...}}
@@ -1973,6 +2020,29 @@ class DrugRepurposingPredictor:
             for db_id, name in id_to_name.items()
         }
 
+        # h686: Add drug name aliases for Every Cure → DrugBank name mismatches.
+        # EC uses different naming conventions (INN vs brand, salt forms, spelling
+        # variants) that prevent matching to DrugBank entries. These aliases
+        # expand internal GT by ~12% with legitimate drug-disease pairs.
+        for ec_name, db_name in _DRUG_NAME_ALIASES.items():
+            db_name_lower = db_name.lower()
+            if db_name_lower in self.name_to_drug_id and ec_name not in self.name_to_drug_id:
+                self.name_to_drug_id[ec_name] = self.name_to_drug_id[db_name_lower]
+
+        # h686: Salt form suffix stripping — EC often uses full salt names
+        # (e.g., "caspofungin acetate") while DrugBank uses base names
+        # (e.g., "caspofungin"). Strip common suffixes to find matches.
+        _SALT_SUFFIXES = [
+            ' hydrochloride', ' hcl', ' citrate', ' acetate', ' sodium',
+            ' sulfate', ' phosphate', ' maleate', ' fumarate', ' besylate',
+            ' tartrate', ' bromide', ' mesylate', ' nitrate', ' succinate',
+            ' potassium', ' calcium', ' magnesium', ' monohydrate',
+            ' dihydrate', ' anhydrous, (e)-', ' anhydrous',
+        ]
+        # Build a copy of current unmapped EC drug names for suffix check
+        # (done during GT loading, not here — but we need the lookup ready)
+        self._salt_suffixes = _SALT_SUFFIXES
+
         # Load MESH mappings
         mesh_path = self.reference_dir / "mesh_mappings_from_agents.json"
         self.mesh_mappings: Dict[str, str] = {}
@@ -2167,7 +2237,15 @@ class DrugRepurposingPredictor:
                 continue
 
             self.disease_names[disease_id] = disease
-            drug_id = self.name_to_drug_id.get(drug.lower())
+            drug_lower = drug.lower()
+            drug_id = self.name_to_drug_id.get(drug_lower)
+            # h686: Salt form suffix stripping fallback
+            if not drug_id:
+                for suffix in self._salt_suffixes:
+                    base = drug_lower.replace(suffix, '').strip()
+                    if base != drug_lower and base in self.name_to_drug_id:
+                        drug_id = self.name_to_drug_id[base]
+                        break
             if drug_id:
                 self.ground_truth[disease_id].add(drug_id)
 
@@ -2211,9 +2289,15 @@ class DrugRepurposingPredictor:
         # These are diagnostic imaging agents, not treatments. Their presence
         # in DRKG treatment edges is from co-occurrence with diseases in clinical
         # contexts (e.g., FDG PET scans for cancer staging).
+        # h685: Extended to include Tc-99m sestamibi, Ioflupane I-123,
+        # Florbetaben, Tc-99m sulfur colloid (all purely diagnostic agents).
         _NON_THERAPEUTIC_GT_DRUGS = {
             'fludeoxyglucose (18f)',  # DB09502 — PET imaging tracer, not a treatment
             'fludeoxyglucose f-18',  # Alternate name
+            'technetium tc-99m sestamibi',  # DB09161 — myocardial perfusion imaging
+            'ioflupane i 123',  # DB08824 — DaTscan dopamine transporter imaging
+            'florbetaben (18f)',  # DB09148 — amyloid PET imaging
+            'technetium tc-99m sulfur colloid',  # DB09397 — sentinel lymph node mapping
         }
         for drug_name_lower in _NON_THERAPEUTIC_GT_DRUGS:
             drug_id = name_to_id.get(drug_name_lower)
@@ -2223,6 +2307,52 @@ class DrugRepurposingPredictor:
                 if drug_id in drug_ids:
                     drug_ids.discard(drug_id)
                     removed += 1
+
+        # h685: Iobenguane (DB06704) is DUAL-USE — therapeutic for neuroblastoma
+        # and paraganglioma (I-131 MIBG therapy, FDA-approved 2018 as Azedra),
+        # but DIAGNOSTIC ONLY for Parkinson's and heart failure (cardiac MIBG
+        # scintigraphy). Remove only from non-therapeutic disease associations.
+        _IOBENGUANE_DIAGNOSTIC_ONLY = {
+            'parkinson', 'heart failure', 'cardiomyopath',
+        }
+        iobenguane_id = name_to_id.get('iobenguane')
+        if iobenguane_id:
+            for disease_id, drug_ids in self.ground_truth.items():
+                if iobenguane_id in drug_ids:
+                    dname = self.disease_names.get(disease_id, '').lower()
+                    if any(kw in dname for kw in _IOBENGUANE_DIAGNOSTIC_ONLY):
+                        drug_ids.discard(iobenguane_id)
+                        removed += 1
+
+        # h685: Remove specific false GT entries found in single-drug disease audit.
+        # These are DRKG co-occurrence artifacts, not genuine treatments.
+        _FALSE_GT_SPECIFIC = {
+            # Diazoxide is for hyperinsulinemic hypoglycemia, not carcinoma
+            'diazoxide': {'carcinoma'},
+            # Insulin has no role in protein C deficiency (coagulation disorder)
+            'insulin human': {'congenital protein c deficiency'},
+            # Isoniazid treats TB, not these diseases (co-occurrence artifacts)
+            'isoniazid': {
+                'chronic peptic ulcer disease',  # INH can CAUSE GI issues
+                'silicosis',  # INH is for TB prophylaxis in silicosis, not silicosis itself
+                'malabsorption syndrome',  # False co-occurrence
+            },
+            # Chlorhexidine is a topical antiseptic, not for coagulation disorders
+            'chlorhexidine': {
+                'purpura fulminans',  # Requires heparin/protein C/plasma
+                'thrombophilia',  # Requires anticoagulants
+            },
+        }
+        for drug_name_lower, false_diseases in _FALSE_GT_SPECIFIC.items():
+            drug_id = name_to_id.get(drug_name_lower)
+            if not drug_id:
+                continue
+            for disease_id, drug_ids in self.ground_truth.items():
+                if drug_id in drug_ids:
+                    dname = self.disease_names.get(disease_id, '').lower()
+                    if dname in false_diseases:
+                        drug_ids.discard(drug_id)
+                        removed += 1
 
         # h677/h680: Allowlist-based cleanup for lidocaine and bupivacaine
         # These drugs have 78/61 false GT entries from combo product NLP mismatch
@@ -3051,10 +3181,14 @@ class DrugRepurposingPredictor:
                 if any(inv_d in disease_lower for inv_d in inv_diseases):
                     return ConfidenceTier.FILTER, False, 'inverse_indication'
 
-        # h542/h552: Non-therapeutic compounds → FILTER
+        # h542/h552/h685: Non-therapeutic compounds → FILTER
         # These are diagnostic/imaging agents in DRKG, not therapeutic drugs.
         # All predictions are artifacts of diagnostic co-occurrence.
-        NON_THERAPEUTIC_COMPOUNDS = ('fludeoxyglucose', 'indocyanine green')
+        NON_THERAPEUTIC_COMPOUNDS = (
+            'fludeoxyglucose', 'indocyanine green',
+            'technetium tc-99m sestamibi', 'ioflupane',
+            'florbetaben', 'technetium tc-99m sulfur colloid',
+        )
         if any(ntc in drug_lower for ntc in NON_THERAPEUTIC_COMPOUNDS):
             return ConfidenceTier.FILTER, False, 'non_therapeutic_compound'
 

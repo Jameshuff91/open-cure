@@ -13971,7 +13971,7 @@
       "id": "h685",
       "title": "Disease GT Coverage Quality: Diseases with Only 1 Drug in Internal GT",
       "description": "h680 found 227 diseases with only 1-2 drugs in internal GT. These are most vulnerable to false GT entries (a single bad entry = 50-100% contamination). Many of these are rare diseases. Audit: for the 227 single-drug diseases, verify the drug-disease pair is legitimate. Check a random sample of 30 pairs. Also check if any of these diseases have obvious FDA-approved treatments that are missing from GT. This could both remove false entries and add missing ones, improving both precision and recall.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13980,13 +13980,15 @@
         "For each, verify: is the drug-disease pair legitimate? Is there a better first-line treatment?",
         "Cross-reference with expanded GT for additional coverage",
         "Flag any false pairs for removal and missing pairs for addition"
-      ]
+      ],
+      "findings": "h685 VALIDATED: Single-Drug Disease GT Quality Audit \u2014 19 False Entries Removed.\n\nKEY FINDINGS:\n1. 169 diseases in internal GT have only 1 drug. Error rate: 5.3% (9/169 completely false).\n2. 5 additional diagnostic imaging agents found across multi-drug diseases (12 more false entries).\n3. Total: 19 false GT entries removed. GT: 3,086 \u2192 3,067 entries. 9 diseases dropped entirely.\n\nFALSE ENTRIES REMOVED:\nA. Diagnostic agents (12 entries, fully removed from GT + prediction filter):\n   - Technetium Tc-99m sestamibi (DB09161): 4 diseases (breast cancer, MI, CAD, myocardial ischemia)\n   - Ioflupane I-123 (DB08824): 4 diseases (Parkinson's, Alzheimer's, MSA, PSP) \u2014 DaTscan only\n   - Florbetaben 18F (DB09148): 1 disease (Alzheimer's) \u2014 amyloid PET imaging\n   - Tc-99m sulfur colloid (DB09397): 1 disease (breast cancer) \u2014 sentinel lymph node mapping\n   - Iobenguane (DB06704): 2 diseases (Parkinson's, CHF) \u2014 KEPT for neuroblastoma/paraganglioma (I-131 MIBG is therapeutic)\n\nB. Non-diagnostic false entries (7 entries):\n   - Diazoxide \u2192 carcinoma (drug-disease mismatch, diazoxide is for hyperinsulinism)\n   - Insulin human \u2192 congenital protein C deficiency (coagulation disorder, not diabetes)\n   - Isoniazid \u2192 chronic peptic ulcer, silicosis, malabsorption (TB co-occurrence artifacts)\n   - Chlorhexidine \u2192 purpura fulminans, thrombophilia (antiseptic for coagulation disorders)\n\nEXPANDED GT: 57,586 \u2192 57,555 (-31 entries). Same false entries removed.\n\nHOLDOUT IMPACT: No significant effect on any tier (all p > 0.18, paired t-test).\n  GOLDEN: 71.8% \u00b1 8.0% (was 72.3%, \u0394=-0.4pp)\n  HIGH: 61.4% \u00b1 8.9% (was 62.8%, \u0394=-1.5pp)\n  MEDIUM: 38.3% \u00b1 4.7% (was 42.3%, \u0394=-4.0pp, p=0.183 NOT significant)\n  LOW: 14.4% \u00b1 1.3% (was 15.0%, \u0394=-0.6pp)\n  FILTER: 9.5% \u00b1 1.0% (was 9.9%, \u0394=-0.4pp)\n\nKEY INSIGHT: 5.3% error rate in single-drug diseases (vs 6% in h677 random sample audit).\nDiagnostic imaging agents are a major source of false GT in DRKG \u2014 they co-occur with diseases\nin clinical contexts (imaging for diagnosis) but are NOT therapeutic. The DRKG treatment edges\nare derived from co-occurrence, not therapeutic relationship.\n\nNEW FILTER: Added Tc-99m sestamibi, Ioflupane, Florbetaben, Tc-99m sulfur colloid to\nNON_THERAPEUTIC_COMPOUNDS prediction filter (predictions \u2192 FILTER tier).\n\nIOBENGUANE DUAL-USE: I-131 iobenguane (Azedra) IS FDA-approved for neuroblastoma and\nparaganglioma. Only the diagnostic use (cardiac MIBG scintigraphy) was removed from GT.",
+      "result_metric": "GT cleaned: 19 false entries removed, no significant holdout change"
     },
     {
       "id": "h686",
       "title": "Drug Name Aliasing: Recover 149+ Missing Internal GT Entries",
       "description": "h683 found that 859 Every Cure drugs fail to map to DrugBank due to name mismatches (INN vs brand name, salt forms, spelling variants). At least 149 indication rows are recoverable with simple aliases (Acyclovir\u2192Aciclovir, Aspirin\u2192Acetylsalicylic acid, Rifampin\u2192Rifampicin, etc.). This would expand internal GT by ~5% with legitimate therapeutic drugs. Impact on kNN: more drugs in training = better frequency estimates for drug repurposing. Expected to improve predictions for diseases currently treated by these 'missing' drugs.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -14013,6 +14015,67 @@
         "For remaining drugs, verify they're real therapeutics with specific indications",
         "Add verified drug-disease pairs to internal GT (Every Cure format)",
         "Run holdout evaluation to measure impact on predictions"
+      ]
+    },
+    {
+      "id": "h688",
+      "title": "Two-Drug Disease GT Audit: Are 62 Two-Drug Diseases Similarly Error-Prone?",
+      "description": "h685 found 5.3% error rate in single-drug diseases. The 62 diseases with exactly 2 drugs are the next most vulnerable (50% error from a single bad entry). Audit a random sample of 30 to check error rate and identify any systematic patterns. Particularly check for diagnostic agents (the dominant error type in single-drug diseases).",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Random sample 30 of 62 two-drug diseases",
+        "For each pair: is each drug-disease association legitimate?",
+        "Check for diagnostic agents, co-occurrence artifacts, drug mismatches",
+        "Remove confirmed false entries"
+      ]
+    },
+    {
+      "id": "h689",
+      "title": "DRKG Diagnostic Agent Census: How Many Imaging Agents Are In DRKG?",
+      "description": "h685 found 5 diagnostic imaging agents in internal GT (Tc-99m sestamibi, Ioflupane, Florbetaben, Tc-99m sulfur colloid, Iobenguane). FDG was found earlier (h680). How many other diagnostic/imaging agents exist in DRKG that could generate artifact predictions? A systematic census using ATC code V09 (diagnostic radiopharmaceuticals) and V08 (contrast media) could identify all non-therapeutic compounds in DRKG, preventing future false GT entries and artifact predictions.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Query DrugBank for all drugs with ATC codes V08 (contrast) and V09 (radiopharmaceuticals)",
+        "Cross-reference with DRKG entity list to find which ones have embeddings",
+        "Check internal GT for any additional diagnostic agents",
+        "Check expanded GT for diagnostic agents",
+        "Add all confirmed non-therapeutic agents to filter"
+      ]
+    },
+    {
+      "id": "h690",
+      "title": "Isoniazid Co-occurrence Pattern: Are Other TB Drugs Also Falsely Associated?",
+      "description": "h685 found Isoniazid falsely associated with silicosis, peptic ulcer, and malabsorption (TB co-occurrence artifacts). Other first-line TB drugs (rifampicin, pyrazinamide, ethambutol) likely have similar co-occurrence artifacts. Check if these drugs appear in GT for non-TB diseases where the association is purely from TB treatment context.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Find all internal GT entries for rifampicin, pyrazinamide, ethambutol, streptomycin",
+        "For each non-TB disease: is the association therapeutic or co-occurrence?",
+        "Remove confirmed false entries",
+        "Check expanded GT for same patterns"
+      ]
+    },
+    {
+      "id": "h691",
+      "title": "Large-Gap Diseases: Diseases with 1-2 Internal GT But 20+ Expanded GT Drugs",
+      "description": "h685 identified 29 diseases with 1 internal GT drug but 20+ expanded GT drugs. These represent severe coverage gaps in training data. The model has very poor neighborhoods for these diseases. Examples: dilated cardiomyopathy (1 vs 59), OCD (1 vs 63), sickle cell (1 vs 69). Understanding WHY these diseases have so few internal GT drugs could reveal systematic gaps in the DRKG treatment edge extraction.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "List all diseases with \u22642 internal GT but \u226520 expanded GT drugs",
+        "For each: why is internal GT so sparse? Check DRKG edges.",
+        "Identify if this is a DRKG extraction gap vs genuine rare disease",
+        "Assess whether adding expanded GT drugs to internal GT could improve kNN for these diseases"
       ]
     }
   ],
@@ -16228,6 +16291,12 @@
       "hypothesis_id": "h683",
       "learning": "63% of expanded GT entries are unmatchable by the model (different ID formats or drugs not in internal GT). This doesn't affect precision estimates but means our GT coverage appears much better than it actually is for practical evaluation. The most actionable finding: 149+ internal GT rows lost to simple drug name mismatches between Every Cure and DrugBank naming conventions.",
       "implication": "Drug name aliasing should be a HIGH priority fix \u2014 it directly expands the training data with legitimate drug-disease pairs. The 5% internal GT expansion from just 20 aliases suggests there may be many more recoverable entries with broader fuzzy matching."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h685",
+      "learning": "Diagnostic imaging agents (Tc-99m sestamibi, Ioflupane, Florbetaben, etc.) are a systematic source of false GT entries in DRKG. They co-occur with diseases in clinical imaging contexts but are NOT therapeutic. 5.3% error rate in single-drug diseases. Iobenguane is DUAL-USE (diagnostic + therapeutic for neuroblastoma/paraganglioma).",
+      "implication": "Need systematic census of all diagnostic agents in DRKG (ATC V08/V09). Also check other drug classes that appear in clinical but non-therapeutic contexts."
     }
   ],
   "collaborations": [

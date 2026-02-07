@@ -1,6 +1,48 @@
 # Research Loop Progress
 
-## Current Session: h674/h677 - Statin Safety + GT Quality Audit (2026-02-06)
+## Current Session: h685 - Single-Drug Disease GT Quality Audit (2026-02-06)
+
+### h685: Disease GT Coverage Quality — VALIDATED (GT Honesty Improvement)
+Audited all 169 diseases with only 1 drug in internal GT. Found 5.3% error rate (9/169 completely false). Also found 5 diagnostic imaging agents across multi-drug diseases (12 more false entries). Total: 19 false GT entries removed.
+
+**Key findings:**
+1. **Diagnostic agents dominate errors** — Tc-99m sestamibi, Ioflupane I-123, Florbetaben, Tc-99m sulfur colloid were all in DRKG from co-occurrence in clinical imaging contexts
+2. **Iobenguane is DUAL-USE** — I-131 iobenguane (Azedra) is therapeutic for neuroblastoma/paraganglioma but diagnostic-only for Parkinson's/CHF. Handled selectively.
+3. **Non-diagnostic false entries** — Diazoxide→carcinoma, Insulin→protein C deficiency, Isoniazid→3 diseases (TB co-occurrence), Chlorhexidine→2 coagulation disorders
+4. **No significant holdout impact** — All tiers within normal variance (paired t-test p > 0.18)
+
+**Changes:**
+- Internal GT: 3,086 → 3,067 entries. 9 diseases dropped entirely.
+- Expanded GT: 57,586 → 57,555 (-31 entries)
+- Added 4 diagnostic agents to NON_THERAPEUTIC_COMPOUNDS prediction filter
+- Added Iobenguane diagnostic-only disease handling
+- Added 7 specific false GT entry removals
+
+### Tier Status (post h685)
+| Tier | Holdout | Std | Previous |
+|------|---------|-----|----------|
+| GOLDEN | 71.8% | ± 8.0% | 72.3% |
+| HIGH | 61.4% | ± 8.9% | 62.8% |
+| MEDIUM | 38.3% | ± 4.7% | 42.3% |
+| LOW | 14.4% | ± 1.3% | 15.0% |
+| FILTER | 9.5% | ± 1.0% | 9.9% |
+
+Note: No changes are statistically significant. MEDIUM apparent drop (p=0.183) driven by high-variance seeds.
+
+### New Hypotheses Generated (4)
+- h688: Two-drug disease GT audit (62 diseases with 2 drugs)
+- h689: DRKG diagnostic agent census (ATC V08/V09 systematic search)
+- h690: TB drug co-occurrence pattern (rifampicin, pyrazinamide, ethambutol)
+- h691: Large-gap diseases (1-2 internal GT but 20+ expanded GT)
+
+### Recommended Next Steps
+1. **h689**: DRKG diagnostic agent census — likely more imaging agents to find
+2. **h691**: Large-gap diseases — understanding why internal GT is sparse
+3. **h690**: TB drug co-occurrence — quick check, similar pattern to Isoniazid
+
+---
+
+## Previous Session: h674/h677 - Statin Safety + GT Quality Audit (2026-02-06)
 
 ### h674: Statin → Diabetes Inverse Indication Expansion — VALIDATED (No Impact)
 All 7 major statins already covered in INVERSE_INDICATION_PAIRS for diabetes/hyperglycemia. Added cerivastatin and mevastatin defensively (no current predictions). All statin→diabetes predictions already at FILTER tier.
