@@ -17,26 +17,37 @@
 
 Cancer drugs with GT gaps: cyclophosphamide→DLBCL, docetaxel→lung, cladribine→ALL/NHL/AML, bortezomib→ALL/NHL/DLBCL, gemcitabine→bladder, methotrexate→uterine, thiotepa→choriocarcinoma.
 
-### Tier Status (updated)
+### h668: Systematic HIGH Novel GT Gap Search — VALIDATED
+Extended to ALL HIGH novel predictions. 22 more pairs added:
+- DOACs → atrial flutter (4 FDA-approved drugs, all gaps!)
+- Erythromycin → pneumococcal/rosacea/osteomyelitis
+- Levofloxacin → sinusitis/osteomyelitis/empyema/bronchiectasis
+- Liothyronine → congenital hypothyroidism, Amphotericin B → mycetoma
+- Prednisone + Montelukast → IPF
+
+### Tier Status (final, h668 update)
 | Tier | Holdout | Previous | Change |
 |------|---------|----------|--------|
 | GOLDEN | 71.6% ± 4.3% | 71.6% | — |
-| HIGH | 56.3% ± 8.8% | 54.8% | **+1.5pp** |
+| HIGH | 58.0% ± 7.7% | 54.8% | **+3.2pp** |
 | MEDIUM | 43.3% ± 2.9% | 42.9% | **+0.4pp** |
-| LOW | 15.2% ± 1.8% | 14.8% | +0.4pp |
+| LOW | 15.3% ± 1.8% | 14.8% | +0.5pp |
 | FILTER | 10.7% ± 1.2% | 10.6% | +0.1pp |
+
+Total GT additions this session: 54 pairs. Expanded GT: 59,638 (was 59,584).
 
 ### New Hypotheses Generated (5)
 - h665: Antimicrobial spectrum-level demotion (echinocandin/cephalosporin mismatches)
 - h666: GT gap expansion for antibiotics (COMPLETED)
 - h667: Literature validation for other holdout-invisible sub-reasons
-- h668: Systematic HIGH novel cancer prediction GT gap search via ClinicalTrials.gov
+- h668: Systematic HIGH GT gap search (COMPLETED)
 - h669: Corticosteroid novel HIGH prediction quality assessment
 
 ### Recommended Next Steps
-1. **h668**: Systematic GT gap search for remaining HIGH cancer predictions (could yield +1-3pp HIGH)
-2. **h669**: CS novel HIGH prediction quality assessment
+1. **h669**: CS novel HIGH prediction quality assessment (144 predictions, 49% of HIGH novel)
+2. Continue GT gap search: 200+ HIGH novel predictions remain
 3. **h665**: Antimicrobial spectrum-level demotion (small impact but clean)
+4. Regenerate deliverable with updated GT
 
 ---
 

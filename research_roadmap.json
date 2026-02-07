@@ -13672,7 +13672,7 @@
       "title": "Systematic HIGH Novel Prediction GT Gap Search via ClinicalTrials.gov",
       "description": "h636 found 16 GT gaps among just bevacizumab and a handful of cancer drugs, lifting HIGH +1.5pp. There are 292 HIGH novel predictions across 45+ drugs. A systematic ClinicalTrials.gov query for ALL HIGH novel cancer predictions could find 30-50 more GT gaps. The HIGH tier has the best ratio of true positives to GT gaps because these are high-confidence predictions.",
       "hypothesis": "Systematic ClinicalTrials.gov search for HIGH novel cancer predictions will find 30+ additional GT gaps, improving HIGH holdout by another +1-3pp.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13683,8 +13683,8 @@
         "Add FDA-approved pairs to expanded GT",
         "Re-run holdout evaluation"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED: Systematic GT gap search across HIGH predictions yielded +3.2pp HIGH.\n\nSESSION SUMMARY (h658+h666+h636+h668 combined):\nTotal GT gaps filled: 54 pairs across 3 phases:\n1. h666: 16 antibiotic/antifungal/derm pairs (0pp holdout \u2014 ATC coherent invisible)\n2. h636: 16 cancer drug pairs (bevacizumab\u2192lung/mesothelioma/head&neck, ramucirumab\u2192lung,\n   cyclophosphamide\u2192DLBCL, cladribine\u2192ALL/NHL/AML, bortezomib\u2192ALL/NHL/DLBCL, etc.)\n3. h668: 22 non-cancer pairs (DOACs\u2192atrial flutter \u00d74, erythromycin\u2192pneumococcal/rosacea/osteo,\n   levofloxacin\u2192sinusitis/osteo/empyema/bronchiectasis, liothyronine\u2192congenital hypothyroidism,\n   prednisone/montelukast\u2192IPF, etc.)\n\nHOLDOUT RESULTS:\n- GOLDEN: 71.6% \u00b1 4.3% (unchanged)\n- HIGH: 58.0% \u00b1 7.7% (was 54.8% \u00b1 8.9%) \u2014 **+3.2pp, std \u21931.2%**\n- MEDIUM: 43.3% \u00b1 2.9% (was 42.9%) \u2014 **+0.4pp**\n- LOW: 15.3% \u00b1 1.8% (was 14.8%) \u2014 **+0.5pp**\n- FILTER: 10.7% \u00b1 1.2% (was 10.6%) \u2014 +0.1pp\n\nKEY PATTERNS in GT gaps:\n- DOACs (apixaban, rivaroxaban, edoxaban, dabigatran) \u2192 atrial flutter: All 4 FDA-approved but mapped to atrial fib in GT, not flutter\n- Cancer drugs \u2192 specific cancer subtypes: FDA-approved broad indications not mapped to specific MESH disease terms\n- Common antibiotics \u2192 well-known indications: prescribing info uses not in reference databases\n- Thyroid hormone \u2192 congenital hypothyroidism: basic endocrine SOC missing\n\nTotal expanded GT: 59,638 pairs (was 59,584 at session start, +54).",
+      "result_metric": "+54 GT pairs total, HIGH +3.2pp (54.8\u219258.0%), MEDIUM +0.4pp",
       "category": "gt-improvement"
     },
     {
@@ -15871,6 +15871,12 @@
       "hypothesis_id": "h636",
       "learning": "Anti-VEGF drugs (bevacizumab, ramucirumab) have high cross-cancer transferability because VEGF angiogenesis is a pan-tumor hallmark. kNN correctly captures this. Bevacizumab LOW predictions (rank 5-30) are surprisingly well-validated (71.4% CLINICAL_EVIDENCE) suggesting systematic underranking. Key GT gaps: bevacizumab\u2192lung cancer (FDA 2006!), ramucirumab\u2192lung cancer (FDA 2014). Literature validation hits ClinicalTrials.gov better for cancer drugs than for antibiotics (13 lung trials vs 0 for most antibiotic pairs).",
       "implication": "Cancer drug literature validation via ClinicalTrials.gov is more effective than antibiotic validation. Anti-VEGF LOW predictions may deserve reexamination for promotion."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h668",
+      "learning": "Systematic GT gap search across HIGH predictions is high-ROI: 54 pairs yielded +3.2pp HIGH, +0.4pp MEDIUM. Key gap patterns: (1) DOACs\u2192atrial flutter (4 FDA drugs, all gaps), (2) cancer drugs\u2192specific subtypes, (3) common antibiotics\u2192prescribing-info uses, (4) basic SOC missing (thyroid hormone\u2192hypothyroidism). GT gap search is more impactful for HIGH (3.2pp) than MEDIUM (0.4pp) because HIGH predictions are higher confidence and more likely to be true positives with missing GT.",
+      "implication": "Further GT gap search should focus on remaining 200+ HIGH novel predictions. DOAC gaps suggest systematic mapping issues (disease term variants). Cancer drug gaps cluster around specific subtypes not in reference DBs."
     }
   ],
   "collaborations": [
