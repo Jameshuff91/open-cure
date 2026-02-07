@@ -1,0 +1,138 @@
+{
+  "tier_summary": {
+    "GOLDEN": {
+      "known_n": 370,
+      "known_pct": 72.97830374753451,
+      "known_holdout": 92.5,
+      "known_std": 1.8,
+      "novel_n": 137,
+      "novel_holdout": 53.4,
+      "novel_std": 6.9,
+      "all_holdout": 82.5,
+      "all_std": 3.1,
+      "total_n": 507
+    },
+    "HIGH": {
+      "known_n": 594,
+      "known_pct": 52.8940338379341,
+      "known_holdout": 86.0,
+      "known_std": 2.4,
+      "novel_n": 529,
+      "novel_holdout": 33.1,
+      "novel_std": 2.8,
+      "all_holdout": 61.9,
+      "all_std": 2.3,
+      "total_n": 1123
+    },
+    "MEDIUM": {
+      "known_n": 895,
+      "known_pct": 40.83029197080292,
+      "known_holdout": 81.0,
+      "known_std": 1.5,
+      "novel_n": 1297,
+      "novel_holdout": 21.5,
+      "novel_std": 0.9,
+      "all_holdout": 47.0,
+      "all_std": 1.7,
+      "total_n": 2192
+    },
+    "LOW": {
+      "known_n": 1138,
+      "known_pct": 18.2869998393058,
+      "known_holdout": 72.8,
+      "known_std": 1.1,
+      "novel_n": 5085,
+      "novel_holdout": 7.3,
+      "novel_std": 0.5,
+      "all_holdout": 19.8,
+      "all_std": 0.8,
+      "total_n": 6223
+    },
+    "FILTER": {
+      "known_n": 1143,
+      "known_pct": 13.180350553505535,
+      "known_holdout": 74.8,
+      "known_std": 1.8,
+      "novel_n": 7529,
+      "novel_holdout": 6.2,
+      "novel_std": 0.4,
+      "all_holdout": 15.4,
+      "all_std": 0.9,
+      "total_n": 8672
+    }
+  },
+  "novel_medium_rules": [
+    {
+      "rule": "default_freq10_nomech_r6_10",
+      "n": 393,
+      "holdout": 17.7,
+      "std": 2.1
+    },
+    {
+      "rule": "default_freq10_nomech_r1_5",
+      "n": 357,
+      "holdout": 15.6,
+      "std": 2.4
+    },
+    {
+      "rule": "default_freq5_mechanism",
+      "n": 132,
+      "holdout": 23.5,
+      "std": 2.7
+    },
+    {
+      "rule": "target_overlap_promotion",
+      "n": 92,
+      "holdout": 33.0,
+      "std": 4.7
+    },
+    {
+      "rule": "cancer_same_type",
+      "n": 81,
+      "holdout": 40.7,
+      "std": 5.9
+    },
+    {
+      "rule": "atc_coherent_infectious",
+      "n": 52,
+      "holdout": 28.7,
+      "std": 6.2
+    },
+    {
+      "rule": "cv_pathway_comprehensive",
+      "n": 43,
+      "holdout": 18.7,
+      "std": 6.0
+    },
+    {
+      "rule": "cv_established_drug_rescue",
+      "n": 36,
+      "holdout": 48.7,
+      "std": 13.6
+    },
+    {
+      "rule": "hematological",
+      "n": 32,
+      "holdout": 21.6,
+      "std": 3.8
+    },
+    {
+      "rule": "highly_repurposable",
+      "n": 20,
+      "holdout": 4.5,
+      "std": 4.6
+    },
+    {
+      "rule": "cardiovascular",
+      "n": 16,
+      "holdout": 22.5,
+      "std": 13.8
+    },
+    {
+      "rule": "neurological_hierarchy_parkinsons",
+      "n": 13,
+      "holdout": 16.8,
+      "std": 10.1
+    }
+  ]
+}

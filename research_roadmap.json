@@ -14864,7 +14864,7 @@
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "rationale": "h731 cross-tabulation showed MEDIUM + NO_EVIDENCE = 16.5% \u00b1 4.4% holdout, well below MEDIUM average (42.8%) and consistent with LOW (14.1%). 116 predictions would be demoted. However, NO_EVIDENCE was only assessed for predictions that were mined (subset of MEDIUM), creating selection bias. Need to verify this isn't an artifact of which predictions were selected for mining (top by composite score).",
       "dependencies": [
         "h731"
@@ -14876,8 +14876,8 @@
         "If confirmed LOW quality: implement demotion rule MEDIUM + NO_EVIDENCE \u2192 LOW",
         "Caution: only 590/14,150 assessed, so NOT_ASSESSED != NO_EVIDENCE"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "INVALIDATED: NO_EVIDENCE (16.0% \u00b1 3.8%, n=116) is NOT independently low \u2014 novel NOT_ASSESSED predictions within the same tier rules have equivalent holdout (10.9% within default_freq10_nomech_r1_5 for both groups). The apparent 16.0% vs 61.6% NOT_ASSESSED gap is entirely driven by known-indication contamination in NOT_ASSESSED (52% known, inflating to 97%). Literature mining was done on NOVEL predictions only, so assessed set is biased. Key discovery: MEDIUM known=97.0% (n=483), novel=29.5% (n=850). The 42.8% MEDIUM average is 57% driven by known indications. Within novel, only STRONG_EVIDENCE (67.8%) and target_overlap/cancer_same_type/atc_coherent/freq5_mech rules (~40-50%) are genuinely MEDIUM quality. default_nomech rules (~16-20%) and LA (7.3%) are LOW. WEAK_EVIDENCE (9.6%) < NO_EVIDENCE (16.0%) due to composition effects (more LA, higher rank in WEAK). Action: promote STRONG_EVIDENCE (h732) rather than demote NO_EVIDENCE. Also discovered potential stale deliverable bug: 41 LA predictions labeled local_anesthetic_procedural but assigned MEDIUM tier.",
+      "result_metric": "NO_EVIDENCE 16.0% \u00b1 3.8% \u2248 novel NOT_ASSESSED baseline. No demotion justified."
     },
     {
       "id": "h735",
@@ -14899,6 +14899,79 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h736",
+      "title": "Deliverable Regeneration: Stale Tier Assignments After Recent Code Changes",
+      "status": "validated",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "low",
+      "steps": [
+        "Regenerate deliverable with current production predictor code",
+        "Compare old vs new: count tier changes per tier",
+        "Verify LA predictions are correctly LOW in new deliverable",
+        "Re-run holdout validation on new deliverable",
+        "Update literature mining evaluation against new deliverable"
+      ],
+      "findings": "VALIDATED: Deliverable regenerated \u2014 was severely stale (Feb 6 vs Feb 7 code). 18,717 predictions (was 14,150, +4,567). LA bug confirmed fixed (0 MEDIUM, was 41). New tier precisions: GOLDEN 82.5%\u00b13.1%, HIGH 61.9%\u00b12.3%, MEDIUM 47.0%\u00b11.7%, LOW 19.8%\u00b10.8%, FILTER 15.4%\u00b10.9%. All tiers improved except GOLDEN (stable). HIGH +4.3pp, MEDIUM +4.2pp from recent code fixes (h686 aliasing, h731 GT gaps). GOLDEN std dropped from 10.6% to 3.1% (more predictions). LOW/FILTER increases (+5.7pp/+5.3pp) from expanded GT \u2014 not regressions.",
+      "result_metric": "GOLDEN 82.5%, HIGH 61.9%, MEDIUM 47.0%, LOW 19.8%, FILTER 15.4%",
+      "rationale": "h734 found 41 LA predictions incorrectly labeled MEDIUM in the current deliverable. The deliverable (Feb 6 21:56) is stale vs production_predictor.py (Feb 7 08:24). Multiple code changes (h686 drug aliasing, h731 GT gaps) not reflected in deliverable."
+    },
+    {
+      "id": "h737",
+      "title": "Novel MEDIUM Sub-Rule Demotion: default_nomech_r1-5 and r6-10 Have LOW-Quality Novel Predictions",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Verify with regenerated deliverable: novel default_freq10_nomech_r1_5 holdout (~20%) and r6_10 (~16%)",
+        "Check if these predictions are already sub-rule-demoted by h555 (R11-20\u2192LOW)",
+        "Evaluate whether demoting novel default_nomech predictions to LOW would improve MEDIUM precision",
+        "CAUTION: Cannot distinguish novel from known at prediction time without GT",
+        "Alternative: annotate deliverable with novel_prediction flag for consumers",
+        "Check if STRONG_EVIDENCE mining could identify the 48% within this rule"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "rationale": "h734 found novel MEDIUM default_freq10_nomech_r1_5 = 19.7% and r6_10 = 16.3%. These are below LOW threshold. But demoting them requires distinguishing novel from known at prediction time, which requires GT knowledge (circular). The right solution may be literature mining as a quality signal (h732)."
+    },
+    {
+      "id": "h738",
+      "title": "Known-Indication Inflation Quantification: Report Tier Precision Split Known vs Novel",
+      "status": "validated",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Compute known vs novel holdout precision for ALL tiers (GOLDEN through FILTER)",
+        "Add known_prediction_pct and novel_holdout_precision to tier summary statistics",
+        "Determine if any tier ordering changes when restricted to novel predictions only",
+        "Report: is the tier system valid for novel predictions specifically?",
+        "Add novel_holdout_precision to deliverable metadata for consumer awareness"
+      ],
+      "findings": "VALIDATED \u2014 CRITICAL deliverable quality finding. Known indications have 73-93% holdout across ALL tiers (essentially validation). Novel predictions show clear tier ordering: GOLDEN 53.4% \u2192 HIGH 33.1% \u2192 MEDIUM 21.5% \u2192 LOW 7.3% \u2192 FILTER 6.2%. MEDIUM: 41% known (81.0%) + 59% novel (21.5%) = 47.0% average. The 47.0% is misleading for novel drug repurposing \u2014 real novel precision is 21.5%. Novel MEDIUM sub-rules: cv_rescue 48.7%, cancer_same_type 40.7%, target_overlap 33.0%, atc_coherent 28.7%, freq5_mech 23.5%, cv_pathway 18.7%, default_nomech 15-18%, highly_repurposable 4.5%. The highly_repurposable rule (4.5%) should be demoted to LOW. Default_nomech rules are borderline.",
+      "result_metric": "Novel tier precision: GOLDEN 53.4%, HIGH 33.1%, MEDIUM 21.5%, LOW 7.3%, FILTER 6.2%",
+      "rationale": "h734 revealed MEDIUM known=97.0% novel=29.5% (42.8% average). The reported 42.8% MEDIUM precision is misleading for novel drug repurposing candidates, which is the whole point of the system. Users of the deliverable need to know that novel MEDIUM predictions are ~30%, not ~43%."
+    },
+    {
+      "id": "h739",
+      "title": "Highly Repurposable Disease Demotion: 4.5% Novel Holdout = FILTER Quality",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Verify highly_repurposable novel holdout (4.5%) with larger n and more seeds",
+        "Analyze: which diseases in HIGHLY_REPURPOSABLE_DISEASES drive the failure?",
+        "Check: are these diseases 100% self-referential? (correlation with h504)",
+        "If confirmed LOW: demote highly_repurposable to LOW or remove the rule",
+        "Re-run holdout: expected MEDIUM +0.5-1pp from removing ~33 LOW predictions"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "rationale": "h738 found highly_repurposable rule has 4.5% \u00b1 4.6% novel holdout (n=20) \u2014 clearly FILTER/LOW quality, not MEDIUM. The rule was from h297 which likely used full-data precision. 33 predictions affected."
     }
   ],
   "completed": [
@@ -17275,6 +17348,18 @@
       "hypothesis_id": "h731",
       "learning": "Literature evidence (ClinicalTrials.gov + PubMed) is a strong independent predictor of holdout precision. STRONG_EVIDENCE = 78.7% holdout (above HIGH 57.6%). MEDIUM+STRONG = 67.4% (HIGH quality). Score quartile gradient: Q1=82.5%, Q2=56.7%, Q3=16.9%, Q4=19.5%. Found 31 genuine GT gaps and 1 inverse indication from 590 predictions mined.",
       "implication": "Literature mining should be extended to all predictions for evidence-based tier adjustments. MEDIUM+STRONG evidence is a clear promotion candidate."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h734",
+      "learning": "MEDIUM known=97.0% (n=483) vs novel=29.5% (n=850). 42.8% average is 57% driven by known indications. Literature NO_EVIDENCE (16.0%) \u2248 novel NOT_ASSESSED baseline within same tier rules. STRONG_EVIDENCE (67.8%) is the actionable signal, not NO_EVIDENCE. Novel sub-rule variation: target_overlap/cancer_same_type/atc_coherent/freq5_mech (40-50%) vs default_nomech (16-20%) vs LA (7.3%).",
+      "implication": "Cannot demote NO_EVIDENCE (biased sample). Should promote STRONG_EVIDENCE (h732) and report known vs novel precision separately (h738). Deliverable is stale (h736)."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h738",
+      "learning": "Known-indication inflation is massive across ALL tiers. Novel tier precision: GOLDEN 53.4%, HIGH 33.1%, MEDIUM 21.5%, LOW 7.3%, FILTER 6.2%. The tier system IS valid for novel predictions (ordering preserved) but reported precisions are 2-4x inflated by known-indication contamination. MEDIUM 47.0% \u2192 21.5% novel.",
+      "implication": "Must report novel precision alongside total precision in deliverables. Sub-rule analysis identifies highly_repurposable (4.5%) and default_nomech (15-18%) as below-MEDIUM quality for novel predictions."
     }
   ],
   "collaborations": [
