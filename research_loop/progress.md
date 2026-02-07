@@ -1,6 +1,51 @@
 # Research Loop Progress
 
-## Current Session: h603/h604 - MEDIUM Standard Rule Refinement (2026-02-06)
+## Current Session: h606/h611/h612/h613/h605 - ATC Coherent + GT Methodology (2026-02-06)
+
+### h606: ATC Coherent Respiratory/Endocrine Validation — VALIDATED
+Comprehensive ATC coherent category analysis. Found 292 ATC coherent MEDIUM predictions across 9 categories. Psychiatric ATC coherent holdout = 17.2% ± 5.8% (p=0.0006 below MEDIUM avg). Added psychiatric to ATC_COHERENT_EXCLUDED. 47 predictions MEDIUM→LOW. Tier-level impact unmeasurable.
+
+### h612: Deliverable Regeneration — VALIDATED
+Regenerated deliverable with all h598-h606 changes. 14,150 predictions, 473 diseases, 1,004 drugs. MEDIUM: 1,876 preds. All changes confirmed.
+
+### h611: MEDIUM Sub-Pathway Quality Map — INVALIDATED (GT methodology bug)
+**CRITICAL FINDING:** Initial analysis using predictor.ground_truth (3,070 pairs) showed 7 below-LOW sub-pathways. But this was WRONG — expanded_ground_truth.json (59,584 pairs, 19x more) should be used. With correct GT, ALL sub-pathways above LOW threshold. cancer_same_type: 11.8% → 37.7%, target_overlap: 11.5% → 31.7%. Code changes reverted.
+
+**KEY LESSON:** ALWAYS use expanded_ground_truth.json for holdout evaluation. predictor.ground_truth only has DRKG-derived pairs.
+
+### h613: Expanded GT Gap Analysis — VALIDATED
+Mapped the internal-vs-expanded GT gap. Cancer has highest ratio (13.2x), endocrine lowest (3.0x). Per-tier gains from expanded GT: GOLDEN +12.9pp, HIGH +16.8pp, MEDIUM +15.4pp, LOW +6.3pp. No diseases have zero expanded GT.
+
+### h605: Highly Repurposable MEDIUM Demotion — INVALIDATED
+Only 4 predictions (all chronic pain). 0% internal GT but 25% expanded GT. Holdout with expanded GT = 29.2%. Not demotable.
+
+### Session Tier Performance (unchanged from h603)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 69.9% ± 17.9% | ~280 |
+| HIGH | 58.9% ± 6.0% | ~732 |
+| MEDIUM | 41.3% ± 2.8% | ~1876 |
+| LOW | 15.1% ± 2.4% | ~3958 |
+| FILTER | 10.6% ± 1.3% | ~7300 |
+
+### New Hypotheses Generated (7 total)
+- h610: ATC coherent infectious per-drug-class quality
+- h611: MEDIUM sub-pathway quality map (INVALIDATED)
+- h612: Deliverable regeneration (COMPLETED)
+- h613: Expanded GT gap analysis (COMPLETED)
+- h614: MEDIUM sub-pathway v2 with correct GT
+- h615: Expanded GT tier recalibration
+- h616: Disease GT completeness score
+
+### Recommended Next Steps
+1. **h614**: Re-run quality map with expanded GT and significance tests
+2. **h616**: Add GT completeness annotation to deliverable
+3. External data integration (h91/h92) for fundamentally new signals
+4. Literature mining (h91) remains highest-priority unblocked direction
+
+---
+
+## Previous Session: h603/h604 - MEDIUM Standard Rule Refinement (2026-02-06)
 
 ### h604: Standard MEDIUM Infectious Drug-Class Stratification — INCONCLUSIVE
 
