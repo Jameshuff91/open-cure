@@ -12588,7 +12588,7 @@
       "id": "h611",
       "title": "MEDIUM Sub-Pathway Quality Map: Rank All MEDIUM Entry Paths by Holdout",
       "description": "h606 revealed the ATC coherent MEDIUM pathway has highly heterogeneous quality across categories. The same likely applies to ALL MEDIUM entry paths (standard, highly_repurposable, target_overlap_promotion, etc.). Build a comprehensive holdout precision map for every MEDIUM sub-pathway \u00d7 category combination to identify remaining low-quality pockets.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12598,7 +12598,9 @@
         "Identify any (sub-pathway, category) pairs with holdout < 15% and n >= 10",
         "Rank all pairs by holdout precision to create a quality map",
         "Expected: may find 2-3 more demotable pockets worth ~1-2pp MEDIUM improvement"
-      ]
+      ],
+      "findings": "CRITICAL METHODOLOGY FINDING: Initial analysis using predictor.ground_truth (3,070 pairs) showed 7 below-LOW sub-pathways. But this was WRONG \u2014 the h393 holdout evaluator uses expanded_ground_truth.json (59,584 pairs), which is 19x larger.\n\nRe-running with correct expanded GT showed ALL MEDIUM sub-pathways above LOW threshold:\n- cancer_same_type: 37.7% (was 11.8% with wrong GT)\n- target_overlap_promotion: 31.7% (was 11.5% with wrong GT)  \n- atc_coherent_infectious: 51.9% (was 27.6% \u2014 relative ordering preserved)\n- infectious_cs_tb_demotion: 83.3% (was 0% \u2014 most dramatic shift)\n- standard: 35.4% (was 23.9%)\n\nNO actionable demotions found with correct GT. Initial code changes (blocking psychiatric+autoimmune+metabolic from target_overlap) were REVERTED.\n\nKey learning: ALWAYS use expanded_ground_truth.json for holdout evaluation. predictor.ground_truth only has internal DRKG-derived pairs. The expanded GT includes Every Cure reference data, FDA-approved pairs, and manual additions.",
+      "result_metric": "No demotions (expanded GT shows all sub-pathways adequate)"
     },
     {
       "id": "h612",
@@ -12616,6 +12618,36 @@
       ],
       "findings": "Deliverable regenerated with all h598-h606 changes. 14,150 predictions across 473 diseases and 1,004 drugs. MEDIUM: 1,876 preds (37.8% full-data). All psychiatric ATC coherent predictions confirmed moved to LOW. Composite quality score, gene overlap, and all tier changes incorporated.",
       "result_metric": "14,150 predictions, MEDIUM 1,876"
+    },
+    {
+      "id": "h613",
+      "title": "Expanded GT Gap Analysis: Which Diseases Have Large Internal-vs-Expanded GT Gaps?",
+      "description": "h611 revealed predictor.ground_truth has 3,070 pairs while expanded_ground_truth.json has 59,584 (19x more). Some diseases may have many expanded GT pairs but few internal ones, leading to systematically understated performance for those diseases in internal evaluations. Mapping the gap could reveal diseases where our kNN predictions appear weak but are actually validated by expanded GT.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "For each of the 479 diseases in predictor.ground_truth, count pairs in both internal and expanded GT",
+        "Identify diseases with largest ratio (expanded/internal)",
+        "Check if these high-ratio diseases have systematically different tier distributions",
+        "Assess whether internal-only evaluation biases specific disease categories"
+      ]
+    },
+    {
+      "id": "h614",
+      "title": "MEDIUM Sub-Pathway Quality Map v2: Correct GT Evaluation",
+      "description": "h611 corrected analysis showed all sub-pathways adequate with expanded GT. However, the corrected analysis revealed interesting heterogeneity: atc_coherent_infectious (51.9%) is the BEST MEDIUM sub-pathway, while standard \u00d7 endocrine (15.1%) is BORDERLINE. A deeper analysis with per-seed significance testing could identify marginal improvements.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Re-run h611 quality map with expanded GT and significance testing",
+        "For each sub-pathway \u00d7 category with n >= 5/seed, test if holdout is significantly below MEDIUM avg",
+        "Focus on standard \u00d7 endocrine (15.1%), standard \u00d7 other (0.0%), and other borderline pairs",
+        "Consider whether endocrine standard should join MEDIUM_DEMOTED_CATEGORIES"
+      ]
     }
   ],
   "completed": [
@@ -14668,6 +14700,12 @@
       "hypothesis_id": "h606",
       "learning": "ATC coherent rescue pathway has highly heterogeneous quality across categories. Only infectious (n=41/seed, 27.6%) is statistically reliable. Psychiatric confirmed below MEDIUM (17.2%, p<0.001). Most categories have n<5/seed \u2014 too small for reliable holdout. Category-specific ATC coherent analysis requires pooling across categories or very large holdout.",
       "implication": "Per-category ATC coherent quality varies from 0% to 30%. Should systematically evaluate ALL MEDIUM sub-pathways \u00d7 categories for remaining low-quality pockets."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h611",
+      "learning": "CRITICAL: predictor.ground_truth has only 3,070 pairs (DRKG-derived). expanded_ground_truth.json has 59,584 pairs (19x more). Using wrong GT for holdout eval gives systematically LOW precision \u2014 cancer_same_type shows 11.8% vs 37.7% with correct GT. ALWAYS use expanded GT (as h393 evaluator does).",
+      "implication": "All previous inline holdout evaluations in this session (h606, h611) used wrong GT. Rankings between sub-pathways are preserved but absolute numbers are wrong. The h606 psychiatric ATC exclusion was independently validated by h393 (correct GT) so that change stands."
     }
   ],
   "collaborations": [
