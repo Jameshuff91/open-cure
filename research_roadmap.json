@@ -12604,7 +12604,7 @@
       "id": "h612",
       "title": "Deliverable Regeneration: Incorporate All h598-h606 Changes",
       "description": "Multiple changes since last deliverable regeneration: h598 (targeted cancer expansion), h603 (metabolic standard demotion), h606 (psychiatric ATC coherent exclusion). The deliverable file needs regeneration to reflect current tier assignments, composite_quality_score, and updated prediction counts.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -12613,7 +12613,9 @@
         "Verify prediction counts match expected: MEDIUM ~1832, LOW ~3850",
         "Spot-check a few psychiatric predictions that should now be LOW instead of MEDIUM",
         "Verify composite_quality_score column is populated"
-      ]
+      ],
+      "findings": "Deliverable regenerated with all h598-h606 changes. 14,150 predictions across 473 diseases and 1,004 drugs. MEDIUM: 1,876 preds (37.8% full-data). All psychiatric ATC coherent predictions confirmed moved to LOW. Composite quality score, gene overlap, and all tier changes incorporated.",
+      "result_metric": "14,150 predictions, MEDIUM 1,876"
     }
   ],
   "completed": [
