@@ -13045,7 +13045,7 @@
       "title": "Cytotoxic Drug Class as Cancer Same-Type Quality Signal",
       "description": "h633 Phase 4 showed drug class holdout: taxane 76%, anthracycline 72%, platinum 51%, antimetabolite 48% vs alkylating 24%, other_cytotoxic 22%. Could drug class be used to refine the remaining cancer_same_type predictions beyond mechanism+rank?",
       "hypothesis": "Taxane and anthracycline cancer_same_type predictions have HIGH-level precision regardless of mechanism/rank.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13055,8 +13055,8 @@
         "If yes, implement drug-class-specific promotion",
         "Verify with h393 evaluator"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "INCONCLUSIVE: Drug class analysis within cancer predictions shows interesting patterns but insufficient sample sizes for action.\n\nCANCER_SAME_TYPE_MECH_RANK10 (HIGH) by drug class:\n- Taxane: 91.0% (n=3.6/seed) \u2014 excellent but small n\n- Anthracycline: 74.0% (n=4.4/seed) \u2014 high variance\n- Antimetabolite: 73.4% (n=8.8/seed) \u2014 most reliable\n- Alkylating: 12.4% (n=3.8/seed) \u2014 terrible but too small for action\n- Other: 58.6% (n=5.4/seed)\n\nCANCER_SAME_TYPE_NO_MECHANISM (LOW) by drug class:\n- All classes n<3.2/seed \u2014 too small for reliable drug-class rescue\n\nCANCER default (LOW, no same-type match):\n- Platinum: 47.1% (n=5.6/seed) \u2014 near MEDIUM quality, interesting\n- Antimetabolite: 23.3% (n=11.8/seed) \u2014 borderline\n- Alkylating: 18.3% (n=11/seed) \u2014 correctly LOW\n\nKEY INSIGHT: Alkylating agents in cancer_same_type_mech_rank10 HIGH show 12.4% holdout \u2014 potentially misclassified. But n=3.8/seed is below reliability threshold (\u224830). Cannot act on this.\n\nRECOMMENDATION: Annotate drug class in deliverable for cancer predictions but don't create tier rules based on it (insufficient n per class).",
+      "result_metric": "No actionable drug class rules. Alkylating HIGH suspect (12.4%) but n too small.",
       "category": "tier-optimization",
       "rationale": "Drug class specificity within cancer may capture domain knowledge that mechanism support misses (e.g., taxanes work across solid tumors regardless of specific target overlap)."
     },
@@ -13163,7 +13163,7 @@
       "title": "CV Established Drug Rescue Precision: Why Is It Only 30.6%?",
       "description": "h637 found cv_established_drug_rescue MEDIUM = 30.6% \u00b1 21.0% (n=43.4/seed) for non-CS \u2014 below MEDIUM average (38.1%). This was implemented in h618 based on 30.9% \u00b1 20.9% holdout. The high variance (\u00b121%) suggests some drug classes perform well and others poorly. Should we tighten the rescue criteria or split into sub-classes?",
       "hypothesis": "CV established drug rescue contains a sub-population below LOW threshold (15%) that should be re-demoted, and a sub-population above MEDIUM that could be promoted.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13173,8 +13173,8 @@
         "Identify drug classes above 45% holdout for annotation",
         "Implement tightened rescue if significant drug classes underperform"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "Superseded by h643 which already tightened CV rescue via mechanism gating. CV rescue with mechanism = 40.3% (at MEDIUM avg). Further stratification of mechanism-supported CV drugs has insufficient sample size (n=14/seed, individual drug classes n<5/seed).",
+      "result_metric": "Superseded by h643",
       "category": "precision-improvement"
     },
     {
@@ -13258,7 +13258,7 @@
       "title": "MEDIUM Rank 16-20 Decomposition: Why Are All Remaining MEDIUM Predictions Low-Rank?",
       "description": "h642 discovered ALL remaining non-CS MEDIUM predictions are rank 16-20 (bottom of top-20 kNN). This means the tier system has extracted all high-rank value. What does this mean for the deliverable? Should rank be more prominently featured? Are rank 16-20 predictions less clinically useful despite acceptable holdout precision?",
       "hypothesis": "Rank 16-20 MEDIUM predictions have different error patterns (more wrong drug class, more wrong disease subtype) than rank 1-10 predictions in higher tiers, suggesting a quality difference not fully captured by holdout precision.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -13268,8 +13268,8 @@
         "Determine if rank should be a more prominent deliverable annotation",
         "Consider whether rank-based sub-tiers add information"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "Based on h642 rank analysis which was FLAWED (knn_rank attr missing, defaulted to 99). The premise \"ALL MEDIUM are rank 16-20\" was incorrect. Cannot proceed without valid rank data.",
+      "result_metric": "Based on flawed h642 rank analysis",
       "category": "error-analysis"
     }
   ],
