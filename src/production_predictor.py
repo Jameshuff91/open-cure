@@ -952,6 +952,9 @@ INVERSE_INDICATION_PAIRS = {
         'toxic epidermal necrolysis', 'severe erythema multiforme',
         'hepatitis b', 'hereditary chronic cholestasis',
         # Note: interstitial pneumonia omitted — azathioprine treats underlying myositis
+        # h704: Azathioprine causes pancreatitis (3-7%, Class I definite).
+        # NOT autoimmune pancreatitis (azathioprine treats AIP).
+        'pancreatitis',
     },
     # h486: NSAIDs cause TEN (Stevens-Johnson spectrum), drug-induced SLE, peptic ulcer,
     # lichen planus, cerebrovascular events (COX-2 class effect)

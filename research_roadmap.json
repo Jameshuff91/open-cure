@@ -14315,7 +14315,7 @@
       "title": "DPP-4i Pancreatitis Inverse Indication: Class-Wide Safety Check",
       "description": "h700 identified sitagliptin\u2192pancreatitis as false GT (DPP-4i are associated with CAUSING pancreatitis per FDA warning). All DPP-4i (sitagliptin, saxagliptin, linagliptin, alogliptin, vildagliptin) are in DRKG with embeddings but currently generate no predictions. However, this is a valuable INVERSE INDICATION to add defensively: if future DRKG updates or GT expansion cause these drugs to be predicted for pancreatitis or pancreatic diseases, the inverse filter would catch them. Also verify that other drugs known to cause pancreatitis (azathioprine, valproic acid, statins at high dose) are not being predicted for pancreatic diseases.",
       "hypothesis": "DPP-4 inhibitors and other pancreatitis-causing drugs may need defensive inverse indication filters.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14325,8 +14325,8 @@
         "Add DPP-4i \u2192 pancreatitis as defensive inverse indication in production_predictor.py",
         "Check azathioprine, valproic acid, statins, didanosine for pancreatic disease predictions"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "VALIDATED (Safety). Comprehensive scan of pancreatitis-causing drugs in pancreatic disease predictions.\n\n1 prediction fixed:\n- Azathioprine \u2192 chronic pancreatitis at R2 (LOW) \u2192 FILTER (inverse_indication)\n  Azathioprine causes pancreatitis in 3-7% of patients (Class I definite).\n  Note: azathioprine treats autoimmune pancreatitis (AIP), but generic 'chronic pancreatitis' is not AIP.\n\nNo action needed for DPP-4i/GLP-1:\n- None of the 9 DPP-4i/GLP-1 drugs (sitagliptin, saxagliptin, linagliptin, alogliptin, vildagliptin, exenatide, liraglutide, semaglutide, dulaglutide) appear in pancreatitis predictions despite having DRKG embeddings.\n- kNN neighborhoods for pancreatitis are dominated by autoimmune/GI drugs, not antidiabetic drugs.\n\nOther pancreatitis-causing drugs:\n- Corticosteroids: already handled by h476 (prednisone, prednisolone, dexamethasone \u2192 pancreatitis = FILTER)\n- Everolimus: already handled (everolimus \u2192 pancreatitis = FILTER)\n- Valproic acid, didanosine, pentamidine, mesalamine: NOT in pancreatitis predictions\n- Mercaptopurine: NOT in pancreatitis predictions",
+      "result_metric": "1 prediction fixed (azathioprine\u2192chronic pancreatitis), 0 DPP-4i/GLP-1 issues"
     },
     {
       "id": "h705",
@@ -16759,6 +16759,12 @@
       "hypothesis_id": "h710",
       "learning": "Benign/intermediate proliferative disorders (hemangioendothelioma, LAM, lymphangioma) are categorized as cancer but not recognized as cancer types by extract_cancer_types(). This caused their GT drug (sirolimus) to be incorrectly filtered by cancer_no_gt. Adding a new 'vascular_proliferative' cancer type resolved the issue.",
       "implication": "When adding diseases to the cancer category keyword list, always verify that extract_cancer_types() also recognizes them. Cancer category + unrecognized cancer type = systematic false FILTER."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h704",
+      "learning": "DPP-4i and GLP-1 drugs don't appear in pancreatitis predictions despite having DRKG embeddings \u2014 their kNN neighborhoods are diabetes-centric, not GI-centric. Only 1 pancreatitis-causing drug (azathioprine) was predicted for chronic pancreatitis. Corticosteroids and everolimus were already handled by prior inverse indication work.",
+      "implication": "Drug-induced pancreatitis is well-covered by existing inverse indications (h476/h486) plus the azathioprine addition. kNN self-selects against most problematic drug-disease pairs because they inhabit different embedding neighborhoods."
     }
   ],
   "collaborations": [
