@@ -1,0 +1,136 @@
+{
+  "hypothesis": "h707",
+  "title": "Zero-Prediction Disease Rescue Analysis",
+  "date": "2026-02-07",
+  "summary": "28 diseases generate zero predictions. 24 absent from DRKG, 4 have predictions incorrectly filtered.",
+  "total_diseases": 497,
+  "diseases_with_predictions": 469,
+  "diseases_with_zero_predictions": 28,
+  "root_causes": {
+    "no_drkg_embedding": 24,
+    "has_embedding_all_filtered": 4,
+    "completely_absent_from_drkg": 20,
+    "in_drkg_wrong_entity_type": 4
+  },
+  "group1_filter_rescue": {
+    "count": 4,
+    "rescuable": 3,
+    "diseases": {
+      "hemangioendothelioma": {
+        "filter_reason": "cancer_no_gt",
+        "gt_drug_at_rank": "sirolimus at R1",
+        "rescue": "reclassify category or add exception",
+        "medical_assessment": "Sirolimus is standard of care for vascular tumors"
+      },
+      "postsurgical_craniopharyngioma": {
+        "filter_reason": "low freq, kNN confused with Parkinsons",
+        "rescue": "UNRESCUABLE via kNN",
+        "medical_assessment": "L-Arginine for GH testing too specialized"
+      },
+      "proliferative_diabetic_retinopathy": {
+        "filter_reason": "complication_non_validated + base_to_complication",
+        "gt_drug_at_rank": "ranibizumab at R2",
+        "rescue": "anti-VEGF whitelist for retinal diseases",
+        "medical_assessment": "Ranibizumab IS standard of care for PDR"
+      },
+      "retinopathy_of_prematurity": {
+        "filter_reason": "mixed (complication, cross_domain, zero_precision)",
+        "gt_drug_at_rank": "ranibizumab at R1, aflibercept at R4",
+        "rescue": "anti-VEGF whitelist for retinal diseases",
+        "medical_assessment": "Both are approved treatments for ROP"
+      }
+    }
+  },
+  "group2_parent_transfer": {
+    "count": 9,
+    "successful": 5,
+    "failed": 2,
+    "marginal": 2,
+    "results": {
+      "esophageal_squamous_cell_carcinoma": {
+        "parent": "esophageal cancer",
+        "gt_hits": "3/4 (pembrolizumab, nivolumab, ipilimumab)",
+        "quality": "HIGH"
+      },
+      "homozygous_familial_hypercholesterolemia": {
+        "parent": "familial hypercholesterolemia",
+        "gt_hits": "5/5 (rosuvastatin, simvastatin, ezetimibe, atorvastatin, alirocumab)",
+        "quality": "GOLDEN"
+      },
+      "ovarian_carcinoma": {
+        "parent": "ovarian cancer",
+        "gt_hits": "1/2 (doxorubicin)",
+        "quality": "MEDIUM"
+      },
+      "marginal_zone_lymphoma": {
+        "parent": "non-hodgkin lymphoma",
+        "gt_hits": "2/2 (lenalidomide, zanubrutinib)",
+        "quality": "HIGH"
+      },
+      "myelodysplastic_syndrome": {
+        "parent": "acute myeloid leukemia",
+        "gt_hits": "1/3 (fludarabine)",
+        "quality": "LOW"
+      },
+      "malignant_pleural_mesothelioma": {
+        "parent": "pleural mesothelioma",
+        "gt_hits": "0/4",
+        "quality": "NONE"
+      },
+      "neonatal_diabetes_mellitus": {
+        "parent": "diabetes mellitus",
+        "gt_hits": "0/1",
+        "quality": "NONE"
+      },
+      "lip_cancer": {
+        "parent": "head and neck cancers",
+        "gt_hits": "1/1 (bleomycin)",
+        "quality": "LOW"
+      },
+      "tonsil_cancer": {
+        "parent": "head and neck cancers",
+        "gt_hits": "1/1 (bleomycin)",
+        "quality": "LOW"
+      }
+    }
+  },
+  "group3_distant_parent": {
+    "count": 10,
+    "not_tested": true,
+    "reason": "Low probability of success - parent diseases too distant"
+  },
+  "group4_unrescuable": {
+    "count": 5,
+    "diseases": [
+      "inflammatory myofibroblastic tumor",
+      "tenosynovial giant cell tumor tgct",
+      "congenital factor vii deficiency",
+      "paraplegia",
+      "pure autonomic failure"
+    ]
+  },
+  "actionable_findings": [
+    {
+      "finding": "Anti-VEGF whitelist for retinal diseases",
+      "impact": "HIGH",
+      "effort": "LOW",
+      "details": "Ranibizumab/aflibercept correctly predicted for PDR and ROP but filtered. Simple whitelist rescues 3 GT drugs.",
+      "hypothesis": "h708"
+    },
+    {
+      "finding": "Parent disease mapping for cancer subtypes",
+      "impact": "MEDIUM",
+      "effort": "HIGH",
+      "details": "Requires infrastructure for disease subtype->parent fallback prediction.",
+      "hypothesis": "h709"
+    },
+    {
+      "finding": "Hemangioendothelioma category fix",
+      "impact": "LOW",
+      "effort": "LOW",
+      "details": "Single disease reclassification rescues sirolimus prediction.",
+      "hypothesis": "h710"
+    }
+  ],
+  "drkg_coverage_insight": "20/28 zero-prediction diseases are completely absent from DRKG. MESH IDs with prefix D000070000+ or D058000+ appear to be post-2016 terms not included in DRKG's 2020 build."
+}

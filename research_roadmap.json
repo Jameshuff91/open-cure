@@ -14352,7 +14352,7 @@
       "title": "Corticosteroid Prediction Concentration: Is 86% CS Predictions a Problem or Feature?",
       "description": "h703 confirms corticosteroids dominate predictions: top 9 of 20 most-predicted drugs are CS, with prednisolone appearing in 143 of 469 disease predictions (30.5%). This extreme concentration means the deliverable is dominated by CS predictions that clinicians already know about. Quantify: what % of GOLDEN/HIGH predictions are corticosteroids? If we REMOVED all CS predictions, what would the deliverable look like? Would non-CS predictions be more valuable for drug discovery? This connects to h577 (CS holdout artifact) but focuses on deliverable utility rather than metrics.",
       "hypothesis": "Removing corticosteroid predictions from the deliverable would increase its novelty and actionability.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14370,7 +14370,7 @@
       "title": "Zero-Prediction Disease Rescue: Can Alternative Methods Predict for the 28 Blind-Spot Diseases?",
       "description": "h703 identified 28 diseases with zero kNN predictions. These include medically important conditions: homozygous FH (GT=5), mesothelioma (GT=4), systemic amyloidosis (GT=4), MDS (GT=3). Some have adequate GT (FH: 5 drugs) but all drugs are from the same narrow class (PCSK9i/statins). Alternative approaches: (1) ATC-based transfer (drugs in same ATC class as GT drugs), (2) Gene overlap (drug targets matching disease genes), (3) TransE similarity. These methods are weaker than kNN but could generate SOME predictions for completely blind diseases.",
       "hypothesis": "Alternative (non-kNN) methods can generate useful predictions for the 28 zero-prediction diseases.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14381,8 +14381,76 @@
         "Try TransE nearest neighbors",
         "Assess whether any generated predictions are medically plausible"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "VALIDATED (Meta-Analysis). 28 diseases generate zero predictions. Root causes:\n- 24/28 have NO DRKG embedding (20 completely absent from DRKG, 4 have edges but wrong entity type)\n- 4/28 have embeddings but all predictions filtered to FILTER tier\n\nKEY FINDING: 3 diseases have CORRECT predictions that are INCORRECTLY FILTERED:\n1. Proliferative diabetic retinopathy: Ranibizumab at R2 is GT but filtered by complication_non_validated\n2. Retinopathy of prematurity: Ranibizumab R1 + Aflibercept R4 are BOTH GT but filtered\n3. Hemangioendothelioma: Sirolimus at R1 is GT but filtered by cancer_no_gt\n\nParent disease transfer tested for 9 diseases with clear DRKG parents:\n- 5/9 have medically sound transfers (HoFH\u2192FH: 5/5 GT hits; Esophageal SCC\u2192esophageal cancer: 3/4; MZL\u2192NHL: 2/2)\n- 2/9 fail completely (mesothelioma, neonatal DM)\n- 2/9 marginal (lip/tonsil cancer)\n\nTransE cannot help: only 1/24 missing diseases has TransE embedding (Bardet-Biedl).\n\nActionable: Anti-VEGF whitelist for retinal diseases (HIGH impact, LOW effort) would rescue 3 GT drugs across 2 diseases. Parent disease mapping would require infrastructure changes.",
+      "result_metric": "8/28 (29%) rescuable, 3 false negative FILTER predictions identified"
+    },
+    {
+      "id": "h708",
+      "title": "Anti-VEGF Retinal Disease Whitelist: Rescue Ranibizumab/Aflibercept for Diabetic Retinopathy and ROP",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h707 found ranibizumab and aflibercept correctly predicted at R1-R4 for PDR and ROP but incorrectly filtered. Anti-VEGF drugs are standard of care for retinal neovascular diseases. Simple whitelist in production_predictor.py would rescue 3 GT drugs across 2 diseases from FILTER\u2192LOW or MEDIUM.",
+      "steps": [
+        "Add anti-VEGF drugs (ranibizumab, aflibercept, bevacizumab) to complication_validated list for retinal diseases",
+        "OR create retinal_anti_vegf rescue rule in _assign_confidence_tier",
+        "Re-evaluate PDR and ROP predictions",
+        "Run holdout validation"
+      ],
+      "created": "2026-02-07",
+      "parent_hypothesis": "h707"
+    },
+    {
+      "id": "h709",
+      "title": "Disease Subtype-to-Parent Mapping Infrastructure: Transfer Predictions from DRKG Parent Diseases",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "rationale": "h707 showed 9 diseases without DRKG embeddings have clear parent diseases with embeddings. 5/9 have medically sound prediction transfers (HoFH\u2192FH: 100% GT captured, Esophageal SCC\u2192esophageal cancer: 75% GT). This requires building a disease subtype\u2192parent mapping and fallback prediction mechanism.",
+      "steps": [
+        "Create DISEASE_SUBTYPE_MAPPING dict mapping child disease IDs to parent disease IDs",
+        "Implement fallback: if disease has no embedding, try parent disease predictions",
+        "Annotate transferred predictions with 'transferred_from_parent' flag",
+        "Validate against GT for the 9 candidate diseases",
+        "Assess whether transferred predictions should get lower confidence tier"
+      ],
+      "created": "2026-02-07",
+      "parent_hypothesis": "h707"
+    },
+    {
+      "id": "h710",
+      "title": "Hemangioendothelioma Category Reclassification: Vascular Tumor Not Traditional Cancer",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h707 found hemangioendothelioma classified as cancer, causing cancer_no_gt filter to block sirolimus (its GT drug at R1). Hemangioendothelioma is a vascular tumor where sirolimus (mTOR inhibitor) is the standard of care. Reclassifying to 'other' or creating a vascular_tumor category would rescue this prediction.",
+      "steps": [
+        "Check category assignment logic for hemangioendothelioma",
+        "Either reclassify disease or add sirolimus exception for vascular tumors",
+        "Verify prediction tier after fix"
+      ],
+      "created": "2026-02-07",
+      "parent_hypothesis": "h707"
+    },
+    {
+      "id": "h711",
+      "title": "DRKG Disease Coverage Gap Quantification: Which EC Diseases Are Missing from DRKG?",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h707 found 20/28 zero-prediction diseases are completely absent from DRKG (no edges at all). These appear to be newer MESH terms (D000077xxx, D058xxx) added after DRKG's 2020 build date. Quantifying the full MESH coverage gap would inform decisions about DRKG updates or external data integration.",
+      "steps": [
+        "Count all EC disease MESH IDs not present in DRKG",
+        "Correlate with MESH term creation dates (D000070000+ are post-2016)",
+        "Assess total GT pairs affected by DRKG absence",
+        "Determine if DRKG update or external KG supplementation would help"
+      ],
+      "created": "2026-02-07",
+      "parent_hypothesis": "h707"
     }
   ],
   "completed": [
@@ -16669,6 +16737,12 @@
       "hypothesis_id": "h703",
       "learning": "Drug coverage gap analysis: 730/1,158 GT drugs (63%) generate predictions. 41.3% of GT drugs are invisible (never predicted for any disease). Critical mass: GT\u22653 diseases \u2192 83.6% prediction rate; GT=1 \u2192 31.8%. Biologics (54 drugs), newer antihypertensives (20), newer antidiabetics (10) are the largest invisible classes. 28 diseases generate zero predictions. Corticosteroids dominate: top 9 of 20 most-predicted drugs, prednisolone\u2192143 diseases.",
       "implication": "GT expansion for single-indication drugs is the highest-ROI improvement possible: adding just 1 indication to GT=1 drugs doubles prediction rate (31.8%\u219259.1%). Biologics and newer drug classes need GT expansion to become visible to kNN. Consider alternative methods (ATC transfer, gene overlap) for 28 zero-prediction diseases."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h707",
+      "learning": "28 zero-prediction diseases: 24 absent from DRKG (newer MESH terms), 4 have correct predictions incorrectly filtered. Anti-VEGF drugs for retinal diseases (PDR, ROP) are the highest-impact rescue. Parent disease transfer works for 5/9 subtypes (HoFH best at 100% GT capture).",
+      "implication": "DRKG disease coverage has a systematic gap for post-2016 MESH terms. Filter rules can create false negatives for niche but correct predictions. Parent disease fallback mechanism could rescue ~8 diseases."
     }
   ],
   "collaborations": [

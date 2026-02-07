@@ -1,6 +1,44 @@
 # Research Loop Progress
 
-## Current Session: h703 - Drug DRKG Coverage Gap (2026-02-07)
+## Current Session: h707 - Zero-Prediction Disease Rescue (2026-02-07)
+
+### h707: Zero-Prediction Disease Rescue — VALIDATED (Meta-Analysis)
+
+**Methodology:** Scanned all 497 diseases to identify the 28 with zero predictions. Classified by root cause (no DRKG embedding vs filtered predictions). Tested parent disease transfer for 9 diseases with clear DRKG parents. Checked TransE coverage. Assessed medical plausibility of all rescue approaches.
+
+**Key findings:**
+1. **24/28 diseases have no DRKG embedding** — 20 completely absent from DRKG (newer MESH terms post-2016), 4 have edges as wrong entity type
+2. **4/28 have embeddings but all predictions filtered** — 3 of these have CORRECT predictions incorrectly filtered:
+   - PDR: Ranibizumab at R2 (GT drug, standard of care) → filtered by complication_non_validated
+   - ROP: Ranibizumab R1 + Aflibercept R4 (BOTH GT drugs) → filtered by mixed rules
+   - Hemangioendothelioma: Sirolimus R1 (GT drug) → filtered by cancer_no_gt
+3. **Parent disease transfer works for 5/9 subtypes:**
+   - HoFH → FH: 5/5 GT drugs found (26.3% precision, GOLDEN quality)
+   - Esophageal SCC → esophageal cancer: 3/4 GT drugs (11.5%)
+   - MZL → NHL: 2/2 GT drugs (10.5%)
+   - Ovarian carcinoma → ovarian cancer: 1/2 GT drugs
+   - MDS → AML: 1/3 GT drugs
+4. **TransE useless:** Only 1/24 missing diseases has TransE embedding
+
+**Actionable findings:**
+- Anti-VEGF whitelist for retinal diseases: HIGH impact, LOW effort → h708
+- Parent disease mapping infrastructure: HIGH impact, HIGH effort → h709
+- Hemangioendothelioma category fix: LOW impact, LOW effort → h710
+
+### New Hypotheses Generated (4)
+- h708: Anti-VEGF retinal disease whitelist (rescues PDR + ROP)
+- h709: Disease subtype-to-parent mapping infrastructure
+- h710: Hemangioendothelioma category reclassification
+- h711: DRKG disease coverage gap quantification
+
+### Recommended Next Steps
+1. **h708**: Anti-VEGF whitelist (LOW effort, rescues 3 GT drugs across 2 diseases)
+2. **h710**: Hemangioendothelioma fix (LOW effort, rescues 1 GT drug)
+3. **h709**: Parent disease mapping (HIGH effort but rescues ~12 drugs across 5 diseases)
+
+---
+
+## Previous Session: h703 - Drug DRKG Coverage Gap (2026-02-07)
 
 ### h703: Drug DRKG Coverage Gap Analysis — VALIDATED (Meta-Analysis)
 
