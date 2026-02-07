@@ -1,0 +1,35 @@
+{
+  "hypothesis": "h723",
+  "title": "Antimicrobial Spectrum as Mechanism Proxy for Infectious Diseases",
+  "status": "invalidated",
+  "full_data": {
+    "spectrum_match": {
+      "count": 77,
+      "gt_hits": 27,
+      "precision": 35.1
+    },
+    "non_antimicrobial": {
+      "count": 134,
+      "gt_hits": 32,
+      "precision": 23.9
+    },
+    "differential": 11.2
+  },
+  "holdout": {
+    "spectrum_match": {
+      "mean": 29.2,
+      "std": 14.7,
+      "n_per_seed": "2-15"
+    },
+    "non_antimicrobial": {
+      "mean": 31.0,
+      "std": 6.4,
+      "n_per_seed": "7-33"
+    },
+    "differential": -1.8,
+    "z_vs_medium": -0.59,
+    "z_vs_low": 1.0,
+    "note": "n per seed far below n>=30 minimum. Results unreliable."
+  },
+  "conclusion": "Spectrum matching is correctly used for DEMOTION (h560) but does NOT work for PROMOTION. The 77 spectrum-matched predictions remain correctly at LOW."
+}

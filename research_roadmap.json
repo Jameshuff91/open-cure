@@ -11380,7 +11380,7 @@
       "title": "Gene-Poor Disease Expansion: DRKG vs Disease Ontology Gene Counts",
       "description": "h408 revealed many skin diseases have very few DRKG gene associations (ichthyosis=8, TEN=2, HS=2, eczema=2). These gene-poor diseases may benefit from external gene-disease databases (DisGeNET, OMIM, ClinVar, HPO gene associations). Expanding disease gene sets could improve drug-target overlap scoring and help predict which drugs target disease-relevant pathways.",
       "hypothesis": "External gene-disease databases contain significantly more gene associations for DRKG gene-poor diseases, and enriching them would improve prediction quality",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -11391,8 +11391,8 @@
         "Calculate drug-target/disease-gene overlap with enriched gene sets",
         "Assess whether enriched overlap predicts holdout precision better"
       ],
-      "findings": null,
-      "result_metric": null,
+      "findings": "Subsumed by h720. External gene-disease databases (CTD, Open Targets) cannot provide discriminative mechanism signal for gene-poor diseases. See h720 findings.",
+      "result_metric": "See h720",
       "category": "meta-analysis",
       "rationale": "h408 revealed many skin diseases have very few DRKG gene associations (ichthyosis=8, TEN=2, HS=2, eczema=2). These gene-poor diseases may benefit from external gene-disease databases (DisGeNET, OMIM, ClinVar, HPO gene associations). Expanding disease gene sets could improve drug-target overlap scoring and help predict which drugs target disease-relevant pathways."
     },
@@ -14545,7 +14545,7 @@
     {
       "id": "h717",
       "title": "Respiratory Disease Subtype Drug Class Coherence: Do ILD vs Obstructive vs Allergic Need Different Filters?",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14593,7 +14593,7 @@
     {
       "id": "h720",
       "title": "Gene-Poor Disease Supplementation: Add DisGeNET/OMIM Genes for 41 Zero-Gene Diseases",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14604,7 +14604,9 @@
         "Check coverage: how many of the 41 zero-gene diseases gain genes?",
         "For covered diseases, compute mechanism overlap with drug targets",
         "Estimate holdout precision impact if these gain mechanism support"
-      ]
+      ],
+      "findings": "Gene-poor disease supplementation via external databases (CTD, Open Targets) does NOT provide actionable mechanism signal.\n\nKEY FINDINGS:\n1. 41 zero-gene diseases generate 1174 predictions (418 LOW, 218 MEDIUM, 63 HIGH, 475 FILTER)\n2. Of 418 LOW, 117 are \"standard\" (no specific demotion rule) and could become MEDIUM with mechanism\n3. 24/41 (59%) zero-gene diseases are INFECTIOUS \u2014 caused by pathogens, not human gene variants\n4. CTD gene-disease associations have a FUNDAMENTAL specificity problem:\n   - CTD direct evidence: only 8/41 diseases have curated genes (1-7 genes each). ZERO mechanism overlaps.\n   - CTD inferred genes: broadly computed, creating 6K-23K genes per disease. This gives 60-85% of ALL drugs \"mechanism support\" \u2014 completely non-discriminative.\n   - Comparison: DRKG disease genes for asthma (189 genes) give only 10.6% drug overlap = discriminative. CTD inferred for conjunctivitis (22799 genes) gives 84.8% overlap = noise.\n5. Open Targets has 500-2800 targets per disease \u2014 same breadth problem as CTD inferred.\n6. ROOT CAUSE: Infectious diseases lack human genetic etiology. Gene-disease associations for infections are fundamentally different from those for cancer/metabolic/autoimmune diseases. They represent host response genes, not causal mechanisms.\n\nCONCLUSION: Gene-poor disease supplementation cannot improve mechanism support for the 41 zero-gene diseases because:\n(a) Curated sources have too few genes \u2192 zero mechanism overlaps\n(b) Computationally inferred sources have too many genes \u2192 non-discriminative (85% drug overlap)\n(c) The fundamental biology: infectious diseases are gene-poor because their etiology is pathogen-based, not human-genetic",
+      "result_metric": "0 mechanism overlaps from CTD direct; 65/117 from CTD inferred but 60-85% non-specific"
     },
     {
       "id": "h721",
@@ -14635,6 +14637,99 @@
         "If any category exceeds MEDIUM threshold, implement category-specific rescue",
         "Check for CS artifact in psychiatric predictions"
       ]
+    },
+    {
+      "id": "h723",
+      "title": "Pathogen-Type Mechanism Proxy: Drug Antimicrobial Spectrum as Mechanism Substitute for Infectious Diseases",
+      "status": "invalidated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h720 showed that infectious diseases (24/41 zero-gene diseases) lack human gene etiology, so drug-target/disease-gene overlap is fundamentally inappropriate as a mechanism check. For infectious diseases, the relevant 'mechanism' is drug antimicrobial spectrum matching pathogen type. We already filter mismatches (h560) but DON'T reward matches. Correct antimicrobial spectrum (antifungal\u2192fungal, antibacterial\u2192bacterial) could serve as a mechanism-equivalent signal for tier assignment of infectious disease predictions. This would let antifungals for fungal diseases (athletes foot, candidiasis, aspergillosis) gain 'mechanism-equivalent' support.",
+      "steps": [
+        "Identify all infectious zero-gene disease predictions currently at LOW",
+        "Check if drug antimicrobial class matches disease pathogen type",
+        "For matched pairs (antifungal\u2192fungal, antibacterial\u2192bacterial): compute holdout precision",
+        "Compare to MEDIUM holdout precision \u2014 if competitive, implement spectrum-match as mechanism-equivalent",
+        "Estimate tier impact"
+      ],
+      "findings": "Antimicrobial spectrum matching (drug class matches pathogen type) does NOT provide a usable tier promotion signal for infectious disease predictions.\n\nKEY FINDINGS:\n1. 77 infectious LOW predictions have spectrum match (antifungal\u2192fungal, antibacterial\u2192bacterial)\n2. Full-data precision: 35.1% (match) vs 23.9% (non-antimicrobial) \u2014 looks promising (+11.2pp)\n3. HOLDOUT precision: 29.2% \u00b1 14.7% (match) vs 31.0% \u00b1 6.4% (non-antimicrobial) \u2014 NO significant difference (-1.8pp)\n4. N per seed is only 2-15 (far below n\u226530 minimum for reliable holdout)\n5. Z vs MEDIUM = -0.59 (not significantly different from MEDIUM 38.3%)\n6. Z vs LOW = +1.00 (not significantly above LOW 14.4%)\n7. The full-data\u2192holdout gap is driven by rank: most matches are R11-20 where holdout drops steeply\n\nCONCLUSION: Spectrum matching is correctly used for DEMOTION (h560, 0% mismatch holdout) but does NOT work for PROMOTION. The positive signal (correct spectrum) does not provide enough additional precision over the baseline. Infectious disease predictions are inherently difficult because: (a) small GT footprint, (b) kNN trained on all diseases but infectious have few neighbors, (c) disease split removes few infectious diseases per holdout.",
+      "result_metric": "Holdout: 29.2% \u00b1 14.7% (match) vs 31.0% \u00b1 6.4% (non-AM), p=NS",
+      "category": "tier-improvement"
+    },
+    {
+      "id": "h724",
+      "title": "Non-Infectious Gene-Poor Disease Audit: Are Ophthalmic/Dermatological Zero-Gene Diseases Misclassified?",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h720 found 17/41 zero-gene diseases are non-infectious (6 ophthalmic, 4 dermatological, 3 toxicological, 4 other). Some of these SHOULD have gene associations (e.g., hyperopia has known genetic basis \u2014 GJD2, ZNF469, LAMA2). The zero-gene status may be a MESH mapping issue, not a biological reality. Checking whether parent/related MESH terms have gene associations in DRKG could rescue some non-infectious gene-poor diseases without needing external databases.",
+      "steps": [
+        "List the 17 non-infectious zero-gene diseases",
+        "For each, check if parent MESH terms have gene associations in DRKG disease_genes.json",
+        "Identify cases where the disease is a MESH subtype but genes are annotated at the parent level",
+        "Test if inheriting parent disease genes creates valid mechanism overlaps",
+        "Estimate prediction count impact"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "meta-analysis"
+    },
+    {
+      "id": "h725",
+      "title": "CTD Curated Gene-Disease for Gene-Sparse (Not Zero) Diseases: Supplement 1-10 Gene Diseases",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "rationale": "h720 focused on 41 ZERO-gene diseases. But h719 found 488 predictions where drug targets and disease genes exist but DON'T overlap. Many diseases with 1-10 genes might benefit from supplementary CTD direct evidence (curated) genes. CTD has 123K curated gene-disease associations. Even 2-3 additional genes per disease could create new mechanism overlaps. Unlike zero-gene diseases, gene-sparse diseases already have some gene biology \u2014 supplementation is more likely to be relevant.",
+      "steps": [
+        "Identify diseases with 1-10 DRKG genes that have no-overlap predictions",
+        "Check CTD direct evidence for these diseases",
+        "For diseases with CTD direct genes not in DRKG: compute new mechanism overlaps",
+        "Validate that supplementary genes are biologically relevant (not noise)",
+        "Estimate holdout impact of new mechanism support"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "meta-analysis"
+    },
+    {
+      "id": "h726",
+      "title": "Infectious Disease Holdout Evaluation: Stratified Splitting for n\u226530",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "rationale": "h723 holdout showed n\u22482-15 per seed for infectious LOW spectrum-matched predictions. The disease-level holdout split is too aggressive for infectious diseases (only ~50 infectious diseases, split 80/20 leaves ~10 in holdout). Could use stratified splitting that ensures minimum infectious disease count in holdout, or increase number of seeds to get reliable estimates. Without this, all infectious disease sub-analyses are unreliable.",
+      "steps": [
+        "Count infectious diseases with GT by pathogen type",
+        "Test stratified splitting (ensure \u226515 infectious diseases per holdout)",
+        "Re-evaluate h560 and h723 findings with stratified holdout",
+        "Report confidence intervals"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "methodology"
+    },
+    {
+      "id": "h727",
+      "title": "Infectious Disease GT Gap Audit: Why Do Correct Antifungals Miss GT?",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h723 found that clotrimazole\u2192athletes foot, voriconazole\u2192ringworm, fluconazole\u2192esophageal candidiasis are ALL FDA-approved and in GT, but clotrimazole\u2192athletes foot is NOT in GT despite being approved. This suggests GT gaps specific to over-the-counter antifungals. If these gaps are systematic (OTC drugs underrepresented in Every Cure data), filling them could improve infectious disease holdout precision.",
+      "steps": [
+        "Identify spectrum-matched predictions that are medically correct but not in GT",
+        "Check if these drugs are FDA-approved for these infections",
+        "If approved: add to expanded GT",
+        "Re-evaluate holdout impact"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "gt-quality"
     }
   ],
   "completed": [
@@ -16975,6 +17070,18 @@
       "hypothesis_id": "h719",
       "learning": "2-hop mechanism paths through DRKG gene-gene network do NOT predict treatment efficacy. Network too dense (27K genes, 2.35M edges) \u2014 at 2 hops, specificity collapses. Holdout: 2hop>=4 = 25.5% vs no-2hop = 23.2% (p>0.5). Direct 1-hop overlap remains the only valid mechanism signal.",
       "implication": "Do NOT attempt mechanism path expansion. Focus on improving direct gene coverage: (a) supplement gene-poor diseases with external databases, (b) category-specific mechanism may work for psychiatric/dermatological."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h720",
+      "learning": "Gene-disease databases have a fundamental specificity tradeoff: curated (CTD direct) gives 0-7 genes per infectious disease (too sparse for mechanism overlap), while inferred (CTD all) gives 6K-23K genes (60-85% of drugs overlap = noise). Infectious diseases lack human genetic etiology \u2014 gene-based mechanism checks are structurally inappropriate for them. Need alternative mechanism proxy (antimicrobial spectrum matching).",
+      "implication": "For infectious diseases, drug antimicrobial spectrum matching pathogen type is the biologically appropriate mechanism substitute. Also check gene-sparse (not zero) diseases where supplementary genes may help."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h723",
+      "learning": "Antimicrobial spectrum matching (correct drug class for pathogen type) has 35.1% full-data precision but only 29.2% \u00b1 14.7% holdout \u2014 NOT significantly different from non-antimicrobial LOW (31.0%). Full-data\u2192holdout gap driven by R11-20 dominance. Spectrum matching is correctly used for demotion (h560, 0% mismatch) but the positive signal is too weak for promotion. Infectious diseases are inherently hard for holdout: small GT footprint + few diseases in holdout per seed.",
+      "implication": "CLOSED: Antimicrobial spectrum matching for tier promotion. The asymmetry (demotion works, promotion doesn't) is because mismatches are clean biological impossibilities (0%), while matches are necessary but not sufficient (antimicrobial must also be clinically appropriate for the specific pathogen)."
     }
   ],
   "collaborations": [

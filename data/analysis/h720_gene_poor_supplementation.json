@@ -1,0 +1,37 @@
+{
+  "hypothesis": "h720",
+  "title": "Gene-Poor Disease Supplementation via External Databases",
+  "status": "invalidated",
+  "zero_gene_diseases": 41,
+  "predictions_affected": 1174,
+  "promotable_low": 117,
+  "ctd_coverage": {
+    "diseases_found": 28,
+    "direct_evidence_diseases": 8,
+    "direct_evidence_max_genes": 7,
+    "mechanism_overlaps_direct": 0,
+    "mechanism_overlaps_all_inferred": 65,
+    "note": "Inferred genes are 60-85% non-specific (most drugs overlap)"
+  },
+  "specificity_analysis": {
+    "conjunctivitis_ctd_genes": 22799,
+    "conjunctivitis_drug_overlap_pct": 84.8,
+    "common_cold_ctd_genes": 6491,
+    "common_cold_drug_overlap_pct": 65.5,
+    "comparison_asthma_drkg_genes": 189,
+    "comparison_asthma_drug_overlap_pct": 10.6,
+    "note": "CTD inferred genes are orders of magnitude less specific than DRKG curated genes"
+  },
+  "root_cause": "24/41 zero-gene diseases are infectious (pathogen-based etiology, not human genetic). Gene-disease associations are fundamentally inappropriate for mechanism checking in infectious diseases.",
+  "new_hypotheses": [
+    "h723 (antimicrobial spectrum as mechanism proxy)",
+    "h724 (non-infectious gene-poor disease audit)",
+    "h725 (gene-sparse supplementation)"
+  ],
+  "antimicrobial_spectrum_match_preview": {
+    "total_matched": 39,
+    "fungal": 19,
+    "bacterial": 20,
+    "note": "These spectrum-matched predictions are likely high quality (antifungals for fungal infections, etc.)"
+  }
+}

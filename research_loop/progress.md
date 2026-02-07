@@ -1,6 +1,48 @@
 # Research Loop Progress
 
-## Current Session: h719 - DRKG Mechanism Path Coverage (2026-02-07)
+## Current Session: h720+h723 - Gene-Poor Disease Supplementation + Antimicrobial Spectrum Matching (2026-02-07)
+
+### h720: Gene-Poor Disease Supplementation via External Databases — INVALIDATED
+
+**Methodology:** Investigated whether external gene-disease databases (CTD, DisGeNET, Open Targets) could provide mechanism support for 41 zero-gene diseases (diseases with no DRKG gene associations). Downloaded and analyzed CTD gene-disease associations (122.7M records). Tested both curated (direct evidence) and computationally inferred gene sets.
+
+**Key findings:**
+1. 41 zero-gene diseases generate 1,174 predictions (117 standard LOW promotable to MEDIUM with mechanism)
+2. 24/41 (59%) are infectious diseases — caused by pathogens, not human gene variants
+3. CTD direct evidence: only 8/41 diseases have curated genes (1-7 genes each) → **0 mechanism overlaps**
+4. CTD inferred genes: 6K-23K genes per disease → 60-85% of ALL drugs overlap (non-discriminative noise)
+5. Comparison: DRKG asthma (189 genes) = 10.6% drug overlap (specific); CTD conjunctivitis (22,799 genes) = 84.8% drug overlap (noise)
+6. Open Targets: similar breadth problem (500-2800 targets per disease)
+
+**Root cause:** Gene-disease associations are fundamentally inappropriate for mechanism checking in infectious diseases. Their etiology is pathogen-based, not human-genetic.
+
+### h723: Antimicrobial Spectrum as Mechanism Proxy — INVALIDATED
+
+**Methodology:** Tested whether antimicrobial drug class matching pathogen type (antifungal→fungal, antibacterial→bacterial) could serve as a mechanism-equivalent signal for tier promotion of infectious disease predictions.
+
+**Key findings:**
+1. 77 infectious LOW predictions have spectrum match (39 zero-gene + 38 from other infectious diseases)
+2. Full-data precision: 35.1% (match) vs 23.9% (non-antimicrobial) — promising +11.2pp
+3. **HOLDOUT precision: 29.2% ± 14.7% (match) vs 31.0% ± 6.4% (non-antimicrobial) — NO significant difference**
+4. n per seed only 2-15 (far below n≥30 minimum for reliable holdout)
+5. Z vs MEDIUM = -0.59, Z vs LOW = +1.00 — inconclusive
+6. Spectrum matching correctly used for demotion (h560, 0% mismatch) but positive signal too weak for promotion
+
+### New Hypotheses Generated (5)
+- h723: Antimicrobial spectrum matching (completed/invalidated)
+- h724: Non-infectious gene-poor disease audit (priority 5)
+- h725: CTD supplementation for gene-sparse (1-10 gene) diseases (priority 5)
+- h726: Stratified holdout splitting for infectious diseases (priority 5)
+- h727: Infectious GT gap audit for OTC antifungals (priority 5)
+
+### Recommended Next Steps
+1. h724: Non-infectious gene-poor disease audit (quick, low effort)
+2. h727: GT gap audit for OTC antifungals (could rescue GT precision)
+3. Continue with priority-4 medium-effort hypotheses
+
+---
+
+## Previous Session: h719 - DRKG Mechanism Path Coverage (2026-02-07)
 
 ### h719: DRKG Mechanism Path Coverage — VALIDATED (Meta-Analysis)
 
