@@ -14057,13 +14057,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Find all internal GT entries for rifampicin, pyrazinamide, ethambutol, streptomycin",
         "For each non-TB disease: is the association therapeutic or co-occurrence?",
         "Remove confirmed false entries",
         "Check expanded GT for same patterns"
-      ]
+      ],
+      "findings": "h690 VALIDATED: TB Drug Co-occurrence Pattern \u2014 Only 1 New False Entry.\n\nChecked all TB drugs (rifampicin, pyrazinamide, ethambutol, streptomycin, rifabutin,\ncycloserine, ethionamide, aminosalicylic acid, bedaquiline, pretomanid, linezolid).\n\nFINDINGS:\n1. Only 1 false entry: Pyrazinamide \u2192 immunodeficiency (HIV/TB co-treatment context)\n2. Streptomycin \u2192 plague: VALID (first-line treatment per WHO/CDC)\n3. Streptomycin \u2192 tularemia: VALID (drug of choice per guidelines)\n4. All other TB drug associations are to TB-related diseases (legitimate)\n\nKEY INSIGHT: Isoniazid was the ONLY TB drug with multiple false associations (3, found in h685).\nOther TB drugs are mostly correctly associated with TB variants or have genuine\nnon-TB therapeutic uses (streptomycin for plague/tularemia, cycloserine for UTI).\n\nThe co-occurrence artifact pattern is SPECIFIC to isoniazid, likely because:\n1. INH is the most widely prescribed TB drug (prophylaxis + treatment)\n2. INH is used for TB prevention in silicosis/immunocompromised (not treatment of those diseases)\n3. INH has broader co-occurrence in clinical contexts than other TB drugs\n\nImpact: 1 false GT entry removed (pyrazinamide \u2192 immunodeficiency). Minimal.",
+      "result_metric": "1 false GT entry removed (pyrazinamide\u2192immunodeficiency)"
     },
     {
       "id": "h691",
@@ -16333,6 +16335,12 @@
       "hypothesis_id": "h689",
       "learning": "Of 64 diagnostic/imaging agents in DrugBank, only ~15 are in DRKG. False GT contamination is concentrated in PET tracers and stimulation test drugs. Pentagastrin had 10 false expanded GT entries including agoraphobia/social anxiety. Comprehensive filter now covers 12 diagnostic agents. Key dual-use exceptions: methylene blue (methemoglobinemia), gallium nitrate (hypercalcemia), I-131 (thyroid), iobenguane (neuroblastoma), metyrapone (Cushing's), tetracosactide (infantile spasms).",
       "implication": "Diagnostic agent contamination is now well-controlled. Future GT additions should be checked against the comprehensive filter list."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h690",
+      "learning": "TB drug co-occurrence artifacts are SPECIFIC to isoniazid (3 false entries in h685). Other TB drugs have almost no false associations \u2014 most are correctly linked to TB variants or have genuine non-TB uses (streptomycin\u2192plague/tularemia). The isoniazid artifact is driven by its broad prophylactic use in non-TB contexts.",
+      "implication": "Co-occurrence artifact risk scales with clinical breadth of use, not drug class. Drugs used prophylactically in non-target diseases are more likely to generate false GT entries."
     }
   ],
   "collaborations": [

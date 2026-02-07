@@ -2341,6 +2341,11 @@ class DrugRepurposingPredictor:
                 'silicosis',  # INH is for TB prophylaxis in silicosis, not silicosis itself
                 'malabsorption syndrome',  # False co-occurrence
             },
+            # h690: Pyrazinamide treats TB, not immunodeficiency
+            # (co-occurrence from HIV/TB co-infection treatment context)
+            'pyrazinamide': {
+                'immunodeficiency',
+            },
             # Chlorhexidine is a topical antiseptic, not for coagulation disorders
             'chlorhexidine': {
                 'purpura fulminans',  # Requires heparin/protein C/plasma
