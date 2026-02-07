@@ -14561,7 +14561,7 @@
     {
       "id": "h718",
       "title": "Cancer Targeted Therapy LOW Re-evaluation: 34% GT Hit Rate Suggests Some Should Be MEDIUM",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14576,7 +14576,7 @@
     {
       "id": "h719",
       "title": "DRKG Mechanism Path Coverage: Which Drug-Disease Pairs Lack Mechanism Paths and Why?",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14586,6 +14586,54 @@
         "For each, check DRKG edge types between drug targets and disease genes",
         "Classify: (a) genuine no mechanism, (b) indirect mechanism (2-hop), (c) missing DRKG edges",
         "If many are (b) or (c), propose mechanism path expansion"
+      ],
+      "findings": "h719 VALIDATED (meta-analysis): Mechanism coverage gap fully characterized.\n\nKEY FINDINGS:\n1. 627 predictions would become MEDIUM if they had mechanism support (43% tier expansion)\n2. Root cause breakdown of missing mechanism:\n   - 22.2% (139): Disease has NO gene annotations in reference data\n   - 77.8% (488): Drug targets and disease genes exist but don't directly overlap\n3. Among 488 no-overlap predictions, 68.2% (333) HAVE 2-hop indirect paths\n   through DRKG gene-gene network\n4. 2-hop gene count IS a gradient signal on full-data:\n   0 genes: 14.3%, 1: 13.9%, 2-3: 18.7%, 4-10: 22.4%, 11+: 30.1%\n5. BUT on holdout: 2hop>=4 = 25.5% \u00b1 8.5% vs no-2hop = 23.2% \u00b1 5.4%\n   \u2192 BARELY DIFFERENT. 2-hop doesn't survive holdout validation.\n6. Promoting 2hop>=4 to MEDIUM would dilute MEDIUM by -3.1pp.\n\nCONCLUSION: Direct mechanism (1-hop gene overlap) is fundamentally different from\nindirect mechanism (2-hop). The DRKG gene-gene network is too dense (27K genes,\n2.35M edges) \u2014 at 2 hops, almost anything connects to anything, destroying\nspecificity. The binding constraint on MEDIUM tier is NOT fixable by expanding\nmechanism path length. Mechanism improvement requires either:\n(a) Better gene annotations for gene-poor diseases (41 diseases with 0 genes)\n(b) External gene-disease databases (DisGeNET, OMIM) to supplement DRKG\n(c) Completely different mechanism evidence (pathway analysis, drug signatures)\n\nTIER X MECHANISM CROSS-TAB (R1-20, has_targets):\nGOLDEN: 71.3% have mechanism\nHIGH:   49.9% have mechanism\nMEDIUM: 35.8% have mechanism\nLOW:    16.9% have mechanism\nFILTER: 12.0% have mechanism\n\nCATEGORY VARIATION (would-be-MEDIUM with 2-hop, full-data):\nPsychiatric: 52.8%, Dermatological: 37.8%, Endocrine: 36.4%\nInfectious: 31.6%, Renal: 28.6%, Respiratory: 22.4%\nOphthalmic: 0%, Autoimmune: 8.1%",
+      "result_metric": "2-hop holdout 25.5% \u00b1 8.5% (not MEDIUM quality). 627 would-be-MEDIUM predictions identified."
+    },
+    {
+      "id": "h720",
+      "title": "Gene-Poor Disease Supplementation: Add DisGeNET/OMIM Genes for 41 Zero-Gene Diseases",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h719 found 41 diseases with zero gene annotations in our reference data. These diseases contribute 139 would-be-MEDIUM predictions that cannot get mechanism support. DisGeNET and OMIM likely have gene associations for many of these diseases. Adding external gene-disease links would enable mechanism checks that are currently impossible. Unlike 2-hop expansion (which failed), this adds DIRECT mechanism evidence.",
+      "steps": [
+        "Download DisGeNET gene-disease associations",
+        "Map disease IDs (MESH \u2192 UMLS \u2192 DisGeNET)",
+        "Check coverage: how many of the 41 zero-gene diseases gain genes?",
+        "For covered diseases, compute mechanism overlap with drug targets",
+        "Estimate holdout precision impact if these gain mechanism support"
+      ]
+    },
+    {
+      "id": "h721",
+      "title": "2-Hop Mechanism as Deliverable Annotation: Indirect Mechanism Evidence Flag",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h719 showed 2-hop mechanism is NOT promotable (25.5% vs 23.2% holdout) but IS a detectable signal on full-data (gradient from 14.3% to 30.1% with increasing 2-hop gene count). While not useful for tier assignment, the 2-hop gene count and connecting genes could be valuable annotations in the deliverable \u2014 giving collaborators indirect mechanism hypotheses for follow-up. This is similar to TransE consilience (annotation, not promotion).",
+      "steps": [
+        "Add two_hop_gene_count field to DrugPrediction",
+        "Compute 2-hop connecting genes for all predictions",
+        "Add to deliverable as supplementary column",
+        "Test: does 2-hop annotation help literature validation efficiency?"
+      ]
+    },
+    {
+      "id": "h722",
+      "title": "Category-Specific 2-Hop Mechanism: Psychiatric/Dermatological May Be MEDIUM-Quality",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "medium",
+      "rationale": "h719 showed psychiatric 2-hop predictions have 52.8% full-data precision and dermatological 37.8%. These category-specific rates exceed MEDIUM average (43% holdout). The overall 2-hop signal was diluted by ophthalmic (0%) and autoimmune (8.1%). Category-specific 2-hop mechanism promotion might work where blanket promotion fails. Need holdout validation for these specific categories.",
+      "steps": [
+        "Isolate psychiatric and dermatological LOW predictions with 2-hop mechanism",
+        "Run category-specific holdout evaluation (5 seeds)",
+        "If any category exceeds MEDIUM threshold, implement category-specific rescue",
+        "Check for CS artifact in psychiatric predictions"
       ]
     }
   ],
@@ -16921,6 +16969,12 @@
       "hypothesis_id": "h714",
       "learning": "Internal GT frequency is NOT the binding constraint on MEDIUM tier size. 2x GT would only add 50-90 MEDIUM predictions (3-6%). The real bottlenecks are: (1) mechanism support (77% of eligible LOW lack it), (2) category-specific demotions (51%), (3) rank quality (only R1-5 match MEDIUM). Cancer targeted therapy at LOW has surprising 34% GT hit rate.",
       "implication": "Pursuing more internal GT has diminishing returns. Focus should be on mechanism path coverage in DRKG and re-evaluating category-specific demotion thresholds."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h719",
+      "learning": "2-hop mechanism paths through DRKG gene-gene network do NOT predict treatment efficacy. Network too dense (27K genes, 2.35M edges) \u2014 at 2 hops, specificity collapses. Holdout: 2hop>=4 = 25.5% vs no-2hop = 23.2% (p>0.5). Direct 1-hop overlap remains the only valid mechanism signal.",
+      "implication": "Do NOT attempt mechanism path expansion. Focus on improving direct gene coverage: (a) supplement gene-poor diseases with external databases, (b) category-specific mechanism may work for psychiatric/dermatological."
     }
   ],
   "collaborations": [

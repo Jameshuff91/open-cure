@@ -119,6 +119,27 @@ DISEASE_SYNONYMS: Dict[str, str] = {
     "inflammatory bowel disease": "inflammatory bowel disease",
     "ibd": "inflammatory bowel disease",
 
+    # h712: Synonym mappings for top unmapped EC diseases
+    "diabetic kidney disease": "diabetic nephropathy",
+    "diabetic renal disease": "diabetic nephropathy",
+    "septicaemia": "sepsis",
+    "septicemia": "sepsis",
+    "renal cell carcinoma": "renal carcinoma",
+    "regional enteritis": "crohn disease",
+    "hodgkins disease": "hodgkin lymphoma",
+    "severe psoriasis": "psoriasis",
+    "openangle glaucoma": "open angle glaucoma",
+    "acute gouty arthritis": "gout",
+    "erosive esophagitis": "esophagitis",
+    "gastroesophageal reflux disease": "gerd",
+    "idiopathic thrombocytopenic purpura": "itp",
+    "acne rosacea": "rosacea",
+    "primary dysmenorrhea": "dysmenorrhea",
+    "chronic anterior uveitis": "uveitis",
+    "postherpetic neuralgia": "postherpetic neuralgia",
+    "agerelated macular degeneration": "macular degeneration",
+    "age related macular degeneration": "macular degeneration",
+
     # h336/h347: Additional synonyms for GT matching (+25 GT hits)
     # These were found by analyzing prediction-GT mismatches
     "acquired hemolytic anemia": "anemia, hemolytic, acquired",  # Comma reordering
@@ -317,6 +338,69 @@ def load_mesh_mappings() -> Dict[str, str]:
         "crohn disease": "drkg:Disease::MESH:D003424",
         "allergic rhinitis": "drkg:Disease::MESH:D065631",
         "acne vulgaris": "drkg:Disease::MESH:D000152",
+        # h712: Top unmapped EC disease names (by GT drug count)
+        # Group 1: Diseases already in predictor under different names (synonyms)
+        "diabetic kidney disease": "drkg:Disease::MESH:D003928",  # = diabetic nephropathy
+        "depression": "drkg:Disease::MESH:D003865",  # = major depressive disorder
+        "septicemia": "drkg:Disease::MESH:D018805",  # = sepsis
+        "renal cell carcinoma": "drkg:Disease::MESH:D002292",  # = renal carcinoma
+        "regional enteritis": "drkg:Disease::MESH:D003424",  # = Crohn disease
+        "hodgkins disease": "drkg:Disease::MESH:D006689",  # = Hodgkin Disease
+        "hodgkin lymphoma": "drkg:Disease::MESH:D006689",
+        "severe psoriasis": "drkg:Disease::MESH:D011565",  # = psoriasis
+        "openangle glaucoma": "drkg:Disease::MESH:D005902",  # = open-angle glaucoma
+        "open angle glaucoma": "drkg:Disease::MESH:D005902",
+        # Group 2: New diseases to add to predictor
+        "emphysema": "drkg:Disease::MESH:D004646",
+        "pulmonary emphysema": "drkg:Disease::MESH:D004646",
+        "ocular hypertension": "drkg:Disease::MESH:D009798",
+        "meningitis": "drkg:Disease::MESH:D008581",
+        "mycosis fungoides": "drkg:Disease::MESH:D009182",
+        "insomnia": "drkg:Disease::MESH:D007319",
+        "hepatocellular carcinoma": "drkg:Disease::MESH:D006528",
+        "migraine": "drkg:Disease::MESH:D008881",
+        "migraine disorders": "drkg:Disease::MESH:D008881",
+        "erosive esophagitis": "drkg:Disease::MESH:D004942",
+        "esophagitis": "drkg:Disease::MESH:D004942",
+        "acute gouty arthritis": "drkg:Disease::MESH:D006073",
+        "gout": "drkg:Disease::MESH:D006073",
+        "chronic renal failure": "drkg:Disease::MESH:D051436",
+        "chronic kidney disease": "drkg:Disease::MESH:D051436",
+        "gastroesophageal reflux disease": "drkg:Disease::MESH:D005764",
+        "gerd": "drkg:Disease::MESH:D005764",
+        "serum sickness": "drkg:Disease::MESH:D012713",
+        "iritis": "drkg:Disease::MESH:D007500",
+        "idiopathic thrombocytopenic purpura": "drkg:Disease::MESH:D016553",
+        "itp": "drkg:Disease::MESH:D016553",
+        "leukemia": "drkg:Disease::MESH:D007938",
+        "leukemias": "drkg:Disease::MESH:D007938",
+        "arthritis": "drkg:Disease::MESH:D001168",
+        "benign prostatic hyperplasia": "drkg:Disease::MESH:D011470",
+        "bph": "drkg:Disease::MESH:D011470",
+        "pheochromocytoma": "drkg:Disease::MESH:D010673",
+        "mixed dyslipidemia": "drkg:Disease::MESH:D050171",
+        "hypertriglyceridemia": "drkg:Disease::MESH:D015228",
+        "iron deficiency anemia": "drkg:Disease::MESH:D018798",
+        "status epilepticus": "drkg:Disease::MESH:D013226",
+        "acne rosacea": "drkg:Disease::MESH:D012393",
+        "rosacea": "drkg:Disease::MESH:D012393",
+        "h pylori infection": "drkg:Disease::MESH:D016481",
+        "helicobacter pylori infection": "drkg:Disease::MESH:D016481",
+        "hyperphosphatemia": "drkg:Disease::MESH:D054559",
+        "primary dysmenorrhea": "drkg:Disease::MESH:D004412",
+        "dysmenorrhea": "drkg:Disease::MESH:D004412",
+        "chancroid": "drkg:Disease::MESH:D002602",
+        "anthrax": "drkg:Disease::MESH:D000881",
+        "tinea cruris": "drkg:Disease::MESH:D014005",
+        "tinea pedis": "drkg:Disease::MESH:D014006",
+        "uveitis": "drkg:Disease::MESH:D014606",
+        "anterior uveitis": "drkg:Disease::MESH:D014606",
+        "chronic anterior uveitis": "drkg:Disease::MESH:D014606",
+        "urinary incontinence": "drkg:Disease::MESH:D014549",
+        "postherpetic neuralgia": "drkg:Disease::MESH:D051474",
+        "age related macular degeneration": "drkg:Disease::MESH:D008268",
+        "agerelated macular degeneration": "drkg:Disease::MESH:D008268",
+        "macular degeneration": "drkg:Disease::MESH:D008268",
     }
 
     # Agent mappings

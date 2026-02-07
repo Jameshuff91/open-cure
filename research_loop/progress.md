@@ -1,6 +1,46 @@
 # Research Loop Progress
 
-## Current Session: h710 - Hemangioendothelioma Cancer Type Fix (2026-02-07)
+## Current Session: h719 - DRKG Mechanism Path Coverage (2026-02-07)
+
+### h719: DRKG Mechanism Path Coverage — VALIDATED (Meta-Analysis)
+
+**Methodology:** Comprehensive analysis of why LOW-tier predictions lack mechanism support (drug-target ∩ disease-gene overlap). Scanned all 1057 diseases, collected 3186 LOW no-mechanism predictions at R1-20. Classified root causes and tested 2-hop indirect mechanism paths through DRKG gene-gene network.
+
+**Key findings:**
+1. **627 predictions would become MEDIUM if they had mechanism** (43% tier expansion potential)
+2. **Root cause breakdown of missing mechanism:**
+   - 22.2% (139 preds across 41 diseases): Disease has NO gene annotations
+   - 77.8% (488 preds): Drug targets and disease genes exist but don't overlap
+3. **2-hop indirect paths exist for 68.2%** (333/488) of no-overlap predictions
+4. **2-hop gene count is a gradient signal on full-data:** 0→14.3%, 1→13.9%, 2-3→18.7%, 4-10→22.4%, 11+→30.1%
+5. **BUT 2-hop fails on holdout:** 2hop≥4 = 25.5% ± 8.5% vs no-2hop = 23.2% ± 5.4% — NOT significant
+6. **Promoting 2hop≥4 to MEDIUM** would dilute MEDIUM by -3.1pp (55.1→52.1%)
+7. **Category variation large:** psychiatric 52.8%, dermatological 37.8%, ophthalmic 0%, autoimmune 8.1%
+
+**Conclusion:** DRKG gene-gene network too dense (27K genes, 2.35M edges) — at 2 hops, specificity collapses. Direct mechanism (1-hop) is fundamentally different from indirect (2-hop). The binding constraint on MEDIUM tier is NOT fixable by expanding mechanism path length. Requires: (a) gene-poor disease supplementation with external databases, (b) category-specific mechanism approaches.
+
+**Tier x Mechanism (R1-20, has_targets):**
+| Tier | With Mech | No Mech | Total | Mech % |
+|------|-----------|---------|-------|--------|
+| GOLDEN | 328 | 132 | 460 | 71.3% |
+| HIGH | 455 | 456 | 911 | 49.9% |
+| MEDIUM | 525 | 941 | 1466 | 35.8% |
+| LOW | 648 | 3186 | 3834 | 16.9% |
+| FILTER | 224 | 1640 | 1864 | 12.0% |
+
+### New Hypotheses Generated (3)
+- h720: Gene-poor disease supplementation via DisGeNET/OMIM (medium impact)
+- h721: 2-hop mechanism as deliverable annotation (low impact)
+- h722: Category-specific 2-hop mechanism for psychiatric/dermatological (low impact)
+
+### Recommended Next Steps
+1. h720: Gene-poor disease supplementation (adds DIRECT mechanism evidence)
+2. h722: Category-specific 2-hop for psychiatric/dermatological (52.8% full-data)
+3. Continue with other pending priority-4 medium-effort hypotheses
+
+---
+
+## Previous Session: h710 - Hemangioendothelioma Cancer Type Fix (2026-02-07)
 
 ### h710: Hemangioendothelioma Category Fix — VALIDATED (Deliverable Quality)
 

@@ -2263,6 +2263,11 @@ class DrugRepurposingPredictor:
             disease_id = matcher.get_mesh_id(disease)
             if not disease_id:
                 disease_id = self.mesh_mappings.get(disease.lower())
+            # h712: Fallback to EC disease ID column (MONDO/UMLS → MESH)
+            if not disease_id:
+                ec_disease_id = str(row.get("final normalized disease id", "")).strip()
+                if ec_disease_id:
+                    disease_id = fuzzy_mappings.get(ec_disease_id.lower())
             if not disease_id:
                 continue
 
