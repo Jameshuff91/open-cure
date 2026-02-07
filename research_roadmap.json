@@ -13313,7 +13313,7 @@
       "title": "Infectious Hierarchy Pneumonia Demotion: 16.7% Holdout Below MEDIUM",
       "description": "h647 sub-reason analysis found infectious_hierarchy_pneumonia MEDIUM at 16.7% holdout (n=6/seed) \u2014 near LOW level (14.8%). This includes antibiotics for pneumonia. Small n but consistently poor. Should be demoted to LOW or investigated further for whether the hierarchy rule is too broad.",
       "hypothesis": "Demoting infectious_hierarchy_pneumonia MEDIUM to LOW will improve MEDIUM precision by removing 6 low-performing predictions per seed.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13323,8 +13323,8 @@
         "If confirmed poor, add to demotion rules",
         "Run h393 holdout validation"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "infectious_hierarchy_pneumonia demoted from MEDIUM to LOW. 15 predictions affected (6/seed). 16.7% \u00b1 0.0% holdout \u2014 near LOW (14.8%), most overfitted rule (80% full-data, \u0394=-63pp). Also found 1 prediction (Cefaclor) leaking back via target_overlap rescue \u2014 added to target_overlap blocklist. MEDIUM improved from 42.8% to 42.9% (+0.1pp). Total session improvement: 40.8% \u2192 42.9% (+2.1pp).",
+      "result_metric": "MEDIUM 42.8% \u2192 42.9% (+0.1pp), total session +2.1pp",
       "category": "precision-improvement"
     },
     {
@@ -13368,7 +13368,7 @@
       "title": "Systematic Demoted Category Rescue Leak Audit",
       "description": "h647 found metabolic_medium_demotion predictions being rescued by target_overlap back to MEDIUM (37 predictions, 22.3% holdout). This was caused by metabolic missing from the target_overlap blocklist. Are there OTHER rescue pathways that could also leak demoted predictions? Check: (1) ATC coherent rescue, (2) highly_repurposable rescue, (3) any other LOW\u2192MEDIUM or LOW\u2192HIGH paths that dont check for _medium_demotion.",
       "hypothesis": "Other rescue pathways besides target_overlap may be leaking demoted category predictions back to MEDIUM.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -13378,8 +13378,8 @@
         "Verify demoted categories are blocked from each rescue path",
         "Fix any leaks found"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "Complete audit of all rescue/promotion pathways. The ONLY LOW\u2192MEDIUM rescue path is target_overlap (line 4114-4127), which was fixed by h647. All other post-processing paths operate on MEDIUM or higher. 238 MEDIUM predictions from demoted categories are ALL from legitimate pre-check returns (hierarchy, cv_pathway_comprehensive, cv_established_drug_rescue), not leaks. Zero _medium_demotion predictions remain in MEDIUM.",
+      "result_metric": "No additional leaks found. h647 fix was complete.",
       "category": "precision-improvement"
     }
   ],

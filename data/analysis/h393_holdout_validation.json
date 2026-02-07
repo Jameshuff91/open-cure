@@ -27,23 +27,23 @@
       ]
     },
     "MEDIUM": {
-      "full_precision": 51.4,
-      "holdout_mean": 42.8,
-      "holdout_std": 3.1,
-      "delta": -8.6,
+      "full_precision": 51.0,
+      "holdout_mean": 42.9,
+      "holdout_std": 2.9,
+      "delta": -8.1,
       "seed_values": [
         45.0,
         40.8,
-        38.5,
+        39.1,
         47.3,
         42.5
       ]
     },
     "LOW": {
-      "full_precision": 22.9,
+      "full_precision": 23.1,
       "holdout_mean": 14.8,
       "holdout_std": 1.7,
-      "delta": -8.1,
+      "delta": -8.3,
       "seed_values": [
         14.7,
         14.6,
@@ -647,6 +647,16 @@
       "mean_n": 18.6,
       "status": "GENUINE"
     },
+    "infectious_hierarchy_pneumonia": {
+      "tier": "LOW",
+      "full_precision": 80.0,
+      "full_n": 15,
+      "holdout_mean": 16.7,
+      "holdout_std": 0.0,
+      "delta": -63.3,
+      "mean_n": 6.0,
+      "status": "OVERFITTED?"
+    },
     "reproductive_medium_demotion": {
       "tier": "LOW",
       "full_precision": 13.3,
@@ -757,16 +767,6 @@
       "mean_n": 6.0,
       "status": "degraded"
     },
-    "infectious_hierarchy_pneumonia": {
-      "tier": "MEDIUM",
-      "full_precision": 80.0,
-      "full_n": 15,
-      "holdout_mean": 16.7,
-      "holdout_std": 0.0,
-      "delta": -63.3,
-      "mean_n": 6.0,
-      "status": "OVERFITTED?"
-    },
     "neurological_hierarchy_parkinsons": {
       "tier": "MEDIUM",
       "full_precision": 100.0,
@@ -819,10 +819,10 @@
     "cancer_same_type_high_rank",
     "cancer_same_type_no_mechanism",
     "immunological_medium_demotion",
+    "infectious_hierarchy_pneumonia",
     "cv_pathway_comprehensive",
     "cancer_same_type",
-    "target_overlap_promotion",
-    "infectious_hierarchy_pneumonia"
+    "target_overlap_promotion"
   ],
   "summary": {
     "golden_holdout_precision": 71.6,

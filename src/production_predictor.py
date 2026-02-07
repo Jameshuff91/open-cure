@@ -3188,14 +3188,20 @@ class DrugRepurposingPredictor:
         # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
         HIERARCHY_DEMOTE_TO_HIGH = {'thyroid', 'diabetes'}
         # h396: These hierarchy groups have 0% precision (n>=2) - demote to MEDIUM
-        # h402: pneumonia 6.7% holdout precision (n=22) vs HIGH avg 44.1% - demote to MEDIUM
-        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine', 'pneumonia'}
+        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine'}
+        # h649: pneumonia demoted MEDIUM→LOW (16.7% ± 0.0% holdout, n=6/seed)
+        # h402 originally demoted to MEDIUM (6.7% holdout), but holdout is near LOW (14.8%)
+        # 80% full-data vs 16.7% holdout = most overfitted rule (Δ=-63pp)
+        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia'}
 
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(
                 drug_id, disease_name, category
             )
             if same_group_match:
+                # h649: Demote to LOW for groups with near-LOW holdout
+                if matching_group in HIERARCHY_DEMOTE_TO_LOW:
+                    return ConfidenceTier.LOW, True, f'{category}_hierarchy_{matching_group}'
                 # h396: Demote 0% precision groups to MEDIUM
                 if matching_group in HIERARCHY_DEMOTE_TO_MEDIUM:
                     return ConfidenceTier.MEDIUM, True, f'{category}_hierarchy_{matching_group}'
@@ -4122,7 +4128,9 @@ class DrugRepurposingPredictor:
                             # h488: Block rescue of incoherent demotions (3.6% holdout)
                             and cat_specific != 'incoherent_demotion'
                             # h560: Block rescue of antimicrobial-pathogen mismatches (0% holdout)
-                            and cat_specific != 'antimicrobial_pathogen_mismatch'):
+                            and cat_specific != 'antimicrobial_pathogen_mismatch'
+                            # h649: Block rescue of hierarchy-demoted pneumonia (16.7% holdout)
+                            and cat_specific != 'infectious_hierarchy_pneumonia'):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 
