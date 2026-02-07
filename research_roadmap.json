@@ -13124,7 +13124,7 @@
       "title": "Multi-System Drug Rescue: Methotrexate/Minocycline Incoherent Demotion Override",
       "description": "h637 found non-CS incoherent_demotion has 48.6% \u00b1 10.5% holdout but n=5/seed. Key drugs: Minocycline (83%, n=1.2/seed), Methotrexate (80%, n=1/seed), Azathioprine (100%, n=0.4/seed). These are multi-system drugs (DMARDs, immunomodulators) that genuinely cross disease categories. Could we create an explicit 'multi-system drug' list that overrides incoherent demotion for these specific drugs?",
       "hypothesis": "A curated list of 5-10 multi-system drugs (methotrexate, minocycline, azathioprine, etc.) can be rescued from incoherent_demotion LOW\u2192MEDIUM with holdout >30%.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13135,8 +13135,8 @@
         "Implement rescue: if drug in MULTI_SYSTEM_DRUGS and incoherent_demotion \u2192 MEDIUM",
         "Validate holdout precision of rescued predictions"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "INVALIDATED: Multi-system drug rescue is not worth implementing.\n\nNon-CS incoherent_demotion: 48.6% \u00b1 10.5% holdout but n=5/seed.\n\nImpact calculation: rescuing 5 preds/seed from LOW\u2192MEDIUM would:\n- Add ~2.5 hits to ~96 MEDIUM hits \u2192 MEDIUM 40.8% \u2192 ~40.7% (negligible)\n- Not meaningfully change any tier precision\n\nRoot cause analysis:\n- Methotrexate (ATC: L) is incoherent for GI (expects A) and musculoskeletal (expects M) despite genuine use for Crohn's and RA. This is an ATC mapping limitation.\n- Minocycline (ATC: J) is incoherent for dermatological despite genuine use for acne.\n- Adding L to GI map or J to dermatological map would be too broad (would rescue all L\u2192GI and J\u2192dermatological, not just these specific drugs).\n\nA per-drug override list for ~5 predictions/seed with negligible tier impact is over-engineering. The tier system correctly identifies these as lower confidence due to ATC mismatch \u2014 even though the underlying predictions may be medically valid, the signal is too weak to act on.",
+      "result_metric": "No implementation. n=5/seed too small for measurable impact.",
       "category": "precision-improvement"
     },
     {
