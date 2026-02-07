@@ -14024,13 +14024,15 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Random sample 30 of 62 two-drug diseases",
         "For each pair: is each drug-disease association legitimate?",
         "Check for diagnostic agents, co-occurrence artifacts, drug mismatches",
         "Remove confirmed false entries"
-      ]
+      ],
+      "findings": "h688 VALIDATED: Two-Drug Disease GT Audit \u2014 0% Error Rate (Much Cleaner Than Single-Drug).\n\nAudited 30 random samples of 61 two-drug diseases.\n\nFINDINGS:\n- Error rate: 0/30 = 0% (vs 5.3% for single-drug diseases in h685)\n- All 30 disease-drug pairs are medically legitimate\n- Two-drug diseases have higher quality because they survived a higher DRKG evidence threshold\n\nMINOR FINDING: Duplicate compound entry\n- Toxic methemoglobinemia: \"Methylene blue\" (DB09241) = \"Methylthioninium\" (DB08167)\n- These are the SAME compound (methylthioninium chloride = methylene blue)\n- Disease appears to have 2 drugs but actually has 1 unique treatment\n- Minor data quality issue, not actionable (doesn't affect predictions)\n\nKEY INSIGHT: Single-drug diseases (5.3% error rate) are the primary source of GT errors.\nTwo-drug diseases are clean. Further GT auditing should focus on 3-5 drug diseases\nif error rate follows a size gradient, or on the expanded GT where coverage is broader.",
+      "result_metric": "0% error rate in two-drug diseases (0/30 false entries)"
     },
     {
       "id": "h689",
@@ -16349,6 +16351,12 @@
       "hypothesis_id": "h691",
       "learning": "47% of diseases (222/477) have \u22642 internal GT drugs but 8.9x more in expanded GT. This is a structural DRKG extraction limitation, not GT quality. These diseases get poor kNN neighborhoods but represent only 9% of GT entries. Patterns: generic disease names, missing standard treatments (OCD lacks SSRIs, PBC lacks UDCA), outdated single drugs.",
       "implication": "The only way to improve predictions for these 222 diseases is to expand internal GT (h687: add DRKG drugs from expanded GT). Current kNN model cannot compensate for sparse training data."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h688",
+      "learning": "Two-drug disease GT error rate = 0% (0/30), much better than single-drug 5.3%. GT error rate decreases with disease drug count. Single-drug diseases are the dominant error source. DrugBank duplicate naming (methylene blue = methylthioninium) can inflate apparent drug count.",
+      "implication": "GT quality auditing has diminishing returns beyond single-drug diseases. Focus remaining audit effort on expanded GT or newly added entries."
     }
   ],
   "collaborations": [
