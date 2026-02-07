@@ -13578,7 +13578,7 @@
       "title": "Infectious CS TB Expanded GT Gap: Why +55.6pp Lift?",
       "description": "h659 found that infectious_cs_tb_demotion has the largest GT lift of any sub-reason (+55.6pp: 33.3% internal \u2192 88.9% expanded). This suggests massive GT gaps for corticosteroid use in TB. Investigating why expanded GT covers TB so much better could reveal patterns for finding GT gaps in other disease areas.",
       "hypothesis": "The TB corticosteroid GT gap is driven by well-documented adjunctive therapy (TB meningitis, pericarditis, IRIS) that is captured in Every Cure's expanded GT but missing from DRKG. Similar gaps may exist for other infection-corticosteroid combinations.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13588,8 +13588,8 @@
         "Check for similar gaps in other infectious-CS combinations",
         "Document findings for GT quality improvement"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED (Meta-Analysis): CS-TB GT gap fully explains +55.6pp expanded GT lift.\n\nKey findings:\n1. The +55.6pp lift comes from 54 CS-infectious GT gap pairs across 25 diseases.\n2. Largest gaps: pulmonary TB (+5 CS), CF respiratory infection (+5 CS), autoimmune hepatitis (+4), meningitis (+4), sepsis (+4).\n3. Most CS-infectious pairs are medically LEGITIMATE:\n   - TB + CS: WHO-recommended adjunctive therapy\n   - Meningitis + dexamethasone: de Gans 2002, standard of care\n   - Sepsis + hydrocortisone: Surviving Sepsis Campaign 2021\n   - PCP + prednisone: NIH guidelines for moderate-severe PCP\n   - ABPA + CS: Standard alongside antifungals\n4. Questionable entries found:\n   - Chronic HBV + prednisone/prednisolone: Historical \"steroid withdrawal therapy\" (1990s), NOW DANGEROUS (reactivation risk). 4 entries across 2 HBV diseases.\n   - Gonococcal pharyngitis + CS: Likely NLP artifact (2 entries).\n   - Malaria + CS: Not current WHO recommendation (2 entries).\n5. These questionable entries are low-impact: HBV has 0 predictions, gonorrhea/malaria have separate MESH terms.\n6. Autoimmune hepatitis + CS is correctly in expanded GT \u2014 it's first-line treatment despite \"hepatitis\" name.\n\nConclusion: The lift is genuine \u2014 internal GT was incomplete for CS adjunctive therapy in infectious diseases. The expanded GT correctly captures standard clinical practice. 8 questionable entries identified but all are inert (0 predictions affected).",
+      "result_metric": "54 CS-infectious GT gap pairs explain +55.6pp lift. 8 questionable entries (inert).",
       "category": "meta-analysis"
     },
     {
@@ -16877,6 +16877,12 @@
       "hypothesis_id": "h702",
       "learning": "ICS/controller \u2192 acute respiratory condition safety concern does not exist: acute conditions (status asthmaticus, bronchospasm) lack DRKG embeddings. Controller drugs are overwhelmingly predicted for chronic conditions where they're appropriate. However, IPF has 67% antihistamine predictions due to kNN embedding near allergic disease neighborhood \u2014 a new drug-class/disease-subtype mismatch pattern.",
       "implication": "Respiratory disease subtypes (obstructive/allergic/fibrotic) may need subtype-specific drug class filters, similar to antimicrobial-pathogen mismatch (h560). IPF antihistamine issue is a concrete example."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h663",
+      "learning": "The +55.6pp expanded GT lift for infectious_cs_tb is explained by 54 CS-infectious pairs across 25 diseases. Most are legitimate (WHO TB guidelines, Surviving Sepsis Campaign, de Gans meningitis trial). CS + chronic HBV is a historical practice now considered dangerous. Autoimmune hepatitis despite its name is correctly treated with CS (first-line therapy).",
+      "implication": "CS adjunctive therapy for infections is a well-established medical practice. The internal GT is simply incomplete for this pattern. No action needed \u2014 the expanded GT correctly captures clinical practice."
     }
   ],
   "collaborations": [
