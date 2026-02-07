@@ -14074,13 +14074,15 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List all diseases with \u22642 internal GT but \u226520 expanded GT drugs",
         "For each: why is internal GT so sparse? Check DRKG edges.",
         "Identify if this is a DRKG extraction gap vs genuine rare disease",
         "Assess whether adding expanded GT drugs to internal GT could improve kNN for these diseases"
-      ]
+      ],
+      "findings": "h691 VALIDATED: Large-Gap Disease Analysis \u2014 Structural DRKG Limitation Confirmed.\n\n26 diseases have \u22642 internal GT drugs but \u226520 expanded GT drugs (DrugBank only).\nCoverage gap is a DRKG extraction limitation, NOT a GT quality issue.\n\nKEY STATISTICS:\n- 222 diseases (47% of all) have \u22642 internal GT drugs\n- These have 8.9x more drugs in expanded GT than internal GT (vs 5.3x for adequate diseases)\n- They represent only 9% of total GT entries (283/3,061)\n- No false GT entries found in this analysis (kidney failure Ca/Na are supportive but valid)\n\nPATTERNS IDENTIFIED:\n1. GENERIC DISEASE NAMES (kidney failure, poisoning, carcinoma): Too broad for DRKG\n2. MISSING STANDARD TREATMENTS: OCD lacks SSRIs, sickle cell lacks newer drugs, \n   DCM lacks ACE-I/ARBs, IPF lacks pirfenidone, PBC lacks UDCA (first-line!)\n3. OUTDATED SINGLE DRUGS: Renal carcinoma (MPA only), toxemia (HCTZ only)\n4. RARE DISEASES: Genuinely limited treatment options (cutaneous leishmaniasis)\n\nIMPACT: These low-coverage diseases get POOR kNN neighborhoods because:\n- 1-2 training drugs \u2192 very few patterns for the model to learn from\n- kNN recommends drugs seen in SIMILAR diseases, but with few anchors,\n  similarity computation is noisy\n\nNOT ACTIONABLE without model retraining on expanded GT (see h687).\nNo false GT entries to remove. Pure characterization of a structural limitation.",
+      "result_metric": "222 diseases (47%) have \u22642 internal GT drugs; 8.9x coverage gap vs expanded GT"
     },
     {
       "id": "h692",
@@ -16341,6 +16343,12 @@
       "hypothesis_id": "h690",
       "learning": "TB drug co-occurrence artifacts are SPECIFIC to isoniazid (3 false entries in h685). Other TB drugs have almost no false associations \u2014 most are correctly linked to TB variants or have genuine non-TB uses (streptomycin\u2192plague/tularemia). The isoniazid artifact is driven by its broad prophylactic use in non-TB contexts.",
       "implication": "Co-occurrence artifact risk scales with clinical breadth of use, not drug class. Drugs used prophylactically in non-target diseases are more likely to generate false GT entries."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h691",
+      "learning": "47% of diseases (222/477) have \u22642 internal GT drugs but 8.9x more in expanded GT. This is a structural DRKG extraction limitation, not GT quality. These diseases get poor kNN neighborhoods but represent only 9% of GT entries. Patterns: generic disease names, missing standard treatments (OCD lacks SSRIs, PBC lacks UDCA), outdated single drugs.",
+      "implication": "The only way to improve predictions for these 222 diseases is to expand internal GT (h687: add DRKG drugs from expanded GT). Current kNN model cannot compensate for sparse training data."
     }
   ],
   "collaborations": [

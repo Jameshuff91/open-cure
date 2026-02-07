@@ -1,6 +1,12 @@
 # Research Loop Progress
 
-## Current Session: h685 + h689 - GT Quality Audit + Diagnostic Agent Census (2026-02-06)
+## Current Session: h685 + h689 + h690 + h691 - GT Quality Audits (2026-02-06)
+
+### h691: Large-Gap Disease Analysis — VALIDATED (Structural Finding)
+222 diseases (47%) have ≤2 internal GT drugs but 8.9x more in expanded GT. This is a structural DRKG limitation. Key patterns: missing standard treatments (OCD lacks SSRIs, PBC lacks UDCA), generic disease names, outdated drugs. Not actionable without model retraining (h687).
+
+### h690: TB Drug Co-occurrence — VALIDATED (Minimal Impact)
+Only 1 new false entry: pyrazinamide→immunodeficiency (HIV/TB co-treatment artifact). All other TB drug associations are legitimate. Isoniazid was unique in having 3 false associations (broader prophylactic use).
 
 ### h689: DRKG Diagnostic Agent Census — VALIDATED (Defensive)
 Systematically searched 64 diagnostic/imaging agents in DrugBank. Found 3 additional agents in internal GT:
