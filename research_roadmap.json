@@ -12736,7 +12736,7 @@
       "id": "h620",
       "title": "Expanded GT Safety Filter Audit: Are FILTER Predictions Actually Valid?",
       "description": "h615 showed several FILTER rules with surprisingly high expanded GT precision: non_therapeutic_compound (33.3%), base_to_complication (37.5%), inverse_indication (16.9%). If expanded GT includes associations beyond therapeutic use (diagnostic, causal, etc.), some of these hits may be false positives in the GT rather than true therapeutic predictions. Audit 10-20 specific hits from each FILTER rule to verify GT quality.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12745,6 +12745,22 @@
         "For inverse_indication FILTER hits, check if expanded GT double-counts drugs that both cause and treat conditions",
         "For base_to_complication FILTER hits, check if expanded GT includes indirect associations",
         "If GT contamination found, clean expanded_ground_truth.json and re-evaluate"
+      ],
+      "findings": "Expanded GT safety filter audit reveals contamination is real but minimal.\n\nKey findings:\n1. Non-therapeutic compounds (FDG PET, ICG dye): 22 GT hits are diagnostic uses, not treatments. 13/22 from INTERNAL GT. Both GT sources contain diagnostic associations.\n2. Inverse indications: 22 hits, 18/22 from internal GT. NOT GT errors \u2014 genuine dual-use drugs (statins reduce CV risk but increase DM risk). Filter correctly handles these.\n3. Base-to-complication: 12 hits, 9/12 from internal GT. Many LEGITIMATE (SGLT2i for diabetic nephropathy = FDA-approved). Mixed quality.\n4. Cross-domain isolated: 32 hits, ALL expanded-only. Some legitimate cross-domain uses (SSRIs\u2192Alzheimers). Found 2 disease categorization errors: pleural mesothelioma and retinoblastoma categorized as respiratory/ophthalmic instead of cancer.\n5. Cancer_no_gt: 25 hits, 20 expanded-only. Many are supportive care (antifungals for oropharynx cancer patients) rather than direct cancer treatment.\n\nTotal impact: ~37 clearly wrong entries out of 1131 FILTER hits (3.3%). Does NOT materially affect tier precision or tier ordering. FILTER holdout (10.6%) is robust.\n\nDisease categorization issue: pleural mesothelioma (respiratory) and retinoblastoma (ophthalmic) should be cancer. Minor impact.",
+      "result_metric": "3.3% FILTER hits are GT errors (37/1131). Tier precision unaffected."
+    },
+    {
+      "id": "h621",
+      "title": "Disease Categorization Fix: Mesothelioma and Retinoblastoma as Cancer",
+      "description": "h620 found pleural mesothelioma categorized as respiratory and retinoblastoma as ophthalmic. Both are cancers. Cancer-only drugs predicting these diseases get falsely cross-domain-isolated. Fix categorization to rescue these predictions.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Add explicit cancer classification for mesothelioma and retinoblastoma in categorize_disease()",
+        "Check if any other cancer types are miscategorized (scan for -oma, -carcinoma, etc.)",
+        "Run holdout to verify no negative impact"
       ]
     }
   ],
@@ -14816,6 +14832,12 @@
       "hypothesis_id": "h615",
       "learning": "Internal GT (3,070 pairs) systematically underestimates hierarchy group precision. With expanded GT (59,584 pairs), 4 hierarchy groups (RA, colitis, coronary, arrhythmia) are GOLDEN-quality despite being classified HIGH based on internal GT analysis. Per-group holdout validation is essential for tier assignment.",
       "implication": "All future tier decisions should use expanded GT for evaluation. Category-level precision analysis can miss group-level quality differences."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h620",
+      "learning": "Both internal and expanded GT contain non-therapeutic associations (diagnostic use of FDG PET coded as treatment indication). 70.1% of FILTER GT hits come from internal GT. Contamination is minimal (3.3%) and does not affect tier ordering. Disease categorization errors exist for pleural mesothelioma (respiratory instead of cancer) and retinoblastoma (ophthalmic instead of cancer).",
+      "implication": "GT quality is adequate for tier evaluation. Disease categorization fixes could rescue a small number of predictions but are low priority."
     }
   ],
   "collaborations": [

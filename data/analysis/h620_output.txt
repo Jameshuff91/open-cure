@@ -1,0 +1,252 @@
+================================================================================
+h620: Expanded GT Safety Filter Audit
+================================================================================
+
+Loading predictor...
+Internal GT: 3070 pairs
+Expanded GT: 59584 pairs
+Expanded-only pairs: 56516
+
+================================================================================
+FILTER Rule GT Hit Analysis
+================================================================================
+
+Rule                                      Hits  Total  Prec%  IntGT ExpOnly
+----------------------------------------------------------------------------
+  non_therapeutic_compound                  22     66  33.3%     13       9
+  inverse_indication                        22    130  16.9%     18       4
+  base_to_complication                      12     32  37.5%      9       3
+  corticosteroid_iatrogenic                  2     19  10.5%      0       2
+  cross_domain_isolated                     32    282  11.3%      0      32
+  cancer_only_non_cancer                     3     21  14.3%      2       1
+  cancer_no_gt                              25    356   7.0%      5      20
+  complication_non_validated                16     74  21.6%      8       8
+  default                                  997   5581  17.9%    738     259
+
+================================================================================
+DETAILED AUDIT: non_therapeutic_compound (22 GT hits)
+================================================================================
+  Fludeoxyglucose (18F)          → multiple myeloma                         [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → diffuse large b cell lymphoma dlbcl      [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → colorectal cancer                        [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → unresectable thyroid cancer              [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → melanoma                                 [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → head and neck squamous cell carcinoma    [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → skin cancer                              [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → cancer                                   [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → osteosarcoma                             [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → unresectable pancreatic cancer           [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → head and neck cancers                    [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → advanced or recurrent cervical cancer    [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → ovarian cancer                           [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → gastric cancer                           [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → lowgrade b cell nonhodgkin lymphoma      [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → mantle cell lymphoma                     [cancer] EXPANDED-ONLY
+  Fludeoxyglucose (18F)          → esophageal cancer                        [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → uterine cancer                           [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → biliary tract cancer                     [cancer] INTERNAL+EXPANDED
+  Indocyanine green acid form    → advanced or recurrent cervical cancer    [cancer] INTERNAL+EXPANDED
+  Indocyanine green acid form    → uterine cancer                           [cancer] INTERNAL+EXPANDED
+  Fludeoxyglucose (18F)          → pleural mesothelioma                     [respiratory] INTERNAL+EXPANDED
+
+================================================================================
+DETAILED AUDIT: inverse_indication (22 GT hits)
+================================================================================
+  Conjugated Estrogens           → breast cancer                            [cancer] INTERNAL+EXPANDED
+  Benazepril                     → angioedema                               [cardiovascular] INTERNAL+EXPANDED
+  Diltiazem                      → ventricular tachycardia                  [cardiovascular] INTERNAL+EXPANDED
+  Flecainide                     → ventricular tachycardia                  [cardiovascular] INTERNAL+EXPANDED
+  Ibutilide                      → ventricular tachycardia                  [cardiovascular] INTERNAL+EXPANDED
+  Milrinone                      → ventricular tachycardia                  [cardiovascular] INTERNAL+EXPANDED
+  Propafenone                    → ventricular tachycardia                  [cardiovascular] INTERNAL+EXPANDED
+  Quinapril                      → angioedema                               [cardiovascular] INTERNAL+EXPANDED
+  Dexamethasone                  → secondary adrenocortical insufficiency   [endocrine] INTERNAL+EXPANDED
+  Methylprednisolone             → secondary adrenocortical insufficiency   [endocrine] INTERNAL+EXPANDED
+  Prednisolone                   → secondary adrenocortical insufficiency   [endocrine] INTERNAL+EXPANDED
+  Prednisone                     → secondary adrenocortical insufficiency   [endocrine] INTERNAL+EXPANDED
+  Triamcinolone                  → secondary adrenocortical insufficiency   [endocrine] INTERNAL+EXPANDED
+  Atorvastatin                   → type 2 diabetes mellitus                 [metabolic] INTERNAL+EXPANDED
+  Liothyronine                   → hyperthyroidism                          [metabolic] INTERNAL+EXPANDED
+  Lovastatin                     → type 1 diabetes mellitus                 [metabolic] INTERNAL+EXPANDED
+  Lovastatin                     → diabetes mellitus                        [metabolic] INTERNAL+EXPANDED
+  Pitavastatin                   → diabetes mellitus                        [metabolic] EXPANDED-ONLY
+  Pravastatin                    → diabetes mellitus                        [metabolic] EXPANDED-ONLY
+  Simvastatin                    → type 1 diabetes mellitus                 [metabolic] INTERNAL+EXPANDED
+  Simvastatin                    → diabetes mellitus                        [metabolic] EXPANDED-ONLY
+  Fluoxetine                     → bipolar disorder                         [psychiatric] EXPANDED-ONLY
+
+================================================================================
+DETAILED AUDIT: base_to_complication (12 GT hits)
+================================================================================
+  Canagliflozin                  → diabetic nephropathy                     [metabolic] INTERNAL+EXPANDED
+  Empagliflozin                  → diabetic ketoacidosis                    [metabolic] INTERNAL+EXPANDED
+  Fenofibrate                    → diabetic nephropathy                     [metabolic] EXPANDED-ONLY
+  Glimepiride                    → diabetic ketoacidosis                    [metabolic] INTERNAL+EXPANDED
+  Glipizide                      → diabetic ketoacidosis                    [metabolic] INTERNAL+EXPANDED
+  Insulin human                  → diabetic ketoacidosis                    [metabolic] INTERNAL+EXPANDED
+  Irbesartan                     → diabetic nephropathy                     [metabolic] INTERNAL+EXPANDED
+  Losartan                       → diabetic nephropathy                     [metabolic] INTERNAL+EXPANDED
+  Lovastatin                     → diabetic nephropathy                     [metabolic] EXPANDED-ONLY
+  Pioglitazone                   → diabetic ketoacidosis                    [metabolic] INTERNAL+EXPANDED
+  Rosiglitazone                  → diabetic ketoacidosis                    [metabolic] INTERNAL+EXPANDED
+  Simvastatin                    → diabetic nephropathy                     [metabolic] EXPANDED-ONLY
+
+================================================================================
+DETAILED AUDIT: corticosteroid_iatrogenic (2 GT hits)
+================================================================================
+  Dexamethasone                  → rosacea                                  [dermatological] EXPANDED-ONLY
+  Dexamethasone                  → pancreatitis                             [gastrointestinal] EXPANDED-ONLY
+
+================================================================================
+DETAILED AUDIT: cross_domain_isolated (32 GT hits)
+================================================================================
+  Fenofibrate                    → atherosclerosis                          [cardiovascular] EXPANDED-ONLY
+  Ceftriaxone                    → early lyme disease erythema migrans      [dermatological] EXPANDED-ONLY
+  Fluorouracil                   → actinic keratosis                        [dermatological] EXPANDED-ONLY
+  Itraconazole                   → severe seborrheic dermatitis             [dermatological] EXPANDED-ONLY
+  Miconazole                     → acne vulgaris                            [dermatological] EXPANDED-ONLY
+  Amphotericin B                 → acute fulminant liver failure            [gastrointestinal] EXPANDED-ONLY
+  Ampicillin                     → peritonitis                              [gastrointestinal] EXPANDED-ONLY
+  Ampicillin                     → diarrhea                                 [gastrointestinal] EXPANDED-ONLY
+  Ampicillin                     → cholecystitis                            [gastrointestinal] EXPANDED-ONLY
+  Apixaban                       → thrombophilia                            [hematological] EXPANDED-ONLY
+  Heparin                        → thrombophilia                            [hematological] EXPANDED-ONLY
+  Amphotericin B                 → chronic granulomatous disease            [immunological] EXPANDED-ONLY
+  Bleomycin                      → acquired immunodeficiency syndrome aids  [infectious] EXPANDED-ONLY
+  Citalopram                     → alzheimers disease                       [neurological] EXPANDED-ONLY
+  Fluoxetine                     → alzheimers disease                       [neurological] EXPANDED-ONLY
+  Sertraline                     → alzheimers disease                       [neurological] EXPANDED-ONLY
+  Sirolimus                      → renal angiomyolipoma and tuberous sclerosis complex tsc [neurological] EXPANDED-ONLY
+  Trazodone                      → alzheimers disease                       [neurological] EXPANDED-ONLY
+  Amphotericin B                 → keratitis                                [ophthalmic] EXPANDED-ONLY
+  Cisplatin                      → retinoblastoma                           [ophthalmic] EXPANDED-ONLY
+  Paroxetine                     → chronic pain                             [other] EXPANDED-ONLY
+  Streptomycin                   → granuloma inguinale                      [other] EXPANDED-ONLY
+  Amantadine                     → attention deficit hyperactivity disorder adhd [psychiatric] EXPANDED-ONLY
+  Cannabidiol                    → social anxiety disorder                  [psychiatric] EXPANDED-ONLY
+  Carbamazepine                  → social anxiety disorder                  [psychiatric] EXPANDED-ONLY
+  Carbamazepine                  → hyperactive children who show excessive motor activity with accompanying conduct disorders [psychiatric] EXPANDED-ONLY
+  Ampicillin                     → pyelonephritis                           [renal] EXPANDED-ONLY
+  Ampicillin                     → endometritis                             [reproductive] EXPANDED-ONLY
+  Bisoprolol                     → toxemia of pregnancy                     [reproductive] EXPANDED-ONLY
+  Cisplatin                      → pleural mesothelioma                     [respiratory] EXPANDED-ONLY
+  Gemcitabine                    → pleural mesothelioma                     [respiratory] EXPANDED-ONLY
+  Paclitaxel                     → pleural mesothelioma                     [respiratory] EXPANDED-ONLY
+
+================================================================================
+DETAILED AUDIT: cancer_only_non_cancer (3 GT hits)
+================================================================================
+  Doxorubicin                    → pleural mesothelioma                     [respiratory] EXPANDED-ONLY
+  Nintedanib                     → systemic sclerosis associated interstitial lung disease [respiratory] INTERNAL+EXPANDED
+  Nintedanib                     → idiopathic pulmonary fibrosis            [respiratory] INTERNAL+EXPANDED
+
+================================================================================
+DETAILED AUDIT: cancer_no_gt (25 GT hits)
+================================================================================
+  Amphotericin B                 → systemic mastocytosis with associated hematological neoplasm [cancer] EXPANDED-ONLY
+  Amphotericin B                 → persistent recurrent or metastatic carcinoma of the cervix [cancer] EXPANDED-ONLY
+  Amphotericin B                 → oropharynx cancer                        [cancer] EXPANDED-ONLY
+  Azathioprine                   → gastric cancer                           [cancer] EXPANDED-ONLY
+  Betamethasone                  → diffuse large b cell lymphoma dlbcl      [cancer] EXPANDED-ONLY
+  Bromocriptine                  → prostate cancer                          [cancer] EXPANDED-ONLY
+  Cyanocobalamin                 → unresectable pancreatic cancer           [cancer] EXPANDED-ONLY
+  Fluconazole                    → oropharynx cancer                        [cancer] EXPANDED-ONLY
+  Hydrocortisone                 → diffuse large b cell lymphoma dlbcl      [cancer] EXPANDED-ONLY
+  Itraconazole                   → persistent recurrent or metastatic carcinoma of the cervix [cancer] EXPANDED-ONLY
+  Itraconazole                   → oropharynx cancer                        [cancer] EXPANDED-ONLY
+  Ketoconazole                   → oropharynx cancer                        [cancer] EXPANDED-ONLY
+  Methylprednisolone             → diffuse large b cell lymphoma dlbcl      [cancer] EXPANDED-ONLY
+  Nystatin                       → oropharynx cancer                        [cancer] EXPANDED-ONLY
+  Posaconazole                   → persistent recurrent or metastatic carcinoma of the cervix [cancer] EXPANDED-ONLY
+  Posaconazole                   → oropharynx cancer                        [cancer] EXPANDED-ONLY
+  Prednisone                     → systemic mastocytosis with associated hematological neoplasm [cancer] EXPANDED-ONLY
+  Prednisone                     → diffuse large b cell lymphoma            [cancer] EXPANDED-ONLY
+  Prednisone                     → langerhans cell histiocytosis            [cancer] EXPANDED-ONLY
+  Sirolimus                      → lymphangioleiomyomatosis                 [cancer] INTERNAL+EXPANDED
+  Sirolimus                      → lymphangioma                             [cancer] INTERNAL+EXPANDED
+  Sirolimus                      → hemangioendothelioma                     [cancer] INTERNAL+EXPANDED
+  Telotristat                    → carcinoid syndrome diarrhoea             [cancer] INTERNAL+EXPANDED
+  Telotristat ethyl              → carcinoid syndrome diarrhoea             [cancer] INTERNAL+EXPANDED
+  Triamcinolone                  → diffuse large b cell lymphoma dlbcl      [cancer] EXPANDED-ONLY
+
+================================================================================
+DETAILED AUDIT: complication_non_validated (16 GT hits)
+================================================================================
+  Amlodipine                     → dilated cardiomyopathy                   [cardiovascular] EXPANDED-ONLY
+  Dexrazoxane                    → cardiomyopathy of variant transthyretinmediated amyloidosis [cardiovascular] INTERNAL+EXPANDED
+  Diltiazem                      → dilated cardiomyopathy                   [cardiovascular] EXPANDED-ONLY
+  Nitroglycerin                  → cardiomyopathy of variant transthyretinmediated amyloidosis [cardiovascular] EXPANDED-ONLY
+  Propranolol                    → cardiomyopathy of variant transthyretinmediated amyloidosis [cardiovascular] EXPANDED-ONLY
+  Quinidine                      → dilated cardiomyopathy                   [cardiovascular] EXPANDED-ONLY
+  Verapamil                      → dilated cardiomyopathy                   [cardiovascular] EXPANDED-ONLY
+  Azathioprine                   → transthyretin familial amyloid polyneuropathy [neurological] EXPANDED-ONLY
+  Droxidopa                      → nondiabetic autonomic neuropathy         [neurological] INTERNAL+EXPANDED
+  Human immunoglobulin G         → transthyretin familial amyloid polyneuropathy [neurological] INTERNAL+EXPANDED
+  Methylprednisolone             → transthyretin familial amyloid polyneuropathy [neurological] EXPANDED-ONLY
+  Chlorthalidone                 → nephrotic syndrome                       [renal] INTERNAL+EXPANDED
+  Furosemide                     → nephrotic syndrome                       [renal] INTERNAL+EXPANDED
+  Lovastatin                     → nephrotic syndrome                       [renal] INTERNAL+EXPANDED
+  Metolazone                     → nephrotic syndrome                       [renal] INTERNAL+EXPANDED
+  Spironolactone                 → nephrotic syndrome                       [renal] INTERNAL+EXPANDED
+
+================================================================================
+SUMMARY: GT Source Breakdown for FILTER Hits
+================================================================================
+Total FILTER GT hits: 1131
+  From internal GT: 793 (70.1%)
+  From expanded GT only: 338 (29.9%)
+
+If expanded-only hits are NOT valid therapeutic associations,
+all expanded-GT-based precision numbers are inflated by these entries.
+
+--- INVERSE INDICATION HITS (22) ---
+These are drugs that CAUSE the disease but appear in expanded GT as treatments:
+  Lovastatin → type 1 diabetes mellitus [INTERNAL]
+  Simvastatin → type 1 diabetes mellitus [INTERNAL]
+  Conjugated Estrogens → breast cancer [INTERNAL]
+  Ibutilide → ventricular tachycardia [INTERNAL]
+  Flecainide → ventricular tachycardia [INTERNAL]
+  Diltiazem → ventricular tachycardia [INTERNAL]
+  Propafenone → ventricular tachycardia [INTERNAL]
+  Milrinone → ventricular tachycardia [INTERNAL]
+  Atorvastatin → type 2 diabetes mellitus [INTERNAL]
+  Lovastatin → diabetes mellitus [INTERNAL]
+  Pravastatin → diabetes mellitus [EXP-ONLY]
+  Simvastatin → diabetes mellitus [EXP-ONLY]
+  Pitavastatin → diabetes mellitus [EXP-ONLY]
+  Methylprednisolone → secondary adrenocortical insufficiency [INTERNAL]
+  Dexamethasone → secondary adrenocortical insufficiency [INTERNAL]
+  Prednisolone → secondary adrenocortical insufficiency [INTERNAL]
+  Prednisone → secondary adrenocortical insufficiency [INTERNAL]
+  Triamcinolone → secondary adrenocortical insufficiency [INTERNAL]
+  Liothyronine → hyperthyroidism [INTERNAL]
+  Benazepril → angioedema [INTERNAL]
+  Quinapril → angioedema [INTERNAL]
+  Fluoxetine → bipolar disorder [EXP-ONLY]
+
+--- NON-THERAPEUTIC COMPOUND HITS (22) ---
+These are diagnostic agents (FDG PET, ICG dye) with GT entries:
+  Fludeoxyglucose (18F) → multiple myeloma [INTERNAL]
+  Fludeoxyglucose (18F) → diffuse large b cell lymphoma dlbcl [EXP-ONLY]
+  Fludeoxyglucose (18F) → colorectal cancer [EXP-ONLY]
+  Fludeoxyglucose (18F) → unresectable thyroid cancer [INTERNAL]
+  Fludeoxyglucose (18F) → melanoma [EXP-ONLY]
+  Fludeoxyglucose (18F) → head and neck squamous cell carcinoma [EXP-ONLY]
+  Fludeoxyglucose (18F) → skin cancer [INTERNAL]
+  Fludeoxyglucose (18F) → cancer [INTERNAL]
+  Fludeoxyglucose (18F) → osteosarcoma [EXP-ONLY]
+  Fludeoxyglucose (18F) → unresectable pancreatic cancer [INTERNAL]
+  Fludeoxyglucose (18F) → head and neck cancers [EXP-ONLY]
+  Fludeoxyglucose (18F) → advanced or recurrent cervical cancer [EXP-ONLY]
+  Indocyanine green acid form → advanced or recurrent cervical cancer [INTERNAL]
+  Fludeoxyglucose (18F) → ovarian cancer [INTERNAL]
+  Fludeoxyglucose (18F) → gastric cancer [INTERNAL]
+  Fludeoxyglucose (18F) → lowgrade b cell nonhodgkin lymphoma [EXP-ONLY]
+  Fludeoxyglucose (18F) → mantle cell lymphoma [EXP-ONLY]
+  Fludeoxyglucose (18F) → esophageal cancer [INTERNAL]
+  Indocyanine green acid form → uterine cancer [INTERNAL]
+  Fludeoxyglucose (18F) → uterine cancer [INTERNAL]
+  Fludeoxyglucose (18F) → biliary tract cancer [INTERNAL]
+  Fludeoxyglucose (18F) → pleural mesothelioma [INTERNAL]
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h620_filter_gt_audit.json
