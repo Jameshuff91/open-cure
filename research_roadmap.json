@@ -14958,7 +14958,7 @@
     {
       "id": "h739",
       "title": "Highly Repurposable Disease Demotion: 4.5% Novel Holdout = FILTER Quality",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -14969,8 +14969,8 @@
         "If confirmed LOW: demote highly_repurposable to LOW or remove the rule",
         "Re-run holdout: expected MEDIUM +0.5-1pp from removing ~33 LOW predictions"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED: highly_repurposable rule demoted from MEDIUM to LOW. Novel holdout = 4.5% \u00b1 4.6% (n=20), known = 80.0% (n=13). 30 predictions demoted (3 retained via mechanism paths). Impact: MEDIUM -0.7pp (47.0\u219246.3%) due to removing known indications, BUT novel MEDIUM +1.3pp (21.5\u219222.8%) \u2014 the correct metric improved. Affected diseases: chronic pain (100% SR), acute pain, bronchospasm, dysmenorrhea. Novel predictions were clearly wrong (Omeprazole\u2192pain, Palivizumab\u2192bronchospasm). Key lesson: demoting predictions that include known indications will always decrease the overall average but improve novel precision.",
+      "result_metric": "Novel MEDIUM +1.3pp (21.5\u219222.8%). Overall MEDIUM -0.7pp (47.0\u219246.3%).",
       "rationale": "h738 found highly_repurposable rule has 4.5% \u00b1 4.6% novel holdout (n=20) \u2014 clearly FILTER/LOW quality, not MEDIUM. The rule was from h297 which likely used full-data precision. 33 predictions affected."
     }
   ],
@@ -17360,6 +17360,12 @@
       "hypothesis_id": "h738",
       "learning": "Known-indication inflation is massive across ALL tiers. Novel tier precision: GOLDEN 53.4%, HIGH 33.1%, MEDIUM 21.5%, LOW 7.3%, FILTER 6.2%. The tier system IS valid for novel predictions (ordering preserved) but reported precisions are 2-4x inflated by known-indication contamination. MEDIUM 47.0% \u2192 21.5% novel.",
       "implication": "Must report novel precision alongside total precision in deliverables. Sub-rule analysis identifies highly_repurposable (4.5%) and default_nomech (15-18%) as below-MEDIUM quality for novel predictions."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h739",
+      "learning": "Removing low-quality MEDIUM predictions that include known indications will DECREASE overall MEDIUM precision (because known indications have ~80% holdout) but INCREASE novel MEDIUM precision. Novel precision is the correct optimization target for drug repurposing since known indications are not actionable.",
+      "implication": "Always report novel precision when evaluating demotion impact. Overall precision is misleading due to known-indication inflation."
     }
   ],
   "collaborations": [

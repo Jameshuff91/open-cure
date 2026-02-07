@@ -3730,10 +3730,14 @@ class DrugRepurposingPredictor:
             else:
                 return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r6_10'
 
-        # h297: Highly repurposable diseases get MEDIUM instead of LOW
-        # These diseases have drugs widely used across many conditions
+        # h297: Highly repurposable diseases — DEMOTED from MEDIUM to LOW (h739)
+        # h738 found novel holdout = 4.5% ± 4.6% (n=20) — clearly LOW quality.
+        # These symptom-like diseases (bronchospasm, acute/chronic pain, dysmenorrhea)
+        # generate noisy predictions (Omeprazole→pain, Palivizumab→bronchospasm).
+        # Known indications (80%) inflate the full-data precision to 28.8%.
+        # Rule retained as LOW-tier annotation for deliverable transparency.
         if is_highly_repurposable and (mechanism_support or train_frequency >= 5):
-            return ConfidenceTier.MEDIUM, False, 'highly_repurposable'
+            return ConfidenceTier.LOW, False, 'highly_repurposable'
 
         # h309/h310: ATC coherence boost for LOW tier predictions
         # Coherent predictions have 35.5% precision vs 18.7% for incoherent
