@@ -14220,7 +14220,7 @@
       "title": "Comp_to_base T1D Exclusion: Should T1D Be Excluded from Diabetes Hierarchy?",
       "description": "h675 found that comp_to_base and metabolic_hierarchy_diabetes promote oral antidiabetics to HIGH for T1D because T1D is in the diabetes hierarchy. While inverse_indication now catches sulfonylureas/TZDs, other diabetes drugs (miglitol, sitagliptin) still get promoted. Should T1D be treated as a separate disease from T2D in the hierarchy? T1D has fundamentally different pathophysiology (autoimmune destruction vs insulin resistance).",
       "hypothesis": "Splitting T1D from T2D in the diabetes hierarchy and limiting comp_to_base diabetes transfers to T2D-compatible drugs would improve prediction safety.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14231,8 +14231,8 @@
         "Consider separate hierarchy group for T1D",
         "Evaluate holdout impact of T1D-specific hierarchy"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "T1D hierarchy separation is NOT needed. Analysis:\n\n1. The expanded GT for T1D has 96 drugs, including many non-T1D-specific drugs (ramipril, lovastatin, phentermine, erythromycin, dexamethasone). These are from clinical trial co-occurrence, not actual T1D treatments.\n\n2. The remaining HIGH predictions (SGLT2i, GLP-1, DPP-4i, metformin) are defensible \u2014 they have genuine T1D adjunctive use evidence and ARE in expanded GT.\n\n3. h675 already filters the clearest errors (sulfonylureas/TZDs) via inverse indication.\n\n4. Ramipril and phentermine getting HIGH for T1D is technically correct per expanded GT evaluation (both are in T1D expanded GT from ClinicalTrials.gov), even if they don't treat the core T1D pathology.\n\n5. Splitting T1D from T2D in the hierarchy would require complex logic for minimal gain (~10 predictions for 1 disease).\n\nCONCLUSION: The expanded GT for T1D is overly broad (includes comorbidity drugs), making precision evaluation unreliable for this specific disease. The h675 inverse indications are the appropriate level of intervention. Any further refinement would require T1D-specific expanded GT curation, not hierarchy changes.",
+      "result_metric": "No action needed \u2014 h675 sufficient, hierarchy split over-engineering"
     },
     {
       "id": "h700",
@@ -16532,6 +16532,12 @@
       "hypothesis_id": "h675",
       "learning": "FDA label \"limitations of use\" sections cause systematic NLP extraction errors. Oral antidiabetic labels all include \"not for T1D or DKA\" boilerplate. 37 false EC GT entries found, but none affect DRKG predictions. Main action: sulfonylurea/TZD \u2192 T1D inverse indication (7 GOLDEN/HIGH \u2192 FILTER).",
       "implication": "NLP-extracted GT databases need drug-class-specific validation. Comp_to_base diabetes hierarchy treats T1D and T2D identically despite fundamentally different pathophysiology."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h699",
+      "learning": "Expanded GT for T1D includes 96 drugs from clinical co-occurrence (ClinicalTrials.gov), many not T1D treatments. Sulfonylureas/TZDs are in expanded GT despite being biologically ineffective for T1D. The expanded GT conflates \"drug prescribed in T1D context\" with \"drug treats T1D.\"",
+      "implication": "Disease-specific expanded GT quality varies. For diseases with many comorbidity drugs, expanded GT holdout evaluation is unreliable. Inverse indication filtering is the right tool for medically incorrect predictions rather than hierarchy changes."
     }
   ],
   "collaborations": [
