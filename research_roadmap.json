@@ -13557,7 +13557,7 @@
       "title": "Per-Rule Holdout Tracking in Evaluator: Add Named-Rule Breakdown for Default MEDIUM",
       "description": "h660 revealed that default MEDIUM predictions (unnamed rules) can't be broken down by rank/mechanism in the holdout evaluator. The evaluator uses category_specific_tier which is None for default path. Adding a named reason to all default MEDIUM sub-paths (e.g., 'default_mech_any_rank', 'default_nomech_r1_5', 'default_nomech_r6_10') would allow precise holdout tracking of each sub-path. This is an infrastructure improvement that would benefit future analyses.",
       "hypothesis": "Adding named reasons to all default MEDIUM sub-paths will enable precise per-sub-path holdout tracking, eliminating the need for estimation and enabling data-driven decisions.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -13567,8 +13567,8 @@
         "Compare sub-path holdout precisions",
         "Use results to inform future tier decisions"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "VALIDATED: Added named reasons to all default MEDIUM sub-paths. New holdout breakdown:\n- default_freq5_mechanism: 45.3% \u00b1 16.7 (n=14/seed) \u2014 mechanism-supported, degraded\n- default_freq10_nomech_r1_5: 45.4% \u00b1 10.6 (n=50/seed) \u2014 GENUINE, above MEDIUM avg!\n- default_freq10_nomech_r6_10: 34.1% \u00b1 7.3 (n=30/seed) \u2014 GENUINE, below MEDIUM avg\n\nKEY INSIGHT: NoMech R1-5 (45.4%) is the strongest default MEDIUM sub-path and above MEDIUM average. NoMech R6-10 (34.1%) is below average but still 2.3x LOW. freq5_mechanism has high precision but small n. All sub-paths correctly classified as MEDIUM.\n\nNOTE: Earlier h657 analysis showed 40.5% for R6-10 but that was with different code state. Current accurate value is 34.1% \u2014 still MEDIUM-quality (z=-1.2, not significant).",
+      "result_metric": "3 named sub-paths: freq5_mech 45.3%, NoMech R1-5 45.4%, NoMech R6-10 34.1%",
       "category": "infrastructure"
     },
     {

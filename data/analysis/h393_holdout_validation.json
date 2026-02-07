@@ -79,12 +79,12 @@
     },
     "default": {
       "tier": "FILTER",
-      "full_precision": 21.5,
-      "full_n": 7337,
-      "holdout_mean": 14.0,
-      "holdout_std": 1.0,
-      "delta": -7.5,
-      "mean_n": 1542.8,
+      "full_precision": 19.9,
+      "full_n": 6770,
+      "holdout_mean": 12.3,
+      "holdout_std": 0.9,
+      "delta": -7.6,
+      "mean_n": 1449.0,
       "status": "degraded"
     },
     "complication_non_validated": {
@@ -707,6 +707,16 @@
       "mean_n": 15.2,
       "status": "OVERFITTED?"
     },
+    "default_freq10_nomech_r6_10": {
+      "tier": "MEDIUM",
+      "full_precision": 29.4,
+      "full_n": 214,
+      "holdout_mean": 34.1,
+      "holdout_std": 7.3,
+      "delta": 4.7,
+      "mean_n": 29.6,
+      "status": "GENUINE"
+    },
     "cancer_same_type": {
       "tier": "MEDIUM",
       "full_precision": 62.8,
@@ -726,6 +736,26 @@
       "delta": -21.5,
       "mean_n": 35.0,
       "status": "OVERFITTED?"
+    },
+    "default_freq10_nomech_r1_5": {
+      "tier": "MEDIUM",
+      "full_precision": 45.0,
+      "full_n": 291,
+      "holdout_mean": 45.4,
+      "holdout_std": 10.6,
+      "delta": 0.4,
+      "mean_n": 50.0,
+      "status": "GENUINE"
+    },
+    "default_freq5_mechanism": {
+      "tier": "MEDIUM",
+      "full_precision": 51.6,
+      "full_n": 62,
+      "holdout_mean": 45.3,
+      "holdout_std": 16.7,
+      "delta": -6.3,
+      "mean_n": 14.2,
+      "status": "degraded"
     },
     "cardiovascular": {
       "tier": "MEDIUM",
@@ -828,10 +858,10 @@
     "golden_holdout_precision": 71.6,
     "golden_pass": true,
     "tier_ordering_correct": true,
-    "n_rules_tested": 73,
-    "n_genuine": 17,
+    "n_rules_tested": 76,
+    "n_genuine": 19,
     "n_overfitted": 24,
-    "n_degraded": 15,
+    "n_degraded": 16,
     "n_small_sample": 17
   }
 }

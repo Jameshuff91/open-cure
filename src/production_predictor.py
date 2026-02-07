@@ -3295,7 +3295,7 @@ class DrugRepurposingPredictor:
             return ConfidenceTier.LOW, False, f'{category}_medium_demotion'
 
         if train_frequency >= 5 and mechanism_support:
-            return ConfidenceTier.MEDIUM, False, None
+            return ConfidenceTier.MEDIUM, False, 'default_freq5_mechanism'
         if train_frequency >= 10:
             # h555: Frequency-only MEDIUM (no mechanism) at rank 11-20 has 18.7-20.7% holdout
             # — near LOW level (16.2%). Demote to LOW. Rank 1-10 stays MEDIUM (24-38.7%).
@@ -3304,7 +3304,13 @@ class DrugRepurposingPredictor:
             # h657 INVALIDATED: With expanded GT, NoMech R6-10 = 40.5% ± 9.4% holdout
             # (n=14.6/seed). This is MEDIUM-quality (z=-0.4 vs MEDIUM avg). Original 30.0%
             # was from internal GT. Expanded GT lifts signal-rich predictions. Keep as MEDIUM.
-            return ConfidenceTier.MEDIUM, False, None
+            # h662: Named reasons for holdout tracking
+            if mechanism_support:
+                return ConfidenceTier.MEDIUM, False, 'default_freq10_mechanism'
+            elif rank <= 5:
+                return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r1_5'
+            else:
+                return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r6_10'
 
         # h297: Highly repurposable diseases get MEDIUM instead of LOW
         # These diseases have drugs widely used across many conditions

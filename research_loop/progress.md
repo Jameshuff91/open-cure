@@ -37,9 +37,21 @@ Created comprehensive prep for Monday Feb 10 meeting. Key findings:
 - h660: MEDIUM Default NoMech R1-5 quality characterization
 - h661: Ryland collaboration prep (completed)
 
+### h659: Expanded GT Impact on Internal GT Precision — VALIDATED
+Expanded GT lifts all sub-reasons but disproportionately: infectious_cs_tb +55.6pp, transe_promotion +32.3pp, cv_rescue +29.4pp. 23 INVALIDATED hypotheses checked — none need re-evaluation.
+
+### h660: MEDIUM Default NoMech R1-5 Quality — INCONCLUSIVE
+Couldn't isolate from holdout. Estimated ~49-54% (correctly MEDIUM).
+
+### h662: Per-Rule Holdout Tracking for Default MEDIUM — VALIDATED
+Named reasons added. Results: freq5_mechanism 45.3% (n=14/seed), NoMech R1-5 **45.4%** (n=50/seed, above avg), NoMech R6-10 34.1% (n=30/seed, below avg but GENUINE).
+
+### h664: Deliverable Regeneration — VALIDATED
+14,150 predictions. MEDIUM: 1336 (h657 revert reflected).
+
 ### Recommended Next Steps
-1. **h659**: Check if any INVALIDATED hypotheses should be re-evaluated with expanded GT
-2. **h658**: Literature validation of holdout-invisible predictions
+1. **h658**: Literature validation of holdout-invisible ATC coherent predictions
+2. Ryland meeting prep review (`data/analysis/h661_ryland_collaboration_prep.md`)
 3. Higher-effort external data integrations (LINCS, PubMed mining)
 
 ---
