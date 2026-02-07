@@ -12810,7 +12810,7 @@
       "id": "h624",
       "title": "Deliverable Regeneration with h618 CV Rescue",
       "description": "Regenerate deliverable with h618 changes. 201 predictions move from LOW to MEDIUM (cv_established_drug_rescue). Verify tier counts match expectations.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -12822,7 +12822,9 @@
       ],
       "dependencies": [
         "h618"
-      ]
+      ],
+      "findings": "Deliverable regenerated with h618 CV rescue. 201 predictions rescued LOW\u2192MEDIUM. Tier counts: GOLDEN 420, HIGH 604, MEDIUM 2075 (+201), LOW 3777 (-201), FILTER 7274. Spot-check confirms medically sound predictions (anticoagulants for thrombotic diseases, statins for CV complications, CCBs for arrhythmias).",
+      "result_metric": "MEDIUM: 2075 preds (up from 1874). Known indications: 36.0%."
     }
   ],
   "completed": [
