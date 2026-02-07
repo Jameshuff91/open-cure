@@ -131,6 +131,14 @@ def main():
                 gt_completeness[did] = round(exp_count / int_count, 1)
         print(f"Computed GT completeness: {len(gt_completeness)} diseases")
 
+    # Literature mining evidence cache
+    lit_cache: Dict[str, dict] = {}
+    lit_cache_path = Path(__file__).parent.parent / "data" / "validation" / "literature_mining_cache.json"
+    if lit_cache_path.exists():
+        with open(lit_cache_path) as f:
+            lit_cache = json.load(f)
+        print(f"Loaded literature mining cache: {len(lit_cache)} entries")
+
     # Get all diseases with embeddings
     all_diseases = [d for d in predictor.embeddings if d in predictor.disease_names]
     print(f"Diseases with embeddings: {len(all_diseases)}")
@@ -198,6 +206,12 @@ def main():
                 'disease_holdout_precision': disease_holdout_precision.get(disease_id, ''),
                 'gt_completeness_ratio': gt_completeness.get(disease_id, ''),
             })
+
+            # Literature mining evidence (from automated cache)
+            lit_key = f"{pred.drug_name.lower()}|{disease_name.lower()}"
+            lit_entry = lit_cache.get(lit_key, {})
+            all_predictions[-1]['literature_evidence_level'] = lit_entry.get('evidence_level', 'NOT_ASSESSED')
+            all_predictions[-1]['literature_evidence_score'] = lit_entry.get('evidence_score', 0.0)
 
             # h592: Compute composite quality score for experiment prioritization
             p = all_predictions[-1]

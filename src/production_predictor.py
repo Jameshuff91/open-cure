@@ -271,6 +271,10 @@ class DrugPrediction:
     literature_status: str = 'NOVEL'
     soc_drug_class: Optional[str] = None
 
+    # Literature mining evidence (automated)
+    literature_evidence_level: str = 'NOT_ASSESSED'
+    literature_evidence_score: float = 0.0
+
     def to_dict(self) -> Dict:
         return {
             'drug': self.drug_name,
@@ -289,6 +293,8 @@ class DrugPrediction:
             'category_holdout_precision': self.category_holdout_precision,
             'literature_status': self.literature_status,
             'soc_drug_class': self.soc_drug_class,
+            'literature_evidence_level': self.literature_evidence_level,
+            'literature_evidence_score': self.literature_evidence_score,
         }
 
 
