@@ -12264,12 +12264,13 @@
         "Generate output file: data/analysis/h592_validation_priority_list.json",
         "Success: identifiable subset with >50% expected precision within MEDIUM"
       ],
-      "status": "in_progress",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
       "category": "deliverable",
-      "rationale": "All internal quality signals have been validated individually. Combining them into a single priority ranking creates a practical output for collaborators deciding which predictions to test first. This is different from h443 (within-tier ranking) because the goal is not tier reassignment but practical experiment prioritization."
+      "rationale": "All internal quality signals have been validated individually. Combining them into a single priority ranking creates a practical output for collaborators deciding which predictions to test first. This is different from h443 (within-tier ranking) because the goal is not tier reassignment but practical experiment prioritization.",
+      "findings": "Composite quality score added to deliverable. Beats kNN rank by +2.6pp for Q1 MEDIUM."
     },
     {
       "id": "h593",
@@ -12534,7 +12535,7 @@
       "id": "h607",
       "title": "Standard MEDIUM Autoimmune Quality: 20.3% Holdout at n=6.8",
       "description": "Standard MEDIUM autoimmune has 20.3% \u00b1 20.4% holdout (n=6.8/seed). High variance suggests a mix of good and bad predictions. The 21 full-data predictions (33.3%) include 7 GT hits. If autoimmune standard MEDIUM is truly ~20%, it should be demoted to LOW. But the high variance (\u00b120.4%) means the true precision could be 0-40%. Need more data or different analysis approach to resolve.",
-      "status": "in_progress",
+      "status": "pending",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
