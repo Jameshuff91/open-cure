@@ -38,31 +38,50 @@ Added `medium_quality` column to deliverable based on h629 signal combinations:
 
 Q1-Q4 spans a 41pp range — more informative than single MEDIUM label for Ryland/collaborators.
 
-### Post-h625 Tier Performance (verified)
+### h630: TransE MEDIUM → HIGH Promotion — VALIDATED
+
+Implemented TransE + (mechanism OR rank≤5) non-CS MEDIUM → HIGH promotion.
+
+**H393 evaluator results:**
+- transe_medium_promotion: Full=68.8%, Holdout=56.1% ± 11.9% (n=15/seed)
+
+**Tier impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 71.6% ± 4.3% (420) | 71.6% ± 4.3% (420) | unchanged |
+| HIGH | 52.8% ± 13.5% (604) | 53.1% ± 12.2% (719) | +0.3pp, -1.3% var |
+| MEDIUM | 39.5% ± 3.5% (2134) | 38.7% ± 3.3% (2019) | -0.8pp, -0.2% var |
+| LOW | 14.2% ± 2.0% (3718) | 14.2% ± 2.0% (3718) | unchanged |
+| FILTER | 10.6% ± 1.3% (7274) | 10.6% ± 1.3% (7274) | unchanged |
+
+115 preds promoted. Top drugs: Doxorubicin (23), Amphotericin B (20), Bleomycin (12).
+
+### Session Tier Performance (post-h630)
 | Tier | Holdout | Predictions |
 |------|---------|-------------|
 | GOLDEN | 71.6% ± 4.3% | 420 |
-| HIGH | 52.8% ± 13.5% | 604 |
-| MEDIUM | 39.5% ± 3.5% | 2134 |
+| HIGH | 53.1% ± 12.2% | 719 |
+| MEDIUM | 38.7% ± 3.3% | 2019 |
 | LOW | 14.2% ± 2.0% | 3718 |
 | FILTER | 10.6% ± 1.3% | 7274 |
 
-### New Hypotheses Generated (3)
-- h630: TransE MEDIUM → HIGH promotion with strict criteria (TransE + mechanism/rank≤5)
+### New Hypotheses Generated (4)
+- h630: TransE MEDIUM → HIGH promotion (VALIDATED)
 - h631: MEDIUM quality quartile annotation (VALIDATED)
 - h632: Mechanism + Rank ≤ 10 as independent HIGH signal
+- (More pending from h629 analysis)
 
 ### Key Insights
 1. Expanded GT resolves TransE MEDIUM blocker — 56.5% vs 34.7% (internal GT)
 2. The 19.3pp TransE differential is GT-independent (constant lift)
-3. Signal combination reveals 41pp quality spread within MEDIUM
-4. Q1 MEDIUM (138 preds) has GOLDEN-level precision
-5. Mechanism+Rank≤10 (52.5% ± 4.4%) has the lowest variance of any MEDIUM subset
+3. TransE promotion: HIGH precision INCREASES while variance DECREASES — counter-intuitive but correct
+4. Signal combination reveals 41pp quality spread within MEDIUM
+5. CLOSED directions should be re-evaluated when evaluation methodology changes (GT expansion)
 
 ### Recommended Next Steps
-1. **h630**: Implement TransE MEDIUM → HIGH promotion with strict criteria
-2. **h632**: Validate mechanism+rank≤10 as independent promotion signal
-3. External data integration for fundamentally new signals
+1. **h632**: Validate mechanism+rank≤10 as independent promotion signal
+2. External data integration for fundamentally new signals
+3. Meeting prep for Ryland (Monday Feb 10)
 
 ---
 

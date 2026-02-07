@@ -147,14 +147,15 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h625 update, 2026-02-06):**
+**Tier System (h630 update, 2026-02-06):**
 - GOLDEN: 71.6% ± 4.3% holdout (420 predictions)
-- HIGH: 52.8% ± 13.5% holdout (604 predictions)
-- MEDIUM: 39.5% ± 3.5% holdout (2134 predictions)
+- HIGH: 53.1% ± 12.2% holdout (719 predictions)
+- MEDIUM: 38.7% ± 3.3% holdout (2019 predictions)
 - LOW: 14.2% ± 2.0% holdout (3718 predictions)
 - FILTER: 10.6% ± 1.3% holdout (7274 predictions)
-- **h629:** MEDIUM quality stratification: TransE+mechanism+rank≤10 = 71.9% holdout (GOLDEN-level). TransE alone = 56.5% (HIGH-level). Mechanism+rank≤10 = 52.5% ± 4.4%. +19.3pp TransE differential is GT-independent. Expanded GT resolves h439 blocker (34.7% → 56.5%). Not promoted (borderline) but annotated as quality quartile in deliverable.
-- **h631:** MEDIUM quality quartile annotation: Q1 (138 preds, 60-72%), Q2 (459, 50-57%), Q3 (931, 44-54%), Q4 (606, ~31%). 41pp spread within MEDIUM.
+- **h630:** TransE MEDIUM → HIGH promotion: TransE + (mechanism OR rank≤5) non-CS. 115 preds promoted. transe_medium_promotion: 56.1% ± 11.9% holdout. HIGH +0.3pp, variance ↓1.3%. MEDIUM -0.8pp.
+- **h629:** MEDIUM quality stratification: TransE+mechanism+rank≤10 = 71.9% holdout (GOLDEN-level). +19.3pp TransE differential is GT-independent. Expanded GT resolves h439 blocker (34.7% → 56.5%).
+- **h631:** MEDIUM quality quartile annotation: Q1 (23 preds, CS only), Q2 (459, 50-57%), Q3 (931, 44-54%), Q4 (606, ~31%).
 - **h625:** Hematological immune-mediated CS rescue: 59 preds rescued LOW→MEDIUM. Immune-mediated 48.4% vs non-immune 3.8%. MEDIUM +0.6pp.
 - **h618:** CV drug-class rescue: established CV drugs (anticoagulants 32.6%, CCBs 49.7%, diuretics 33.8%, ARBs 30.0%) rescued LOW→MEDIUM. 201 preds. cv_established_drug_rescue: 30.9% ± 20.9% holdout (GENUINE). Non-CV drugs stay demoted (4.6%).
 - **h622:** Other demoted categories (neuro, heme) lack rescuable drug-class subsets. CV was special.
@@ -176,8 +177,6 @@ vastai destroy instance <INSTANCE_ID>
 - **h526:** Inverse indication taxonomy (10 mechanism classes). +10 new pairs (SSRIs→bipolar, estrogens→cancer, ACEi→angioedema). Bug fix: moved inverse_indication before cancer_same_type. Total: 63 drugs, 135 pairs.
 - **h529:** GT quality audit: removed 19 false DRKG-derived GT entries (drug CAUSES disease). 14 Every Cure errors flagged.
 - **NOTE:** Full-data inflated; use HOLDOUT only.
-
-**h520/h522:** Corticosteroid SOC promotion (non-hematological→HIGH, 333 preds) + hematological demotion (123 MEDIUM→LOW). Non-hematological = 50.1% holdout.
 
 **h478:** GT sync: expanded_ground_truth.json was missing 1503 pairs from production GT. All holdout numbers improved ~7-8pp.
 

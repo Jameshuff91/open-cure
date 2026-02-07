@@ -4159,6 +4159,19 @@ class DrugRepurposingPredictor:
                         tier = ConfidenceTier.LOW
                         cat_specific = 'infectious_corticosteroid_demotion'
 
+                    # h630: TransE MEDIUM → HIGH promotion (non-CS, strict criteria)
+                    # h629 validated: TransE+mechanism = 59.4% ± 13.9% holdout,
+                    # TransE+rank<=5 = 64.9% ± 12.4% — both above HIGH (52.8%).
+                    # Non-CS TransE MEDIUM = 49.1% holdout (per-seed: 50,50,42,57,50%).
+                    # Expanded GT resolves h439 blocker (34.7% → 56.5%).
+                    # Strict criteria: require mechanism OR rank<=5 to ensure above HIGH.
+                    if (tier == ConfidenceTier.MEDIUM
+                            and in_transe_top30
+                            and drug_name.lower() not in _CORTICOSTEROID_LOWER
+                            and (mech_support or rank <= 5)):
+                        tier = ConfidenceTier.HIGH
+                        cat_specific = 'transe_medium_promotion'
+
                     # h374: Mark predictions from MinRank ensemble
                     if use_minrank and cat_specific is None:
                         cat_specific = 'minrank_ensemble'

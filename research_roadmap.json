@@ -12943,7 +12943,7 @@
       "title": "TransE MEDIUM \u2192 HIGH Promotion: Formal Implementation with Strict Criteria",
       "description": "h629 found TransE MEDIUM non-CS has 49.1% holdout (expanded GT) \u2014 borderline HIGH. Implement promotion with stricter criteria: TransE + (mechanism OR rank<=5) non-CS to ensure safely above HIGH threshold. This would promote ~100-140 predictions from the ~187 TransE MEDIUM non-CS.",
       "hypothesis": "TransE + (mechanism OR rank<=5) MEDIUM non-CS predictions can be safely promoted to HIGH without diluting HIGH precision.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -12953,8 +12953,8 @@
         "Verify HIGH stays above 50% and MEDIUM stays above 35%",
         "Regenerate deliverable"
       ],
-      "findings": null,
-      "result_metric": null,
+      "findings": "VALIDATED: TransE MEDIUM \u2192 HIGH promotion implemented and holdout-validated.\n\nIMPLEMENTATION: In _assign_confidence_tier, after TransE consilience flag is computed:\n  if tier == MEDIUM and in_transe_top30 and NOT corticosteroid and (mechanism OR rank<=5):\n    tier = HIGH, cat_specific = 'transe_medium_promotion'\n\nH393 EVALUATOR RESULTS:\n  transe_medium_promotion: Full=68.8%, Holdout=56.1% \u00b1 11.9% (n=15/seed)\n  56.1% holdout is well above HIGH threshold (52.8%).\n\nTIER IMPACT:\n  GOLDEN: 71.6% \u00b1 4.3% (420) \u2014 unchanged\n  HIGH: 52.8% \u2192 53.1% \u00b1 12.2% (604 \u2192 719) \u2014 +0.3pp, variance \u21931.3%\n  MEDIUM: 39.5% \u2192 38.7% \u00b1 3.3% (2134 \u2192 2019) \u2014 -0.8pp, variance \u21930.2%\n  LOW: 14.2% \u00b1 2.0% (3718) \u2014 unchanged\n  FILTER: 10.6% \u00b1 1.3% (7274) \u2014 unchanged\n\n115 predictions promoted. Top drugs: Doxorubicin (23), Amphotericin B (20), Bleomycin (12), Erythromycin (10). Top categories: cancer (54), infectious (36).\n\nHIGH precision preserved with +19% more predictions. HIGH variance reduced.",
+      "result_metric": "transe_medium_promotion: 56.1% \u00b1 11.9% holdout. HIGH +0.3pp, MEDIUM -0.8pp. 115 preds promoted.",
       "category": "tier-optimization",
       "rationale": "h629 validated TransE+mechanism (59.4%) and TransE+rank<=5 (64.9%) as HIGH-level subsets. These stricter criteria provide margin above the 52.8% HIGH threshold."
     },
@@ -15110,6 +15110,12 @@
       "hypothesis_id": "h629",
       "learning": "Expanded GT resolves TransE MEDIUM blocker: internal GT showed 34.7% (below HIGH), expanded GT shows 56.5% (above HIGH). The 19.3pp differential over non-TransE MEDIUM is constant regardless of GT. TransE+mechanism+rank<=10 reaches GOLDEN-level (71.9%). Mechanism+rank<=10 alone = 52.5% \u00b1 4.4% (HIGH-level with very low variance).",
       "implication": "Signal combination stratification within MEDIUM reveals HIGH/GOLDEN-quality subsets. The key insight: expanded GT doesn't just inflate precision uniformly \u2014 it preferentially lifts predictions with strong signals. TransE+mechanism predictions benefit more from expanded GT than no-signal predictions."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h630",
+      "learning": "TransE MEDIUM \u2192 HIGH promotion is safe with strict criteria (mechanism OR rank<=5, non-CS). 56.1% holdout for promoted predictions. HIGH precision INCREASES (+0.3pp) while variance DECREASES (-1.3%). Counter-intuitively, adding predictions can improve tier precision by rebalancing the composition.",
+      "implication": "CLOSED direction #2 (within-tier reranking) should be revisited as CLOSED direction for PROMOTION (not reranking). TransE promotion works because expanded GT revealed the signal was always there but underestimated."
     }
   ],
   "collaborations": [
