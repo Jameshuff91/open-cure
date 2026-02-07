@@ -1,6 +1,18 @@
 # Research Loop Progress
 
-## Current Session: h615 - Expanded GT Tier Recalibration (2026-02-06)
+## Current Session: h615/h619/h620/h621/h616 - Expanded GT Analysis (2026-02-06)
+
+### h616: Disease-Specific GT Completeness Score — VALIDATED
+Added `gt_completeness_ratio` column to deliverable. 479 diseases scored. Median 6.0x, mean 11.5x. Weakly negative correlation with holdout precision (r=-0.198) — not predictive of quality, but informative annotation.
+
+### h621: Disease Categorization Fix — VALIDATED
+Fixed pleural mesothelioma (respiratory→cancer) and retinoblastoma (ophthalmic→cancer). ~28 predictions rescued from FILTER. Added `mesothelioma` to cancer keywords, moved `retinoblastoma` from ophthalmic to cancer.
+
+### h620: Expanded GT Safety Filter Audit — VALIDATED
+GT contamination is real but minimal: 37 clearly wrong entries out of 1131 FILTER GT hits (3.3%). FDG PET diagnostic associations exist in both internal and expanded GT. Inverse indication hits are mostly genuine dual-use drugs (18/22 from internal GT). Does NOT affect tier precision.
+
+### h619: Deliverable Regeneration — VALIDATED
+Deliverable regenerated with h615+h621 changes. GOLDEN: 420, HIGH: 604, MEDIUM: 1874, LOW: 3978, FILTER: 7274. 14,150 total predictions.
 
 ### h615: Expanded GT-Based Tier Recalibration — VALIDATED
 
@@ -34,20 +46,27 @@ Tier ordering preserved. HIGH drop due to removing best predictions. Seed 42 out
 
 **New Hypotheses (4):** h617-h620 (HIGH stabilization, CV medium demotion stratification, deliverable regeneration, expanded GT safety audit)
 
-### Session Tier Performance (h615 update)
+### Session Tier Performance (h621 update)
 | Tier | Holdout | Predictions |
 |------|---------|-------------|
-| GOLDEN | 71.6% ± 4.3% | ~419 |
-| HIGH | 52.8% ± 13.5% | ~597 |
-| MEDIUM | 41.3% ± 2.8% | ~1876 |
-| LOW | 15.1% ± 2.4% | ~3958 |
-| FILTER | 10.6% ± 1.3% | ~7300 |
+| GOLDEN | 71.6% ± 4.3% | 420 |
+| HIGH | 52.8% ± 13.5% | 604 |
+| MEDIUM | 41.3% ± 2.8% | 1874 |
+| LOW | 15.1% ± 2.4% | 3978 |
+| FILTER | 10.6% ± 1.3% | 7274 |
+
+### New Hypotheses Generated (5 total)
+- h617: HIGH tier stabilization after h615 promotions
+- h618: CV medium demotion drug-class stratification
+- h619: Deliverable regeneration (COMPLETED)
+- h620: Expanded GT safety filter audit (COMPLETED)
+- h621: Disease categorization fix (COMPLETED)
 
 ### Recommended Next Steps
-1. **h619**: Regenerate deliverable with h615 changes (quick win)
-2. **h620**: Audit expanded GT quality for FILTER rules
-3. **h618**: CV medium demotion drug-class stratification
-4. External data integration (h91/h92) for new signals
+1. **h618**: CV medium demotion drug-class stratification (25.1% ± 19.4% holdout)
+2. **h617**: Investigate HIGH tier seed-42 outlier
+3. External data integration (h91/h92) for fundamentally new signals
+4. Literature mining (h91) for novel hypotheses
 
 ---
 

@@ -12676,7 +12676,7 @@
       "id": "h616",
       "title": "Disease-Specific GT Completeness Score for Deliverable",
       "description": "h613 showed extreme variation in expanded/internal GT ratios (3x to 186x). Diseases with low expanded GT coverage (endocrine 3x) may have artificially LOW tier precision because fewer drugs are confirmed as hits. A GT completeness annotation could help users interpret confidence tiers by flagging diseases with potentially incomplete GT.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12685,7 +12685,9 @@
         "Add a 'gt_completeness_ratio' column to the deliverable",
         "Flag diseases where ratio < 5 (potentially low GT coverage)",
         "Correlate GT completeness with per-disease holdout precision"
-      ]
+      ],
+      "findings": "Added gt_completeness_ratio column to deliverable. 479 diseases have ratio computed.\nDistribution: median 6.0x, mean 11.5x, range 1.0-186.5x.\nCorrelation with per-disease holdout precision is weakly negative (r=-0.198) \u2014 diseases with more expanded GT have LOWER per-prediction holdout precision. This is expected: more GT = more room for model to \"miss\".\nGT completeness ratio is informative as annotation (tells users which diseases have more/less validated drug coverage) but is NOT predictive of prediction quality.\nLow-completeness diseases (<3x, n=99) have fewer validated treatments, potentially less reliable tier assignments.",
+      "result_metric": "gt_completeness_ratio added to deliverable. r=-0.198 with holdout (not predictive)."
     },
     {
       "id": "h617",

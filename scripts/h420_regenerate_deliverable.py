@@ -117,6 +117,20 @@ def main():
                 disease_holdout_precision[did] = info["holdout_precision"]
         print(f"Loaded disease holdout precision: {len(disease_holdout_precision)} diseases")
 
+    # h616: Load expanded GT for completeness ratio
+    gt_completeness: Dict[str, float] = {}
+    exp_gt_path = Path(__file__).parent.parent / "data" / "reference" / "expanded_ground_truth.json"
+    if exp_gt_path.exists():
+        with open(exp_gt_path) as f:
+            exp_gt_data = json.load(f)
+        for did in predictor.ground_truth:
+            int_count = len(predictor.ground_truth[did])
+            exp_drugs = exp_gt_data.get(did, [])
+            exp_count = len(exp_drugs) if isinstance(exp_drugs, list) else 0
+            if int_count > 0:
+                gt_completeness[did] = round(exp_count / int_count, 1)
+        print(f"Computed GT completeness: {len(gt_completeness)} diseases")
+
     # Get all diseases with embeddings
     all_diseases = [d for d in predictor.embeddings if d in predictor.disease_names]
     print(f"Diseases with embeddings: {len(all_diseases)}")
@@ -182,6 +196,7 @@ def main():
                 'therapeutic_island': therapeutic_island,
                 'gene_overlap_count': gene_overlap,
                 'disease_holdout_precision': disease_holdout_precision.get(disease_id, ''),
+                'gt_completeness_ratio': gt_completeness.get(disease_id, ''),
             })
 
             # h592: Compute composite quality score for experiment prioritization
