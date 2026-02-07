@@ -12753,7 +12753,7 @@
       "id": "h621",
       "title": "Disease Categorization Fix: Mesothelioma and Retinoblastoma as Cancer",
       "description": "h620 found pleural mesothelioma categorized as respiratory and retinoblastoma as ophthalmic. Both are cancers. Cancer-only drugs predicting these diseases get falsely cross-domain-isolated. Fix categorization to rescue these predictions.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12761,7 +12761,9 @@
         "Add explicit cancer classification for mesothelioma and retinoblastoma in categorize_disease()",
         "Check if any other cancer types are miscategorized (scan for -oma, -carcinoma, etc.)",
         "Run holdout to verify no negative impact"
-      ]
+      ],
+      "findings": "Fixed disease categorization for pleural mesothelioma (was respiratory, now cancer) and retinoblastoma (was ophthalmic, now cancer). Added mesothelioma to cancer keywords, moved retinoblastoma from ophthalmic to cancer. ~28 predictions rescued from FILTER for these 2 diseases. Impact on overall tier counts is tiny. Confirmed no other cancer diseases are miscategorized.",
+      "result_metric": "2 diseases recategorized, ~28 predictions rescued from FILTER"
     }
   ],
   "completed": [

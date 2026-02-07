@@ -1586,7 +1586,9 @@ CATEGORY_KEYWORDS = {
                # h148: Additional cancer patterns
                'carcinoid', 'ependymoma', 'hemangioendothelioma', 'mole', 'neoplasia',
                'langerhans cell histiocytosis', 'lymphangioleiomyomatosis', 'lymphangioma',
-               'medulloblastoma'],
+               'medulloblastoma',
+               # h621: Cancer diseases miscategorized as other specialties
+               'mesothelioma', 'retinoblastoma'],
     'cardiovascular': ['cardiac', 'heart', 'coronary', 'hypertension', 'arrhythmia',
                        'atherosclerosis', 'stroke', 'vascular', 'myocardial', 'angina',
                        'tachycardia', 'aneurysm', 'aorta', 'thrombosis', 'embolism',
@@ -1667,7 +1669,7 @@ CATEGORY_KEYWORDS = {
                    'scleritis', 'optic', 'blindness', 'keratoconus', 'pterygium',
                    'hyperopia', 'myopia',
                    # h188: Additional from h186 analysis
-                   'retinoblastoma', 'retinopathy'],
+                   'retinopathy'],  # h621: retinoblastoma moved to cancer
     'hematological': ['anemia', 'hemophilia', 'thrombocytopenia',
                       'neutropenia', 'hematological', 'myelodysplastic', 'polycythemia',
                       'agranulocytosis', 'coagulation', 'thalassemia', 'sickle cell',
