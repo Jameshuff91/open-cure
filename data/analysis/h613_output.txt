@@ -1,0 +1,109 @@
+================================================================================
+h613: Expanded GT Gap Analysis
+================================================================================
+
+Internal GT: 479 diseases, 3070 pairs
+Expanded GT: 3638 diseases, 59584 pairs
+
+--- Step 1: Per-disease GT comparison ---
+
+Category             Diseases  Int/dis  Exp/dis  Ratio
+-------------------------------------------------------
+  cancer                   80     6.0    79.3  13.2x
+  gastrointestinal         24     2.9    33.2  11.4x
+  renal                    10     7.6    84.3  11.1x
+  other                    17     3.5    38.4  11.1x
+  psychiatric              10     8.7    91.2  10.5x
+  neurological             26     3.8    32.4   8.6x
+  reproductive              5     2.6    21.2   8.2x
+  cardiovascular           39    12.4    94.6   7.6x
+  metabolic                46     5.7    42.5   7.5x
+  immunological             6     7.3    49.8   6.8x
+  respiratory              19     7.8    50.8   6.5x
+  infectious               85     5.1    32.0   6.3x
+  hematological            24     3.8    21.7   5.8x
+  musculoskeletal           8     4.8    27.2   5.7x
+  autoimmune               30    12.3    66.3   5.4x
+  ophthalmic               17     6.1    29.2   4.8x
+  dermatological           30     6.5    28.1   4.3x
+  endocrine                 3     7.3    22.0   3.0x
+
+
+--- Step 2: Diseases with largest expanded-vs-internal GT gaps ---
+
+Disease                                       Cat             Internal Expanded  Ratio
+-------------------------------------------------------------------------------------
+  kidney failure                              renal                  2      373 186.5x
+  carcinoma                                   cancer                 1      176 176.0x
+  myocardial ischemia                         cardiovascular         1      127 127.0x
+  poisoning                                   other                  1      116 116.0x
+  chronic diarrhea associated with inflammato gastrointestinal        1       94  94.0x
+  sickle cell anemia                          hematological          1       74  74.0x
+  lung cancer                                 cancer                 3      200  66.7x
+  toxemia of pregnancy                        reproductive           1       66  66.0x
+  obsessive compulsive disorder               psychiatric            1       63  63.0x
+  cerebral infarction                         cardiovascular         2      123  61.5x
+  dilated cardiomyopathy                      cardiovascular         1       61  61.0x
+  primary biliary cholangitis                 gastrointestinal        1       58  58.0x
+  alzheimers disease                          neurological           4      215  53.8x
+  neuropathy                                  neurological           1       51  51.0x
+  diabetes mellitus                           metabolic             13      645  49.6x
+  cardiomyopathy of variant transthyretinmedi cardiovascular         2       91  45.5x
+  diarrhea                                    gastrointestinal        3      132  44.0x
+  diffuse large b cell lymphoma dlbcl         cancer                 3      129  43.0x
+  pulmonary hypertension                      cardiovascular         3      126  42.0x
+  persistent recurrent or metastatic carcinom cancer                 5      187  37.4x
+  extrapulmonary tuberculosis                 infectious             1       36  36.0x
+  idiopathic pulmonary fibrosis               respiratory            1       36  36.0x
+  atherosclerosis                             cardiovascular         3      106  35.3x
+  glioma                                      cancer                 5      176  35.2x
+  chronic peptic ulcer disease                gastrointestinal        1       34  34.0x
+  leprosy                                     infectious             1       32  32.0x
+  cancer                                      cancer                45     1431  31.8x
+  congenitalidiopathic neutropenia            hematological          3       87  29.0x
+  sepsis                                      infectious             7      202  28.9x
+  amyotrophic lateral sclerosis               neurological           2       56  28.0x
+
+
+--- Step 3: Diseases with ZERO expanded GT ---
+Count: 0
+
+
+--- Step 4: Diseases with most extra expanded drugs ---
+
+Disease                                       Cat             Internal Expanded  Extra
+-------------------------------------------------------------------------------------
+  cancer                                      cancer                45     1431   1386
+  diabetes mellitus                           metabolic             13      645    632
+  breast cancer                               cancer                49      513    464
+  hypertension                                cardiovascular        79      506    427
+  kidney failure                              renal                  2      373    371
+  pain                                        other                 30      369    339
+  chronic heart failure                       cardiovascular        55      384    330
+  rheumatoid arthritis                        autoimmune            55      367    312
+  prostate cancer                             cancer                18      322    304
+  bronchial asthma                            respiratory           31      319    288
+  myocardial infarction                       cardiovascular        66      354    288
+  schizophrenia                               psychiatric           25      296    271
+  colorectal cancer                           cancer                16      284    268
+  melanoma                                    cancer                14      254    240
+  immunodeficiency                            immunological         34      268    234
+  ovarian cancer                              cancer                13      246    233
+  ischemic stroke                             cardiovascular        47      277    231
+  unresectable pancreatic cancer              cancer                 9      234    225
+  alzheimers disease                          neurological           4      215    211
+  epilepsy                                    neurological          17      225    208
+
+
+--- Step 5: Which tiers benefit most from expanded GT? ---
+
+Tier         Internal %   Expanded %     Gain
+---------------------------------------------
+  GOLDEN           65.9%       78.9%    12.9pp
+  HIGH             49.0%       65.9%    16.8pp
+  MEDIUM           38.8%       54.2%    15.4pp
+  LOW              14.3%       20.6%     6.3pp
+  FILTER           12.1%       17.2%     5.1pp
+
+
+Done.

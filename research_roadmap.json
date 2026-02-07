@@ -12623,7 +12623,7 @@
       "id": "h613",
       "title": "Expanded GT Gap Analysis: Which Diseases Have Large Internal-vs-Expanded GT Gaps?",
       "description": "h611 revealed predictor.ground_truth has 3,070 pairs while expanded_ground_truth.json has 59,584 (19x more). Some diseases may have many expanded GT pairs but few internal ones, leading to systematically understated performance for those diseases in internal evaluations. Mapping the gap could reveal diseases where our kNN predictions appear weak but are actually validated by expanded GT.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -12632,7 +12632,9 @@
         "Identify diseases with largest ratio (expanded/internal)",
         "Check if these high-ratio diseases have systematically different tier distributions",
         "Assess whether internal-only evaluation biases specific disease categories"
-      ]
+      ],
+      "findings": "Expanded GT has 19x more pairs than internal GT (59,584 vs 3,070). Per-category ratios range from 3.0x (endocrine) to 13.2x (cancer). This explains why inline holdout evaluations using internal GT dramatically understate precision.\n\nKey metrics:\n- GOLDEN: 65.9% (internal) vs 78.9% (expanded) = +12.9pp\n- HIGH: 49.0% vs 65.9% = +16.8pp\n- MEDIUM: 38.8% vs 54.2% = +15.4pp\n- LOW: 14.3% vs 20.6% = +6.3pp\n\nCancer has highest ratio (13.2x), explaining why cancer_same_type was most affected in h611.\nKidney failure has most extreme per-disease ratio (186x: 2 internal, 373 expanded).\nNo diseases have zero expanded GT coverage.\n\nTier ordering preserved across both GTs \u2014 the system is well-calibrated regardless of GT source, but absolute precision varies significantly. The expanded GT better reflects real-world drug-disease coverage.",
+      "result_metric": "Expanded GT adds +15pp across tiers, 19x more pairs"
     },
     {
       "id": "h614",
@@ -12647,6 +12649,36 @@
         "For each sub-pathway \u00d7 category with n >= 5/seed, test if holdout is significantly below MEDIUM avg",
         "Focus on standard \u00d7 endocrine (15.1%), standard \u00d7 other (0.0%), and other borderline pairs",
         "Consider whether endocrine standard should join MEDIUM_DEMOTED_CATEGORIES"
+      ]
+    },
+    {
+      "id": "h615",
+      "title": "Expanded GT-Based Tier Recalibration: Are Tier Boundaries Optimal for Expanded GT?",
+      "description": "h613 showed expanded GT adds ~15pp precision across tiers. The tier boundaries (GOLDEN/HIGH/MEDIUM/LOW/FILTER) were calibrated using holdout with expanded GT via h393, but the full-data precision used for rule development (e.g., 'this rule has 43% full-data precision') was computed with internal GT. Since expanded GT shows 54.2% MEDIUM precision, some rules previously considered MEDIUM-quality may actually be HIGH-quality under expanded GT evaluation.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "For each tier rule, compute full-data precision using expanded GT instead of internal GT",
+        "Identify rules where expanded GT precision crosses tier boundaries (e.g., MEDIUM rule with HIGH-level expanded precision)",
+        "Compare rule ordering between internal and expanded GT - are any rules misordered?",
+        "Assess whether any tier boundaries should be adjusted"
+      ]
+    },
+    {
+      "id": "h616",
+      "title": "Disease-Specific GT Completeness Score for Deliverable",
+      "description": "h613 showed extreme variation in expanded/internal GT ratios (3x to 186x). Diseases with low expanded GT coverage (endocrine 3x) may have artificially LOW tier precision because fewer drugs are confirmed as hits. A GT completeness annotation could help users interpret confidence tiers by flagging diseases with potentially incomplete GT.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "For each disease in the deliverable, compute expanded_gt_count / internal_gt_count ratio",
+        "Add a 'gt_completeness_ratio' column to the deliverable",
+        "Flag diseases where ratio < 5 (potentially low GT coverage)",
+        "Correlate GT completeness with per-disease holdout precision"
       ]
     }
   ],
@@ -14706,6 +14738,12 @@
       "hypothesis_id": "h611",
       "learning": "CRITICAL: predictor.ground_truth has only 3,070 pairs (DRKG-derived). expanded_ground_truth.json has 59,584 pairs (19x more). Using wrong GT for holdout eval gives systematically LOW precision \u2014 cancer_same_type shows 11.8% vs 37.7% with correct GT. ALWAYS use expanded GT (as h393 evaluator does).",
       "implication": "All previous inline holdout evaluations in this session (h606, h611) used wrong GT. Rankings between sub-pathways are preserved but absolute numbers are wrong. The h606 psychiatric ATC exclusion was independently validated by h393 (correct GT) so that change stands."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h613",
+      "learning": "Expanded GT has 19x more pairs. Cancer=13.2x ratio (highest). Per-tier inflation: GOLDEN +12.9pp, HIGH +16.8pp, MEDIUM +15.4pp, LOW +6.3pp. Higher tiers benefit proportionally more from expanded GT.",
+      "implication": "Inline evaluations must ALWAYS use expanded GT. The internal GT significantly understates system quality. Cancer predictions especially affected."
     }
   ],
   "collaborations": [
