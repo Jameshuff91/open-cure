@@ -13806,7 +13806,7 @@
       "title": "Systematic FDA Label Contraindication Mining: 'Contraindicated in' Pattern Expansion",
       "description": "h670 identified fentanyl \u2192 headache/migraine as contraindicated in the FDA label. There may be more drugs where the Every Cure indication list includes disease pairs that are actually CONTRAINDICATED. A systematic search of 'contraindicated in [disease]' patterns in indication text could find more false GT entries and safety-critical inverse indications. The pattern search in h670 found this pattern matches many rows but requires disease-name matching to filter signal from noise.",
       "hypothesis": "Systematic mining of 'contraindicated in' patterns in indication text will find additional false GT entries and/or safety-critical inverse indications.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -13817,8 +13817,8 @@
         "Classify: false GT (disease mentioned only in contraindication) vs true GT (indicated AND contraindicated for different populations)",
         "Add confirmed false pairs to FALSE_GT_PAIRS or INVERSE_INDICATION_PAIRS"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Systematic mining of 'contraindicated in', 'should not be used', 'not indicated for', and 'not recommended' patterns in EC indication text.\n\nKEY FINDINGS:\n1. 37 FALSE GT entries identified where NLP extracted disease names from negative context (limitations of use, contraindication sections, ineffectiveness statements).\n2. NONE of the 37 false GT entries affect predictions \u2014 all 37 drugs are NOT in DRKG.\n3. BUT the patterns revealed a CRITICAL safety issue: 7 oral antidiabetics (sulfonylureas + TZDs) predicted at GOLDEN/HIGH for T1D.\n   - Sulfonylureas (glimepiride, glipizide, glyburide, nateglinide, repaglinide) require functioning beta cells \u2014 T1D has none.\n   - TZDs (rosiglitazone, pioglitazone) require endogenous insulin \u2014 T1D lacks this.\n   - 2 GOLDEN + 5 HIGH predictions moved to FILTER via inverse_indication.\n   - Holdout impact negligible (within variance) since T1D is only 1 disease.\n4. Conservative approach: did NOT filter SGLT2i, GLP-1, DPP-4i, metformin, or alpha-glucosidase inhibitors for T1D (some evidence for adjunctive use).\n\nPATTERN CATEGORIES FOUND:\n- 'not indicated for' (38 findings): Mainly drug class limitations\n- 'should not be used' (23): Formulation/population restrictions\n- 'not recommended' (11): Subtype-specific exclusions\n- 'contraindicated for' (3): True contraindications\n- 'not effective' (1): Proven ineffectiveness\n\nEC DATA QUALITY: 37 false GT entries (3.6% of 10,224 rows) from NLP extraction of negative context. Systematic pattern: oral antidiabetic labels always include 'limitations of use: not for T1D or DKA' boilerplate.",
+      "result_metric": "7 GOLDEN/HIGH\u2192FILTER (2 GOLDEN + 5 HIGH); no holdout change; 37 false EC GT identified"
     },
     {
       "id": "h676",
@@ -13914,7 +13914,7 @@
       "id": "h681",
       "title": "B12 Supplement False GT Audit: Cyanocobalamin/Hydroxocobalamin Disease Misattribution",
       "description": "h677 found B12 supplements (cyanocobalamin, hydroxocobalamin) listed as treating diseases mentioned in their label as DIFFERENTIAL DIAGNOSES (folate deficiency, iron deficiency, multiple sclerosis, thyrotoxicosis, hepatic disease, renal disease). These are diseases that can CAUSE B12 deficiency, not diseases treated BY B12. Pattern: NLP extracted diseases mentioned in \"conditions associated with B12 deficiency\" context.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14211,6 +14211,62 @@
         "Check saccharin's EC row: what disease and what indication text?",
         "Determine if this is a legitimate therapeutic use or formulation artifact",
         "If false, add to false GT removal"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h699",
+      "title": "Comp_to_base T1D Exclusion: Should T1D Be Excluded from Diabetes Hierarchy?",
+      "description": "h675 found that comp_to_base and metabolic_hierarchy_diabetes promote oral antidiabetics to HIGH for T1D because T1D is in the diabetes hierarchy. While inverse_indication now catches sulfonylureas/TZDs, other diabetes drugs (miglitol, sitagliptin) still get promoted. Should T1D be treated as a separate disease from T2D in the hierarchy? T1D has fundamentally different pathophysiology (autoimmune destruction vs insulin resistance).",
+      "hypothesis": "Splitting T1D from T2D in the diabetes hierarchy and limiting comp_to_base diabetes transfers to T2D-compatible drugs would improve prediction safety.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "category": "safety",
+      "steps": [
+        "Check which drugs get metabolic_hierarchy_diabetes for T1D",
+        "Classify each as T1D-appropriate or T2D-only",
+        "Consider separate hierarchy group for T1D",
+        "Evaluate holdout impact of T1D-specific hierarchy"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h700",
+      "title": "NLP Limitation-of-Use Boilerplate: Other Drug Classes with Systematic False GT",
+      "description": "h675 found that oral antidiabetic labels systematically include \"should not be used for T1D or DKA\" boilerplate. Other drug classes may have similar standard limitation-of-use language that causes NLP extraction errors. E.g., opioid labels say \"not for chronic pain management\" (extended-release forms), NSAIDs say \"not for perioperative pain in CABG\". These patterns could be mined to identify more false GT entries in specific drug classes.",
+      "hypothesis": "Other drug classes have standard FDA label limitation-of-use language that causes systematic NLP false GT extraction.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "category": "data_quality",
+      "steps": [
+        "Identify drug classes with shared label templates (opioids, NSAIDs, antibiotics)",
+        "Extract common \"limitations of use\" patterns per class",
+        "Check if extracted diseases appear only in negative context",
+        "Compare to DRKG drug presence to assess prediction impact"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h701",
+      "title": "Alpha-Blocker Uroselective/Non-Selective Distinction for Hypertension Predictions",
+      "description": "h675 found silodosin and tamsulosin (uroselective alpha-1 blockers) say \"not indicated for hypertension,\" unlike prazosin/doxazosin (non-selective alpha-1 blockers) which DO treat hypertension. If these drugs are in DRKG (they are not currently), they would generate false hypertension predictions. This distinction could matter for future DRKG updates or for annotating the deliverable.",
+      "hypothesis": "Uroselective alpha-1 blockers (tamsulosin, silodosin, alfuzosin) should be flagged as non-antihypertensive in the deliverable annotations.",
+      "status": "pending",
+      "priority": 6,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "annotation",
+      "steps": [
+        "Check which alpha-1 blockers are in DRKG",
+        "Verify none generate hypertension predictions currently",
+        "Add defensive annotation if appropriate"
       ],
       "findings": "",
       "result_metric": ""
@@ -16470,6 +16526,12 @@
       "hypothesis_id": "h696",
       "learning": "CRITICAL: Always use data/raw/drkg/drkg.tsv for DRKG queries, NOT data/drkg/drkg.tsv (which doesn't exist). The h678 analysis was partially incorrect because grep returned 0 by default for the wrong path. Many pharmaceutical excipients/preservatives (chlorobutanol, thimerosal, benzalkonium chloride, etc.) ARE in DRKG with hundreds/thousands of edges, but they don't affect predictions because they're not in EC data (thus not in internal GT). Dual-use substances (edetic acid, zinc oxide, calcium carbonate) need careful handling \u2014 they have genuine therapeutic uses alongside excipient roles.",
       "implication": "The expanded GT is now cleaner (57,445 pairs) after removing 48 inert excipient entries. Future DRKG queries must use the correct path. No code changes needed \u2014 existing filters handle all impactful cases."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h675",
+      "learning": "FDA label \"limitations of use\" sections cause systematic NLP extraction errors. Oral antidiabetic labels all include \"not for T1D or DKA\" boilerplate. 37 false EC GT entries found, but none affect DRKG predictions. Main action: sulfonylurea/TZD \u2192 T1D inverse indication (7 GOLDEN/HIGH \u2192 FILTER).",
+      "implication": "NLP-extracted GT databases need drug-class-specific validation. Comp_to_base diabetes hierarchy treats T1D and T2D identically despite fundamentally different pathophysiology."
     }
   ],
   "collaborations": [

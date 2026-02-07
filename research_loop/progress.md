@@ -1,6 +1,45 @@
 # Research Loop Progress
 
-## Current Session: h678 - Combo Product Drug Mismatch Audit (2026-02-06)
+## Current Session: h675 - FDA Label Contraindication Mining (2026-02-07)
+
+### h675: Systematic FDA Label Contraindication Mining — VALIDATED (Safety Improvement)
+
+**Methodology:** Mined EC indication text for 5 negative patterns: 'contraindicated in', 'should not be used', 'not indicated for', 'not recommended', 'not effective'. Matched disease names appearing in negative context against the disease listed as the indication.
+
+**Key findings:**
+1. **37 false GT entries** identified where NLP extracted disease names from "limitations of use" sections, not from indication context. Major pattern: ALL oral antidiabetic labels include "should not be used for type 1 diabetes mellitus or diabetic ketoacidosis" boilerplate.
+2. **None of the 37 false GT drugs are in DRKG** — no prediction or holdout impact from GT cleanup alone.
+3. **CRITICAL safety fix:** 7 oral antidiabetics predicted at GOLDEN/HIGH for T1D are medically incorrect:
+   - 2 GOLDEN: Glimepiride, Rosiglitazone → T1D (sulfonylurea/TZD, require beta cells)
+   - 5 HIGH: Glipizide, Pioglitazone, Glyburide, Nateglinide, Repaglinide → T1D
+   - All moved to FILTER via inverse_indication
+   - Sulfonylureas/meglitinides stimulate insulin release from beta cells; T1D has autoimmune beta cell destruction → zero efficacy
+   - TZDs require endogenous insulin production → ineffective in T1D
+4. **Conservative approach:** Did NOT filter SGLT2i (dapagliflozin), GLP-1 (liraglutide, semaglutide), DPP-4i (sitagliptin), metformin, or alpha-glucosidase inhibitors (miglitol) for T1D — these have some evidence for adjunctive use.
+
+### Tier Status (post h675)
+| Tier | Holdout | Std | Previous |
+|------|---------|-----|----------|
+| GOLDEN | 72.5% | ± 6.5% | 71.8% |
+| HIGH | 61.3% | ± 7.7% | 61.4% |
+| MEDIUM | 37.9% | ± 5.0% | 38.3% |
+| LOW | 14.4% | ± 1.2% | 14.4% |
+| FILTER | 9.5% | ± 1.0% | 9.5% |
+Note: All changes within normal holdout variance. Safety improvement is the main value.
+
+### New Hypotheses Generated (3)
+- h699: Comp_to_base T1D exclusion (split T1D from diabetes hierarchy)
+- h700: NLP limitation-of-use boilerplate (other drug classes)
+- h701: Alpha-blocker uroselective/non-selective distinction
+
+### Recommended Next Steps
+1. **h699**: T1D hierarchy separation (medium impact, medium effort)
+2. **h675 follow-up**: Check if other disease subtypes have similar hierarchy issues (e.g., gestational diabetes)
+3. **h672**: CS GT gap expansion
+
+---
+
+## Previous Session: h678 - Combo Product Drug Mismatch Audit (2026-02-06)
 
 ### h678: Combo Product Drug Mismatch Audit — VALIDATED (Data Cleanliness, No Metric Impact)
 Comprehensive audit extending h677 (lidocaine/bupivacaine combo product fix) to all drugs.

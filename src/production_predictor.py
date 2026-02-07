@@ -761,11 +761,20 @@ FALSE_GT_PAIRS = {
     # adrenal hyperplasia, testotoxicosis must be excluded" — CAH is a differential,
     # not an indication for GnRH agonist therapy
     'nafarelin': {'congenital adrenal hyperplasia'},
-    # h677: B12 supplements list diseases that CAUSE B12 deficiency, not diseases treated BY B12.
+    # h677/h681: B12 supplements list diseases that CAUSE B12 deficiency, not diseases treated BY B12.
     # Label text: "conditions associated with B12 deficiency: hypothyroidism, multiple sclerosis,
     # iron deficiency" — these are differential diagnoses, not indications.
-    'cyanocobalamin': {'multiple sclerosis', 'iron deficiency', 'thyrotoxicosis'},
-    'hydroxocobalamin': {'folate deficiency', 'multiple sclerosis', 'iron deficiency'},
+    # Also from multi-vitamin combo products (iron+B12+folate+fluoride) where iron/folate/fluoride
+    # indications are attributed to the B12 component.
+    'cyanocobalamin': {
+        'multiple sclerosis', 'iron deficiency', 'thyrotoxicosis',
+        'hemolytic anemia', 'hepatic disease', 'renal disease',  # h681: B12 deficiency CAUSES, not indications
+        'hypochromic anemia', 'iron deficiency anemia',  # h681: from iron+B12 combo products
+        'vitamin c deficiency', 'dental caries', 'vitamin deficiency',  # h681: from multi-vitamin combos
+    },
+    'hydroxocobalamin': {
+        'folate deficiency', 'multiple sclerosis', 'iron deficiency',
+    },
 }
 
 # h480: Inverse-indication FILTER
@@ -787,17 +796,31 @@ INVERSE_INDICATION_PAIRS = {
     'vasopressin': {'hyperglycemia'},
     # h482: Sulfonylureas/insulin → hypoglycemia (they CAUSE hypoglycemia)
     # These drugs lower blood sugar; predicting them for hypoglycemia is inverse
-    'glipizide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
-    'glimepiride': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
-    'glyburide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
-    'tolazamide': {'hypoglycemia'},
-    'nateglinide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
-    'repaglinide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    # h675: Also → T1D/DKA: Sulfonylureas and meglitinides require functioning beta cells
+    #   to stimulate insulin release. T1D has autoimmune beta cell destruction → zero efficacy.
+    #   FDA labels explicitly state "should not be used for type 1 diabetes or DKA."
+    #   NLP extraction error: EC indicationList extracts T1D/DKA from "limitations of use" text.
+    'glipizide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia',
+                  'type 1 diabetes mellitus', 'diabetic ketoacidosis'},
+    'glimepiride': {'hypoglycemia', 'hyperinsulinemic hypoglycemia',
+                    'type 1 diabetes mellitus', 'diabetic ketoacidosis'},
+    'glyburide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia',
+                  'type 1 diabetes mellitus', 'diabetic ketoacidosis'},
+    'tolazamide': {'hypoglycemia',
+                   'type 1 diabetes mellitus', 'diabetic ketoacidosis'},
+    'nateglinide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia',
+                    'type 1 diabetes mellitus', 'diabetic ketoacidosis'},
+    'repaglinide': {'hypoglycemia', 'hyperinsulinemic hypoglycemia',
+                    'type 1 diabetes mellitus', 'diabetic ketoacidosis'},
     'insulin lispro': {'hypoglycemia'},
     'insulin human': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
     # h482: Insulin sensitizers → hypoglycemia (can cause hypoglycemia)
-    'rosiglitazone': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
-    'pioglitazone': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
+    # h675: TZDs → T1D/DKA: Require endogenous insulin production to work.
+    #   T1D has no beta cells → TZDs are ineffective. FDA labels explicit.
+    'rosiglitazone': {'hypoglycemia', 'hyperinsulinemic hypoglycemia',
+                      'type 1 diabetes mellitus', 'diabetic ketoacidosis'},
+    'pioglitazone': {'hypoglycemia', 'hyperinsulinemic hypoglycemia',
+                     'type 1 diabetes mellitus', 'diabetic ketoacidosis'},
     # h483: Metronidazole → myopia (CAUSES transient myopia as adverse effect, JAMA case report)
     'metronidazole': {'myopia'},
     # h483: Verapamil → cardiac arrest (CAN PRECIPITATE cardiac arrest in WPW/VT; not a treatment)
