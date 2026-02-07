@@ -13893,7 +13893,7 @@
       "id": "h680",
       "title": "DRKG Internal GT False Entries: Systematic Drug-Text Mismatch Scan",
       "description": "h677 found 43 lidocaine + 28 bupivacaine false entries in DRKG INTERNAL GT (not just expanded). These come from DRKG treatment edges that are actually co-occurrence artifacts from combo products. A systematic scan of all DRKG treatment edges for drug-indication text mismatches could identify more false internal GT entries. This would improve both evaluation honesty AND kNN prediction quality.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "high",
       "effort": "medium",
@@ -13902,7 +13902,9 @@
         "Flag drugs with GT entries from a very different class (e.g., LA with autoimmune diseases)",
         "Cross-reference with DRKG edge types to identify co-occurrence vs treatment edges",
         "Remove confirmed false internal GT entries"
-      ]
+      ],
+      "findings": "h680 VALIDATED: Internal GT and expanded GT quality audit.\n\nKEY FINDINGS:\n1. FDG PET tracer (DB09502) had 12 false internal GT entries (cancer diseases it diagnoses, not treats). Pleural mesothelioma had FDG as its ONLY drug \u2014 removing FDG removes mesothelioma from training (correct: no real drug GT for it). Fixed by adding FDG to _remove_false_gt_pairs.\n\n2. Expanded GT contained 1,905 dead-weight pairs from broad drug CLASS entries:\n   - \"Steroids\" (MESH:D013256): 531 diseases\n   - \"steroid\" (CHEBI:35341): 452 diseases  \n   - \"Adrenal Cortex Hormones\" (MESH:D000305): 396 diseases\n   - \"corticosteroid\" (CHEBI:50858): 212 diseases\n   - \"Estrogens\" (MESH:D004967): 161 diseases\n   - \"Penicillins\" (MESH:D010406): 153 diseases\n   These never matched any predictions (model predicts specific drugs, not classes) but inflated GT pair count from 59,541 to 57,586 after removal.\n\n3. 42 diseases removed from expanded GT \u2014 all had ONLY class-level entries, no specific drugs. None were in internal GT.\n\n4. Technetium SPECT (DB09138): 6 expanded GT entries removed (0 in internal GT).\n\n5. Internal GT is actually fairly clean for drugs that DO map through DrugBank. The main contamination vector (combo product NLP mismatch) was already addressed by h677 for lidocaine/bupivacaine. No other systematic drug-class mismatches found.\n\nHOLDOUT IMPACT: Within noise for all tiers (\u00b10.7-1.0pp changes, all within 1 std). FDG removal from 12 training pairs is too small to move metrics. Broad class removal from expanded GT doesn't affect evaluation since those IDs never matched predictions.\n\nGT: 59,541 \u2192 57,586 (-1,955 pairs: 50 non-therapeutic + 1,905 broad class).\nDiseases: 3,638 \u2192 3,596 (-42 class-only diseases).",
+      "result_metric": "Negligible holdout impact (within noise). GT cleaned: 59,541\u219257,586"
     },
     {
       "id": "h681",
@@ -13917,6 +13919,65 @@
         "Classify: genuine B12 deficiency treatment vs causative condition",
         "Remove false entries (folate deficiency, iron deficiency, MS, etc.)",
         "Check for similar pattern in other vitamin supplements"
+      ]
+    },
+    {
+      "id": "h682",
+      "title": "Mesothelioma GT Gap: No Real Drug GT After FDG Removal",
+      "description": "h680 found that pleural mesothelioma had FDG (PET tracer) as its ONLY drug in internal GT. After FDG removal, mesothelioma has zero drugs and is excluded from training. Check: (1) Are there any FDA-approved treatments for mesothelioma that could be added to GT? (2) Pemetrexed+cisplatin is standard first-line. Check if these appear in expanded GT. (3) Should we add mesothelioma GT entries? This could improve predictions for mesothelioma and similar rare cancers.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Check if pemetrexed, cisplatin, or other mesothelioma drugs appear in expanded GT for mesothelioma",
+        "Search ClinicalTrials.gov for mesothelioma treatments",
+        "If legitimate GT gaps exist, add them to expanded_ground_truth.json",
+        "Check other diseases that lost their only drug from non-therapeutic cleanup"
+      ]
+    },
+    {
+      "id": "h683",
+      "title": "Expanded GT ID Format Audit: MESH Compound IDs vs DrugBank IDs",
+      "description": "h680 revealed that expanded GT contains 16,316 MESH compound IDs and 2,867 CHEBI IDs alongside 38,403 DrugBank IDs. The model only predicts DrugBank-format IDs (drkg:Compound::DBXXXXX). MESH and CHEBI compound IDs can only match if they're also in the DRKG entity list AND the model predicts them. Question: how many MESH/CHEBI expanded GT entries actually match model predictions? If many don't, the effective expanded GT is smaller than 57,586 and tier precision estimates may be inflated by denominator dilution (more GT = more chances to match).",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Get the set of all drug IDs that the model actually predicts (from internal GT)",
+        "Cross-reference with expanded GT drug IDs to find matchable vs unmatchable entries",
+        "Quantify: what fraction of expanded GT entries can ever match a prediction?",
+        "If significant unmatchable fraction, assess impact on precision estimates"
+      ]
+    },
+    {
+      "id": "h684",
+      "title": "FILTER Tier FDG Artifact: Quantify FDG Prediction Volume Post-Removal",
+      "description": "h680 removed FDG from internal GT, so it should no longer appear in kNN predictions. But FDG still has an embedding in DRKG. Check: does removing FDG from internal GT actually stop it from being predicted? Or does it still appear via other pathways? Also check if FILTER tier precision changed (-0.8pp in h680) reflects FDG removal correctly. If FDG predictions persist, may need to verify the NON_THERAPEUTIC_COMPOUNDS filter is catching them.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Run predictor on a few cancer diseases and check if FDG appears in predictions",
+        "Verify NON_THERAPEUTIC_COMPOUNDS filter catches any residual FDG predictions",
+        "Compare FILTER tier composition before/after h680"
+      ]
+    },
+    {
+      "id": "h685",
+      "title": "Disease GT Coverage Quality: Diseases with Only 1 Drug in Internal GT",
+      "description": "h680 found 227 diseases with only 1-2 drugs in internal GT. These are most vulnerable to false GT entries (a single bad entry = 50-100% contamination). Many of these are rare diseases. Audit: for the 227 single-drug diseases, verify the drug-disease pair is legitimate. Check a random sample of 30 pairs. Also check if any of these diseases have obvious FDA-approved treatments that are missing from GT. This could both remove false entries and add missing ones, improving both precision and recall.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Random sample 30 of the 227 single-drug internal GT diseases",
+        "For each, verify: is the drug-disease pair legitimate? Is there a better first-line treatment?",
+        "Cross-reference with expanded GT for additional coverage",
+        "Flag any false pairs for removal and missing pairs for addition"
       ]
     }
   ],
@@ -16120,6 +16181,12 @@
       "hypothesis_id": "h677",
       "learning": "Every Cure GT has ~6% error rate from NLP extraction. Dominant error: combo product drug mismatch (lidocaine/bupivacaine inheriting corticosteroid indications). 139 rows in source, 82 false GT entries removed. Also found target_overlap rescue was leaking LA procedural demotions back to MEDIUM \u2014 same pattern as h560/h647.",
       "implication": "Always check for rescue pathway leakage after implementing demotions. Combo product NLP errors likely affect other drug pairs too. GT quality directly affects holdout evaluation honesty."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h680",
+      "learning": "Internal GT (2,999 pairs) is fairly clean for DrugBank-mapped drugs. Main contamination was combo product NLP mismatch (h677, already fixed). FDG PET tracer had 12 false entries but removal has negligible holdout impact. Expanded GT had 1,905 dead-weight broad drug class entries that never matched predictions. GT cleanup is about honesty, not metric improvement.",
+      "implication": "Further internal GT cleaning has diminishing returns. Focus future GT work on: (1) expanded GT ID format audit (MESH/CHEBI vs DrugBank matchability), (2) single-drug disease verification, (3) GT gap filling for rare cancers."
     }
   ],
   "collaborations": [

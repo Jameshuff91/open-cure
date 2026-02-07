@@ -2207,6 +2207,57 @@ class DrugRepurposingPredictor:
                     drug_ids.discard(drug_id)
                     removed += 1
 
+        # h680: Remove non-therapeutic compounds from internal GT entirely.
+        # These are diagnostic imaging agents, not treatments. Their presence
+        # in DRKG treatment edges is from co-occurrence with diseases in clinical
+        # contexts (e.g., FDG PET scans for cancer staging).
+        _NON_THERAPEUTIC_GT_DRUGS = {
+            'fludeoxyglucose (18f)',  # DB09502 — PET imaging tracer, not a treatment
+            'fludeoxyglucose f-18',  # Alternate name
+        }
+        for drug_name_lower in _NON_THERAPEUTIC_GT_DRUGS:
+            drug_id = name_to_id.get(drug_name_lower)
+            if not drug_id:
+                continue
+            for disease_id, drug_ids in self.ground_truth.items():
+                if drug_id in drug_ids:
+                    drug_ids.discard(drug_id)
+                    removed += 1
+
+        # h677/h680: Allowlist-based cleanup for lidocaine and bupivacaine
+        # These drugs have 78/61 false GT entries from combo product NLP mismatch
+        # (corticosteroid indication text assigned to LA component).
+        # Instead of listing all false diseases, we keep ONLY legitimate indications.
+        _LA_ALLOWLIST = {
+            'lidocaine': {
+                'pain', 'arrhythmi', 'ventricular', 'pruritus', 'itch', 'neuropath',
+                'neuralgia', 'tachycardia', 'hemorrhoid', 'herpes zoster', 'herpes simplex',
+                'postherpetic', 'fibromyalgia', 'cardiac arrest', 'dermatit', 'eczema',
+                'psoriasis', 'urticaria', 'lichen', 'keratosis', 'seborrheic', 'pemphig',
+                'erythema multiforme', 'bullous', 'alopecia', 'vitiligo', 'acne',
+                'depression', 'depressive', 'migraine', 'headache',
+                'epilepsy', 'seizure', 'status epilepticus',
+                'stomatitis', 'aphthous', 'mouth', 'dental', 'toothache',
+                'cystitis', 'interstitial cystitis', 'hidradenitis',
+                'osteoarthritis', 'tenosynovitis', 'torsades', 'myocardial infarction',
+            },
+            'bupivacaine': {
+                'pain', 'anesthesia', 'labor', 'surgical', 'dental', 'epidural', 'spinal',
+                'postoperative', 'nerve block', 'obstetric', 'caesarean', 'cesarean',
+                'herpes zoster', 'tendinitis',
+            },
+        }
+        for drug_name_lower, legit_keywords in _LA_ALLOWLIST.items():
+            drug_id = name_to_id.get(drug_name_lower)
+            if not drug_id:
+                continue
+            for disease_id, drug_ids in self.ground_truth.items():
+                if drug_id in drug_ids:
+                    dname = self.disease_names.get(disease_id, '').lower()
+                    if dname and not any(kw in dname for kw in legit_keywords):
+                        drug_ids.discard(drug_id)
+                        removed += 1
+
         if removed > 0:
             # Remove empty disease entries
             self.ground_truth = {k: v for k, v in self.ground_truth.items() if v}
