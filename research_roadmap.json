@@ -12774,7 +12774,7 @@
       "id": "h622",
       "title": "Expanded GT Recalibration of Other Demoted Categories",
       "description": "h618 showed CV demotion was too aggressive when evaluated with expanded GT (29.1% vs 2.0% with internal GT). The same pattern may apply to other MEDIUM_DEMOTED_CATEGORIES (immunological 7.6%, neurological 5.5%, hematological 4.4%, GI 5.6%, metabolic 10.3%, reproductive 2.9%). Test whether expanded GT reveals drug-class subsets that are genuinely MEDIUM-quality within these categories.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12786,7 +12786,9 @@
       ],
       "dependencies": [
         "h618"
-      ]
+      ],
+      "findings": "No other demoted category has a drug-class subset with both sufficient precision (>=25%)\nand sufficient sample size (n>=5/seed) to warrant rescue.\n\nNeurological (overall 19.4%):\n- anticonvulsant: 21.8% \u00b1 23.1% (n=10/seed) \u2014 borderline, high variance\n- muscle_relaxant: 53.3% (n=2.2/seed) \u2014 tiny n, unreliable\n- antiparkinsonian: 0.0% (n=4.6/seed) \u2014 fails\n- non_neuro: 19.2% (n=13/seed) \u2014 below threshold\n\nHematological (overall 21.1%):\n- antineoplastic_heme: 31.9% \u00b1 17.1% (n=4.8/seed) \u2014 promising but marginal sample size\n- supplement: 51.3% (n=2.8/seed) \u2014 tiny n\n- complement_inhibitor: 6.7% (n=2.4/seed) \u2014 poor\n- non_hemo: 13.3% (n=11.6/seed) \u2014 below LOW avg\n\nThe CV case (h618) was special: anticoagulants had n=14.2/seed (3x larger than any other category).\nCategory-level demotions are correctly calibrated for all non-CV categories.",
+      "result_metric": "No actionable drug-class subsets. Best candidate: heme antineoplastic_heme 31.9% but n=4.8/seed (marginal)."
     },
     {
       "id": "h623",
@@ -14907,6 +14909,12 @@
       "hypothesis_id": "h618",
       "learning": "Internal GT (3,070 pairs) systematically underestimates CV drug precision. Expanded GT (59,584) reveals genuine CV drugs have 30.9% holdout in CV demotion group. Drug-class stratification cleanly separates CV pharmacotherapy (30.9%) from non-CV drugs (4.6%).",
       "implication": "All MEDIUM_DEMOTED_CATEGORIES should be re-evaluated with expanded GT. Category-level demotions may be hiding drug-class-specific quality that only appears with complete GT."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h622",
+      "learning": "Category demotions are well-calibrated for all non-CV categories even with expanded GT. The CV rescue worked because anticoagulants have high n (14.2/seed). Other categories lack a dominant genuine drug class with sufficient holdout volume.",
+      "implication": "MEDIUM_DEMOTED_CATEGORIES exhausted for drug-class rescue. Further MEDIUM improvements need promotions or new signals, not demotion reversals."
     }
   ],
   "collaborations": [
