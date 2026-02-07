@@ -12720,7 +12720,7 @@
       "id": "h619",
       "title": "Deliverable Regeneration: Apply h615 Hierarchy Promotions",
       "description": "Regenerate the deliverable with h615 HIERARCHY_PROMOTE_TO_GOLDEN changes. 139 predictions move from HIGH to GOLDEN. Update prediction counts and tier annotations.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -12728,7 +12728,9 @@
         "Run scripts/h420_regenerate_deliverable.py",
         "Verify GOLDEN count increased by ~139 predictions",
         "Verify tier ordering in deliverable"
-      ]
+      ],
+      "findings": "Deliverable regenerated with h615 changes. GOLDEN: 280\u2192420 (+140), HIGH: 736\u2192597 (-139). Total 14,150 predictions, 473 diseases, 1,004 drugs. All tier counts match expectations.",
+      "result_metric": "GOLDEN 420 preds (+50%), HIGH 597 preds, MEDIUM 1876, total 14150"
     },
     {
       "id": "h620",
