@@ -1,0 +1,38 @@
+======================================================================
+h625: Hematological Immune-Mediated Corticosteroid Rescue
+======================================================================
+
+Seed 42...
+
+Seed 123...
+
+Seed 456...
+
+Seed 789...
+
+Seed 2024...
+
+======================================================================
+RESULTS
+======================================================================
+
+--- hematological_corticosteroid_demotion ---
+  immune_mediated: no predictions in holdout
+  non_immune: 3.8% ± 4.0% (n=9.0/seed, total~45)
+
+--- hematological_medium_demotion ---
+  immune_mediated: 26.7% ± 17.0% (n=11.8/seed, total~59)
+  non_immune: 14.2% ± 9.1% (n=15.4/seed, total~77)
+
+--- Current tier precision ---
+  GOLDEN: 38.9% ± 38.9% (n=5.8/seed)
+  HIGH: 60.1% ± 7.5% (n=110.0/seed)
+  MEDIUM: 51.6% ± 6.0% (n=362.0/seed)
+  LOW: 22.1% ± 2.5% (n=835.4/seed)
+  FILTER: 19.1% ± 1.1% (n=1529.8/seed)
+
+--- Impact Analysis ---
+  Current MEDIUM: 51.6% (n=362/seed)
+  Immune CS rescue: 0.0% (n=0.0/seed)
+  New MEDIUM: 51.6% (n=362/seed)
+  Delta: +0.0pp

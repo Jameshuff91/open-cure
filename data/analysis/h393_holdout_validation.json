@@ -27,28 +27,28 @@
       ]
     },
     "MEDIUM": {
-      "full_precision": 51.6,
-      "holdout_mean": 38.9,
-      "holdout_std": 4.0,
-      "delta": -12.7,
+      "full_precision": 51.4,
+      "holdout_mean": 39.5,
+      "holdout_std": 3.5,
+      "delta": -11.9,
       "seed_values": [
-        33.9,
+        37.0,
         42.7,
-        34.6,
-        43.3,
+        34.3,
+        43.8,
         39.8
       ]
     },
     "LOW": {
-      "full_precision": 21.5,
-      "holdout_mean": 14.6,
-      "holdout_std": 2.4,
+      "full_precision": 21.1,
+      "holdout_mean": 14.2,
+      "holdout_std": 2.0,
       "delta": -6.9,
       "seed_values": [
-        16.5,
+        15.0,
         13.6,
         14.3,
-        17.8,
+        17.2,
         11.0
       ]
     },
@@ -577,16 +577,6 @@
       "mean_n": 19.0,
       "status": "OVERFITTED?"
     },
-    "hematological_corticosteroid_demotion": {
-      "tier": "LOW",
-      "full_precision": 29.4,
-      "full_n": 102,
-      "holdout_mean": 23.7,
-      "holdout_std": 21.5,
-      "delta": -5.7,
-      "mean_n": 24.4,
-      "status": "degraded"
-    },
     "hematological_medium_demotion": {
       "tier": "LOW",
       "full_precision": 17.9,
@@ -626,6 +616,16 @@
       "delta": -10.5,
       "mean_n": 25.8,
       "status": "degraded"
+    },
+    "hematological_corticosteroid_demotion": {
+      "tier": "LOW",
+      "full_precision": 4.7,
+      "full_n": 43,
+      "holdout_mean": 5.8,
+      "holdout_std": 0.9,
+      "delta": 1.1,
+      "mean_n": 17.5,
+      "status": "GENUINE"
     },
     "mechanism_specific": {
       "tier": "LOW",
@@ -685,6 +685,16 @@
       "holdout_std": 20.9,
       "delta": -1.6,
       "mean_n": 43.6,
+      "status": "GENUINE"
+    },
+    "hematological": {
+      "tier": "MEDIUM",
+      "full_precision": 47.5,
+      "full_n": 59,
+      "holdout_mean": 44.4,
+      "holdout_std": 19.6,
+      "delta": -3.1,
+      "mean_n": 17.3,
       "status": "GENUINE"
     },
     "infectious_cs_tb_demotion": {
@@ -773,10 +783,10 @@
     "golden_holdout_precision": 71.6,
     "golden_pass": true,
     "tier_ordering_correct": true,
-    "n_rules_tested": 68,
-    "n_genuine": 14,
+    "n_rules_tested": 69,
+    "n_genuine": 16,
     "n_overfitted": 19,
-    "n_degraded": 18,
+    "n_degraded": 17,
     "n_small_sample": 17
   }
 }

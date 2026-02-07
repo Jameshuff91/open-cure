@@ -12799,7 +12799,7 @@
       "id": "h623",
       "title": "MEDIUM Tier Precision Recovery: Tighten CV Rescue Criteria",
       "description": "h618 rescue diluted MEDIUM from 41.3% to 38.9% (-2.4pp). The cv_established_drug_rescue holdout is 30.9% with high variance (\u00b120.9%). Could adding a mechanism_support or rank<10 requirement to the CV rescue improve MEDIUM precision while keeping most rescues? Anticoagulants with mechanism had 27.2% vs without 65.0% \u2014 surprising inversion suggests mechanism flag is noisy for this drug class.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12811,7 +12811,9 @@
       ],
       "dependencies": [
         "h618"
-      ]
+      ],
+      "findings": "Rank stratification: rank<=5 (58.2%), rank<=10 (53.7%), rank>10 (30.4%), rank>15 (38.0%). Mechanism: +mech (51.7%), -mech (33.0%). However, tightening criteria yields only +0.1 to +0.6pp MEDIUM precision improvement because: (1) dropped predictions still have decent precision (30-37%), (2) dropped predictions are small fraction of MEDIUM (89-164/2075), (3) coverage loss (4-8% of MEDIUM) not worth marginal precision gain. h618 implementation is already near-optimal for coverage/precision trade-off.",
+      "result_metric": "Max +0.6pp MEDIUM improvement (rank<=10 + mech), not worth complexity"
     },
     {
       "id": "h624",
@@ -12832,6 +12834,29 @@
       ],
       "findings": "Deliverable regenerated with h618 CV rescue. 201 predictions rescued LOW\u2192MEDIUM. Tier counts: GOLDEN 420, HIGH 604, MEDIUM 2075 (+201), LOW 3777 (-201), FILTER 7274. Spot-check confirms medically sound predictions (anticoagulants for thrombotic diseases, statins for CV complications, CCBs for arrhythmias).",
       "result_metric": "MEDIUM: 2075 preds (up from 1874). Known indications: 36.0%."
+    },
+    {
+      "id": "h625",
+      "title": "Hematological Immune-Mediated Corticosteroid Rescue",
+      "description": "The hematological_corticosteroid_demotion (h522) blanket-demotes ALL CS\u2192hematological MEDIUM\u2192LOW. But immune-mediated hematological diseases (autoimmune cytopenias, HIT, aplastic anemia) genuinely use corticosteroids as treatment. Split the demotion by disease subtype.",
+      "hypothesis": "Corticosteroid\u2192immune-mediated hematological diseases should be MEDIUM, not LOW. Immune-mediated: 48.4% holdout (pre-impl), non-immune: 3.8%. 10x gap.",
+      "status": "validated",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Analyze disease-level precision for hematological_corticosteroid_demotion",
+        "Classify immune-mediated vs genetic/structural hematological diseases",
+        "5-seed holdout validation",
+        "Implement _is_immune_mediated_hematological() method",
+        "Re-run h393 evaluator to confirm tier impact"
+      ],
+      "findings": "VALIDATED. Clean 10x precision split: immune-mediated CS 48.4% \u00b1 28.8% holdout vs non-immune 3.8% \u00b1 4.0%. 59 predictions rescued LOW\u2192MEDIUM (8 diseases: pure red cell aplasia, aplastic anemia, HIT type II, anemia, hypereosinophilic syndrome, etc.). Post-implementation h393 evaluator: MEDIUM 39.5% \u00b1 3.5% (+0.6pp vs 38.9%), LOW 14.2% \u00b1 2.0% (-0.4pp vs 14.6%). The rescued hematological MEDIUM sub-rule shows 44.4% \u00b1 19.6% holdout (GENUINE status). Underlying biology: corticosteroids suppress immune-mediated blood cell destruction (valid treatment) but cannot fix genetic/structural disorders.",
+      "result_metric": "MEDIUM +0.6pp (38.9% \u2192 39.5%), 59 predictions rescued, n=17.3/seed at 44.4%",
+      "category": "meta-analysis",
+      "dependencies": [
+        "h522"
+      ]
     }
   ],
   "completed": [

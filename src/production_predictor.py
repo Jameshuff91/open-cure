@@ -2657,6 +2657,51 @@ class DrugRepurposingPredictor:
                 return True
         return False
 
+    @staticmethod
+    def _is_immune_mediated_hematological(disease_name: str) -> bool:
+        """
+        h625: Check if a hematological disease is immune-mediated.
+
+        Corticosteroids are genuine treatments for immune-mediated cytopenias
+        (autoimmune destruction of blood cells) but NOT for genetic/structural
+        hematological disorders (hemoglobinopathies, coagulation factor deficiencies).
+
+        5-seed holdout (expanded GT):
+        - Immune-mediated CS: 48.4% ± 28.8% (n=16.2/seed) → MEDIUM quality
+        - Non-immune CS: 3.8% ± 4.0% (n=9.0/seed) → correctly LOW
+
+        Returns True if disease is immune-mediated hematological.
+        """
+        dl = disease_name.lower()
+
+        immune_keywords = [
+            # Autoimmune cytopenias
+            'autoimmune hemolytic', 'warm autoimmune', 'cold autoimmune',
+            'immune thrombocytopeni', 'idiopathic thrombocytopeni',
+            'pure red cell aplasia', 'aplastic anemia',
+            'evans syndrome',
+            # Immune-mediated conditions
+            'heparin-induced thrombocytopeni', 'heparininduced thrombocytopeni',
+            'thrombotic thrombocytopenic purpura',
+            'hemolytic uremic',
+            'hypereosinophilic',
+            'hemolytic anemia',
+            # Transplant-related
+            'graft versus host', 'gvhd',
+            # Acquired immune-mediated
+            'acquired hemophilia',
+        ]
+
+        for kw in immune_keywords:
+            if kw in dl:
+                return True
+
+        # "anemia" without genetic qualifiers is often immune-mediated/multifactorial
+        if 'anemia' in dl and 'sickle' not in dl and 'thalassemia' not in dl:
+            return True
+
+        return False
+
     def _is_atc_coherent(self, drug_name: str, category: str) -> bool:
         """
         h309/h310: Check if drug's ATC code is coherent with disease category.
@@ -4081,10 +4126,12 @@ class DrugRepurposingPredictor:
 
                     # h522: Hematological corticosteroid demotion MEDIUM→LOW
                     # Hematological corticosteroid MEDIUM = 19.1% holdout (below MEDIUM avg 31.1%)
-                    # Works for autoimmune cytopenias but fails for genetic/structural disorders
+                    # h625: Immune-mediated diseases exempted (48.4% ± 28.8% holdout)
+                    # Non-immune (genetic/structural): 3.8% ± 4.0% → stays LOW
                     if (tier == ConfidenceTier.MEDIUM
                             and category == 'hematological'
-                            and drug_name.lower() in _CORTICOSTEROID_LOWER):
+                            and drug_name.lower() in _CORTICOSTEROID_LOWER
+                            and not self._is_immune_mediated_hematological(disease_name)):
                         tier = ConfidenceTier.LOW
                         cat_specific = 'hematological_corticosteroid_demotion'
 
