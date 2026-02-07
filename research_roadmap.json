@@ -13878,7 +13878,7 @@
       "id": "h679",
       "title": "Lidocaine GOLDEN Prediction Quality: Are Psychiatric/Dermatological Tiers Appropriate?",
       "description": "h677 found lidocaine has 9 GOLDEN predictions including psychiatric (ADHD, bipolar, depression) and dermatological (atopic dermatitis, keratosis pilaris). While dermatological uses are legitimate (topical lidocaine), psychiatric uses are driven by inflated kNN frequency from false GT (43 diseases instead of ~10 real ones). Should we restrict lidocaine GOLDEN to only neurological/CV/dermatological and exclude psychiatric?",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13887,7 +13887,9 @@
         "Assess medical plausibility of each",
         "Check if inflated train_frequency (43 vs ~10 real) affects tier assignment",
         "Consider adding lidocaine-specific frequency correction or psychiatric exclusion"
-      ]
+      ],
+      "findings": "h679 INVALIDATED: Lidocaine GOLDEN quality already resolved by h677 cleanup.\n\nh677 already reduced lidocaine GT from ~43 to 18 diseases using allowlist-based cleanup.\nAll 18 remaining GT entries are medically legitimate:\n- Dermatological (8): topical anesthetic uses\n- Neurological/Pain (3): core lidocaine use\n- Cardiovascular (2): Class Ib antiarrhythmic\n- Psychiatric (1): IV lidocaine for depression (genuine research area)\n- Others (4): herpes zoster, lichen planus, tenosynovitis, pruritus ani\n\nMajor depressive disorder is the only psychiatric GT entry. IV lidocaine for \ntreatment-resistant depression has real evidence (Cochrane review exists).\nAlready allowed by h540 therapeutic category list.\n\nNo action needed. The hypothesis was already addressed by prior work.",
+      "result_metric": "No action needed \u2014 already cleaned by h677"
     },
     {
       "id": "h680",
@@ -13925,7 +13927,7 @@
       "id": "h682",
       "title": "Mesothelioma GT Gap: No Real Drug GT After FDG Removal",
       "description": "h680 found that pleural mesothelioma had FDG (PET tracer) as its ONLY drug in internal GT. After FDG removal, mesothelioma has zero drugs and is excluded from training. Check: (1) Are there any FDA-approved treatments for mesothelioma that could be added to GT? (2) Pemetrexed+cisplatin is standard first-line. Check if these appear in expanded GT. (3) Should we add mesothelioma GT entries? This could improve predictions for mesothelioma and similar rare cancers.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13934,7 +13936,9 @@
         "Search ClinicalTrials.gov for mesothelioma treatments",
         "If legitimate GT gaps exist, add them to expanded_ground_truth.json",
         "Check other diseases that lost their only drug from non-therapeutic cleanup"
-      ]
+      ],
+      "findings": "h682 INVALIDATED: Mesothelioma GT is adequate via disease hierarchy.\n\nTwo mesothelioma entries exist in DRKG:\n1. malignant pleural mesothelioma (D000086002): 4 internal GT drugs (pemetrexed, nivolumab, ipilimumab, pembrolizumab) \u2014 well-covered\n2. pleural mesothelioma (D008654): 0 internal GT (FDG was only drug, removed in h680), but 15 DB drugs in expanded GT\n\nThe \"gap\" is not real because:\n- The specific subtype (malignant pleural mesothelioma) has good GT coverage\n- The generic form (pleural mesothelioma) had only a diagnostic agent\n- kNN makes predictions for both disease entities\n- D000086002 drives good mesothelioma predictions through its 4 drugs\n\nNo action needed. The model already covers mesothelioma adequately through the specific subtype.",
+      "result_metric": "No gap \u2014 malignant pleural mesothelioma has 4 GT drugs"
     },
     {
       "id": "h683",

@@ -1,6 +1,10 @@
 # Research Loop Progress
 
-## Current Session: h685 + h689 + h690 + h691 - GT Quality Audits (2026-02-06)
+## Current Session: h685-h691 - GT Quality Audit Series (2026-02-06)
+
+### h679: Lidocaine GOLDEN Quality — INVALIDATED (already resolved by h677)
+### h682: Mesothelioma GT Gap — INVALIDATED (adequate via disease hierarchy)
+### h688: Two-Drug Disease GT Audit — VALIDATED (0% error rate, much better than single-drug)
 
 ### h691: Large-Gap Disease Analysis — VALIDATED (Structural Finding)
 222 diseases (47%) have ≤2 internal GT drugs but 8.9x more in expanded GT. This is a structural DRKG limitation. Key patterns: missing standard treatments (OCD lacks SSRIs, PBC lacks UDCA), generic disease names, outdated drugs. Not actionable without model retraining (h687).
