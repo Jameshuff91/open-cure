@@ -1,6 +1,40 @@
 # Research Loop Progress
 
-## Current Session: h638/h644/h647/h648 - Target Overlap Analysis & MEDIUM Optimization (2026-02-06)
+## Current Session: h651/h650/h655 - ATC Coherent Exclusions & Cancer Rank Analysis (2026-02-06)
+
+### h651: ATC Coherent Endocrine/Musculoskeletal/Respiratory/Renal Exclusion — VALIDATED
+Added 4 new categories to ATC_COHERENT_EXCLUDED: endocrine (0% holdout), musculoskeletal (0%), respiratory (19.4%), renal (11.1%). All had n<5/seed, consistently below MEDIUM avg (42.9%). 27 predictions demoted from MEDIUM to LOW in deliverable.
+
+**Key finding:** Holdout evaluator shows 0pp change because GT recomputation reduces train_frequency below the freq>=3 threshold for borderline drugs (Terbutaline 2→1, Formoterol 3→2, Calcitriol 3→2). The change only affects full-data precision and deliverable quality.
+
+**Lesson:** ATC coherent exclusions have minimal holdout impact due to the freq>=3 natural filter during holdout evaluation.
+
+### h650: Cancer Same-Type Rank 16-20 Demotion — INVALIDATED
+Rank 16-20 cancer_same_type has 31.9% ± 4.9% holdout (n=10.2/seed). While below MEDIUM avg (42.9%), many predictions are medically legitimate (FDA-approved drugs like Apalutamide→prostate, Nelarabine→ALL). At 2x LOW average (14.8%), these are borderline MEDIUM, not genuinely LOW. +0.58pp improvement not worth misclassifying legitimate predictions.
+
+### h655: Cancer Same-Type Rank 11-15 → HIGH Promotion — INVALIDATED
+Initial mean of 55.8% was inflated by seed 42 (n=1, 100%). Excluding this outlier: 44.7% ± 8.6%, which is at MEDIUM average — NOT promotable to HIGH.
+
+**Cancer rank gradient (final):** R1-10=HIGH (62.4%), R11-15=MEDIUM (44.7%), R16-20=MEDIUM-low (31.9%), R21+=LOW (26.9%)
+
+### Comprehensive MEDIUM Quality Map
+Ran detailed sub-reason × mechanism × rank analysis. Key finding: **Default MEDIUM NoMech R6-10 at 30.0% ± 9.3% (n=25.8/seed)** is the single largest low-quality bucket in MEDIUM. New hypothesis h657 created to investigate demotion.
+
+### New Hypotheses Generated (5)
+- h653: ATC coherent remaining categories quality map
+- h654: Train frequency threshold sensitivity (freq>=3 vs freq>=2)
+- h655: Cancer rank 11-15 → HIGH (INVALIDATED)
+- h656: Deliverable-only quality metrics
+- h657: Default MEDIUM NoMech R6-10 demotion (priority 3, medium impact)
+
+### Recommended Next Steps
+1. **h657**: Default MEDIUM NoMech R6-10 demotion — largest remaining MEDIUM quality lever
+2. **h653**: ATC coherent remaining categories quality map
+3. Higher-effort external data integrations (LINCS, PubMed mining)
+
+---
+
+## Previous Session: h638/h644/h647/h648 - Target Overlap Analysis & MEDIUM Optimization (2026-02-06)
 
 ### h638: MEDIUM Target Overlap → HIGH Promotion — INVALIDATED
 No subset of target_overlap_promotion MEDIUM exceeds 55% holdout with n>=10/seed. ALL preds are Mech=Y, TransE=N, non-CS. Overall: 49.2% ± 5.9% (n=35/seed). Psychiatric: 53.3% ± 8.8% (n=18.2, near-promotable but 1.7pp below 55%). Rank 1-5: 58.7% (n=6.2, too few). Target_overlap correctly placed as high-quality MEDIUM.

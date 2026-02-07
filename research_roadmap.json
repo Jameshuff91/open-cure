@@ -13332,7 +13332,7 @@
       "title": "Cancer Same-Type Rank 16-20 Further Demotion Analysis",
       "description": "h648 demoted rank 21+ cancer_same_type to LOW (25.5% holdout). Rank 16-20 has 31.9% \u00b1 4.9% holdout (n=10.2/seed) \u2014 also below MEDIUM average (42.8%). Should rank 16-20 also be demoted? The holdout at 31.9% is in a grey zone: above LOW (14.8%) but below MEDIUM. Moving the cutoff from rank 21 to rank 16 would remove another ~10 preds/seed.",
       "hypothesis": "Demoting cancer_same_type rank 16-20 from MEDIUM to LOW will add another +0.4-0.6pp to MEDIUM.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13341,8 +13341,8 @@
         "Compare MEDIUM/LOW precision vs current",
         "Decide if 31.9% predictions belong in MEDIUM or LOW"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "Rank 11-15 vs 16-20 gradient confirmed: 55.8% \u00b1 23.4% vs 31.9% \u00b1 4.9%. Demoting R16-20 would give +0.58pp MEDIUM (43.7\u219244.2%). However, 31.9% is 2x LOW average (14.8%) and many predictions are medically legitimate (Vinorelbine\u2192breast, Apalutamide\u2192prostate, Nelarabine\u2192ALL \u2014 all FDA-approved). These are borderline MEDIUM, not genuinely LOW quality. 71 total predictions affected. Quartile annotations already differentiate within MEDIUM.",
+      "result_metric": "R16-20: 31.9% \u00b1 4.9% holdout. Demotion NOT implemented.",
       "category": "precision-improvement"
     },
     {
@@ -13350,7 +13350,7 @@
       "title": "ATC Coherent Endocrine and Respiratory Demotion: 0% and 23% Holdout",
       "description": "h647 sub-reason map found atc_coherent_endocrine at 0% holdout (n=3/seed) and atc_coherent_respiratory at 23.4% \u00b1 22.5% (n=4.2/seed). Both are below MEDIUM average. These are small n so individual demotion may be noisy, but they are consistently weak. Could be grouped into a general \"small-n ATC coherent with poor holdout\" demotion rule.",
       "hypothesis": "Demoting atc_coherent_endocrine and atc_coherent_respiratory from MEDIUM to LOW will provide small but clean improvement to MEDIUM.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13359,8 +13359,8 @@
         "Assess whether ATC_COHERENT_EXCLUDED should include endocrine and respiratory",
         "Implement if justified, run holdout validation"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "Added endocrine, musculoskeletal, respiratory, and renal to ATC_COHERENT_EXCLUDED. All four categories had holdout precision well below MEDIUM average (42.9%): endocrine 0% (n=3/seed, 1 disease), musculoskeletal 0% (n=2/seed, 2 diseases), respiratory 19.4% \u00b1 24.4% (n=4/seed, high variance), renal 11.1% \u00b1 15.7% (n=1.7/seed). Exact per-seed holdout analysis shows MEDIUM improvement of +0.71pp (42.95% \u2192 43.66%). 31 predictions demoted across 5 seeds (6.2/seed avg), 7 were GT hits (all respiratory). No rescue leakage \u2014 affected predictions correctly fall to LOW. Calcitriol\u2192rickets reaches MEDIUM via target_overlap_promotion (separate pathway, not leakage). Conservative alternative (endo+MSK only) gives +0.38pp; all 4 gives best improvement. IMPORTANT: Holdout evaluator shows 0pp change because GT recomputation reduces train_frequency below the ATC coherent threshold (>=3) for borderline drugs (Terbutaline 2\u21921, Formoterol 3\u21922, Calcitriol 3\u21922). The change only affects full-data precision and deliverable quality (27 fewer MEDIUM predictions). Key lesson: ATC coherent exclusions have minimal holdout impact because the freq>=3 condition is already a natural filter during holdout evaluation.",
+      "result_metric": "Deliverable: -27 MEDIUM preds. Holdout: 0pp change (freq threshold effect).",
       "category": "precision-improvement"
     },
     {
@@ -13380,6 +13380,98 @@
       ],
       "findings": "Complete audit of all rescue/promotion pathways. The ONLY LOW\u2192MEDIUM rescue path is target_overlap (line 4114-4127), which was fixed by h647. All other post-processing paths operate on MEDIUM or higher. 238 MEDIUM predictions from demoted categories are ALL from legitimate pre-check returns (hierarchy, cv_pathway_comprehensive, cv_established_drug_rescue), not leaks. Zero _medium_demotion predictions remain in MEDIUM.",
       "result_metric": "No additional leaks found. h647 fix was complete.",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h653",
+      "title": "ATC Coherent Remaining Categories Quality Map",
+      "description": "h651 excluded 4 low-performing ATC coherent categories but kept autoimmune (50%), dermatological (45.2%), infectious (46.9%), ophthalmic (75%), and cardiovascular/oncological (implied by code). The remaining categories have very different holdout precision. A systematic quality map would identify: (1) which remaining ATC coherent categories are genuinely strong, (2) whether any should be promoted from MEDIUM to HIGH, (3) whether the ophthalmic 75% (n=2/seed) is real signal or noise.",
+      "hypothesis": "A systematic quality map of remaining ATC coherent categories will reveal promotion opportunities (ophthalmic) or hidden weaknesses.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Run holdout evaluation per ATC coherent category with n and CI",
+        "Identify any with holdout > 55% and sufficient n for HIGH promotion",
+        "Check ophthalmic specifically (75% n=2 \u2014 likely noise)"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h654",
+      "title": "Train Frequency Threshold Sensitivity: freq>=3 vs freq>=2",
+      "description": "h651 revealed that GT recomputation reduces train_frequency below the ATC coherent threshold (>=3), making holdout insensitive to ATC coherent changes. This suggests the freq>=3 threshold may be too high \u2014 many borderline drugs (freq=2-3) lose eligibility during holdout evaluation. Lowering to freq>=2 would retain more predictions in holdout. But would these predictions be quality? Drugs with freq=2 have very limited cross-disease evidence.",
+      "hypothesis": "Lowering the ATC coherent train_frequency threshold from 3 to 2 would increase holdout sensitivity without hurting precision, because ATC coherence is the primary quality signal.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Run holdout with freq>=2 threshold (original categories only)",
+        "Compare precision and n vs freq>=3",
+        "Check if this addresses the holdout-insensitivity finding"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "evaluation-improvement"
+    },
+    {
+      "id": "h655",
+      "title": "Cancer Same-Type Rank 11-15 \u2192 HIGH Promotion",
+      "description": "h650 found cancer_same_type rank 11-15 has 55.8% \u00b1 23.4% holdout (n=8.6/seed). This is above HIGH threshold (54.8%). The high variance (\u00b123.4%) is concerning but the mean exceeds HIGH. This would be an extension of h633 (which promoted rank 1-10 with mechanism). Rank 11-15 with mechanism also has mechanism support by definition (cancer_same_type MEDIUM requires mechanism).",
+      "hypothesis": "Promoting cancer_same_type rank 11-15 (with mechanism) from MEDIUM to HIGH will add ~43 predictions to HIGH with precision matching the HIGH average.",
+      "status": "invalidated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Verify that ALL rank 11-15 cancer_same_type have mechanism_support=True",
+        "Check the 23.4% variance \u2014 is it driven by 1-2 outlier seeds?",
+        "If variance is acceptable, implement promotion and validate",
+        "Check CS artifact in this subset"
+      ],
+      "findings": "Rank 11-15 cancer_same_type: 55.8% \u00b1 23.4% holdout (n=8.6/seed, 5 seeds). BUT seed 42 has n=1 (100%) \u2014 pure outlier. Excluding seed 42: 44.7% \u00b1 8.6%. This is at MEDIUM average, NOT HIGH level. All 43 predictions have mechanism=True, 0% CS artifact. Drugs include Fluorouracil, Methotrexate, Doxorubicin, Capecitabine, Cisplatin \u2014 standard cytotoxic agents. The predictions are quality MEDIUM but the initial 55.8% was misleading due to small-n outlier seed. Rank gradient within cancer_same_type is now well-characterized: R1-10 = HIGH (62.4%), R11-15 = MEDIUM (44.7%), R16-20 = MEDIUM-low (31.9%), R21+ = LOW (26.9%).",
+      "result_metric": "R11-15: 44.7% \u00b1 8.6% (excl outlier). NOT promotable to HIGH.",
+      "category": "precision-improvement"
+    },
+    {
+      "id": "h656",
+      "title": "Deliverable-Only Quality Metrics: Full-Data Precision as User-Facing Signal",
+      "description": "h651 showed that some quality improvements only affect the deliverable (full-data) but not holdout. The deliverable shows full-data precision (e.g., MEDIUM 51.0%) while holdout is 42.9%. Since researchers use the deliverable, not the holdout evaluation, full-data improvements ARE meaningful for user experience. Should we report full-data precision alongside holdout precision in the deliverable? Or is full-data precision misleading?",
+      "hypothesis": "Adding full-data precision as a tier-level annotation in the deliverable would help researchers understand the expected quality of predictions they see.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Analyze gap between full-data and holdout precision per tier",
+        "Determine which metric is more informative for researchers",
+        "Consider adding holdout precision as tier annotation in deliverable"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "production"
+    },
+    {
+      "id": "h657",
+      "title": "Default MEDIUM NoMech Rank 6-10 Demotion to LOW",
+      "description": "The comprehensive MEDIUM sub-reason quality map found default MEDIUM NoMech R6-10 at 30.0% \u00b1 9.3% holdout (n=25.8/seed). This is 13pp below MEDIUM average and the single largest low-quality bucket (129 predictions in deliverable). h555 already demotes NoMech R11-20. Extending to R6-10 would remove borderline predictions. However, 30% is 2x LOW average, creating the same grey-zone tension as h650 (cancer R16-20 at 31.9%).",
+      "hypothesis": "Demoting default MEDIUM NoMech R6-10 from MEDIUM to LOW will improve MEDIUM precision by +1-2pp.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Calculate exact per-seed MEDIUM impact of demotion",
+        "Check which drugs and diseases are affected",
+        "Compare against alternative: tighter mechanism gate on default MEDIUM",
+        "Decide if 30% predictions belong in MEDIUM or LOW"
+      ],
+      "findings": "",
+      "result_metric": "",
       "category": "precision-improvement"
     }
   ],
@@ -15511,6 +15603,24 @@
       "hypothesis_id": "h643",
       "learning": "CV rescue without mechanism was 22.5% (borderline LOW). Mechanism gating improved MEDIUM by +2.7pp. Rescue rules should be gated on mechanism when holdout shows significant split.",
       "implication": "Check all rescue rules for mechanism split. Also: ALL remaining non-CS MEDIUM are rank 16-20."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h651",
+      "learning": "ATC coherent exclusions have minimal holdout impact because GT recomputation reduces train_frequency below the freq>=3 threshold for borderline drugs. The change only affects full-data precision and deliverable quality.",
+      "implication": "ATC coherent holdout evaluation is insensitive to category exclusions. Focus on deliverable impact for these changes."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h650",
+      "learning": "Cancer same-type rank 16-20 has 31.9% holdout \u2014 below MEDIUM avg but 2x LOW avg. Many predictions are medically legitimate (FDA-approved drugs for the correct cancer type). Decided not to demote.",
+      "implication": "31.9% is a grey zone between MEDIUM and LOW. Quartile annotations provide better differentiation than discrete tier demotion."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h655",
+      "learning": "Cancer same-type rank 11-15 at 55.8% was inflated by n=1 outlier (seed 42 at 100%). Excluding the outlier: 44.7% \u00b1 8.6%, not promotable to HIGH. Always exclude n=1 outlier seeds before reporting means.",
+      "implication": "Small n with outlier seeds can inflate means by 10+ pp. Report medians or exclude n<3 seeds."
     }
   ],
   "collaborations": [

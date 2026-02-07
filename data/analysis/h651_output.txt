@@ -1,0 +1,113 @@
+=== h651: ATC Coherent Endocrine/Respiratory Analysis ===
+
+Expanded GT: 3638 diseases, 59584 pairs
+Diseases with GT + embeddings: 455
+
+--- STEP 1: Current holdout per-rule stats ---
+
+Seed 42 done
+Seed 123 done
+Seed 456 done
+Seed 789 done
+Seed 1337 done
+
+=== ATC Coherent Sub-Reasons ===
+
+atc_coherent_autoimmune:
+  Holdout: 50.0% ± 0.0% (n=2.7/seed)
+  Per-seed: ['50.0%', '50.0%', '50.0%']
+  Drugs (3): ['Azathioprine', 'Rituximab', 'Tocilizumab']
+  Diseases (5): ['autoimmune pulmonary alveolar proteinosis', 'eosinophilic granulomatosis with polyangiitis', 'graft versus host disease gvhd', 'microscopic polyangiitis', 'vasculitis']
+
+atc_coherent_dermatological:
+  Holdout: 45.2% ± 28.6% (n=6.4/seed)
+  Per-seed: ['66.7%', '33.3%', '83.3%', '42.9%', '0.0%']
+  Drugs (9): ['Azathioprine', 'Clindamycin', 'Erythromycin', 'Ketoconazole', 'Metronidazole', 'Oxytetracycline', 'Promethazine', 'Salicylic acid', 'Tetracycline']
+  Diseases (12): ['acne vulgaris', 'blepharitis', 'dermatitis', 'dry skin', 'hordeolum', 'ichthyosis', 'ichthyosis vulgaris', 'impetigo', 'otitis externa', 'pyoderma', 'rosacea', 'severe seborrheic dermatitis']
+
+atc_coherent_endocrine:
+  Holdout: 0.0% ± 0.0% (n=3.0/seed)
+  Per-seed: ['0.0%']
+  Drugs (3): ['Ketoconazole', 'Lanreotide', 'Oxytetracycline']
+  Diseases (1): ['central precocious puberty']
+
+atc_coherent_infectious:
+  Holdout: 46.9% ± 5.9% (n=36.8/seed)
+  Per-seed: ['46.5%', '36.4%', '52.0%', '46.6%', '52.8%']
+  Drugs (29): ['Amphotericin B', 'Ampicillin', 'Azithromycin', 'Aztreonam', 'Caspofungin', 'Cefotaxime', 'Cefoxitin', 'Ceftriaxone', 'Cefuroxime', 'Ciprofloxacin', 'Clindamycin', 'Erythromycin', 'Fluconazole', 'Itraconazole', 'Ivermectin']
+  Diseases (44): ['acquired immunodeficiency syndrome aids', 'actinomycosis', 'allergic bronchopulmonary aspergillosis', 'aspergillosis', 'bacterial meningitis', 'brucellosis', 'chagas disease american trypanosomiasis', 'cholera', 'chronic mucocutaneous candidiasis', 'congenital toxoplasmosis', 'cryptococcosis', 'cutaneous candidiasis', 'cutaneous leishmaniasis caused by leishmania braziliensis', 'diabetic foot infections of the skin and soft tissue', 'diphtheria']
+
+atc_coherent_musculoskeletal:
+  Holdout: 0.0% ± 0.0% (n=2.0/seed)
+  Per-seed: ['0.0%', '0.0%']
+  Drugs (3): ['Budesonide', 'Calcitriol', 'Liothyronine']
+  Diseases (2): ['duchenne muscular dystrophy', 'fgf23related hypophosphatemic ricketsosteomalacia']
+
+atc_coherent_ophthalmic:
+  Holdout: 75.0% ± 25.0% (n=2.0/seed)
+  Per-seed: ['50.0%', '100.0%', '50.0%', '100.0%']
+  Drugs (6): ['Bimatoprost', 'Epinephrine', 'Lanreotide', 'Metronidazole', 'Moxifloxacin', 'Ofloxacin']
+  Diseases (5): ['conjunctivitis', 'corneal ulcer', 'dacryocystitis', 'glaucoma', 'hyperopia']
+
+atc_coherent_renal:
+  Holdout: 11.1% ± 15.7% (n=1.7/seed)
+  Per-seed: ['0.0%', '0.0%', '33.3%']
+  Drugs (3): ['Dapagliflozin', 'Furosemide', 'Liothyronine']
+  Diseases (3): ['kidney failure', 'uremia', 'vesicoureteral reflux']
+
+atc_coherent_respiratory:
+  Holdout: 19.4% ± 24.4% (n=4.0/seed)
+  Per-seed: ['0.0%', '0.0%', '40.0%', '57.1%', '0.0%']
+  Drugs (10): ['Acetylcysteine', 'Cetirizine', 'Desloratadine', 'Fexofenadine', 'Formoterol', 'Metronidazole', 'Promethazine', 'Salmeterol', 'Terbutaline', 'Theophylline']
+  Diseases (7): ['allergic rhinitis', 'bronchial asthma', 'chronic obstructive pulmonary disease', 'empyema', 'laryngitis', 'seasonal allergic rhinitis', 'silicosis']
+
+=== Current Tier Precision ===
+  GOLDEN: 74.7% ± 7.1%
+  HIGH: 53.9% ± 3.6%
+  MEDIUM: 42.9% ± 2.6%
+  LOW: 13.4% ± 0.8%
+  FILTER: 9.8% ± 1.2%
+
+
+--- STEP 2: Simulate demotion (add endocrine+respiratory to ATC_COHERENT_EXCLUDED) ---
+
+Per-seed analytical calculation:
+(We'll need to re-run to get per-seed per-rule hits/totals)
+
+atc_coherent_endocrine:
+  Mean holdout: 0.0%
+  Mean n: 3.0/seed
+  Expected hits removed from MEDIUM: 0.0/seed
+  Expected misses removed: 3.0/seed
+
+atc_coherent_respiratory:
+  Mean holdout: 19.4%
+  Mean n: 4.0/seed
+  Expected hits removed from MEDIUM: 0.8/seed
+  Expected misses removed: 3.2/seed
+
+
+--- STEP 3: Proper simulation with modified exclusions ---
+
+Modifying ATC_COHERENT_EXCLUDED to include endocrine and respiratory...
+Patched seed 42 done
+Patched seed 123 done
+Patched seed 456 done
+Patched seed 789 done
+Patched seed 1337 done
+
+=== COMPARISON: Current vs Patched (endocrine+respiratory excluded) ===
+
+Tier               Current         Patched    Delta
+--------------------------------------------------
+GOLDEN      74.7% ±  7.1%   0.0% ±  0.0% -74.7pp
+HIGH        53.9% ±  3.6%   0.0% ±  0.0% -53.9pp
+MEDIUM      42.9% ±  2.6%   0.0% ±  0.0% -42.9pp
+LOW         13.4% ±  0.8%   0.0% ±  0.0% -13.4pp
+FILTER       9.8% ±  1.2%   0.0% ±  0.0%  -9.8pp
+
+MEDIUM per-seed detail:
+  Current: ['45.3%', '39.6%', '40.8%', '46.5%', '42.3%']
+  Patched: []
+
+Done!
