@@ -153,6 +153,9 @@ vastai destroy instance <INSTANCE_ID>
 - MEDIUM: 42.9% ± 2.9% holdout (~1363 predictions)
 - LOW: 14.8% ± 1.7% holdout (~4235 predictions)
 - FILTER: 10.6% ± 1.3% holdout (7274 predictions)
+- **h662:** Named default MEDIUM sub-paths: freq5_mech 45.3%, NoMech R1-5 **45.4%** (GENUINE, n=50/seed), NoMech R6-10 34.1% (z=-1.2). All correctly placed. CLOSED #17.
+- **h657 INVALIDATED:** NoMech R6-10 demotion would misclassify MEDIUM-quality predictions. 34.1-40.5% holdout is MEDIUM, not LOW.
+- **h661:** Ryland collaboration prep: 230 derm predictions, EGFR gap identified, Montelukast→IPF top wet-lab candidate.
 - **h649:** Infectious hierarchy pneumonia → LOW. 15 preds. 16.7% holdout. **MEDIUM +0.1pp (42.8→42.9%)**.
 - **h648:** Cancer same-type rank 21+ → LOW demotion. 100 preds demoted. 26.9% holdout. **MEDIUM +1.3pp (41.5→42.8%)**.
 - **h647:** Metabolic target_overlap rescue leak fix. 37 preds blocked from MEDIUM rescue. 10.3% holdout. **MEDIUM +0.7pp (40.8→41.5%)**.
