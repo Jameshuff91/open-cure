@@ -11168,15 +11168,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Add a deliverable column: transe_filter_flag (boolean) for FILTER predictions with TransE consilience",
         "Document the 264 predictions that would be flagged",
         "Verify that the existing transe_consilience flag works for FILTER predictions (may only be computed for non-FILTER)",
         "Success: deliverable annotated, no tier change"
       ],
-      "findings": "",
-      "result_metric": "",
+      "findings": "TransE consilience already computed for all tiers including FILTER (425/7274 = 5.8%). The transe_consilience flag in the deliverable already serves this purpose. FILTER+TransE predictions are mostly cross_domain_isolated (amphotericin B) or cancer_no_gt \u2014 correctly filtered despite TransE agreement. No additional annotation needed.",
+      "result_metric": "425 FILTER+TransE predictions. Already annotated. No further action.",
       "category": "meta-analysis",
       "rationale": ""
     },
@@ -12535,7 +12535,7 @@
       "id": "h607",
       "title": "Standard MEDIUM Autoimmune Quality: 20.3% Holdout at n=6.8",
       "description": "Standard MEDIUM autoimmune has 20.3% \u00b1 20.4% holdout (n=6.8/seed). High variance suggests a mix of good and bad predictions. The 21 full-data predictions (33.3%) include 7 GT hits. If autoimmune standard MEDIUM is truly ~20%, it should be demoted to LOW. But the high variance (\u00b120.4%) means the true precision could be 0-40%. Need more data or different analysis approach to resolve.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12544,7 +12544,8 @@
         "Check if specific drug classes drive the variance (e.g., DMARDs vs other)",
         "If n is too small for reliable demotion, annotate as 'uncertain' quality",
         "Revisit if GT expansion adds more autoimmune diseases"
-      ]
+      ],
+      "findings": "Resolved by h614: standard|autoimmune shows 70.3% \u00b1 24.6% holdout with expanded GT (n=7.4/seed). The 20.3% was from internal GT which systematically underestimates. No demotion needed."
     },
     {
       "id": "h608",
