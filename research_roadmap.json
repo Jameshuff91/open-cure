@@ -14479,7 +14479,7 @@
       "id": "h713",
       "title": "Symptom vs Disease Filter: Should Symptoms Like Nausea/Vomiting/Pain Have Drug Predictions?",
       "description": "h711 found many top unmapped EC entries are symptoms rather than diseases: nausea (21 GT), vomiting (21 GT), acute pain (17 GT), depression (26 GT). Drug repurposing for symptoms raises different considerations than for diseases. Should we: (a) map them and treat them like diseases, (b) map them but annotate as 'symptom', (c) exclude them? The predictor currently generates predictions only for MESH-mapped diseases, so adding symptoms would expand the prediction space.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14488,7 +14488,9 @@
         "Check whether symptoms have meaningful DRKG graph structure for kNN",
         "Assess whether symptom predictions would add value or noise",
         "Recommend inclusion/exclusion policy"
-      ]
+      ],
+      "findings": "VALIDATED (Meta-Analysis): Symptom entries generate reasonable predictions; no systematic filter needed.\n\nKey findings:\n1. Only 9/1057 disease entries are pure symptoms (pain, chronic pain, anxiety, insomnia, diarrhea, pruritus, edema, anorexia, motion sickness).\n2. 2/9 have no DRKG embedding (anorexia, anxiety) \u2192 0 predictions.\n3. Prediction quality varies but is generally good:\n   - EXCELLENT: pain (17/17 = 100% expanded GT), edema (14/19 = 74%)\n   - GOOD: insomnia (4/8 = 50%), chronic pain (6/10 = 60%)\n   - REASONABLE: pruritus (7/17 = 41%), diarrhea (3/9 = 33%)\n   - LOW: motion sickness (2/20 = 10%, all at LOW tier \u2014 appropriate)\n4. Pain predictions are particularly strong \u2014 all 15 MEDIUM+ predictions are analgesics and all are in expanded GT.\n5. Doxycycline \u2192 diarrhea at HIGH (F46, mech) is questionable but doxycycline does treat cholera/GI infections. Not clearly an inverse indication.\n6. Symptom entries SHOULD remain in prediction space \u2014 they represent valid drug indications.\n\nRECOMMENDATION: No filter needed. Symptom entries are few (0.9% of diseases) and generate clinically reasonable predictions.",
+      "result_metric": "No change needed \u2014 symptom predictions are medically reasonable"
     },
     {
       "id": "h714",
