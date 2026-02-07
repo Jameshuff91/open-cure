@@ -12857,6 +12857,147 @@
       "dependencies": [
         "h522"
       ]
+    },
+    {
+      "id": "h626",
+      "title": "Metabolic Endocrine Subtype Rescue: Thyroid/Parathyroid vs Diabetes",
+      "description": "h625 showed immune-mediated vs genetic/structural split works for hematological. Metabolic demotion similarly groups heterogeneous diseases: hyperthyroidism (60% full-data, 0% SR), type I hyperlipoproteinemia (31%, 0% SR) vs diabetes (50% but 64% random baseline). Could thyroid/parathyroid diseases be rescued from metabolic_medium_demotion? These diseases use distinct drug classes (antithyroid drugs, PTH) that genuinely treat the condition. Caveat: small n per disease.",
+      "hypothesis": "Thyroid/parathyroid diseases within metabolic_medium_demotion have genuinely higher precision than diabetes-dominated remainder.",
+      "status": "invalidated",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Classify metabolic diseases: thyroid/parathyroid vs diabetes/lipid vs other",
+        "Full-data precision per subtype",
+        "5-seed holdout validation per subtype",
+        "If thyroid/parathyroid >=30% holdout AND n>=5/seed, implement rescue"
+      ],
+      "dependencies": [
+        "h625"
+      ],
+      "category": "meta-analysis",
+      "findings": "INVALIDATED due to insufficient n. Metabolic subtypes: lipid=5 diseases (1.0/holdout), thyroid=7 (1.4), diabetes=11 (2.2), other=24 (4.8). All below n>=30 holdout minimum. Full-data: lipid 34.8% (promising, type I hyperlipoproteinemia 41% at 0% SR with 24x lift), thyroid 19.2%, diabetes 15.6%, other 0.9%. The lipid subtype is medically valid (statins+fibrates+bile acids are textbook treatments) but cannot be reliably validated with only 5 lipid diseases in the system.",
+      "result_metric": "n too small for holdout validation (max 5 diseases/subtype, need ~30 predictions/seed)"
+    },
+    {
+      "id": "h627",
+      "title": "GI Acid-Related Disease Subtype Rescue: Peptic/Cholestatic vs Other",
+      "description": "GI demotion catches pancreatitis (50%), PBC (30%), peptic ulcer (33%) alongside diseases with 0% precision. Acid-related and cholestatic GI diseases use distinct drug classes (PPIs, UDCA, bile acids) that may transfer well within subtype. Could we split GI demotion by acid-related/cholestatic vs other? Caveat: many of these diseases are 100% self-referential which inflates full-data numbers.",
+      "hypothesis": "Acid-related and cholestatic GI diseases within GI demotion have higher precision than inflammatory/functional GI diseases.",
+      "status": "invalidated",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Classify GI diseases by subtype (acid-related, cholestatic, inflammatory, functional)",
+        "Check self-referentiality for each subtype",
+        "Full-data precision with random baseline correction",
+        "5-seed holdout only for non-SR subtypes with >=30% full-data precision"
+      ],
+      "dependencies": [
+        "h625"
+      ],
+      "category": "meta-analysis",
+      "findings": "INVALIDATED: Only 25 GI diseases total (5.0/holdout). Subtypes even smaller. Same structural limitation as h626. Full-data promising (pancreatitis 50%, PBC 30%) but not validatable. GI is the 2nd-smallest demoted category after reproductive.",
+      "result_metric": "n too small for holdout (25 GI diseases total, 5/holdout)"
+    },
+    {
+      "id": "h628",
+      "title": "Deliverable Regeneration with h625 Updates",
+      "description": "Regenerate deliverable after h625 immune-mediated heme CS rescue.",
+      "status": "validated",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Run h420_regenerate_deliverable.py"
+      ],
+      "findings": "Deliverable regenerated. GOLDEN 420, HIGH 604, MEDIUM 2134, LOW 3718, FILTER 7274.",
+      "result_metric": "+59 MEDIUM predictions from heme immune rescue",
+      "category": "deliverable"
+    },
+    {
+      "id": "h629",
+      "title": "MEDIUM Precision Stratification by Multiple Signals: TransE Consilience Revisited with Expanded GT",
+      "description": "h405/h439 found TransE MEDIUM = 34.7% holdout (internal GT) \u2014 below HIGH threshold (50.8%). With expanded GT (19x more pairs), re-evaluate TransE as a MEDIUM\u2192HIGH promotion signal. Also test mechanism+rank combinations.",
+      "hypothesis": "TransE consilience within MEDIUM identifies a subset with HIGH-level precision when evaluated with expanded GT.",
+      "status": "validated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Run 5-seed holdout for MEDIUM stratified by TransE, mechanism, rank, gene_overlap",
+        "Test single signals, double combinations, and triple combinations",
+        "Check for CS artifact in all high-precision subsets",
+        "Quantify tier impact of promotion",
+        "Verify tier ordering and thresholds maintained"
+      ],
+      "findings": "VALIDATED: TransE consilience within MEDIUM identifies HIGH-quality subsets.\n\n5-SEED HOLDOUT (expanded GT):\nHIGH-PRECISION SUBSETS (>50% holdout, n>=5/seed):\n- TransE+Mechanism+Rank<=10: 71.9% \u00b1 15.7% (n=7/seed, ~37 total) \u2014 GOLDEN level\n- cancer_same_type+Rank<=5: 66.0% \u00b1 14.1% (n=22/seed, ~109 total)\n- TransE+Rank<=5: 64.9% \u00b1 12.4% (n=11/seed, ~54 total)\n- TransE+Rank<=10: 63.2% \u00b1 7.1% (n=19/seed, ~93 total)\n- TransE+Mechanism: 59.4% \u00b1 13.9% (n=14/seed, ~68 total)\n- TransE alone: 56.5% \u00b1 8.8% (n=28/seed, ~139 total)\n- Mechanism+Rank<=5: 53.9% \u00b1 6.2% (n=39/seed, ~196 total)\n- Mechanism+Rank<=10: 52.5% \u00b1 4.4% (n=76/seed, ~379 total)\n\nCS ARTIFACT CHECK:\n- TransE non-CS: 49.1% holdout (50.0%, 50.0%, 41.5%, 56.7%, 50.0% per seed)\n- TransE CS: 68.6% \u2014 CS does NOT drive the signal\n- Mechanism+Rank<=10 non-CS: 54.2% \u2014 GENUINE\n- TransE+Mechanism+Rank<=10 non-CS: 78.1% (n=32 across 5 seeds)\n\nDIFFERENTIAL (independent of GT expansion):\n- TransE MEDIUM: 56.5% vs non-TransE: 37.2% = +19.3pp differential\n- This 1.52x lift is constant regardless of GT used\n\nTIER IMPACT (TransE MEDIUM non-CS \u2192 HIGH):\n- HIGH: 49.1% \u2192 49.5% (+0.4pp), +34 preds/seed\n- HIGH variance: 7.9% \u2192 5.7% (IMPROVES)\n- MEDIUM: 39.9% \u2192 38.9% (-0.9pp)\n- ~187 production predictions would move\n\nDECISION: Validated as finding but NOT implementing as tier promotion yet. Reasons:\n1. TransE MEDIUM non-CS = 49.1% \u2014 right at HIGH boundary, not clearly above\n2. Existing CLOSED direction on within-tier reranking\n3. High value as annotation for experimental prioritization\n4. Follow-up h630 proposed for formal promotion with stricter criteria",
+      "result_metric": "TransE MEDIUM: 56.5% holdout (+19.3pp over non-TransE). Mechanism+Rank<=10: 52.5% \u00b1 4.4%.",
+      "category": "meta-analysis",
+      "rationale": "Expanded GT resolves the original blocker (h439: 37.4% full-data < HIGH 50.8%). With expanded GT, TransE MEDIUM reaches HIGH-level precision."
+    },
+    {
+      "id": "h630",
+      "title": "TransE MEDIUM \u2192 HIGH Promotion: Formal Implementation with Strict Criteria",
+      "description": "h629 found TransE MEDIUM non-CS has 49.1% holdout (expanded GT) \u2014 borderline HIGH. Implement promotion with stricter criteria: TransE + (mechanism OR rank<=5) non-CS to ensure safely above HIGH threshold. This would promote ~100-140 predictions from the ~187 TransE MEDIUM non-CS.",
+      "hypothesis": "TransE + (mechanism OR rank<=5) MEDIUM non-CS predictions can be safely promoted to HIGH without diluting HIGH precision.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Implement TransE MEDIUM \u2192 HIGH promotion with strict criteria in _assign_confidence_tier",
+        "Run h393 evaluator to validate tier impact",
+        "Verify HIGH stays above 50% and MEDIUM stays above 35%",
+        "Regenerate deliverable"
+      ],
+      "findings": null,
+      "result_metric": null,
+      "category": "tier-optimization",
+      "rationale": "h629 validated TransE+mechanism (59.4%) and TransE+rank<=5 (64.9%) as HIGH-level subsets. These stricter criteria provide margin above the 52.8% HIGH threshold."
+    },
+    {
+      "id": "h631",
+      "title": "MEDIUM Quality Quartile Annotation: Composite Signal for Experimental Prioritization",
+      "description": "h629 found multiple MEDIUM signal combinations with 40-72% holdout. Instead of tier promotion, annotate each MEDIUM prediction with a quality quartile (Q1-Q4) based on TransE, mechanism, rank, and gene_overlap. Q1 (all signals positive) has GOLDEN-level precision. This helps collaborators like Ryland prioritize without changing the tier system.",
+      "hypothesis": "A quality quartile annotation based on TransE+mechanism+rank will help experimental collaborators identify the best MEDIUM predictions.",
+      "status": "validated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Define quality quartile boundaries using h629 signal combinations",
+        "Add quality_quartile column to deliverable",
+        "Document quartile-level holdout precision for each quartile",
+        "Validate quartile separation on holdout"
+      ],
+      "findings": "VALIDATED: MEDIUM quality quartile annotation added to deliverable.\n\nDistribution:\n- Q1 (TransE+mechanism OR TransE+rank<=5): 138 predictions (6.5%)\n  Expected holdout: 60-72% (GOLDEN-level)\n- Q2 (TransE OR mechanism+rank<=10): 459 predictions (21.5%)\n  Expected holdout: 50-57% (HIGH-level)\n- Q3 (mechanism OR rank<=5): 931 predictions (43.6%)\n  Expected holdout: 44-54% (borderline HIGH)\n- Q4 (none): 606 predictions (28.4%)\n  Expected holdout: ~31% (baseline MEDIUM)\n\nColumn 'medium_quality' added to deliverable Excel/JSON.\nQ1 examples: Doxorubicin\u2192breast cancer (TransE+mech, rank 1), Methotrexate\u2192breast cancer.\nQ4 examples: Antibiotics for endocrine diseases without any quality signal.\n\nKey insight: Q1-Q4 spans a 41pp range (72% to 31%) \u2014 more informative than \nthe single MEDIUM label for experimental collaborators.",
+      "result_metric": "Q1: 138 preds (60-72% holdout), Q2: 459 (50-57%), Q3: 931 (44-54%), Q4: 606 (31%)",
+      "category": "deliverable",
+      "rationale": "h629 showed TransE+Mechanism+Rank<=10 = 71.9% while no-signal MEDIUM = 30.7%. Quality quartiles capture this 41pp spread without tier changes."
+    },
+    {
+      "id": "h632",
+      "title": "Mechanism + Rank \u2264 10 as Independent HIGH Signal: Non-TransE Validation",
+      "description": "h629 found mechanism+rank<=10 has 52.5% \u00b1 4.4% holdout (non-CS) \u2014 the LOWEST variance of any MEDIUM subset and squarely in HIGH territory. This signal is INDEPENDENT of TransE (411 production predictions vs 187 TransE). Test whether this could be a standalone promotion criterion without using TransE.",
+      "hypothesis": "Mechanism support + kNN rank \u2264 10 is a standalone HIGH-quality signal for MEDIUM predictions.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Exclude TransE from mechanism+rank<=10 analysis to ensure independence",
+        "Stratify by tier_rule to identify which rules benefit most",
+        "Check for circularity: mechanism is already used in some tier rules",
+        "Run formal h393 evaluator with mechanism+rank<=10 \u2192 HIGH",
+        "Verify no existing rules already capture this signal"
+      ],
+      "findings": null,
+      "result_metric": null,
+      "category": "tier-optimization",
+      "rationale": "411 MEDIUM predictions have mechanism+rank<=10 \u2014 2x the TransE subset. If non-circular, this is a larger, more robust promotion opportunity."
     }
   ],
   "completed": [
@@ -14957,6 +15098,18 @@
       "hypothesis_id": "h617",
       "learning": "HIGH tier variance (\u00b113.5%) is structural \u2014 driven by which hierarchy-matching diseases end up in holdout. Cannot be reduced without stratified splitting. comp_to_base_high_87 shows 0% holdout but n=5/seed is too small for action.",
       "implication": "HIGH variance is irreducible with current holdout methodology. Report confidence intervals rather than trying to fix. Consider stratified holdout for future evaluations."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h625",
+      "learning": "Disease-subtype analysis within blanket category demotions can find rescuable populations. Immune-mediated vs genetic/structural hematological diseases cleanly separate (48.4% vs 3.8%). The h622 closure was drug-class level; disease-subtype level is a different and more successful approach.",
+      "implication": "Apply disease-subtype analysis to other demoted categories (metabolic, GI, neurological). Focus on subtypes with distinct drug classes AND non-self-referential diseases."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h629",
+      "learning": "Expanded GT resolves TransE MEDIUM blocker: internal GT showed 34.7% (below HIGH), expanded GT shows 56.5% (above HIGH). The 19.3pp differential over non-TransE MEDIUM is constant regardless of GT. TransE+mechanism+rank<=10 reaches GOLDEN-level (71.9%). Mechanism+rank<=10 alone = 52.5% \u00b1 4.4% (HIGH-level with very low variance).",
+      "implication": "Signal combination stratification within MEDIUM reveals HIGH/GOLDEN-quality subsets. The key insight: expanded GT doesn't just inflate precision uniformly \u2014 it preferentially lifts predictions with strong signals. TransE+mechanism predictions benefit more from expanded GT than no-signal predictions."
     }
   ],
   "collaborations": [

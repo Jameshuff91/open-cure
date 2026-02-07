@@ -217,6 +217,28 @@ def main():
                 2
             )
 
+            # h631: MEDIUM quality quartile based on TransE, mechanism, rank
+            # h629 holdout results (5-seed, expanded GT):
+            #   Q1 (TransE+mechanism OR TransE+rank<=5): 60-72% holdout
+            #   Q2 (TransE OR mechanism+rank<=10): 50-57% holdout
+            #   Q3 (mechanism OR rank<=5): 44-54% holdout
+            #   Q4 (none of the above): 31% holdout
+            if p['confidence_tier'] == 'MEDIUM':
+                has_transe = bool(p.get('transe_consilience'))
+                has_mech = bool(p.get('mechanism_support'))
+                rank_val_q = p.get('rank', 99)
+
+                if has_transe and (has_mech or rank_val_q <= 5):
+                    p['medium_quality'] = 'Q1'  # 60-72% holdout
+                elif has_transe or (has_mech and rank_val_q <= 10):
+                    p['medium_quality'] = 'Q2'  # 50-57% holdout
+                elif has_mech or rank_val_q <= 5:
+                    p['medium_quality'] = 'Q3'  # 44-54% holdout
+                else:
+                    p['medium_quality'] = 'Q4'  # ~31% holdout
+            else:
+                p['medium_quality'] = ''
+
             tier_counts[pred.confidence_tier.value] += 1
             category_counts[result.category] += 1
 

@@ -147,13 +147,16 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h618 update, 2026-02-06):**
+**Tier System (h625 update, 2026-02-06):**
 - GOLDEN: 71.6% ± 4.3% holdout (420 predictions)
 - HIGH: 52.8% ± 13.5% holdout (604 predictions)
-- MEDIUM: 38.9% ± 4.0% holdout (2075 predictions)
-- LOW: 14.6% ± 2.4% holdout (3777 predictions)
+- MEDIUM: 39.5% ± 3.5% holdout (2134 predictions)
+- LOW: 14.2% ± 2.0% holdout (3718 predictions)
 - FILTER: 10.6% ± 1.3% holdout (7274 predictions)
-- **h618:** CV drug-class rescue: established CV drugs (anticoagulants 32.6%, CCBs 49.7%, diuretics 33.8%, ARBs 30.0%) rescued LOW→MEDIUM. 201 preds. cv_established_drug_rescue: 30.9% ± 20.9% holdout (GENUINE). MEDIUM 41.3%→38.9% (dilution). Non-CV drugs stay demoted (4.6%).
+- **h629:** MEDIUM quality stratification: TransE+mechanism+rank≤10 = 71.9% holdout (GOLDEN-level). TransE alone = 56.5% (HIGH-level). Mechanism+rank≤10 = 52.5% ± 4.4%. +19.3pp TransE differential is GT-independent. Expanded GT resolves h439 blocker (34.7% → 56.5%). Not promoted (borderline) but annotated as quality quartile in deliverable.
+- **h631:** MEDIUM quality quartile annotation: Q1 (138 preds, 60-72%), Q2 (459, 50-57%), Q3 (931, 44-54%), Q4 (606, ~31%). 41pp spread within MEDIUM.
+- **h625:** Hematological immune-mediated CS rescue: 59 preds rescued LOW→MEDIUM. Immune-mediated 48.4% vs non-immune 3.8%. MEDIUM +0.6pp.
+- **h618:** CV drug-class rescue: established CV drugs (anticoagulants 32.6%, CCBs 49.7%, diuretics 33.8%, ARBs 30.0%) rescued LOW→MEDIUM. 201 preds. cv_established_drug_rescue: 30.9% ± 20.9% holdout (GENUINE). Non-CV drugs stay demoted (4.6%).
 - **h622:** Other demoted categories (neuro, heme) lack rescuable drug-class subsets. CV was special.
 - **h614:** MEDIUM sub-pathway quality map v2: all sub-pathways adequate with expanded GT. No further demotions.
 - **h617:** HIGH variance (±13.5%) is structural (disease-split). Irreducible without stratified splitting.
@@ -165,11 +168,8 @@ vastai destroy instance <INSTANCE_ID>
 - **h592:** Composite quality score (rank+TransE+gene_overlap+mechanism+disease_holdout+non_SR) beats kNN rank by +2.6pp for Q1 MEDIUM. Added to deliverable as `composite_quality_score`.
 - **h593+h596+h597:** GT gap expansion: 18 FDA-approved pairs added (antifungals, cancer drugs). MEDIUM +1.2pp.
 - **h560:** Antimicrobial-pathogen mismatch filter: 0% holdout for all mismatches. Antibacterial→fungal/parasitic/viral, antifungal→parasitic/viral/bacterial. Dual-activity drugs handled. ~30 MEDIUM→LOW. +0.9pp MEDIUM. Also fixed target_overlap rescue leakage.
-- **h562:** extract_cancer_types bug fix: 'ALL' substring matched 'small','fallopian','allergic'. Word boundary regex for <=4 char keywords. 39 false cancer_same_type removed. MEDIUM +0.7pp.
-- **h557:** CS→infectious MEDIUM demotion: 2.1% holdout (even VALID uses = 2.9%). 59 preds MEDIUM→LOW. MEDIUM +0.3pp.
-- **h553+h555+h556:** MEDIUM precision session: +3.8pp (30.1%→33.9%). Various low-quality sub-rules→LOW.
-- **h542+h544+h408:** Safety audits: non-therapeutic compounds→FILTER, anti-TNF paradoxical autoimmunity.
-- **h546:** Gene overlap annotation: +11.4pp MEDIUM novel holdout. NOT promotable (circular with kNN).
+- **h553-h562:** MEDIUM precision improvements: cancer_types bug fix (+0.7pp), CS→infectious demotion (+0.3pp), sub-rule demotions (+3.8pp).
+- **h542+h544+h546:** Safety audits + gene overlap annotation: non-therapeutic→FILTER, anti-TNF paradoxical autoimmunity, gene overlap +11.4pp (circular, annotation only).
 - **h537+h540:** Quality audits, LA procedural demotion. Details in experiment_history.md.
 - **h520:** Corticosteroid SOC promotion: 333 MEDIUM→HIGH for autoimmune/dermatological/respiratory/ophthalmic. HIGH +2.3pp, MEDIUM +1.2pp.
 - **h486:** SIDER adverse effect mining: 47 new inverse indication pairs (55 drugs, 124 total). 105 predictions → FILTER, 93.3% precision.

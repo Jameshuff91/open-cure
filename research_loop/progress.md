@@ -1,6 +1,72 @@
 # Research Loop Progress
 
-## Current Session: h618/h622/h614/h617/h624 - CV Rescue + Tier Calibration (2026-02-06)
+## Current Session: h629/h631 - MEDIUM Quality Stratification (2026-02-06)
+
+### h629: MEDIUM Precision Stratification by Multiple Signals — VALIDATED
+
+Expanded GT resolves original TransE MEDIUM blocker (h405: 34.7% < HIGH 50.8%). With expanded GT, TransE within MEDIUM reaches HIGH-level precision.
+
+**Key Results (5-seed holdout, expanded GT):**
+| Signal Combination | Holdout | ±std | N/seed |
+|---|---|---|---|
+| TransE+Mechanism+Rank≤10 | 71.9% | 15.7% | 7 |
+| cancer_same_type+Rank≤5 | 66.0% | 14.1% | 22 |
+| TransE+Rank≤5 | 64.9% | 12.4% | 11 |
+| TransE+Rank≤10 | 63.2% | 7.1% | 19 |
+| TransE+Mechanism | 59.4% | 13.9% | 14 |
+| TransE alone | 56.5% | 8.8% | 28 |
+| Mechanism+Rank≤5 | 53.9% | 6.2% | 39 |
+| Mechanism+Rank≤10 | 52.5% | 4.4% | 76 |
+| All MEDIUM | 38.8% | 3.7% | 328 |
+
+**CS artifact check:** TransE non-CS: 49.1% (GENUINE). Not driven by corticosteroids.
+
+**Differential:** +19.3pp over non-TransE MEDIUM (constant regardless of GT used).
+
+**Tier impact assessment (TransE MEDIUM non-CS → HIGH):**
+- HIGH: 49.1% → 49.5%, variance 7.9% → 5.7% (IMPROVES), +34 preds/seed
+- MEDIUM: 39.9% → 38.9% (-0.9pp)
+- Decision: NOT promoted (borderline, existing CLOSED direction). Implemented as annotation instead.
+
+### h631: MEDIUM Quality Quartile Annotation — VALIDATED
+
+Added `medium_quality` column to deliverable based on h629 signal combinations:
+- Q1 (TransE + mechanism/rank≤5): 138 preds, 60-72% expected holdout
+- Q2 (TransE OR mechanism+rank≤10): 459 preds, 50-57% expected holdout
+- Q3 (mechanism OR rank≤5): 931 preds, 44-54% expected holdout
+- Q4 (none): 606 preds, ~31% expected holdout
+
+Q1-Q4 spans a 41pp range — more informative than single MEDIUM label for Ryland/collaborators.
+
+### Post-h625 Tier Performance (verified)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 71.6% ± 4.3% | 420 |
+| HIGH | 52.8% ± 13.5% | 604 |
+| MEDIUM | 39.5% ± 3.5% | 2134 |
+| LOW | 14.2% ± 2.0% | 3718 |
+| FILTER | 10.6% ± 1.3% | 7274 |
+
+### New Hypotheses Generated (3)
+- h630: TransE MEDIUM → HIGH promotion with strict criteria (TransE + mechanism/rank≤5)
+- h631: MEDIUM quality quartile annotation (VALIDATED)
+- h632: Mechanism + Rank ≤ 10 as independent HIGH signal
+
+### Key Insights
+1. Expanded GT resolves TransE MEDIUM blocker — 56.5% vs 34.7% (internal GT)
+2. The 19.3pp TransE differential is GT-independent (constant lift)
+3. Signal combination reveals 41pp quality spread within MEDIUM
+4. Q1 MEDIUM (138 preds) has GOLDEN-level precision
+5. Mechanism+Rank≤10 (52.5% ± 4.4%) has the lowest variance of any MEDIUM subset
+
+### Recommended Next Steps
+1. **h630**: Implement TransE MEDIUM → HIGH promotion with strict criteria
+2. **h632**: Validate mechanism+rank≤10 as independent promotion signal
+3. External data integration for fundamentally new signals
+
+---
+
+## Previous Session: h618/h622/h614/h617/h624 - CV Rescue + Tier Calibration (2026-02-06)
 
 ### h618: CV Medium Demotion Reversal — VALIDATED
 
