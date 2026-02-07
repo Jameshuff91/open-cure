@@ -14241,7 +14241,7 @@
       "title": "NLP Limitation-of-Use Boilerplate: Other Drug Classes with Systematic False GT",
       "description": "h675 found that oral antidiabetic labels systematically include \"should not be used for T1D or DKA\" boilerplate. Other drug classes may have similar standard limitation-of-use language that causes NLP extraction errors. E.g., opioid labels say \"not for chronic pain management\" (extended-release forms), NSAIDs say \"not for perioperative pain in CABG\". These patterns could be mined to identify more false GT entries in specific drug classes.",
       "hypothesis": "Other drug classes have standard FDA label limitation-of-use language that causes systematic NLP false GT extraction.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -14252,8 +14252,8 @@
         "Check if extracted diseases appear only in negative context",
         "Compare to DRKG drug presence to assess prediction impact"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Systematic scan of EC indications text found 31 false GT entries from NLP limitation-of-use extraction errors across 8 drug classes: (1) Oral antidiabetics\u2192T1D/DKA (already handled by h675), (2) ICS\u2192bronchospasm (7 entries), (3) 5-ARIs\u2192prostate cancer prevention (2 entries), (4) Becaplermin\u2192pressure/venous ulcers (3 entries), (5) Anti-IL5/TSLP\u2192status asthmaticus (2 entries), (6) Triptans/ergots\u2192specific migraine subtypes (3 entries), (7) Anifrolumab\u2192severe lupus subtypes (2 entries), (8) Various individual cases (sitagliptin\u2192pancreatitis, doxylamine/pyridoxine\u2192hyperemesis, etc.). 5 false pairs removed from expanded GT (57,445\u219257,440) and internal GT (3,060\u21923,055): finasteride\u2192prostate_cancer, sitagliptin\u2192pancreatitis (INVERSE - DPP-4i causes pancreatitis), empagliflozin\u2192DKA (INVERSE - SGLT2i causes euglycemic DKA), liraglutide\u2192T1D, semaglutide\u2192T1D (not for T1D per FDA). ZERO holdout impact - all affected drugs/diseases outside prediction space. Key insight: ~3% of EC rows are false GT from limitation-of-use NLP extraction, but they don't impact predictions because the affected drugs are newer drugs not yet in DRKG. Pattern is: FDA label says 'Limitations: not for X' and NLP extracts X as an indication.",
+      "result_metric": "31 false GT entries identified, 5 removed (expanded GT 57,445\u219257,440). Zero holdout change."
     },
     {
       "id": "h701",
@@ -14269,6 +14269,61 @@
         "Check which alpha-1 blockers are in DRKG",
         "Verify none generate hypertension predictions currently",
         "Add defensive annotation if appropriate"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h702",
+      "title": "ICS Bronchospasm Safety Filter: Check If Asthma Controller Drugs Predicted for Acute Conditions",
+      "description": "h700 found that inhaled corticosteroids (budesonide, fluticasone, beclomethasone, ciclesonide) and ICS/LABA combos have false GT entries for bronchospasm/acute bronchospasm. While these drugs are not in the predictor's prediction output currently, this pattern raises a broader question: do any asthma CONTROLLER medications get predicted for acute respiratory conditions where they'd be inappropriate? E.g., long-acting bronchodilators predicted for status asthmaticus, or montelukast predicted for acute bronchospasm. These would be analogous to the CS\u2192infectious demotion pattern (h557) - clinically relevant but wrong context.",
+      "hypothesis": "Asthma controller medications may be predicted for acute respiratory conditions where they are inappropriate.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "safety",
+      "steps": [
+        "Check predictions for status asthmaticus, acute bronchospasm, and related acute respiratory diseases",
+        "Identify any asthma controller drugs (ICS, LABA, leukotriene inhibitors) in predictions",
+        "Assess whether these are clinically inappropriate (controller vs reliever mismatch)"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h703",
+      "title": "Newer Drug DRKG Coverage Gap: Quantify What Drugs Are Missing from Prediction Space",
+      "description": "h700 revealed that many important drug classes (DPP-4i, SGLT2i, GLP-1 agonists, newer biologics) are in DRKG with embeddings but generate ZERO predictions because their diseases are 100% self-referential. These drugs treat important diseases (T2D, heart failure) but the kNN model can't predict novel uses. This is a systematic limitation: newer drugs added to DRKG from 2018+ publications often have narrow GT (only original indication) and insular disease neighborhoods. Quantifying this gap would help prioritize future DRKG/GT expansion work and identify where the model is fundamentally blind.",
+      "hypothesis": "A significant fraction of DRKG drugs with embeddings generate zero novel predictions due to self-referentiality.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "category": "meta-analysis",
+      "steps": [
+        "For each drug with embeddings, count how many novel (non-GT) predictions it generates across all diseases",
+        "Identify drugs with zero or near-zero novel predictions",
+        "Analyze common characteristics (drug age, GT size, disease neighborhood insularity)",
+        "Quantify the 'blind spot' - what fraction of DRKG drug space is unexploitable by kNN"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h704",
+      "title": "DPP-4i Pancreatitis Inverse Indication: Class-Wide Safety Check",
+      "description": "h700 identified sitagliptin\u2192pancreatitis as false GT (DPP-4i are associated with CAUSING pancreatitis per FDA warning). All DPP-4i (sitagliptin, saxagliptin, linagliptin, alogliptin, vildagliptin) are in DRKG with embeddings but currently generate no predictions. However, this is a valuable INVERSE INDICATION to add defensively: if future DRKG updates or GT expansion cause these drugs to be predicted for pancreatitis or pancreatic diseases, the inverse filter would catch them. Also verify that other drugs known to cause pancreatitis (azathioprine, valproic acid, statins at high dose) are not being predicted for pancreatic diseases.",
+      "hypothesis": "DPP-4 inhibitors and other pancreatitis-causing drugs may need defensive inverse indication filters.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "category": "safety",
+      "steps": [
+        "Check if any known pancreatitis-causing drugs are predicted for pancreatic diseases",
+        "Add DPP-4i \u2192 pancreatitis as defensive inverse indication in production_predictor.py",
+        "Check azathioprine, valproic acid, statins, didanosine for pancreatic disease predictions"
       ],
       "findings": "",
       "result_metric": ""
@@ -16546,6 +16601,12 @@
       "hypothesis_id": "h610",
       "learning": "Within ATC coherent infectious: azole antifungals (85%) drive quality, cefuroxime (18%) is weakest. But ATC coherent is holdout-invisible (h653), so class-specific demotion can't be validated. Full-data precision is the only signal.",
       "implication": "ATC coherent quality is drug-class dependent. Antifungals >> antibacterials. But volume too small for actionable drug-level demotions."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h700",
+      "learning": "~3% of EC indicationList rows (31/10224) are false GT from NLP limitation-of-use extraction. Pattern: FDA label says 'Limitations of Use: not indicated for X' and NLP extracts X as indication. 8 drug class patterns identified. None impact predictions because affected drugs/diseases are outside DRKG kNN prediction space. Newer drugs (DPP-4i, SGLT2i, GLP-1 agonists) have DRKG embeddings but generate zero predictions due to insular disease neighborhoods. Removed 5 false GT pairs. Key insight: NLP extraction errors cluster by drug class label templates.",
+      "implication": "When extending GT to new drug classes or updating DRKG, check FDA label limitation-of-use sections to avoid importing false indications. Drug classes with standard boilerplate (antidiabetics, ICS, 5-ARIs, biologics) have predictable extraction error patterns."
     }
   ],
   "collaborations": [

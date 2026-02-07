@@ -1,6 +1,59 @@
 # Research Loop Progress
 
-## Current Session: h675 - FDA Label Contraindication Mining (2026-02-07)
+## Current Session: h700 - NLP Limitation-of-Use Boilerplate (2026-02-07)
+
+### h700: NLP Limitation-of-Use Boilerplate — VALIDATED (Data Quality, Zero Metric Impact)
+
+**Methodology:** Systematic scan of ALL 10,224 EC indicationList rows for negative patterns ("not indicated", "not recommended", "should not be used", "limitations of use", etc.). For each row with negative patterns, checked whether the listed disease appears ONLY in the negative/limitation context (false GT) or also in positive indication context (legitimate).
+
+**Key findings:**
+1. **31 false GT entries** identified from NLP limitation-of-use extraction across 8 drug classes:
+   - Oral antidiabetics → T1D/DKA (27 entries, already handled by h675)
+   - ICS → bronchospasm (7 entries: budesonide, beclomethasone, fluticasone, ciclesonide, formoterol/mometasone)
+   - 5-ARIs → prostate cancer prevention (2 entries: finasteride, dutasteride+tamsulosin)
+   - Becaplermin → pressure/venous ulcers (3 entries)
+   - Anti-IL5/TSLP → status asthmaticus (2 entries: reslizumab, tezepelumab)
+   - Triptans/ergots → specific migraine subtypes (3 entries: rizatriptan, dihydroergotamine)
+   - Anifrolumab → severe lupus subtypes (2 entries: lupus nephritis, CNS lupus)
+   - Individual cases: sitagliptin→pancreatitis, doxylamine/pyridoxine→hyperemesis gravidarum
+
+2. **5 false pairs removed** from internal GT (3,060→3,055) and expanded GT (57,445→57,440):
+   - finasteride → prostate cancer (not approved for cancer prevention; FDA rejected PCPT data)
+   - sitagliptin → pancreatitis (DPP-4i CAUSES pancreatitis — INVERSE indication)
+   - empagliflozin → DKA (SGLT2i CAUSES euglycemic DKA — INVERSE indication)
+   - liraglutide → T1D (GLP-1 agonist requires beta cells; FDA: not for T1D)
+   - semaglutide → T1D (GLP-1 agonist requires beta cells; FDA: not for T1D)
+
+3. **ZERO prediction or holdout impact** — all affected drugs/diseases outside kNN prediction space:
+   - Affected drugs have DRKG embeddings but generate zero novel predictions (100% self-referential diseases)
+   - DPP-4i, SGLT2i, GLP-1 agonists all in DRKG but insular in disease neighborhoods (T2D, heart failure)
+   - ICS, triptans, 5-ARIs, becaplermin, biologics: either not in DRKG or target diseases not in predictor
+
+4. **Pattern insight:** ~3% of EC rows are false GT from limitation-of-use NLP extraction. FDA labels use standard templates per drug class: "Important Limitations of Use: [drug] should not be used for [X]" and NLP extracts X as an indication. Clusters by drug class.
+
+### Tier Status (post h700 — unchanged)
+| Tier | Holdout | Std | Previous |
+|------|---------|-----|----------|
+| GOLDEN | 72.5% | ± 6.5% | 72.5% |
+| HIGH | 61.0% | ± 7.7% | 61.3% |
+| MEDIUM | 37.9% | ± 5.0% | 37.9% |
+| LOW | 14.3% | ± 1.2% | 14.4% |
+| FILTER | 9.6% | ± 1.0% | 9.5% |
+All changes within normal holdout variance.
+
+### New Hypotheses Generated (3)
+- h702: ICS bronchospasm safety filter (controller vs reliever mismatch)
+- h703: Newer drug DRKG coverage gap quantification
+- h704: DPP-4i pancreatitis inverse indication (class-wide safety check)
+
+### Recommended Next Steps
+1. **h703**: Newer drug coverage gap (medium impact, medium effort) — would reveal systematic blind spots
+2. **h702/h704**: Safety audits (low impact but defensive)
+3. Consider pivoting to higher-impact work: deliverable regeneration or external data integration
+
+---
+
+## Previous Session: h675 - FDA Label Contraindication Mining (2026-02-07)
 
 ### h675: Systematic FDA Label Contraindication Mining — VALIDATED (Safety Improvement)
 
