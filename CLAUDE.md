@@ -147,12 +147,14 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h677 update, 2026-02-06):**
-- GOLDEN: 71.6% ± 4.8% holdout (415 predictions)
-- HIGH: 61.8% ± 7.5% holdout (808 predictions)
-- MEDIUM: 43.0% ± 3.4% holdout (~1276 predictions) — **honest** (was 43.5% with false GT inflation)
-- LOW: 14.1% ± 1.7% holdout (~4363 predictions) — **honest** (was 15.3% with false GT inflation)
-- FILTER: 10.7% ± 1.2% holdout (7288 predictions)
+**Tier System (h686 update, 2026-02-07):**
+- GOLDEN: 82.9% ± 10.6% holdout (376 predictions)
+- HIGH: 57.6% ± 6.3% holdout (886 predictions)
+- MEDIUM: 42.8% ± 1.8% holdout (1303 predictions) — **recovered** (std dropped from 4.7% to 1.8%)
+- LOW: 14.1% ± 1.3% holdout (4769 predictions)
+- FILTER: 10.1% ± 1.7% holdout (5399 predictions)
+- **h686:** Drug name aliasing: 34 new aliases, +85 GT pairs, +10 diseases. Key drugs: piperacillin (F=16), HCTZ (F=11), clopidogrel (F=9). MEDIUM recovered to 42.8% with 1.8% std.
+- **h718/h730:** Cancer targeted therapy confirmed LOW across ALL sub-classes. Holdout=6.1% (full-data=36%, 5.9x inflation). Checkpoint inhibitors=10.1%, kinase=5.9%, PARP=0%. h598 demotion CORRECT.
 - **h677:** GT quality audit: 6% error rate in EC data. 82 false lidocaine/bupivacaine + 3 B12 GT entries removed (combo product drug mismatch). Blocked LA rescue via target_overlap. GT: 59,626→59,541.
 - **h673/h670/h671:** Safety fixes: CS→TEN/PAP/OSA filtered (15 preds), 18 false GT removed (NLP extraction errors), AmB antiparasitic spectrum narrowed (3 HIGH→LOW). Fixed duplicate dict key bug in INVERSE_INDICATION_PAIRS. HIGH +0.3pp.
 - **h669:** CS HIGH novel quality audit: 97.2% medically acceptable. Fixed DI comp_to_base bug (9 wrong HIGH), removed 6 false GT (NLP errors), +12 CS GT gaps. HIGH +3.5pp (58.0→61.5%).

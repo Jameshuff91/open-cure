@@ -730,6 +730,44 @@ _DRUG_NAME_ALIASES = {
     'rose bengal at': 'rose bengal',
     'technetium tc 99m sulfur colloid': 'technetium tc-99m sulfur colloid',
     'florbetaben f18': 'florbetaben (18f)',
+    # h686 expansion: INN vs international naming
+    'albuterol': 'salbutamol',
+    'meperidine': 'pethidine',
+    'endo-atropine': 'atropine',
+    'glycopyrronium': 'glycopyrrolate',
+    'levocarnitine': 'l-carnitine',
+    'cromolyn': 'cromoglicic acid',
+    # h686 expansion: Spelling variants / alternate names
+    'chenodiol': 'chenodeoxycholic acid',
+    'clorazepic acid': 'clorazepate',
+    'd-valacyclovir': 'valaciclovir',
+    'iodoquinol': 'diiodohydroxyquinoline',
+    'colecalciferol': 'cholecalciferol',
+    'retinol': 'vitamin a',
+    # h686 expansion: Salt form / suffix differences
+    'fondaparinux': 'fondaparinux sodium',
+    'ipratropium': 'ipratropium bromide',
+    'polymyxin b': 'polymyxin b sulfate',
+    'risedronic acid': 'risedronate',
+    'tenofovir disoproxil': 'tenofovir',
+    'zoledronic acid': 'zoledronate',
+    # h686 expansion: "only product" / injection suffix
+    'choriogonadotropin alfa only product': 'choriogonadotropin alfa',
+    'inotuzumab ozogamicin only product': 'inotuzumab ozogamicin',
+    'insulin detemir injection': 'insulin detemir',
+    # h686 expansion: Combo product → primary active ingredient
+    # (indications are for the combination, primary drug inherits them)
+    'clopidogrel aspirin': 'clopidogrel',
+    'hydrochlorothiazide-triamterene': 'hydrochlorothiazide',
+    'piperacillin-tazobactam combination': 'piperacillin',
+    # h686 expansion: ADC / biologic variants
+    'soravtansine': 'mirvetuximab soravtansine',
+    'epoetin alfa': 'erythropoietin',
+    'epoetin zeta': 'erythropoietin',
+    'epoetin beta': 'erythropoietin',
+    # h686 expansion: Ion/element → drug form
+    'magnesium(2+)': 'magnesium',
+    'gallium cation': 'gallium nitrate',
 }
 
 # Example: "secondary causes such as hypothyroidism should be excluded before starting

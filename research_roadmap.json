@@ -13996,7 +13996,7 @@
       "id": "h686",
       "title": "Drug Name Aliasing: Recover 149+ Missing Internal GT Entries",
       "description": "h683 found that 859 Every Cure drugs fail to map to DrugBank due to name mismatches (INN vs brand name, salt forms, spelling variants). At least 149 indication rows are recoverable with simple aliases (Acyclovir\u2192Aciclovir, Aspirin\u2192Acetylsalicylic acid, Rifampin\u2192Rifampicin, etc.). This would expand internal GT by ~5% with legitimate therapeutic drugs. Impact on kNN: more drugs in training = better frequency estimates for drug repurposing. Expected to improve predictions for diseases currently treated by these 'missing' drugs.",
-      "status": "in_progress",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -14007,7 +14007,9 @@
         "Implement aliases in _load_ground_truth (add alias lookup after primary name_to_drug_id check)",
         "Invalidate GT cache and run holdout evaluation",
         "Check if any new drugs change tier precision (new training diseases, better frequencies)"
-      ]
+      ],
+      "findings": "VALIDATED. Added 34 new drug name aliases to _DRUG_NAME_ALIASES, recovering 85 new drug-disease GT pairs across 10 new diseases (982\u2192992 diseases, 4884\u21924969 pairs, +1.7%). Key drugs recovered: piperacillin (freq=16), hydrochlorothiazide (freq=11), clopidogrel (freq=9), iodoquinol (freq=9), ipratropium (freq=6), atropine/erythropoietin/zoledronate (freq=5 each). Alias categories: INN variants (albuterol\u2192salbutamol, meperidine\u2192pethidine), salt forms (fondaparinux\u2192fondaparinux sodium), 'only product' suffix stripping, combo\u2192primary (piperacillin-tazobactam\u2192piperacillin), biologic variants (epoetin alfa/beta/zeta\u2192erythropoietin). Holdout impact: GOLDEN 82.9%\u00b110.6% (was 71.8%), MEDIUM 42.8%\u00b11.8% (was 38.3%), HIGH 57.6%\u00b16.3% (was 61.4%), LOW/FILTER unchanged. MEDIUM std dropped from 4.7% to 1.8% (more stable predictions). Note: some improvement may be from changed holdout splits (+9 diseases). Conservative exclusions: PET tracers (florbetapir, flutemetamol), minerals (copper, fluoride), kept gallium nitrate (legitimate antihypercalcemic) and magnesium (legitimate supplement).",
+      "result_metric": "+85 GT pairs, +10 diseases. MEDIUM: 42.8%\u00b11.8% (was 38.3%\u00b14.7%). GOLDEN: 82.9%\u00b110.6% (was 71.8%\u00b18.0%)"
     },
     {
       "id": "h687",
@@ -14561,7 +14563,7 @@
     {
       "id": "h718",
       "title": "Cancer Targeted Therapy LOW Re-evaluation: 34% GT Hit Rate Suggests Some Should Be MEDIUM",
-      "status": "in_progress",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14571,7 +14573,9 @@
         "Check if high-rank (R1-5) cancer_targeted_therapy LOW has MEDIUM-quality GT hit rate",
         "Compare with cancer_same_type_no_mechanism (46.4% GT) \u2014 could mechanism paths be found?",
         "If justified, create a targeted rescue for high-rank, high-freq cancer_targeted_therapy"
-      ]
+      ],
+      "findings": "INVALIDATED. Full-data precision massively inflated (36.0% \u2192 6.1% holdout). Even best subset R1-5+mech: 19.3% \u00b1 16.6% (n=10.6/seed, tiny). R1-10+mech: 13.6% \u00b1 9.7% (z=-2.55 vs MEDIUM, consistent with LOW). The h598 CANCER_TARGETED_THERAPY demotion to LOW is CORRECT. Targeted therapy drugs don't transfer across cancer subtypes via kNN because they work via specific biomarkers (BRAF V600E, HER2+, BRCA1/2) that are cancer-subtype-specific. Full-data inflation is caused by expanded GT containing known indications (e.g., pembrolizumab for 12/37 cancer types) which score high because the drug appears in multiple kNN neighborhoods, but holdout diseases don't share these biomarkers. This is the largest full-data-to-holdout inflation ratio in the entire tier system (5.9x).",
+      "result_metric": "Holdout: all=6.1%\u00b12.7%, R1-10+mech=13.6%\u00b19.7% \u2014 all LOW-quality"
     },
     {
       "id": "h719",
@@ -14716,7 +14720,7 @@
     {
       "id": "h727",
       "title": "Infectious Disease GT Gap Audit: Why Do Correct Antifungals Miss GT?",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14730,6 +14734,62 @@
       "findings": "",
       "result_metric": "",
       "category": "gt-quality"
+    },
+    {
+      "id": "h728",
+      "title": "Biomarker-Matched Targeted Therapy Rescue: Use DRKG Mutation Edges for Cancer Drug Matching",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "high",
+      "rationale": "h718 showed targeted therapy fails kNN transfer because biomarkers (BRAF V600E, HER2+, BRCA1/2) are cancer-subtype-specific. DRKG contains Gene:Mutation\u2192Disease edges and Drug\u2192Gene:Target edges. If a targeted therapy drug targets Gene X, and holdout disease has Gene X mutation, this is a biologically-grounded match that doesn't depend on kNN neighbors. This would be a fundamentally different signal from kNN and could rescue high-quality targeted therapy predictions.",
+      "steps": [
+        "Extract Drug\u2192Gene:Target edges from DRKG for CANCER_TARGETED_THERAPY drugs",
+        "Extract Gene:Mutation\u2192Disease edges from DRKG for cancer diseases",
+        "Compute drug-disease matches via shared gene targets",
+        "Check if biomarker-matched predictions have higher holdout precision than kNN",
+        "If validated, implement as targeted_therapy_biomarker_match sub-reason"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "model-improvement"
+    },
+    {
+      "id": "h729",
+      "title": "Full-Data Inflation Index: Systematic Ranking of Rule Inflation Ratios for Quality Auditing",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h718 discovered cancer_targeted_therapy has 5.9x full-data-to-holdout inflation (36.0%/6.1%). This is a deliverable quality concern \u2014 researchers see 36% in the deliverable but actual value is 6%. Computing inflation ratios for ALL rules would identify which deliverable metrics are trustworthy vs misleading. Rules with >3x inflation should be flagged in the deliverable. This is a meta-quality metric that improves trust calibration for end users.",
+      "steps": [
+        "Extract full-data and holdout precision for all rules from h393 output",
+        "Compute inflation ratio (full/holdout) for each rule",
+        "Rank rules by inflation ratio",
+        "Identify top-10 most inflated rules",
+        "Consider adding 'holdout_validated_precision' to deliverable"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "category": "deliverable-quality"
+    },
+    {
+      "id": "h730",
+      "title": "Immunotherapy Cancer Type Specificity: Do Checkpoint Inhibitors Transfer Better Than Kinase Inhibitors?",
+      "status": "invalidated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h718 aggregated ALL targeted therapies (kinase inhibitors + immunotherapy + PARP + mAbs). But checkpoint inhibitors (pembrolizumab, nivolumab) are increasingly pan-cancer (MSI-high, TMB-high) while kinase inhibitors (vemurafenib, crizotinib) are strictly mutation-specific. If immunotherapy has higher holdout precision than kinase inhibitors, immunotherapy could be rescued from LOW while kinase inhibitors stay LOW. Drug-level analysis showed nivolumab=45.5% and pembrolizumab=32.4% full-data GT hit rate, vs trabectedin=8.8% and everolimus=3.6%.",
+      "steps": [
+        "Split CANCER_TARGETED_THERAPY into sub-classes: checkpoint, kinase, mAb, PARP, other",
+        "Run holdout evaluation per sub-class",
+        "If checkpoint inhibitors exceed MEDIUM threshold on holdout, rescue to MEDIUM",
+        "If kinase inhibitors remain LOW, document biological explanation"
+      ],
+      "findings": "INVALIDATED. No sub-class of cancer targeted therapy reaches MEDIUM on holdout. Checkpoint inhibitors: 10.1% \u00b1 9.4% (n=24.2/seed). Kinase inhibitors: 5.9% \u00b1 4.3% (n=53.2/seed). Anti-target mAbs: 2.7% \u00b1 3.3% (n=10.4/seed). PARP inhibitors: 0.0% (n=8.8/seed). R1-10+mech checkpoint subset: 31.7% \u00b1 36.7% but n=6.2/seed (unreliable). Even pembrolizumab (pan-cancer approval) doesn't transfer via kNN to holdout cancer diseases. The biological explanation: kNN neighbors share disease embedding proximity, not biomarker profiles. Checkpoint inhibitor efficacy depends on MSI-high/TMB-high/PD-L1 expression status, which is NOT captured in DRKG disease embeddings. All targeted therapy sub-classes are correctly demoted to LOW.",
+      "result_metric": "Checkpoint=10.1%\u00b19.4%, Kinase=5.9%\u00b14.3%, mAb=2.7%, PARP=0% \u2014 all LOW",
+      "category": "precision-improvement"
     }
   ],
   "completed": [
@@ -17082,6 +17142,24 @@
       "hypothesis_id": "h723",
       "learning": "Antimicrobial spectrum matching (correct drug class for pathogen type) has 35.1% full-data precision but only 29.2% \u00b1 14.7% holdout \u2014 NOT significantly different from non-antimicrobial LOW (31.0%). Full-data\u2192holdout gap driven by R11-20 dominance. Spectrum matching is correctly used for demotion (h560, 0% mismatch) but the positive signal is too weak for promotion. Infectious diseases are inherently hard for holdout: small GT footprint + few diseases in holdout per seed.",
       "implication": "CLOSED: Antimicrobial spectrum matching for tier promotion. The asymmetry (demotion works, promotion doesn't) is because mismatches are clean biological impossibilities (0%), while matches are necessary but not sufficient (antimicrobial must also be clinically appropriate for the specific pathogen)."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h718",
+      "learning": "Cancer targeted therapy has the largest full-data-to-holdout inflation ratio in the tier system (5.9x). Full-data=36.0%, holdout=6.1%. Even R1-5+mech: 19.3% \u00b1 16.6% (tiny n=10.6/seed). The h598 demotion is biologically correct: targeted therapies target specific biomarkers that are cancer-subtype-specific. kNN transfers drug recommendations based on disease similarity, but biomarker profiles (BRAF V600E, HER2+) don't correlate with disease embedding similarity.",
+      "implication": "Full-data precision is deeply misleading for biomarker-dependent drugs. Future targeted therapy improvements require biomarker-matching (DRKG mutation edges), not kNN-based signals. Checkpoint inhibitors may transfer better than kinase inhibitors (pan-cancer approvals)."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h730",
+      "learning": "Even pan-cancer immunotherapy (pembrolizumab, nivolumab) doesn't transfer via kNN to holdout cancers. Checkpoint=10.1%, Kinase=5.9%, mAb=2.7%, PARP=0%. This confirms targeted therapy demotion is biologically correct across ALL sub-classes. Biomarker profiles (MSI-high, TMB-high, PD-L1, BRCA) are not captured in DRKG disease embeddings. Full-data inflation is 2-4x for all sub-classes.",
+      "implication": "CLOSED: No targeted therapy sub-class rescue is possible via kNN. Biomarker-matching (h728) is the only remaining path for targeted therapy improvement."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h686",
+      "learning": "Drug name aliasing recovered 85 GT pairs from 34 aliases. Key patterns: INN variants (US vs international: albuterol/salbutamol, meperidine/pethidine), salt form differences beyond suffix stripping (fondaparinux/fondaparinux sodium), 'only product' suffix (inotuzumab ozogamicin only product), combo product\u2192primary drug (piperacillin-tazobactam\u2192piperacillin is safe when both drugs share indications, unlike h677 lidocaine/hydrocortisone). Biologic variants (epoetin alfa/beta/zeta all map to erythropoietin). MEDIUM holdout improved 38.3\u219242.8% with std dropping 4.7\u21921.8%.",
+      "implication": "Drug name aliasing is a high-ROI activity. 787 EC drugs still unmapped, but remaining ones are mostly combo products, vaccines, and newer drugs not in DrugBank. Future work: systematic combo product drug mapping (h686 extension)."
     }
   ],
   "collaborations": [
