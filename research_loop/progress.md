@@ -1,6 +1,50 @@
 # Research Loop Progress
 
-## Current Session: h651/h650/h655 - ATC Coherent Exclusions & Cancer Rank Analysis (2026-02-06)
+## Current Session: h657/h654/h653/h661 - MEDIUM Calibration & Ryland Prep (2026-02-06)
+
+### h657: Default MEDIUM NoMech R6-10 Demotion — INVALIDATED
+With expanded GT, NoMech R6-10 has 40.5% ± 9.4% holdout (n=14.6/seed). This is MEDIUM-quality (z=-0.4 vs MEDIUM avg 42.9%), not LOW-quality. The original 30.0% estimate from h555-era used internal GT, which systematically underestimates signal-rich predictions (h629). Demoting would game MEDIUM headline (+1.6pp to 44.5%) but misclassify genuinely MEDIUM-quality predictions as LOW. Code reverted.
+
+**Key lesson:** Always re-evaluate tier decisions when GT changes. Expanded GT lifts signal-rich predictions more than weak ones, so internal-GT-based demotions may be wrong.
+
+### h654: Train Frequency Threshold Sensitivity — INVALIDATED
+22% of freq>=3 drugs (74.6/343) drop below threshold during holdout. This makes holdout a conservative lower-bound estimate (desirable). Production unaffected. The freq>=3 threshold is correctly calibrated.
+
+### h653: ATC Coherent Remaining Categories Quality Map — VALIDATED
+190 ATC coherent predictions at 61.6% full-data precision. Remaining categories: infectious (85%), ophthalmic (7%), dermatological (6%), autoimmune (2%). All have 59-86% full-data precision vs excluded categories at 0-19%. KEY FINDING: ATC coherent predictions are holdout-invisible (freq drops below 3 during holdout). No further exclusions needed.
+
+### h661: Ryland Collaboration Prep — VALIDATED
+Created comprehensive prep for Monday Feb 10 meeting. Key findings:
+- 30 dermatological diseases, 230 GOLDEN/HIGH/MEDIUM predictions (mostly corticosteroids)
+- Tetracycline→ichthyosis predictions are kNN artifacts (no literature support)
+- EGFR drugs NOT predicted for skin diseases (DRKG cancer-only gap)
+- Top novel wet-lab candidate: Montelukast→IPF (HIGH, Mech+TransE)
+- 58 novel non-CS predictions for rare/genetic diseases identified
+- Document: `data/analysis/h661_ryland_collaboration_prep.md`
+
+### Tier Status (unchanged from h649)
+| Tier | Holdout | Predictions |
+|------|---------|-------------|
+| GOLDEN | 71.6% ± 4.3% | 420 |
+| HIGH | 54.8% ± 8.9% | ~858 |
+| MEDIUM | 42.9% ± 2.9% | ~1363 |
+| LOW | 14.8% ± 1.7% | ~4235 |
+| FILTER | 10.6% ± 1.3% | 7274 |
+
+### New Hypotheses Generated (4)
+- h658: Holdout-invisible prediction validation via literature mining
+- h659: Expanded GT impact on internal GT precision estimates
+- h660: MEDIUM Default NoMech R1-5 quality characterization
+- h661: Ryland collaboration prep (completed)
+
+### Recommended Next Steps
+1. **h659**: Check if any INVALIDATED hypotheses should be re-evaluated with expanded GT
+2. **h658**: Literature validation of holdout-invisible predictions
+3. Higher-effort external data integrations (LINCS, PubMed mining)
+
+---
+
+## Previous Session: h651/h650/h655 - ATC Coherent Exclusions & Cancer Rank Analysis (2026-02-06)
 
 ### h651: ATC Coherent Endocrine/Musculoskeletal/Respiratory/Renal Exclusion — VALIDATED
 Added 4 new categories to ATC_COHERENT_EXCLUDED: endocrine (0% holdout), musculoskeletal (0%), respiratory (19.4%), renal (11.1%). All had n<5/seed, consistently below MEDIUM avg (42.9%). 27 predictions demoted from MEDIUM to LOW in deliverable.
