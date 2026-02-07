@@ -12645,7 +12645,7 @@
       "id": "h614",
       "title": "MEDIUM Sub-Pathway Quality Map v2: Correct GT Evaluation",
       "description": "h611 corrected analysis showed all sub-pathways adequate with expanded GT. However, the corrected analysis revealed interesting heterogeneity: atc_coherent_infectious (51.9%) is the BEST MEDIUM sub-pathway, while standard \u00d7 endocrine (15.1%) is BORDERLINE. A deeper analysis with per-seed significance testing could identify marginal improvements.",
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -12654,7 +12654,9 @@
         "For each sub-pathway \u00d7 category with n >= 5/seed, test if holdout is significantly below MEDIUM avg",
         "Focus on standard \u00d7 endocrine (15.1%), standard \u00d7 other (0.0%), and other borderline pairs",
         "Consider whether endocrine standard should join MEDIUM_DEMOTED_CATEGORIES"
-      ]
+      ],
+      "findings": "With expanded GT, ALL MEDIUM sub-pathways have adequate holdout precision. No demotable sub-pathways found.\n\nKey findings:\n- Overall MEDIUM holdout: 51.8% \u00b1 5.5% (expanded GT)\n- cancer_same_type: 44.5% \u00b1 4.7% (n=93.2/seed)\n- standard|autoimmune: 70.3% \u00b1 24.6% (n=7.4)\n- target_overlap_promotion|psychiatric: 68.3% \u00b1 34.4% (n=16.6)\n- cv_established_drug_rescue: 42.0% \u00b1 12.9% (n=48.8) \u2014 better than h393 showed\n- metabolic_medium_demotion (target_overlap rescued): 48.9% \u00b1 8.5% (n=18.6)\n  These 45 preds leak from LOW\u2192MEDIUM via target_overlap (metabolic not in block list).\n  This is correct behavior: target overlap selects high-quality metabolic preds.\n- No sub-pathway below 25% with sufficient n\n\nMEDIUM tier is well-calibrated with expanded GT. No action needed.",
+      "result_metric": "No demotable sub-pathways. MEDIUM overall: 51.8% \u00b1 5.5% (expanded GT)."
     },
     {
       "id": "h615",
@@ -14915,6 +14917,12 @@
       "hypothesis_id": "h622",
       "learning": "Category demotions are well-calibrated for all non-CV categories even with expanded GT. The CV rescue worked because anticoagulants have high n (14.2/seed). Other categories lack a dominant genuine drug class with sufficient holdout volume.",
       "implication": "MEDIUM_DEMOTED_CATEGORIES exhausted for drug-class rescue. Further MEDIUM improvements need promotions or new signals, not demotion reversals."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h614",
+      "learning": "MEDIUM tier is well-calibrated at sub-pathway level with expanded GT. Metabolic predictions with target_overlap leak through to MEDIUM and have 48.9% holdout \u2014 correctly promoted. All sub-pathways with n>=3/seed are above MEDIUM threshold.",
+      "implication": "MEDIUM tier optimization is complete. No further demotions possible. Focus on HIGH/GOLDEN improvements or annotation quality."
     }
   ],
   "collaborations": [
