@@ -1,6 +1,14 @@
 # Research Loop Progress
 
-## Current Session: h685 - Single-Drug Disease GT Quality Audit (2026-02-06)
+## Current Session: h685 + h689 - GT Quality Audit + Diagnostic Agent Census (2026-02-06)
+
+### h689: DRKG Diagnostic Agent Census — VALIDATED (Defensive)
+Systematically searched 64 diagnostic/imaging agents in DrugBank. Found 3 additional agents in internal GT:
+- Flortaucipir F-18 → Alzheimer's (tau PET tracer)
+- Fluciclovine 18F → prostate cancer, glioma (amino acid PET)
+- Pentagastrin → duodenal ulcer, pernicious anemia (stimulation test)
+
+Expanded prediction filter from 6 to 12 agents. Correctly excluded 7 dual-use therapeutic agents. Expanded GT: 57,555 → 57,539 (-16 entries). No significant holdout change.
 
 ### h685: Disease GT Coverage Quality — VALIDATED (GT Honesty Improvement)
 Audited all 169 diseases with only 1 drug in internal GT. Found 5.3% error rate (9/169 completely false). Also found 5 diagnostic imaging agents across multi-drug diseases (12 more false entries). Total: 19 false GT entries removed.

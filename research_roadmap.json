@@ -14039,14 +14039,16 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Query DrugBank for all drugs with ATC codes V08 (contrast) and V09 (radiopharmaceuticals)",
         "Cross-reference with DRKG entity list to find which ones have embeddings",
         "Check internal GT for any additional diagnostic agents",
         "Check expanded GT for diagnostic agents",
         "Add all confirmed non-therapeutic agents to filter"
-      ]
+      ],
+      "findings": "h689 VALIDATED: DRKG Diagnostic Agent Census \u2014 Comprehensive Filter Implemented.\n\nSystematically searched DrugBank for all diagnostic/imaging agents. Found 64 candidates.\n\nNEWLY IDENTIFIED FALSE GT ENTRIES (3 agents, 5 entries):\n1. Flortaucipir F-18 (DB14914) \u2192 Alzheimer's disease \u2014 tau PET tracer (Tauvid)\n2. Fluciclovine 18F (DB13146) \u2192 prostate cancer, glioma \u2014 amino acid PET tracer (Axumin)\n3. Pentagastrin (DB00183) \u2192 duodenal ulcer, pernicious anemia \u2014 diagnostic stimulation test\n\nEXPANDED PREDICTION FILTER (now 12 agents):\nPreviously: fludeoxyglucose, indocyanine green, Tc-99m sestamibi, ioflupane, florbetaben, Tc-99m sulfur colloid\nAdded: flortaucipir, fluciclovine, pentagastrin, florbetapir, flutemetamol, fluoroestradiol\n\nDUAL-USE AGENTS CORRECTLY EXCLUDED FROM FILTER:\n- Methylene blue (therapeutic for methemoglobinemia)\n- Gallium nitrate (therapeutic for hypercalcemia)\n- Iodide I-131 (therapeutic for thyroid cancer)\n- Iobenguane I-131 (therapeutic for neuroblastoma/paraganglioma)\n- Metyrapone (therapeutic for Cushing's)\n- Tetracosactide (therapeutic for infantile spasms)\n\nEXPANDED GT: 57,555 \u2192 57,539 (-16 entries, mostly Pentagastrin false associations)\n\nHOLDOUT IMPACT: Negligible (same as h685 \u00b1 0.06pp). Changes are DEFENSIVE \u2014\npreventing future false GT entries and ensuring prediction quality.\n\nKEY INSIGHT: Of 64 diagnostic/imaging agents in DrugBank, only ~15 are in DRKG.\nThe DRKG co-occurrence extraction primarily picks up agents used in clinical \ncontexts (PET tracers for cancer/neuro, stimulation tests for GI). Comprehensive\nfilter now covers all known diagnostic agents that could generate artifact predictions.",
+      "result_metric": "Filter expanded from 6 to 12 agents, 5 false GT entries removed, 16 expanded GT entries removed"
     },
     {
       "id": "h690",
@@ -14076,6 +14078,34 @@
         "For each: why is internal GT so sparse? Check DRKG edges.",
         "Identify if this is a DRKG extraction gap vs genuine rare disease",
         "Assess whether adding expanded GT drugs to internal GT could improve kNN for these diseases"
+      ]
+    },
+    {
+      "id": "h692",
+      "title": "Pentagastrin Association Pattern: Other Stimulation Test Drugs in DRKG",
+      "description": "h689 found pentagastrin (a diagnostic stimulation test drug) falsely associated with 10 diseases in expanded GT including agoraphobia and social anxiety. Other stimulation/challenge test drugs (secretin, cosyntropin, glucagon, histamine) may have similar false associations. Check if these generate GT contamination.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Check secretin, cosyntropin, glucagon diagnostic, histamine in expanded GT",
+        "For each: are associations therapeutic or diagnostic context?",
+        "Remove confirmed false entries"
+      ]
+    },
+    {
+      "id": "h693",
+      "title": "Fluorescein Diagnostic Context: Are Ophthalmic Predictions Legitimate?",
+      "description": "Fluorescein (DB00693) is primarily a diagnostic agent (fluorescein angiography for retinal diseases). However, it is also used therapeutically in some contexts (corneal staining, leak detection). Check if fluorescein GT entries and predictions are diagnostic artifacts or legitimate therapeutic associations.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 5,
+      "status": "pending",
+      "steps": [
+        "Check all fluorescein GT entries",
+        "Assess: diagnostic angiography context vs therapeutic use",
+        "Remove confirmed false entries if any"
       ]
     }
   ],
@@ -16297,6 +16327,12 @@
       "hypothesis_id": "h685",
       "learning": "Diagnostic imaging agents (Tc-99m sestamibi, Ioflupane, Florbetaben, etc.) are a systematic source of false GT entries in DRKG. They co-occur with diseases in clinical imaging contexts but are NOT therapeutic. 5.3% error rate in single-drug diseases. Iobenguane is DUAL-USE (diagnostic + therapeutic for neuroblastoma/paraganglioma).",
       "implication": "Need systematic census of all diagnostic agents in DRKG (ATC V08/V09). Also check other drug classes that appear in clinical but non-therapeutic contexts."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h689",
+      "learning": "Of 64 diagnostic/imaging agents in DrugBank, only ~15 are in DRKG. False GT contamination is concentrated in PET tracers and stimulation test drugs. Pentagastrin had 10 false expanded GT entries including agoraphobia/social anxiety. Comprehensive filter now covers 12 diagnostic agents. Key dual-use exceptions: methylene blue (methemoglobinemia), gallium nitrate (hypercalcemia), I-131 (thyroid), iobenguane (neuroblastoma), metyrapone (Cushing's), tetracosactide (infantile spasms).",
+      "implication": "Diagnostic agent contamination is now well-controlled. Future GT additions should be checked against the comprehensive filter list."
     }
   ],
   "collaborations": [

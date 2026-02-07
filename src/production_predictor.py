@@ -2298,6 +2298,10 @@ class DrugRepurposingPredictor:
             'ioflupane i 123',  # DB08824 — DaTscan dopamine transporter imaging
             'florbetaben (18f)',  # DB09148 — amyloid PET imaging
             'technetium tc-99m sulfur colloid',  # DB09397 — sentinel lymph node mapping
+            # h689: Additional diagnostic agents found in census
+            'flortaucipir f-18',  # DB14914 — tau PET imaging (Tauvid)
+            'fluciclovine (18f)',  # DB13146 — amino acid PET imaging (Axumin)
+            'pentagastrin',  # DB00183 — gastric acid stimulation test only
         }
         for drug_name_lower in _NON_THERAPEUTIC_GT_DRUGS:
             drug_id = name_to_id.get(drug_name_lower)
@@ -3181,13 +3185,18 @@ class DrugRepurposingPredictor:
                 if any(inv_d in disease_lower for inv_d in inv_diseases):
                     return ConfidenceTier.FILTER, False, 'inverse_indication'
 
-        # h542/h552/h685: Non-therapeutic compounds → FILTER
+        # h542/h552/h685/h689: Non-therapeutic compounds → FILTER
         # These are diagnostic/imaging agents in DRKG, not therapeutic drugs.
         # All predictions are artifacts of diagnostic co-occurrence.
+        # h689: Comprehensive census of diagnostic agents. Dual-use agents
+        # (methylene blue, gallium nitrate, I-131, iobenguane, metyrapone,
+        # tetracosactide) are NOT included — they have genuine therapeutic uses.
         NON_THERAPEUTIC_COMPOUNDS = (
             'fludeoxyglucose', 'indocyanine green',
             'technetium tc-99m sestamibi', 'ioflupane',
             'florbetaben', 'technetium tc-99m sulfur colloid',
+            'flortaucipir', 'fluciclovine', 'pentagastrin',
+            'florbetapir', 'flutemetamol', 'fluoroestradiol',
         )
         if any(ntc in drug_lower for ntc in NON_THERAPEUTIC_COMPOUNDS):
             return ConfidenceTier.FILTER, False, 'non_therapeutic_compound'
