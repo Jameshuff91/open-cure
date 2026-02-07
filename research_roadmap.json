@@ -12696,7 +12696,7 @@
       "id": "h617",
       "title": "HIGH Tier Stabilization: Reduce Seed-42 Outlier Variance After h615 Promotions",
       "description": "After h615 promoted 139 HIGH\u2192GOLDEN, HIGH holdout dropped to 52.8% \u00b1 13.5% (from 58.8% \u00b1 6.1%). Seed 42 is the outlier (30.0%, n=40 vs mean 137 other seeds). Investigate whether the remaining HIGH tier has structural instabilities that could be addressed. Possible approaches: (1) check if other hierarchy groups with small-n but good quality should be promoted to reduce the remaining HIGH pool to more consistent rules, (2) check if seed 42 is an inherent disease-split issue.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -12704,7 +12704,9 @@
         "Analyze seed 42 holdout diseases to understand why HIGH n=40 vs others n=113-167",
         "Check which HIGH rules contribute predictions on seed 42 vs others",
         "Determine if the variance is structural (disease split) or addressable"
-      ]
+      ],
+      "findings": "HIGH tier variance (52.8% \u00b1 13.5%) is STRUCTURAL, driven by disease-split randomness.\n\nKey findings:\n- Seed 42 has n=40 HIGH preds (others: 97-128) \u2014 fewer hierarchy-matching diseases in holdout\n- corticosteroid_soc_promotion (52.4% \u00b1 10.5%, n=60/seed) and incoherent_demotion (73.8% \u00b1 10.5%, n=28/seed) are the two dominant HIGH rules\n- comp_to_base_high_87 shows 0.0% across all seeds (n=5/seed) \u2014 always 0 hits. Possible OVERFITTED rule.\n- Respiratory (63.3% \u00b1 37.1%) and neurological (66.7% \u00b1 47.1%) rules have extreme variance due to tiny n\n\nThe seed-42 outlier is caused by random disease assignment: some diseases that generate many HIGH predictions (through hierarchy groups) are all in training for seed 42. This cannot be fixed without stratified splitting.\n\nPotential action: comp_to_base_high_87 at 0.0% holdout (n=5/seed) may be demotable, but n is too small for confident action.",
+      "result_metric": "HIGH variance is structural. No actionable fix. comp_to_base_high_87 = 0.0% holdout (n=5, too small)."
     },
     {
       "id": "h618",
@@ -14923,6 +14925,12 @@
       "hypothesis_id": "h614",
       "learning": "MEDIUM tier is well-calibrated at sub-pathway level with expanded GT. Metabolic predictions with target_overlap leak through to MEDIUM and have 48.9% holdout \u2014 correctly promoted. All sub-pathways with n>=3/seed are above MEDIUM threshold.",
       "implication": "MEDIUM tier optimization is complete. No further demotions possible. Focus on HIGH/GOLDEN improvements or annotation quality."
+    },
+    {
+      "date": "2026-02-06",
+      "hypothesis_id": "h617",
+      "learning": "HIGH tier variance (\u00b113.5%) is structural \u2014 driven by which hierarchy-matching diseases end up in holdout. Cannot be reduced without stratified splitting. comp_to_base_high_87 shows 0% holdout but n=5/seed is too small for action.",
+      "implication": "HIGH variance is irreducible with current holdout methodology. Report confidence intervals rather than trying to fix. Consider stratified holdout for future evaluations."
     }
   ],
   "collaborations": [
