@@ -2176,6 +2176,43 @@ class DrugRepurposingPredictor:
         # h405/h439: Load TransE model for consilience scoring
         self._load_transe_model()
 
+        # h732: Load literature evidence cache for tier promotion/demotion
+        self._load_literature_evidence()
+
+    def _load_literature_evidence(self) -> None:
+        """Load literature mining cache for tier modification (h732).
+
+        Literature evidence is the strongest independent predictor of holdout
+        precision discovered (h731):
+        - MEDIUM + STRONG_EVIDENCE: 69.1% holdout (HIGH quality)
+        - MEDIUM + NO_EVIDENCE: 7.3% holdout (LOW quality)
+        - MEDIUM + WEAK_EVIDENCE: 5.0% holdout (LOW quality)
+
+        Cache format: {"drug_name|disease_name": {evidence_level, evidence_score, ...}}
+        """
+        cache_path = self.data_dir / "data" / "validation" / "literature_mining_cache.json"
+        self.literature_evidence: Dict[str, Dict] = {}
+
+        if not cache_path.exists():
+            return
+
+        try:
+            with open(cache_path) as f:
+                self.literature_evidence = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            self.literature_evidence = {}
+
+    def _get_literature_evidence(self, drug_name: str, disease_name: str) -> Tuple[str, float]:
+        """Get literature evidence level and score for a drug-disease pair.
+
+        Returns: (evidence_level, evidence_score)
+        """
+        key = f"{drug_name.lower()}|{disease_name.lower()}"
+        if key in self.literature_evidence:
+            entry = self.literature_evidence[key]
+            return entry.get('evidence_level', 'NOT_ASSESSED'), entry.get('evidence_score', 0.0)
+        return 'NOT_ASSESSED', 0.0
+
     def _load_transe_model(self) -> None:
         """Load TransE model for consilience scoring (h405/h439).
 
@@ -3726,13 +3763,21 @@ class DrugRepurposingPredictor:
             # h662: Named reasons for holdout tracking
             if mechanism_support:
                 return ConfidenceTier.MEDIUM, False, 'default_freq10_mechanism'
-            # h740: kNN score < 2.0 demotion for no-mechanism predictions.
-            # R1-5 score<2.0: 9.9% ± 3.0% holdout (n=30/seed) — below LOW avg.
-            # R6-10 score<2.0: 12.1% ± 3.0% holdout (n=62/seed) — at LOW avg.
+            # h740/h741: kNN score < 3.0 demotion for no-mechanism predictions.
+            # Score < 2.0: R1-5=9.9%, R6-10=12.1% holdout — below LOW avg.
+            # Score 2.0-3.0: R1-5=13.2%, R6-10=15.7% holdout — at/below LOW avg.
+            # Score >= 3.0: R6-10=30.7% holdout — solid MEDIUM.
             # Low kNN scores indicate weak neighbor agreement, enriched in novel preds.
-            elif knn_score < 2.0:
+            elif knn_score < 3.0:
                 return ConfidenceTier.LOW, False, 'default_nomech_low_score'
             elif rank <= 5:
+                # h742: Score gradient within nomech R1-5 (post-h740):
+                # Score 3.0-5.0: 22.1% ± 9.3% (n=22.2/seed) — LOW quality
+                # Score 5.0-8.0: 61.6% ± 10.5% (n=20.4/seed) — HIGH quality
+                # Score >=8.0: 78.2% ± 3.1% (n=17.4/seed) — GOLDEN quality
+                # Demote R1-5 at score 3.0-5.0 to LOW. Keep score >= 5.0 as MEDIUM.
+                if knn_score < 5.0:
+                    return ConfidenceTier.LOW, False, 'default_nomech_r1_5_low_score'
                 return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r1_5'
             else:
                 return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r6_10'
@@ -4576,7 +4621,9 @@ class DrugRepurposingPredictor:
                             # LA drugs demoted by h540 should not be rescued via target overlap
                             and cat_specific != 'local_anesthetic_procedural'
                             # h740: Block rescue of low kNN score demotions (9.9-12.1% holdout)
-                            and cat_specific != 'default_nomech_low_score'):
+                            and cat_specific != 'default_nomech_low_score'
+                            # h742: Block rescue of R1-5 mid-score demotions (22.1% holdout)
+                            and cat_specific != 'default_nomech_r1_5_low_score'):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 
@@ -4644,6 +4691,24 @@ class DrugRepurposingPredictor:
                         tier = ConfidenceTier.HIGH
                         cat_specific = 'transe_medium_promotion'
 
+                    # h732: Literature evidence tier modification
+                    # h731 validated: literature evidence is strongest independent
+                    # predictor of holdout precision. STRONG_EVIDENCE predictions
+                    # consistently outperform their tier peers.
+                    lit_level, lit_score = self._get_literature_evidence(drug_name, disease_name)
+
+                    # h732: MEDIUM + STRONG_EVIDENCE → HIGH (69.1% holdout)
+                    if (tier == ConfidenceTier.MEDIUM
+                            and lit_level == 'STRONG_EVIDENCE'):
+                        tier = ConfidenceTier.HIGH
+                        cat_specific = 'literature_strong_promotion'
+
+                    # h732: MEDIUM + NO_EVIDENCE/WEAK_EVIDENCE → LOW (5-7% holdout)
+                    if (tier == ConfidenceTier.MEDIUM
+                            and lit_level in ('NO_EVIDENCE', 'WEAK_EVIDENCE')):
+                        tier = ConfidenceTier.LOW
+                        cat_specific = 'literature_weak_demotion'
+
                     # h374: Mark predictions from MinRank ensemble
                     if use_minrank and cat_specific is None:
                         cat_specific = 'minrank_ensemble'
@@ -4665,6 +4730,8 @@ class DrugRepurposingPredictor:
                         transe_consilience=in_transe_top30,
                         rank_bucket_precision=get_rank_bucket_precision(tier.value, rank),
                         category_holdout_precision=get_category_holdout_precision(category, tier.value),
+                        literature_evidence_level=lit_level,
+                        literature_evidence_score=lit_score,
                     )
 
                     if include_filtered or tier != ConfidenceTier.FILTER:

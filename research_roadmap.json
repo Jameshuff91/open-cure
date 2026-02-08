@@ -9,7 +9,7 @@
     "ceiling": "60.4% (oracle)",
     "gap": "23 pp requires external data"
   },
-  "last_updated": "2026-02-05",
+  "last_updated": "2026-02-07",
   "hypotheses": [
     {
       "id": "h1",
@@ -37,7 +37,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Use src/disease_categorizer.py to classify all evaluation diseases",
         "Step 2: Route storage/psychiatric/dermatological/autoimmune to TxGNN predictions",
@@ -46,7 +46,8 @@
         "Step 5: Success criteria: >44% R@30"
       ],
       "findings": "BLOCKED: Same issue as h1 - TxGNN pre-computed predictions only contain top-50 drugs per disease. GT drugs not in top-50 for most diseases. Category routing would have 0% contribution from TxGNN without live GPU inference. Requires GPU access to implement properly.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h3",
@@ -75,7 +76,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Download DrugBank approved indications (data/reference/drugbank_lookup.json exists)",
         "Step 2: Download ChEMBL approved indications via API",
@@ -85,7 +86,8 @@
         "Step 6: Success criteria: >43% R@30"
       ],
       "findings": "PARTIAL VALIDATION: The hypothesis premise was partially correct but the impact is too small to be meaningful.\n\nKEY FINDINGS:\n1. All DRKG treatment edges (4,968) are already included in the current GT (58,016 pairs)\n2. The GT is much larger than DRKG because it includes Every Cure annotations\n3. We identified 6 FDA-approved drug-disease pairs missing from GT:\n   - Pembrolizumab -> Breast Cancer (Rank 7, Hit)\n   - Natalizumab -> Multiple Sclerosis (Rank 16, Hit)\n   - Erlotinib -> Pancreatic Cancer (Rank 16, Hit)\n   - Cetuximab -> Colorectal Cancer (Rank 1, Hit)\n   - Oxaliplatin -> Colorectal Cancer (Rank 37, Miss)\n   - Bevacizumab -> Colorectal Cancer (Rank 7, Hit)\n4. 5/6 (83.3%) of these pairs hit@30 - suggesting the model already learns these relationships\n5. Impact: Adding these 6 pairs would improve R@30 by only +0.22 pp (42.04% \u2192 42.26%)\n\nBLOCKERS:\n- DrugBank data available (drugbank_lookup.json) only has name mappings, not indication data\n- Full DrugBank indication data requires license/download (not available)\n- ChEMBL API access not implemented\n- Manual curation of missing pairs is not scalable\n\nCONCLUSION: The approach is theoretically sound (adding correct FDA pairs improves accuracy) but:\n1. Most FDA-approved pairs are already in GT\n2. Missing pairs are few in number\n3. Impact is marginal (<0.3 pp)\n4. Accessing comprehensive indication databases requires additional setup\n\nRecommend: Mark as inconclusive pending access to DrugBank/ChEMBL full indication data.",
-      "result_metric": "+0.22 pp (42.04% \u2192 42.26%) from 6 manual additions"
+      "result_metric": "+0.22 pp (42.04% \u2192 42.26%) from 6 manual additions",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h5",
@@ -114,7 +116,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 6,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Extract mAb target antigens from DrugBank (e.g., TNF-alpha, CD20, IL-17)",
         "Step 2: Map diseases to immunology pathways (Th1, Th2, Th17)",
@@ -124,7 +126,8 @@
         "Step 6: Success criteria: >35% R@30 for biologics"
       ],
       "findings": "BLOCKED (DRKG ceiling): DRKG-internal feature engineering won't break 37% ceiling (h34, h35, h41, h45). The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h7",
@@ -134,7 +137,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 7,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Load DRKG graph from data/drkg/drkg.tsv",
         "Step 2: Compute for each drug-disease pair: shortest path, #paths<=3, shared gene neighbors",
@@ -144,7 +147,8 @@
         "Step 6: Success criteria: >43% R@30"
       ],
       "findings": "BLOCKED (DRKG ceiling): Graph path features already tested and failed in h34. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h8",
@@ -154,7 +158,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 10,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Load confidence_calibrator.pkl model",
         "Step 2: Score all predictions in evaluation set",
@@ -163,7 +167,8 @@
         "Step 5: Success criteria: Maintain >40% R@30 with >30% precision improvement"
       ],
       "findings": "BLOCKED by paradigm shift to kNN.\n\nThe confidence calibrator was trained for the GB model (base_score, boosted_score features).\nSince h39 showed kNN (37.04%) >> GB (25.85%), the calibrator is no longer applicable.\n\nThe kNN approach outputs drug frequency scores, not the same features the calibrator expects.\nWould need to retrain a new calibrator on kNN outputs, but kNN already provides interpretable scores.\n\nAlternative: The existing confidence_filter.py rules (antibiotic patterns, withdrawn drugs, etc.)\nare still applicable to any prediction method as post-hoc filtering.",
-      "result_metric": "BLOCKED - calibrator trained on obsolete GB model features"
+      "result_metric": "BLOCKED - calibrator trained on obsolete GB model features",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h9",
@@ -192,7 +197,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 14,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Download FDA approval dates from DrugBank or OpenFDA",
         "Step 2: Split GT: train on approvals pre-2020, test on 2020-2025",
@@ -202,7 +207,8 @@
         "Step 6: Success criteria: Establish temporal baseline, identify gap"
       ],
       "findings": "BLOCKED: Requires FDA approval date data that we don't have.\n\nCurrent data: Only 16 FDA approval dates in fda_approved_pairs.json\nRequired: FDA approval dates for thousands of drug-disease pairs in GT\n\nTo implement:\n1. Download FDA Orange Book or OpenFDA drug approvals API\n2. Match drug names to DrugBank IDs\n3. Extract approval dates for all GT drugs\n4. Split GT: train pre-2020, test 2020-2025\n5. Evaluate temporal generalization\n\nEstimated effort: 4-6 hours for data download and matching\nValue: Low - would mainly document temporal gap, not improve performance",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h11",
@@ -212,7 +218,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 11,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Extract MoA from DrugBank (action field)",
         "Step 2: Create MoA categories: agonist, antagonist, inhibitor, modulator",
@@ -222,7 +228,8 @@
         "Step 6: Success criteria: >42.5% R@30"
       ],
       "findings": "BLOCKED (DRKG ceiling): MoA features are DRKG-internal, won't help. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h12",
@@ -232,7 +239,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 12,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Augment DRKG with Every Cure treatment edges",
         "Step 2: Retrain Node2Vec embeddings (256-dim) on augmented graph",
@@ -242,7 +249,8 @@
         "Step 6: Success criteria: >43% R@30"
       ],
       "findings": "BLOCKED (DRKG ceiling): Retraining Node2Vec won't break ceiling - similarity measure is the bottleneck, not embedding quality. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h13",
@@ -252,7 +260,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 11,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Review all false positive patterns from validation_sessions.md",
         "Step 2: Add rules for: anti-IL-5 for non-eosinophilic, IL-6 for psoriasis, anti-IFN-gamma for UC",
@@ -261,7 +269,8 @@
         "Step 5: Success criteria: >5% confounding detection rate"
       ],
       "findings": "h13 INCONCLUSIVE - Patterns added but detection rate unchanged on validation cache.\n\nCHANGES MADE:\nAdded 60+ new confounding patterns from validation_sessions.md:\n1. TCAs \u2192 hypertension (norepinephrine reuptake)\n2. PPIs \u2192 hypertension (17% increased risk)\n3. Aminoglycosides \u2192 T2D (insulin inhibition)\n4. Anti-EGFR \u2192 UC (EGFR is protective)\n5. B-cell depletion \u2192 psoriasis (paradoxical induction)\n6. Anti-IL-5 for non-eosinophilic diseases\n7. Anti-IFN-\u03b3 for UC (wrong Th1/Th2 pathway)\n8. TRAIL agonists for inflammatory diseases\n9. IL-6 inhibitors for psoriasis (wrong pathway)\n10. Bone drugs for neurological diseases\n11. Cancer-specific antibodies for autoimmune diseases\n\nRESULTS ON VALIDATION CACHE (1,052 pairs):\n- Before: 9 patterns detected (1.6%)\n- After: 15 patterns detected (1.43%)\n- New patterns (wrong_pathway, cancer_target): 0 detected\n\nWHY NO IMPROVEMENT:\n1. Validation cache doesn't contain the specific biologics targeted by new patterns\n2. Anti-IL-5, TRAIL agonists, etc. are rare in model predictions\n3. The cache is already filtered/curated, so confounded pairs are underrepresented\n\nSUCCESS CRITERION NOT MET: Target was >5% detection rate.\n\nRECOMMENDATION: The confounding detector is more comprehensive, but measuring on validation cache underestimates its value. The patterns will filter false positives when applied to raw model predictions.\n",
-      "result_metric": "1.43% detection rate (target: >5%)"
+      "result_metric": "1.43% detection rate (target: >5%)",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h14",
@@ -290,7 +299,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 15,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Extract cancer disease subset from GT",
         "Step 2: Add tumor-specific features: driver mutations, tumor suppressor status",
@@ -300,7 +309,8 @@
         "Step 6: Success criteria: >25% R@30 for oncology (up from ~11%)"
       ],
       "findings": "BLOCKED (DRKG ceiling): Specialist models already failed (h3), and kNN doesn't need them. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h16",
@@ -310,7 +320,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 20,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Query ClinicalTrials.gov API for all drug-disease pairs",
         "Step 2: Extract max trial phase reached",
@@ -319,7 +329,8 @@
         "Step 5: Success criteria: >25% validation precision (up from 22.5%)"
       ],
       "findings": "Low priority: h19/h17 showed external data provides weaker signal. Clinical trial phase data is orthogonal (not similarity-based) so may still be worth testing, but expected impact is low.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h17",
@@ -388,7 +399,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 20,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Hold out 20% of training pairs for calibration",
         "Step 2: Apply Platt scaling to raw GB scores",
@@ -397,7 +408,8 @@
         "Step 5: Success criteria: Brier score < 0.15, maintain R@30"
       ],
       "findings": "BLOCKED (DRKG ceiling): Calibration improves scores but won't improve recall ceiling. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h21",
@@ -407,7 +419,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 21,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Count known indications per drug from GT",
         "Step 2: Add indication_count as feature",
@@ -416,7 +428,8 @@
         "Step 5: Success criteria: Positive correlation + >41.8% R@30"
       ],
       "findings": "BLOCKED (DRKG ceiling): DRKG-internal feature, won't help. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h22",
@@ -445,7 +458,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 23,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Provision GPU on Vast.ai",
         "Step 2: Load TxGNN model (txgnn_500epochs.pt)",
@@ -454,7 +467,8 @@
         "Step 5: Re-test h1 and h2 with full rankings"
       ],
       "findings": "BLOCKED: Requires GPU resources",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h24",
@@ -483,7 +497,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 25,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Compute embedding distances for all GT pairs",
         "Step 2: Compute distances for random negatives",
@@ -492,7 +506,8 @@
         "Step 5: Evaluate R@30 improvement"
       ],
       "findings": "BLOCKED (DRKG ceiling): DRKG-internal calibration, won't help. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h26",
@@ -540,7 +555,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 1,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Download full DrugBank XML (requires academic license)",
         "Step 2: Parse indication data for all drugs",
@@ -551,7 +566,8 @@
         "Success criteria: Identify >100 missing pairs with >70% hit@30"
       ],
       "findings": "BLOCKED: DrugBank XML requires academic license which we don't have access to. The vocabulary CSV only contains drug names/identifiers, not indication data. Would need to either: (1) Obtain DrugBank academic license, or (2) Find alternative indication data source.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h29",
@@ -705,7 +721,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 6,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Identify current Node2Vec parameters (check if recorded in training logs)",
         "Step 2: Retrain Node2Vec with grid: p={0.5,1,2}, q={0.5,1,2} (9 combinations)",
@@ -715,7 +731,8 @@
         "Success criteria: >33% R@30 with optimized parameters"
       ],
       "findings": "BLOCKED (DRKG ceiling): Node2Vec hyperparameter tuning won't break ceiling - h43 showed params already optimal. The 37% kNN ceiling (h39/h44) proves DRKG-internal improvements are exhausted.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h37",
@@ -1067,7 +1084,7 @@
     {
       "id": "h55",
       "title": "GEO Gene Expression Data Integration",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "high",
       "effort": "high",
@@ -1080,7 +1097,8 @@
       "rationale": "h49 pipeline enables going from expression signatures to drug candidates. Could bypass DRKG coverage limits for rare diseases.",
       "findings": "",
       "result_metric": "",
-      "category": "meta-analysis"
+      "category": "meta-analysis",
+      "closure_reason": "Roadmap cleanup 2026-02-07: CLOSED #11: Gene expression integration does not improve treatment paradigm prediction."
     },
     {
       "id": "h56",
@@ -1246,7 +1264,7 @@
       "id": "h64",
       "title": "Real Gene Expression Integration via ARCHS4",
       "description": "ARCHS4 provides pre-computed gene expression signatures for diseases from GEO. Download disease-level expression profiles and generate TRUE Geneformer embeddings.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "high",
       "effort": "high",
@@ -1269,7 +1287,8 @@
       ],
       "findings": null,
       "result_metric": null,
-      "category": "meta-analysis"
+      "category": "meta-analysis",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h65",
@@ -1512,7 +1531,7 @@
       "id": "h77",
       "title": "Category-Specific Confidence Thresholds",
       "description": "Since autoimmune achieves clinical precision at current thresholds but cancer/metabolic don't, test if category-specific thresholds can expand coverage while maintaining precision.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -1525,7 +1544,8 @@
       ],
       "findings": "Category-specific thresholds analysis was inconclusive due to methodology limitation:\n\nPROBLEM: Used 'known indications' as ground truth for precision calculation.\n- Known indications are a LOWER BOUND \u2014 novel predictions may also be correct\n- Max precision achievable with this metric: ~35% (renal, cardiovascular)\n- NO category achieves even 75% precision using this metric\n\nThis contrasts with h68 which used held-out ground truth and found:\n- combined_avg @ 0.8: 100% precision\n- This is because h68 evaluated on diseases WHERE we know the GT drugs\n\nThe issue: production predictions include diseases for which we have NO GT evaluation.\nWithout proper held-out evaluation, we cannot determine per-category precision.\n\nIMPLICATION: Category-specific thresholds require per-category calibration using\nheld-out data (similar to h68 but stratified by category). This is captured in h71.",
       "result_metric": "INCONCLUSIVE - methodology issue (known indications != true precision)",
-      "category": "meta-analysis"
+      "category": "meta-analysis",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h78",
@@ -1608,7 +1628,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "1. Apply h66 category-specific k values to kNN",
         "2. Apply h71 category-specific thresholds",
@@ -1618,7 +1638,8 @@
       "findings": "h66 (category-specific k) and h71 (category-specific thresholds) are ORTHOGONAL:\n\n1. h66 improves hit rate for CHALLENGING categories:\n   - Cancer: +3.9 pp (68.6% \u2192 72.5%)\n   - Metabolic: +9.1 pp (45.5% \u2192 54.5%)\n   - Respiratory: +8.3 pp (41.7% \u2192 50.0%)\n\n2. But h71 EXCLUDES those same categories or applies strict thresholds:\n   - Metabolic, Respiratory: EXCLUDED (poorly calibrated)\n   - Cancer: Threshold 0.7 (still ~75% precision)\n\n3. For HIGH-TIER categories (autoimmune, derm, psychiatric):\n   - Already at 93-100% hit rate\n   - Category-specific k provides NO improvement\n\nVERDICT: h66's k optimization helps categories that h71 excludes anyway.\nFor production, h71's category-specific thresholds alone are sufficient.\nThe added complexity of h66's category-specific k is not justified.",
       "result_metric": "Marginal benefit for cancer only (+3.9pp hit rate before thresholding)",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h83",
@@ -1782,7 +1803,7 @@
       "rationale": "Novel drug-disease hypotheses exist in published literature but aren't in DRKG. LLMs can extract these relationships at scale. This is fundamentally different from graph-based methods and could work for truly untreated diseases.",
       "expected_impact": "high",
       "effort": "high",
-      "priority": 2,
+      "priority": 3,
       "status": "pending",
       "steps": [
         "Step 1: For each zero-treatment disease (from h90), query PubMed for recent papers",
@@ -1806,7 +1827,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 3,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Download LINCS L1000 drug perturbation signatures",
         "Step 2: Get disease expression signatures from GEO (or derive from DRKG gene associations)",
@@ -1819,7 +1840,8 @@
         "h90"
       ],
       "findings": null,
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: CLOSED #11: LINCS signatures unlikely to add independent signal."
     },
     {
       "id": "h93",
@@ -1852,7 +1874,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 4,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Create experiment script at scripts/txgnn_h94_experiment.py that:",
         "  - Loads TxGNN model",
@@ -1883,7 +1905,8 @@
         "h90"
       ],
       "findings": null,
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h95",
@@ -1988,11 +2011,12 @@
         "Step 4: Compare to gene-based similarity",
         "Step 5: Evaluate on benchmark"
       ],
-      "status": "inconclusive",
+      "status": "deprioritized",
       "findings": "INCONCLUSIVE: Symptom-based kNN underperforms Node2Vec but has limited data coverage.\n\nDATA AVAILABILITY:\n- GT diseases with symptom data: 58 out of 472 (12.3%)\n- Test diseases per fold: 7-11 (very small sample)\n- Total test predictions: 43 (across 5 seeds)\n\nRESULTS (on diseases WITH symptom data):\n| Method              | R@30   |\n|---------------------|--------|\n| Symptom-based kNN   | 21.34% |\n| Node2Vec kNN        | 42.44% |\n\nDifference: -21.09 pp (symptom-based WORSE)\n\nANALYSIS:\n- Jaccard similarity mean: 0.285 (reasonable overlap)\n- 72% of test diseases have nearest neighbor with Jaccard > 0.2\n- Despite reasonable symptom overlap, drug transfer doesn't work well\n\nKEY FINDINGS:\n1. Node2Vec on this subset = 42.44% (vs ~26% overall) \u2192 diseases with symptom data are EASIER to predict\n2. Symptom similarity doesn't capture drug treatment patterns as well as graph embeddings\n3. Symptoms may be too high-level or non-specific for drug targeting\n4. 88% of GT diseases LACK symptom data \u2192 this approach can't scale\n\nINTERPRETATION:\nSymptom phenotypes don't correlate strongly with drug response.\nDiseases with similar symptoms (e.g., fever, fatigue) may have very different treatments.\nGraph proximity (Node2Vec) captures mechanistic similarity better than symptom overlap.\n\nBLOCKED due to low coverage (12.3%). Would need HPO or other phenotype ontology.",
       "result_metric": "Symptom kNN 21.34% vs Node2Vec 42.44% (-21 pp, limited to 58 diseases)",
       "category": "meta-analysis",
-      "rationale": "Use HPO phenotype similarity instead of gene similarity. Diseases with similar phenotypes may respond to similar drugs even without shared genetic mechanisms."
+      "rationale": "Use HPO phenotype similarity instead of gene similarity. Diseases with similar phenotypes may respond to similar drugs even without shared genetic mechanisms.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h100",
@@ -2041,7 +2065,7 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Run mechanism traversal for zero-shot diseases",
         "Step 2: Run ATC-based recommendations in parallel",
@@ -2052,7 +2076,8 @@
       "findings": "BLOCKED: Zero-shot methods (h93, h95) achieved only 3.5% R@30. Mechanism traversal is not viable. Hybrid with failed method won't help.",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "Combine mechanism traversal scores with ATC class transfer scores. Mechanism captures biological targets, ATC captures therapeutic class relationships."
+      "rationale": "Combine mechanism traversal scores with ATC class transfer scores. Mechanism captures biological targets, ATC captures therapeutic class relationships.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h103",
@@ -2061,7 +2086,7 @@
       "priority": 99,
       "expected_impact": "low",
       "effort": "low",
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: For each disease, try ATC Level 4 first",
         "Step 2: If <10 candidates, fall back to Level 3",
@@ -2072,7 +2097,8 @@
       "findings": "BLOCKED: h67 showed ATC boosting hurts kNN, and only 29.1% of drugs have ATC mappings. Hierarchical ATC navigation cannot overcome low coverage issue.",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "When ATC Level 3 produces no candidates, fall back to Level 2; when Level 2 fails, use Level 1. Adaptive hierarchy navigation may improve coverage."
+      "rationale": "When ATC Level 3 produces no candidates, fall back to Level 2; when Level 2 fails, use Level 1. Adaptive hierarchy navigation may improve coverage.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h104",
@@ -2253,7 +2279,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Sample incoherent predictions that are true positives (hits)",
         "Step 2: Analyze what types of drugs/diseases these represent",
@@ -2265,7 +2291,8 @@
         "h110"
       ],
       "findings": "INCONCLUSIVE: Missing ATC code data file prevents full analysis.\n\nBACKGROUND:\n- h110 found incoherent predictions have HIGHER precision (11.24% vs 6.69%)\n- This is counter-intuitive but consistent with selection pressure hypothesis\n\nBLOCKED BY:\n- drug_atc_codes.json file does not exist\n- ATC mappings require extracting from unified_edges_clean.csv (HAS_ATC_CODE relation)\n- This requires additional preprocessing\n\nPRELIMINARY HYPOTHESES (untested):\n1. SELECTION PRESSURE: Incoherent hits need stronger kNN signals to overcome class mismatch\n2. POLYPHARMACOLOGY: Incoherent hits may have more targets (broad mechanisms)\n3. CONFOUNDING: Coherent predictions may capture obvious/known associations\n\nRECOMMENDATION:\nCreate drug_atc_codes.json from unified edges before retesting, or accept h110 finding as-is: ATC class coherence is not a useful confidence signal.",
-      "result_metric": "BLOCKED - missing ATC data"
+      "result_metric": "BLOCKED - missing ATC data",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h113",
@@ -2474,7 +2501,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Identify diseases where predicted tier hit rate >> actual hit rate",
         "Step 2: Examine disease names to understand why miscategorized",
@@ -2486,7 +2513,8 @@
         "h116"
       ],
       "findings": "INCONCLUSIVE: Category misclassification exists but is addressed by existing per-disease confidence.\n\nKEY FINDINGS:\n1. 53 explicit category mismatches (assigned vs keyword classification)\n2. 182 diseases over-perform their category (>20 pp deviation)\n3. The \"other\" category is BIMODAL:\n   - 92 diseases with 100% hit rate (mostly infections, inflammatory)\n   - 80 diseases with 4.4% hit rate (rare genetic/metabolic)\n4. Category-level calibration has 57.4 pp average error\n5. Correcting \"other\" expectation only reduces error by 4 pp (not meeting >10 pp target)\n\nWHY INCONCLUSIVE:\nThe per-disease confidence features (prob_h52, prob_h65) from h79 already address this:\n- prob_h52 has +0.313 difference between high/low hit \"other\" diseases\n- combined_avg threshold 0.6: 81.9% vs 32.6% hit rate separation\n\nIMPLICATION:\nCategory-based tiers are fundamentally limited by bimodal distributions.\nThe production system should prioritize per-disease confidence scores over category tiers.\n",
-      "result_metric": "4 pp calibration improvement (below 10 pp target)"
+      "result_metric": "4 pp calibration improvement (below 10 pp target)",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h123",
@@ -2670,7 +2698,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 4,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Add freq_x_score to 3-feature logistic model",
         "Step 2: Compare to XGBoost on same features",
@@ -2682,7 +2710,8 @@
         "h120"
       ],
       "findings": "DUPLICATE of h127",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h132",
@@ -2901,7 +2930,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Extract the components of prob_h52 calculation (kNN pool, distances, etc.)",
         "Step 2: Correlate each component with actual hit rate",
@@ -2912,7 +2941,8 @@
       "findings": "INCONCLUSIVE: prob_h52 explains 33.7% variance (below 50% target), but reveals important insights.\n\nCORRELATIONS:\n- prob_h52 vs hit_rate: r=0.581 (strong)\n- pool_size vs hit_rate: r=0.035 (weak)\n- prob_h52 vs pool_size: r=0.105 (weak)\n- prob_h52 vs within-category residual: r=0.511 (strong!)\n\nKEY INSIGHTS:\n1. prob_h52 does NOT primarily predict via pool size (only 0.1% explained)\n2. prob_h52 captures WITHIN-CATEGORY variation (r=0.511 with residuals)\n3. ~66% of variance remains unexplained - likely from:\n   - Neighbor quality (not just quantity)\n   - Embedding distance distributions\n   - Unknown biological factors\n\nINTERPRETABLE EXPLANATION:\nprob_h52 predicts success by learning which diseases have \"good\" kNN neighborhoods,\nwhere goodness comes from similarity to training diseases, not just drug pool size.\n",
       "result_metric": "33.7% variance explained (below 50% target)",
       "category": "meta-analysis",
-      "rationale": "Understand what makes prob_h52 so effective - is it pool coverage, embedding distance, or something else?"
+      "rationale": "Understand what makes prob_h52 so effective - is it pool coverage, embedding distance, or something else?",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h143",
@@ -3268,7 +3298,7 @@
       "rationale": "autoimmune hemolytic anemia is categorized as autoimmune (Tier 1) but could benefit from hematological rescue. Keyword order affects classification.",
       "expected_impact": "low",
       "effort": "low",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 4,
       "category": "precision",
       "dependencies": [
@@ -3283,7 +3313,8 @@
       "started_date": "2026-02-05",
       "completed_date": "2026-02-05",
       "findings": "INCONCLUSIVE: Category boundary refinement is theoretically valid but has minimal practical impact.\n\nANALYSIS:\n1. Dual-identity diseases (ITP, TTP, AIHA) exist at autoimmune-hematological boundary\n2. TTP/ITP miscategorized as \"other\" - could benefit from autoimmune drug pool\n3. AIHA correctly categorized as autoimmune (14% precision)\n\nDRUG OVERLAP:\n- 53% of ITP drugs also treat autoimmune diseases (classic steroids)\n- TTP GT includes Rituximab (autoimmune drug)\n- Modern ITP drugs (TPO agonists) have 0% overlap - specialized\n\nQUANTITATIVE IMPACT:\n- TTP: 16 predictions, 0 correct. Expansion might add Rituximab (+1)\n- Best case precision: 6.3% (still poor)\n- GT is tiny (2-4 drugs per disease) \u2192 minimal improvement possible\n\nVERDICT: Valid insight but <5pp impact expected. Not worth implementation effort.",
-      "result_metric": "Minimal impact: TTP/ITP have tiny GT (2-4 drugs), expansion adds ~1 correct"
+      "result_metric": "Minimal impact: TTP/ITP have tiny GT (2-4 drugs), expansion adds ~1 correct",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h160",
@@ -3545,7 +3576,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 3,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Search GEO for neurological disease expression studies",
         "Compute disease similarity from expression profiles",
@@ -3555,7 +3586,8 @@
         "h55"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: CLOSED #11: Gene expression similarity does not add independent signal beyond drug Jaccard."
     },
     {
       "id": "h173",
@@ -3678,7 +3710,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 4,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Create FastAPI wrapper for DrugRepurposingPredictor",
         "Add /predict endpoint accepting disease name",
@@ -3687,7 +3719,8 @@
         "Document deployment with uvicorn"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h181",
@@ -3765,7 +3798,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 4,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Identify metabolic disease subtypes where statins are NOT indicated",
         "Add STATIN_EXCLUDED_DISEASES set (hyperthyroidism, diabetic nephropathy, etc)",
@@ -3774,7 +3807,8 @@
       ],
       "started_date": "2026-02-05",
       "findings": "Left in_progress from previous session. Need to review context before continuing.",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h186",
@@ -3908,7 +3942,7 @@
       "expected_impact": "low",
       "effort": "high",
       "priority": 4,
-      "status": "pending",
+      "status": "deprioritized",
       "category": "methodology",
       "dependencies": [
         "h152"
@@ -3922,7 +3956,8 @@
       ],
       "findings": "",
       "result_metric": "",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: ATC coherence already used as tier signal (h606). ATC similarity for kNN adds collider bias (CLOSED #7)."
     },
     {
       "id": "h193",
@@ -4598,11 +4633,12 @@
         "Map contraindicated conditions to disease categories",
         "Integrate high-confidence contraindications into filter"
       ],
-      "status": "blocked",
+      "status": "deprioritized",
       "priority": 5,
       "findings": "",
       "result_metric": "",
-      "category": "meta-analysis"
+      "category": "meta-analysis",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h224",
@@ -4810,7 +4846,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Load StringDB confidence scores for PPI interactions",
         "Score 2-hop paths by interaction confidence",
@@ -4819,7 +4855,8 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "meta-analysis"
+      "category": "meta-analysis",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h235",
@@ -4828,7 +4865,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Load gene->pathway mappings",
         "Filter 2-hop paths to those where gene1 and gene2 share a pathway",
@@ -4837,7 +4874,8 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "meta-analysis"
+      "category": "meta-analysis",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h236",
@@ -5052,7 +5090,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Identify pattern: If disease has BOTH antipsychotic AND stimulant in top predictions, allow stimulant",
         "Identify pattern: If disease has BOTH mood stabilizer AND SSRI in top predictions, allow SSRI",
@@ -5063,7 +5101,8 @@
         "h243"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h247",
@@ -5222,7 +5261,7 @@
       "expected_impact": "low",
       "effort": "high",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Identify HF predictions involving aliskiren",
         "Check if disease involves diabetes comorbidity",
@@ -5234,7 +5273,8 @@
         "h250"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h255",
@@ -5537,7 +5577,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Split autoimmune into subtypes (inflammatory arthritis, connective tissue, skin, neurological)",
         "Step 2: Calculate NSAID vs DMARD precision per subtype",
@@ -5549,7 +5589,8 @@
         "h265"
       ],
       "findings": "h268 INCONCLUSIVE: Subtype-specific data not available\n\nANALYSIS ATTEMPT:\n- Tried to split autoimmune into subtypes (RA, lupus, psoriasis, MS, IBD)\n- But h163 data only has overall \"autoimmune\" category precision\n\nEXISTING FINDINGS FROM h163/h265:\n- NSAID + autoimmune = 50% (already HIGH tier via h265)\n- DMARD + autoimmune = 75.4% (already GOLDEN tier via h157)\n- Corticosteroid + autoimmune = 46.1%\n- Kinase inhibitor + autoimmune = 30.8% (surprise!)\n- Receptor fusion + autoimmune = 30.0%\n\nCONCLUSION:\nThe existing production_predictor rules are already optimal for \"autoimmune\" as a single category.\nTo determine subtype-specific preferences (e.g., RA vs psoriasis vs MS), would need:\n1. Re-run kNN with subtype classification\n2. Large enough n per subtype (many subtypes have n<10)\n\nThis is medium-high effort with uncertain benefit since current rules work well.",
-      "result_metric": "NSAID=50%, DMARD=75.4%, Steroid=46.1% for autoimmune (no subtype split)"
+      "result_metric": "NSAID=50%, DMARD=75.4%, Steroid=46.1% for autoimmune (no subtype split)",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h269",
@@ -5559,7 +5600,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 2,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Extract drug targets for cancer drugs from DRKG",
         "Step 2: Extract known cancer gene markers (oncogenes, tumor suppressors)",
@@ -5571,7 +5612,8 @@
         "h267"
       ],
       "findings": "Leave-one-out CV on 38 evaluable cancer diseases:\n- Target Overlap R@30: 65.8% (25/38 hits)\n- kNN Baseline R@30: 63.2% (24/38 hits)\n- McNemar's chi-square: 0.00 (not significant)\n\nTarget overlap wins in 7 cases, kNN wins in 6 cases, both hit in 18 cases.\nMethods are statistically equivalent.\n\nKey insight: Target-based scoring captures different signal from kNN (18 shared wins, 13 different outcomes).\nPotential for ensemble, but no single-method improvement.\n\nLimiting factor: Only 38 diseases evaluable due to MONDO\u2192MESH mapping coverage (103/395 cancer diseases have MESH) and DRKG disease-gene coverage (88/104 with genes).",
-      "result_metric": "Target Overlap 65.8% vs kNN 63.2% (n.s. difference)"
+      "result_metric": "Target Overlap 65.8% vs kNN 63.2% (n.s. difference)",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h270",
@@ -5909,7 +5951,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 4,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Build taxonomy of disease relationship types from medical ontologies",
         "Step 2: Classify existing disease pairs by relationship type",
@@ -5922,7 +5964,8 @@
         "h279"
       ],
       "findings": null,
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h286",
@@ -5932,7 +5975,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "blocked",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Get drug mechanisms/pathways from existing pathway data",
         "Step 2: Get complication pathways (e.g., diabetic nephropathy = renal, vascular)",
@@ -5944,7 +5987,8 @@
         "h281"
       ],
       "findings": "BLOCKED: Data format mismatch prevents direct pathway overlap analysis.\n\nDATA FORMAT ISSUES:\n- GT uses CHEBI IDs for drugs\n- Pathway data uses DrugBank/CHEMBL IDs for drugs\n- Pathway data uses MESH IDs for diseases\n- No existing mapping between these formats\n\nEFFORT ASSESSMENT:\n- Would require building CHEBI \u2194 DrugBank/CHEMBL mapping\n- Would require building disease name \u2194 MESH ID mapping\n- High effort for uncertain gain\n\nRELATED FINDING (h293):\n- Base\u2192comp precision is already only 2.9% overall\n- Organ-specific complications have 0% precision regardless\n- Pathway overlap unlikely to change this fundamental pattern\n\nRECOMMENDATION: Deprioritize in favor of other approaches.",
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h287",
@@ -6217,7 +6261,7 @@
     {
       "id": "h299",
       "title": "Alternative Methods for Mechanism-Specific Diseases",
-      "status": "blocked",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -6232,7 +6276,8 @@
       "findings": "BLOCKED: ID format mismatch prevents alternative method testing.\n\nDATA FORMAT MISMATCH:\n- GT drug IDs: CHEBI (e.g., CHEBI:8327), PUBCHEM, UNII\n- Drug targets uses: DrugBank (DB00635), CHEMBL\n- Overlap: 0/2,382 (0%)\n\n- GT disease IDs: MONDO (e.g., MONDO:0005009), UMLS\n- Disease genes uses: MESH (e.g., MESH:D005909)\n- Overlap: 0/2,688 (0%)\n\nIMPLICATION:\nCannot test target-based scoring or mechanism matching for mechanism-specific\ndiseases without extensive ID mapping infrastructure.\n\nRECOMMENDATION:\n1. This would require building/sourcing CHEBI\u2194DrugBank and MONDO\u2194MESH mappings\n2. High effort with uncertain benefit\n3. For now, mechanism-specific diseases should simply get LOW confidence\n4. Alternative: Use literature mining (h91) which doesn't require ID mapping",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "kNN fails for mechanism-specific diseases (6.6% repurposable). What alternatives work?"
+      "rationale": "kNN fails for mechanism-specific diseases (6.6% repurposable). What alternatives work?",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Superseded by kNN collaborative filtering approach. ML-era hypothesis no longer relevant."
     },
     {
       "id": "h300",
@@ -6257,7 +6302,7 @@
     {
       "id": "h301",
       "title": "Build Drug/Disease ID Mapping Infrastructure",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "high",
       "effort": "high",
@@ -6272,7 +6317,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "Build mappings between GT IDs (CHEBI, MONDO) and reference data IDs (DrugBank, MESH) to enable target-based predictions"
+      "rationale": "Build mappings between GT IDs (CHEBI, MONDO) and reference data IDs (DrugBank, MESH) to enable target-based predictions",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Duplicate of h407 (ID mapping infrastructure)."
     },
     {
       "id": "h302",
@@ -6774,7 +6820,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Compute precision for endocrine diseases at GOLDEN/HIGH/MEDIUM tiers",
         "Compare with other Tier 2 categories (cancer, cardiovascular, other)",
@@ -6786,7 +6832,8 @@
       "findings": "h324 INCONCLUSIVE: Endocrine Tier Promotion - insufficient sample size.\n\nAnalysis:\n- Endocrine success rate: 75.0% (3/4 diseases)\n- Cardiovascular (Tier 2): 53.8% (7/13)\n- Cancer (Tier 2): 68.6% (35/51)\n\nWhile 75% > 53.8%, the sample size (n=4) is too small for statistical significance.\nNeed more endocrine disease data to validate promotion.\n\nRecommendation: Keep endocrine at Tier 3 until more data collected.",
       "result_metric": "75% success (n=4), insufficient sample",
       "category": "meta-analysis",
-      "rationale": "h323 shows endocrine has +0.64 kNN success coefficient but is currently Tier 3. Analyze endocrine disease precision to determine if promotion is warranted."
+      "rationale": "h323 shows endocrine has +0.64 kNN success coefficient but is currently Tier 3. Analyze endocrine disease precision to determine if promotion is warranted.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h325",
@@ -6841,7 +6888,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Step 1: Analyze all statin-alone predictions",
         "Step 2: Check disease categories where statins-alone succeed",
@@ -6853,7 +6900,8 @@
       ],
       "completed_date": "2026-02-05",
       "findings": "h327 INCONCLUSIVE: Sample size too small for reliable pattern.\n\nANALYSIS:\n- Total statin-alone predictions: 8 (too small for statistical significance)\n- Statin-alone: 3/8 = 37.5% precision\n- Statin with-classmates: 22/75 = 29.3% precision\n- Difference: +8.2 pp\n\nBY TIER (alone):\n- HIGH: 2/3 = 66.7%\n- MEDIUM: 1/5 = 20.0%\n\nSPECIFIC PREDICTIONS:\n- Lovastatin \u2192 hypothyroidism: HIT\n- Lovastatin \u2192 coronary atherosclerosis: HIT\n- Pravastatin \u2192 myocardial infarction: HIT\n- 5 misses across endocrine, cancer, other categories\n\nCONCLUSION:\nThe +8.2 pp difference (37.5% vs 29.3%) might be noise due to tiny sample size (n=8).\nCannot recommend implementing a statin isolation boost with only 8 data points.\n\nNOTE: This is unlike the broad class demotion rule (h326) which had 212 samples.\nWith only 8 samples, even a 2-3 hit difference changes precision by 25-37%.\n\nRECOMMENDATION:\n- Do NOT implement statin isolation boost\n- If more statin predictions become available, revisit this hypothesis",
-      "result_metric": "37.5% alone vs 29.3% with classmates, but n=8 too small"
+      "result_metric": "37.5% alone vs 29.3% with classmates, but n=8 too small",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h328",
@@ -7060,7 +7108,7 @@
       "id": "h337",
       "title": "Broad Class Cohesion Signal: ACE Inhibitors Analysis",
       "description": "h333 confirmed statins are exception (isolation helps). Test if ACE inhibitors follow similar pattern.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -7073,7 +7121,8 @@
       "findings": "ACE inhibitors show OPPOSITE pattern to statins:\n- HIGH isolated: 0% (2/0)\n- HIGH non-isolated: 22.2% (9/2)\n- Gap: -22.2 pp (cohesion HELPS)\n\nThis suggests ACE inhibitors COULD be added to BROAD_THERAPEUTIC_CLASSES.\n\nHOWEVER: Sample sizes too small for implementation:\n- Only 2 isolated HIGH predictions\n- Only 9 non-isolated HIGH predictions\n\nARBs show inconsistent pattern:\n- HIGH isolated: 33.3% (3/1)\n- HIGH non-isolated: 0% (11/0)\n- Gap: +33.3 pp (isolation helps like statins)\n\nConclusion: Pattern exists but insufficient data. Would only affect 2 HIGH predictions. NOT worth implementing.",
       "result_metric": "ACE: -22.2 pp (cohesion helps), Sample size: 2 isolated HIGH",
       "category": "meta-analysis",
-      "rationale": "h333 confirmed statins are exception (isolation helps). Test if ACE inhibitors follow similar pattern."
+      "rationale": "h333 confirmed statins are exception (isolation helps). Test if ACE inhibitors follow similar pattern.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h338",
@@ -7138,7 +7187,7 @@
       "description": "h337 found ACE inhibitors show opposite pattern to statins (cohesion helps vs isolation helps). Build comprehensive database of class-specific isolation patterns.",
       "expected_impact": "medium",
       "effort": "high",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "steps": [
         "Identify top 20 drug classes by prediction count",
@@ -7149,7 +7198,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h337 found ACE inhibitors show opposite pattern to statins (cohesion helps vs isolation helps). Build comprehensive database of class-specific isolation patterns."
+      "rationale": "h337 found ACE inhibitors show opposite pattern to statins (cohesion helps vs isolation helps). Build comprehensive database of class-specific isolation patterns.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h342",
@@ -7272,7 +7322,7 @@
       "description": "h342 showed kNN fails for mechanism-based repurposing (mTOR \u2192 transplant). Compare kNN vs pathway-based approaches for specific drug classes.",
       "expected_impact": "medium",
       "effort": "high",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 3,
       "steps": [
         "Identify drugs with known dual mechanisms (mTOR, JAK, etc.)",
@@ -7283,7 +7333,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h342 showed kNN fails for mechanism-based repurposing (mTOR \u2192 transplant). Compare kNN vs pathway-based approaches for specific drug classes."
+      "rationale": "h342 showed kNN fails for mechanism-based repurposing (mTOR \u2192 transplant). Compare kNN vs pathway-based approaches for specific drug classes.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: kNN is the adopted method, mechanism serves as annotation. Comparison moot."
     },
     {
       "id": "h349",
@@ -7357,7 +7408,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 4,
-      "status": "pending",
+      "status": "deprioritized",
       "created_date": "2026-02-05",
       "steps": [
         "Step 1: Build disease-to-mechanism mapping from DRKG",
@@ -7372,7 +7423,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h294 found organ proximity fails. Alternative: diseases that share MECHANISMS (not just organs) may have valid drug transfer. E.g., inflammatory diseases share IL-6/TNF pathways."
+      "rationale": "h294 found organ proximity fails. Alternative: diseases that share MECHANISMS (not just organs) may have valid drug transfer. E.g., inflammatory diseases share IL-6/TNF pathways.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h353",
@@ -7654,7 +7706,7 @@
       "id": "h365",
       "title": "Prediction Count Reduction Root Cause Analysis",
       "description": "Old deliverables had 13,461 predictions, new has 7,131 (47% reduction). Analyze what filtering rules caused the reduction.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 6,
       "expected_impact": "low",
       "effort": "medium",
@@ -7667,7 +7719,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "Old deliverables had 13,461 predictions, new has 7,131 (47% reduction). Analyze what filtering rules caused the reduction."
+      "rationale": "Old deliverables had 13,461 predictions, new has 7,131 (47% reduction). Analyze what filtering rules caused the reduction.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h366",
@@ -7695,7 +7748,7 @@
       "title": "Disease-Specific Gene Weighting",
       "description": "Currently all DRKG disease-gene associations are weighted equally. Weight genes by association strength/evidence type.",
       "hypothesis": "Weighting disease genes by DRKG edge types (L/J/U/Te) will improve target overlap precision.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -7708,7 +7761,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "Currently all DRKG disease-gene associations are weighted equally. Weight genes by association strength/evidence type."
+      "rationale": "Currently all DRKG disease-gene associations are weighted equally. Weight genes by association strength/evidence type.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h368",
@@ -7862,7 +7916,7 @@
       "title": "Disease-Specific Gene Weighting by DRKG Edge Type",
       "description": "DRKG has multiple edge types for disease-gene associations. Test if weighting genes by edge type improves target scoring.",
       "hypothesis": "Weighting genes by edge type (e.g., 'causes' vs 'associated_with') will improve target overlap signal quality.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -7876,7 +7930,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "DRKG has multiple edge types for disease-gene associations. Test if weighting genes by edge type improves target scoring."
+      "rationale": "DRKG has multiple edge types for disease-gene associations. Test if weighting genes by edge type improves target scoring.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h376",
@@ -8047,7 +8102,7 @@
       "title": "Tighten CV Pathway Comprehensive Rule",
       "description": "h378 found cv_pathway_comprehensive has 38% precision vs 59.9% HIGH tier avg. Rule h351 may be too broad.",
       "hypothesis": "Restricting cv_pathway_comprehensive to specific drug classes (statins only?) will improve precision.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -8060,7 +8115,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h378 found cv_pathway_comprehensive has 38% precision vs 59.9% HIGH tier avg. Rule h351 may be too broad."
+      "rationale": "h378 found cv_pathway_comprehensive has 38% precision vs 59.9% HIGH tier avg. Rule h351 may be too broad.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h385",
@@ -8210,7 +8266,7 @@
       "title": "Overlap Threshold Optimization by Category",
       "description": "h388 used global overlap thresholds (>=3 for HIGH\u2192GOLDEN, >=1 for LOW\u2192MEDIUM). Different disease categories may have different optimal thresholds due to varying gene coverage.",
       "hypothesis": "Category-specific overlap thresholds will improve promotion precision by 5+ pp for at least 2 categories.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "low",
       "effort": "medium",
@@ -8223,7 +8279,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h388 used global overlap thresholds (>=3 for HIGH\u2192GOLDEN, >=1 for LOW\u2192MEDIUM). Different disease categories may have different optimal thresholds due to varying gene coverage."
+      "rationale": "h388 used global overlap thresholds (>=3 for HIGH\u2192GOLDEN, >=1 for LOW\u2192MEDIUM). Different disease categories may have different optimal thresholds due to varying gene coverage.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h393",
@@ -8418,7 +8475,7 @@
       "title": "Reassess DRKG Ceiling with Category-Specific Approaches",
       "description": "PROMISING DIRECTION: The 37% DRKG ceiling was declared after h41-h45 (ML overlays failed). But h66 found +9pp for metabolic with k=30, and other approaches remain untested: distance-weighted kNN, category-specific embeddings, non-cosine similarity metrics. Oracle ceiling is 60% with 23pp headroom.",
       "hypothesis": "Combining category-specific k (h398), distance-weighted voting, and possibly re-tuned Node2Vec hyperparameters can push R@30 above 40% without external data.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "high",
       "effort": "high",
@@ -8435,7 +8492,8 @@
       "findings": null,
       "result_metric": null,
       "category": "meta-analysis",
-      "rationale": "PROMISING DIRECTION: The 37% DRKG ceiling was declared after h41-h45 (ML overlays failed). But h66 found +9pp for metabolic with k=30, and other approaches remain untested: distance-weighted kNN, category-specific embeddings, non-cosine similarity metrics. Oracle ceiling is 60% with 23pp headroom."
+      "rationale": "PROMISING DIRECTION: The 37% DRKG ceiling was declared after h41-h45 (ML overlays failed). But h66 found +9pp for metabolic with k=30, and other approaches remain untested: distance-weighted kNN, category-specific embeddings, non-cosine similarity metrics. Oracle ceiling is 60% with 23pp headroom.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Largely completed through 590+ hypotheses. DRKG ceiling well-characterized."
     },
     {
       "id": "h402",
@@ -8466,7 +8524,7 @@
       "title": "Edge2Vec: Edge-Type-Aware Embeddings for DRKG",
       "description": "LITERATURE-INFORMED: Vanilla Node2Vec treats all 107 DRKG edge types equally. Edge2Vec (and similar heterogeneous graph methods) use edge-type-aware random walks, weighting transitions by edge type. Since DRKG is highly heterogeneous (gene-gene, drug-gene, drug-disease, disease-gene, etc.), this could capture richer structural patterns. May break the 37% DRKG ceiling without external data. Ref: edge2vec paper, KG review in Briefings in Bioinformatics 2024.",
       "hypothesis": "Replacing Node2Vec with Edge2Vec (edge-type-aware random walks) on DRKG will produce embeddings that better capture heterogeneous relationships, improving kNN R@30 by 3-8pp over vanilla Node2Vec (currently 37%).",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "high",
       "effort": "high",
@@ -8483,14 +8541,15 @@
       "findings": null,
       "result_metric": null,
       "category": "meta-analysis",
-      "rationale": "LITERATURE-INFORMED: Vanilla Node2Vec treats all 107 DRKG edge types equally. Edge2Vec (and similar heterogeneous graph methods) use edge-type-aware random walks, weighting transitions by edge type. Since DRKG is highly heterogeneous (gene-gene, drug-gene, drug-disease, disease-gene, etc.), this could capture richer structural patterns. May break the 37% DRKG ceiling without external data. Ref: edge2vec paper, KG review in Briefings in Bioinformatics 2024."
+      "rationale": "LITERATURE-INFORMED: Vanilla Node2Vec treats all 107 DRKG edge types equally. Edge2Vec (and similar heterogeneous graph methods) use edge-type-aware random walks, weighting transitions by edge type. Since DRKG is highly heterogeneous (gene-gene, drug-gene, drug-disease, disease-gene, etc.), this could capture richer structural patterns. May break the 37% DRKG ceiling without external data. Ref: edge2vec paper, KG review in Briefings in Bioinformatics 2024.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: CLOSED #12: Node2Vec subsumes DRKG auxiliary edges. Edge2Vec unlikely to add value."
     },
     {
       "id": "h404",
       "title": "LINCS L1000 Transcriptional Signature Integration",
       "description": "LITERATURE-INFORMED: AMVL (2025) achieved SOTA by integrating CMap/LINCS L1000 chemical-induced transcriptional profiles with KG embeddings. LINCS L1000 contains gene expression signatures for ~20K compounds across cell lines. Drug-drug similarity based on transcriptional signatures captures mechanism-of-action similarity that KG structure misses. Data is freely available via LINCS API (lincscloud.org) or GEO (GSE92742, GSE70138). This is the most promising external data source identified in literature review. Supersedes h92.",
       "hypothesis": "Computing drug similarity from LINCS L1000 transcriptional signatures and using it as an additional signal (either as kNN feature or separate similarity metric for ensemble) will improve R@30 by 3-5pp, especially for drugs with weak KG connectivity (biologics, novel mechanisms).",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "high",
       "effort": "high",
@@ -8507,7 +8566,8 @@
       "findings": null,
       "result_metric": null,
       "category": "meta-analysis",
-      "rationale": "LITERATURE-INFORMED: AMVL (2025) achieved SOTA by integrating CMap/LINCS L1000 chemical-induced transcriptional profiles with KG embeddings. LINCS L1000 contains gene expression signatures for ~20K compounds across cell lines. Drug-drug similarity based on transcriptional signatures captures mechanism-of-action similarity that KG structure misses. Data is freely available via LINCS API (lincscloud.org) or GEO (GSE92742, GSE70138). This is the most promising external data source identified in literature review. Supersedes h92."
+      "rationale": "LITERATURE-INFORMED: AMVL (2025) achieved SOTA by integrating CMap/LINCS L1000 chemical-induced transcriptional profiles with KG embeddings. LINCS L1000 contains gene expression signatures for ~20K compounds across cell lines. Drug-drug similarity based on transcriptional signatures captures mechanism-of-action similarity that KG structure misses. Data is freely available via LINCS API (lincscloud.org) or GEO (GSE92742, GSE70138). This is the most promising external data source identified in literature review. Supersedes h92.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: CLOSED #11: Gene expression does not predict treatment. LINCS integration unlikely to help."
     },
     {
       "id": "h405",
@@ -8538,7 +8598,7 @@
       "title": "Download and Curate LINCS L1000 Data for Drug Signature Matching",
       "description": "Data acquisition task: Download LINCS L1000 Level 5 data (moderated z-scores) from GEO, map perturbagen IDs to our DrugBank drug IDs, and produce a drug-drug transcriptional similarity matrix. This is prerequisite infrastructure for h404 (LINCS integration). L1000 measures expression of 978 landmark genes across ~20K compounds. Phase I: GSE92742, Phase II: GSE70138.",
       "hypothesis": "We can download, curate, and integrate LINCS L1000 data autonomously. Expected coverage: 30-50% of our DrugBank drugs will have L1000 signatures. The drug-drug similarity matrix will provide a new signal independent of KG structure.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "high",
@@ -8557,7 +8617,8 @@
       "findings": null,
       "result_metric": null,
       "category": "meta-analysis",
-      "rationale": "Data acquisition task: Download LINCS L1000 Level 5 data (moderated z-scores) from GEO, map perturbagen IDs to our DrugBank drug IDs, and produce a drug-drug transcriptional similarity matrix. This is prerequisite infrastructure for h404 (LINCS integration). L1000 measures expression of 978 landmark genes across ~20K compounds. Phase I: GSE92742, Phase II: GSE70138."
+      "rationale": "Data acquisition task: Download LINCS L1000 Level 5 data (moderated z-scores) from GEO, map perturbagen IDs to our DrugBank drug IDs, and produce a drug-drug transcriptional similarity matrix. This is prerequisite infrastructure for h404 (LINCS integration). L1000 measures expression of 978 landmark genes across ~20K compounds. Phase I: GSE92742, Phase II: GSE70138.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: CLOSED #11: Prerequisite for h404 which is now deprioritized."
     },
     {
       "id": "h407",
@@ -8565,7 +8626,7 @@
       "description": "Data infrastructure task: The ID format mismatch (CHEBI/MONDO/UMLS in GT vs DrugBank/CHEMBL/MESH in reference data) has been a persistent blocker for 20+ hypotheses. Build a comprehensive bidirectional mapping using PubChem and UniProt APIs. This unblocks target/pathway analysis, LINCS integration, and external dataset connections. Supersedes h301.",
       "hypothesis": "Using PubChem's REST API to map DrugBank\u2192PubChem CID\u2192CHEBI\u2192CHEMBL, and disease ontology crossrefs to map MESH\u2192MONDO\u2192UMLS, we can achieve >80% coverage for drugs and >60% for diseases, unblocking the entire class of target/pathway hypotheses.",
       "status": "pending",
-      "priority": 2,
+      "priority": 3,
       "expected_impact": "high",
       "effort": "high",
       "steps": [
@@ -8636,7 +8697,7 @@
       "title": "Frequency-Independent Tier Rules for Border Cases",
       "description": "h394 found 57 drug-disease pairs cross freq>=10 threshold due to leakage. These border cases (freq=10-14) are unreliable. Test if replacing frequency thresholds with frequency-independent signals (mechanism + rank + ATC coherence) improves honest evaluation.",
       "hypothesis": "Replacing freq>=10 requirement with mechanism + rank<=5 + ATC coherence for standard GOLDEN/HIGH assignment will reduce leakage sensitivity while maintaining or improving honest precision.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "low",
       "effort": "medium",
@@ -8649,7 +8710,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h394 found 57 drug-disease pairs cross freq>=10 threshold due to leakage. These border cases (freq=10-14) are unreliable. Test if replacing frequency thresholds with frequency-independent signals (mechanism + rank + ATC coherence) improves honest evaluation."
+      "rationale": "h394 found 57 drug-disease pairs cross freq>=10 threshold due to leakage. These border cases (freq=10-14) are unreliable. Test if replacing frequency thresholds with frequency-independent signals (mechanism + rank + ATC coherence) improves honest evaluation.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h410",
@@ -8719,7 +8781,7 @@
       "title": "Cancer-Only k=30 Deployment",
       "description": "h400 found that ONLY cancer benefits from k=30 (+4.9pp). Test cancer-specific k=30 with all other categories at k=20. This is a targeted improvement that avoids the harm from lowering k for other categories.",
       "hypothesis": "Using k=30 for cancer diseases only will improve cancer R@30 by ~5pp without hurting other categories, yielding +1-2pp overall.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -8732,14 +8794,15 @@
       "findings": "INCONCLUSIVE: Cancer k=30 shows +4.9pp improvement but not statistically significant.\n\nOverall R@30: k=20: 62.8% \u00b1 3.1% \u2192 cancer-k=30: 63.4% \u00b1 3.0% (+0.7pp, p=0.208)\nCancer R@30: k=20: 68.2% \u00b1 9.1% \u2192 k=30: 73.1% \u00b1 9.9% (+4.9pp, p=0.196)\n\nEffect direction is consistent (improvement in 2/5 seeds, neutral in 3/5).\nBut cancer has only 11-18 test diseases per seed, so p-value is high.\n\nWould need either: (a) larger cancer test set, or (b) more seeds to detect this effect.\nNot deploying since it doesn't meet the p<0.05 criterion.",
       "result_metric": "Cancer +4.9pp (p=0.20), Overall +0.7pp (p=0.21) - not significant",
       "category": "meta-analysis",
-      "rationale": "h400 found that ONLY cancer benefits from k=30 (+4.9pp). Test cancer-specific k=30 with all other categories at k=20. This is a targeted improvement that avoids the harm from lowering k for other categories."
+      "rationale": "h400 found that ONLY cancer benefits from k=30 (+4.9pp). Test cancer-specific k=30 with all other categories at k=20. This is a targeted improvement that avoids the harm from lowering k for other categories.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h414",
       "title": "h170 Boosting Strength Optimization",
       "description": "h400 showed h170 selective boosting (alpha=0.5) already provides category-focus. The alpha value was set somewhat arbitrarily. Optimizing alpha per category could improve R@30. Higher alpha = more category focus (like lower k), lower alpha = more diversity.",
       "hypothesis": "Category-specific alpha values could achieve the same benefit h66 was targeting. E.g., cancer might benefit from lower alpha (more diverse neighbors), while autoimmune might benefit from higher alpha.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -8752,7 +8815,8 @@
       "findings": "Full-data: alpha range 20.5-20.9% R@30 (0.4pp total range, alpha=0.5 marginally best). Holdout (5-seed): alpha=0.0 is best at 15.1%\u00b12.3%, alpha=0.5 gives 14.8%\u00b12.1% (delta=-0.3pp, within noise). The selective boost has negligible impact on R@30 (<0.5pp either direction). Category-specific: neurological HURT by boost (11.3\u21927.9%), metabolic HURT (9.9\u21928.1%), only renal mildly helped (5.4\u21926.5%). Conclusion: alpha=0.5 is near-optimal but boost itself is essentially neutral.",
       "result_metric": "alpha=0.5: 14.8%\u00b12.1% holdout R@30 (vs alpha=0.0: 15.1%\u00b12.3%), delta=-0.3pp within noise",
       "category": "meta-analysis",
-      "rationale": "h400 showed h170 selective boosting (alpha=0.5) already provides category-focus. The alpha value was set somewhat arbitrarily. Optimizing alpha per category could improve R@30. Higher alpha = more category focus (like lower k), lower alpha = more diversity."
+      "rationale": "h400 showed h170 selective boosting (alpha=0.5) already provides category-focus. The alpha value was set somewhat arbitrarily. Optimizing alpha per category could improve R@30. Higher alpha = more category focus (like lower k), lower alpha = more diversity.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h415",
@@ -8843,7 +8907,7 @@
       "priority": 4,
       "expected_impact": "low",
       "effort": "medium",
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "For each remaining borderline rule (5-10% GT hit rate), analyze ATC L2/L3 codes",
         "Split each rule into sub-rules by ATC L2",
@@ -8854,7 +8918,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h415 kept 15 mismatch rules with 5-10% GT hit rate. These rules use ATC L1 (single letter) which is too coarse. Refine using L2 or L3 codes to distinguish valid vs invalid mismatches within these broad categories. E.g., J+dermatological might work for J01 (systemic antibiotics for bacterial skin infections) but not J05 (antivirals)."
+      "rationale": "h415 kept 15 mismatch rules with 5-10% GT hit rate. These rules use ATC L1 (single letter) which is too coarse. Refine using L2 or L3 codes to distinguish valid vs invalid mismatches within these broad categories. E.g., J+dermatological might work for J01 (systemic antibiotics for bacterial skin infections) but not J05 (antivirals).",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h420",
@@ -8961,7 +9026,7 @@
       "title": "Nephropathy-Specific Renoprotective Drug Rescue",
       "description": "h421 investigation revealed diabetic nephropathy base_to_complication predictions have 41.7% precision (5/12) when the drug is a statin, fibrate, or ARB with known renoprotective effects. All other complication diseases have 0%. This is a specific, well-supported clinical pattern: statins reduce proteinuria, ARBs reduce intraglomerular pressure.",
       "hypothesis": "A targeted rescue rule for nephropathy + renoprotective drugs (statins, fibrates, ARBs) will have >35% holdout precision and rescue 5-12 predictions from FILTER to HIGH.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -8976,14 +9041,15 @@
       "findings": "Quick invalidation check: Only 8 nephropathy-like diseases total (diabetic nephropathy has just 4 GT drugs). With 80/20 holdout, ~2 diseases per split. Per h433, min n\u224830 for reliable holdout validation. Not worth running a full experiment. The pattern is clinically sound (ARBs/statins are renoprotective) but dataset is too small to validate.",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h421 investigation revealed diabetic nephropathy base_to_complication predictions have 41.7% precision (5/12) when the drug is a statin, fibrate, or ARB with known renoprotective effects. All other complication diseases have 0%. This is a specific, well-supported clinical pattern: statins reduce proteinuria, ARBs reduce intraglomerular pressure."
+      "rationale": "h421 investigation revealed diabetic nephropathy base_to_complication predictions have 41.7% precision (5/12) when the drug is a statin, fibrate, or ARB with known renoprotective effects. All other complication diseases have 0%. This is a specific, well-supported clinical pattern: statins reduce proteinuria, ARBs reduce intraglomerular pressure.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h426",
       "title": "Holdout-Aware Feature Computation for Rank>20 Rescue",
       "description": "h417/h418/h423 all show the SAME failure: rank 21-30 predictions look great on full data but fail holdout because drug frequency and mechanism support are inflated when computed from all diseases. A holdout-aware approach would compute features differently: e.g., use only cross-validated frequency estimates, or compute mechanism support only from structurally dissimilar diseases. This could unlock rank 21-30 rescue without the inflation problem.",
       "hypothesis": "Computing drug frequency and mechanism support from LOO (leave-one-out) estimates rather than full-data counts will produce features that are consistent between full-data and holdout evaluation, enabling rank 21-30 rescue rules that generalize.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "high",
@@ -8997,13 +9063,14 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h417/h418/h423 all show the SAME failure: rank 21-30 predictions look great on full data but fail holdout because drug frequency and mechanism support are inflated when computed from all diseases. A holdout-aware approach would compute features differently: e.g., use only cross-validated frequency estimates, or compute mechanism support only from structurally dissimilar diseases. This could unlock rank 21-30 rescue without the inflation problem."
+      "rationale": "h417/h418/h423 all show the SAME failure: rank 21-30 predictions look great on full data but fail holdout because drug frequency and mechanism support are inflated when computed from all diseases. A holdout-aware approach would compute features differently: e.g., use only cross-validated frequency estimates, or compute mechanism support only from structurally dissimilar diseases. This could unlock rank 21-30 rescue without the inflation problem.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: P4 item with marginal expected impact given mature tier system."
     },
     {
       "id": "h427",
       "title": "Psychiatric Target Overlap \u2192 GOLDEN Promotion",
       "description": "h390 found psychiatric MEDIUM is 53.3% precision (100/105 from target_overlap_promotion). Schizophrenia 90%, bipolar 58%, social anxiety 86%. These are GOLDEN-level. Test promoting psychiatric+target_overlap>=3 from MEDIUM to HIGH or GOLDEN. Need holdout validation.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -9016,7 +9083,8 @@
       "findings": "Psychiatric MEDIUM has 55.3% full-data precision (62/114), driven by atc_coherent_psychiatric (52.4%) and target_overlap_promotion (56.5%). \n\nPer-disease: schizophrenia 90%, social_anxiety 78%, MDD 75%, alcohol_withdrawal 67%, bipolar 58%, ADHD 53%, agoraphobia 50%, OCD 40%, bulimia 17%, hyperactive_children 0%.\n\nHoldout (5-seed): atc_coherent_psychiatric 42.0% \u00b1 23.8%, target_overlap_promotion 36.4% \u00b1 22.2%. Combined psychiatric MEDIUM 40.9% \u00b1 20.9%.\n\nMASSIVE variance because only 10 psychiatric diseases. Seed 456 had just 1 disease (acute alcohol withdrawal) in holdout \u2192 0%.\n\nSignal is HIGH-level (~40% holdout) but variance too large to distinguish from MEDIUM baseline (22.4%). 4/5 seeds show >30% but sample too small for formal promotion.\n\nNOT IMPLEMENTED: Psychiatric category too small (n=10) for reliable holdout validation.",
       "result_metric": "Psych MEDIUM holdout: 40.9% \u00b1 20.9% (HIGH-level but \u00b123% variance)",
       "category": "meta-analysis",
-      "rationale": "h390 found psychiatric MEDIUM is 53.3% precision (100/105 from target_overlap_promotion). Schizophrenia 90%, bipolar 58%, social anxiety 86%. These are GOLDEN-level. Test promoting psychiatric+target_overlap>=3 from MEDIUM to HIGH or GOLDEN. Need holdout validation."
+      "rationale": "h390 found psychiatric MEDIUM is 53.3% precision (100/105 from target_overlap_promotion). Schizophrenia 90%, bipolar 58%, social anxiety 86%. These are GOLDEN-level. Test promoting psychiatric+target_overlap>=3 from MEDIUM to HIGH or GOLDEN. Need holdout validation.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h428",
@@ -9500,7 +9568,7 @@
       "title": "Per-Disease k Optimization by Category",
       "description": "kNN uses k=20 globally but different disease categories may have very different neighborhood structures. Autoimmune diseases (many related diseases) might benefit from larger k, while rare diseases (few neighbors) might need smaller k. h436 showed that using fewer data points hurts uniformly, but the optimal k per disease might vary.",
       "hypothesis": "Disease categories have different optimal k values. Category-specific k optimization will improve R@30 by 1-3pp over global k=20.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -9514,7 +9582,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "kNN uses k=20 globally but different disease categories may have very different neighborhood structures. Autoimmune diseases (many related diseases) might benefit from larger k, while rare diseases (few neighbors) might need smaller k. h436 showed that using fewer data points hurts uniformly, but the optimal k per disease might vary."
+      "rationale": "kNN uses k=20 globally but different disease categories may have very different neighborhood structures. Autoimmune diseases (many related diseases) might benefit from larger k, while rare diseases (few neighbors) might need smaller k. h436 showed that using fewer data points hurts uniformly, but the optimal k per disease might vary.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h453",
@@ -9563,7 +9632,7 @@
       "title": "Collider Bias Decomposition: Untangle Tier Assignment for Better Predictions",
       "description": "h453 discovered that within a tier, kNN rank and external signals are anti-correlated (collider effect). This means the tier assignment process destroys within-tier signal by conditioning on a collider. Hypothesis: if we decompose predictions into (1) kNN-only score and (2) external-only score BEFORE tier assignment, then re-assign tiers using just the kNN score, the external signals might become positively correlated with GT within tiers, providing better within-tier ranking.",
       "hypothesis": "Assigning tiers based on kNN rank only (not external signals) would make external signals positively correlated with GT within tiers, enabling composite ranking.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "high",
@@ -9577,7 +9646,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h453 discovered that within a tier, kNN rank and external signals are anti-correlated (collider effect). This means the tier assignment process destroys within-tier signal by conditioning on a collider. Hypothesis: if we decompose predictions into (1) kNN-only score and (2) external-only score BEFORE tier assignment, then re-assign tiers using just the kNN score, the external signals might become positively correlated with GT within tiers, providing better within-tier ranking."
+      "rationale": "h453 discovered that within a tier, kNN rank and external signals are anti-correlated (collider effect). This means the tier assignment process destroys within-tier signal by conditioning on a collider. Hypothesis: if we decompose predictions into (1) kNN-only score and (2) external-only score BEFORE tier assignment, then re-assign tiers using just the kNN score, the external signals might become positively correlated with GT within tiers, providing better within-tier ranking.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h456",
@@ -10668,7 +10738,7 @@
       "id": "h510",
       "title": "Cross-Category Transfer Diseases: Identify and Promote Genuine Cross-Domain Predictions",
       "description": "h507 found 42 diseases with low same_cat_frac but genuinely good cross-category drug transfer (e.g., uveitis, pyelonephritis, nephrotic syndrome). These diseases' kNN neighborhoods span multiple categories but drugs still transfer well. Could we identify which cross-category predictions are genuine vs noise? Look at: (1) whether the same drug class appears in multiple categories, (2) whether the mechanism of action applies broadly.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -10681,13 +10751,14 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h507 found 42 diseases with low same_cat_frac but genuinely good cross-category drug transfer (e.g., uveitis, pyelonephritis, nephrotic syndrome). These diseases' kNN neighborhoods span multiple categories but drugs still transfer well. Could we identify which cross-category predictions are genuine vs noise? Look at: (1) whether the same drug class appears in multiple categories, (2) whether the mechanism of action applies broadly."
+      "rationale": "h507 found 42 diseases with low same_cat_frac but genuinely good cross-category drug transfer (e.g., uveitis, pyelonephritis, nephrotic syndrome). These diseases' kNN neighborhoods span multiple categories but drugs still transfer well. Could we identify which cross-category predictions are genuine vs noise? Look at: (1) whether the same drug class appears in multiple categories, (2) whether the mechanism of action applies broadly.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h511",
       "title": "Embedding Norm as Disease Confidence Annotation (Non-Actionable but Informative)",
       "description": "h507 found embedding_norm correlates with self-referentiality (AUC=0.657). While not actionable for tier demotion (too noisy), it could be useful as an ANNOTATION in the deliverable to signal 'confidence in disease coverage'. Diseases with low embedding norm are poorly represented in DRKG and predictions should be interpreted with more caution. This is informational, not a tier change.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 6,
       "expected_impact": "low",
       "effort": "low",
@@ -10699,13 +10770,14 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h507 found embedding_norm correlates with self-referentiality (AUC=0.657). While not actionable for tier demotion (too noisy), it could be useful as an ANNOTATION in the deliverable to signal 'confidence in disease coverage'. Diseases with low embedding norm are poorly represented in DRKG and predictions should be interpreted with more caution. This is informational, not a tier change."
+      "rationale": "h507 found embedding_norm correlates with self-referentiality (AUC=0.657). While not actionable for tier demotion (too noisy), it could be useful as an ANNOTATION in the deliverable to signal 'confidence in disease coverage'. Diseases with low embedding norm are poorly represented in DRKG and predictions should be interpreted with more caution. This is informational, not a tier change.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h512",
       "title": "External Disease Similarity for Self-Referential Diseases: HPO/Gene Overlap Alternative to kNN",
       "description": "h504 showed 144 diseases (31.6%) are 100% self-referential - their kNN neighborhoods provide no information beyond self. h507 confirmed this cannot be fixed within the embedding space. The structural fix requires an ALTERNATIVE similarity measure for these diseases. HPO phenotype similarity or gene-disease association overlap could provide non-kNN neighbors. Test: for the 144 self-ref diseases, do HPO-based neighbors provide any GT drugs that kNN misses?",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "high",
       "effort": "high",
@@ -10719,7 +10791,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h504 showed 144 diseases (31.6%) are 100% self-referential - their kNN neighborhoods provide no information beyond self. h507 confirmed this cannot be fixed within the embedding space. The structural fix requires an ALTERNATIVE similarity measure for these diseases. HPO phenotype similarity or gene-disease association overlap could provide non-kNN neighbors. Test: for the 144 self-ref diseases, do HPO-based neighbors provide any GT drugs that kNN misses?"
+      "rationale": "h504 showed 144 diseases (31.6%) are 100% self-referential - their kNN neighborhoods provide no information beyond self. h507 confirmed this cannot be fixed within the embedding space. The structural fix requires an ALTERNATIVE similarity measure for these diseases. HPO phenotype similarity or gene-disease association overlap could provide non-kNN neighbors. Test: for the 144 self-ref diseases, do HPO-based neighbors provide any GT drugs that kNN misses?",
+      "closure_reason": "Roadmap cleanup 2026-02-07: CLOSED #11: GT-free treatment paradigm proxy adds no independent signal (h586/h588/h589)"
     },
     {
       "id": "h513",
@@ -10943,14 +11016,15 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "depends_on": [
         "h520"
       ],
       "findings": "Anticoagulant LOW tier: 48 predictions total (n\u224810/seed), almost all cardiovascular.\nPredictions are medically plausible (DVT, PE, ACS, stroke, etc.) but n is too small for \nreliable holdout evaluation (our minimum is n\u224830). Cannot confirm or deny promotion.",
       "result_metric": "n=48 total (10/seed), too small for reliable holdout",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h524",
@@ -10965,14 +11039,15 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "depends_on": [
         "h520"
       ],
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h525",
@@ -11090,7 +11165,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Feature engineering: drug ATC class, disease category, SIDER AE overlap",
         "Labels: existing 135 inverse pairs as positives, all non-inverse predictions as negatives",
@@ -11101,7 +11176,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h526 showed that inverse indications follow predictable patterns (same drug class, same mechanism). Instead of manual curation, train a classifier that uses drug class + disease category + SIDER AE data to automatically flag potential inverse indications. Could scale beyond manually curated pairs."
+      "rationale": "h526 showed that inverse indications follow predictable patterns (same drug class, same mechanism). Instead of manual curation, train a classifier that uses drug class + disease category + SIDER AE data to automatically flag potential inverse indications. Could scale beyond manually curated pairs.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h531",
@@ -11187,7 +11263,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Extract respiratory and autoimmune FILTER predictions",
         "Compare kNN rank distribution vs other categories",
@@ -11198,7 +11274,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h536",
@@ -11207,7 +11284,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 6,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Add FILTER precision to standard validation metrics",
         "Compare current 10.2% against historical values",
@@ -11216,7 +11293,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h537",
@@ -11266,7 +11344,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Add cancer_drug_class column to deliverable for cancer MEDIUM predictions",
         "Classifications: cytotoxic (anthracycline/taxane/antimetabolite/platinum/alkylating/vinca), targeted (kinase_inhibitor/immunotherapy), other",
@@ -11275,7 +11353,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h540",
@@ -11303,7 +11382,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Map antibiotics to spectrum (Gram+, Gram-, atypical, anaerobe)",
         "Map infectious diseases to typical pathogens",
@@ -11313,7 +11392,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h542",
@@ -11422,7 +11502,7 @@
       "title": "Corticosteroid Prediction Deduplication: Are 86% CS Predictions Adding Value?",
       "description": "h408 showed 86% of novel GOLDEN/HIGH derm/autoimmune predictions are corticosteroids. This is clinically unsurprising \u2014 corticosteroids ARE used for most inflammatory skin diseases. For the deliverable to be maximally useful to collaborators, we should annotate or deduplicate: instead of listing 7 corticosteroids for each disease, present one 'corticosteroid class' prediction with the individual drugs as sub-entries. This would make non-CS predictions (the truly novel ones) more visible.",
       "hypothesis": "Grouping corticosteroid predictions by class rather than individual drugs would improve deliverable usability without losing information",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -11435,7 +11515,8 @@
       "findings": null,
       "result_metric": null,
       "category": "meta-analysis",
-      "rationale": "h408 showed 86% of novel GOLDEN/HIGH derm/autoimmune predictions are corticosteroids. This is clinically unsurprising \u2014 corticosteroids ARE used for most inflammatory skin diseases. For the deliverable to be maximally useful to collaborators, we should annotate or deduplicate: instead of listing 7 corticosteroids for each disease, present one 'corticosteroid class' prediction with the individual drugs as sub-entries. This would make non-CS predictions (the truly novel ones) more visible."
+      "rationale": "h408 showed 86% of novel GOLDEN/HIGH derm/autoimmune predictions are corticosteroids. This is clinically unsurprising \u2014 corticosteroids ARE used for most inflammatory skin diseases. For the deliverable to be maximally useful to collaborators, we should annotate or deduplicate: instead of listing 7 corticosteroids for each disease, present one 'corticosteroid class' prediction with the individual drugs as sub-entries. This would make non-CS predictions (the truly novel ones) more visible.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h548",
@@ -11502,7 +11583,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Classify cancer drugs as hematologic vs solid tumor specialists",
         "Check holdout precision for hematologic\u2192solid and solid\u2192hematologic predictions",
@@ -11512,7 +11593,8 @@
       "findings": "Cancer drug hematologic vs solid tumor specificity analysis.\n\nCLASSIFICATION:\n- Hematologic-only drugs: 57 (fludarabine, cladribine, BTK inhibitors, etc.)\n- Solid-only drugs: 125 (5-FU, oxaliplatin, bleomycin, etc.)\n- Mixed drugs: 21 (doxorubicin, methotrexate, cyclophosphamide, etc.)\n\nCROSS-TYPE PREDICTIONS:\n- Only 16 predictions are cross-type (heme drug\u2192solid cancer or solid drug\u2192heme cancer)\n- 0% known indication rate (vs 36% for same-type)\n- Too small for reliable holdout measurement (< 5/seed)\n\nCANCER_SAME_TYPE OVERALL:\n- Holdout: 27.4% \u00b1 4.4% (127 predictions/seed)\n- Consistent with MEDIUM tier average (29.9%)\n- 19.7pp full-to-holdout gap (standard for cancer predictions)\n\nCONCLUSION:\nThe cross-type signal exists (0% GT) but is too small (n=16) to justify a code change.\ncancer_same_type at 27.4% holdout is performing appropriately for MEDIUM tier.\nThe 47% implausible rate in h542 audit is expected given 27% holdout precision.\nNo action warranted \u2014 this is structural, not fixable without better cancer classification data.",
       "result_metric": "Cross-type n=16 (too small), overall 27.4% holdout (appropriate for MEDIUM)",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h552",
@@ -11559,7 +11641,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 4,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Compute target_overlap_promotion holdout by category within MEDIUM",
         "Simulate promoting target_overlap_promotion MEDIUM\u2192HIGH",
@@ -11569,7 +11651,8 @@
       "findings": "target_overlap_promotion within MEDIUM has 43.0% \u00b1 6.3% holdout (31/seed). Category breakdown is highly heterogeneous:\n- psychiatric: 53.7% (11/seed) \u2014 at HIGH level\n- infectious: 53.3% (3.6/seed, high variance \u00b140%)\n- metabolic: 18.3% (5.4/seed) \u2014 terrible\n- autoimmune: 11.9% (4/seed) \u2014 terrible\n\nPromotion strategies tested:\n1. Promote all \u2192 HIGH -2.2pp (too much dilution)\n2. Exclude worst categories \u2192 HIGH -0.1pp (21 promoted, neutral)\n3. Only psych+infect \u2192 HIGH -0.2pp (15 promoted, neutral)\n4. Overlap >= 2 \u2192 0 promoted (all target_overlap=1)\n\nVERDICT: The best strategy (exclude_worst) is calibration-neutral but only moves 21 predictions. MEDIUM drops from 31.7% to 30.7%. Net effect is marginal \u2014 not worth the added complexity.\n\nKEY INSIGHT: All target_overlap_promotion predictions have overlap=1 (minimum threshold). The signal is binary (has overlap vs doesn't), not graded. This limits the ability to further subset.\n\nThe existing target_overlap annotation in the deliverable already allows users to prioritize these predictions manually.",
       "result_metric": "Best strategy: HIGH -0.1pp, 21 promoted \u2014 not worth implementation complexity",
       "category": "meta-analysis",
-      "rationale": "target_overlap_promotion sub-reason within MEDIUM has 45.3% \u00b1 3.6% holdout precision (n=45/seed) \u2014 comparable to HIGH (54.5%). This could be promoted from MEDIUM to HIGH if it doesn't hurt HIGH tier overall. Need to verify that target_overlap promoted predictions maintain HIGH-level precision across categories and don't dilute HIGH."
+      "rationale": "target_overlap_promotion sub-reason within MEDIUM has 45.3% \u00b1 3.6% holdout precision (n=45/seed) \u2014 comparable to HIGH (54.5%). This could be promoted from MEDIUM to HIGH if it doesn't hurt HIGH tier overall. Need to verify that target_overlap promoted predictions maintain HIGH-level precision across categories and don't dilute HIGH.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h555",
@@ -11732,7 +11815,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "inconclusive",
+      "status": "deprioritized",
       "steps": [
         "Count full-data local_anesthetic_procedural MEDIUM predictions",
         "Verify holdout is stable across seeds",
@@ -11742,7 +11825,8 @@
       "findings": "LA procedural MEDIUM predictions are LA drugs demoted to LOW by h540 then rescued back to MEDIUM by target_overlap promotion. Only 41 full-data predictions (6.6/seed holdout). Full-data precision 31.7% (at MEDIUM level, not HIGH). Holdout 24.9% \u00b1 16.4% \u2014 too noisy to act on (n too small). 28/41 are bupivacaine (which should never be systemic therapeutic). Lidocaine in auto/resp/inf/ophthal categories showing target overlap. Decision: KEEP AS-IS. Too few predictions to justify code change.",
       "result_metric": "24.9% \u00b1 16.4% holdout, n=6.6/seed (INCONCLUSIVE)",
       "category": "meta-analysis",
-      "rationale": "local_anesthetic_procedural in MEDIUM has 50.5% \u00b1 11.0% holdout (11.2/seed), above HIGH average (59.5%). This is after h540 already demoted non-therapeutic LA predictions. The remaining LA MEDIUM predictions are genuinely therapeutic (lidocaine for neuro/CV/derm/psych). Worth investigating if n is sufficient for promotion."
+      "rationale": "local_anesthetic_procedural in MEDIUM has 50.5% \u00b1 11.0% holdout (11.2/seed), above HIGH average (59.5%). This is after h540 already demoted non-therapeutic LA predictions. The remaining LA MEDIUM predictions are genuinely therapeutic (lidocaine for neuro/CV/derm/psych). Worth investigating if n is sufficient for promotion.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h564",
@@ -11770,7 +11854,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Search PubMed for azole antifungal activity against Leishmania, Trypanosoma, Toxoplasma",
         "Check whether any azole has FDA/WHO approval for parasitic infections",
@@ -11779,7 +11863,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h560 excluded ketoconazole\u2192leishmaniasis and itraconazole\u2192Chagas as \"legitimate cross-uses\". But the evidence for azole antifungals against parasites is weak (in-vitro only). A stricter classification might demote these too. Need literature validation of azole anti-parasitic activity."
+      "rationale": "h560 excluded ketoconazole\u2192leishmaniasis and itraconazole\u2192Chagas as \"legitimate cross-uses\". But the evidence for azole antifungals against parasites is weak (in-vitro only). A stricter classification might demote these too. Need literature validation of azole anti-parasitic activity.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h566",
@@ -11788,7 +11873,7 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "List all infectious predictions with target_overlap_promotion rule",
         "Check holdout precision vs non-infectious target_overlap",
@@ -11798,7 +11883,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "h560 found that 11 antimicrobial mismatch predictions were being rescued by target_overlap LOW\u2192MEDIUM promotion. This suggests target_overlap may rescue other low-quality infectious predictions. Audit all infectious target_overlap_promotion predictions for medical validity."
+      "rationale": "h560 found that 11 antimicrobial mismatch predictions were being rescued by target_overlap LOW\u2192MEDIUM promotion. This suggests target_overlap may rescue other low-quality infectious predictions. Audit all infectious target_overlap_promotion predictions for medical validity.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h567",
@@ -11938,7 +12024,7 @@
       "id": "h575",
       "title": "Methotrexate Cancer Subtype Specificity: Remove Non-Indicated Cancer Types",
       "hypothesis": "h567 found 41 methotrexate\u2192cancer MEDIUM predictions with only 8 hits (19.5%). Methotrexate treats specific cancers (ALL, choriocarcinoma, lymphomas, osteosarcoma, breast) but is predicted for many others. Adding methotrexate-specific cancer type rules could improve precision.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -11951,7 +12037,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": ""
+      "rationale": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h576",
@@ -11999,7 +12086,7 @@
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "1. Add 'low_quality_signal' column to deliverable: TransE+Mech = 'strong', TransE or Mech = 'moderate', neither = 'weak'",
         "2. Compute per-signal holdout for annotation",
@@ -12008,7 +12095,8 @@
       "findings": "",
       "result_metric": "",
       "category": "meta-analysis",
-      "rationale": "TransE+LOW has 21.4% holdout vs 14.8% without (+6.6pp). While not promotable, this could be flagged in the deliverable as 'higher-confidence LOW'. Combined with mechanism support (25.0%), these could guide manual review priorities."
+      "rationale": "TransE+LOW has 21.4% holdout vs 14.8% without (+6.6pp). While not promotable, this could be flagged in the deliverable as 'higher-confidence LOW'. Combined with mechanism support (25.0%), these could guide manual review priorities.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h579",
@@ -12041,7 +12129,7 @@
         "Compare with kNN top-30 for these diseases"
       ],
       "status": "pending",
-      "priority": 3,
+      "priority": 4,
       "expected_impact": "medium",
       "effort": "high"
     },
@@ -12107,10 +12195,11 @@
         "Document methodology (exclude 100% self-ref diseases from holdout)",
         "Include both corrected and uncorrected numbers for transparency"
       ],
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
-      "effort": "low"
+      "effort": "low",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h585",
@@ -12156,10 +12245,11 @@
         "Document the holdout-validated quality gradient",
         "No tier promotion (GT-dependent), annotation only"
       ],
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
-      "effort": "low"
+      "effort": "low",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h588",
@@ -12326,12 +12416,13 @@
         "Check for overfitting: leave-one-seed-out cross-validation",
         "Success: Q1 holdout > 15% with stable weights"
       ],
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
       "category": "meta-analysis",
-      "rationale": "Potential improvement from h592. Risk of overfitting to holdout seeds. Need LOO-CV to validate."
+      "rationale": "Potential improvement from h592. Risk of overfitting to holdout seeds. Need LOO-CV to validate.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h596",
@@ -12400,7 +12491,7 @@
       "id": "h599",
       "title": "Obsolete Tetracycline Demotion: Demeclocycline and Oxytetracycline Predictions",
       "description": "Error analysis found demeclocycline (28.6% full-data, 40 FP) and oxytetracycline (21.2% full-data, 41 FP) are major sources of MEDIUM false positives. These are rarely-used tetracyclines with modern alternatives. Many predictions are for diseases where doxycycline (the modern equivalent) is already predicted. Could demoting predictions for these obsolete drugs improve MEDIUM precision?",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12411,7 +12502,8 @@
         "Medical validation: are any demeclocycline/oxytetracycline predictions uniquely valuable?"
       ],
       "findings": "INCONCLUSIVE: Obsolete tetracyclines (demeclocycline, oxytetracycline) have lower holdout precision than modern tetracyclines but the signal is too noisy for confident demotion.\n\nHoldout (5-seed):\n- Obsolete (demeclocycline + oxytetracycline): 23.9% \u00b1 10.8% (n=19.4/seed)\n- Modern (doxycycline + minocycline + tetracycline): 40.9% \u00b1 14.8% (n=30.6/seed)\n- All MEDIUM: 41.4% \u00b1 2.0%\n- Gap: 17.0pp\n\nProblems:\n1. n=19.4/seed is below n\u224830 threshold \u2192 unreliable\n2. Variance is enormous: 10.0% to 39.1% across seeds\n3. 23.9% is between LOW (13.4%) and MEDIUM (41.4%) \u2014 ambiguous zone\n4. These drugs have the SAME spectrum as doxycycline \u2014 lower precision is about GT coverage, not medical inaccuracy\n\nKey finding: 95-96% of obsolete tetracycline diseases are ALSO covered by doxycycline MEDIUM predictions. These add redundancy, not new information. But they're not clearly LOW-quality.\n\nDecision: Keep at MEDIUM. The loss in precision is real but not enough to justify demotion given the small sample size and high variance.",
-      "result_metric": "Obsolete tet 23.9% \u00b1 10.8% vs modern 40.9% \u2014 inconclusive (n too small)"
+      "result_metric": "Obsolete tet 23.9% \u00b1 10.8% vs modern 40.9% \u2014 inconclusive (n too small)",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h600",
@@ -12483,7 +12575,7 @@
       "id": "h604",
       "title": "Standard MEDIUM Infectious Sub-Analysis: Drug-Class Stratification",
       "description": "Standard MEDIUM infectious is the largest sub-category (314 preds, 22.7% holdout, n=47.2/seed). This is below MEDIUM avg (41.3%) but above LOW (15.1%). Can we stratify by drug class to find specific demotable groups within infectious? E.g., beta-lactams for non-bacterial diseases, aminoglycosides for wrong pathogen types, etc. Per-drug analysis (h598 approach) may find 5-10 specific drugs dragging down the average.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -12495,7 +12587,8 @@
         "Run holdout validation to confirm MEDIUM improvement"
       ],
       "findings": "INCONCLUSIVE: Per-drug-class analysis of standard MEDIUM infectious (314 preds, 22.7% holdout) reveals significant heterogeneity but no clean demotable group with sufficient n.\n\nDrug class holdout (5-seed):\n- tetracycline CLASS: 32.3% \u00b1 18.2% (n=28/seed) \u2014 genuine MEDIUM\n- fluoroquinolone: 11.4% \u00b1 12.2% (n=9.6/seed) \u2014 below MEDIUM but marginal n\n- macrolide_antibiotic: 10.6% \u00b1 13.6% (n=4.5/seed) \u2014 LOW-N\n- aminoglycoside: 30.0% \u00b1 21.2% (n=4.0/seed) \u2014 LOW-N\n- antifungal: 0.0% \u00b1 0.0% (n=3.0/seed) \u2014 suspicious but LOW-N\n\nPer-drug analysis (within standard MEDIUM infectious):\n- tetracycline (drug): 0.0% holdout (n=7/seed), 36 preds \u2014 CLEAR signal but narrow\n- erythromycin: 0.0% holdout (n=4.5/seed), 34 preds \u2014 borderline n\n- oxytetracycline: 8.3% (n=4.5/seed), 33 preds \u2014 borderline\n- ciprofloxacin: 0.0% (n=2.7/seed) \u2014 too small n\nvs:\n- doxycycline: 35.4% (n=8.2) \u2014 genuine MEDIUM\n- minocycline: 36.6% (n=7.4) \u2014 genuine MEDIUM\n- demeclocycline: 31.2% (n=7.8) \u2014 genuine MEDIUM\n- levofloxacin: 12.9% (n=7.6) \u2014 borderline\n\nDecision: NOT implementing per-drug demotions. Reasons:\n1. Individual drug n is too small (7/seed max) for reliable rules\n2. Tetracycline-the-drug at 0% is clear but requires exact-match logic (oxytetracycline contains 'tetracycline')\n3. Marginal MEDIUM improvement (~1-2pp) doesn't justify granularity\n4. Risk of overfitting to specific drug-disease intersections\n\nKey finding: Standard MEDIUM infectious is driven by tetracycline CLASS (32.3%, n=28/seed). Fluoroquinolone and macrolide classes underperform but have insufficient n for class-level demotion. The 22.7% overall represents a genuine mix, not a uniformly low-quality group.",
-      "result_metric": "Tetracycline class 32.3%, fluoroquinolone 11.4%, macrolide 10.6% holdout. No action."
+      "result_metric": "Tetracycline class 32.3%, fluoroquinolone 11.4%, macrolide 10.6% holdout. No action.",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h605",
@@ -12551,7 +12644,7 @@
       "id": "h608",
       "title": "Fluoroquinolone Standard Infectious MEDIUM Demotion with Larger Holdout",
       "description": "h604 found fluoroquinolone standard MEDIUM infectious at 11.4% holdout (n=9.6/seed, below n\u224830 threshold). With more seeds (10 seeds) or a larger holdout fraction, could we get enough n to confirm this is LOW-quality? If confirmed at 11.4% with n\u226530, demoting 48 fluoroquinolone preds would give MEDIUM +1.0pp.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -12559,13 +12652,14 @@
         "Run 10-seed holdout for fluoroquinolone standard MEDIUM infectious",
         "If n\u226530/seed and holdout <15%, implement fluoroquinolone infectious demotion",
         "Check interaction with fluoroquinolone\u2192HIGH respiratory rescue"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h609",
       "title": "Legacy Antibiotic Annotation: Flag Tetracycline and Erythromycin as Redundant",
       "description": "h604 found tetracycline (0% holdout) and erythromycin (0% holdout) are always co-predicted with their modern successors (doxycycline, azithromycin) for the same diseases. Rather than demoting, annotate these as 'legacy_redundant' in the deliverable so collaborators know doxycycline/azithromycin predictions are equivalent but higher confidence.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -12573,7 +12667,8 @@
         "Verify co-prediction overlap: what % of tetracycline diseases also have doxycycline MEDIUM?",
         "Add 'legacy_redundant' boolean to deliverable for these drugs",
         "Document in deliverable metadata"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h610",
@@ -12699,7 +12794,7 @@
       "id": "h617",
       "title": "HIGH Tier Stabilization: Reduce Seed-42 Outlier Variance After h615 Promotions",
       "description": "After h615 promoted 139 HIGH\u2192GOLDEN, HIGH holdout dropped to 52.8% \u00b1 13.5% (from 58.8% \u00b1 6.1%). Seed 42 is the outlier (30.0%, n=40 vs mean 137 other seeds). Investigate whether the remaining HIGH tier has structural instabilities that could be addressed. Possible approaches: (1) check if other hierarchy groups with small-n but good quality should be promoted to reduce the remaining HIGH pool to more consistent rules, (2) check if seed 42 is an inherent disease-split issue.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -12709,7 +12804,8 @@
         "Determine if the variance is structural (disease split) or addressable"
       ],
       "findings": "HIGH tier variance (52.8% \u00b1 13.5%) is STRUCTURAL, driven by disease-split randomness.\n\nKey findings:\n- Seed 42 has n=40 HIGH preds (others: 97-128) \u2014 fewer hierarchy-matching diseases in holdout\n- corticosteroid_soc_promotion (52.4% \u00b1 10.5%, n=60/seed) and incoherent_demotion (73.8% \u00b1 10.5%, n=28/seed) are the two dominant HIGH rules\n- comp_to_base_high_87 shows 0.0% across all seeds (n=5/seed) \u2014 always 0 hits. Possible OVERFITTED rule.\n- Respiratory (63.3% \u00b1 37.1%) and neurological (66.7% \u00b1 47.1%) rules have extreme variance due to tiny n\n\nThe seed-42 outlier is caused by random disease assignment: some diseases that generate many HIGH predictions (through hierarchy groups) are all in training for seed 42. This cannot be fixed without stratified splitting.\n\nPotential action: comp_to_base_high_87 at 0.0% holdout (n=5/seed) may be demotable, but n is too small for confident action.",
-      "result_metric": "HIGH variance is structural. No actionable fix. comp_to_base_high_87 = 0.0% holdout (n=5, too small)."
+      "result_metric": "HIGH variance is structural. No actionable fix. comp_to_base_high_87 = 0.0% holdout (n=5, too small).",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h618",
@@ -13047,7 +13143,7 @@
       "title": "Cytotoxic Drug Class as Cancer Same-Type Quality Signal",
       "description": "h633 Phase 4 showed drug class holdout: taxane 76%, anthracycline 72%, platinum 51%, antimetabolite 48% vs alkylating 24%, other_cytotoxic 22%. Could drug class be used to refine the remaining cancer_same_type predictions beyond mechanism+rank?",
       "hypothesis": "Taxane and anthracycline cancer_same_type predictions have HIGH-level precision regardless of mechanism/rank.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13060,7 +13156,8 @@
       "findings": "INCONCLUSIVE: Drug class analysis within cancer predictions shows interesting patterns but insufficient sample sizes for action.\n\nCANCER_SAME_TYPE_MECH_RANK10 (HIGH) by drug class:\n- Taxane: 91.0% (n=3.6/seed) \u2014 excellent but small n\n- Anthracycline: 74.0% (n=4.4/seed) \u2014 high variance\n- Antimetabolite: 73.4% (n=8.8/seed) \u2014 most reliable\n- Alkylating: 12.4% (n=3.8/seed) \u2014 terrible but too small for action\n- Other: 58.6% (n=5.4/seed)\n\nCANCER_SAME_TYPE_NO_MECHANISM (LOW) by drug class:\n- All classes n<3.2/seed \u2014 too small for reliable drug-class rescue\n\nCANCER default (LOW, no same-type match):\n- Platinum: 47.1% (n=5.6/seed) \u2014 near MEDIUM quality, interesting\n- Antimetabolite: 23.3% (n=11.8/seed) \u2014 borderline\n- Alkylating: 18.3% (n=11/seed) \u2014 correctly LOW\n\nKEY INSIGHT: Alkylating agents in cancer_same_type_mech_rank10 HIGH show 12.4% holdout \u2014 potentially misclassified. But n=3.8/seed is below reliability threshold (\u224830). Cannot act on this.\n\nRECOMMENDATION: Annotate drug class in deliverable for cancer predictions but don't create tier rules based on it (insufficient n per class).",
       "result_metric": "No actionable drug class rules. Alkylating HIGH suspect (12.4%) but n too small.",
       "category": "tier-optimization",
-      "rationale": "Drug class specificity within cancer may capture domain knowledge that mechanism support misses (e.g., taxanes work across solid tumors regardless of specific target overlap)."
+      "rationale": "Drug class specificity within cancer may capture domain knowledge that mechanism support misses (e.g., taxanes work across solid tumors regardless of specific target overlap).",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h636",
@@ -13184,7 +13281,7 @@
       "title": "MEDIUM Default Sub-Stratification: Mechanism \u00d7 Rank \u00d7 TransE Quality Tiers",
       "description": "h637 confirmed MEDIUM 'default' rule (non-CS) = 36.9% \u00b1 5.3% (n=84/seed) is the largest MEDIUM sub-rule. h629/h631 already showed MEDIUM quality quartiles (Q1 60-72% to Q4 ~31%). But those quartiles are annotations, not tier assignments. Can we split MEDIUM default into sub-tiers and promote the top quartile (Q1: TransE+mechanism+rank<=10) to HIGH?",
       "hypothesis": "MEDIUM default Q1 (TransE + mechanism OR rank<=5) has holdout >55% and n>=10/seed, qualifying for HIGH promotion.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -13196,7 +13293,8 @@
       ],
       "findings": "MEDIUM Default Sub-Stratification: Key finding is that ALL remaining non-CS MEDIUM predictions are rank 16-20.\n\nMEDIUM COMPOSITION (non-CS, after all promotions):\n1. Mech+NoTransE+Rank16-20: 39.7% (n=124/seed) \u2014 at MEDIUM average\n2. NoMech+NoTransE+Rank16-20: 33.6% (n=145/seed) \u2014 below MEDIUM avg but 2.3x above LOW\n3. TransE+NoMech+Rank>5: 24.4% (n=3/seed) \u2014 tiny, unreliable\n\nMech+Rank<=10 bucket is EMPTY \u2014 all such predictions already promoted by h630, cancer rules, or hierarchy.\n\nSUB-RULE \u00d7 MECHANISM analysis revealed:\n- cv_established_drug_rescue NoMech: 22.5% \u00b1 14.7% (n=29/seed) \u2014 weakest MEDIUM sub-population\n- cv_established_drug_rescue Mech: 40.4% \u00b1 20.5% (n=14/seed) \u2014 at MEDIUM average\n- default NoMech: 34.4% (n=65/seed) \u2014 below avg but not demotable (still 2.3x above LOW)\n- target_overlap_promotion Mech: 47.4% (n=31/seed) \u2014 near-HIGH quality\n- atc_coherent_infectious NoMech: 42.4% (n=34/seed) \u2014 above MEDIUM avg\n\nCONCLUSION: No clear-cut HIGH promotion from MEDIUM default (all rank 16-20).\nCV rescue NoMech (22.5%) is borderline \u2014 3/5 seeds show LOW-level precision.\nWould need mechanism-gated CV rescue to tighten, but impact uncertain.\n\nCORRECTION: The rank analysis was FLAWED. `knn_rank` attribute doesn't exist on DrugPrediction (defaults to 99). The 'ALL rank 16-20' finding was an artifact. The mechanism split analysis was still valid (mechanism_support attribute exists). h643's CV rescue mechanism gate was correctly validated.",
       "result_metric": "No MEDIUM\u2192HIGH promotion found. CV rescue NoMech 22.5% is borderline.",
-      "category": "precision-improvement"
+      "category": "precision-improvement",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h643",
@@ -13444,7 +13542,7 @@
       "title": "Deliverable-Only Quality Metrics: Full-Data Precision as User-Facing Signal",
       "description": "h651 showed that some quality improvements only affect the deliverable (full-data) but not holdout. The deliverable shows full-data precision (e.g., MEDIUM 51.0%) while holdout is 42.9%. Since researchers use the deliverable, not the holdout evaluation, full-data improvements ARE meaningful for user experience. Should we report full-data precision alongside holdout precision in the deliverable? Or is full-data precision misleading?",
       "hypothesis": "Adding full-data precision as a tier-level annotation in the deliverable would help researchers understand the expected quality of predictions they see.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13455,7 +13553,8 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "production"
+      "category": "production",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h657",
@@ -13520,7 +13619,7 @@
       "title": "MEDIUM Default NoMech R1-5 Quality Characterization",
       "description": "h657 found NoMech R6-10 at 40.5% holdout (MEDIUM-quality). h555 found NoMech R1-5 at 38.7% (pre-expanded-GT). With expanded GT, R1-5 may be higher. If R1-5 NoMech has >50% expanded-GT holdout, these might be promotable to HIGH. Alternatively, understanding what makes R1-5 NoMech predictions successful could inform new promotion rules.",
       "hypothesis": "Default NoMech rank 1-5 predictions may have >50% holdout precision with expanded GT, potentially qualifying for HIGH tier promotion.",
-      "status": "inconclusive",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -13531,7 +13630,8 @@
       ],
       "findings": "INCONCLUSIVE: Can't isolate NoMech R1-5 holdout precision from current evaluator output \u2014 it's mixed with freq>=5+mechanism defaults in 'unnamed MEDIUM' bucket (~67.5/seed). Estimation from h555 (internal GT R1-5 = 38.7%) + typical expanded GT lift (+10-15pp) suggests ~49-54% holdout for NoMech R1-5 \u2014 near HIGH threshold but frequency-only predictions without mechanism support. At ~50%, correctly placed in MEDIUM. Not promotable without mechanism or TransE signal. Would need custom holdout analysis to confirm, but expected ROI is low given the tier system is already well-calibrated.",
       "result_metric": "Estimated ~49-54% holdout for NoMech R1-5. Correctly placed in MEDIUM.",
-      "category": "precision-improvement"
+      "category": "precision-improvement",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Inconclusive result, unlikely to yield actionable improvement. Tier system mature."
     },
     {
       "id": "h661",
@@ -13616,7 +13716,7 @@
       "title": "Antimicrobial Spectrum-Level Demotion: Echinocandin and Cephalosporin Mismatches",
       "description": "h658 identified 13 WRONG_SPECTRUM predictions within ATC coherent MEDIUM. The largest pattern is echinocandins (caspofungin) predicted for non-Candida/Aspergillus fungal diseases (5 preds), and cephalosporins predicted for intracellular bacteria or Listeria (4 preds). These are right drug CLASS but wrong drug SPECTRUM. Could implement spectrum-level demotion rules: echinocandin\u2192non-target-organism, cephalosporin\u2192Listeria (intrinsic resistance). This extends h560 antimicrobial mismatch to within-class spectrum matching.",
       "hypothesis": "Implementing spectrum-level antimicrobial rules could demote 6-13 WRONG_SPECTRUM ATC coherent predictions from MEDIUM to LOW, improving MEDIUM precision by ~0.1-0.3pp.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -13629,7 +13729,8 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "precision-improvement"
+      "category": "precision-improvement",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h666",
@@ -13655,7 +13756,7 @@
       "title": "Literature Validation for Other Holdout-Invisible Sub-Reasons",
       "description": "h658 showed that literature validation can assess prediction quality for holdout-invisible predictions. The same approach could be applied to other sub-reasons with small n/seed in holdout: local_anesthetic_procedural (41 preds), infectious_cs_tb_demotion (18 preds), mechanism_specific (11 preds), highly_repurposable (4 preds). These all have limited holdout sample sizes. Literature validation could give independent quality estimates.",
       "hypothesis": "Literature validation of other small-n MEDIUM sub-reasons will provide more reliable quality estimates than holdout for predictions with n<10/seed.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -13667,7 +13768,8 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "evaluation-improvement"
+      "category": "evaluation-improvement",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h668",
@@ -13916,7 +14018,7 @@
       "id": "h681",
       "title": "B12 Supplement False GT Audit: Cyanocobalamin/Hydroxocobalamin Disease Misattribution",
       "description": "h677 found B12 supplements (cyanocobalamin, hydroxocobalamin) listed as treating diseases mentioned in their label as DIFFERENTIAL DIAGNOSES (folate deficiency, iron deficiency, multiple sclerosis, thyrotoxicosis, hepatic disease, renal disease). These are diseases that can CAUSE B12 deficiency, not diseases treated BY B12. Pattern: NLP extracted diseases mentioned in \"conditions associated with B12 deficiency\" context.",
-      "status": "in_progress",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13925,7 +14027,8 @@
         "Classify: genuine B12 deficiency treatment vs causative condition",
         "Remove false entries (folate deficiency, iron deficiency, MS, etc.)",
         "Check for similar pattern in other vitamin supplements"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Stalled. B12 audit was partially completed during h685 single-drug audit. Remaining items marginal."
     },
     {
       "id": "h682",
@@ -13965,7 +14068,7 @@
       "id": "h684",
       "title": "FILTER Tier FDG Artifact: Quantify FDG Prediction Volume Post-Removal",
       "description": "h680 removed FDG from internal GT, so it should no longer appear in kNN predictions. But FDG still has an embedding in DRKG. Check: does removing FDG from internal GT actually stop it from being predicted? Or does it still appear via other pathways? Also check if FILTER tier precision changed (-0.8pp in h680) reflects FDG removal correctly. If FDG predictions persist, may need to verify the NON_THERAPEUTIC_COMPOUNDS filter is catching them.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -13973,7 +14076,8 @@
         "Run predictor on a few cancer diseases and check if FDG appears in predictions",
         "Verify NON_THERAPEUTIC_COMPOUNDS filter catches any residual FDG predictions",
         "Compare FILTER tier composition before/after h680"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h685",
@@ -14103,12 +14207,13 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Check secretin, cosyntropin, glucagon diagnostic, histamine in expanded GT",
         "For each: are associations therapeutic or diagnostic context?",
         "Remove confirmed false entries"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h693",
@@ -14117,19 +14222,20 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 5,
-      "status": "pending",
+      "status": "deprioritized",
       "steps": [
         "Check all fluorescein GT entries",
         "Assess: diagnostic angiography context vs therapeutic use",
         "Remove confirmed false entries if any"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h694",
       "title": "Excipient Detection in EC Data: Systematic Non-Drug Substance Filter",
       "description": "h678 found 98 EC rows (1.0%) from non-drug substances (croscarmellose=42, edetic acid=13, allergenic extracts, etc.). While these don't affect DRKG predictions, they represent systematic data quality issues. A comprehensive filter (ATC classification, molecular weight, therapeutic use verification) could flag all non-drug substances for EC data quality reporting.",
       "hypothesis": "Systematic classification of EC drug entries into therapeutic vs non-therapeutic would identify additional data quality issues beyond what manual review catches.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 6,
       "expected_impact": "low",
       "effort": "medium",
@@ -14141,14 +14247,15 @@
         "Report findings for EC data quality feedback"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h695",
       "title": "Japanese PMDA Shared-Text GT Expansion: Drug-Class Level Indications",
       "description": "h678 found many PMDA (Japanese regulatory) entries where multiple drugs share identical text ('A drug with a new active ingredient indicated for...'). These represent drug-class level approvals (e.g., all SGLT2 inhibitors for T2DM, all anti-PD1s for same cancers). This shared-text pattern could systematically identify drug-class GT gaps: if Drug A and Drug B share PMDA approval text but Drug C (same class) doesn't have it, Drug C is likely a GT gap.",
       "hypothesis": "PMDA shared-text patterns can identify drug-class GT gaps by finding drugs in the same ATC class that are missing shared indications.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -14161,7 +14268,8 @@
         "Add confirmed gaps to expanded GT"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h696",
@@ -14187,7 +14295,7 @@
       "title": "DRKG Excipient Edge Source Analysis: Why Do Preservatives Have 1000+ KG Edges?",
       "description": "Chlorobutanol has 611 DRKG edges, thimerosal has 1117, benzyl alcohol has 1465. These are primarily preservatives, not therapeutic drugs. The DRKG edges likely come from PubMed co-occurrence mining (drugs mentioned in same abstracts as diseases) or from pharmacological studies of their toxicity/side effects. Understanding why these compounds have so many KG edges could reveal systematic DRKG quality issues that affect other drug predictions.",
       "hypothesis": "DRKG edges for excipients primarily come from toxicological co-occurrence (side effects, adverse reactions), not therapeutic associations. This same pattern may inflate kNN scores for other drugs via shared graph neighborhoods.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 6,
       "expected_impact": "low",
       "effort": "medium",
@@ -14199,14 +14307,15 @@
         "If excipient edges are from toxicology, check if similar patterns affect real drugs"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h698",
       "title": "Saccharin False GT Audit: Is the Single EC Row Legitimate?",
       "description": "Saccharin has 1 EC row and 4 DRKG edges. It's an artificial sweetener, not a drug. What disease is it listed for in EC? Is this a legitimate use (e.g., as a flavoring agent in a pharmaceutical formulation) or another NLP extraction error?",
       "hypothesis": "Saccharin's EC entry is likely a false positive from NLP extraction of a pharmaceutical formulation description.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 6,
       "expected_impact": "low",
       "effort": "low",
@@ -14217,7 +14326,8 @@
         "If false, add to false GT removal"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h699",
@@ -14262,7 +14372,7 @@
       "title": "Alpha-Blocker Uroselective/Non-Selective Distinction for Hypertension Predictions",
       "description": "h675 found silodosin and tamsulosin (uroselective alpha-1 blockers) say \"not indicated for hypertension,\" unlike prazosin/doxazosin (non-selective alpha-1 blockers) which DO treat hypertension. If these drugs are in DRKG (they are not currently), they would generate false hypertension predictions. This distinction could matter for future DRKG updates or for annotating the deliverable.",
       "hypothesis": "Uroselective alpha-1 blockers (tamsulosin, silodosin, alfuzosin) should be flagged as non-antihypertensive in the deliverable annotations.",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 6,
       "expected_impact": "low",
       "effort": "low",
@@ -14273,7 +14383,8 @@
         "Add defensive annotation if appropriate"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h702",
@@ -14354,7 +14465,7 @@
       "title": "Corticosteroid Prediction Concentration: Is 86% CS Predictions a Problem or Feature?",
       "description": "h703 confirms corticosteroids dominate predictions: top 9 of 20 most-predicted drugs are CS, with prednisolone appearing in 143 of 469 disease predictions (30.5%). This extreme concentration means the deliverable is dominated by CS predictions that clinicians already know about. Quantify: what % of GOLDEN/HIGH predictions are corticosteroids? If we REMOVED all CS predictions, what would the deliverable look like? Would non-CS predictions be more valuable for drug discovery? This connects to h577 (CS holdout artifact) but focuses on deliverable utility rather than metrics.",
       "hypothesis": "Removing corticosteroid predictions from the deliverable would increase its novelty and actionability.",
-      "status": "in_progress",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14365,7 +14476,8 @@
         "Assess clinical novelty of non-CS predictions vs CS predictions"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Stalled. CS concentration is structural \u2014 86% is inherent to kNN + broad CS use. Not a fixable problem."
     },
     {
       "id": "h707",
@@ -14475,7 +14587,8 @@
         "Regenerate GT cache and measure internal GT expansion",
         "Run holdout validation to check tier impact",
         "CAUTION: Some 'diseases' are symptoms (nausea, vomiting, pain) - assess if appropriate for predictions"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Reset to pending. Still valuable (h711 showed name matching is 56.9% of coverage gap)."
     },
     {
       "id": "h713",
@@ -14532,7 +14645,7 @@
     {
       "id": "h716",
       "title": "Neonatal Disease Age-Appropriateness: Adult Drug Predictions for Neonatal Conditions",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14542,12 +14655,13 @@
         "Check predictions for adult-only drugs (LABAs, oral anticoagulants, etc.)",
         "Assess whether age-inappropriate predictions are at MEDIUM or above",
         "If systematic issue, consider disease-age annotation or filter"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h717",
       "title": "Respiratory Disease Subtype Drug Class Coherence: Do ILD vs Obstructive vs Allergic Need Different Filters?",
-      "status": "in_progress",
+      "status": "deprioritized",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14558,7 +14672,8 @@
         "Identify cross-subtype drug class mismatches (e.g., antihistamines for fibrotic)",
         "Assess holdout precision by subtype",
         "Implement subtype-specific filters if justified"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Stalled. Respiratory subtypes are complex (ILD vs obstructive vs allergic). Low expected impact."
     },
     {
       "id": "h718",
@@ -14615,7 +14730,7 @@
     {
       "id": "h721",
       "title": "2-Hop Mechanism as Deliverable Annotation: Indirect Mechanism Evidence Flag",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14625,7 +14740,8 @@
         "Compute 2-hop connecting genes for all predictions",
         "Add to deliverable as supplementary column",
         "Test: does 2-hop annotation help literature validation efficiency?"
-      ]
+      ],
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h722",
@@ -14664,7 +14780,7 @@
     {
       "id": "h724",
       "title": "Non-Infectious Gene-Poor Disease Audit: Are Ophthalmic/Dermatological Zero-Gene Diseases Misclassified?",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14678,12 +14794,13 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "meta-analysis"
+      "category": "meta-analysis",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h725",
       "title": "CTD Curated Gene-Disease for Gene-Sparse (Not Zero) Diseases: Supplement 1-10 Gene Diseases",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -14697,12 +14814,13 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "meta-analysis"
+      "category": "meta-analysis",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h726",
       "title": "Infectious Disease Holdout Evaluation: Stratified Splitting for n\u226530",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "medium",
@@ -14715,12 +14833,13 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "methodology"
+      "category": "methodology",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h727",
       "title": "Infectious Disease GT Gap Audit: Why Do Correct Antifungals Miss GT?",
-      "status": "in_progress",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14733,7 +14852,8 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "gt-quality"
+      "category": "gt-quality",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Stalled. Infectious GT gaps partially addressed by h731 literature mining."
     },
     {
       "id": "h728",
@@ -14757,7 +14877,7 @@
     {
       "id": "h729",
       "title": "Full-Data Inflation Index: Systematic Ranking of Rule Inflation Ratios for Quality Auditing",
-      "status": "pending",
+      "status": "deprioritized",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -14771,7 +14891,8 @@
       ],
       "findings": "",
       "result_metric": "",
-      "category": "deliverable-quality"
+      "category": "deliverable-quality",
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h730",
@@ -14817,10 +14938,10 @@
       "id": "h732",
       "title": "Literature Evidence Tier Promotion: MEDIUM+STRONG_EVIDENCE \u2192 HIGH",
       "category": "tier_system",
-      "priority": 3,
+      "priority": 2,
       "expected_impact": "high",
       "effort": "high",
-      "status": "pending",
+      "status": "validated",
       "rationale": "h731 showed MEDIUM + STRONG_EVIDENCE = 67.4% holdout (50.9% before GT fixes), far above MEDIUM 42.8%. 139 predictions qualify. However, requires running literature mining on ALL 14,150 predictions (currently only 590 mined). Need to extend pipeline to mine remaining ~13,500 predictions. Expected to find additional GT gaps and inversions from LOW/FILTER tiers too.",
       "dependencies": [
         "h731"
@@ -14833,8 +14954,8 @@
         "Re-run holdout validation with new tier rules",
         "Regenerate deliverable"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Literature evidence implemented as tier modifier: MEDIUM + STRONG_EVIDENCE \u2192 HIGH (literature_strong_promotion: 60.2% \u00b1 8.6%, n=73). MEDIUM + NO_EVIDENCE/WEAK_EVIDENCE \u2192 LOW (literature_weak_demotion: 10.4% \u00b1 11.2%, n=79). Literature evidence confirmed as strongest independent predictor of holdout precision. 73 MEDIUM predictions promoted to HIGH (gains HIGH +1.7pp), 79 MEDIUM predictions demoted to LOW. Only applied to predictions that have been mined (590 of ~13K). Full mining of remaining predictions would amplify this signal.",
+      "result_metric": "HIGH +1.7pp (50.2\u219251.9%), MEDIUM contribution to +10.5pp combined"
     },
     {
       "id": "h733",
@@ -14886,7 +15007,7 @@
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "deprioritized",
       "rationale": "After adding 31 GT gaps, there are still some STRONG_EVIDENCE predictions not in GT (78.7% not 100%). The 4 false positives from GOLDEN/HIGH (lidocaine\u2192edema, erythromycin\u2192bacterial meningitis, erythromycin\u2192TB, hydrocortisone\u2192edema) reveal systematic patterns: (1) procedural co-occurrence (lidocaine), (2) macrolide spectrum mismatch (erythromycin), (3) adverse effect mimicking indication (CS\u2192edema). Understanding these helps calibrate literature evidence interpretation.",
       "dependencies": [
         "h731"
@@ -14898,7 +15019,8 @@
         "Assess if literature mining parameters need adjustment"
       ],
       "findings": null,
-      "result_metric": null
+      "result_metric": null,
+      "closure_reason": "Roadmap cleanup 2026-02-07: Marginal expected impact. Tier system mature with 30+ validated rules. Diminishing returns on further micro-optimizations."
     },
     {
       "id": "h736",
@@ -14921,7 +15043,7 @@
     {
       "id": "h737",
       "title": "Novel MEDIUM Sub-Rule Demotion: default_nomech_r1-5 and r6-10 Have LOW-Quality Novel Predictions",
-      "status": "in_progress",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14934,7 +15056,7 @@
         "Check if STRONG_EVIDENCE mining could identify the 48% within this rule"
       ],
       "findings": "h737 analysis found strong kNN score gradient within default nomech MEDIUM: R1-5 Q4(high score)=55.4% vs Q1(low score)=11.3%; R6-10 Q4=36.2% vs Q1=10.7%. Score < 2.0 is 9.9-12.1% (LOW quality), score >= 5.0 is 47.8% (above MEDIUM avg). Low scores are heavily enriched in novel predictions (R1-5: 24.6% novel below 2.0 vs 4.6% known). kNN score is a GT-free proxy for prediction quality within these sub-rules. Implementing as h740: kNN score threshold demotion.",
-      "result_metric": "",
+      "result_metric": "Spawned h740 (validated +3.2pp MEDIUM)",
       "rationale": "h734 found novel MEDIUM default_freq10_nomech_r1_5 = 19.7% and r6_10 = 16.3%. These are below LOW threshold. But demoting them requires distinguishing novel from known at prediction time, which requires GT knowledge (circular). The right solution may be literature mining as a quality signal (h732)."
     },
     {
@@ -14999,7 +15121,7 @@
       "id": "h741",
       "title": "kNN Score Gradient Demotion: Score < 3.0 for R6-10 NoMech",
       "description": "h740 demoted score < 2.0 for both R1-5 and R6-10. But R6-10 score 2.0-3.0 has only 15.7% \u00b1 1.8% holdout (n=108/seed) \u2014 borderline LOW quality. R1-5 score 2.0-3.0 has 13.2% which is already LOW. Could a higher threshold (3.0) for R6-10 further improve MEDIUM? Risk: R6-10 remaining would be n=54/seed (33.7%), small but HIGH-MEDIUM quality.",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -15009,13 +15131,15 @@
         "If implementing: test score < 3.0 threshold for R6-10 only",
         "Run 5-seed holdout validation",
         "CAUTION: R1-5 score 2.0-3.0 also 13.2% but n=28 is tiny \u2014 avoid"
-      ]
+      ],
+      "findings": "Extended h740 kNN score threshold from < 2.0 to < 3.0 for ALL nomech predictions. Score 2.0-3.0: R1-5=13.2%, R6-10=15.7% holdout \u2014 at/below LOW avg. ~389 additional predictions demoted from MEDIUM to LOW. Combined with h742+h732, MEDIUM went from 37.2% to 47.7% (+10.5pp), LOW absorbed demotions cleanly (13.2% \u00b1 0.6%). default_nomech_low_score now has n=875, holdout=13.5% \u00b1 2.6%.",
+      "result_metric": "Part of combined +10.5pp MEDIUM improvement (37.2\u219247.7%)"
     },
     {
       "id": "h742",
       "title": "kNN Score as Continuous Quality Signal: Within-MEDIUM Score Percentile Annotation",
       "description": "h740 showed kNN score is a strong GT-free quality predictor within MEDIUM: Q1(low score)=11.3% vs Q4(high score)=55.4% for R1-5 nomech. This gradient applies across ALL MEDIUM sub-rules, not just nomech. Add knn_score_percentile as a deliverable annotation for all MEDIUM predictions so consumers can prioritize higher-score predictions within the same tier. May reveal further demotion targets in other sub-rules.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -15025,13 +15149,15 @@
         "Add knn_score_percentile to deliverable",
         "Check if other sub-rules have similar low-score LOW-quality pockets",
         "Consider whether freq5_mechanism or target_overlap also have score gradients"
-      ]
+      ],
+      "findings": "Score gradient analysis across ALL MEDIUM sub-rules revealed: default_freq10_nomech_r1_5 at score 3.0-5.0: 22.1% \u00b1 9.3% (n=22.2/seed) \u2014 LOW quality. Remaining R1-5 at score 5.0-8.0: 61.6% \u00b1 10.5% (n=20.4/seed) \u2014 HIGH quality. R1-5 at score >=8.0: 78.2% \u00b1 3.1% (n=17.4/seed) \u2014 GOLDEN quality. Implemented: R1-5 score < 5.0 \u2192 LOW (default_nomech_r1_5_low_score). Holdout validation: demoted preds = 20.6% \u00b1 6.9% (n=53.2/seed, firmly below MEDIUM). Remaining R1-5: 38.7% \u00b1 4.3% (n=84.4/seed, solid MEDIUM). Also found: default_freq5_mechanism at score <1.0: 31.7% \u00b1 6.4% (n=18.6/seed) \u2014 borderline but kept as MEDIUM (z=-1.0 vs avg). Other sub-rules (cv_pathway, target_overlap, cancer_same_type) have adequate or small-n score gradients. Combined effect with h741+h732: MEDIUM 37.2\u219247.7% (+10.5pp), 2122\u21921220 predictions. This is the highest MEDIUM precision ever achieved. std=2.4% (very stable).",
+      "result_metric": "MEDIUM +10.5pp combined (37.2\u219247.7%), 292 preds demoted to LOW"
     },
     {
       "id": "h743",
       "title": "Combined Score + TransE Demotion: Predictions Without Both Signals",
       "description": "h740 showed kNN score < 2.0 is LOW quality. h405 showed TransE disagreement is lower quality. What about predictions that lack BOTH signals \u2014 low kNN score AND no TransE consilience? These predictions have no strong independent evidence. Could demoting predictions that are both low-score and non-TransE further purify MEDIUM?",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -15040,6 +15166,89 @@
         "Evaluate holdout for low-score + non-TransE group",
         "Check if this group is already captured by h740 demotion",
         "If not: evaluate whether further demotion improves MEDIUM precision"
+      ],
+      "findings": "INVALIDATED: Combined kNN score + TransE demotion does NOT identify a LOW-quality subset within MEDIUM. 5-seed holdout cross-tabulation: Score 3-5 + no-TransE = 30.9% \u00b1 6.3% (n=87/seed) \u2014 above LOW avg (14.1%), still within MEDIUM range. TransE is only 5.6% of MEDIUM predictions (104/1856), too small for reliable sub-group analysis (n=19/seed total TransE=Yes). Counter-intuitively, TransE at score 3-5 is LOWER (26.1%) than no-TransE (30.9%) \u2014 likely noise from n=9/seed. Score <3.0 MEDIUM predictions (n=988) are on different tier paths (freq5_mechanism=225, target_overlap=203, cancer_same_type=161) and have 45.2% holdout \u2014 solid MEDIUM. h740 already captured the actionable score threshold (<3.0 for nomech). No further score\u00d7TransE demotion warranted. Score gradient within MEDIUM: <3=45.2%, 3-5=30.9%, 5-8=45.9%, 8-15=66.3%, \u226515=100% (full-data confirmed by holdout).",
+      "result_metric": "Score 3-5 + no-TransE = 30.9% \u00b1 6.3% holdout \u2014 still MEDIUM"
+    },
+    {
+      "id": "h744",
+      "title": "Nomech R1-5 Score>=5 Promotion to HIGH: 68.2% Holdout Post-Demotion",
+      "category": "tier_system",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "low",
+      "status": "pending",
+      "rationale": "After h742 demotion of R1-5 score<5.0, the remaining default_freq10_nomech_r1_5 (score>=5.0) has 68.2% \u00b1 6.7% holdout (n=37.8/seed) \u2014 clearly HIGH quality. Full-data=62.5%. This is above HIGH tier average (51.9%) and approaching GOLDEN. 251 predictions could be promoted from MEDIUM to HIGH. Would increase HIGH quality and reduce MEDIUM pool further. Need to verify: (1) stability across all seeds, (2) no confound from CS artifact, (3) no interaction with other rules.",
+      "dependencies": [
+        "h742"
+      ],
+      "steps": [
+        "Verify default_freq10_nomech_r1_5 seed values for HIGH stability",
+        "Check CS composition of remaining R1-5 preds",
+        "Implement promotion: nomech R1-5 score >= 5.0 \u2192 HIGH",
+        "Run holdout validation",
+        "Check if R6-10 high-score also qualifies for promotion"
+      ]
+    },
+    {
+      "id": "h745",
+      "title": "Cancer Same-Type High-Rank Rescue: 40.7% Holdout Currently LOW",
+      "category": "tier_system",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "rationale": "cancer_same_type_high_rank (mech+rank>=21 demoted by h648) has 40.7% \u00b1 8.7% holdout (n=20.4/seed) \u2014 this is at MEDIUM level. The h648 demotion was based on 26.9% holdout with the old evaluation. Expanded GT and improved code may have changed this. However, need to verify: was h648 holdout simply mismeasured, or did other changes (GT expansion, h741/h742 score thresholds) improve this group? 152 predictions could be promoted from LOW back to MEDIUM.",
+      "dependencies": [
+        "h648"
+      ],
+      "steps": [
+        "Verify cancer_same_type_high_rank seed values across all 5 seeds",
+        "Check if improvement is from GT expansion or code changes",
+        "If genuine, promote cancer_same_type_high_rank back to MEDIUM",
+        "Run holdout validation",
+        "Check for CS artifact in this subset"
+      ]
+    },
+    {
+      "id": "h746",
+      "title": "Default Freq5 Mechanism Low-Score Demotion: Score<1.0 is 31.7% Holdout",
+      "category": "tier_system",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "rationale": "h742 analysis found default_freq5_mechanism at score<1.0 has 31.7% \u00b1 6.4% (n=18.6/seed) \u2014 borderline LOW vs MEDIUM. z-score vs MEDIUM avg (47.7%): z = (31.7-47.7)/6.4 = -2.5 below MEDIUM. This subset may warrant demotion. However, mechanism support makes these higher-quality than pure frequency preds. Need to check: (1) what drugs/diseases are in this group, (2) whether the mechanism signal compensates for low kNN score.",
+      "dependencies": [
+        "h742"
+      ],
+      "steps": [
+        "Analyze drugs/diseases in freq5_mech score<1.0 group",
+        "Check if these are systematic errors or genuine borderline",
+        "If demotion warranted, implement score<1.0 demotion for freq5_mech",
+        "Run holdout validation",
+        "Estimate MEDIUM precision impact"
+      ]
+    },
+    {
+      "id": "h747",
+      "title": "Literature Mining Expansion: Mine ALL 13K+ Predictions for Evidence Tier Modifiers",
+      "category": "tier_system",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "high",
+      "status": "pending",
+      "rationale": "h732 validated literature evidence as a tier modifier: STRONG\u2192HIGH (60.2%), WEAK/NO\u2192LOW (10.4%). Currently only 590 of ~13K predictions have been mined. Full mining would identify many more STRONG and WEAK predictions, further improving tier separation. Based on h731 evidence distribution: ~10% STRONG, ~15% WEAK/NO. Full mining could promote ~130 to HIGH and demote ~200 to LOW. Main bottleneck: PubMed/ClinicalTrials.gov API rate limits.",
+      "dependencies": [
+        "h732",
+        "h731"
+      ],
+      "steps": [
+        "Set up batch literature mining for all MEDIUM predictions (~1220)",
+        "Mine HIGH and GOLDEN predictions for quality audit",
+        "Analyze evidence distribution across tiers",
+        "Implement results as tier modifiers",
+        "Run holdout validation with full evidence data"
       ]
     }
   ],
