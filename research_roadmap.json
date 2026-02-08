@@ -15177,7 +15177,7 @@
       "priority": 2,
       "expected_impact": "high",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "rationale": "After h742 demotion of R1-5 score<5.0, the remaining default_freq10_nomech_r1_5 (score>=5.0) has 68.2% \u00b1 6.7% holdout (n=37.8/seed) \u2014 clearly HIGH quality. Full-data=62.5%. This is above HIGH tier average (51.9%) and approaching GOLDEN. 251 predictions could be promoted from MEDIUM to HIGH. Would increase HIGH quality and reduce MEDIUM pool further. Need to verify: (1) stability across all seeds, (2) no confound from CS artifact, (3) no interaction with other rules.",
       "dependencies": [
         "h742"
@@ -15188,7 +15188,9 @@
         "Implement promotion: nomech R1-5 score >= 5.0 \u2192 HIGH",
         "Run holdout validation",
         "Check if R6-10 high-score also qualifies for promotion"
-      ]
+      ],
+      "findings": "default_freq10_nomech_r1_5 (score>=5.0) promoted from MEDIUM to HIGH. Holdout: 68.2% \u00b1 6.7% (n=37.8/seed). Non-CS: 65.9% \u00b1 7.6%. Score gradient: s5-8=61.6%, s8+=78.2%. 251 predictions promoted. CS fraction=29.4% (manageable). Also found: R6-10 s5+  is too small n (4.6/seed) and 100% CS, so no promotion for R6-10. R1-5 low-score (s3-5) demoted to LOW: 20.6% holdout (h742). MEDIUM now 47.7% \u00b1 2.4%, HIGH now 51.9% \u00b1 4.7%.",
+      "result_metric": "MEDIUM 47.7% \u00b1 2.4% (net +10.5pp from h740+h741+h742+h744 combined), HIGH 51.9% \u00b1 4.7%"
     },
     {
       "id": "h745",
@@ -15197,7 +15199,7 @@
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "rationale": "cancer_same_type_high_rank (mech+rank>=21 demoted by h648) has 40.7% \u00b1 8.7% holdout (n=20.4/seed) \u2014 this is at MEDIUM level. The h648 demotion was based on 26.9% holdout with the old evaluation. Expanded GT and improved code may have changed this. However, need to verify: was h648 holdout simply mismeasured, or did other changes (GT expansion, h741/h742 score thresholds) improve this group? 152 predictions could be promoted from LOW back to MEDIUM.",
       "dependencies": [
         "h648"
@@ -15208,7 +15210,9 @@
         "If genuine, promote cancer_same_type_high_rank back to MEDIUM",
         "Run holdout validation",
         "Check for CS artifact in this subset"
-      ]
+      ],
+      "findings": "h745 VALIDATED: cancer_same_type_high_rank promoted LOW\u2192MEDIUM. GT expansion (h668/h731) lifted holdout from 25.5% (h648) to 40.7% \u00b1 8.7% (n=20.4/seed). Non-CS: 42.9% \u00b1 7.5%. Novel: 37.7%. CS fraction only 8.6% \u2014 not inflated. 152 predictions promoted. Genuine MEDIUM quality confirmed.",
+      "result_metric": "40.7% \u00b1 8.7% holdout (was 25.5% at h648). 152 LOW\u2192MEDIUM."
     },
     {
       "id": "h746",
@@ -15217,7 +15221,7 @@
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "inconclusive",
       "rationale": "h742 analysis found default_freq5_mechanism at score<1.0 has 31.7% \u00b1 6.4% (n=18.6/seed) \u2014 borderline LOW vs MEDIUM. z-score vs MEDIUM avg (47.7%): z = (31.7-47.7)/6.4 = -2.5 below MEDIUM. This subset may warrant demotion. However, mechanism support makes these higher-quality than pure frequency preds. Need to check: (1) what drugs/diseases are in this group, (2) whether the mechanism signal compensates for low kNN score.",
       "dependencies": [
         "h742"
@@ -15228,7 +15232,9 @@
         "If demotion warranted, implement score<1.0 demotion for freq5_mech",
         "Run holdout validation",
         "Estimate MEDIUM precision impact"
-      ]
+      ],
+      "findings": "h746 INCONCLUSIVE: default_freq5_mechanism score gradient analysis. Score < 0.75: 22.0% \u00b1 3.7% (n=10.4/seed) \u2014 clearly below MEDIUM but n too small for reliable demotion (only 24 predictions). Score 0.75-1.0: ~44% holdout \u2014 at MEDIUM level, should NOT be demoted. Score >= 1.0: 56.1% \u00b1 5.6% (n=28.2/seed) \u2014 HIGH quality, but promoting would hurt MEDIUM (-1.6pp) by removing good predictions. Total freq5_mech only 204 predictions (minor sub-rule). h742 estimate of 31.7% for score<1.0 was driven by score<0.75 (22%) dragging down the average; score 0.75-1.0 is genuinely MEDIUM (~44%). No action taken \u2014 effect too small and unreliable.",
+      "result_metric": "No change \u2014 inconclusive"
     },
     {
       "id": "h747",

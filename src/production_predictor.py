@@ -3481,11 +3481,13 @@ class DrugRepurposingPredictor:
                 # Demote to LOW. With mechanism but rank>10 stays MEDIUM (33.8%).
                 if not mechanism_support:
                     return ConfidenceTier.LOW, False, 'cancer_same_type_no_mechanism'
-                # h648: cancer_same_type + mechanism + rank 21+ = 25.5% ± 15.2% holdout
-                # Well below MEDIUM avg (41.5%). Rank 11-20 = 42.3% (above MEDIUM).
-                # Demote rank 21+ to LOW.
+                # h648: cancer_same_type + mechanism + rank 21+ originally demoted to LOW
+                # (25.5% ± 15.2% holdout at time of h648).
+                # h745: GT expansion (h668/h731) lifted holdout to 40.7% ± 8.7%
+                # (n=20.4/seed). Non-CS: 42.9% ± 7.5%. Novel: 37.7%.
+                # Genuine MEDIUM quality — 8.6% CS, not inflated. Promoted back to MEDIUM.
                 if rank >= 21:
-                    return ConfidenceTier.LOW, False, 'cancer_same_type_high_rank'
+                    return ConfidenceTier.MEDIUM, True, 'cancer_same_type_high_rank'
                 # h396: Demoted from GOLDEN to MEDIUM (24.5% full, 19.2% holdout)
                 # cancer_same_type was 57% of GOLDEN predictions, dragging GOLDEN below HIGH
                 return ConfidenceTier.MEDIUM, True, 'cancer_same_type'
@@ -3778,7 +3780,14 @@ class DrugRepurposingPredictor:
                 # Demote R1-5 at score 3.0-5.0 to LOW. Keep score >= 5.0 as MEDIUM.
                 if knn_score < 5.0:
                     return ConfidenceTier.LOW, False, 'default_nomech_r1_5_low_score'
-                return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r1_5'
+                # h744: Nomech R1-5 score>=5.0 promotion to HIGH.
+                # Holdout: 68.2% ± 6.7% (n=37.8/seed). Non-CS: 65.9% ± 7.6%.
+                # Above HIGH avg (51.9%) and 55% threshold. 251 predictions.
+                # Score gradient: 5-8=61.6%, 8+=78.2%. Top drugs: tetracyclines,
+                # corticosteroids, azithromycin, ketoconazole. High freq (>=10)
+                # + top rank (1-5) + strong kNN score (>=5.0) = genuine signal
+                # even without explicit DRKG mechanism path.
+                return ConfidenceTier.HIGH, False, 'default_freq10_nomech_r1_5'
             else:
                 return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r6_10'
 

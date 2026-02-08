@@ -515,6 +515,384 @@ DISEASE_SYNONYMS: Dict[str, str] = {
     "absence seizures": "epilepsy, absence",
     "grand mal seizures": "epilepsy, generalized",
     "acute myelogenous leukemia": "leukemia, myeloid, acute",
+
+    # h712s7: Comprehensive unmapped EC disease synonym expansion
+    # Maps EC disease name variants to canonical names that have MESH mappings
+    "covid19": "covid-19",
+    "covid 19": "covid-19",
+    "coronavirus disease 2019": "covid-19",
+    "sars cov 2 infection": "covid-19",
+    "varicella": "varicella zoster infection",
+    "chickenpox": "varicella zoster infection",
+    "softtissue sarcoma": "soft tissue sarcoma",
+    "soft tissue sarcomas": "soft tissue sarcoma",
+    "lumbago": "low back pain",
+    "pruritus cutaneous": "pruritus",
+    "pruritus scroti": "pruritus",
+    "skin pruritus": "pruritus",
+    "migraine headaches": "migraine disorders",
+    "chronic asthma": "asthma",
+    "reversible obstructive airways disease": "asthma",
+    "regional ileitis": "crohn disease",
+    "dermographism": "urticaria",
+    "dermatographism": "urticaria",
+    "sjogrens syndrome": "sjogren syndrome",
+    "sjgrens syndrome": "sjogren syndrome",
+    "prostatic cancer": "prostate cancer",
+    "prostatic carcinoma": "prostate cancer",
+    "smoking addiction": "tobacco use disorder",
+    "smoking cessation": "tobacco use disorder",
+    "autistic disorder": "autistic spectrum disorder",
+    "gallbladder stones": "cholelithiasis",
+    "ulcerative proctitis": "proctitis",
+    "ulcerative proctosigmoiditis": "proctocolitis",
+    "gonococcal infections": "gonorrhea",
+    "uncomplicated cervical gonorrhea": "gonorrhea",
+    "uncomplicated gonococcal urethritis": "gonorrhea",
+    "pneumocystis carinii pneumonia": "pneumocystis pneumonia",
+    "pneumocystis carinii pneumonia pcp": "pneumocystis pneumonia",
+    "pcp": "pneumocystis pneumonia",
+    "pneumocystis pneumonia": "pneumocystis pneumonia",
+    "pneumonia due to pneumocystis carinii": "pneumocystis pneumonia",
+    "endomyometritis": "endometritis",
+    "postpartum endomyometritis": "endometritis",
+    "attention deficit disorder with hyperactivity": "attention deficit hyperactivity disorder",
+    "brain tumor": "brain neoplasms",
+    "primary brain tumor": "brain neoplasms",
+    "primary malignant brain tumor": "brain neoplasms",
+    "secondary amenorrhea": "amenorrhea",
+    "secondary amenorrhea of undetermined etiology": "amenorrhea",
+    "postoralcontraceptive amenorrhea": "amenorrhea",
+    "insulin shock": "hypoglycemia",
+    "delirium tremens": "alcohol withdrawal delirium",
+    "withdrawal symptoms of acute alcoholism": "alcohol withdrawal delirium",
+    "tinea capitis": "tinea",
+    "tinea barbae": "tinea",
+    "ringworm infections": "tinea",
+    "bleeding episodes": "hemorrhage",
+    "hemorrhage": "hemorrhage",
+    "thermal burns": "burns",
+    "thirddegree burns": "burns",
+    "radiation burns": "burns",
+    "acute renal failure": "acute kidney injury",
+    "acute cholecystitis": "cholecystitis",
+    "acute prostatitis": "prostatitis",
+    "fungal infections": "mycoses",
+    "presumed fungal infections": "mycoses",
+    "serious fungal infections caused by fusarium species": "mycoses",
+    "hepatitis d": "hepatitis d",
+    "pathologic myopia": "myopia",
+    "pathological myopia": "myopia",
+    "systemic embolism": "embolism",
+    "peripheral arterial embolism": "embolism",
+    "peripheral embolism": "embolism",
+    "mild cognitive impairment": "cognitive dysfunction",
+    "invasive meningococcal disease": "meningococcal infections",
+    "meningococcal infection": "meningococcal infections",
+    "chronic liver disease": "liver diseases",
+    "severe liver disease": "liver diseases",
+    "hepatic disease": "liver diseases",
+    "overactive bladder": "urinary bladder, overactive",
+    "overactive bladder syndrome": "urinary bladder, overactive",
+    "bullous pemphigoid": "pemphigoid, bullous",
+    "absssi": "skin diseases, infectious",
+    "adult growth hormone deficiency": "dwarfism, pituitary",
+    "cerebrovascular disease": "cerebrovascular disorders",
+    "nasal polyps": "nasal polyps",
+    "endometrial hyperplasia": "endometrial hyperplasia",
+    "cerebral edema": "brain edema",
+    "sinus tachycardia": "tachycardia, sinus",
+    "paroxysmal tachycardia": "tachycardia, paroxysmal",
+    "reciprocating tachycardias": "tachycardia, supraventricular",
+    "tachyarrhythmias": "tachycardia",
+    "tremor": "tremor",
+    "intermittent claudication": "intermittent claudication",
+    "bacterial infections": "bacterial infections",
+    "secondary bacterial infections": "bacterial infections",
+    "serious infections of bones and joints": "bacterial infections",
+    "liver abscess": "liver abscess",
+    "apnea of prematurity": "apnea",
+    "primary hypogonadism": "hypogonadism",
+    "testicular failure": "hypogonadism",
+    "synovitis": "synovitis",
+    "potassium deficiency states": "hypokalemia",
+    "parathyroid carcinoma": "parathyroid neoplasms",
+    "miosis": "miosis",
+    "digitalis intoxication": "digitalis glycoside poisoning",
+    "digitalis intoxications": "digitalis glycoside poisoning",
+    "dysproteinemias": "paraproteinemias",
+    "obstructive liver disease": "cholestasis",
+    "partial biliary obstruction": "cholestasis",
+    "symptomatic carotid artery disease": "carotid artery diseases",
+    "transient ischemia of the brain": "ischemic attack, transient",
+    "transient ischaemic attack": "ischemic attack, transient",
+    "hypoestrogenism": "menopause",
+    "sodium retention": "edema",
+    "acute nonspecific diarrhea": "diarrhea",
+    "travelers diarrhea": "diarrhea",
+    "clostridium species infections": "clostridium infections",
+    "haemophilus influenzae respiratory infections": "haemophilus infections",
+    "idiopathic steatorrhea": "malabsorption syndromes",
+    "mixed infections": "coinfection",
+    "vasomotor symptoms associated with the menopause": "hot flashes",
+    "vasomotor symptoms": "hot flashes",
+    "blastomycosis": "blastomycosis",
+    "uncomplicated endocervical infections": "cervicitis",
+    "uncomplicated endocervical infections caused by chlamydia trachomatis": "cervicitis",
+
+    # Additional 1-drug disease synonyms for common conditions
+    "shingles": "herpes zoster",
+    "scarlet fever": "scarlatina",
+    "tachycardia": "tachycardia",
+    "subarachnoid hemorrhage": "subarachnoid hemorrhage",
+    "peripheral artery disease": "peripheral arterial disease",
+    "peripheral vessel disease": "peripheral vascular diseases",
+    "pouchitis": "pouchitis",
+    "vaginal candidiasis": "candidiasis, vulvovaginal",
+    "vaginitis": "vaginitis",
+    "oral thrush": "candidiasis, oral",
+    "seasonal affective disorder": "seasonal affective disorder",
+    "panic attacks": "panic disorder",
+    "recurrent depression": "depressive disorder, major",
+    "psychotic depression": "depressive disorder, major",
+    "psychotic depressive disorders": "depressive disorder, major",
+    "psychoneurosis": "neurotic disorders",
+    "phobic disorders": "phobic disorders",
+    "stiffman syndrome": "stiff person syndrome",
+    "shift work sleep disorder": "sleep wake disorders",
+    "transient insomnia": "sleep initiation and maintenance disorders",
+    "severe spasticity": "muscle spasticity",
+    "spasms": "muscle spasticity",
+    "spasms due to spinal cord trauma": "muscle spasticity",
+    "spasticity due to traumatic brain injury": "muscle spasticity",
+    "spasticity of cerebral origin": "muscle spasticity",
+    "spasticity of spinal cord origin": "muscle spasticity",
+    "skeletal muscle spasm": "muscle spasticity",
+    "overweight": "overweight",
+    "preeclampsia": "pre-eclampsia",
+    "preterm labour": "obstetric labor, premature",
+    "polycystic ovarian disease": "polycystic ovary syndrome",
+    "polycystic ovarian syndrome": "polycystic ovary syndrome",
+    "polycystic ovary syndrome": "polycystic ovary syndrome",
+    "varicose veins": "varicose veins",
+    "varicose veins of the lower extremities": "varicose veins",
+    "splenomegaly": "splenomegaly",
+    "strabismus": "strabismus",
+    "photophobia": "photophobia",
+    "presbyopia": "presbyopia",
+    "panuveitis": "panuveitis",
+    "rhinorrhea": "rhinorrhea",
+    "perennial rhinitis": "rhinitis",
+    "seasonal rhinitis": "rhinitis",
+    "nonallergic rhinitis": "rhinitis",
+    "sialorrhea": "sialorrhea",
+    "sialorrhoea": "sialorrhea",
+    "polydipsia": "polydipsia",
+    "thyroid carcinoma": "thyroid neoplasms",
+    "thyroid eye disease": "graves ophthalmopathy",
+    "testicular carcinoma": "testicular neoplasms",
+    "testicular carcinoma embryonal cell": "testicular neoplasms",
+    "penis cancer": "penile neoplasms",
+    "urothelial cancer": "urologic neoplasms",
+    "upper tract urothelial cancer": "urologic neoplasms",
+    "renal cancer": "kidney neoplasms",
+    "renalcell carcinoma": "carcinoma, renal cell",
+    "transitional cell bladder cancer": "urinary bladder neoplasms",
+    "transitional cell bladder carcinoma": "urinary bladder neoplasms",
+    "superficial bladder cancer": "urinary bladder neoplasms",
+    "uveal melanoma": "uveal neoplasms",
+    "severe malaria": "malaria",
+    "vivax malaria": "malaria, vivax",
+    "plasmodium vivax malaria": "malaria, vivax",
+    "uncomplicated malaria": "malaria",
+    "salmonella infections": "salmonella infections",
+    "rickettsial infections": "rickettsia infections",
+    "paratyphoid": "paratyphoid fever",
+    "typhoid": "typhoid fever",
+    "scarlet fever": "scarlatina",
+    "spinal cord injuries": "spinal cord injuries",
+    "spinal cord injury": "spinal cord injuries",
+    "primary syphilis": "syphilis",
+    "severe nodular acne": "acne vulgaris",
+    "pustular acne": "acne vulgaris",
+    "solar keratoses": "keratosis, actinic",
+    "pediculus humanus capitis infection": "lice infestations",
+    "scabies infestations": "scabies",
+    "staphylococcus infections": "staphylococcal infections",
+    "staphylococci infection": "staphylococcal infections",
+    "staphylococci infections": "staphylococcal infections",
+    "staphylococcal disease": "staphylococcal infections",
+    "streptococcus infections": "streptococcal infections",
+    "streptococcal disease": "streptococcal infections",
+    "streptococci infection": "streptococcal infections",
+    "throat infections": "pharyngitis",
+    "petit mal": "epilepsy, absence",
+    "severe myoclonic epilepsy in infancy": "epilepsies, myoclonic",
+    "refractory generalized tonicclonic seizures": "epilepsy, generalized",
+    "tonic seizures": "epilepsy, generalized",
+    "secondarily generalized seizure": "epilepsy, generalized",
+    "secondarily generalised seizures": "epilepsy, generalized",
+    "seizures with secondary generalization": "epilepsy, generalized",
+    "severe recurrent convulsive seizures": "seizures",
+    "seizures focal partial onset": "epilepsies, partial",
+    "premature ventricular extrasystoles": "ventricular premature complexes",
+    "ventricular premature beats": "ventricular premature complexes",
+    "ventricular premature contraction": "ventricular premature complexes",
+    "tumor lysis syndrome": "tumor lysis syndrome",
+    "pneumothorax": "pneumothorax",
+    "short stature": "dwarfism",
+    "pituitary dwarfism": "dwarfism, pituitary",
+    "stills disease": "still disease, adult onset",
+    "wegener granulomatosis": "granulomatosis with polyangiitis",
+    "wegeners granulomatosis": "granulomatosis with polyangiitis",
+    "uterine leiomyomas fibroids": "leiomyoma",
+    "uterine hemorrhage": "uterine hemorrhage",
+    "uterine adenomyosis": "adenomyosis",
+    "vulvar atrophy": "atrophy",
+    "postmenopausal atrophy of the vagina": "atrophy",
+    "endometriosis": "endometriosis",
+    "recurrent pericarditis": "pericarditis",
+    "progesterone deficiency": "progesterone",
+    "severe heart failure": "heart failure",
+    "refractory congestive failure": "heart failure",
+    "reduced ejection fraction": "heart failure",
+    "right ventricular outflow tract obstruction": "ventricular outflow obstruction",
+    "shock": "shock",
+    "shock syndrome": "shock",
+    "primary osteoporosis": "osteoporosis",
+    "refractory rickets": "rickets",
+    "primary biliary cirrhosis": "liver cirrhosis, biliary",
+    "primary biliary cirrhosis pbc": "liver cirrhosis, biliary",
+    "pseudomembranous colitis": "enterocolitis, pseudomembranous",
+    "staphylococcal enterocolitis": "enterocolitis, pseudomembranous",
+    "recurrent glioblastoma": "glioblastoma",
+    "refractory anaplastic astrocytoma": "astrocytoma",
+    "periarthritis of scapulohumerous": "periarthritis",
+    "periarthritis scapulohumeralis": "periarthritis",
+    "scapulohumeral periarthritis": "periarthritis",
+    "posttraumatic stress disorder ptsd": "stress disorders, post-traumatic",
+    "recurrent aphthous stomatitis canker sores": "stomatitis, aphthous",
+    "painful musculoskeletal conditions": "musculoskeletal pain",
+    "premenstrual cramps": "dysmenorrhea",
+    "osteoarthrosis": "osteoarthritis",
+    "tophi": "gout",
+    "renal colic": "renal colic",
+    "renal diseases": "kidney diseases",
+    "renal bone disease": "renal osteodystrophy",
+    "renal tubular acidosis": "acidosis, renal tubular",
+    "renal tubular acidosis rta with calcium stones": "acidosis, renal tubular",
+    "thiamine deficiency": "thiamine deficiency",
+    "vitamin a deficiency": "vitamin a deficiency",
+    "vitamin b 12 deficiency": "vitamin b 12 deficiency",
+    "vitamin b 12 deficiencies": "vitamin b 12 deficiency",
+    "selenium deficiency": "selenium",
+    "zinc deficiency": "zinc",
+    "sodium deficiency": "hyponatremia",
+    "iron deficiency": "anemia, iron-deficiency",
+    "transfusional iron overload": "iron overload",
+    "transfusional iron overload in patients with chronic anemia": "iron overload",
+    "prolactinsecreting adenomas": "prolactinoma",
+    "pituitary adenomas": "pituitary neoplasms",
+    "pituitary tumors": "pituitary neoplasms",
+    "sheehans syndrome": "sheehan syndrome",
+    "pruritus associated with partial biliary obstruction": "pruritus",
+    "pneumonia community acquired": "community-acquired infections",
+    "pneumonia nosocomial": "cross infection",
+    "strongly suspected bacterial pneumonia": "pneumonia, bacterial",
+    "pneumonia of infancy": "pneumonia",
+    "upper gi bleeding": "gastrointestinal hemorrhage",
+    "zollingerellison syndrome zes": "zollinger-ellison syndrome",
+    "peptic ulcer refractory to histamine h2 receptor antagonist therapy": "peptic ulcer",
+    "postoperative stomal ulcer": "peptic ulcer",
+    "stomal ulcer": "peptic ulcer",
+    # h712: Disease name synonym expansion — 85 new mappings
+    # Exact synonyms (same disease, different name form)
+    "posttraumatic stress disorder": "stress disorders, post-traumatic",
+    "h pylori": "h pylori infection",
+    "burkitts lymphoma": "burkitt lymphoma",
+    "urea cycle disorders": "urea cycle disorder",
+    "carcinoma in situ": "in situ carcinoma",
+    "bipolar ii disorder": "bipolar disorder",
+    "bipolar depression": "bipolar disorder",
+    "tardive dyskinesia": "dyskinesia",
+    "oligodendroglioma": "glioma",
+    "mantlecell lymphoma": "mantle cell lymphoma",
+    "lennoxgastaut syndrome lgs": "lennox-gastaut syndrome",
+    "kawasaki disease": "mucocutaneous lymph node syndrome",
+    "dyslipidaemia": "mixed dyslipidemia",
+    "hyperlipidaemia": "hyperlipidemia",
+    "superficial punctate keratits": "superficial punctate keratitis",
+    "gastric carcinoma": "gastric cancer",
+    "stomach cancer": "gastric cancer",
+    "vulvar cancer": "vulvar squamous cell carcinoma",
+    "neuroendocrine tumors": "neuroendocrine neoplasm",
+    "neuroendocrine tumors of the pancreas": "pancreatic neuroendocrine tumor",
+    "neuroendocrine tumors of the gastrointestinal tract": "digestive system neuroendocrine neoplasm",
+    # Subtype → parent (severity/acuity/site modifiers)
+    "scalp psoriasis": "psoriasis",
+    "severe hypoglycemia": "hypoglycemia",
+    "active tuberculosis": "tuberculosis",
+    "systemic candidiasis": "candidiasis",
+    "rectal gonorrhea": "gonorrhea",
+    "acute rhinitis": "rhinitis",
+    "caries": "dental caries",
+    "status asthmaticus": "asthma",
+    "severe diarrhea": "diarrhea",
+    "acute poliomyelitis": "poliomyelitis",
+    "knee osteoarthritis": "osteoarthritis",
+    "chronic urticaria": "urticaria",
+    "systemic vasculitis": "vasculitis",
+    "early lyme disease": "lyme disease",
+    "acute cystitis": "cystitis",
+    "major depression": "depression",
+    "chronic diarrhea": "diarrhea",
+    "hemiplegic migraine": "migraine",
+    "severe chronic pain": "chronic pain",
+    "pruritic eczemas": "eczema",
+    "hypertensive emergencies": "hypertension",
+    "depressive symptoms": "depression",
+    "painful urethritis": "urethritis",
+    # Infection genus/species variants
+    "klebsiella respiratory infections": "klebsiella infections",
+    "klebsiella species infections": "klebsiella infections",
+    "shigella species infections": "shigella infections",
+    "acinetobacter species infections": "acinetobacter infections",
+    "infections due to campylobacter fetus": "campylobacter fetus infections",
+    "central nervous system infections": "central nervous system infectious disorder",
+    "fungal infection": "mycoses",
+    "invasive fungal infections": "mycoses",
+    "ocular infections": "superficial ocular infections",
+    # Plural/singular fixes
+    "astrocytomas": "astrocytoma",
+    "bone sarcomas": "bone sarcoma",
+    "cerebral infarctions": "cerebral infarction",
+    "craniopharyngiomas": "craniopharyngioma",
+    "duodenal ulcers": "duodenal ulcer",
+    "dysenteries": "dysentery",
+    "dyskinesias": "dyskinesia",
+    "ependymomas": "ependymoma",
+    "glioblastomas": "glioblastoma",
+    "gliomas": "glioma",
+    "malignant gliomas": "malignant glioma",
+    "medulloblastomas": "medulloblastoma",
+    "neuromas": "neuroma",
+    "pains": "pain",
+    "pyodermas": "pyoderma",
+    "solid tumor": "solid tumors",
+    "toothaches": "toothache",
+    "pressure ulcers": "pressure ulcer",
+    # Additional modifier removals (1-drug diseases)
+    "acute heart failure": "heart failure",
+    "acute lead poisoning": "lead poisoning",
+    "acute mania": "mania",
+    "acute urticaria": "urticaria",
+    "chronic angina": "angina",
+    "chronic cancer pain": "cancer pain",
+    "chronic emphysema": "emphysema",
+    "chronic gout": "gout",
+    "chronic insomnia": "insomnia",
+    "chronic migraine": "migraine",
+    "mild hyperthyroidism": "hyperthyroidism",
 }
 
 
@@ -1187,6 +1565,325 @@ def load_mesh_mappings() -> Dict[str, str]:
         "acute ischemic stroke": "drkg:Disease::MESH:D020521",
         # Fix: "post herpetic neuralgia" synonym resolves incorrectly to generic neuralgia
         "post herpetic neuralgia": "drkg:Disease::MESH:D051474",
+
+        # h712s7: Direct MESH mappings for unmapped EC disease synonyms
+        # Varicella/Chickenpox
+        "varicella zoster infection": "drkg:Disease::MESH:D002644",
+        # Burns
+        "burns": "drkg:Disease::MESH:D002056",
+        # Embolism
+        "embolism": "drkg:Disease::MESH:D004617",
+        # Acute Kidney Injury
+        "acute kidney injury": "drkg:Disease::MESH:D058186",
+        # Hemorrhage
+        "hemorrhage": "drkg:Disease::MESH:D006470",
+        # Sjogren Syndrome
+        "sjogren syndrome": "drkg:Disease::MESH:D012859",
+        # Brain Neoplasms
+        "brain neoplasms": "drkg:Disease::MESH:D001932",
+        # Cerebrovascular Disorders
+        "cerebrovascular disorders": "drkg:Disease::MESH:D002561",
+        # Nasal Polyps
+        "nasal polyps": "drkg:Disease::MESH:D009298",
+        # Endometrial Hyperplasia
+        "endometrial hyperplasia": "drkg:Disease::MESH:D004714",
+        # Amenorrhea
+        "amenorrhea": "drkg:Disease::MESH:D000568",
+        # Cholelithiasis / Gallstones
+        "cholelithiasis": "drkg:Disease::MESH:D002769",
+        # Brain Edema
+        "brain edema": "drkg:Disease::MESH:D001929",
+        # Alcohol Withdrawal Delirium
+        "alcohol withdrawal delirium": "drkg:Disease::MESH:D000430",
+        # Tachycardia, Sinus
+        "tachycardia, sinus": "drkg:Disease::MESH:D013616",
+        "tachycardia": "drkg:Disease::MESH:D013610",
+        "tachycardia, paroxysmal": "drkg:Disease::MESH:D013610",
+        "tachycardia, supraventricular": "drkg:Disease::MESH:D013617",
+        # Tinea
+        "tinea": "drkg:Disease::MESH:D014005",
+        # Mycoses
+        "mycoses": "drkg:Disease::MESH:D009181",
+        # Proctitis
+        "proctitis": "drkg:Disease::MESH:D011349",
+        # Gonorrhea
+        "gonorrhea": "drkg:Disease::MESH:D006069",
+        # Cholecystitis
+        "cholecystitis": "drkg:Disease::MESH:D041881",
+        # Prostatitis
+        "prostatitis": "drkg:Disease::MESH:D011472",
+        # Pneumocystis Pneumonia
+        "pneumocystis pneumonia": "drkg:Disease::MESH:D011020",
+        # Endometritis
+        "endometritis": "drkg:Disease::MESH:D004716",
+        # Attention Deficit Hyperactivity Disorder
+        "attention deficit hyperactivity disorder": "drkg:Disease::MESH:D001289",
+        # Migraine Disorders
+        "migraine disorders": "drkg:Disease::MESH:D008881",
+        # Tobacco Use Disorder
+        "tobacco use disorder": "drkg:Disease::MESH:D014029",
+        # Autistic Spectrum Disorder
+        "autistic spectrum disorder": "drkg:Disease::MESH:D001321",
+        # Liver Diseases
+        "liver diseases": "drkg:Disease::MESH:D008107",
+        # Urinary Bladder, Overactive
+        "urinary bladder, overactive": "drkg:Disease::MESH:D053201",
+        # Pemphigoid, Bullous
+        "pemphigoid, bullous": "drkg:Disease::MESH:D010391",
+        # Skin Diseases, Infectious
+        "skin diseases, infectious": "drkg:Disease::MESH:D017192",
+        # Dwarfism, Pituitary
+        "dwarfism, pituitary": "drkg:Disease::MESH:D004393",
+        # Cognitive Dysfunction
+        "cognitive dysfunction": "drkg:Disease::MESH:D060825",
+        # Meningococcal Infections
+        "meningococcal infections": "drkg:Disease::MESH:D008585",
+        # Myopia
+        "myopia": "drkg:Disease::MESH:D009216",
+        # Tremor
+        "tremor": "drkg:Disease::MESH:D014202",
+        # Intermittent Claudication
+        "intermittent claudication": "drkg:Disease::MESH:D007383",
+        # Bacterial Infections
+        "bacterial infections": "drkg:Disease::MESH:D001424",
+        # Liver Abscess
+        "liver abscess": "drkg:Disease::MESH:D008100",
+        # Apnea
+        "apnea": "drkg:Disease::MESH:D001049",
+        # Hypogonadism
+        "hypogonadism": "drkg:Disease::MESH:D007006",
+        # Synovitis
+        "synovitis": "drkg:Disease::MESH:D013585",
+        # Hypokalemia
+        "hypokalemia": "drkg:Disease::MESH:D007008",
+        # Parathyroid Neoplasms
+        "parathyroid neoplasms": "drkg:Disease::MESH:D010282",
+        # Miosis
+        "miosis": "drkg:Disease::MESH:D015877",
+        # Paraproteinemias
+        "paraproteinemias": "drkg:Disease::MESH:D054219",
+        # Cholestasis
+        "cholestasis": "drkg:Disease::MESH:D002779",
+        # Carotid Artery Diseases
+        "carotid artery diseases": "drkg:Disease::MESH:D002340",
+        # Ischemic Attack, Transient
+        "ischemic attack, transient": "drkg:Disease::MESH:D002546",
+        # Hot Flashes
+        "hot flashes": "drkg:Disease::MESH:D019584",
+        # Blastomycosis (not in DRKG but add mapping anyway)
+        "blastomycosis": "drkg:Disease::MESH:D001760",
+        # Cervicitis
+        "cervicitis": "drkg:Disease::MESH:D002575",
+        # Malabsorption Syndromes
+        "malabsorption syndromes": "drkg:Disease::MESH:D008286",
+        # Coinfection
+        "coinfection": "drkg:Disease::MESH:D060085",
+        # Clostridium Infections
+        "clostridium infections": "drkg:Disease::MESH:D003015",
+        # Haemophilus Infections
+        "haemophilus infections": "drkg:Disease::MESH:D006192",
+        # Digitalis Glycoside Poisoning (not in DRKG)
+        "digitalis glycoside poisoning": "drkg:Disease::MESH:D004071",
+        # Hepatitis D (not in DRKG)
+        "hepatitis d": "drkg:Disease::MESH:D003698",
+        # Diarrhea
+        "diarrhea": "drkg:Disease::MESH:D003967",
+        # Herpes Zoster (shingles)
+        "herpes zoster": "drkg:Disease::MESH:D006562",
+        # Candidiasis, vulvovaginal
+        "candidiasis, vulvovaginal": "drkg:Disease::MESH:D002181",
+        # Vaginitis
+        "vaginitis": "drkg:Disease::MESH:D014627",
+        # Candidiasis, oral
+        "candidiasis, oral": "drkg:Disease::MESH:D002180",
+        # Seasonal Affective Disorder
+        "seasonal affective disorder": "drkg:Disease::MESH:D016574",
+        # Panic Disorder
+        "panic disorder": "drkg:Disease::MESH:D016584",
+        # Stiff Person Syndrome
+        "stiff person syndrome": "drkg:Disease::MESH:D016750",
+        # Muscle Spasticity
+        "muscle spasticity": "drkg:Disease::MESH:D009128",
+        # Overweight
+        "overweight": "drkg:Disease::MESH:D050177",
+        # Pre-eclampsia
+        "pre-eclampsia": "drkg:Disease::MESH:D011225",
+        # Varicose Veins
+        "varicose veins": "drkg:Disease::MESH:D014648",
+        # Splenomegaly
+        "splenomegaly": "drkg:Disease::MESH:D013163",
+        # Strabismus
+        "strabismus": "drkg:Disease::MESH:D013285",
+        # Photophobia
+        "photophobia": "drkg:Disease::MESH:D020795",
+        # Rhinorrhea
+        "rhinorrhea": "drkg:Disease::MESH:D012220",
+        # Rhinitis
+        "rhinitis": "drkg:Disease::MESH:D012220",
+        # Sialorrhea
+        "sialorrhea": "drkg:Disease::MESH:D012798",
+        # Thyroid Neoplasms
+        "thyroid neoplasms": "drkg:Disease::MESH:D013964",
+        # Graves Ophthalmopathy
+        "graves ophthalmopathy": "drkg:Disease::MESH:D049970",
+        # Testicular Neoplasms
+        "testicular neoplasms": "drkg:Disease::MESH:D013736",
+        # Penile Neoplasms
+        "penile neoplasms": "drkg:Disease::MESH:D010412",
+        # Urologic Neoplasms
+        "urologic neoplasms": "drkg:Disease::MESH:D014571",
+        # Kidney Neoplasms
+        "kidney neoplasms": "drkg:Disease::MESH:D007680",
+        # Carcinoma, Renal Cell
+        "carcinoma, renal cell": "drkg:Disease::MESH:D002292",
+        # Uveal Neoplasms
+        "uveal neoplasms": "drkg:Disease::MESH:D014604",
+        # Malaria, Vivax
+        "malaria, vivax": "drkg:Disease::MESH:D016780",
+        # Salmonella Infections
+        "salmonella infections": "drkg:Disease::MESH:D012480",
+        # Rickettsia Infections
+        "rickettsia infections": "drkg:Disease::MESH:D012282",
+        # Paratyphoid Fever
+        "paratyphoid fever": "drkg:Disease::MESH:D010284",
+        # Typhoid Fever
+        "typhoid fever": "drkg:Disease::MESH:D014435",
+        # Scarlatina
+        "scarlatina": "drkg:Disease::MESH:D012541",
+        # Spinal Cord Injuries
+        "spinal cord injuries": "drkg:Disease::MESH:D013119",
+        # Keratosis, Actinic
+        "keratosis, actinic": "drkg:Disease::MESH:D055623",
+        # Lice Infestations
+        "lice infestations": "drkg:Disease::MESH:D010373",
+        # Scabies
+        "scabies": "drkg:Disease::MESH:D012532",
+        # Staphylococcal Infections
+        "staphylococcal infections": "drkg:Disease::MESH:D013203",
+        # Streptococcal Infections
+        "streptococcal infections": "drkg:Disease::MESH:D013290",
+        # Pharyngitis
+        "pharyngitis": "drkg:Disease::MESH:D010612",
+        # Epilepsies, Myoclonic
+        "epilepsies, myoclonic": "drkg:Disease::MESH:D020191",
+        # Ventricular Premature Complexes
+        "ventricular premature complexes": "drkg:Disease::MESH:D018879",
+        # Tumor Lysis Syndrome
+        "tumor lysis syndrome": "drkg:Disease::MESH:D015275",
+        # Pneumothorax
+        "pneumothorax": "drkg:Disease::MESH:D011030",
+        # Dwarfism
+        "dwarfism": "drkg:Disease::MESH:D004392",
+        # Still Disease, Adult Onset
+        "still disease, adult onset": "drkg:Disease::MESH:D016706",
+        # Granulomatosis with Polyangiitis
+        "granulomatosis with polyangiitis": "drkg:Disease::MESH:D014890",
+        # Leiomyoma
+        "leiomyoma": "drkg:Disease::MESH:D007889",
+        # Uterine Hemorrhage
+        "uterine hemorrhage": "drkg:Disease::MESH:D014592",
+        # Adenomyosis
+        "adenomyosis": "drkg:Disease::MESH:D062788",
+        # Pericarditis
+        "pericarditis": "drkg:Disease::MESH:D010493",
+        # Shock
+        "shock": "drkg:Disease::MESH:D012769",
+        # Ventricular Outflow Obstruction
+        "ventricular outflow obstruction": "drkg:Disease::MESH:D014694",
+        # Liver Cirrhosis, Biliary
+        "liver cirrhosis, biliary": "drkg:Disease::MESH:D008105",
+        # Enterocolitis, Pseudomembranous
+        "enterocolitis, pseudomembranous": "drkg:Disease::MESH:D004761",
+        # Glioblastoma
+        "glioblastoma": "drkg:Disease::MESH:D005909",
+        # Astrocytoma
+        "astrocytoma": "drkg:Disease::MESH:D001254",
+        # Periarthritis
+        "periarthritis": "drkg:Disease::MESH:D010489",
+        # Stress Disorders, Post-Traumatic
+        "stress disorders, post-traumatic": "drkg:Disease::MESH:D013313",
+        # Stomatitis, Aphthous
+        "stomatitis, aphthous": "drkg:Disease::MESH:D013281",
+        # Musculoskeletal Pain
+        "musculoskeletal pain": "drkg:Disease::MESH:D059352",
+        # Dysmenorrhea
+        "dysmenorrhea": "drkg:Disease::MESH:D004412",
+        # Renal Colic
+        "renal colic": "drkg:Disease::MESH:D056844",
+        # Kidney Diseases
+        "kidney diseases": "drkg:Disease::MESH:D007674",
+        # Renal Osteodystrophy
+        "renal osteodystrophy": "drkg:Disease::MESH:D012080",
+        # Acidosis, Renal Tubular
+        "acidosis, renal tubular": "drkg:Disease::MESH:D000141",
+        # Thiamine Deficiency
+        "thiamine deficiency": "drkg:Disease::MESH:D013832",
+        # Vitamin A Deficiency
+        "vitamin a deficiency": "drkg:Disease::MESH:D014802",
+        # Vitamin B 12 Deficiency
+        "vitamin b 12 deficiency": "drkg:Disease::MESH:D014806",
+        # Hyponatremia
+        "hyponatremia": "drkg:Disease::MESH:D007010",
+        # Iron Overload
+        "iron overload": "drkg:Disease::MESH:D019190",
+        # Prolactinoma
+        "prolactinoma": "drkg:Disease::MESH:D015175",
+        # Pituitary Neoplasms
+        "pituitary neoplasms": "drkg:Disease::MESH:D010911",
+        # Sheehan Syndrome
+        "sheehan syndrome": "drkg:Disease::MESH:D007018",
+        # Community-acquired infections
+        "community-acquired infections": "drkg:Disease::MESH:D017714",
+        # Pneumonia, Bacterial
+        "pneumonia, bacterial": "drkg:Disease::MESH:D018410",
+        # Gastrointestinal Hemorrhage
+        "gastrointestinal hemorrhage": "drkg:Disease::MESH:D006471",
+        # Zollinger-Ellison Syndrome
+        "zollinger-ellison syndrome": "drkg:Disease::MESH:D015043",
+        # Phobic Disorders
+        "phobic disorders": "drkg:Disease::MESH:D010698",
+        # Neurotic Disorders
+        "neurotic disorders": "drkg:Disease::MESH:D009497",
+        # Subarachnoid Hemorrhage
+        "subarachnoid hemorrhage": "drkg:Disease::MESH:D013345",
+        # Peripheral Arterial Disease
+        "peripheral arterial disease": "drkg:Disease::MESH:D058729",
+        # Peripheral Vascular Diseases
+        "peripheral vascular diseases": "drkg:Disease::MESH:D016491",
+        # Pouchitis
+        "pouchitis": "drkg:Disease::MESH:D019449",
+        # Obstetric Labor, Premature
+        "obstetric labor, premature": "drkg:Disease::MESH:D007752",
+        # Polycystic Ovary Syndrome
+        "polycystic ovary syndrome": "drkg:Disease::MESH:D011085",
+        # Presbyopia (may not be in DRKG)
+        "presbyopia": "drkg:Disease::MESH:D011305",
+        # Panuveitis
+        "panuveitis": "drkg:Disease::MESH:D015864",
+        # Polydipsia
+        "polydipsia": "drkg:Disease::MESH:D059606",
+        # Syphilis
+        "syphilis": "drkg:Disease::MESH:D013587",
+        # Anemia, Iron-Deficiency
+        "anemia, iron-deficiency": "drkg:Disease::MESH:D018798",
+        # Epilepsies, Partial
+        "epilepsies, partial": "drkg:Disease::MESH:D004828",
+        # Seizures
+        "seizures": "drkg:Disease::MESH:D012640",
+        # Proctocolitis
+        "proctocolitis": "drkg:Disease::MESH:D011349",
+        # Sleep Initiation and Maintenance Disorders
+        "sleep initiation and maintenance disorders": "drkg:Disease::MESH:D007319",
+        # Sleep Wake Disorders
+        "sleep wake disorders": "drkg:Disease::MESH:D012893",
+        # Depressive Disorder, Major
+        "depressive disorder, major": "drkg:Disease::MESH:D003865",
+        # Edema
+        "edema": "drkg:Disease::MESH:D004487",
+        # Hypoglycemia
+        "hypoglycemia": "drkg:Disease::MESH:D007003",
+        # Cross Infection (nosocomial)
+        "cross infection": "drkg:Disease::MESH:D003428",
     }
 
     # Agent mappings
