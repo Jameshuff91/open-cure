@@ -3257,6 +3257,7 @@ class DrugRepurposingPredictor:
         drug_name: str = "",
         disease_name: str = "",
         drug_id: str = "",
+        knn_score: float = 0.0,
     ) -> Tuple[ConfidenceTier, bool, Optional[str]]:
         """
         Assign confidence tier based on h135 criteria.
@@ -3725,6 +3726,12 @@ class DrugRepurposingPredictor:
             # h662: Named reasons for holdout tracking
             if mechanism_support:
                 return ConfidenceTier.MEDIUM, False, 'default_freq10_mechanism'
+            # h740: kNN score < 2.0 demotion for no-mechanism predictions.
+            # R1-5 score<2.0: 9.9% ± 3.0% holdout (n=30/seed) — below LOW avg.
+            # R6-10 score<2.0: 12.1% ± 3.0% holdout (n=62/seed) — at LOW avg.
+            # Low kNN scores indicate weak neighbor agreement, enriched in novel preds.
+            elif knn_score < 2.0:
+                return ConfidenceTier.LOW, False, 'default_nomech_low_score'
             elif rank <= 5:
                 return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r1_5'
             else:
@@ -4541,7 +4548,7 @@ class DrugRepurposingPredictor:
 
                     tier, rescue_applied, cat_specific = self._assign_confidence_tier(
                         rank, train_freq, mech_support, has_targets, disease_tier, category,
-                        drug_name, disease_name, drug_id
+                        drug_name, disease_name, drug_id, knn_score
                     )
 
                     # h388: Target overlap tier promotion (no rank change)
@@ -4567,7 +4574,9 @@ class DrugRepurposingPredictor:
                             and cat_specific != 'infectious_hierarchy_pneumonia'
                             # h677: Block rescue of LA procedural demotions (bupivacaine/lidocaine)
                             # LA drugs demoted by h540 should not be rescued via target overlap
-                            and cat_specific != 'local_anesthetic_procedural'):
+                            and cat_specific != 'local_anesthetic_procedural'
+                            # h740: Block rescue of low kNN score demotions (9.9-12.1% holdout)
+                            and cat_specific != 'default_nomech_low_score'):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = cat_specific or 'target_overlap_promotion'
 

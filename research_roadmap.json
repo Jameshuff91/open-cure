@@ -14921,7 +14921,7 @@
     {
       "id": "h737",
       "title": "Novel MEDIUM Sub-Rule Demotion: default_nomech_r1-5 and r6-10 Have LOW-Quality Novel Predictions",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -14933,7 +14933,7 @@
         "Alternative: annotate deliverable with novel_prediction flag for consumers",
         "Check if STRONG_EVIDENCE mining could identify the 48% within this rule"
       ],
-      "findings": "",
+      "findings": "h737 analysis found strong kNN score gradient within default nomech MEDIUM: R1-5 Q4(high score)=55.4% vs Q1(low score)=11.3%; R6-10 Q4=36.2% vs Q1=10.7%. Score < 2.0 is 9.9-12.1% (LOW quality), score >= 5.0 is 47.8% (above MEDIUM avg). Low scores are heavily enriched in novel predictions (R1-5: 24.6% novel below 2.0 vs 4.6% known). kNN score is a GT-free proxy for prediction quality within these sub-rules. Implementing as h740: kNN score threshold demotion.",
       "result_metric": "",
       "rationale": "h734 found novel MEDIUM default_freq10_nomech_r1_5 = 19.7% and r6_10 = 16.3%. These are below LOW threshold. But demoting them requires distinguishing novel from known at prediction time, which requires GT knowledge (circular). The right solution may be literature mining as a quality signal (h732)."
     },
@@ -14972,6 +14972,75 @@
       "findings": "VALIDATED: highly_repurposable rule demoted from MEDIUM to LOW. Novel holdout = 4.5% \u00b1 4.6% (n=20), known = 80.0% (n=13). 30 predictions demoted (3 retained via mechanism paths). Impact: MEDIUM -0.7pp (47.0\u219246.3%) due to removing known indications, BUT novel MEDIUM +1.3pp (21.5\u219222.8%) \u2014 the correct metric improved. Affected diseases: chronic pain (100% SR), acute pain, bronchospasm, dysmenorrhea. Novel predictions were clearly wrong (Omeprazole\u2192pain, Palivizumab\u2192bronchospasm). Key lesson: demoting predictions that include known indications will always decrease the overall average but improve novel precision.",
       "result_metric": "Novel MEDIUM +1.3pp (21.5\u219222.8%). Overall MEDIUM -0.7pp (47.0\u219246.3%).",
       "rationale": "h738 found highly_repurposable rule has 4.5% \u00b1 4.6% novel holdout (n=20) \u2014 clearly FILTER/LOW quality, not MEDIUM. The rule was from h297 which likely used full-data precision. 33 predictions affected."
+    },
+    {
+      "id": "h740",
+      "title": "kNN Score Threshold Demotion for Default NoMech MEDIUM Predictions",
+      "category": "tier_system",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "validated",
+      "rationale": "h737 analysis revealed strong kNN score gradient within default_freq10_nomech MEDIUM predictions. Score < 2.0: 9.9-12.1% holdout (LOW quality, ~92 preds). Score >= 5.0: 47.8% (above avg). Low scores enriched in novel predictions (GT-free proxy). Estimated MEDIUM impact: +2.4pp by demoting score < 2.0 to LOW.",
+      "dependencies": [
+        "h737"
+      ],
+      "steps": [
+        "Implement kNN score threshold in _assign_confidence_tier: score < 2.0 \u2192 LOW for nomech R1-5 and R6-10",
+        "Run 5-seed holdout validation",
+        "Verify tier precision improvements",
+        "Check for interactions with other rescue/demotion rules",
+        "Consider whether R6-10 needs a different threshold than R1-5"
+      ],
+      "findings": "kNN score < 2.0 demotion for nomech R1-5 and R6-10 predictions. 489 predictions moved from MEDIUM to LOW. default_nomech_low_score: 7.7% \u00b1 1.6% holdout (n=97/seed) \u2014 firmly LOW. Remaining R1-5: 31.7% \u00b1 3.6% (improved from 30.6%). Remaining R6-10: 30.2% \u00b1 6.8% (improved from 26.0%). MEDIUM tier: 37.2% \u00b1 2.7% (improved from 34.0% in committed h393, +3.2pp). Estimated pure h740 effect: +5.1pp MEDIUM by removing 92/seed at 11.4% holdout. Low kNN scores enriched in novel predictions (36.3% novel below 2.0 vs 8.5% known). Target_overlap rescue blocked for demoted predictions.",
+      "result_metric": "MEDIUM +3.2pp (34.0\u219237.2%), 489 preds demoted to LOW"
+    },
+    {
+      "id": "h741",
+      "title": "kNN Score Gradient Demotion: Score < 3.0 for R6-10 NoMech",
+      "description": "h740 demoted score < 2.0 for both R1-5 and R6-10. But R6-10 score 2.0-3.0 has only 15.7% \u00b1 1.8% holdout (n=108/seed) \u2014 borderline LOW quality. R1-5 score 2.0-3.0 has 13.2% which is already LOW. Could a higher threshold (3.0) for R6-10 further improve MEDIUM? Risk: R6-10 remaining would be n=54/seed (33.7%), small but HIGH-MEDIUM quality.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Analyze R6-10 score 2.0-3.0 predictions in detail",
+        "Check if n=54/seed remaining R6-10 is reliable enough",
+        "If implementing: test score < 3.0 threshold for R6-10 only",
+        "Run 5-seed holdout validation",
+        "CAUTION: R1-5 score 2.0-3.0 also 13.2% but n=28 is tiny \u2014 avoid"
+      ]
+    },
+    {
+      "id": "h742",
+      "title": "kNN Score as Continuous Quality Signal: Within-MEDIUM Score Percentile Annotation",
+      "description": "h740 showed kNN score is a strong GT-free quality predictor within MEDIUM: Q1(low score)=11.3% vs Q4(high score)=55.4% for R1-5 nomech. This gradient applies across ALL MEDIUM sub-rules, not just nomech. Add knn_score_percentile as a deliverable annotation for all MEDIUM predictions so consumers can prioritize higher-score predictions within the same tier. May reveal further demotion targets in other sub-rules.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Analyze kNN score gradient across ALL MEDIUM sub-rules (not just nomech)",
+        "Compute score percentile within each sub-rule",
+        "Add knn_score_percentile to deliverable",
+        "Check if other sub-rules have similar low-score LOW-quality pockets",
+        "Consider whether freq5_mechanism or target_overlap also have score gradients"
+      ]
+    },
+    {
+      "id": "h743",
+      "title": "Combined Score + TransE Demotion: Predictions Without Both Signals",
+      "description": "h740 showed kNN score < 2.0 is LOW quality. h405 showed TransE disagreement is lower quality. What about predictions that lack BOTH signals \u2014 low kNN score AND no TransE consilience? These predictions have no strong independent evidence. Could demoting predictions that are both low-score and non-TransE further purify MEDIUM?",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Cross-tabulate kNN score quartile \u00d7 TransE consilience for MEDIUM predictions",
+        "Evaluate holdout for low-score + non-TransE group",
+        "Check if this group is already captured by h740 demotion",
+        "If not: evaluate whether further demotion improves MEDIUM precision"
+      ]
     }
   ],
   "completed": [
@@ -17366,6 +17435,12 @@
       "hypothesis_id": "h739",
       "learning": "Removing low-quality MEDIUM predictions that include known indications will DECREASE overall MEDIUM precision (because known indications have ~80% holdout) but INCREASE novel MEDIUM precision. Novel precision is the correct optimization target for drug repurposing since known indications are not actionable.",
       "implication": "Always report novel precision when evaluating demotion impact. Overall precision is misleading due to known-indication inflation."
+    },
+    {
+      "date": "2026-02-07",
+      "hypothesis_id": "h740",
+      "learning": "kNN score is a strong GT-free quality predictor within MEDIUM nomech predictions. Score < 2.0 has 7.7% holdout (vs 30+% above 2.0). Novel predictions are 4x more likely to be low-score (36.3% vs 8.5%). Adding knn_score to _assign_confidence_tier enabled the first score-based demotion rule.",
+      "implication": "kNN score may be useful across OTHER sub-rules too, not just nomech. Could extend to freq5_mechanism, target_overlap, etc."
     }
   ],
   "collaborations": [
