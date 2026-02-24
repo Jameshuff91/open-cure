@@ -926,6 +926,7 @@ INVERSE_INDICATION_PAIRS = {
     'prednisolone': {
         'idiopathic pulmonary fibrosis',
         'neovascular glaucoma', 'osteoporosis', 'pancreatitis',
+        'vertebral fractures',  # h769: CS-induced osteoporosis → fractures
         'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
         'toxic epidermal necrolysis',  # h673: no proven efficacy, infection risk, 40% mortality on CS
         'obstructive sleep apnea',  # h673: CS increase OSA risk (HR 1.40), weight gain worsens OSA
@@ -950,7 +951,8 @@ INVERSE_INDICATION_PAIRS = {
     'dexamethasone': {
         'idiopathic pulmonary fibrosis', 'extrapulmonary tuberculosis',
         'systemic myasthenia gravis',
-        'neovascular glaucoma', 'osteoporosis',
+        'neovascular glaucoma', 'osteoporosis', 'ocular hypertension',  # h769: steroid-induced IOP elevation
+        'vertebral fractures',  # h769: CS-induced osteoporosis → fractures
         'secondary adrenocortical insufficiency',  # h542: long-acting CS causes HPA suppression
         'toxic epidermal necrolysis',  # h673
         'obstructive sleep apnea',  # h673
@@ -1115,6 +1117,16 @@ INVERSE_INDICATION_PAIRS = {
     # h674: Defensive coverage for withdrawn/research statins (no current predictions but prevents future leakage)
     'cerivastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
     'mevastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
+    # h769: Doxycycline CAUSES diarrhea (common GI side effect of tetracyclines)
+    'doxycycline': {'diarrhea'},
+    # h769: Vitamin D analogs CAUSE hypercalcemia (increase calcium absorption/mobilization)
+    'calcitriol': {'hypercalcemia'},
+    'ergocalciferol': {'hypercalcemia'},
+    # h769: Adenosine CAUSES transient asystole; NOT a treatment for cardiac arrest
+    # Used for SVT (supraventricular tachycardia) only
+    'adenosine': {'cardiac arrest'},
+    # h769: Beta-blockers CAUSE hypotension (lower blood pressure by design)
+    'carvedilol': {'hypotension'},
 }
 
 # h481: Drug class → disease category standard-of-care mappings
@@ -3650,11 +3662,13 @@ class DrugRepurposingPredictor:
         # h396: These hierarchy groups have 0% precision (n>=2) - demote to MEDIUM
         # h757: skin_infection 25.0% ± 12.5% holdout (n=8/seed) — below HIGH avg (57.0%)
         # h760: copd 25.9% ± 36.7% holdout (n=3.7/seed) — below HIGH avg (59.4%), demoted HIGH→MEDIUM
-        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine', 'skin_infection', 'copd'}
+        # h764: parkinsons demoted MEDIUM→LOW (18.2% full-data, 0% holdout n=0/seed — invisible and low quality)
+        HIERARCHY_DEMOTE_TO_MEDIUM = {'migraine', 'skin_infection', 'copd'}
         # h649: pneumonia demoted MEDIUM→LOW (16.7% ± 0.0% holdout, n=6/seed)
         # h757: epilepsy 20.0% ± 14.1% holdout (n=10/seed), gout 0.0% (n=4/seed) — below MEDIUM avg (37.2%)
         # h760: diabetes 11.1% ± 15.7% holdout (n=3.7/seed) — below MEDIUM avg (36.0%), demoted MEDIUM→LOW
-        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia', 'epilepsy', 'gout', 'diabetes'}
+        # h764: parkinsons 18.2% full-data (below MEDIUM), 0% holdout (invisible) — demoted MEDIUM→LOW
+        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia', 'epilepsy', 'gout', 'diabetes', 'parkinsons'}
 
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(

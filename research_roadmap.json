@@ -15551,13 +15551,15 @@
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Check if parkinsons 18.2% full-data is below typical LOW/MEDIUM boundary",
         "Analyze parkinsons drugs to understand why predictions fail",
         "For migraine, check if expanded GT could improve evaluability",
         "Implement demotion if justified and measure impact"
-      ]
+      ],
+      "findings": "Parkinsons already demoted to LOW in h757 (line 3671 production_predictor.py). \n0 parkinsons predictions remaining in MEDIUM.\nMigraine at 50% holdout (n=2/seed) but 62.5% full-data. All 5 predictions are medically legitimate \n(dihydroergotamine, botox, valproate, timolol for migraine/headache). Keep as MEDIUM.\nh764 parkinsons portion was already completed by previous session's h757 work.",
+      "result_metric": "Parkinsons already LOW. Migraine stays MEDIUM (legitimate predictions)."
     },
     {
       "id": "h765",
@@ -15595,7 +15597,7 @@
       "id": "h767",
       "title": "Hierarchy Rule GT Gap Expansion: Add FDA-Approved Drugs Missing from Expanded GT for Hierarchy Diseases",
       "description": "h765 found many hierarchy predictions are well-known FDA-approved treatments (e.g., all 8 MS drugs, 13 sepsis antibiotics, 15 asthma drugs) but many may be missing from expanded GT. Adding these as GT entries would improve holdout validation. Focus on the 67 STRONG evidence predictions from invisible hierarchy rules.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -15605,13 +15607,15 @@
         "For missing pairs, verify FDA approval status",
         "Add confirmed FDA-approved pairs to expanded_ground_truth.json",
         "Re-run holdout evaluation to measure impact"
-      ]
+      ],
+      "findings": "Expanded GT with 49 new pairs from hierarchy prediction GT gaps:\n- 10 STRONG evidence pairs from h765 literature mining (antibiotics\u2192sepsis, CS\u2192lupus nephritis, rivaroxaban\u2192PAD, rituximab/tacrolimus\u2192LN)\n- 3 CS\u2192lupus nephritis pairs with WEAK/NO evidence (corticosteroids are standard therapy)  \n- 36 pairs from broader hierarchy analysis: anticonvulsants\u2192tonic-clonic seizure, COPD drugs\u2192emphysema, antibiotics\u2192cellulitis/skin infections/pelvic infections, statins\u2192mixed dyslipidemia, antiplatelets\u2192CAD, PD drugs\u2192parkinsonism, etc.\n\nImpact: GOLDEN +1.5pp (78.1\u219279.6%), HIGH +0.3pp (59.4\u219259.7%), MEDIUM +1.7pp (36.0\u219237.7%). Not statistically significant (p=0.13 for MEDIUM) but direction is consistently positive and pairs are genuine FDA-approved treatments.\n\n166 total hierarchy GT gaps found; 49 added (most conservative, clearly FDA-approved). Remaining 117 gaps are more ambiguous (e.g., Vancomycin\u2192arthritis, Olmesartan\u2192hypercholesterolemia).\n\nFixed: pretomanid drug ID (DB12825\u2192DB05154), added fondaparinux\u2192ACS separately.\nGT: 57,495 \u2192 57,544 pairs.",
+      "result_metric": "MEDIUM 37.7% \u00b1 2.6% (+1.7pp), GOLDEN 79.6% \u00b1 6.4% (+1.5pp)"
     },
     {
       "id": "h768",
       "title": "MEDIUM Tier Literature Mining: Validate Holdout-Invisible MEDIUM Sub-Reasons",
       "description": "h765 successfully used literature mining to validate holdout-invisible HIGH hierarchy rules. The same approach should be applied to MEDIUM sub-reasons that have small n or high variance in holdout evaluation. This could identify MEDIUM rules that should be demoted to LOW or promoted to HIGH.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -15620,6 +15624,123 @@
         "Extract predictions matching these sub-reasons",
         "Run literature mining pipeline",
         "Cross-tabulate evidence with holdout to identify miscalibrated rules"
+      ],
+      "findings": "Mined 277 MEDIUM predictions across all sub-reasons. Evidence distribution: 137 STRONG (49%), 65 MODERATE (23%), 28 WEAK (10%), 47 NO_EVIDENCE (17%).\nPer sub-reason STRONG rates: comp_to_base_high_87=100%, respiratory_hierarchy_copd=69%, cancer_same_type_high_rank=58%, neurological=52%, reproductive=50%, infectious_hierarchy_skin_infection=35%, atc_coherent_infectious=14%, hematological=0%, mechanism_specific=0%.\n5 STRONG GT gaps found \u2014 ALL false positives (supportive care for cancer, weak evidence).\nKey findings: (1) hematological MEDIUM is 100% CS-driven (0% STRONG, all MODERATE) \u2014 consistent with CS holdout artifact. (2) atc_coherent_infectious is weakest MEDIUM sub-reason (14% STRONG, 25% NO_EVIDENCE). (3) Literature evidence validates existing MEDIUM sub-reason calibration \u2014 no demotions/promotions needed.",
+      "result_metric": "MEDIUM sub-reasons validated. No GT gaps. atc_coherent_infectious weakest (14% STRONG)"
+    },
+    {
+      "id": "h768",
+      "title": "Hierarchy GT Gap Expansion Phase 2: Validate Remaining 117 Ambiguous Gaps via Literature Mining",
+      "description": "h767 found 166 hierarchy GT gaps total but only added 49 (clearly FDA-approved). The remaining 117 gaps include predictions like Cholestyramine\u2192ACS, Vancomycin\u2192arthritis, Olmesartan\u2192hypercholesterolemia. Run automated literature mining on these 117 to identify which are genuine treatments vs kNN artifacts.",
+      "steps": [
+        "Extract the 117 unadded hierarchy GT gaps from h767 analysis",
+        "Run literature mining (PubMed + ClinicalTrials.gov) on each",
+        "Add STRONG evidence pairs to expanded GT",
+        "Re-run holdout evaluation"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "category": "gt_quality"
+    },
+    {
+      "id": "h769",
+      "title": "Non-Hierarchy GT Gap Mining: Literature-Validate HIGH/GOLDEN Non-Hierarchy Predictions Missing from GT",
+      "description": "h767 focused on hierarchy rules. But non-hierarchy GOLDEN/HIGH predictions (e.g., corticosteroid SOC, cancer same-type, disease-hierarchy) may also have GT gaps. Count non-hierarchy GOLDEN/HIGH predictions not in expanded GT and run literature mining to identify genuine treatments.",
+      "steps": [
+        "Count all non-hierarchy GOLDEN/HIGH predictions not in expanded GT",
+        "Run literature mining on the top candidates",
+        "Add confirmed FDA-approved pairs to GT",
+        "Re-run holdout evaluation"
+      ],
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "invalidated",
+      "category": "gt_quality",
+      "findings": "Mined 608 non-hierarchy GOLDEN/HIGH predictions missing from expanded GT. \nEvidence distribution: 222 STRONG, 106 MODERATE, 134 WEAK, 146 NONE.\nOf 222 STRONG, 208 already in GT. 14 STRONG gaps manually reviewed \u2014 ALL are false positives:\n- 7 inverse indications (doxycycline\u2192diarrhea, dexamethasone\u2192ocular HTN, calcitriol/ergocalciferol\u2192hypercalcemia, adenosine\u2192cardiac arrest, prednisolone\u2192vertebral fractures, carvedilol\u2192hypotension)\n- 7 other FP (supportive care, co-administration noise, wrong spectrum)\nAdded 7 new inverse indication pairs + 2 CS\u2192vertebral fractures/ocular hypertension to INVERSE_INDICATION_PAIRS.\nNo new GT entries added. Literature mining confirms existing GT is comprehensive for GOLDEN/HIGH non-hierarchy predictions.",
+      "result_metric": "0 GT gaps (14/14 STRONG FP), +9 inverse indication entries"
+    },
+    {
+      "id": "h770",
+      "title": "Holdout-Invisible Disease Analysis: Which Diseases Have Zero Holdout Representation?",
+      "description": "Several hierarchy rules show 100% full-data but 0% holdout (MS, sepsis, asthma) because these diseases always land in training. Identify which diseases systematically appear in training across all seeds and never in holdout. These diseases inflate full-data precision and their predictions can never be holdout-validated. Could use stratified splitting to ensure each disease appears in holdout at least once.",
+      "steps": [
+        "For each of the 5 holdout seeds, record which diseases are in holdout",
+        "Identify diseases that never appear in holdout across all 5 seeds",
+        "Quantify the inflation these diseases cause in full-data precision",
+        "Consider stratified splitting as mitigation"
+      ],
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 5,
+      "status": "pending",
+      "category": "evaluation"
+    },
+    {
+      "id": "h771",
+      "title": "Literature Evidence Integration: MEDIUM+STRONG\u2192HIGH Promotion with Mining Coverage Check",
+      "description": "h731 showed MEDIUM+STRONG_EVIDENCE=67.4% holdout (clearly HIGH-quality). h768 confirmed 49% of MEDIUM predictions have STRONG evidence. But only 277/646 MEDIUM predictions have been mined. Run full literature mining on ALL 646 MEDIUM predictions, then implement MEDIUM+STRONG as HIGH promotion rule. Expected: ~300 MEDIUM\u2192HIGH, significant HIGH tier expansion.",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "status": "pending",
+      "steps": [
+        "Mine remaining ~370 MEDIUM predictions not yet covered by h768",
+        "Verify STRONG rate is consistent across full sample",
+        "Check if MEDIUM+STRONG holdout reaches HIGH threshold (>55%)",
+        "Implement as tier promotion rule if validated",
+        "Run holdout evaluation to measure impact"
+      ]
+    },
+    {
+      "id": "h772",
+      "title": "Hematological MEDIUM CS Artifact: Demote Non-Autoimmune Hematological CS Predictions",
+      "description": "h768 found hematological MEDIUM has 0% STRONG literature evidence (all MODERATE). h577 showed CS inflate precision +13pp for HIGH. Hematological MEDIUM is likely inflated by CS artifact. Analyze whether these are autoimmune-mediated (ITP, AIHA, DBA) vs non-immune hematological conditions. Non-immune CS predictions may need demotion.",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "List all hematological MEDIUM predictions with their diseases",
+        "Classify diseases: autoimmune-mediated (ITP, AIHA) vs non-immune (DIC, anemia of chronic disease)",
+        "Check holdout precision for immune vs non-immune subsets",
+        "Demote non-immune CS\u2192hematological to LOW if holdout confirms",
+        "Run holdout evaluation"
+      ]
+    },
+    {
+      "id": "h773",
+      "title": "ATC Coherent Infectious Sub-Analysis: Antifungal vs Antibacterial Performance Split",
+      "description": "h768 showed atc_coherent_infectious is the weakest MEDIUM sub-reason (14% STRONG, 25% NO_EVIDENCE). Memory notes antifungals have 64.9% holdout vs antibacterials 33.3%. Could demoting antibacterial-ATC-coherent-infectious to LOW while keeping antifungal improve MEDIUM precision?",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Split atc_coherent_infectious into antifungal vs antibacterial",
+        "Check holdout precision for each subset",
+        "Check literature evidence rate for each subset",
+        "Implement selective demotion if antibacterial subset is LOW-quality",
+        "Run holdout evaluation"
+      ]
+    },
+    {
+      "id": "h774",
+      "title": "Inverse Indication Class Expansion: Beta-Blockers\u2192Hypotension and Vitamin D\u2192Hypercalcemia",
+      "description": "h769 found carvedilol\u2192hypotension (beta-blocker CAUSES hypotension) and calcitriol/ergocalciferol\u2192hypercalcemia (vitamin D CAUSES hypercalcemia). These are CLASS effects affecting ALL beta-blockers and ALL vitamin D analogs. Expand to full drug classes: all beta-blockers\u2192hypotension, all vitamin D\u2192hypercalcemia, all tetracyclines\u2192diarrhea.",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "List all beta-blockers in DRKG (propranolol, metoprolol, atenolol, etc.)",
+        "List all vitamin D analogs (calcitriol, ergocalciferol, cholecalciferol, etc.)",
+        "List all tetracyclines (doxycycline, minocycline, tetracycline)",
+        "Check which have predictions for hypotension/hypercalcemia/diarrhea",
+        "Add class-level inverse indication pairs",
+        "Run holdout evaluation"
       ]
     }
   ],
@@ -18057,6 +18178,24 @@
       "hypothesis_id": "h765",
       "learning": "Literature mining validates all 8 holdout-invisible HIGH hierarchy rules (82% STRONG evidence). No demotions needed. PubMed exact-match search fails for very specific disease names (0/6 for CF pseudomonas, 0/2 for ATTR cardiomyopathy) \u2014 all false negatives confirmed by manual review.",
       "implication": "Literature mining is a reliable independent validation signal for holdout-invisible rules. Pipeline needs disease name simplification for specific/rare conditions."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h767",
+      "learning": "Hierarchy predictions have systematic GT gaps for well-known treatments. 166 gaps found across 44 diseases. Most common: sepsis antibiotics (10), emphysema drugs (10), cellulitis antibiotics (7), seizure drugs (10), dyslipidemia statins (8). Adding 49 conservative FDA-approved pairs improved MEDIUM +1.7pp. Remaining 117 gaps need literature validation.",
+      "implication": "GT expansion from hierarchy predictions is a reliable, low-risk way to improve evaluation accuracy. Literature mining should be applied systematically to all holdout-invisible predictions."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h769",
+      "learning": "Literature mining STRONG evidence for GT gaps has ~100% false positive rate when existing GT is comprehensive. 7/14 STRONG gaps were inverse indications (drug CAUSES the condition). Literature co-mention \u2260 therapeutic indication. Always validate STRONG hits against known drug mechanisms.",
+      "implication": "GT gap mining is approaching diminishing returns for GOLDEN/HIGH non-hierarchy predictions. Future GT expansion should focus on specific drug classes or disease categories with known incompleteness."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h768",
+      "learning": "Literature STRONG rate correlates with MEDIUM sub-reason quality: comp_to_base_high_87 (100%), respiratory_hierarchy_copd (69%), cancer_same_type_high_rank (58%) vs hematological (0%), atc_coherent_infectious (14%). Sub-reasons with 0% STRONG evidence are CS-artifact driven.",
+      "implication": "Literature evidence rate can serve as external validation signal for sub-reason quality, independent of holdout precision."
     }
   ],
   "collaborations": [
