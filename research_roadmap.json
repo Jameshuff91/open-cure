@@ -15307,7 +15307,7 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "in_progress",
       "rationale": "h749 h393 holdout shows default_freq10_nomech_r6_10 at 29.1% \u00b1 8.2% holdout (n=31/seed). MEDIUM avg is 35.5%. This is 6.4pp below average and borderline LOW quality. 154 full-data predictions. z-score vs MEDIUM avg = (29.1-35.5)/8.2 = -0.78, not significant. But combined with existing evidence (h555 already demoted R11-20 to LOW), R6-10 without mechanism may be next demotion target. Need to check: is this subset already correctly classified, or would LOW improve MEDIUM?",
       "steps": [
         "Run targeted holdout for freq10_nomech_r6_10 to confirm 29.1%",
@@ -15323,14 +15323,16 @@
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "rationale": "h749 h393 holdout shows gastrointestinal HIGH at 90.4% \u00b1 9.3% holdout (n=10/seed). This is above GOLDEN avg (78.0%). However, only 38 full-data predictions from 11 drugs and 7 diseases. Small n makes this risky. Need to verify signal is robust across seeds (3/5 seeds had data). If confirmed, 38 predictions could move HIGH\u2192GOLDEN, improving both tiers.",
       "steps": [
         "Check which GI diseases and drugs contribute to this HIGH rule",
         "Verify 90.4% is not driven by a single disease or drug",
         "Run targeted holdout validation",
         "If confirmed, implement promotion"
-      ]
+      ],
+      "findings": "h751 INVALIDATED: GI HIGH holdout = 69.9% \u00b1 16.8% (n=11.4/seed, 5/5 seeds). Above HIGH avg (57%) but below GOLDEN threshold (78%). Drug-class sub-reason: 52.6% \u00b1 37.2% (only 3/5 seeds with data, n=4/seed \u2014 extremely sparse). h749 reported 90.4% but that was from a different evaluation setup. Proper 5-seed holdout with expanded GT shows 69.9%. n too small (11.4/seed << 30 threshold) and variance too high (\u00b116.8%) for reliable promotion. GI HIGH is performing well within HIGH tier but not promotable.",
+      "result_metric": "69.9% \u00b1 16.8% holdout (below GOLDEN 78%)"
     },
     {
       "id": "h752",
@@ -15339,13 +15341,43 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "in_progress",
       "rationale": "h749 h393 holdout shows cv_pathway_comprehensive at 31.2% \u00b1 17.7% holdout (n=10/seed), vs 68.6% full-data \u2014 a 37.4pp gap, one of the most overfitted rules. 51 full-data predictions. The high variance (\u00b117.7%) and large overfit gap suggest this rule may be capturing training correlations rather than genuine signal. Should investigate: is the rule still adding value over baseline, or should it be demoted/removed?",
       "steps": [
         "Analyze which CV diseases contribute most to overfit",
         "Check if pathway-comprehensive signal is redundant with other rules",
         "Compare holdout precision with and without cv_pathway_comprehensive",
         "Decide whether to demote or keep"
+      ]
+    },
+    {
+      "id": "h752",
+      "title": "HIGH Tier Drug-Class Sub-Reason Audit: Which Drug-Class Rules Exceed GOLDEN Threshold?",
+      "category": "tier_system",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "rationale": "h751 found GI drug-class HIGH at 52.6% but with huge variance. Other categories also have drug-class rescue rules (neurological h171, cardiovascular h351). Some drug-class rules might individually exceed GOLDEN threshold even if the category overall doesn't. For example, PPI\u2192ulcer might be 90%+ while antispasmodic\u2192IBS might be 30%. Per-rule holdout analysis could identify GOLDEN-worthy drug-class matches.",
+      "steps": [
+        "Run holdout per drug-class rule across all categories",
+        "Identify rules with >70% holdout AND n>10/seed",
+        "Consider promoting specific rules to GOLDEN"
+      ]
+    },
+    {
+      "id": "h753",
+      "title": "Tier Variance Reduction: Stratified Disease Splitting by Category for More Stable Holdout",
+      "category": "methodology",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "status": "pending",
+      "rationale": "h751 showed GI HIGH variance of \u00b116.8% across seeds because random splitting gives 7-15 GI holdout diseases per seed. Category-stratified splitting would ensure each seed has proportional GI representation. This could reduce variance for per-category holdout estimates. Already noted as structural issue in h617 (HIGH \u00b113.5% is irreducible with random splitting). Worth testing if stratified splitting is feasible.",
+      "steps": [
+        "Implement stratified disease splitting by category",
+        "Compare variance to random splitting for per-category metrics",
+        "If variance drops >30%, adopt stratified splitting"
       ]
     }
   ],
@@ -17753,6 +17785,12 @@
       "hypothesis_id": "h749",
       "learning": "Epilepsy and gout hierarchy GOLDEN rules were 4-5x overfitted (58%/37.5% full-data vs 12%/16% holdout). Demoting to MEDIUM improved GOLDEN by +7.8pp with minimal MEDIUM dilution (-0.4pp). Full h393 revalidation also reveals current absolute tier values differ from CLAUDE.md due to h744-h746 intermediate changes.",
       "implication": "Hierarchy rules for small disease groups (<100 preds) are especially prone to overfitting. Always validate new hierarchy rules with holdout before deploying. Current tier holdout: GOLDEN 78.0%, HIGH 56.8%, MEDIUM 35.5%."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h751",
+      "learning": "GI HIGH holdout 69.9% \u00b1 16.8% \u2014 above HIGH avg but below GOLDEN. h749's 90.4% was from smaller subsample. n=11.4/seed is too sparse for reliable per-category promotion decisions.",
+      "implication": "Per-category GOLDEN promotions need n>30/seed minimum. GI has only 43 diseases total (8-9 holdout/seed). Focus on improving existing HIGH rules rather than promoting sparse categories."
     }
   ],
   "collaborations": [
