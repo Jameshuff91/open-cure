@@ -1,0 +1,140 @@
+======================================================================
+h757: Post-h744 MEDIUM Sub-Reason Holdout Audit
+======================================================================
+
+Loading predictor...
+Loaded 3588 GT diseases, 57495 pairs
+Diseases with GT + embeddings: 965
+
+--- FULL-DATA BASELINE ---
+
+Tier precision (full-data):
+  GOLDEN: 88.3% (356/403)
+  HIGH: 67.0% (1157/1726)
+  MEDIUM: 43.5% (335/770)
+  LOW: 19.9% (1844/9283)
+  FILTER: 14.9% (1342/8982)
+
+MEDIUM sub-reasons (full-data):
+  default_freq5_mechanism                                   34.3% ( 47/ 137)
+  cancer_same_type_high_rank                                46.0% ( 57/ 124)
+  default_freq10_nomech_r6_10                               38.7% ( 48/ 124)
+  target_overlap_promotion                                  41.7% ( 43/ 103)
+  cancer_same_type                                          52.7% ( 29/  55)
+  metabolic_hierarchy_diabetes                              73.9% ( 34/  46)
+  infectious_hierarchy_skin_infection                       25.8% (  8/  31)
+  neurological                                              36.0% (  9/  25)
+  incoherent_demotion                                       65.0% ( 13/  20)
+  respiratory                                               66.7% ( 12/  18)
+  cv_pathway_comprehensive                                  50.0% (  6/  12)
+  comp_to_base_high_87                                      91.7% ( 11/  12)
+  hematological                                             16.7% (  2/  12)
+  neurological_hierarchy_parkinsons                         18.2% (  2/  11)
+  cv_established_drug_rescue                                40.0% (  4/  10)
+  neurological_hierarchy_migraine                           62.5% (  5/   8)
+  reproductive                                              12.5% (  1/   8)
+  mechanism_specific                                         0.0% (  0/   5)
+  cardiovascular                                            25.0% (  1/   4)
+  infectious_cs_tb_demotion                                 66.7% (  2/   3)
+  comp_to_base_high_75                                     100.0% (  1/   1)
+  comp_to_base_high_80                                       0.0% (  0/   1)
+
+MEDIUM by category (full-data):
+  other                            36.4% ( 82/ 225)
+  cancer                           48.0% ( 86/ 179)
+  infectious                       36.8% ( 32/  87)
+  metabolic                        76.3% ( 45/  59)
+  neurological                     36.4% ( 16/  44)
+  cardiovascular                   44.4% ( 12/  27)
+  respiratory                      46.2% ( 12/  26)
+  psychiatric                      50.0% ( 12/  24)
+  dermatological                   57.1% ( 12/  21)
+  autoimmune                       42.1% (  8/  19)
+  renal                            26.7% (  4/  15)
+  endocrine                        38.5% (  5/  13)
+  hematological                    16.7% (  2/  12)
+  reproductive                     12.5% (  1/   8)
+  musculoskeletal                  57.1% (  4/   7)
+  ophthalmic                       50.0% (  2/   4)
+
+--- SEED 42 (1/5) ---
+  Evaluated 193 holdout diseases
+
+--- SEED 123 (2/5) ---
+  Evaluated 193 holdout diseases
+
+--- SEED 456 (3/5) ---
+  Evaluated 193 holdout diseases
+
+--- SEED 789 (4/5) ---
+  Evaluated 193 holdout diseases
+
+--- SEED 2024 (5/5) ---
+  Evaluated 193 holdout diseases
+
+======================================================================
+AGGREGATE HOLDOUT RESULTS (mean ± std across 5 seeds)
+======================================================================
+
+--- TIER PRECISION ---
+  GOLDEN  : Full= 88.3% | Holdout=  0.0% ±  0.0%
+  HIGH    : Full= 67.0% | Holdout= 61.8% ±  3.7%
+  MEDIUM  : Full= 43.5% | Holdout= 37.0% ±  2.5%
+  LOW     : Full= 19.9% | Holdout= 13.8% ±  0.8%
+  FILTER  : Full= 14.9% | Holdout= 10.0% ±  0.5%
+
+--- MEDIUM SUB-REASONS: FULL-DATA vs HOLDOUT ---
+Sub-reason                                               Full%  Hold%  ±std  n/seed   Action
+-----------------------------------------------------------------------------------------------
+  default_freq5_mechanism                                 34.3%   44.3%   4.4%    42.2       ok
+  cancer_same_type_high_rank                              46.0%   38.2%   8.2%    16.4    watch
+  default_freq10_nomech_r6_10                             38.7%   26.5%  11.1%    31.0   DEMOTE
+  target_overlap_promotion                                41.7%   36.3%   5.0%    55.8    watch
+  cancer_same_type                                        52.7%   39.5%  10.5%    18.4    watch
+  metabolic_hierarchy_diabetes                            73.9%    0.0%   0.0%     0.0       ok
+  infectious_hierarchy_skin_infection                     25.8%    0.0%   0.0%     0.0       ok
+  neurological                                            36.0%   14.7%   8.8%     8.2       ok
+  incoherent_demotion                                     65.0%   36.1%  19.4%     7.0       ok
+  respiratory                                             66.7%   21.8%  39.2%     5.4       ok
+  cv_pathway_comprehensive                                50.0%   32.0%  17.6%     7.2       ok
+  comp_to_base_high_87                                    91.7%    0.0%   0.0%     0.2       ok
+  hematological                                           16.7%   12.5%  19.4%     2.6       ok
+  neurological_hierarchy_parkinsons                       18.2%    0.0%   0.0%     0.0       ok
+  cv_established_drug_rescue                              40.0%   50.2%  14.7%     9.6       ok
+  neurological_hierarchy_migraine                         62.5%    0.0%   0.0%     0.0       ok
+  reproductive                                            12.5%    5.0%  10.0%     0.8       ok
+  mechanism_specific                                       0.0%    0.0%   0.0%     1.2       ok
+  cardiovascular                                          25.0%   72.7%  26.9%     3.6       ok
+  infectious_cs_tb_demotion                               66.7%    0.0%   0.0%     0.0       ok
+  comp_to_base_high_75                                   100.0%    0.0%   0.0%     0.0       ok
+  comp_to_base_high_80                                     0.0%    7.5%  15.0%     2.2       ok
+
+--- MEDIUM BY CATEGORY: FULL-DATA vs HOLDOUT ---
+Category                        Full%  Hold%  ±std  n/seed   Action
+---------------------------------------------------------------------------
+  other                          36.4%   35.2%   6.0%    71.8    watch
+  cancer                         48.0%   39.0%   4.7%    34.8    watch
+  infectious                     36.8%   34.6%  16.4%    22.0   DEMOTE
+  metabolic                      76.3%    6.7%  13.3%     2.4       ok
+  neurological                   36.4%   14.7%   8.8%     8.2       ok
+  cardiovascular                 44.4%   49.2%  13.1%    20.4       ok
+  respiratory                    46.2%   21.5%  30.7%     9.2       ok
+  psychiatric                    50.0%   37.4%  20.9%    13.6    watch
+  dermatological                 57.1%   30.0%  24.5%     3.4       ok
+  autoimmune                     42.1%   50.8%  14.5%    13.4       ok
+  renal                          26.7%   30.1%  23.3%     6.0       ok
+  endocrine                      38.5%    0.0%   0.0%     0.0       ok
+  hematological                  16.7%   12.5%  19.4%     2.6       ok
+  reproductive                   12.5%    5.0%  10.0%     0.8       ok
+  musculoskeletal                57.1%   48.3%  27.1%     3.0       ok
+  ophthalmic                     50.0%    0.0%   0.0%     0.2       ok
+
+Results saved to data/analysis/h757_medium_subreason_audit.json
+
+--- SUMMARY ---
+DEMOTE candidates (<35% holdout, n>=10/seed): 1
+  default_freq10_nomech_r6_10: 26.5% ± 11.1% (n=31.0, full=124)
+Watch candidates (<40% holdout, n>=10/seed): 3
+  cancer_same_type_high_rank: 38.2% ± 8.2% (n=16.4, full=124)
+  target_overlap_promotion: 36.3% ± 5.0% (n=55.8, full=103)
+  cancer_same_type: 39.5% ± 10.5% (n=18.4, full=55)

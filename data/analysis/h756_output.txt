@@ -1,0 +1,98 @@
+======================================================================
+h756: HIGH Tier Sub-Reason Audit — Finding GOLDEN-Worthy Rules
+======================================================================
+
+Loading predictor...
+Loaded 3588 GT diseases, 57495 pairs
+Diseases with GT + embeddings: 965
+
+--- FULL-DATA BASELINE ---
+
+Tier precision (full-data):
+  GOLDEN: 88.3% (356/403)
+  HIGH: 67.0% (1157/1726)
+  MEDIUM: 43.5% (335/770)
+  LOW: 19.9% (1844/9283)
+  FILTER: 14.9% (1342/8982)
+
+HIGH sub-reasons (full-data):
+  literature_strong_promotion                          75.1% (410/ 546)
+  default_freq10_nomech_r1_5                           59.4% (258/ 434)
+  cancer_same_type_mech_rank10                         77.5% (207/ 267)
+  corticosteroid_soc_promotion                         55.1% ( 97/ 176)
+  transe_medium_promotion                              66.7% ( 40/  60)
+  infectious_hierarchy_pneumonia                       47.2% ( 25/  53)
+  gastrointestinal                                     68.4% ( 26/  38)
+  cardiovascular_hierarchy_hypertension                73.9% ( 17/  23)
+  respiratory_hierarchy_copd                           40.9% (  9/  22)
+  metabolic_hierarchy_thyroid                          50.0% (  8/  16)
+  autoimmune_hierarchy_lupus                           50.0% (  8/  16)
+  respiratory_hierarchy_asthma                         93.3% ( 14/  15)
+  infectious_hierarchy_sepsis                          76.9% ( 10/  13)
+  cardiovascular                                       16.7% (  2/  12)
+  autoimmune_hierarchy_multiple_sclerosis             100.0% (  8/   8)
+  infectious_hierarchy_tuberculosis                    85.7% (  6/   7)
+  infectious_hierarchy_respiratory_infection          100.0% (  6/   6)
+  cancer                                                0.0% (  0/   5)
+  cardiovascular_hierarchy_atherosclerosis             75.0% (  3/   4)
+  autoimmune_hierarchy_scleroderma                    100.0% (  3/   3)
+  cardiovascular_hierarchy_heart_failure                0.0% (  0/   2)
+
+--- SEED 42 (1/5) ---
+  Evaluated 193 holdout diseases
+
+--- SEED 123 (2/5) ---
+  Evaluated 193 holdout diseases
+
+--- SEED 456 (3/5) ---
+  Evaluated 193 holdout diseases
+
+--- SEED 789 (4/5) ---
+  Evaluated 193 holdout diseases
+
+--- SEED 2024 (5/5) ---
+  Evaluated 193 holdout diseases
+
+======================================================================
+AGGREGATE HOLDOUT RESULTS (mean ± std across 5 seeds)
+======================================================================
+
+--- TIER PRECISION ---
+  GOLDEN  : Full= 88.3% | Holdout=  0.0% ±  0.0%
+  HIGH    : Full= 67.0% | Holdout= 61.8% ±  3.7%
+  MEDIUM  : Full= 43.5% | Holdout= 37.0% ±  2.5%
+  LOW     : Full= 19.9% | Holdout= 13.8% ±  0.8%
+  FILTER  : Full= 14.9% | Holdout= 10.0% ±  0.5%
+
+--- HIGH SUB-REASONS: FULL-DATA vs HOLDOUT ---
+Sub-reason                                          Full%  Hold%  ±std  n/seed  GOLDEN?
+------------------------------------------------------------------------------------------
+  literature_strong_promotion                        75.1%   68.3%   5.9%    69.0       no
+  default_freq10_nomech_r1_5                         59.4%   56.1%   5.9%    75.2       no
+  cancer_same_type_mech_rank10                       77.5%   61.9%  14.5%    33.6       no
+  corticosteroid_soc_promotion                       55.1%   60.2%  18.3%    43.4       no
+  transe_medium_promotion                            66.7%   62.6%   4.6%    10.2       no
+  infectious_hierarchy_pneumonia                     47.2%    0.0%   0.0%     0.0       no
+  gastrointestinal                                   68.4%   54.2%  44.9%     6.0       no
+  cardiovascular_hierarchy_hypertension              73.9%    0.0%   0.0%     0.0       no
+  respiratory_hierarchy_copd                         40.9%    0.0%   0.0%     0.0       no
+  metabolic_hierarchy_thyroid                        50.0%    0.0%   0.0%     0.0       no
+  autoimmune_hierarchy_lupus                         50.0%    0.0%   0.0%     0.0       no
+  respiratory_hierarchy_asthma                       93.3%    0.0%   0.0%     0.0       no
+  infectious_hierarchy_sepsis                        76.9%    0.0%   0.0%     0.0       no
+  cardiovascular                                     16.7%   55.6%  33.7%     9.2       no
+  autoimmune_hierarchy_multiple_sclerosis           100.0%    0.0%   0.0%     0.0       no
+  infectious_hierarchy_tuberculosis                  85.7%    0.0%   0.0%     0.0       no
+  infectious_hierarchy_respiratory_infection        100.0%    0.0%   0.0%     0.0       no
+  cancer                                              0.0%   13.3%  26.7%     1.6       no
+  cardiovascular_hierarchy_atherosclerosis           75.0%    0.0%   0.0%     0.0       no
+  autoimmune_hierarchy_scleroderma                  100.0%    0.0%   0.0%     0.0       no
+  cardiovascular_hierarchy_heart_failure              0.0%    0.0%   0.0%     0.0       no
+
+--- ALL TIERS: SUB-REASONS EXCEEDING GOLDEN THRESHOLD ---
+
+Results saved to data/analysis/h756_high_subreason_audit.json
+
+--- SUMMARY ---
+GOLDEN candidates (>=78% holdout, n>=10/seed): 0
+Maybe candidates (>=70% holdout, n>=10/seed): 0

@@ -3575,8 +3575,9 @@ class DrugRepurposingPredictor:
                     # Non-statin predicting atherosclerosis from CV event - don't boost (0% precision)
                     pass  # Continue to standard tier assignment
                 elif transferability >= 50:
-                    # h284: HIGH transferability comp→base = 62.5% precision
-                    return ConfidenceTier.HIGH, True, f'comp_to_base_high_{transferability:.0f}'
+                    # h284: HIGH transferability comp→base
+                    # h757: Demoted HIGH→MEDIUM (18.8% holdout for 80% bin, 50% for 87% bin but n=2)
+                    return ConfidenceTier.MEDIUM, True, f'comp_to_base_high_{transferability:.0f}'
                 elif transferability >= 20:
                     # MEDIUM transferability
                     return ConfidenceTier.MEDIUM, True, f'comp_to_base_med_{transferability:.0f}'
@@ -3638,19 +3639,19 @@ class DrugRepurposingPredictor:
         # rheumatoid_arthritis: 86.4% ± 8.7% (n=23/seed), colitis: 85.7% ± 0.0% (n=7/seed)
         HIERARCHY_PROMOTE_TO_GOLDEN = {
             'coronary', 'arrhythmia', 'rheumatoid_arthritis', 'colitis',
+            'uti',  # h757: 80.0% ± 0.0% holdout (n=10/seed), above GOLDEN 78%
         }
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
-        # h402: Diabetes hierarchy 31.5% holdout ± 13.8% (n=72) vs GOLDEN avg 46.3% - demote to HIGH
         # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
-        HIERARCHY_DEMOTE_TO_HIGH = {'thyroid', 'diabetes'}
+        HIERARCHY_DEMOTE_TO_HIGH = {'thyroid'}
         # h396: These hierarchy groups have 0% precision (n>=2) - demote to MEDIUM
-        # h749: epilepsy GOLDEN→MEDIUM (12.0% ± 14.7% holdout, n=6/seed; full-data 58.2%)
-        # h749: gout GOLDEN→MEDIUM (16.0% ± 19.6% holdout, n=2/seed; full-data 37.5%)
-        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine', 'epilepsy', 'gout'}
+        # h757: diabetes 21.1% ± 15.0% holdout (n=5/seed) — below HIGH avg (57.0%)
+        # h757: skin_infection 25.0% ± 12.5% holdout (n=8/seed) — below HIGH avg (57.0%)
+        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine', 'diabetes', 'skin_infection'}
         # h649: pneumonia demoted MEDIUM→LOW (16.7% ± 0.0% holdout, n=6/seed)
-        # h402 originally demoted to MEDIUM (6.7% holdout), but holdout is near LOW (14.8%)
-        # 80% full-data vs 16.7% holdout = most overfitted rule (Δ=-63pp)
-        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia'}
+        # h649: pneumonia demoted MEDIUM→LOW (16.7% ± 0.0% holdout, n=6/seed)
+        # h757: epilepsy 20.0% ± 14.1% holdout (n=10/seed), gout 0.0% (n=4/seed) — below MEDIUM avg (37.2%)
+        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia', 'epilepsy', 'gout'}
 
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(
@@ -3795,7 +3796,9 @@ class DrugRepurposingPredictor:
                 # even without explicit DRKG mechanism path.
                 return ConfidenceTier.HIGH, False, 'default_freq10_nomech_r1_5'
             else:
-                return ConfidenceTier.MEDIUM, False, 'default_freq10_nomech_r6_10'
+                # h757: freq>=10, no-mechanism, rank 6-10 = 26.5% ± 11.1% holdout
+                # (n=31/seed). Below MEDIUM avg (37.0%). Demoted to LOW.
+                return ConfidenceTier.LOW, False, 'default_freq10_nomech_r6_10'
 
         # h297: Highly repurposable diseases — DEMOTED from MEDIUM to LOW (h739)
         # h738 found novel holdout = 4.5% ± 4.6% (n=20) — clearly LOW quality.
@@ -3937,9 +3940,10 @@ class DrugRepurposingPredictor:
         elif category == 'respiratory':
             drug_lower = drug_name.lower()
 
-            # h265: Fluoroquinolones achieve 44.4% precision for respiratory (HIGH)
+            # h265: Fluoroquinolones for respiratory
+            # h757: Demoted HIGH→MEDIUM (21.8% ± 39.2% holdout, n=5/seed — below HIGH avg 57%)
             if any(fq in drug_lower for fq in FLUOROQUINOLONE_DRUGS):
-                return ConfidenceTier.HIGH  # 44.4% precision (h265/h163)
+                return ConfidenceTier.MEDIUM  # h757: was HIGH, holdout 21.8%
 
             # h395: Respiratory generic rescue → MEDIUM (was HIGH)
             # h395 found 14.3% precision (n=21) vs HIGH avg 47.1%
@@ -4067,16 +4071,17 @@ class DrugRepurposingPredictor:
                 if rank <= 10 and mechanism_support and is_anticonvulsant:
                     return ConfidenceTier.GOLDEN  # 58.8% precision (h187)
 
-            # h171: HIGH tier for drug class matches
+            # h171: Drug class matches for neurological
+            # h757: Demoted HIGH→MEDIUM (8.6% ± 8.8% holdout, n=5/seed — below HIGH avg 57%)
             if self._is_neurological_class_match(drug_lower, disease_name):
-                return ConfidenceTier.HIGH  # ~60% coverage
+                return ConfidenceTier.MEDIUM  # h757: was HIGH, holdout 8.6%
 
         elif category == 'reproductive':
-            # h183: Hormone drugs achieve 26.3% precision for reproductive diseases
-            # vs 3.1% for non-hormone drugs - significant enough for HIGH tier
+            # h183: Hormone drugs for reproductive diseases
+            # h757: Demoted HIGH→MEDIUM (28.6% ± 0.0% holdout, n=7/seed — below HIGH avg 57%)
             drug_lower = drug_name.lower()
             if any(h in drug_lower for h in REPRODUCTIVE_HORMONE_DRUGS):
-                return ConfidenceTier.HIGH  # 26.3% precision (h183)
+                return ConfidenceTier.MEDIUM  # h757: was HIGH, holdout 28.6%
 
         elif category == 'gastrointestinal':
             # h380: GI category is worst (42.9% R@30) because kNN finds wrong drug classes

@@ -1,6 +1,41 @@
 # Research Loop Progress
 
-## Current Session: h731 - Automated Literature Mining Validation (2026-02-07)
+## Current Session: h757 - Post-h744 MEDIUM/HIGH Sub-Reason Audit (2026-02-24)
+
+### h757: Comprehensive Sub-Reason Holdout Audit — VALIDATED
+
+**Methodology:** Ran 5-seed holdout evaluation on all MEDIUM and HIGH sub-reasons. Identified and demoted weak rules. Fixed pneumonia hierarchy bug.
+
+**Key findings:**
+1. **MEDIUM demotion:** `default_freq10_nomech_r6_10` = 26.5% ± 11.1% holdout (n=31/seed) — demoted to LOW (124 preds)
+2. **HIGH demotions to MEDIUM:** comp_to_base_high (18.8%), fluoroquinolone respiratory (21.8%), neurological class match (8.6%), reproductive hormones (28.6%)
+3. **Hierarchy fixes:** UTI→GOLDEN (80.0%), diabetes HIGH→MEDIUM (21.1%), skin_infection→MEDIUM (25.0%), epilepsy+gout→LOW
+4. **Bug fix:** pneumonia was accidentally removed from HIERARCHY_DEMOTE_TO_LOW
+
+**Combined tier impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 68.9% | 78.1% | **+9.2pp** |
+| HIGH | 53.7% | 59.4% | **+5.7pp** |
+| MEDIUM | 33.4% | 36.0% | **+2.6pp** |
+| LOW | 13.7% | 13.9% | +0.2pp |
+| FILTER | — | 10.0% | — |
+
+**Key learning:** Rules originally calibrated on full-data precision (h183, h265) are severely overfitted — full-data 26-67% but holdout 8-29%. All category-specific tier rules need holdout validation.
+
+### New Hypotheses Generated (3)
+- h758: target_overlap_promotion sub-analysis (35.2% with low variance — biggest reliable MEDIUM sub-reason)
+- h759: Neurological/respiratory MEDIUM → LOW re-evaluation (very low holdout, small n)
+- h760: Hierarchy rule holdout-invisible audit (many 0-n rules)
+
+### Recommended Next Steps
+1. h758: target_overlap_promotion investigation (medium effort, reliable signal)
+2. h747: Continue literature mining expansion (in-progress, high effort)
+3. h759: Quick neurological/respiratory MEDIUM check
+
+---
+
+## Previous Session: h731 - Automated Literature Mining Validation (2026-02-07)
 
 ### h731: Automated Literature Mining on GOLDEN/HIGH/MEDIUM NOVEL predictions — VALIDATED
 

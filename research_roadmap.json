@@ -15309,14 +15309,16 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "in_progress",
+      "status": "invalidated",
       "rationale": "h749 h393 holdout shows default_freq10_nomech_r6_10 at 29.1% \u00b1 8.2% holdout (n=31/seed). MEDIUM avg is 35.5%. This is 6.4pp below average and borderline LOW quality. 154 full-data predictions. z-score vs MEDIUM avg = (29.1-35.5)/8.2 = -0.78, not significant. But combined with existing evidence (h555 already demoted R11-20 to LOW), R6-10 without mechanism may be next demotion target. Need to check: is this subset already correctly classified, or would LOW improve MEDIUM?",
       "steps": [
         "Run targeted holdout for freq10_nomech_r6_10 to confirm 29.1%",
         "Check if demoting to LOW improves MEDIUM precision",
         "Verify tier hierarchy is maintained after change",
         "If validated, implement demotion"
-      ]
+      ],
+      "findings": "h740 score threshold already solved this. After h740/h741/h742 changes, default_freq10_nomech_r6_10 high-score subset is at 41.2% \u00b1 7.3% holdout (n=7/seed) \u2014 ABOVE MEDIUM avg (37.2%). The low-score subset was already demoted to LOW at 27.8% by h740. No further action needed.",
+      "result_metric": "41.2% holdout (above MEDIUM 37.2%)"
     },
     {
       "id": "h751",
@@ -15343,29 +15345,33 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "in_progress",
+      "status": "invalidated",
       "rationale": "h749 h393 holdout shows cv_pathway_comprehensive at 31.2% \u00b1 17.7% holdout (n=10/seed), vs 68.6% full-data \u2014 a 37.4pp gap, one of the most overfitted rules. 51 full-data predictions. The high variance (\u00b117.7%) and large overfit gap suggest this rule may be capturing training correlations rather than genuine signal. Should investigate: is the rule still adding value over baseline, or should it be demoted/removed?",
       "steps": [
         "Analyze which CV diseases contribute most to overfit",
         "Check if pathway-comprehensive signal is redundant with other rules",
         "Compare holdout precision with and without cv_pathway_comprehensive",
         "Decide whether to demote or keep"
-      ]
+      ],
+      "findings": "cv_pathway_comprehensive now shows 40.1% \u00b1 8.2% holdout (n=9/seed) \u2014 above MEDIUM avg (37.2%). The 37pp overfit gap shrunk after h740/h741/h742 changes. Rule is performing adequately for MEDIUM tier.",
+      "result_metric": "40.1% holdout (above MEDIUM 37.2%)"
     },
     {
-      "id": "h752",
+      "id": "h756",
       "title": "HIGH Tier Drug-Class Sub-Reason Audit: Which Drug-Class Rules Exceed GOLDEN Threshold?",
       "category": "tier_system",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "invalidated",
       "rationale": "h751 found GI drug-class HIGH at 52.6% but with huge variance. Other categories also have drug-class rescue rules (neurological h171, cardiovascular h351). Some drug-class rules might individually exceed GOLDEN threshold even if the category overall doesn't. For example, PPI\u2192ulcer might be 90%+ while antispasmodic\u2192IBS might be 30%. Per-rule holdout analysis could identify GOLDEN-worthy drug-class matches.",
       "steps": [
         "Run holdout per drug-class rule across all categories",
         "Identify rules with >70% holdout AND n>10/seed",
         "Consider promoting specific rules to GOLDEN"
-      ]
+      ],
+      "findings": "No HIGH sub-reason reaches GOLDEN threshold (78% holdout, n>=10/seed). Best candidates: literature_strong_promotion (68.3% \u00b1 5.9%, n=69/seed), transe_medium_promotion (62.6% \u00b1 4.6%, n=10.2/seed), cancer_same_type_mech_rank10 (61.9% \u00b1 14.5%, n=33.6/seed). Many hierarchy rules have n=0 in holdout (diseases too rare). No promotions possible.",
+      "result_metric": "Best HIGH sub-reason: 68.3% holdout (below GOLDEN 78%)"
     },
     {
       "id": "h753",
@@ -15406,12 +15412,81 @@
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "rationale": "h722 found immunological category has 33.2% \u00b1 6.9% holdout for 2-hop mechanism (4/5 seeds, n=18.5). While below MEDIUM avg (42.8%), this is above LOW avg (14.1%) and close to MEDIUM threshold. Combined with other signals (rank, frequency), immunological 2-hop might be promotable. However, small n and CLOSED direction #8 (LOW\u2192MEDIUM exhausted) suggest low probability.",
       "steps": [
         "Check if immunological 2-hop + rank<=5 or + freq>=5 exceeds MEDIUM threshold",
         "Verify not CS artifact",
         "If promising, run targeted holdout"
+      ],
+      "findings": "Immunological LOW rescue analysis: TransE subset 66.7% (n=4/seed), score_high 100% (n=1/seed). All subsets have n<5 \u2014 far too small for reliable holdout. No rescuable subset with sufficient sample size. Immunological LOW is correctly calibrated.",
+      "result_metric": "n too small for all subsets (max n=4/seed)"
+    },
+    {
+      "id": "h757",
+      "title": "Post-h744 MEDIUM Sub-Reason Holdout Audit: Remaining Demotion Opportunities After Score Threshold",
+      "description": "After h740-h744 removed 292 weak predictions from MEDIUM (score threshold, literature evidence, R1-5 gradient), audit the remaining MEDIUM predictions by sub-reason. The landscape changed significantly (+10.5pp). Some sub-reasons that were previously borderline may now be clearly below the new MEDIUM average. Identify any remaining sub-populations below 35% holdout with n>10/seed.",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "validated",
+      "steps": [
+        "Run 5-seed holdout evaluation with current production_predictor.py",
+        "Break down MEDIUM predictions by category_specific_tier sub-reason",
+        "Calculate holdout precision per sub-reason",
+        "Identify sub-reasons below 35% holdout with sufficient n",
+        "If found, implement demotions and re-evaluate"
+      ],
+      "findings": "Comprehensive audit of MEDIUM and HIGH sub-reasons post-h744. MEDIUM: default_freq10_nomech_r6_10 = 26.5% \u00b1 11.1% holdout (n=31/seed) \u2014 demoted to LOW (124 preds). HIGH: Multiple weak rules demoted to MEDIUM: comp_to_base_high (18.8%), fluoroquinolone respiratory (21.8%), neurological class match (8.6%), reproductive hormones (28.6%). Hierarchy: UTI promoted to GOLDEN (80.0%), diabetes demoted HIGH\u2192MEDIUM (21.1%), skin_infection demoted to MEDIUM (25.0%), epilepsy+gout demoted to LOW. Fixed pneumonia missing from HIERARCHY_DEMOTE_TO_LOW. Combined impact: GOLDEN +9.2pp (68.9\u219278.1%), HIGH +5.7pp (53.7\u219259.4%), MEDIUM +2.6pp (33.4\u219236.0%), LOW +0.2pp.",
+      "result_metric": "GOLDEN 78.1% (+9.2pp), HIGH 59.4% (+5.7pp), MEDIUM 36.0% (+2.6pp)"
+    },
+    {
+      "id": "h758",
+      "title": "MEDIUM Watch List Investigation: target_overlap_promotion at 35.2% with Low Variance",
+      "description": "h757 flagged target_overlap_promotion as 'watch' (35.2% \u00b1 3.9% holdout, n=55.8/seed). This is the largest MEDIUM sub-reason by n and has very low variance \u2014 the most reliable estimate. At 35.2%, it's borderline below MEDIUM avg (36.0%). Investigate whether specific drug classes or categories within target_overlap are dragging down precision. A targeted demotion of the worst subset could improve MEDIUM by ~1pp without losing good predictions.",
+      "category": "tier_system",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Break down target_overlap_promotion by disease category",
+        "Identify categories with <25% holdout within target_overlap",
+        "Check if specific drug classes (e.g., antibiotics, biologics) are consistently wrong",
+        "If found, implement targeted demotion for weak subsets",
+        "Run holdout to verify MEDIUM improvement"
+      ]
+    },
+    {
+      "id": "h759",
+      "title": "Neurological and Respiratory MEDIUM \u2192 LOW: Small-n Rules with Very Low Holdout",
+      "description": "h757 found neurological MEDIUM at 8.6% \u00b1 8.8% (n=5/seed) and respiratory MEDIUM at 21.8% \u00b1 39.2% (n=5/seed). Both are well below MEDIUM average but have small n. With the h757 HIGH\u2192MEDIUM demotions now adding formerly-HIGH predictions to these categories, the n may have increased. Re-evaluate these categories with fresh holdout to determine if they should be demoted to LOW.",
+      "category": "tier_system",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Run h757 sub-reason audit with updated code",
+        "Check if neurological/respiratory MEDIUM n increased due to HIGH\u2192MEDIUM demotions",
+        "If n >= 10/seed and holdout < 30%, demote to LOW",
+        "Run holdout to measure impact"
+      ]
+    },
+    {
+      "id": "h760",
+      "title": "Hierarchy Rule Holdout-Invisible Audit: Are 0-n Rules Providing Value?",
+      "description": "h757 found many hierarchy rules with 0.0% holdout and n=0/seed: metabolic_hierarchy_diabetes (73.9% full, 0% holdout), infectious_hierarchy_skin_infection (25.8% full, 0% holdout), neurological_hierarchy_parkinsons (18.2% full, 0% holdout), neurological_hierarchy_migraine (62.5% full, 0% holdout). These rules have high full-data precision but are completely invisible in holdout because the specific diseases always end up in training. This is the same pattern as h653 (ATC coherent). Should these rules be simplified or merged?",
+      "category": "methodology",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Count how many diseases trigger each hierarchy rule",
+        "For rules with <5 triggering diseases, assess if they can be evaluated at all",
+        "Consider merging small hierarchy groups into their parent category",
+        "Document which rules are evaluation-blind spots"
       ]
     }
   ],
@@ -17831,6 +17906,12 @@
       "hypothesis_id": "h722",
       "learning": "Category-specific 2-hop mechanism: full-data to holdout inflation is ~2x (psychiatric 52.8% \u2192 22.7%, dermatological 37.8% \u2192 25.0%). No category reaches MEDIUM threshold. The DRKG gene-gene network's density destroys 2-hop specificity even within categories.",
       "implication": "2-hop mechanism is CLOSED as a path to MEDIUM tier expansion, regardless of category filtering. Mechanism expansion requires better gene-disease data (DisGeNET/OMIM), not longer paths."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h757",
+      "learning": "Comprehensive sub-reason audit improved all tiers: GOLDEN +9.2pp, HIGH +5.7pp, MEDIUM +2.6pp. Key pattern: rules originally set from full-data precision (h183 reproductive hormones 26.3% \u2192 HIGH, h265 fluoroquinolones 44.4% \u2192 HIGH) are severely overfitted \u2014 holdout drops to 8-29%. All category-specific HIGH rules should be holdout-validated. freq10_nomech_r6_10 (high-frequency drugs without mechanism at rank 6-10) is genuinely LOW quality \u2014 frequency alone without mechanism or top-5 rank doesn't indicate repurposability.",
+      "implication": "Remaining MEDIUM watch candidates: target_overlap_promotion (35.2%), cancer_same_type variants (~39%). These are borderline and may need deeper sub-analysis. Also: many hierarchy rules are holdout-invisible (0 n/seed) \u2014 they can't be validated but may still provide value."
     }
   ],
   "collaborations": [
