@@ -14748,7 +14748,7 @@
     {
       "id": "h722",
       "title": "Category-Specific 2-Hop Mechanism: Psychiatric/Dermatological May Be MEDIUM-Quality",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "medium",
@@ -14758,7 +14758,9 @@
         "Run category-specific holdout evaluation (5 seeds)",
         "If any category exceeds MEDIUM threshold, implement category-specific rescue",
         "Check for CS artifact in psychiatric predictions"
-      ]
+      ],
+      "findings": "h722 INVALIDATED: Category-specific 2-hop mechanism does NOT reach MEDIUM threshold (42.8%) for any reliably-measured category. Psychiatric: 22.7% \u00b1 12.8% (all 2-hop, n=24.3/seed), 30.2% \u00b1 17.7% (\u22654 genes, n=19/seed). Dermatological: 25.0% \u00b1 9.6% (all 2-hop, n=37/seed), 29.6% \u00b1 14.0% (\u22654 genes, n=11.4/seed). h719 full-data figures (52.8%/37.8%) were ~2x inflated vs holdout. Endocrine 45.5% but only 1/5 seeds had data (n=11). Best reliably measured: renal \u22654 genes at 35.0% \u00b1 15.2% (3/5 seeds) \u2014 still below MEDIUM. Confirms h719 conclusion: DRKG gene-gene network too dense for specificity at 2 hops.",
+      "result_metric": "Psychiatric 22.7%, Dermatological 25.0% (both below MEDIUM 42.8%)"
     },
     {
       "id": "h723",
@@ -15378,6 +15380,38 @@
         "Implement stratified disease splitting by category",
         "Compare variance to random splitting for per-category metrics",
         "If variance drops >30%, adopt stratified splitting"
+      ]
+    },
+    {
+      "id": "h754",
+      "title": "External Gene-Disease Database Integration: DisGeNET/OMIM for Mechanism Coverage Expansion",
+      "category": "data_integration",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "status": "pending",
+      "rationale": "h719+h722 confirm DRKG gene-gene 2-hop is too dense for mechanism specificity. But 77.8% of would-be-MEDIUM predictions lack 1-hop mechanism because DRKG's disease-gene annotations are incomplete (139 diseases have 0 genes). DisGeNET and OMIM contain much richer gene-disease associations. Supplementing DRKG with external gene-disease data could expand 1-hop mechanism coverage without the 2-hop specificity problem. This is the remaining path to expanding MEDIUM tier beyond current rules.",
+      "steps": [
+        "Download DisGeNET gene-disease associations (free academic license)",
+        "Map DisGeNET disease IDs to DRKG MESH IDs",
+        "Count how many of the 139 gene-poor diseases gain genes from DisGeNET",
+        "Re-evaluate mechanism coverage on holdout",
+        "If coverage expands >20%, implement as supplementary gene source"
+      ]
+    },
+    {
+      "id": "h755",
+      "title": "Immunological 2-Hop+Mechanism as MEDIUM Rescue: 33.2% Holdout Investigation",
+      "category": "tier_system",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "rationale": "h722 found immunological category has 33.2% \u00b1 6.9% holdout for 2-hop mechanism (4/5 seeds, n=18.5). While below MEDIUM avg (42.8%), this is above LOW avg (14.1%) and close to MEDIUM threshold. Combined with other signals (rank, frequency), immunological 2-hop might be promotable. However, small n and CLOSED direction #8 (LOW\u2192MEDIUM exhausted) suggest low probability.",
+      "steps": [
+        "Check if immunological 2-hop + rank<=5 or + freq>=5 exceeds MEDIUM threshold",
+        "Verify not CS artifact",
+        "If promising, run targeted holdout"
       ]
     }
   ],
@@ -17791,6 +17825,12 @@
       "hypothesis_id": "h751",
       "learning": "GI HIGH holdout 69.9% \u00b1 16.8% \u2014 above HIGH avg but below GOLDEN. h749's 90.4% was from smaller subsample. n=11.4/seed is too sparse for reliable per-category promotion decisions.",
       "implication": "Per-category GOLDEN promotions need n>30/seed minimum. GI has only 43 diseases total (8-9 holdout/seed). Focus on improving existing HIGH rules rather than promoting sparse categories."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h722",
+      "learning": "Category-specific 2-hop mechanism: full-data to holdout inflation is ~2x (psychiatric 52.8% \u2192 22.7%, dermatological 37.8% \u2192 25.0%). No category reaches MEDIUM threshold. The DRKG gene-gene network's density destroys 2-hop specificity even within categories.",
+      "implication": "2-hop mechanism is CLOSED as a path to MEDIUM tier expansion, regardless of category filtering. Mechanism expansion requires better gene-disease data (DisGeNET/OMIM), not longer paths."
     }
   ],
   "collaborations": [
