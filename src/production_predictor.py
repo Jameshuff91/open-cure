@@ -1651,7 +1651,7 @@ TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES: set[str] = {
     'autoimmune_hierarchy_lupus',
     'autoimmune_hierarchy_colitis',
     'respiratory_hierarchy_asthma',
-    'respiratory_hierarchy_copd',
+    # h760: respiratory_hierarchy_copd removed (demoted to MEDIUM, no longer HIGH→GOLDEN eligible)
     'infectious_hierarchy_tuberculosis',
     'metabolic_hierarchy_thyroid',
 }
@@ -3648,13 +3648,13 @@ class DrugRepurposingPredictor:
         # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
         HIERARCHY_DEMOTE_TO_HIGH = {'thyroid'}
         # h396: These hierarchy groups have 0% precision (n>=2) - demote to MEDIUM
-        # h757: diabetes 21.1% ± 15.0% holdout (n=5/seed) — below HIGH avg (57.0%)
         # h757: skin_infection 25.0% ± 12.5% holdout (n=8/seed) — below HIGH avg (57.0%)
-        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine', 'diabetes', 'skin_infection'}
-        # h649: pneumonia demoted MEDIUM→LOW (16.7% ± 0.0% holdout, n=6/seed)
+        # h760: copd 25.9% ± 36.7% holdout (n=3.7/seed) — below HIGH avg (59.4%), demoted HIGH→MEDIUM
+        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine', 'skin_infection', 'copd'}
         # h649: pneumonia demoted MEDIUM→LOW (16.7% ± 0.0% holdout, n=6/seed)
         # h757: epilepsy 20.0% ± 14.1% holdout (n=10/seed), gout 0.0% (n=4/seed) — below MEDIUM avg (37.2%)
-        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia', 'epilepsy', 'gout'}
+        # h760: diabetes 11.1% ± 15.7% holdout (n=3.7/seed) — below MEDIUM avg (36.0%), demoted MEDIUM→LOW
+        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia', 'epilepsy', 'gout', 'diabetes'}
 
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(

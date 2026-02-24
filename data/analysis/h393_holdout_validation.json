@@ -1,49 +1,49 @@
 {
   "tier_comparison": {
     "GOLDEN": {
-      "full_precision": 88.3,
-      "holdout_mean": 78.1,
-      "holdout_std": 5.3,
-      "delta": -10.2,
+      "full_precision": 88.7,
+      "holdout_mean": 78.6,
+      "holdout_std": 5.8,
+      "delta": -10.1,
       "seed_values": [
         78.8,
         77.4,
         68.4,
         83.3,
-        82.6
+        85.0
       ]
     },
     "HIGH": {
-      "full_precision": 67.7,
-      "holdout_mean": 59.0,
-      "holdout_std": 3.8,
-      "delta": -8.7,
+      "full_precision": 68.1,
+      "holdout_mean": 59.1,
+      "holdout_std": 3.6,
+      "delta": -9.0,
       "seed_values": [
-        55.3,
+        55.6,
         63.0,
-        53.7,
+        54.0,
         62.2,
-        61.0
+        60.7
       ]
     },
     "MEDIUM": {
-      "full_precision": 44.8,
-      "holdout_mean": 36.8,
-      "holdout_std": 2.9,
-      "delta": -8.0,
+      "full_precision": 42.7,
+      "holdout_mean": 37.1,
+      "holdout_std": 2.8,
+      "delta": -5.6,
       "seed_values": [
-        35.9,
-        38.3,
+        35.6,
+        38.5,
         33.3,
         41.5,
-        34.8
+        36.6
       ]
     },
     "LOW": {
-      "full_precision": 20.8,
+      "full_precision": 21.1,
       "holdout_mean": 13.8,
       "holdout_std": 0.5,
-      "delta": -7.0,
+      "delta": -7.3,
       "seed_values": [
         13.1,
         14.0,
@@ -249,21 +249,21 @@
     },
     "literature_strong_promotion": {
       "tier": "HIGH",
-      "full_precision": 75.7,
-      "full_n": 485,
-      "holdout_mean": 67.5,
-      "holdout_std": 7.4,
-      "delta": -8.2,
-      "mean_n": 57.0,
+      "full_precision": 75.8,
+      "full_n": 483,
+      "holdout_mean": 67.7,
+      "holdout_std": 7.1,
+      "delta": -8.1,
+      "mean_n": 56.8,
       "status": "degraded"
     },
     "transe_medium_promotion": {
       "tier": "HIGH",
-      "full_precision": 64.5,
-      "full_n": 62,
+      "full_precision": 63.5,
+      "full_n": 63,
       "holdout_mean": 63.4,
       "holdout_std": 7.0,
-      "delta": -1.1,
+      "delta": -0.1,
       "mean_n": 9.6,
       "status": "GENUINE"
     },
@@ -367,16 +367,6 @@
       "mean_n": 0,
       "status": "OVERFITTED?"
     },
-    "respiratory_hierarchy_copd": {
-      "tier": "HIGH",
-      "full_precision": 46.4,
-      "full_n": 28,
-      "holdout_mean": 25.9,
-      "holdout_std": 36.7,
-      "delta": -20.5,
-      "mean_n": 3.7,
-      "status": "OVERFITTED?"
-    },
     "metabolic_hierarchy_thyroid": {
       "tier": "HIGH",
       "full_precision": 52.6,
@@ -441,10 +431,10 @@
       "tier": "LOW",
       "full_precision": 28.6,
       "full_n": 241,
-      "holdout_mean": 21.8,
-      "holdout_std": 8.3,
-      "delta": -6.8,
-      "mean_n": 28.6,
+      "holdout_mean": 21.9,
+      "holdout_std": 8.2,
+      "delta": -6.7,
+      "mean_n": 28.4,
       "status": "degraded"
     },
     "gastrointestinal_medium_demotion": {
@@ -486,6 +476,16 @@
       "delta": -13.3,
       "mean_n": 53.2,
       "status": "degraded"
+    },
+    "metabolic_hierarchy_diabetes": {
+      "tier": "LOW",
+      "full_precision": 73.5,
+      "full_n": 49,
+      "holdout_mean": 21.1,
+      "holdout_std": 15.0,
+      "delta": -52.4,
+      "mean_n": 4.7,
+      "status": "OVERFITTED?"
     },
     "metabolic_medium_demotion": {
       "tier": "LOW",
@@ -727,16 +727,6 @@
       "mean_n": 1.0,
       "status": "OVERFITTED?"
     },
-    "metabolic_hierarchy_diabetes": {
-      "tier": "MEDIUM",
-      "full_precision": 73.9,
-      "full_n": 46,
-      "holdout_mean": 11.1,
-      "holdout_std": 15.7,
-      "delta": -62.8,
-      "mean_n": 3.7,
-      "status": "OVERFITTED?"
-    },
     "target_overlap_promotion": {
       "tier": "MEDIUM",
       "full_precision": 42.1,
@@ -785,6 +775,16 @@
       "holdout_std": 0,
       "delta": -18.2,
       "mean_n": 0,
+      "status": "OVERFITTED?"
+    },
+    "respiratory_hierarchy_copd": {
+      "tier": "MEDIUM",
+      "full_precision": 46.2,
+      "full_n": 26,
+      "holdout_mean": 25.0,
+      "holdout_std": 35.4,
+      "delta": -21.2,
+      "mean_n": 3.3,
       "status": "OVERFITTED?"
     },
     "respiratory": {
@@ -888,19 +888,19 @@
     "autoimmune_hierarchy_multiple_sclerosis",
     "infectious_hierarchy_sepsis",
     "respiratory_hierarchy_asthma",
-    "respiratory_hierarchy_copd",
     "autoimmune_hierarchy_lupus",
     "infectious_hierarchy_tuberculosis",
+    "metabolic_hierarchy_diabetes",
     "cancer_targeted_therapy",
     "neurological_hierarchy_epilepsy",
     "comp_to_base_high_87",
-    "metabolic_hierarchy_diabetes",
     "neurological_hierarchy_parkinsons",
+    "respiratory_hierarchy_copd",
     "respiratory",
     "neurological"
   ],
   "summary": {
-    "golden_holdout_precision": 78.1,
+    "golden_holdout_precision": 78.6,
     "golden_pass": true,
     "tier_ordering_correct": true,
     "n_rules_tested": 81,

@@ -15467,13 +15467,15 @@
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Run h757 sub-reason audit with updated code",
         "Check if neurological/respiratory MEDIUM n increased due to HIGH\u2192MEDIUM demotions",
         "If n >= 10/seed and holdout < 30%, demote to LOW",
         "Run holdout to measure impact"
-      ]
+      ],
+      "findings": "Both neurological (8.6% \u00b1 8.8%, n=5.0/seed) and respiratory (21.8% \u00b1 39.2%, n=5.4/seed) MEDIUM sub-reasons remain well below n\u224830 threshold for reliable holdout. h757 HIGH\u2192MEDIUM demotions did NOT meaningfully increase n in these categories. Respiratory is 100% fluoroquinolone antibiotics for respiratory infections (medically correct). Neurological includes anticonvulsants for neuralgia, stimulants for narcolepsy (medically correct). Low holdout driven by evaluation instability with small disease counts, not prediction quality. Cannot confidently demote.",
+      "result_metric": "No demotion (n=5/seed, threshold n\u224830)"
     },
     {
       "id": "h760",
@@ -15483,13 +15485,15 @@
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Count how many diseases trigger each hierarchy rule",
         "For rules with <5 triggering diseases, assess if they can be evaluated at all",
         "Consider merging small hierarchy groups into their parent category",
         "Document which rules are evaluation-blind spots"
-      ]
+      ],
+      "findings": "Comprehensive audit of 32 hierarchy rules found:\n- 10/32 rules are holdout-invisible (n=0/seed) \u2014 evaluation blind spots\n- 7 rules are overfitted (holdout much worse than full-data)\n- 6 rules are genuine (holdout tracks full-data)\n- 2 rules degraded but still substantial\n\nActionable demotions implemented:\n1. metabolic_hierarchy_diabetes: MEDIUM\u2192LOW (11.1% holdout vs MEDIUM avg 36.0%)\n2. respiratory_hierarchy_copd: HIGH\u2192MEDIUM (25.9% holdout vs HIGH avg 59.4%)\n\nAlso removed copd from TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES.\n\nDead rule found: autoimmune_hierarchy_spondylitis (0 GT diseases, 0 predictions)\n\nInvisible HIGH-tier rules (MS, asthma, scleroderma, resp_infection, sepsis, atherosclerosis) \nare medically reasonable with good full-data precision. No demotions needed \u2014 they affect ~61 \npredictions total and medical logic supports their tier assignments.",
+      "result_metric": "MEDIUM +1.1pp (36.0\u219237.1%), GOLDEN +0.5pp (78.6%)"
     },
     {
       "id": "h761",
@@ -15524,6 +15528,51 @@
       ],
       "findings": "Found 5 cancer diseases miscategorized as other: recurrent glioblastoma, malignant astrocytoma, meningiomas, pheochromocytoma, postsurgical craniopharyngioma. glioblastoma is NOT a substring of glioma (separate word). Added 8 cancer keywords: glioblastoma, astrocytoma, meningioma, craniopharyngioma, pheochromocytoma, paraganglioma, schwannoma, thymoma. Recategorization correctly routes cancer-specific filters. MEDIUM +0.8pp (36.0\u219236.8%), within noise but correct fix. Pheochromocytoma now gets 24/30 FILTER (was getting other-category treatment). 120 predictions across 5 diseases affected.",
       "result_metric": "MEDIUM +0.8pp (36.0\u219236.8%), 5 diseases fixed, 120 predictions re-routed"
+    },
+    {
+      "id": "h763",
+      "title": "Hierarchy Rule Consolidation: Merge Small Groups Into Parent Categories",
+      "description": "h760 found 10 holdout-invisible rules and 1 dead rule. Many hierarchy groups \nhave only 1-2 GT diseases, making individual evaluation impossible. Consider merging small groups \ninto their parent category (e.g., all autoimmune hierarchy groups \u2192 single autoimmune_hierarchy rule). \nThis would increase n/seed for holdout evaluation while maintaining the category-level signal. \nTrade-off: lose within-category discrimination (e.g., psoriasis vs lupus vs MS) but gain evaluability.",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "For each category, compute merged holdout precision across all hierarchy sub-groups",
+        "Compare merged vs individual rule performance for evaluable rules",
+        "If merged precision is similar, simplify by removing sub-group discrimination",
+        "If individual rules perform differently, keep separate where evaluable"
+      ]
+    },
+    {
+      "id": "h764",
+      "title": "Parkinsons/Migraine Hierarchy Further Demotion: MEDIUM\u2192LOW Holdout Check",
+      "description": "h760 audit found neurological_hierarchy_parkinsons (18.2% full, 0% holdout, n=0/seed)\nand neurological_hierarchy_migraine (62.5% full, 50% holdout, n=2/seed) are both MEDIUM tier.\nParkinsons is completely holdout-invisible with low full-data precision (18.2%). \nMigraine has n=2/seed which is too small for reliable evaluation.\nShould parkinsons be demoted to LOW given its 18.2% full-data (below MEDIUM avg)?\nMigraine at 50% holdout but n=2 needs more data to evaluate.",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Check if parkinsons 18.2% full-data is below typical LOW/MEDIUM boundary",
+        "Analyze parkinsons drugs to understand why predictions fail",
+        "For migraine, check if expanded GT could improve evaluability",
+        "Implement demotion if justified and measure impact"
+      ]
+    },
+    {
+      "id": "h765",
+      "title": "HIGH Tier Invisible Rule Validation via Literature Mining",
+      "description": "h760 found 6 HIGH-tier hierarchy rules that are holdout-invisible: MS, asthma,\nscleroderma, respiratory_infection, sepsis, atherosclerosis (~61 predictions total).\nThese cannot be validated via holdout. Literature mining (ClinicalTrials.gov + PubMed) \ncould provide an independent validation signal for these predictions.\nIf literature evidence is strong, the tier assignments are supported.\nIf evidence is weak, demotions may be needed.",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Extract predictions from the 6 invisible HIGH hierarchy rules",
+        "Run literature mining pipeline on these ~61 predictions",
+        "Cross-tabulate literature evidence with current tier",
+        "Recommend demotions if literature evidence is weak"
+      ]
     }
   ],
   "completed": [
@@ -17948,6 +17997,12 @@
       "hypothesis_id": "h757",
       "learning": "Comprehensive sub-reason audit improved all tiers: GOLDEN +9.2pp, HIGH +5.7pp, MEDIUM +2.6pp. Key pattern: rules originally set from full-data precision (h183 reproductive hormones 26.3% \u2192 HIGH, h265 fluoroquinolones 44.4% \u2192 HIGH) are severely overfitted \u2014 holdout drops to 8-29%. All category-specific HIGH rules should be holdout-validated. freq10_nomech_r6_10 (high-frequency drugs without mechanism at rank 6-10) is genuinely LOW quality \u2014 frequency alone without mechanism or top-5 rank doesn't indicate repurposability.",
       "implication": "Remaining MEDIUM watch candidates: target_overlap_promotion (35.2%), cancer_same_type variants (~39%). These are borderline and may need deeper sub-analysis. Also: many hierarchy rules are holdout-invisible (0 n/seed) \u2014 they can't be validated but may still provide value."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h760",
+      "learning": "Hierarchy rule audit: 10/32 rules are holdout-invisible (n=0/seed). diabetes MEDIUM\u2192LOW (+1.1pp MEDIUM) and copd HIGH\u2192MEDIUM. Invisible rules affect ~78 predictions but are medically reasonable. Full-data precision is DEEPLY misleading for hierarchy rules (62.8pp gap for diabetes).",
+      "implication": "Full-data precision for hierarchy rules should never be trusted. All tier assignments need holdout validation. Rules with <4 GT diseases are evaluation blind spots."
     }
   ],
   "collaborations": [
