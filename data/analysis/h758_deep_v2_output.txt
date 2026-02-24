@@ -1,0 +1,226 @@
+======================================================================
+h758 v2: target_overlap_promotion Deep Analysis
+======================================================================
+
+Loading predictor...
+Diseases with GT + embeddings: 965
+
+--- SEED 42 (1/5) ---
+  45 target_overlap preds, 15 hits (33.3%)
+
+--- SEED 123 (2/5) ---
+  38 target_overlap preds, 11 hits (28.9%)
+
+--- SEED 456 (3/5) ---
+  67 target_overlap preds, 24 hits (35.8%)
+
+--- SEED 789 (4/5) ---
+  57 target_overlap preds, 23 hits (40.4%)
+
+--- SEED 2024 (5/5) ---
+  72 target_overlap preds, 31 hits (43.1%)
+
+======================================================================
+TOTAL: 279 pred-instances across 5 seeds
+Overall: 37.3% (104/279)
+
+======================================================================
+kNN SCORE DISTRIBUTION
+======================================================================
+  Score range: 0.0000 - 0.0000
+  Mean: 0.0000, Median: 0.0000
+
+  Score Threshold Analysis (demote if score < threshold):
+  Threshold      Below%  Below_n   Above%  Above_n  Removed
+  score<0.010    37.3%      279     0.0%        0    55.8/seed
+  score<0.020    37.3%      279     0.0%        0    55.8/seed
+  score<0.030    37.3%      279     0.0%        0    55.8/seed
+  score<0.040    37.3%      279     0.0%        0    55.8/seed
+  score<0.050    37.3%      279     0.0%        0    55.8/seed
+  score<0.060    37.3%      279     0.0%        0    55.8/seed
+  score<0.080    37.3%      279     0.0%        0    55.8/seed
+  score<0.100    37.3%      279     0.0%        0    55.8/seed
+
+======================================================================
+OVERLAP COUNT DISTRIBUTION
+======================================================================
+  overlap=0: 37.3% (104/279)
+
+======================================================================
+RANK DISTRIBUTION
+======================================================================
+  Rank range: 99 - 99
+
+======================================================================
+PER-DRUG HOLDOUT ANALYSIS
+======================================================================
+
+  Drug                             Prec   H/   N  n/seed Cats                  AvgScore
+  ------------------------------ ------ --- ---- ------- -------------------- ---------
+  Phenelzine                      27.3%   3/  11    2.2 other,psychiatric      0.0000
+  Fluoxetine                      62.5%   5/   8    1.6 other,psychiatric      0.0000
+  Venlafaxine                      0.0%   0/   8    1.6 other,psychiatric      0.0000
+  Chlorpromazine                  42.9%   3/   7    1.4 other,psychiatric      0.0000
+  Chorionic Gonadotropin (Human)   0.0%   0/   7    1.4 other                  0.0000
+  Testosterone                    57.1%   4/   7    1.4 autoimmune,other       0.0000
+  Sertraline                      33.3%   2/   6    1.2 other                  0.0000
+  Fluoxymesterone                  0.0%   0/   6    1.2 autoimmune,other       0.0000
+  Cannabidiol                     40.0%   2/   5    1.0 other,psychiatric      0.0000
+  Haloperidol                    100.0%   5/   5    1.0 other                  0.0000
+  Aripiprazole                     0.0%   0/   5    1.0 other                  0.0000
+  Rilonacept                       0.0%   0/   5    1.0 autoimmune,dermatolo   0.0000
+  Estropipate                      0.0%   0/   5    1.0 other                  0.0000
+  Medroxyprogesterone Acetate    100.0%   5/   5    1.0 other                  0.0000
+  Progesterone                   100.0%   5/   5    1.0 other                  0.0000
+  Clomifene                       40.0%   2/   5    1.0 other                  0.0000
+  Bupropion                       60.0%   3/   5    1.0 other,psychiatric      0.0000
+  Methyltestosterone               0.0%   0/   5    1.0 autoimmune,other       0.0000
+  Amphetamine                     25.0%   1/   4    0.8 other,psychiatric      0.0000
+  Clozapine                       25.0%   1/   4    0.8 other,psychiatric      0.0000
+  Choriogonadotropin alfa          0.0%   0/   4    0.8 other                  0.0000
+  Follitropin                      0.0%   0/   4    0.8 other                  0.0000
+  Danazol                        100.0%   4/   4    0.8 other                  0.0000
+  Gallium nitrate                  0.0%   0/   3    0.6 other                  0.0000
+  Paricalcitol                    66.7%   2/   3    0.6 other,renal            0.0000
+  Cyclobenzaprine                 66.7%   2/   3    0.6 musculoskeletal,othe   0.0000
+  Valproic Acid                   33.3%   1/   3    0.6 other,psychiatric      0.0000
+  Ropinirole                       0.0%   0/   3    0.6 other                  0.0000
+  Pramipexole                      0.0%   0/   3    0.6 other                  0.0000
+  Amitriptyline                   66.7%   2/   3    0.6 other,psychiatric      0.0000
+  Theophylline                     0.0%   0/   3    0.6 respiratory            0.0000
+  Anakinra                         0.0%   0/   3    0.6 autoimmune,musculosk   0.0000
+  Phenytoin                        0.0%   0/   3    0.6 other                  0.0000
+  Olanzapine                       0.0%   0/   3    0.6 other,psychiatric      0.0000
+  Ibrutinib                        0.0%   0/   3    0.6 other                  0.0000
+  Fluvastatin                      0.0%   0/   3    0.6 other                  0.0000
+  Pitavastatin                   100.0%   3/   3    0.6 other                  0.0000
+  Selegiline                      33.3%   1/   3    0.6 other,psychiatric      0.0000
+  Cysteamine                       0.0%   0/   2    0.4 renal                  0.0000
+  Methylphenidate                100.0%   2/   2    0.4 other                  0.0000
+  Clonidine                      100.0%   2/   2    0.4 other                  0.0000
+  Bortezomib                       0.0%   0/   2    0.4 other                  0.0000
+  Cladribine                       0.0%   0/   2    0.4 other                  0.0000
+  Alprostadil                      0.0%   0/   2    0.4 other                  0.0000
+  Capsaicin                      100.0%   2/   2    0.4 other                  0.0000
+  Formoterol                      50.0%   1/   2    0.4 respiratory            0.0000
+  Arformoterol                    50.0%   1/   2    0.4 respiratory            0.0000
+  Vasopressin                     50.0%   1/   2    0.4 other                  0.0000
+  Mycophenolate mofetil          100.0%   2/   2    0.4 other                  0.0000
+  Tadalafil                        0.0%   0/   2    0.4 other                  0.0000
+  L-Arginine                     100.0%   2/   2    0.4 other                  0.0000
+  Dienogest                        0.0%   0/   2    0.4 other                  0.0000
+  Acamprosate                    100.0%   2/   2    0.4 other                  0.0000
+  Nalmefene                      100.0%   2/   2    0.4 other                  0.0000
+  Carbamazepine                  100.0%   2/   2    0.4 other,psychiatric      0.0000
+  Pilocarpine                      0.0%   0/   2    0.4 autoimmune             0.0000
+  Clonazepam                     100.0%   2/   2    0.4 psychiatric            0.0000
+  Alprazolam                      50.0%   1/   2    0.4 psychiatric            0.0000
+  Paliperidone                     0.0%   0/   2    0.4 psychiatric            0.0000
+  Pimozide                         0.0%   0/   2    0.4 other                  0.0000
+  Rosuvastatin                    50.0%   1/   2    0.4 other                  0.0000
+  Mesalazine                     100.0%   2/   2    0.4 autoimmune             0.0000
+  Infliximab                     100.0%   2/   2    0.4 autoimmune             0.0000
+  Natalizumab                      0.0%   0/   2    0.4 autoimmune             0.0000
+  Canagliflozin                    0.0%   0/   2    0.4 renal                  0.0000
+  Oxycodone                      100.0%   1/   1    0.2 other                  0.0000
+  Pethidine                        0.0%   0/   1    0.2 other                  0.0000
+  Benzatropine                     0.0%   0/   1    0.2 other                  0.0000
+  Alfuzosin                        0.0%   0/   1    0.2 other                  0.0000
+  Tamsulosin                       0.0%   0/   1    0.2 other                  0.0000
+  Terazosin                        0.0%   0/   1    0.2 other                  0.0000
+  Silodosin                        0.0%   0/   1    0.2 other                  0.0000
+  Methadone                        0.0%   0/   1    0.2 other                  0.0000
+  Naloxone                       100.0%   1/   1    0.2 other                  0.0000
+  Perindopril                      0.0%   0/   1    0.2 other                  0.0000
+  Lenalidomide                     0.0%   0/   1    0.2 other                  0.0000
+  Mirtazapine                    100.0%   1/   1    0.2 psychiatric            0.0000
+  Imipramine                     100.0%   1/   1    0.2 psychiatric            0.0000
+  Ranitidine                     100.0%   1/   1    0.2 other                  0.0000
+  Ifosfamide                     100.0%   1/   1    0.2 other                  0.0000
+  Cetirizine                     100.0%   1/   1    0.2 dermatological         0.0000
+  Etodolac                         0.0%   0/   1    0.2 autoimmune             0.0000
+  Tromethamine                     0.0%   0/   1    0.2 renal                  0.0000
+  Metyrapone                       0.0%   0/   1    0.2 renal                  0.0000
+  Captopril                        0.0%   0/   1    0.2 renal                  0.0000
+  Foscarnet                      100.0%   1/   1    0.2 infectious             0.0000
+  Pyrimethamine                  100.0%   1/   1    0.2 infectious             0.0000
+  Fluphenazine                     0.0%   0/   1    0.2 psychiatric            0.0000
+  Atomoxetine                      0.0%   0/   1    0.2 psychiatric            0.0000
+  Tolcapone                      100.0%   1/   1    0.2 other                  0.0000
+  Octreotide                     100.0%   1/   1    0.2 other                  0.0000
+  Ezetimibe                        0.0%   0/   1    0.2 other                  0.0000
+  Econazole                      100.0%   1/   1    0.2 infectious             0.0000
+  Terbinafine                      0.0%   0/   1    0.2 infectious             0.0000
+  Stiripentol                      0.0%   0/   1    0.2 other                  0.0000
+  Potassium Chloride               0.0%   0/   1    0.2 musculoskeletal        0.0000
+  Erythropoietin                   0.0%   0/   1    0.2 renal                  0.0000
+  Bumetanide                     100.0%   1/   1    0.2 renal                  0.0000
+  Sunitinib                        0.0%   0/   1    0.2 other                  0.0000
+  Lanreotide                       0.0%   0/   1    0.2 other                  0.0000
+  Calcium                        100.0%   1/   1    0.2 renal                  0.0000
+  Mitomycin                        0.0%   0/   1    0.2 musculoskeletal        0.0000
+  Megestrol acetate              100.0%   1/   1    0.2 other                  0.0000
+  Fentanyl                         0.0%   0/   1    0.2 other                  0.0000
+  Ziprasidone                    100.0%   1/   1    0.2 other                  0.0000
+  Icosapent                      100.0%   1/   1    0.2 other                  0.0000
+  Ipratropium bromide            100.0%   1/   1    0.2 respiratory            0.0000
+  Choline                          0.0%   0/   1    0.2 respiratory            0.0000
+  Terbutaline                    100.0%   1/   1    0.2 respiratory            0.0000
+  Salmeterol                     100.0%   1/   1    0.2 respiratory            0.0000
+  Indacaterol                    100.0%   1/   1    0.2 respiratory            0.0000
+  Sarilumab                        0.0%   0/   1    0.2 autoimmune             0.0000
+  Quetiapine                       0.0%   0/   1    0.2 psychiatric            0.0000
+  Cariprazine                      0.0%   0/   1    0.2 psychiatric            0.0000
+  Citalopram                       0.0%   0/   1    0.2 psychiatric            0.0000
+
+======================================================================
+PER-DISEASE HOLDOUT ANALYSIS (top 25 by n)
+======================================================================
+
+  Disease                                         Prec   H/   N Cat             Drugs
+  --------------------------------------------- ------ --- ---- --------------- ------------------------------
+  autistic disorder                              33.3%  10/  30 other           Amphetamine, Aripiprazole, Chlorpromazine... (+12)
+  alcoholism                                     46.2%  12/  26 other           Acamprosate, Aripiprazole, Bupropion... (+12)
+  endometrial hyperplasia                        22.7%   5/  22 other           Chorionic Gonadotropin (Human), Clomifene, Dienogest... (+6)
+  polycystic ovary syndrome                      31.6%   6/  19 other           Choriogonadotropin alfa, Chorionic Gonadotropin (Human), Estropipate... (+9)
+  endometriosis                                  71.4%  10/  14 other           Chorionic Gonadotropin (Human), Clomifene, Danazol... (+5)
+  shift work sleep disorder                      11.1%   1/   9 psychiatric     Cannabidiol, Carbamazepine, Fluoxetine... (+2)
+  bipolar disorder                               50.0%   4/   8 psychiatric     Alprazolam, Amphetamine, Bupropion... (+5)
+  chronic obstructive pulmonary disease          75.0%   6/   8 respiratory     Arformoterol, Choline, Formoterol... (+5)
+  recurrent glioblastoma                          0.0%   0/   7 other           Bortezomib, Cladribine, Ibrutinib... (+3)
+  agoraphobia                                    85.7%   6/   7 psychiatric     Amitriptyline, Fluoxetine, Imipramine... (+2)
+  unexplained infertility                        42.9%   3/   7 other           Choriogonadotropin alfa, Danazol, Follitropin... (+1)
+  attention deficit hyperactivity disorder adhd  28.6%   2/   7 psychiatric     Cariprazine, Citalopram, Clozapine... (+4)
+  obsessive compulsive disorder                  33.3%   2/   6 psychiatric     Bupropion, Chlorpromazine, Phenelzine
+  psoriatic arthritis                             0.0%   0/   6 autoimmune      Fluoxymesterone, Methyltestosterone, Pilocarpine... (+2)
+  ulcerative colitis                             66.7%   4/   6 autoimmune      Infliximab, Mesalazine, Natalizumab
+  dyslipidaemia                                  50.0%   3/   6 other           Fluvastatin, Icosapent, Pitavastatin... (+1)
+  malignant astrocytoma                           0.0%   0/   5 other           Gallium nitrate, Ibrutinib
+  chronic renal failure                          60.0%   3/   5 renal           Calcium, Cysteamine, Paricalcitol
+  social anxiety disorder                        60.0%   3/   5 psychiatric     Cannabidiol, Chlorpromazine, Clozapine... (+1)
+  pain                                          100.0%   5/   5 other           Amitriptyline, Capsaicin, Cyclobenzaprine
+  schizophrenia                                  60.0%   3/   5 psychiatric     Alprazolam, Amphetamine, Atomoxetine... (+2)
+  peripheral neuropathic pain                    25.0%   1/   4 other           Cannabidiol, Cyclobenzaprine, Oxycodone... (+1)
+  erectile dysfunction                            0.0%   0/   4 other           Alfuzosin, Silodosin, Tamsulosin... (+1)
+  renal diseases                                 25.0%   1/   4 renal           Bumetanide, Canagliflozin, Erythropoietin
+  tourettes disorder                              0.0%   0/   3 other           Benzatropine, Clozapine, Sertraline
+
+======================================================================
+ZERO-HIT DRUGS (0% holdout, n >= 3/seed)
+======================================================================
+
+  0 drugs with 0% holdout and n>=3/seed (0 pred-instances)
+
+======================================================================
+SIMULATED DEMOTION IMPACT
+======================================================================
+
+  Remove zero-hit drugs (n>=3/seed):
+    Remaining: 37.3% (104/279)
+    Removed: 0 pred-instances (0/seed)
+    NOTE: Drug-specific demotions need n≈30 for reliable signal
+
+  Demote autoimmune + respiratory:
+    Remaining: 37.6% (94/250)
+    Demoted: 10/29 = 34.5%
+    Moved: 5.8/seed

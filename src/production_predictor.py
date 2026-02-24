@@ -1783,7 +1783,10 @@ CATEGORY_KEYWORDS = {
                'langerhans cell histiocytosis', 'lymphangioleiomyomatosis', 'lymphangioma',
                'medulloblastoma',
                # h621: Cancer diseases miscategorized as other specialties
-               'mesothelioma', 'retinoblastoma'],
+               'mesothelioma', 'retinoblastoma',
+               # h762: Additional cancer types found via h758 target_overlap analysis
+               'glioblastoma', 'astrocytoma', 'meningioma', 'craniopharyngioma',
+               'pheochromocytoma', 'paraganglioma', 'schwannoma', 'thymoma'],
     'cardiovascular': ['cardiac', 'heart', 'coronary', 'hypertension', 'arrhythmia',
                        'atherosclerosis', 'stroke', 'vascular', 'myocardial', 'angina',
                        'tachycardia', 'aneurysm', 'aorta', 'thrombosis', 'embolism',

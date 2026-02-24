@@ -15448,14 +15448,16 @@
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Break down target_overlap_promotion by disease category",
         "Identify categories with <25% holdout within target_overlap",
         "Check if specific drug classes (e.g., antibiotics, biologics) are consistently wrong",
         "If found, implement targeted demotion for weak subsets",
         "Run holdout to verify MEDIUM improvement"
-      ]
+      ],
+      "findings": "target_overlap_promotion holdout = 36.3% \u00b1 5.6% (n=55.8/seed), right at MEDIUM avg (36.0%). No actionable demotion found. autoimmune (18.0%, n=3.4/seed) and respiratory (25.0%, n=4.0/seed) flagged but too small for reliable conclusion (min n\u224830). Per-drug analysis: no drug has n>=3/seed. Score/overlap/rank attributes not populated on rescued preds. Disease-level: recurrent glioblastoma (0%, n=7) and psoriatic arthritis (0%, n=6) are low but not category-separable. Overall target_overlap is correctly calibrated.",
+      "result_metric": "36.3% \u00b1 5.6% holdout (no change, correctly at MEDIUM avg)"
     },
     {
       "id": "h759",
@@ -15488,6 +15490,40 @@
         "Consider merging small hierarchy groups into their parent category",
         "Document which rules are evaluation-blind spots"
       ]
+    },
+    {
+      "id": "h761",
+      "title": "DrugPrediction Attribute Propagation: Populate score/rank/overlap on Rescued Predictions",
+      "description": "h758 analysis found that rescued predictions (target_overlap_promotion) have score=0, knn_rank=99, overlap_count=0 \u2014 the original LOW prediction attributes are not propagated after rescue. This limits analysis capability (cannot do score-threshold analysis on rescued predictions). Fix attribute propagation so all prediction attributes are preserved through rescue.",
+      "category": "infrastructure",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Trace where DrugPrediction attributes are set during prediction",
+        "Identify why score/rank/overlap are lost during rescue",
+        "Fix attribute propagation in _assign_confidence_tier or predict()",
+        "Verify attributes populated on rescued predictions"
+      ]
+    },
+    {
+      "id": "h762",
+      "title": "Recurrent Glioblastoma / Astrocytoma Target Overlap: Cancer-Specific Target Overlap Demotion",
+      "description": "h758 found recurrent glioblastoma (0%, n=7) and malignant astrocytoma (0%, n=5) are zero-hit diseases within target_overlap_promotion. These are cancer diseases getting rescued by gene overlap, but cancer target_overlap has 0.3% holdout in general (h485). Check if cancer predictions are leaking through target_overlap rescue despite the cancer blocklist. If so, tighten the blocklist.",
+      "category": "tier_system",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "validated",
+      "steps": [
+        "Check if recurrent glioblastoma / astrocytoma are categorized as cancer or other",
+        "If categorized as other, they bypass the cancer blocklist for target_overlap rescue",
+        "Verify disease categorization for these diseases",
+        "If miscategorized, fix categorization or add specific blocklist entries"
+      ],
+      "findings": "Found 5 cancer diseases miscategorized as other: recurrent glioblastoma, malignant astrocytoma, meningiomas, pheochromocytoma, postsurgical craniopharyngioma. glioblastoma is NOT a substring of glioma (separate word). Added 8 cancer keywords: glioblastoma, astrocytoma, meningioma, craniopharyngioma, pheochromocytoma, paraganglioma, schwannoma, thymoma. Recategorization correctly routes cancer-specific filters. MEDIUM +0.8pp (36.0\u219236.8%), within noise but correct fix. Pheochromocytoma now gets 24/30 FILTER (was getting other-category treatment). 120 predictions across 5 diseases affected.",
+      "result_metric": "MEDIUM +0.8pp (36.0\u219236.8%), 5 diseases fixed, 120 predictions re-routed"
     }
   ],
   "completed": [
