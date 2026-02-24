@@ -14576,7 +14576,7 @@
       "id": "h712",
       "title": "Disease Name Synonym Expansion: Add Top 50 Common Disease Names to DISEASE_SYNONYMS",
       "description": "h711 found that 56.9% of EC disease names fail to map to MESH IDs, losing 50.9% of EC pairs. Many are simple synonyms: 'migraine' (16 GT drugs), 'emphysema' (24 GT), 'nausea' (21 GT), 'depression' (26 GT), 'insomnia' (18 GT). These all have MESH IDs already in DRKG but the DiseaseMatcher doesn't recognize the synonym. Adding the top 50 unmapped disease names to DISEASE_SYNONYMS would be a quick win for internal GT expansion.",
-      "status": "in_progress",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -14588,7 +14588,9 @@
         "Run holdout validation to check tier impact",
         "CAUTION: Some 'diseases' are symptoms (nausea, vomiting, pain) - assess if appropriate for predictions"
       ],
-      "closure_reason": "Roadmap cleanup 2026-02-07: Reset to pending. Still valuable (h711 showed name matching is 56.9% of coverage gap)."
+      "closure_reason": "Roadmap cleanup 2026-02-07: Reset to pending. Still valuable (h711 showed name matching is 56.9% of coverage gap).",
+      "findings": "h712 disease name synonym expansion: 986 synonyms added to DISEASE_SYNONYMS in disease_name_matcher.py. Internal GT gained +16 pairs (5650\u21925666). Many synonyms map to canonical names that already had MESH IDs through fuzzy matching, so the internal GT impact was modest. However, the synonyms improve disease name resolution across the entire pipeline (expanded GT, deliverable, etc.). The h712 synonym categories: COVID variants, cancer types, infection types, metabolic conditions, psychiatric conditions, procedural conditions, symptom-to-disease mappings.",
+      "result_metric": "+986 synonyms, +16 internal GT pairs. Modest direct impact but improves overall name resolution."
     },
     {
       "id": "h713",
@@ -15243,7 +15245,7 @@
       "priority": 2,
       "expected_impact": "high",
       "effort": "high",
-      "status": "pending",
+      "status": "in_progress",
       "rationale": "h732 validated literature evidence as a tier modifier: STRONG\u2192HIGH (60.2%), WEAK/NO\u2192LOW (10.4%). Currently only 590 of ~13K predictions have been mined. Full mining would identify many more STRONG and WEAK predictions, further improving tier separation. Based on h731 evidence distribution: ~10% STRONG, ~15% WEAK/NO. Full mining could promote ~130 to HIGH and demote ~200 to LOW. Main bottleneck: PubMed/ClinicalTrials.gov API rate limits.",
       "dependencies": [
         "h732",
@@ -15255,6 +15257,95 @@
         "Analyze evidence distribution across tiers",
         "Implement results as tier modifiers",
         "Run holdout validation with full evidence data"
+      ]
+    },
+    {
+      "id": "h748",
+      "title": "Incoherent GOLDEN\u2192HIGH Demotion Further to MEDIUM: 420 Preds at 38.2% Holdout",
+      "description": "h393 holdout validation shows incoherent_demotion at HIGH tier has 38.2% \u00b1 10.5% holdout (n=82.4/seed, full_n=420). This is BELOW MEDIUM average (43.7%) and HIGH average (52.4%). These are predictions that would qualify for GOLDEN (tier1 disease + freq>=10 + mechanism) but ATC class does not match disease category. Currently demoted GOLDEN\u2192HIGH. Should be demoted further to MEDIUM since 38.2% < 43.7% MEDIUM average. h576 found LOW-level incoherent demotions are 44% CS \u2014 need to check CS fraction in HIGH-level ones too.",
+      "status": "validated",
+      "priority": 1,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "LOW effort, HIGH certainty: holdout data already shows 38.2% < 43.7% MEDIUM. 420 predictions would move from HIGH to MEDIUM, cleaning up HIGH tier. Need to verify: (1) not driven by CS artifact, (2) stable across seeds, (3) non-CS precision.",
+      "steps": [
+        "Analyze the 420 incoherent_demotion HIGH predictions by drug category",
+        "Check CS fraction and non-CS precision",
+        "Verify if demoting to MEDIUM improves HIGH holdout",
+        "Implement change and run holdout validation",
+        "Check interaction with other rules"
+      ],
+      "findings": "h748 VALIDATED: Incoherent GOLDEN demoted from HIGH to MEDIUM. Holdout: 34.7% \u00b1 12.4% (n=64/seed, 339 full predictions). ~82% corticosteroids (CS\u2192infectious/cancer categories). Below MEDIUM avg (43.3%) but FAR above LOW (12.9%). Net effect: HIGH +0.6pp (52.4\u219253.0%), MEDIUM -0.4pp (43.7\u219243.3%). Better tier separation: HIGH now more reliably above 50%. The h748 analysis script confirmed n=17.6/seed at HIGH tier (after change), meaning the bulk of incoherent_demotion predictions successfully moved to MEDIUM.",
+      "result_metric": "HIGH +0.6pp (52.4\u219253.0%), MEDIUM -0.4pp (43.7\u219243.3%)"
+    },
+    {
+      "id": "h749",
+      "title": "Hierarchy Rule Overfitting Audit: Demote Epilepsy/Gout GOLDEN + Diabetes/Neurological HIGH + Promote GI/UTI",
+      "category": "tier_system",
+      "priority": 1,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "validated",
+      "rationale": "h393 holdout validation reveals several hierarchy rules with dramatic full-to-holdout gaps. Epilepsy GOLDEN=20% holdout (target 70%), gout GOLDEN=14.3%, diabetes HIGH=21.1%, neurological HIGH=8.6%. Meanwhile GI HIGH=90.4% and UTI HIGH=80% could be promoted. Low effort: all data already available, just need to implement changes.",
+      "steps": [
+        "Run h749 analysis script for detailed holdout per rule",
+        "Implement epilepsy GOLDEN\u2192HIGH or MEDIUM (20% holdout)",
+        "Implement gout GOLDEN\u2192MEDIUM (14.3% holdout)",
+        "Test diabetes HIGH\u2192MEDIUM/LOW (21.1% holdout)",
+        "Test neurological HIGH\u2192LOW (8.6% holdout)",
+        "Test GI HIGH\u2192GOLDEN promotion (90.4% holdout)",
+        "Test UTI HIGH\u2192GOLDEN promotion (80.0% holdout)",
+        "Run full holdout validation"
+      ],
+      "findings": "h749 VALIDATED: Epilepsy and gout GOLDEN\u2192MEDIUM demotions. Epilepsy: 12.0% \u00b1 14.7% holdout (n=6/seed, 65 preds, full-data 58.2%). Gout: 16.0% \u00b1 19.6% holdout (n=2/seed, 7 preds, full-data 37.5%). Both far below GOLDEN avg. GOLDEN improved +7.8pp (70.2\u219278.0%). MEDIUM barely affected (-0.4pp, 36.0\u219235.5%). Other candidates (GI/UTI promotion, neurological/diabetes demotion) had n<10/seed \u2014 too sparse to act on. Current tier holdout: GOLDEN 78.0% \u00b1 5.4%, HIGH 56.8% \u00b1 4.1%, MEDIUM 35.5% \u00b1 2.0%, LOW 13.0% \u00b1 0.5%, FILTER 10.0% \u00b1 0.5%.",
+      "result_metric": "GOLDEN +7.8pp (70.2\u219278.0%), MEDIUM -0.4pp (36.0\u219235.5%)"
+    },
+    {
+      "id": "h750",
+      "title": "freq10_nomech_r6_10 MEDIUM Demotion: 29.1% Holdout is Below MEDIUM Average",
+      "category": "tier_system",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "rationale": "h749 h393 holdout shows default_freq10_nomech_r6_10 at 29.1% \u00b1 8.2% holdout (n=31/seed). MEDIUM avg is 35.5%. This is 6.4pp below average and borderline LOW quality. 154 full-data predictions. z-score vs MEDIUM avg = (29.1-35.5)/8.2 = -0.78, not significant. But combined with existing evidence (h555 already demoted R11-20 to LOW), R6-10 without mechanism may be next demotion target. Need to check: is this subset already correctly classified, or would LOW improve MEDIUM?",
+      "steps": [
+        "Run targeted holdout for freq10_nomech_r6_10 to confirm 29.1%",
+        "Check if demoting to LOW improves MEDIUM precision",
+        "Verify tier hierarchy is maintained after change",
+        "If validated, implement demotion"
+      ]
+    },
+    {
+      "id": "h751",
+      "title": "GI Hierarchy HIGH\u2192GOLDEN Promotion: 90.4% Holdout with n=10/seed",
+      "category": "tier_system",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "rationale": "h749 h393 holdout shows gastrointestinal HIGH at 90.4% \u00b1 9.3% holdout (n=10/seed). This is above GOLDEN avg (78.0%). However, only 38 full-data predictions from 11 drugs and 7 diseases. Small n makes this risky. Need to verify signal is robust across seeds (3/5 seeds had data). If confirmed, 38 predictions could move HIGH\u2192GOLDEN, improving both tiers.",
+      "steps": [
+        "Check which GI diseases and drugs contribute to this HIGH rule",
+        "Verify 90.4% is not driven by a single disease or drug",
+        "Run targeted holdout validation",
+        "If confirmed, implement promotion"
+      ]
+    },
+    {
+      "id": "h752",
+      "title": "cv_pathway_comprehensive MEDIUM Audit: 31.2% Holdout with 37pp Overfit Gap",
+      "category": "tier_system",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "rationale": "h749 h393 holdout shows cv_pathway_comprehensive at 31.2% \u00b1 17.7% holdout (n=10/seed), vs 68.6% full-data \u2014 a 37.4pp gap, one of the most overfitted rules. 51 full-data predictions. The high variance (\u00b117.7%) and large overfit gap suggest this rule may be capturing training correlations rather than genuine signal. Should investigate: is the rule still adding value over baseline, or should it be demoted/removed?",
+      "steps": [
+        "Analyze which CV diseases contribute most to overfit",
+        "Check if pathway-comprehensive signal is redundant with other rules",
+        "Compare holdout precision with and without cv_pathway_comprehensive",
+        "Decide whether to demote or keep"
       ]
     }
   ],
@@ -17656,6 +17747,12 @@
       "hypothesis_id": "h740",
       "learning": "kNN score is a strong GT-free quality predictor within MEDIUM nomech predictions. Score < 2.0 has 7.7% holdout (vs 30+% above 2.0). Novel predictions are 4x more likely to be low-score (36.3% vs 8.5%). Adding knn_score to _assign_confidence_tier enabled the first score-based demotion rule.",
       "implication": "kNN score may be useful across OTHER sub-rules too, not just nomech. Could extend to freq5_mechanism, target_overlap, etc."
+    },
+    {
+      "date": "2026-02-23",
+      "hypothesis_id": "h749",
+      "learning": "Epilepsy and gout hierarchy GOLDEN rules were 4-5x overfitted (58%/37.5% full-data vs 12%/16% holdout). Demoting to MEDIUM improved GOLDEN by +7.8pp with minimal MEDIUM dilution (-0.4pp). Full h393 revalidation also reveals current absolute tier values differ from CLAUDE.md due to h744-h746 intermediate changes.",
+      "implication": "Hierarchy rules for small disease groups (<100 preds) are especially prone to overfitting. Always validate new hierarchy rules with holdout before deploying. Current tier holdout: GOLDEN 78.0%, HIGH 56.8%, MEDIUM 35.5%."
     }
   ],
   "collaborations": [

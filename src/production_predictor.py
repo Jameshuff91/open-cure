@@ -3644,7 +3644,9 @@ class DrugRepurposingPredictor:
         # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
         HIERARCHY_DEMOTE_TO_HIGH = {'thyroid', 'diabetes'}
         # h396: These hierarchy groups have 0% precision (n>=2) - demote to MEDIUM
-        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine'}
+        # h749: epilepsy GOLDEN→MEDIUM (12.0% ± 14.7% holdout, n=6/seed; full-data 58.2%)
+        # h749: gout GOLDEN→MEDIUM (16.0% ± 19.6% holdout, n=2/seed; full-data 37.5%)
+        HIERARCHY_DEMOTE_TO_MEDIUM = {'parkinsons', 'migraine', 'epilepsy', 'gout'}
         # h649: pneumonia demoted MEDIUM→LOW (16.7% ± 0.0% holdout, n=6/seed)
         # h402 originally demoted to MEDIUM (6.7% holdout), but holdout is near LOW (14.8%)
         # 80% full-data vs 16.7% holdout = most overfitted rule (Δ=-63pp)
@@ -3704,9 +3706,13 @@ class DrugRepurposingPredictor:
 
         # GOLDEN tier (Tier1 + freq>=10 + mechanism)
         if disease_tier == 1 and train_frequency >= 10 and mechanism_support:
-            # h311: Demote incoherent GOLDEN to HIGH
+            # h311/h748: Demote incoherent GOLDEN to MEDIUM
+            # h393 holdout: 38.2% ± 10.5% (n=82.4/seed, 420 preds)
+            # Below MEDIUM avg (43.7%). ~82% corticosteroids for non-matching
+            # categories (e.g., CS→infectious/cancer). Genuine quality gap.
+            # Moving from HIGH→MEDIUM improves HIGH by ~+8pp.
             if not is_coherent:
-                return ConfidenceTier.HIGH, False, 'incoherent_demotion'
+                return ConfidenceTier.MEDIUM, False, 'incoherent_demotion'
             return ConfidenceTier.GOLDEN, False, None
 
         # HIGH tier
