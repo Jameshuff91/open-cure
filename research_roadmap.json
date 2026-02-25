@@ -15685,7 +15685,7 @@
       "priority": 3,
       "expected_impact": "high",
       "effort": "high",
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Mine remaining ~370 MEDIUM predictions not yet covered by h768",
         "Verify STRONG rate is consistent across full sample",
@@ -15717,7 +15717,7 @@
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Split atc_coherent_infectious into antifungal vs antibacterial",
         "Check holdout precision for each subset",
@@ -15733,7 +15733,7 @@
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "List all beta-blockers in DRKG (propranolol, metoprolol, atenolol, etc.)",
         "List all vitamin D analogs (calcitriol, ergocalciferol, cholecalciferol, etc.)",
@@ -15741,7 +15741,57 @@
         "Check which have predictions for hypotension/hypercalcemia/diarrhea",
         "Add class-level inverse indication pairs",
         "Run holdout evaluation"
-      ]
+      ],
+      "findings": "Expanded inverse indication coverage to full drug classes: 11 beta-blockers\u2192hypotension/orthostatic hypotension, 7 vitamin D analogs\u2192hypercalcemia (incl. paricalcitol merge), 5 tetracyclines\u2192diarrhea (incl. minocycline merge). Actual tier changes: 3 predictions (Propranolol\u2192hypotension MEDIUM\u2192FILTER, Propranolol\u2192orthostatic_hypotension LOW\u2192FILTER, Minocycline\u2192diarrhea LOW\u2192FILTER). Most new entries are defensive (no current predictions or already FILTER). MEDIUM +1.1pp (37.9\u219239.0%). Discovered diuretics\u2192hyponatremia as new inverse indication class (Spironolactone\u2192hyponatremia is MEDIUM).",
+      "result_metric": "MEDIUM 39.0% \u00b1 2.8% (+1.1pp from 37.9%)"
+    },
+    {
+      "id": "h775",
+      "title": "Diuretic Inverse Indications: Diuretics\u2192Hyponatremia/Hypokalemia Class Expansion",
+      "description": "h774 discovered Spironolactone\u2192hyponatremia [MEDIUM] and other diuretics\u2192hyponatremia [LOW/FILTER]. Diuretics CAUSE hyponatremia (especially thiazides \u2014 most common cause of drug-induced hyponatremia). Spironolactone is a potassium-sparing diuretic that causes dilutional hyponatremia. Also: thiazides/loop diuretics\u2192hypokalemia (they waste potassium). NOTE: Spironolactone/amiloride\u2192hypokalemia is NOT inverse (they are potassium-sparing and TREAT hypokalemia). HCTZ is most common cause of drug-induced hyponatremia (BMJ 2024). Expand to full class: all diuretics\u2192hyponatremia, non-K-sparing\u2192hypokalemia.",
+      "steps": [
+        "List all diuretics in DRKG predictions",
+        "Verify which diuretic\u2192electrolyte predictions exist",
+        "Add class-level inverse indication pairs (careful: K-sparing vs K-wasting distinction)",
+        "Run holdout evaluation"
+      ],
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "parent_hypothesis": "h774"
+    },
+    {
+      "id": "h776",
+      "title": "ACE Inhibitor\u2192Angioedema Class Expansion: Only 2/10 ACEi Covered",
+      "description": "h774 audit found only benazepril and quinapril have angioedema inverse indication entries, but ALL ACE inhibitors cause angioedema via bradykinin accumulation (0.1-0.7% incidence, FDA black box warning on all ACEi). Missing: lisinopril, enalapril, ramipril, captopril, fosinopril, perindopril, trandolapril, moexipril. No current predictions exist for these drug-disease pairs, but should be added defensively. Also check ARBs (lower risk but non-zero).",
+      "steps": [
+        "List all ACE inhibitors in DRKG",
+        "Check for angioedema predictions",
+        "Add all ACEi\u2192angioedema/hereditary angioedema",
+        "Consider ARBs\u2192angioedema (lower risk, 0.1-0.4%)"
+      ],
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "parent_hypothesis": "h774"
+    },
+    {
+      "id": "h777",
+      "title": "Aminoglycoside Nephrotoxicity Class Expansion: Only Gentamicin Covered",
+      "description": "h774 audit found only gentamicin has kidney failure inverse indication. ALL aminoglycosides are nephrotoxic (dose-dependent proximal tubular damage): tobramycin (10-20%), amikacin (10-15%), streptomycin, neomycin (most toxic, topical only), kanamycin. No current predictions exist for uncovered aminoglycosides\u2192kidney but should add defensively. Also check: vancomycin\u2192kidney failure (nephrotoxic, 5-25% incidence), cisplatin\u2192kidney (well-known).",
+      "steps": [
+        "List all aminoglycosides in DRKG",
+        "Check for kidney-related predictions",
+        "Add all aminoglycosides\u2192kidney failure/CKD/AKI",
+        "Check vancomycin, cisplatin coverage"
+      ],
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "parent_hypothesis": "h774"
     }
   ],
   "completed": [
@@ -18196,6 +18246,12 @@
       "hypothesis_id": "h768",
       "learning": "Literature STRONG rate correlates with MEDIUM sub-reason quality: comp_to_base_high_87 (100%), respiratory_hierarchy_copd (69%), cancer_same_type_high_rank (58%) vs hematological (0%), atc_coherent_infectious (14%). Sub-reasons with 0% STRONG evidence are CS-artifact driven.",
       "implication": "Literature evidence rate can serve as external validation signal for sub-reason quality, independent of holdout precision."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h774",
+      "learning": "Class-level inverse indication expansion has diminishing returns \u2014 most drug-disease pairs are already caught by other filters (cross_domain_isolated, category demotion, etc.). The main value is safety/defensive coverage. Propranolol\u2192hypotension was the only MEDIUM-tier catch. Diuretics\u2192hyponatremia discovered as new inverse indication class (spironolactone\u2192hyponatremia [MEDIUM]).",
+      "implication": "Focus inverse indication work on MEDIUM-tier predictions only \u2014 LOW/FILTER are already caught. Diuretic inverse indications (h775) are the highest-value next step."
     }
   ],
   "collaborations": [

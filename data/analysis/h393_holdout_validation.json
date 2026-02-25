@@ -14,40 +14,40 @@
       ]
     },
     "HIGH": {
-      "full_precision": 82.6,
-      "holdout_mean": 74.0,
-      "holdout_std": 5.5,
+      "full_precision": 82.0,
+      "holdout_mean": 73.4,
+      "holdout_std": 5.2,
       "delta": -8.6,
       "seed_values": [
         64.4,
-        77.6,
-        71.3,
         77.9,
-        79.0
+        70.6,
+        76.8,
+        77.3
       ]
     },
     "MEDIUM": {
-      "full_precision": 41.4,
-      "holdout_mean": 37.9,
-      "holdout_std": 2.1,
-      "delta": -3.5,
+      "full_precision": 34.7,
+      "holdout_mean": 39.0,
+      "holdout_std": 2.8,
+      "delta": 4.3,
       "seed_values": [
-        36.9,
-        38.3,
-        37.4,
+        37.0,
+        38.6,
         41.7,
+        42.6,
         35.3
       ]
     },
     "LOW": {
-      "full_precision": 21.5,
+      "full_precision": 21.6,
       "holdout_mean": 14.3,
       "holdout_std": 0.5,
-      "delta": -7.2,
+      "delta": -7.3,
       "seed_values": [
-        13.8,
+        13.9,
         14.8,
-        13.7,
+        13.6,
         14.5,
         14.9
       ]
@@ -69,22 +69,22 @@
   "rule_comparison": {
     "inverse_indication": {
       "tier": "FILTER",
-      "full_precision": 20.1,
-      "full_n": 139,
-      "holdout_mean": 15.5,
-      "holdout_std": 8.6,
-      "delta": -4.6,
-      "mean_n": 19.4,
-      "status": "GENUINE"
+      "full_precision": 18.8,
+      "full_n": 149,
+      "holdout_mean": 13.4,
+      "holdout_std": 7.1,
+      "delta": -5.4,
+      "mean_n": 21.8,
+      "status": "degraded"
     },
     "default": {
       "tier": "FILTER",
       "full_precision": 16.6,
-      "full_n": 10321,
+      "full_n": 10316,
       "holdout_mean": 11.1,
       "holdout_std": 0.6,
       "delta": -5.5,
-      "mean_n": 2170.0,
+      "mean_n": 2169.0,
       "status": "degraded"
     },
     "complication_non_validated": {
@@ -249,12 +249,12 @@
     },
     "literature_strong_promotion": {
       "tier": "HIGH",
-      "full_precision": 96.6,
-      "full_n": 594,
-      "holdout_mean": 93.8,
-      "holdout_std": 2.9,
-      "delta": -2.8,
-      "mean_n": 64.8,
+      "full_precision": 93.2,
+      "full_n": 692,
+      "holdout_mean": 88.5,
+      "holdout_std": 3.2,
+      "delta": -4.7,
+      "mean_n": 78.2,
       "status": "GENUINE"
     },
     "transe_medium_promotion": {
@@ -319,12 +319,12 @@
     },
     "cardiovascular": {
       "tier": "HIGH",
-      "full_precision": 52.9,
-      "full_n": 17,
-      "holdout_mean": 60.5,
-      "holdout_std": 25.2,
-      "delta": 7.6,
-      "mean_n": 6.2,
+      "full_precision": 53.3,
+      "full_n": 15,
+      "holdout_mean": 61.1,
+      "holdout_std": 25.3,
+      "delta": 7.8,
+      "mean_n": 5.4,
       "status": "GENUINE"
     },
     "gastrointestinal": {
@@ -429,32 +429,42 @@
     },
     "literature_weak_demotion": {
       "tier": "LOW",
-      "full_precision": 25.3,
-      "full_n": 293,
-      "holdout_mean": 22.1,
-      "holdout_std": 9.0,
-      "delta": -3.2,
-      "mean_n": 35.2,
-      "status": "GENUINE"
+      "full_precision": 25.1,
+      "full_n": 386,
+      "holdout_mean": 19.5,
+      "holdout_std": 6.5,
+      "delta": -5.6,
+      "mean_n": 53.4,
+      "status": "degraded"
     },
     "gastrointestinal_medium_demotion": {
       "tier": "LOW",
-      "full_precision": 14.4,
-      "full_n": 367,
-      "holdout_mean": 8.3,
-      "holdout_std": 5.6,
-      "delta": -6.1,
-      "mean_n": 71.0,
+      "full_precision": 14.6,
+      "full_n": 364,
+      "holdout_mean": 8.4,
+      "holdout_std": 5.7,
+      "delta": -6.2,
+      "mean_n": 70.4,
       "status": "degraded"
+    },
+    "incoherent_demotion": {
+      "tier": "LOW",
+      "full_precision": 45.7,
+      "full_n": 322,
+      "holdout_mean": 43.9,
+      "holdout_std": 9.6,
+      "delta": -1.8,
+      "mean_n": 62.4,
+      "status": "GENUINE"
     },
     "default_nomech_low_score": {
       "tier": "LOW",
       "full_precision": 20.3,
-      "full_n": 871,
+      "full_n": 870,
       "holdout_mean": 13.4,
       "holdout_std": 2.5,
       "delta": -6.9,
-      "mean_n": 181.8,
+      "mean_n": 181.6,
       "status": "degraded"
     },
     "default_no_mech_high_rank": {
@@ -554,7 +564,7 @@
       "holdout_mean": 13.7,
       "holdout_std": 10.4,
       "delta": -7.6,
-      "mean_n": 81.6,
+      "mean_n": 81.4,
       "status": "degraded"
     },
     "infectious_hierarchy_pneumonia": {
@@ -697,64 +707,34 @@
       "mean_n": 18.7,
       "status": "degraded"
     },
-    "comp_to_base_high_75": {
-      "tier": "MEDIUM",
-      "full_precision": 100.0,
-      "full_n": 1,
-      "holdout_mean": 0,
-      "holdout_std": 0,
-      "delta": -100.0,
-      "mean_n": 0,
-      "status": "small-n"
-    },
     "cv_pathway_comprehensive": {
       "tier": "MEDIUM",
       "full_precision": 50.0,
-      "full_n": 12,
-      "holdout_mean": 40.1,
-      "holdout_std": 8.2,
-      "delta": -9.9,
-      "mean_n": 9.0,
-      "status": "degraded"
-    },
-    "incoherent_demotion": {
-      "tier": "MEDIUM",
-      "full_precision": 46.1,
-      "full_n": 330,
-      "holdout_mean": 43.7,
-      "holdout_std": 9.7,
-      "delta": -2.4,
-      "mean_n": 62.6,
-      "status": "GENUINE"
-    },
-    "target_overlap_promotion": {
-      "tier": "MEDIUM",
-      "full_precision": 42.1,
-      "full_n": 95,
-      "holdout_mean": 37.0,
-      "holdout_std": 4.5,
-      "delta": -5.1,
-      "mean_n": 50.6,
-      "status": "degraded"
+      "full_n": 10,
+      "holdout_mean": 34.6,
+      "holdout_std": 8.0,
+      "delta": -15.4,
+      "mean_n": 8.0,
+      "status": "OVERFITTED?"
     },
     "cv_established_drug_rescue": {
       "tier": "MEDIUM",
-      "full_precision": 40.0,
-      "full_n": 10,
-      "holdout_mean": 30.8,
-      "holdout_std": 20.0,
-      "delta": -9.2,
-      "mean_n": 4.2,
-      "status": "degraded"
+      "full_precision": 57.1,
+      "full_n": 7,
+      "holdout_mean": 34.2,
+      "holdout_std": 21.5,
+      "delta": -22.9,
+      "mean_n": 4.0,
+      "status": "small-n"
     },
     "default_freq5_mechanism": {
       "tier": "MEDIUM",
-      "full_precision": 35.6,
-      "full_n": 132,
-      "holdout_mean": 43.1,
-      "holdout_std": 3.7,
-      "delta": 7.5,
-      "mean_n": 38.2,
+      "full_precision": 32.9,
+      "full_n": 70,
+      "holdout_mean": 47.1,
+      "holdout_std": 5.3,
+      "delta": 14.2,
+      "mean_n": 28.0,
       "status": "GENUINE"
     },
     "respiratory_hierarchy_copd": {
@@ -767,25 +747,15 @@
       "mean_n": 1.0,
       "status": "small-n"
     },
-    "respiratory": {
+    "target_overlap_promotion": {
       "tier": "MEDIUM",
-      "full_precision": 66.7,
-      "full_n": 18,
-      "holdout_mean": 21.8,
-      "holdout_std": 39.2,
-      "delta": -44.9,
-      "mean_n": 5.4,
-      "status": "OVERFITTED?"
-    },
-    "comp_to_base_high_80": {
-      "tier": "MEDIUM",
-      "full_precision": 0.0,
-      "full_n": 1,
-      "holdout_mean": 18.8,
-      "holdout_std": 18.8,
-      "delta": 18.8,
-      "mean_n": 5.5,
-      "status": "small-n"
+      "full_precision": 41.7,
+      "full_n": 48,
+      "holdout_mean": 42.1,
+      "holdout_std": 6.4,
+      "delta": 0.4,
+      "mean_n": 34.2,
+      "status": "GENUINE"
     },
     "neurological": {
       "tier": "MEDIUM",
@@ -819,22 +789,22 @@
     },
     "cancer_same_type": {
       "tier": "MEDIUM",
-      "full_precision": 50.8,
-      "full_n": 61,
-      "holdout_mean": 46.5,
-      "holdout_std": 11.3,
-      "delta": -4.3,
-      "mean_n": 14.6,
+      "full_precision": 26.7,
+      "full_n": 15,
+      "holdout_mean": 48.2,
+      "holdout_std": 12.4,
+      "delta": 21.5,
+      "mean_n": 12.4,
       "status": "GENUINE"
     },
-    "neurological_hierarchy_migraine": {
+    "respiratory": {
       "tier": "MEDIUM",
-      "full_precision": 62.5,
-      "full_n": 8,
-      "holdout_mean": 50.0,
+      "full_precision": 20.0,
+      "full_n": 5,
+      "holdout_mean": 0.0,
       "holdout_std": 0.0,
-      "delta": -12.5,
-      "mean_n": 2.0,
+      "delta": -20.0,
+      "mean_n": 6.0,
       "status": "small-n"
     },
     "cancer_same_type_high_rank": {
@@ -856,6 +826,16 @@
       "delta": 0.0,
       "mean_n": 3.0,
       "status": "small-n"
+    },
+    "neurological_hierarchy_migraine": {
+      "tier": "MEDIUM",
+      "full_precision": 100.0,
+      "full_n": 1,
+      "holdout_mean": 0,
+      "holdout_std": 0,
+      "delta": -100.0,
+      "mean_n": 0,
+      "status": "small-n"
     }
   },
   "overfitted_rules": [
@@ -872,16 +852,16 @@
     "cancer_targeted_therapy",
     "neurological_hierarchy_parkinsons",
     "neurological_hierarchy_epilepsy",
-    "respiratory"
+    "cv_pathway_comprehensive"
   ],
   "summary": {
     "golden_holdout_precision": 80.1,
     "golden_pass": true,
     "tier_ordering_correct": true,
-    "n_rules_tested": 79,
-    "n_genuine": 29,
+    "n_rules_tested": 77,
+    "n_genuine": 28,
     "n_overfitted": 14,
-    "n_degraded": 21,
+    "n_degraded": 20,
     "n_small_sample": 15
   }
 }

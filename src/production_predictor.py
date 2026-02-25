@@ -912,7 +912,7 @@ INVERSE_INDICATION_PAIRS = {
     'canagliflozin': {'hypoglycemia', 'hyperinsulinemic hypoglycemia'},
     # h479: Minocycline CAUSES urticaria as adverse effect (case reports: acute severe urticaria
     # developing 3-28 days after initiation, can recur >12 months after discontinuation)
-    'minocycline': {'urticaria'},
+    'minocycline': {'urticaria', 'diarrhea'},  # h774: added diarrhea (tetracycline class effect)
     # h493: Corticosteroids contraindicated in stable IPF (ATS/ERS/JRS/ALAT 2022)
     # PANTHER-IPF trial (NEJM 2012): prednisone+azathioprine+NAC INCREASED mortality
     # Standard of care is pirfenidone/nintedanib, NOT corticosteroids
@@ -1029,7 +1029,7 @@ INVERSE_INDICATION_PAIRS = {
     'venlafaxine': {'bipolar disorder'},
     'duloxetine': {'bipolar disorder'},
     # h486: Paricalcitol (vitamin D analog) suppresses PTH → hypoparathyroidism
-    'paricalcitol': {'hypoparathyroidism'},
+    'paricalcitol': {'hypoparathyroidism', 'hypercalcemia'},  # h774: added hypercalcemia (vitamin D class effect)
     # h486: Erythromycin causes erythema multiforme
     'erythromycin': {'severe erythema multiforme'},
     # h486: Proarrhythmic drugs → ventricular tachycardia (torsades de pointes risk)
@@ -1117,16 +1117,36 @@ INVERSE_INDICATION_PAIRS = {
     # h674: Defensive coverage for withdrawn/research statins (no current predictions but prevents future leakage)
     'cerivastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
     'mevastatin': {'type 2 diabetes mellitus', 'diabetes mellitus', 'hyperglycemia'},
-    # h769: Doxycycline CAUSES diarrhea (common GI side effect of tetracyclines)
+    # h769+h774: Tetracyclines CAUSE diarrhea (common GI side effect, class effect)
+    # Tetracycline antibiotics disrupt gut microbiome and cause osmotic diarrhea
     'doxycycline': {'diarrhea'},
-    # h769: Vitamin D analogs CAUSE hypercalcemia (increase calcium absorption/mobilization)
+    'tetracycline': {'diarrhea'},
+    'tigecycline': {'diarrhea'},
+    'demeclocycline': {'diarrhea'},
+    # h769+h774: Vitamin D analogs CAUSE hypercalcemia (increase calcium absorption/mobilization)
+    # All vitamin D analogs raise serum calcium — overdose/excess causes hypercalcemia
     'calcitriol': {'hypercalcemia'},
     'ergocalciferol': {'hypercalcemia'},
+    'cholecalciferol': {'hypercalcemia'},
+    'alfacalcidol': {'hypercalcemia'},
+    'doxercalciferol': {'hypercalcemia'},
+    'calcifediol': {'hypercalcemia'},
     # h769: Adenosine CAUSES transient asystole; NOT a treatment for cardiac arrest
     # Used for SVT (supraventricular tachycardia) only
     'adenosine': {'cardiac arrest'},
-    # h769: Beta-blockers CAUSE hypotension (lower blood pressure by design)
-    'carvedilol': {'hypotension'},
+    # h769+h774: Beta-blockers CAUSE hypotension and orthostatic hypotension (class effect)
+    # Beta-blockers lower blood pressure by design — predicting them for LOW blood pressure is inverse
+    'carvedilol': {'hypotension', 'orthostatic hypotension'},
+    'propranolol': {'hypotension', 'orthostatic hypotension'},
+    'metoprolol': {'hypotension', 'orthostatic hypotension'},
+    'atenolol': {'hypotension', 'orthostatic hypotension'},
+    'bisoprolol': {'hypotension', 'orthostatic hypotension'},
+    'labetalol': {'hypotension', 'orthostatic hypotension'},
+    'nebivolol': {'hypotension', 'orthostatic hypotension'},
+    'nadolol': {'hypotension', 'orthostatic hypotension'},
+    'timolol': {'hypotension', 'orthostatic hypotension'},
+    'esmolol': {'hypotension', 'orthostatic hypotension'},
+    'sotalol': {'hypotension', 'orthostatic hypotension'},
 }
 
 # h481: Drug class → disease category standard-of-care mappings
