@@ -1,0 +1,78 @@
+======================================================================
+h808: Literature High Demotion Sub-Reason Audit
+======================================================================
+Diseases: 965, GT pairs: 57805
+
+Seed 42 (1/5)...
+  Demoted: 15/53 = 28.3%
+
+Seed 123 (2/5)...
+  Demoted: 14/55 = 25.5%
+
+Seed 456 (3/5)...
+  Demoted: 12/47 = 25.5%
+
+Seed 789 (4/5)...
+  Demoted: 31/63 = 49.2%
+
+Seed 2024 (5/5)...
+  Demoted: 7/40 = 17.5%
+
+======================================================================
+ORIGINAL SUB-REASON BREAKDOWN (predictions demoted HIGH→MEDIUM by literature)
+======================================================================
+
+  default_freq10_nomech_r1_5: 36.4% ± 10.8% (n=29/seed, total=147)
+    → MEDIUM quality: correctly demoted
+      NO_EVIDENCE: 26/68 = 34.3% (13/seed)
+      WEAK_EVIDENCE: 32/79 = 37.4% (15/seed)
+
+  cancer_same_type_mech_rank10: 13.4% ± 8.8% (n=8/seed, total=39)
+    → LOW quality: could demote further
+      NO_EVIDENCE: 1/8 = 12.5% (1/seed)
+      WEAK_EVIDENCE: 5/31 = 14.1% (6/seed)
+
+  default: 15.7% ± 16.0% (n=7/seed, total=34)
+    → LOW quality: could demote further
+      NO_EVIDENCE: 1/5 = 12.5% (1/seed)
+      WEAK_EVIDENCE: 4/29 = 16.2% (5/seed)
+
+  transe_medium_promotion: 18.8% ± 20.7% (n=3/seed, total=11)
+    → LOW quality: could demote further
+      NO_EVIDENCE: 0/6 = 0.0% (1/seed)
+      WEAK_EVIDENCE: 3/5 = 50.0% (1/seed)
+
+  corticosteroid_soc_promotion: 11.1% ± 15.7% (n=2/seed, total=6)
+    → LOW quality: could demote further
+      NO_EVIDENCE: 1/4 = 16.7% (0/seed)
+      WEAK_EVIDENCE: 0/2 = 0.0% (0/seed)
+
+  metabolic_hierarchy_thyroid: 20.0% ± 20.0% (n=3/seed, total=6)
+    → LOW quality: could demote further
+      NO_EVIDENCE: 2/5 = 25.0% (1/seed)
+      WEAK_EVIDENCE: 0/1 = 0.0% (0/seed)
+
+  cardiovascular_hierarchy_hypertension: 0.0% ± 0.0% (n=2/seed, total=6)
+    → LOW quality: could demote further
+      NO_EVIDENCE: 0/1 = 0.0% (0/seed)
+      WEAK_EVIDENCE: 0/5 = 0.0% (1/seed)
+
+  cardiovascular: 16.7% ± 23.6% (n=2/seed, total=5)
+    → LOW quality: could demote further
+      NO_EVIDENCE: 0/4 = 0.0% (0/seed)
+      WEAK_EVIDENCE: 1/1 = 100.0% (0/seed)
+
+  autoimmune_hierarchy_lupus: 100.0% ± 0.0% (n=3/seed, total=3)
+    → MEDIUM quality: correctly demoted
+      NO_EVIDENCE: 1/1 = 100.0% (0/seed)
+      WEAK_EVIDENCE: 2/2 = 100.0% (0/seed)
+
+  cancer: 0.0% ± 0.0% (n=1/seed, total=1)
+    → LOW quality: could demote further
+      WEAK_EVIDENCE: 0/1 = 0.0% (0/seed)
+
+======================================================================
+DECISION SUMMARY
+======================================================================
+No sub-reasons meet protection criteria (>=55% holdout, n>=5/seed)
+Literature demotion is correctly applied to all HIGH sub-reasons.

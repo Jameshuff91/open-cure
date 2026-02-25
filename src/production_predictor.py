@@ -4818,16 +4818,27 @@ class DrugRepurposingPredictor:
                     # h791: HIGH + NO/WEAK_EVIDENCE → MEDIUM (31.3% holdout)
                     # HIGH predictions with poor literature evidence underperform MEDIUM.
                     # Only applies to predictions IN the cache (NOT_ASSESSED untouched).
+                    # h808: Save original sub-reason before overwrite — some
+                    # HIGH sub-reasons are LOW quality even at MEDIUM tier.
+                    _orig_cat_specific = cat_specific
                     if (tier == ConfidenceTier.HIGH
                             and lit_level in ('NO_EVIDENCE', 'WEAK_EVIDENCE')):
                         tier = ConfidenceTier.MEDIUM
                         cat_specific = 'literature_high_demotion'
 
                     # h732: MEDIUM + NO_EVIDENCE/WEAK_EVIDENCE → LOW (5-7% holdout)
+                    # h808: Only protect literature_high_demotion if original
+                    # sub-reason has >=MEDIUM holdout. Sub-reasons with LOW
+                    # holdout (cancer_same_type_mech_rank10: 13.4%, default:
+                    # 15.7%) should fall through to LOW.
+                    _LIT_DEMOTION_PROTECTED = {
+                        'default_freq10_nomech_r1_5',  # 36.4% holdout (n=29/seed)
+                    }
                     if (tier == ConfidenceTier.MEDIUM
                             and lit_level in ('NO_EVIDENCE', 'WEAK_EVIDENCE')
-                            # h791: Don't double-demote predictions just demoted from HIGH
-                            and cat_specific != 'literature_high_demotion'):
+                            and not (cat_specific == 'literature_high_demotion'
+                                     and _orig_cat_specific
+                                     in _LIT_DEMOTION_PROTECTED)):
                         tier = ConfidenceTier.LOW
                         cat_specific = 'literature_weak_demotion'
 

@@ -1,0 +1,58 @@
+======================================================================
+h809: Cancer same-type double demotion + impact analysis
+======================================================================
+Diseases: 965, GT pairs: 57805
+
+Seed 42 (1/5)...
+  Moved 19 preds MEDIUM→LOW
+    MEDIUM: 34.0% (141) → 36.9% (122) [+2.8pp]
+    LOW: 11.5% (1732) → 11.6% (1751) [+0.0pp]
+
+Seed 123 (2/5)...
+  Moved 20 preds MEDIUM→LOW
+    MEDIUM: 28.5% (158) → 29.7% (138) [+1.2pp]
+    LOW: 12.1% (1675) → 12.2% (1695) [+0.1pp]
+
+Seed 456 (3/5)...
+  Moved 25 preds MEDIUM→LOW
+    MEDIUM: 33.6% (149) → 37.1% (124) [+3.5pp]
+    LOW: 10.7% (1626) → 10.8% (1651) [+0.1pp]
+
+Seed 789 (4/5)...
+  Moved 12 preds MEDIUM→LOW
+    MEDIUM: 42.2% (173) → 44.7% (161) [+2.5pp]
+    LOW: 12.4% (1663) → 12.4% (1675) [-0.0pp]
+
+Seed 2024 (5/5)...
+  Moved 15 preds MEDIUM→LOW
+    MEDIUM: 28.9% (149) → 31.3% (134) [+2.5pp]
+    LOW: 12.0% (1589) → 11.9% (1604) [-0.0pp]
+
+======================================================================
+AGGREGATE RESULTS (5-seed mean ± std)
+======================================================================
+Predictions moved MEDIUM→LOW: 18/seed
+
+  GOLDEN:
+    Baseline: 82.0% ± 3.6% (n=164/seed)
+    Modified: 82.0% ± 3.6% (n=164/seed)
+
+  HIGH:
+    Baseline: 80.7% ± 4.3% (n=188/seed)
+    Modified: 80.7% ± 4.3% (n=188/seed)
+
+  MEDIUM:
+    Baseline: 33.4% ± 5.0% (n=154/seed)
+    Modified: 36.0% ± 5.3% (n=136/seed)
+
+  LOW:
+    Baseline: 11.8% ± 0.6% (n=1657/seed)
+    Modified: 11.8% ± 0.6% (n=1675/seed)
+
+  FILTER:
+    Baseline: 9.5% ± 0.5% (n=2039/seed)
+    Modified: 9.5% ± 0.5% (n=2039/seed)
+
+======================================================================
+SENSITIVITY: Only cancer_same_type_mech_rank10 demotion
+======================================================================

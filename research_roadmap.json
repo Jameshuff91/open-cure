@@ -16231,7 +16231,7 @@
       "id": "h804",
       "title": "LOW Rich-Disease Score-Gate Rescue: Promote LOW Predictions with GT\u226530 AND Score\u22654 AND Mechanism Support",
       "description": "h803 found rich_disease(GT\u226530)+high_score(\u22653) at 37.8% holdout, but promoting broadly rescues unsafe demotions. Tighter gate: GT\u226530 + score\u22654 + mechanism + NOT in safety-demoted sub-reasons (antimicrobial_pathogen_mismatch, cancer_targeted_therapy, reproductive_medium_demotion). This excludes the dangerous sub-reasons while targeting the ~54/seed predictions at 47.0% holdout (score\u22654 + rich20). Mechanism gate should further improve precision. Non-CS 39.4% is above MEDIUM threshold.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -16240,13 +16240,15 @@
         "Run holdout evaluation on filtered subset",
         "Check CS artifact and sub-reason composition",
         "If \u226535% non-CS holdout and n\u226515/seed, implement as MEDIUM promotion"
-      ]
+      ],
+      "findings": "Score\u22654 + GT\u226530 + mechanism + safety exclusion: 0/0 predictions in holdout. The intersection of all gates is empty \u2014 too restrictive. LOW tier safety demotions are correctly calibrated.",
+      "result_metric": "0/0 predictions (empty set)"
     },
     {
       "id": "h805",
       "title": "Literature High Demotion Tightening: Only Demote NO_EVIDENCE (Not WEAK_EVIDENCE)",
       "description": "h791 demotes HIGH + NO/WEAK_EVIDENCE \u2192 MEDIUM. Current holdout: literature_high_demotion 31.1% \u00b1 12.4% (n=45/seed). But WEAK_EVIDENCE means SOME literature support exists, just not strong. Splitting: NO_EVIDENCE may be worse than WEAK_EVIDENCE. If WEAK_EVIDENCE alone is \u2265HIGH quality, removing it from the demotion could improve HIGH precision. Analysis needed to separate NO vs WEAK within the demotion pool.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -16255,13 +16257,15 @@
         "Run holdout evaluation on each subset",
         "If WEAK_EVIDENCE subset \u226555% holdout (HIGH threshold), remove from demotion",
         "Validate overall tier impact"
-      ]
+      ],
+      "findings": "WEAK_EVIDENCE (29.1% \u00b1 8.2%, n=31/seed) and NO_EVIDENCE (29.3% \u00b1 16.1%, n=20/seed) perform identically on holdout. Difference is -0.2pp. No basis for differential treatment. Combined 29.2% is below MEDIUM avg (34.8%) but z=-0.53 \u2014 not statistically significant. Current demotion HIGH\u2192MEDIUM is appropriately calibrated. Also discovered: MODERATE_EVIDENCE (550 cache entries) exists but is NOT handled in production_predictor.py \u2014 treated as NOT_ASSESSED.",
+      "result_metric": "WEAK=29.1% vs NO=29.3% (no difference)"
     },
     {
       "id": "h806",
       "title": "Autoimmune RA Hierarchy \u2192 HIGH Demotion: 69.0% Holdout Flagged OVERFITTED",
       "description": "autoimmune_hierarchy_rheumatoid_arthritis shows 89.7% full-data but 69.0% \u00b1 28.8% holdout (n=16/seed). Flagged OVERFITTED with -20.7pp delta. Current tier: GOLDEN. Should be demoted to HIGH (69.0% < GOLDEN 85.3%). High variance (\u00b128.8%) suggests small effective sample or disease-split sensitivity. Check if this is structural or if a subset is salvageable for GOLDEN.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -16270,6 +16274,102 @@
         "Identify if variance is from specific seed outliers or consistent underperformance",
         "If consistently <80%, demote to HIGH",
         "Validate GOLDEN tier improvement"
+      ],
+      "findings": "MODERATE_EVIDENCE is correctly treated as NOT_ASSESSED. HIGH+MODERATE=63.2%\u00b111.1% (stays HIGH, correct). MEDIUM+MODERATE=40.6%\u00b17.1% (stays MEDIUM, correct). LOW+MODERATE=33.2%\u00b15.4% (borderline MEDIUM but z=-0.30, not significant). No tier changes needed. KEY FINDING: Literature evidence gradient in LOW is clean and monotonic: STRONG=43.7%, MODERATE=33.2%, WEAK=19.1%, NO=9.3%, NOT_ASSESSED=10.8%. Validates evidence as strong independent signal.",
+      "result_metric": "No change \u2014 current behavior correct for all tiers"
+    },
+    {
+      "id": "h806",
+      "title": "MODERATE_EVIDENCE Literature Level: Integrate 550 Unhandled Cache Entries",
+      "description": "h805 discovered that MODERATE_EVIDENCE (550 entries in literature_mining_cache.json) is not handled by production_predictor.py. These predictions are treated as NOT_ASSESSED, meaning they bypass all literature-based tier modifications (h789 promotion, h791 demotion, h732 demotion, h795 promotion). Need to evaluate MODERATE_EVIDENCE holdout precision across tiers: (1) Should MODERATE + HIGH \u2192 stay HIGH or demote to MEDIUM? (2) Should MODERATE + MEDIUM \u2192 stay MEDIUM or promote/demote? (3) Should MODERATE + LOW/FILTER \u2192 promote to HIGH like STRONG?",
+      "status": "inconclusive",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Run holdout evaluation for predictions with MODERATE_EVIDENCE across all current tiers",
+        "Compare MODERATE to WEAK and STRONG boundaries",
+        "If MODERATE+HIGH >= 55%: leave as HIGH (no demotion needed)",
+        "If MODERATE+LOW >= 55%: promote like STRONG",
+        "Implement appropriate tier modifications"
+      ],
+      "findings": "LOW + MODERATE_EVIDENCE analysis:\n- All: 33.2% \u00b1 5.4% (n=37/seed, 185 total) \u2014 near MEDIUM (34.8%) but includes 'other' drag\n- Non-other: 40.2% \u00b1 12.9% (n=24/seed) \u2014 above MEDIUM avg but HIGH variance\n- Non-other non-CS: 36.6% \u00b1 11.4% (n=21/seed) \u2014 marginal\n- Per-seed range: 20.8% to 57.1% (too unstable)\n- No safety-demoted predictions (all are genuinely LOW)\n- 'other' category = 21.9% (h798 pattern confirmed)\n- Category breakdown: musculoskeletal 55.6%, autoimmune 55.6%, ophthalmic 75.0%, infectious 37.3%, dermatological 11.1%\nCONCLUSION: Signal exists but n<30 and variance too high (\u00b112.9%). Not reliable enough for LOW\u2192MEDIUM promotion.\nHIGH+MODERATE (63.2%) and MEDIUM+MODERATE (40.6%) correctly placed \u2014 no action needed.",
+      "result_metric": "LOW+MODERATE non-other: 40.2% \u00b1 12.9% (too high variance, n=24/seed)"
+    },
+    {
+      "id": "h807",
+      "title": "Literature Evidence Score Gradient: Use Continuous Score Instead of Categorical Level",
+      "description": "h805 showed NO_EVIDENCE and WEAK_EVIDENCE have identical holdout (29.1-29.3%), suggesting the categorical bucketing loses information. The literature_mining_cache stores both evidence_level (categorical) and evidence_score (continuous). A continuous score threshold might separate HIGH-quality from LOW-quality predictions within the same evidence level. Check if evidence_score gradient within WEAK_EVIDENCE predicts holdout precision (e.g., WEAK with score>1.5 vs score<0.5).",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "For all literature_high_demotion predictions, compute holdout precision by evidence_score quartile",
+        "Check if score gradient within WEAK is meaningful",
+        "If yes, consider score-based threshold instead of categorical level for demotion"
+      ]
+    },
+    {
+      "id": "h808",
+      "title": "Literature High Demotion Sub-Reason Audit: Which Original HIGH Rules Are Being Demoted?",
+      "description": "h805 showed literature_high_demotion at 29.2% holdout (below MEDIUM 34.8%). But this pools ALL original HIGH sub-reasons that lack literature evidence. Some HIGH sub-reasons may be robust even without literature support (e.g., hierarchy rules backed by medical knowledge) while others may be weak (e.g., freq-based promotions). Audit which original HIGH sub-reasons contribute most to the demotion pool and whether any should be protected from literature-based demotion.",
+      "status": "validated",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Temporarily disable literature_high_demotion to see original HIGH sub-reasons",
+        "Cross-tabulate original sub-reason \u00d7 literature level",
+        "Evaluate holdout for each (original_sub_reason, lit_level) combination",
+        "If any sub-reason has >= 55% holdout even with NO/WEAK evidence, protect from demotion"
+      ],
+      "findings": "Literature-demoted HIGH predictions have heterogeneous quality by original sub-reason. default_freq10_nomech_r1_5: 36.4% holdout (MEDIUM, n=29/seed) \u2014 PROTECTED. cancer_same_type_mech_rank10: 13.4% (LOW, n=8/seed), default: 15.7% (LOW, n=7/seed), others: <20% (LOW, tiny n). Implemented double-demotion: only protect default_freq10_nomech_r1_5 from MEDIUM\u2192LOW; all other literature-demoted HIGH sub-reasons fall through to LOW. ~19 preds/seed moved. MEDIUM +1.5pp (34.8%\u219236.3%), variance 5.1\u21924.6%.",
+      "result_metric": "MEDIUM +1.5pp (34.8\u219236.3%)"
+    },
+    {
+      "id": "h809",
+      "title": "Literature Evidence Coverage Expansion: Mine Remaining Un-cached HIGH/MEDIUM Predictions",
+      "description": "h808 showed that literature evidence quality varies dramatically by sub-reason. Currently only ~590 predictions are in the literature mining cache. Many HIGH and MEDIUM predictions have NOT_ASSESSED literature status and bypass the demotion/promotion rules entirely. Expanding literature mining coverage to all HIGH+MEDIUM predictions would allow more precise tier calibration. Focus on sub-reasons where literature evidence provides the biggest signal: cancer_same_type, hierarchy rules, corticosteroid_soc.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "high",
+      "steps": [
+        "Count NOT_ASSESSED predictions in HIGH and MEDIUM tiers",
+        "Identify which sub-reasons have the most NOT_ASSESSED predictions",
+        "Run literature mining on the highest-ROI subset (e.g., cancer_same_type + hierarchy)",
+        "Evaluate impact of expanded coverage on tier precision"
+      ]
+    },
+    {
+      "id": "h810",
+      "title": "MEDIUM Variance Reduction: Identify Seed-Sensitive Sub-Reasons Causing \u00b14.6% Swing",
+      "description": "MEDIUM holdout varies from 31.1% (seed 2024) to 44.1% (seed 789) \u2014 a 13pp range. Some sub-reasons may be contributing disproportionately to this variance due to small n or disease-sensitivity. Identifying and stabilizing these would improve confidence in MEDIUM tier reporting. Compare per-seed sub-reason precision to find the most variable ones.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "For each MEDIUM sub-reason, compute per-seed holdout precision",
+        "Identify sub-reasons with >20pp range across seeds",
+        "Check if variable sub-reasons have small n (instability) vs genuine signal variation",
+        "If small-n: consider merging with other sub-reasons or demoting to LOW"
+      ]
+    },
+    {
+      "id": "h811",
+      "title": "Autoimmune RA Hierarchy GOLDEN\u2192HIGH Demotion: 69.0% Holdout Below GOLDEN Threshold",
+      "description": "autoimmune_hierarchy_rheumatoid_arthritis shows 89.7% full-data but 69.0% \u00b1 28.8% holdout (n=16/seed). Flagged as OVERFITTED with -20.7pp delta. Currently GOLDEN tier. The 69.0% holdout is well below GOLDEN (85.3%). However, variance is very high (\u00b128.8%) suggesting seed-sensitive results. Check if demotion to HIGH would improve GOLDEN precision without hurting HIGH.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Check per-seed breakdown for autoimmune_hierarchy_rheumatoid_arthritis",
+        "Identify if variance is from specific seed outliers or consistent underperformance",
+        "If consistently <80%, implement demotion to HIGH",
+        "Run holdout validation to confirm impact"
       ]
     }
   ],
@@ -18785,6 +18885,24 @@
       "hypothesis_id": "h797+h798+h803",
       "learning": "Cancer same-type full-data inflation is 15.9pp (85.4%\u219269.5%) even for mech+rank\u226410 subset. 'Other' category literature_strong_low has only 39% holdout (vs 85.7% non-other). Disease GT richness (24% for GT\u226550 vs 3% for GT\u22644) is strongest LOW-internal signal but cannot promote safely due to mix of correctly-demoted sub-reasons.",
       "implication": "Never trust full-data cancer precision. Disease GT count is strong quality proxy but cannot be used alone for tier promotion. 'Other' category should be excluded from any evidence-based promotion rules."
+    },
+    {
+      "date": "2026-02-25",
+      "hypothesis_id": "h805",
+      "learning": "WEAK_EVIDENCE and NO_EVIDENCE have identical holdout precision (29.1% vs 29.3%) for literature_high_demotion predictions. The categorical distinction between no evidence and weak evidence provides zero predictive value for this tier system. Also discovered MODERATE_EVIDENCE (550 entries) is unhandled by production_predictor.py.",
+      "implication": "Current demotion is appropriately calibrated. MODERATE_EVIDENCE is a potential improvement opportunity (h806). Sub-reason analysis of what HIGH rules are being demoted may reveal protected rules (h808)."
+    },
+    {
+      "date": "2026-02-25",
+      "hypothesis_id": "h806",
+      "learning": "MODERATE_EVIDENCE correctly handled as NOT_ASSESSED \u2014 HIGH+MOD=63.2% (stays HIGH), MEDIUM+MOD=40.6% (stays MEDIUM), LOW+MOD=33.2% (borderline, stays LOW). Literature evidence has clean monotonic gradient in LOW tier: STRONG 43.7% > MODERATE 33.2% > WEAK 19.1% > NO 9.3% \u2248 NOT_ASSESSED 10.8%.",
+      "implication": "No code changes. Literature evidence level is the best sub-tier discriminator within LOW. Consider continuous evidence score for finer granularity (h807)."
+    },
+    {
+      "date": "2026-02-25",
+      "hypothesis_id": "h808",
+      "learning": "Literature-demoted HIGH predictions are NOT uniform quality. Only default_freq10_nomech_r1_5 (36.4%) maintains MEDIUM quality. All other sub-reasons (cancer_same_type_mech_rank10: 13.4%, default: 15.7%) are LOW quality when literature evidence is weak. Double-demotion freed +1.5pp MEDIUM.",
+      "implication": "Blanket protection rules should be audited for sub-group heterogeneity. Composite rules (like literature \u00d7 original-tier) may mask quality differences."
     }
   ],
   "collaborations": [

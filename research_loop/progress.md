@@ -1,6 +1,43 @@
 # Research Loop Progress
 
-## Current Session: h797+h798+h803 - Cancer GOLDEN Promotion + Other Category Exclusion + LOW Rescue (2026-02-25)
+## Current Session: h808 - Literature High Demotion Sub-Reason Audit (2026-02-25)
+
+### h808: Literature High Demotion Sub-Reason Audit — VALIDATED
+
+**Methodology:** Analyzed all predictions demoted HIGH→MEDIUM by literature evidence (h791), breaking down by their original HIGH sub-reason. Used h808 analysis script (pre-existing) which ran 5-seed holdout on each original sub-reason × literature level combination.
+
+**Key findings:**
+1. `default_freq10_nomech_r1_5` (n=29/seed): 36.4% holdout — correctly MEDIUM, PROTECTED
+2. `cancer_same_type_mech_rank10` (n=8/seed): 13.4% holdout — LOW quality, DEMOTED
+3. `default` misc HIGH (n=7/seed): 15.7% — LOW quality, DEMOTED
+4. All other sub-reasons (n<5/seed): LOW quality but tiny sample, DEMOTED
+
+**Implementation:** Modified production_predictor.py to only protect `default_freq10_nomech_r1_5` from the MEDIUM→LOW literature demotion. All other literature-demoted HIGH sub-reasons now fall through to LOW.
+
+**Tier impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 85.3% ± 2.6% | 85.3% ± 2.6% | 0pp |
+| HIGH | 81.8% ± 5.5% | 81.8% ± 5.5% | 0pp |
+| MEDIUM | 34.8% ± 5.1% | 36.3% ± 4.6% | **+1.5pp** |
+| LOW | 11.8% ± 0.6% | 11.9% ± 0.5% | +0.1pp |
+| FILTER | 9.2% ± 0.5% | 9.2% ± 0.5% | 0pp |
+
+**Key learning:** Blanket protection rules should be audited for sub-group heterogeneity. The literature_high_demotion protection was treating all original HIGH sub-reasons equally, but cancer_same_type_mech_rank10 was 13.4% while default_freq10_nomech_r1_5 was 36.4%.
+
+### New Hypotheses Generated (3)
+- h809: Literature evidence coverage expansion (mine more HIGH/MEDIUM predictions)
+- h810: MEDIUM variance reduction (identify seed-sensitive sub-reasons)
+- h811: Autoimmune RA hierarchy GOLDEN→HIGH demotion (69.0% holdout)
+
+### Recommended Next Steps
+1. h811: Quick RA hierarchy demotion check (low effort, clear OVERFITTED signal)
+2. h808 sub-analysis: Check other OVERFITTED rules for actionable demotions
+3. h809: Expand literature mining coverage for better tier calibration
+
+---
+
+## Previous Session: h797+h798+h803 - Cancer GOLDEN Promotion + Other Category Exclusion + LOW Rescue (2026-02-25)
 
 ### h797: Cancer Same-Type Mech Rank10 → GOLDEN — INVALIDATED
 
