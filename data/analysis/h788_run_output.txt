@@ -1,0 +1,125 @@
+======================================================================
+h788: Evidence Score as Continuous Holdout Predictor
+======================================================================
+Literature cache: 3115 entries
+Loading predictor...
+GT: 3589 diseases, 57805 pairs
+Diseases with GT + embeddings: 965
+
+--- STEP 1: Full-data evidence score matching ---
+Sample (50 diseases): 295/1266 matched (23.3%)
+
+--- STEP 2: 5-seed holdout evaluation by evidence score ---
+
+  Seed 42 (1/5)...
+
+  Seed 123 (2/5)...
+
+  Seed 456 (3/5)...
+
+  Seed 789 (4/5)...
+
+  Seed 2024 (5/5)...
+
+======================================================================
+RESULTS: Evidence Score Bins Within Tiers (5-seed holdout)
+======================================================================
+
+  GOLDEN:
+  Score Bin              Holdout%   ±std  n/seed
+  --------------------------------------------------
+  0-2 (none/weak)            0.0%   0.0%    0.2
+  2-4 (moderate)           100.0%   0.0%    0.2
+  4-6 (strong-low)         100.0%   0.0%    0.8
+  6-9 (strong-high)        100.0%   0.0%    0.4
+  no_cache                  79.6%   5.7%   45.0
+
+  HIGH:
+  Score Bin              Holdout%   ±std  n/seed
+  --------------------------------------------------
+  0-2 (none/weak)           31.3%  12.4%   28.2
+  2-4 (moderate)            74.4%   9.4%   12.8
+  4-6 (strong-low)          81.5%   8.9%   31.8
+  6-9 (strong-high)         90.5%   3.0%   76.0
+  no_cache                  68.1%   7.5%   92.0
+
+  MEDIUM:
+  Score Bin              Holdout%   ±std  n/seed
+  --------------------------------------------------
+  0-2 (none/weak)             N/A           0.0
+  2-4 (moderate)            33.4%   7.2%   23.0
+  4-6 (strong-low)            N/A           0.0
+  6-9 (strong-high)           N/A           0.0
+  no_cache                  40.6%   3.7%   98.0
+
+  LOW:
+  Score Bin              Holdout%   ±std  n/seed
+  --------------------------------------------------
+  0-2 (none/weak)           12.5%   2.2%  141.6
+  2-4 (moderate)            35.4%   6.2%   39.6
+  4-6 (strong-low)          65.9%   6.3%   32.8
+  6-9 (strong-high)         81.0%   9.6%   29.8
+  no_cache                  11.8%   0.5% 1673.4
+
+  FILTER:
+  Score Bin              Holdout%   ±std  n/seed
+  --------------------------------------------------
+  0-2 (none/weak)           15.1%   3.6%   13.2
+  2-4 (moderate)            46.7%  32.3%    3.6
+  4-6 (strong-low)          62.7%  19.8%    9.0
+  6-9 (strong-high)         90.1%   4.4%   17.8
+  no_cache                   9.0%   0.5% 1832.4
+
+======================================================================
+RESULTS: Evidence Level Within Tiers (5-seed holdout)
+======================================================================
+
+  GOLDEN:
+  Evidence Level         Holdout%   ±std  n/seed
+  --------------------------------------------------
+  NO_EVIDENCE                 N/A           0.0
+  WEAK_EVIDENCE              0.0%   0.0%    0.2
+  MODERATE_EVIDENCE        100.0%   0.0%    0.2
+  STRONG_EVIDENCE          100.0%   0.0%    1.2
+
+  HIGH:
+  Evidence Level         Holdout%   ±std  n/seed
+  --------------------------------------------------
+  NO_EVIDENCE               28.1%  15.7%   12.4
+  WEAK_EVIDENCE             33.6%  10.7%   15.8
+  MODERATE_EVIDENCE         74.4%   9.4%   12.8
+  STRONG_EVIDENCE           88.1%   4.1%  107.8
+
+  MEDIUM:
+  Evidence Level         Holdout%   ±std  n/seed
+  --------------------------------------------------
+  NO_EVIDENCE                 N/A           0.0
+  WEAK_EVIDENCE               N/A           0.0
+  MODERATE_EVIDENCE         33.4%   7.2%   23.0
+  STRONG_EVIDENCE             N/A           0.0
+
+  LOW:
+  Evidence Level         Holdout%   ±std  n/seed
+  --------------------------------------------------
+  NO_EVIDENCE                8.6%   2.3%   76.4
+  WEAK_EVIDENCE             17.2%   3.5%   65.2
+  MODERATE_EVIDENCE         35.4%   6.2%   39.6
+  STRONG_EVIDENCE           73.1%   6.4%   62.6
+
+  FILTER:
+  Evidence Level         Holdout%   ±std  n/seed
+  --------------------------------------------------
+  NO_EVIDENCE                4.7%   6.0%    6.0
+  WEAK_EVIDENCE             23.8%   6.3%    7.2
+  MODERATE_EVIDENCE         46.7%  32.3%    3.6
+  STRONG_EVIDENCE           81.3%   6.3%   26.8
+
+======================================================================
+FOCUS: MEDIUM tier evidence score gradient
+======================================================================
+  2-4 (moderate)        : 33.4% ± 7.2% (n=23/seed)
+
+--- Comparison: MEDIUM+STRONG vs HIGH tier ---
+  HIGH overall:       73.2% ± 5.2%
+
+Results saved to data/analysis/h788_evidence_score_holdout.json

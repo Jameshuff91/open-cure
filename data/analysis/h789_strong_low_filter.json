@@ -1,0 +1,4082 @@
+[
+  {
+    "drug": "Cortisone",
+    "disease": "nephrotic syndrome",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009404",
+    "drug_id": "drkg:Compound::DB14681"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "igan",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005921",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Corticotropin",
+    "disease": "igan",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.8,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005921",
+    "drug_id": "drkg:Compound::DB01285"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "orchitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D009920",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Ramipril",
+    "disease": "ischemic stroke",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020521",
+    "drug_id": "drkg:Compound::DB00178"
+  },
+  {
+    "drug": "Minocycline",
+    "disease": "pneumonia",
+    "tier": "LOW",
+    "sub_reason": "infectious_hierarchy_pneumonia",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011014",
+    "drug_id": "drkg:Compound::DB01017"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "pneumonia",
+    "tier": "LOW",
+    "sub_reason": "infectious_hierarchy_pneumonia",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011014",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Ceftriaxone",
+    "disease": "gonococcal pelvic inflammatory diseases",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000292",
+    "drug_id": "drkg:Compound::DB01212"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "rocky mountain spotted fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.8,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D012373",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "typhus fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014438",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "q fever",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011778",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "chancroid",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002602",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Streptomycin",
+    "disease": "plague",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010930",
+    "drug_id": "drkg:Compound::DB01082"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "plague",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010930",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Streptomycin",
+    "disease": "tularemia",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014406",
+    "drug_id": "drkg:Compound::DB01082"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "shigella infections",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D004405",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "shigella infections",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D004405",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Cefiderocol",
+    "disease": "infections caused by klebsiella",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007710",
+    "drug_id": "drkg:Compound::DB14879"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "infections caused by klebsiella",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007710",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Ceftazidime",
+    "disease": "infections caused by klebsiella",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007710",
+    "drug_id": "drkg:Compound::DB00438"
+  },
+  {
+    "drug": "Cefoxitin",
+    "disease": "infections caused by klebsiella",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007710",
+    "drug_id": "drkg:Compound::DB01331"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "syphilis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013587",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "syphilis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013587",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Amoxicillin",
+    "disease": "syphilis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D013587",
+    "drug_id": "drkg:Compound::DB01060"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "syphilis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D013587",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Levofloxacin",
+    "disease": "anthrax",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000881",
+    "drug_id": "drkg:Compound::DB01137"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "anthrax",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 6.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000881",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Streptomycin",
+    "disease": "actinomycosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000196",
+    "drug_id": "drkg:Compound::DB01082"
+  },
+  {
+    "drug": "Tetracycline",
+    "disease": "acne vulgaris",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000152",
+    "drug_id": "drkg:Compound::DB00759"
+  },
+  {
+    "drug": "Oxytetracycline",
+    "disease": "acne vulgaris",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000152",
+    "drug_id": "drkg:Compound::DB00595"
+  },
+  {
+    "drug": "Salicylic acid",
+    "disease": "acne vulgaris",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000152",
+    "drug_id": "drkg:Compound::DB00936"
+  },
+  {
+    "drug": "Clindamycin",
+    "disease": "acne vulgaris",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000152",
+    "drug_id": "drkg:Compound::DB01190"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "trachoma",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014141",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Levofloxacin",
+    "disease": "conjunctivitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003231",
+    "drug_id": "drkg:Compound::DB01137"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "conjunctivitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003231",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Ofloxacin",
+    "disease": "conjunctivitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003231",
+    "drug_id": "drkg:Compound::DB01165"
+  },
+  {
+    "drug": "Moxifloxacin",
+    "disease": "conjunctivitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003231",
+    "drug_id": "drkg:Compound::DB00218"
+  },
+  {
+    "drug": "Dofetilide",
+    "disease": "tachyarrhythmia",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001145",
+    "drug_id": "drkg:Compound::DB00204"
+  },
+  {
+    "drug": "Verapamil",
+    "disease": "wolffparkinsonwhite syndrome",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014927",
+    "drug_id": "drkg:Compound::DB00661"
+  },
+  {
+    "drug": "Lidocaine",
+    "disease": "dermatitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 6.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D003872",
+    "drug_id": "drkg:Compound::DB00281"
+  },
+  {
+    "drug": "Promethazine",
+    "disease": "vomiting",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014839",
+    "drug_id": "drkg:Compound::DB01069"
+  },
+  {
+    "drug": "Phenobarbital",
+    "disease": "vomiting",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014839",
+    "drug_id": "drkg:Compound::DB01174"
+  },
+  {
+    "drug": "Diazepam",
+    "disease": "acute alcohol withdrawal",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000430",
+    "drug_id": "drkg:Compound::DB00829"
+  },
+  {
+    "drug": "Metronidazole",
+    "disease": "trichomoniasis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014247",
+    "drug_id": "drkg:Compound::DB00916"
+  },
+  {
+    "drug": "Ceftazidime",
+    "disease": "intraabdominal infections",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D059413",
+    "drug_id": "drkg:Compound::DB00438"
+  },
+  {
+    "drug": "Clindamycin",
+    "disease": "intraabdominal infections",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D059413",
+    "drug_id": "drkg:Compound::DB01190"
+  },
+  {
+    "drug": "Aztreonam",
+    "disease": "intraabdominal infections",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D059413",
+    "drug_id": "drkg:Compound::DB00355"
+  },
+  {
+    "drug": "Doxycycline",
+    "disease": "sepsis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D018805",
+    "drug_id": "drkg:Compound::DB00254"
+  },
+  {
+    "drug": "Minocycline",
+    "disease": "sepsis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D018805",
+    "drug_id": "drkg:Compound::DB01017"
+  },
+  {
+    "drug": "Amoxicillin",
+    "disease": "sepsis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D018805",
+    "drug_id": "drkg:Compound::DB01060"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "osteomyelitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010019",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "osteomyelitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010019",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "osteomyelitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010019",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "osteomyelitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010019",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Ceftriaxone",
+    "disease": "osteomyelitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010019",
+    "drug_id": "drkg:Compound::DB01212"
+  },
+  {
+    "drug": "Metronidazole",
+    "disease": "osteomyelitis",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010019",
+    "drug_id": "drkg:Compound::DB00916"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "purulent meningitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008581",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Eptifibatide",
+    "disease": "coronary artery disease",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003324",
+    "drug_id": "drkg:Compound::DB00063"
+  },
+  {
+    "drug": "Dupilumab",
+    "disease": "urticaria",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014581",
+    "drug_id": "drkg:Compound::DB12159"
+  },
+  {
+    "drug": "Doxycycline",
+    "disease": "urticaria",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014581",
+    "drug_id": "drkg:Compound::DB00254"
+  },
+  {
+    "drug": "Lidocaine",
+    "disease": "contact dermatitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003877",
+    "drug_id": "drkg:Compound::DB00281"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "contact dermatitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003877",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Brimonidine",
+    "disease": "primary openangle glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005902",
+    "drug_id": "drkg:Compound::DB00484"
+  },
+  {
+    "drug": "Carteolol",
+    "disease": "primary openangle glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005902",
+    "drug_id": "drkg:Compound::DB00521"
+  },
+  {
+    "drug": "Bimatoprost",
+    "disease": "primary openangle glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005902",
+    "drug_id": "drkg:Compound::DB00905"
+  },
+  {
+    "drug": "Brinzolamide",
+    "disease": "primary openangle glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005902",
+    "drug_id": "drkg:Compound::DB01194"
+  },
+  {
+    "drug": "Betaxolol",
+    "disease": "primary openangle glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005902",
+    "drug_id": "drkg:Compound::DB00195"
+  },
+  {
+    "drug": "Timolol",
+    "disease": "primary openangle glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005902",
+    "drug_id": "drkg:Compound::DB00373"
+  },
+  {
+    "drug": "Tobramycin",
+    "disease": "eye infections",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015818",
+    "drug_id": "drkg:Compound::DB00684"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "chronic bronchitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001991",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Bupivacaine",
+    "disease": "osteoarthritis",
+    "tier": "LOW",
+    "sub_reason": "local_anesthetic_procedural",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010003",
+    "drug_id": "drkg:Compound::DB00297"
+  },
+  {
+    "drug": "Amphotericin B",
+    "disease": "esophageal candidiasis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002177",
+    "drug_id": "drkg:Compound::DB00681"
+  },
+  {
+    "drug": "Micafungin",
+    "disease": "esophageal candidiasis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002177",
+    "drug_id": "drkg:Compound::DB01141"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "esophageal candidiasis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002177",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Caspofungin",
+    "disease": "esophageal candidiasis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002177",
+    "drug_id": "drkg:Compound::DB00520"
+  },
+  {
+    "drug": "Voriconazole",
+    "disease": "esophageal candidiasis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002177",
+    "drug_id": "drkg:Compound::DB00582"
+  },
+  {
+    "drug": "Cholestyramine",
+    "disease": "hyperlipidemia",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006949",
+    "drug_id": "drkg:Compound::DB01432"
+  },
+  {
+    "drug": "Colesevelam",
+    "disease": "diabetes mellitus",
+    "tier": "LOW",
+    "sub_reason": "metabolic_hierarchy_diabetes",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003920",
+    "drug_id": "drkg:Compound::DB00930"
+  },
+  {
+    "drug": "Fenofibrate",
+    "disease": "diabetes mellitus",
+    "tier": "LOW",
+    "sub_reason": "metabolic_hierarchy_diabetes",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D003920",
+    "drug_id": "drkg:Compound::DB01039"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "chronic kidney disease",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D007676",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Hydrochlorothiazide",
+    "disease": "chronic kidney disease",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007676",
+    "drug_id": "drkg:Compound::DB00999"
+  },
+  {
+    "drug": "Epinephrine",
+    "disease": "bronchospasm",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001986",
+    "drug_id": "drkg:Compound::DB00668"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "impetigo",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D007169",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Calcitriol",
+    "disease": "hypercalcemia",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D006934",
+    "drug_id": "drkg:Compound::DB00136"
+  },
+  {
+    "drug": "Ergocalciferol",
+    "disease": "hypercalcemia",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D006934",
+    "drug_id": "drkg:Compound::DB00153"
+  },
+  {
+    "drug": "Denosumab",
+    "disease": "hypercalcemia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 7.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D006934",
+    "drug_id": "drkg:Compound::DB06643"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "gonococcal urethritis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014526",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "gonococcal urethritis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014526",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Ofloxacin",
+    "disease": "gonococcal urethritis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014526",
+    "drug_id": "drkg:Compound::DB01165"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "cholera",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002771",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "cholera",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002771",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Streptomycin",
+    "disease": "cholera",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D002771",
+    "drug_id": "drkg:Compound::DB01082"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "campylobacter fetus infections",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D002169",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Levofloxacin",
+    "disease": "brucellosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002006",
+    "drug_id": "drkg:Compound::DB01137"
+  },
+  {
+    "drug": "Streptomycin",
+    "disease": "brucellosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002006",
+    "drug_id": "drkg:Compound::DB01082"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "brucellosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002006",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Ceftriaxone",
+    "disease": "brucellosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002006",
+    "drug_id": "drkg:Compound::DB01212"
+  },
+  {
+    "drug": "Amikacin",
+    "disease": "infections caused by acinetobacter",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D000151",
+    "drug_id": "drkg:Compound::DB00479"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "infections caused by acinetobacter",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D000151",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Cefiderocol",
+    "disease": "infections caused by acinetobacter",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D000151",
+    "drug_id": "drkg:Compound::DB14879"
+  },
+  {
+    "drug": "Piperacillin",
+    "disease": "infections caused by acinetobacter",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D000151",
+    "drug_id": "drkg:Compound::DB00319"
+  },
+  {
+    "drug": "Diclofenac",
+    "disease": "dysmenorrhea",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D004412",
+    "drug_id": "drkg:Compound::DB00586"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "renal insufficiency",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000309",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Methylprednisolone",
+    "disease": "renal insufficiency",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000309",
+    "drug_id": "drkg:Compound::DB00959"
+  },
+  {
+    "drug": "Triamcinolone",
+    "disease": "tenosynovitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013717",
+    "drug_id": "drkg:Compound::DB00620"
+  },
+  {
+    "drug": "Cortisone",
+    "disease": "epicondylitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D013716",
+    "drug_id": "drkg:Compound::DB14681"
+  },
+  {
+    "drug": "Betamethasone",
+    "disease": "epicondylitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013716",
+    "drug_id": "drkg:Compound::DB00443"
+  },
+  {
+    "drug": "Abatacept",
+    "disease": "systemic lupus erythematosus",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008180",
+    "drug_id": "drkg:Compound::DB01281"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "interstitial pneumonia associated with polymyositisdermatomyositis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003882",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "polymyositis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D017285",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Corticotropin",
+    "disease": "polymyositis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D017285",
+    "drug_id": "drkg:Compound::DB01285"
+  },
+  {
+    "drug": "Tacrolimus",
+    "disease": "polymyositis",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D017285",
+    "drug_id": "drkg:Compound::DB00864"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "pemphigus foliaceus",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010392",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Rituximab",
+    "disease": "pemphigus foliaceus",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010392",
+    "drug_id": "drkg:Compound::DB00073"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "mycosis fungoides",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 6.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009182",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "mycosis fungoides",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009182",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Epinephrine",
+    "disease": "seasonal allergic rhinitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012220",
+    "drug_id": "drkg:Compound::DB00668"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "serum sickness",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012713",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "corneal ulcer",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003320",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "corneal ulcer",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003320",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Ofloxacin",
+    "disease": "corneal ulcer",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003320",
+    "drug_id": "drkg:Compound::DB01165"
+  },
+  {
+    "drug": "Moxifloxacin",
+    "disease": "corneal ulcer",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003320",
+    "drug_id": "drkg:Compound::DB00218"
+  },
+  {
+    "drug": "Aciclovir",
+    "disease": "herpes zoster",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006562",
+    "drug_id": "drkg:Compound::DB00787"
+  },
+  {
+    "drug": "Penciclovir",
+    "disease": "herpes zoster",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006562",
+    "drug_id": "drkg:Compound::DB00299"
+  },
+  {
+    "drug": "Famciclovir",
+    "disease": "herpes zoster",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006562",
+    "drug_id": "drkg:Compound::DB00426"
+  },
+  {
+    "drug": "Corticotropin",
+    "disease": "iridocyclitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.8,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014606",
+    "drug_id": "drkg:Compound::DB01285"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "inflammation",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D012173",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "inflammation",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D012173",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Corticotropin",
+    "disease": "posterior uveitis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 4.8,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015866",
+    "drug_id": "drkg:Compound::DB01285"
+  },
+  {
+    "drug": "Corticotropin",
+    "disease": "optic neuritis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009902",
+    "drug_id": "drkg:Compound::DB01285"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "tuberculosis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014376",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Fluorouracil",
+    "disease": "actinic keratosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D055623",
+    "drug_id": "drkg:Compound::DB00544"
+  },
+  {
+    "drug": "Imiquimod",
+    "disease": "actinic keratosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D055623",
+    "drug_id": "drkg:Compound::DB00724"
+  },
+  {
+    "drug": "Aminolevulinic acid",
+    "disease": "actinic keratosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D055623",
+    "drug_id": "drkg:Compound::DB00855"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "proteinuria",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011507",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Methylprednisolone",
+    "disease": "proteinuria",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011507",
+    "drug_id": "drkg:Compound::DB00959"
+  },
+  {
+    "drug": "Dexamethasone",
+    "disease": "proteinuria",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011507",
+    "drug_id": "drkg:Compound::DB01234"
+  },
+  {
+    "drug": "Corticotropin",
+    "disease": "proteinuria",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D011507",
+    "drug_id": "drkg:Compound::DB01285"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "nontropical sprue",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D002446",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Posaconazole",
+    "disease": "onychomycosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 6.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014006",
+    "drug_id": "drkg:Compound::DB01263"
+  },
+  {
+    "drug": "Miconazole",
+    "disease": "ringworm tinea corporis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014005",
+    "drug_id": "drkg:Compound::DB01110"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "ringworm tinea corporis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014005",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Miconazole",
+    "disease": "cutaneous candidiasis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002179",
+    "drug_id": "drkg:Compound::DB01110"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "tinea unguium",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014009",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Amantadine",
+    "disease": "parkinsons disease",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010301",
+    "drug_id": "drkg:Compound::DB00915"
+  },
+  {
+    "drug": "Droxidopa",
+    "disease": "parkinsons disease",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010301",
+    "drug_id": "drkg:Compound::DB06262"
+  },
+  {
+    "drug": "Zonisamide",
+    "disease": "parkinsons disease",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010301",
+    "drug_id": "drkg:Compound::DB00909"
+  },
+  {
+    "drug": "Selegiline",
+    "disease": "parkinsons disease",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010301",
+    "drug_id": "drkg:Compound::DB01037"
+  },
+  {
+    "drug": "Carbidopa",
+    "disease": "parkinsons disease",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010301",
+    "drug_id": "drkg:Compound::DB00190"
+  },
+  {
+    "drug": "Trihexyphenidyl",
+    "disease": "parkinsons disease",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010301",
+    "drug_id": "drkg:Compound::DB00376"
+  },
+  {
+    "drug": "Pramipexole",
+    "disease": "parkinsons disease",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010301",
+    "drug_id": "drkg:Compound::DB00413"
+  },
+  {
+    "drug": "Bromocriptine",
+    "disease": "parkinsons disease",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010301",
+    "drug_id": "drkg:Compound::DB01200"
+  },
+  {
+    "drug": "Propranolol",
+    "disease": "hypokalemia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D007008",
+    "drug_id": "drkg:Compound::DB00571"
+  },
+  {
+    "drug": "Piperacillin",
+    "disease": "hypokalemia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007008",
+    "drug_id": "drkg:Compound::DB00319"
+  },
+  {
+    "drug": "Spironolactone",
+    "disease": "hypokalemia",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D007008",
+    "drug_id": "drkg:Compound::DB00421"
+  },
+  {
+    "drug": "Doxycycline",
+    "disease": "diarrhea",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D003967",
+    "drug_id": "drkg:Compound::DB00254"
+  },
+  {
+    "drug": "Minocycline",
+    "disease": "prostatitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D011472",
+    "drug_id": "drkg:Compound::DB01017"
+  },
+  {
+    "drug": "Ofloxacin",
+    "disease": "prostatitis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011472",
+    "drug_id": "drkg:Compound::DB01165"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "infective endocarditis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D004696",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "infective endocarditis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D004696",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Ceftriaxone",
+    "disease": "infective endocarditis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D004696",
+    "drug_id": "drkg:Compound::DB01212"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "infective endocarditis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D004696",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Levofloxacin",
+    "disease": "cystitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003556",
+    "drug_id": "drkg:Compound::DB01137"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "cystitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003556",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Aztreonam",
+    "disease": "cystitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D003556",
+    "drug_id": "drkg:Compound::DB00355"
+  },
+  {
+    "drug": "Amoxicillin",
+    "disease": "cystitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D003556",
+    "drug_id": "drkg:Compound::DB01060"
+  },
+  {
+    "drug": "Piperacillin",
+    "disease": "cystitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003556",
+    "drug_id": "drkg:Compound::DB00319"
+  },
+  {
+    "drug": "Ofloxacin",
+    "disease": "cystitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003556",
+    "drug_id": "drkg:Compound::DB01165"
+  },
+  {
+    "drug": "Cholestyramine",
+    "disease": "chd",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D003327",
+    "drug_id": "drkg:Compound::DB01432"
+  },
+  {
+    "drug": "Amoxicillin",
+    "disease": "gonococcal pharyngitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010612",
+    "drug_id": "drkg:Compound::DB01060"
+  },
+  {
+    "drug": "Cefpodoxime",
+    "disease": "gonococcal pharyngitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010612",
+    "drug_id": "drkg:Compound::DB01416"
+  },
+  {
+    "drug": "Penicillin V",
+    "disease": "gonococcal pharyngitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010612",
+    "drug_id": "drkg:Compound::DB00417"
+  },
+  {
+    "drug": "Cefdinir",
+    "disease": "gonococcal pharyngitis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010612",
+    "drug_id": "drkg:Compound::DB00535"
+  },
+  {
+    "drug": "Clarithromycin",
+    "disease": "gonococcal pharyngitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010612",
+    "drug_id": "drkg:Compound::DB01211"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "gonococcal pharyngitis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010612",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "gonococcal pharyngitis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D010612",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "tonsillitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014069",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Cefpodoxime",
+    "disease": "tonsillitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014069",
+    "drug_id": "drkg:Compound::DB01416"
+  },
+  {
+    "drug": "Amoxicillin",
+    "disease": "tonsillitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014069",
+    "drug_id": "drkg:Compound::DB01060"
+  },
+  {
+    "drug": "Penicillin V",
+    "disease": "tonsillitis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014069",
+    "drug_id": "drkg:Compound::DB00417"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "otitis media",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010033",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Ofloxacin",
+    "disease": "otitis media",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010033",
+    "drug_id": "drkg:Compound::DB01165"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "otitis media",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010033",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Cefpodoxime",
+    "disease": "otitis media",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010033",
+    "drug_id": "drkg:Compound::DB01416"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "otitis media",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010033",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "rosacea",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012393",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Dexamethasone",
+    "disease": "ocular hypertension",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D009798",
+    "drug_id": "drkg:Compound::DB01234"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "aspergillosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001228",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Voriconazole",
+    "disease": "aspergillosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001228",
+    "drug_id": "drkg:Compound::DB00582"
+  },
+  {
+    "drug": "Micafungin",
+    "disease": "aspergillosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001228",
+    "drug_id": "drkg:Compound::DB01141"
+  },
+  {
+    "drug": "Caspofungin",
+    "disease": "aspergillosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001228",
+    "drug_id": "drkg:Compound::DB00520"
+  },
+  {
+    "drug": "Fluconazole",
+    "disease": "aspergillosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001228",
+    "drug_id": "drkg:Compound::DB00196"
+  },
+  {
+    "drug": "Brimonidine",
+    "disease": "glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005901",
+    "drug_id": "drkg:Compound::DB00484"
+  },
+  {
+    "drug": "Carteolol",
+    "disease": "glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005901",
+    "drug_id": "drkg:Compound::DB00521"
+  },
+  {
+    "drug": "Betaxolol",
+    "disease": "glaucoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005901",
+    "drug_id": "drkg:Compound::DB00195"
+  },
+  {
+    "drug": "Minocycline",
+    "disease": "peritonitis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010538",
+    "drug_id": "drkg:Compound::DB01017"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "staphylococcus aureus",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013203",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "staphylococcus aureus",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013203",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "staphylococcus aureus",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013203",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Penicillin V",
+    "disease": "staphylococcus aureus",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013203",
+    "drug_id": "drkg:Compound::DB00417"
+  },
+  {
+    "drug": "Oxytetracycline",
+    "disease": "staphylococcus aureus",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D013203",
+    "drug_id": "drkg:Compound::DB00595"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "staphylococcus aureus",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013203",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Tetracycline",
+    "disease": "staphylococcus aureus",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013203",
+    "drug_id": "drkg:Compound::DB00759"
+  },
+  {
+    "drug": "Citalopram",
+    "disease": "agoraphobia",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016584",
+    "drug_id": "drkg:Compound::DB00215"
+  },
+  {
+    "drug": "Carbamazepine",
+    "disease": "bipolar disorder",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001714",
+    "drug_id": "drkg:Compound::DB00564"
+  },
+  {
+    "drug": "Brexpiprazole",
+    "disease": "bipolar disorder",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001714",
+    "drug_id": "drkg:Compound::DB09128"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "bacteriuria",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001437",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "bacteriuria",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001437",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "bacteriuria",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001437",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "bacteriuria",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001437",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Clindamycin",
+    "disease": "bacteriuria",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001437",
+    "drug_id": "drkg:Compound::DB01190"
+  },
+  {
+    "drug": "Ivermectin",
+    "disease": "scabies",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012532",
+    "drug_id": "drkg:Compound::DB00602"
+  },
+  {
+    "drug": "Levofloxacin",
+    "disease": "dysuria",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D053159",
+    "drug_id": "drkg:Compound::DB01137"
+  },
+  {
+    "drug": "Promethazine",
+    "disease": "postoperative nausea and vomiting",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020250",
+    "drug_id": "drkg:Compound::DB01069"
+  },
+  {
+    "drug": "Aprepitant",
+    "disease": "postoperative nausea and vomiting",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020250",
+    "drug_id": "drkg:Compound::DB00673"
+  },
+  {
+    "drug": "Doxycycline",
+    "disease": "gastroenteritis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005759",
+    "drug_id": "drkg:Compound::DB00254"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "gastroenteritis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005759",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Amoxicillin",
+    "disease": "gastroenteritis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005759",
+    "drug_id": "drkg:Compound::DB01060"
+  },
+  {
+    "drug": "Clindamycin",
+    "disease": "lung abscess",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008171",
+    "drug_id": "drkg:Compound::DB01190"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "invasive disease caused by neisseria meningitidis serogroupb strains",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D013180",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Promethazine",
+    "disease": "postoperative pain",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010149",
+    "drug_id": "drkg:Compound::DB01069"
+  },
+  {
+    "drug": "Diclofenac",
+    "disease": "migraine",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008881",
+    "drug_id": "drkg:Compound::DB00586"
+  },
+  {
+    "drug": "Menthol",
+    "disease": "migraine",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D008881",
+    "drug_id": "drkg:Compound::DB00825"
+  },
+  {
+    "drug": "Naratriptan",
+    "disease": "migraine",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008881",
+    "drug_id": "drkg:Compound::DB00952"
+  },
+  {
+    "drug": "Frovatriptan",
+    "disease": "migraine",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008881",
+    "drug_id": "drkg:Compound::DB00998"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "otitis externa",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D010032",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Denosumab",
+    "disease": "vertebral fractures",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D058866",
+    "drug_id": "drkg:Compound::DB06643"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "vertebral fractures",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D058866",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Venlafaxine",
+    "disease": "schizophrenia",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D012559",
+    "drug_id": "drkg:Compound::DB00285"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "tetanus",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013742",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Citalopram",
+    "disease": "hyperactive children who show excessive motor activity with accompanying conduct disorders",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 5.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D019955",
+    "drug_id": "drkg:Compound::DB00215"
+  },
+  {
+    "drug": "Duloxetine",
+    "disease": "hyperactive children who show excessive motor activity with accompanying conduct disorders",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 5.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D019955",
+    "drug_id": "drkg:Compound::DB00476"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "sinusitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012852",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Cefuroxime",
+    "disease": "sinusitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012852",
+    "drug_id": "drkg:Compound::DB01112"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "deep mycosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D058387",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Posaconazole",
+    "disease": "cryptococcal meningitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016919",
+    "drug_id": "drkg:Compound::DB01263"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "cryptococcal meningitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016919",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Ketoconazole",
+    "disease": "cryptococcal meningitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016919",
+    "drug_id": "drkg:Compound::DB01026"
+  },
+  {
+    "drug": "Fluconazole",
+    "disease": "cryptococcal meningitis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016919",
+    "drug_id": "drkg:Compound::DB00196"
+  },
+  {
+    "drug": "Voriconazole",
+    "disease": "cryptococcal meningitis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D016919",
+    "drug_id": "drkg:Compound::DB00582"
+  },
+  {
+    "drug": "Diazepam",
+    "disease": "muscle stiffness",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009128",
+    "drug_id": "drkg:Compound::DB00829"
+  },
+  {
+    "drug": "Triamcinolone",
+    "disease": "bursitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D002062",
+    "drug_id": "drkg:Compound::DB00620"
+  },
+  {
+    "drug": "Hydrocortisone",
+    "disease": "chronic diarrhea associated with inflammatory bowel disease",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 4.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015212",
+    "drug_id": "drkg:Compound::DB00741"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "chronic diarrhea associated with inflammatory bowel disease",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015212",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "chronic diarrhea associated with inflammatory bowel disease",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015212",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Dexamethasone",
+    "disease": "chronic diarrhea associated with inflammatory bowel disease",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015212",
+    "drug_id": "drkg:Compound::DB01234"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "cellulitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D002481",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Ceftriaxone",
+    "disease": "cellulitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D002481",
+    "drug_id": "drkg:Compound::DB01212"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "cellulitis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D002481",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Amantadine",
+    "disease": "parkinsonism",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020734",
+    "drug_id": "drkg:Compound::DB00915"
+  },
+  {
+    "drug": "Zonisamide",
+    "disease": "parkinsonism",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020734",
+    "drug_id": "drkg:Compound::DB00909"
+  },
+  {
+    "drug": "Selegiline",
+    "disease": "parkinsonism",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020734",
+    "drug_id": "drkg:Compound::DB01037"
+  },
+  {
+    "drug": "Trihexyphenidyl",
+    "disease": "parkinsonism",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020734",
+    "drug_id": "drkg:Compound::DB00376"
+  },
+  {
+    "drug": "Diphenhydramine",
+    "disease": "parkinsonism",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020734",
+    "drug_id": "drkg:Compound::DB01075"
+  },
+  {
+    "drug": "Droxidopa",
+    "disease": "parkinsonism",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D020734",
+    "drug_id": "drkg:Compound::DB06262"
+  },
+  {
+    "drug": "Carbidopa",
+    "disease": "parkinsonism",
+    "tier": "LOW",
+    "sub_reason": "neurological_hierarchy_parkinsons",
+    "score": 6.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D020734",
+    "drug_id": "drkg:Compound::DB00190"
+  },
+  {
+    "drug": "Venlafaxine",
+    "disease": "fibromyalgia",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 7.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005356",
+    "drug_id": "drkg:Compound::DB00285"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "bacterial meningitis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016920",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "bacterial meningitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016920",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Ceftazidime",
+    "disease": "bacterial meningitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D016920",
+    "drug_id": "drkg:Compound::DB00438"
+  },
+  {
+    "drug": "Ceftriaxone",
+    "disease": "bacterial meningitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016920",
+    "drug_id": "drkg:Compound::DB01212"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "bacterial meningitis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016920",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "bacterial meningitis",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016920",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Streptomycin",
+    "disease": "typhoid",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014435",
+    "drug_id": "drkg:Compound::DB01082"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "primary biliary cholangitis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008105",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "primary biliary cholangitis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008105",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "pulmonary tuberculosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014397",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "rheumatic fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012213",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Tetracycline",
+    "disease": "malaria",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008288",
+    "drug_id": "drkg:Compound::DB00759"
+  },
+  {
+    "drug": "Propranolol",
+    "disease": "pheochromocytoma",
+    "tier": "FILTER",
+    "sub_reason": "cancer_no_gt",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010673",
+    "drug_id": "drkg:Compound::DB00571"
+  },
+  {
+    "drug": "Metyrosine",
+    "disease": "pheochromocytoma",
+    "tier": "FILTER",
+    "sub_reason": "cancer_no_gt",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010673",
+    "drug_id": "drkg:Compound::DB00765"
+  },
+  {
+    "drug": "Epinephrine",
+    "disease": "pheochromocytoma",
+    "tier": "FILTER",
+    "sub_reason": "cancer_no_gt",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D010673",
+    "drug_id": "drkg:Compound::DB00668"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "blepharitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001762",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "blepharitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001762",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Epinephrine",
+    "disease": "chronic obstructive pulmonary disease",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D029424",
+    "drug_id": "drkg:Compound::DB00668"
+  },
+  {
+    "drug": "Montelukast",
+    "disease": "chronic obstructive pulmonary disease",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D029424",
+    "drug_id": "drkg:Compound::DB00471"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "pertussis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014917",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Ketoconazole",
+    "disease": "vulvovaginitis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014627",
+    "drug_id": "drkg:Compound::DB01026"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "surgical wound",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014946",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Clindamycin",
+    "disease": "surgical wound",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014946",
+    "drug_id": "drkg:Compound::DB01190"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "surgical wound",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014946",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "surgical wound",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014946",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Tetracycline",
+    "disease": "bacterial vaginosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D016585",
+    "drug_id": "drkg:Compound::DB00759"
+  },
+  {
+    "drug": "Tinidazole",
+    "disease": "bacterial vaginosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016585",
+    "drug_id": "drkg:Compound::DB00911"
+  },
+  {
+    "drug": "Clindamycin",
+    "disease": "bacterial vaginosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D016585",
+    "drug_id": "drkg:Compound::DB01190"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "bacterial vaginosis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D016585",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Verapamil",
+    "disease": "ventricular fibrillation",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014693",
+    "drug_id": "drkg:Compound::DB00661"
+  },
+  {
+    "drug": "Dexamethasone",
+    "disease": "ocular pain",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D058447",
+    "drug_id": "drkg:Compound::DB01234"
+  },
+  {
+    "drug": "Methylprednisolone",
+    "disease": "ocular pain",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D058447",
+    "drug_id": "drkg:Compound::DB00959"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "ocular pain",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D058447",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Posaconazole",
+    "disease": "coccidioidomycosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003047",
+    "drug_id": "drkg:Compound::DB01263"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "coccidioidomycosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003047",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Fluconazole",
+    "disease": "coccidioidomycosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003047",
+    "drug_id": "drkg:Compound::DB00196"
+  },
+  {
+    "drug": "Posaconazole",
+    "disease": "histoplasmosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006660",
+    "drug_id": "drkg:Compound::DB01263"
+  },
+  {
+    "drug": "Ketoconazole",
+    "disease": "histoplasmosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006660",
+    "drug_id": "drkg:Compound::DB01026"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "histoplasmosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006660",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Voriconazole",
+    "disease": "histoplasmosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006660",
+    "drug_id": "drkg:Compound::DB00582"
+  },
+  {
+    "drug": "Fluconazole",
+    "disease": "histoplasmosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006660",
+    "drug_id": "drkg:Compound::DB00196"
+  },
+  {
+    "drug": "Piperacillin",
+    "disease": "fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005334",
+    "drug_id": "drkg:Compound::DB00319"
+  },
+  {
+    "drug": "Doxycycline",
+    "disease": "fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005334",
+    "drug_id": "drkg:Compound::DB00254"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005334",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Metronidazole",
+    "disease": "fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005334",
+    "drug_id": "drkg:Compound::DB00916"
+  },
+  {
+    "drug": "Aztreonam",
+    "disease": "fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D005334",
+    "drug_id": "drkg:Compound::DB00355"
+  },
+  {
+    "drug": "Ceftazidime",
+    "disease": "fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005334",
+    "drug_id": "drkg:Compound::DB00438"
+  },
+  {
+    "drug": "Clindamycin",
+    "disease": "fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005334",
+    "drug_id": "drkg:Compound::DB01190"
+  },
+  {
+    "drug": "Cefoxitin",
+    "disease": "fever",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D005334",
+    "drug_id": "drkg:Compound::DB01331"
+  },
+  {
+    "drug": "Minocycline",
+    "disease": "mycobacterium avium complex mac infection",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D015270",
+    "drug_id": "drkg:Compound::DB01017"
+  },
+  {
+    "drug": "Amikacin",
+    "disease": "mycobacterium avium complex mac infection",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015270",
+    "drug_id": "drkg:Compound::DB00479"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "mycobacterium avium complex mac infection",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015270",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Voriconazole",
+    "disease": "fungal infection",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015821",
+    "drug_id": "drkg:Compound::DB00582"
+  },
+  {
+    "drug": "Caspofungin",
+    "disease": "fungal infection",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015821",
+    "drug_id": "drkg:Compound::DB00520"
+  },
+  {
+    "drug": "Micafungin",
+    "disease": "fungal infection",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D015821",
+    "drug_id": "drkg:Compound::DB01141"
+  },
+  {
+    "drug": "Ampicillin",
+    "disease": "pyelonephritis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011704",
+    "drug_id": "drkg:Compound::DB00415"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "pyelonephritis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011704",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Ciprofloxacin",
+    "disease": "pyelonephritis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011704",
+    "drug_id": "drkg:Compound::DB00537"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "kidney transplant rejection",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D006086",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Rituximab",
+    "disease": "kidney transplant rejection",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D006086",
+    "drug_id": "drkg:Compound::DB00073"
+  },
+  {
+    "drug": "Triamcinolone",
+    "disease": "kidney transplant rejection",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D006086",
+    "drug_id": "drkg:Compound::DB00620"
+  },
+  {
+    "drug": "Duloxetine",
+    "disease": "attention deficit hyperactivity disorder adhd",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 5.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001289",
+    "drug_id": "drkg:Compound::DB00476"
+  },
+  {
+    "drug": "Clarithromycin",
+    "disease": "nontuberculous mycobacteriosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D009165",
+    "drug_id": "drkg:Compound::DB01211"
+  },
+  {
+    "drug": "D-glucose",
+    "disease": "hypoglycemia",
+    "tier": "LOW",
+    "sub_reason": "metabolic_hierarchy_diabetes",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D007003",
+    "drug_id": "drkg:Compound::DB01914"
+  },
+  {
+    "drug": "Denosumab",
+    "disease": "hypophosphatemia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D017674",
+    "drug_id": "drkg:Compound::DB06643"
+  },
+  {
+    "drug": "Verapamil",
+    "disease": "hyperkalemia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D006947",
+    "drug_id": "drkg:Compound::DB00661"
+  },
+  {
+    "drug": "Adenosine",
+    "disease": "cardiac arrest",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D006323",
+    "drug_id": "drkg:Compound::DB00640"
+  },
+  {
+    "drug": "Amiodarone",
+    "disease": "cardiac arrest",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006323",
+    "drug_id": "drkg:Compound::DB01118"
+  },
+  {
+    "drug": "Lidocaine",
+    "disease": "cardiac arrest",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006323",
+    "drug_id": "drkg:Compound::DB00281"
+  },
+  {
+    "drug": "Metronidazole",
+    "disease": "postoperative infections",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013530",
+    "drug_id": "drkg:Compound::DB00916"
+  },
+  {
+    "drug": "Cefotaxime",
+    "disease": "postoperative infections",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013530",
+    "drug_id": "drkg:Compound::DB00493"
+  },
+  {
+    "drug": "Ceftazidime",
+    "disease": "postoperative infections",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D013530",
+    "drug_id": "drkg:Compound::DB00438"
+  },
+  {
+    "drug": "Bupropion",
+    "disease": "restless legs syndrome",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012148",
+    "drug_id": "drkg:Compound::DB01156"
+  },
+  {
+    "drug": "Diazepam",
+    "disease": "eclampsia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D004461",
+    "drug_id": "drkg:Compound::DB00829"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "eczema",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D004485",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Lidocaine",
+    "disease": "eczema",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D004485",
+    "drug_id": "drkg:Compound::DB00281"
+  },
+  {
+    "drug": "Propranolol",
+    "disease": "left ventricular hypertrophy",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D017379",
+    "drug_id": "drkg:Compound::DB00571"
+  },
+  {
+    "drug": "Verapamil",
+    "disease": "left ventricular hypertrophy",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D017379",
+    "drug_id": "drkg:Compound::DB00661"
+  },
+  {
+    "drug": "Ranibizumab",
+    "disease": "pathologic myopia",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D009216",
+    "drug_id": "drkg:Compound::DB01270"
+  },
+  {
+    "drug": "Sumatriptan",
+    "disease": "episodic cluster headache",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003027",
+    "drug_id": "drkg:Compound::DB00669"
+  },
+  {
+    "drug": "Minocycline",
+    "disease": "respiratory infection caused by pseudomonas aeruginosa in cystic fibrosis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 6.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003550",
+    "drug_id": "drkg:Compound::DB01017"
+  },
+  {
+    "drug": "Doxycycline",
+    "disease": "respiratory infection caused by pseudomonas aeruginosa in cystic fibrosis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D003550",
+    "drug_id": "drkg:Compound::DB00254"
+  },
+  {
+    "drug": "Erythromycin",
+    "disease": "respiratory infection caused by pseudomonas aeruginosa in cystic fibrosis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D003550",
+    "drug_id": "drkg:Compound::DB00199"
+  },
+  {
+    "drug": "Tetracycline",
+    "disease": "respiratory infection caused by pseudomonas aeruginosa in cystic fibrosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003550",
+    "drug_id": "drkg:Compound::DB00759"
+  },
+  {
+    "drug": "Amphotericin B",
+    "disease": "allergic bronchopulmonary aspergillosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001229",
+    "drug_id": "drkg:Compound::DB00681"
+  },
+  {
+    "drug": "Tocilizumab",
+    "disease": "systemic vasculitis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014657",
+    "drug_id": "drkg:Compound::DB06273"
+  },
+  {
+    "drug": "Sumatriptan",
+    "disease": "headache",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006261",
+    "drug_id": "drkg:Compound::DB00669"
+  },
+  {
+    "drug": "Sitafloxacin",
+    "disease": "bronchiectasis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.8,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001987",
+    "drug_id": "drkg:Compound::DB13261"
+  },
+  {
+    "drug": "Amoxicillin",
+    "disease": "bronchiectasis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001987",
+    "drug_id": "drkg:Compound::DB01060"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "bronchiectasis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001987",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Clarithromycin",
+    "disease": "bronchiectasis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D001987",
+    "drug_id": "drkg:Compound::DB01211"
+  },
+  {
+    "drug": "Piperacillin",
+    "disease": "bronchiectasis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D001987",
+    "drug_id": "drkg:Compound::DB00319"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "kidney failure",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D051437",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "kidney failure",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D051437",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Gentamicin",
+    "disease": "kidney failure",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D051437",
+    "drug_id": "drkg:Compound::DB00798"
+  },
+  {
+    "drug": "Diclofenac",
+    "disease": "toothache",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.8,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014098",
+    "drug_id": "drkg:Compound::DB00586"
+  },
+  {
+    "drug": "Doxycycline",
+    "disease": "onchocerciasis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D009855",
+    "drug_id": "drkg:Compound::DB00254"
+  },
+  {
+    "drug": "Ivermectin",
+    "disease": "onchocerciasis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009855",
+    "drug_id": "drkg:Compound::DB00602"
+  },
+  {
+    "drug": "Ketoconazole",
+    "disease": "cryptococcosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003453",
+    "drug_id": "drkg:Compound::DB01026"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "cryptococcosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003453",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Famciclovir",
+    "disease": "herpes simplex virus infection",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D006561",
+    "drug_id": "drkg:Compound::DB00426"
+  },
+  {
+    "drug": "Propranolol",
+    "disease": "hypotension",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 7.5,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007022",
+    "drug_id": "drkg:Compound::DB00571"
+  },
+  {
+    "drug": "Carvedilol",
+    "disease": "hypotension",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007022",
+    "drug_id": "drkg:Compound::DB01136"
+  },
+  {
+    "drug": "Amphotericin B",
+    "disease": "fusariosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D060585",
+    "drug_id": "drkg:Compound::DB00681"
+  },
+  {
+    "drug": "Voriconazole",
+    "disease": "fusariosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D060585",
+    "drug_id": "drkg:Compound::DB00582"
+  },
+  {
+    "drug": "Posaconazole",
+    "disease": "fusariosis",
+    "tier": "LOW",
+    "sub_reason": "default_no_mech_high_rank",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D060585",
+    "drug_id": "drkg:Compound::DB01263"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "uremia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014511",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Methylprednisolone",
+    "disease": "uremia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D014511",
+    "drug_id": "drkg:Compound::DB00959"
+  },
+  {
+    "drug": "Baricitinib",
+    "disease": "alopecia areata",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D000506",
+    "drug_id": "drkg:Compound::DB11817"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "lichen planus",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D008010",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Methylprednisolone",
+    "disease": "hyponatremia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007010",
+    "drug_id": "drkg:Compound::DB00959"
+  },
+  {
+    "drug": "Spironolactone",
+    "disease": "hyponatremia",
+    "tier": "FILTER",
+    "sub_reason": "inverse_indication",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007010",
+    "drug_id": "drkg:Compound::DB00421"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "hyponatremia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007010",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Hydrocortisone",
+    "disease": "hyponatremia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007010",
+    "drug_id": "drkg:Compound::DB00741"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "hyponatremia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007010",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Dexamethasone",
+    "disease": "hyponatremia",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 5.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D007010",
+    "drug_id": "drkg:Compound::DB01234"
+  },
+  {
+    "drug": "Aciclovir",
+    "disease": "herpes simplex encephalitis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020803",
+    "drug_id": "drkg:Compound::DB00787"
+  },
+  {
+    "drug": "Posaconazole",
+    "disease": "zygomycosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 6.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009091",
+    "drug_id": "drkg:Compound::DB01263"
+  },
+  {
+    "drug": "Voriconazole",
+    "disease": "zygomycosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009091",
+    "drug_id": "drkg:Compound::DB00582"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "sporotrichosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013174",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Ketoconazole",
+    "disease": "sporotrichosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013174",
+    "drug_id": "drkg:Compound::DB01026"
+  },
+  {
+    "drug": "Fluconazole",
+    "disease": "sporotrichosis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 6.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013174",
+    "drug_id": "drkg:Compound::DB00196"
+  },
+  {
+    "drug": "Doxycycline",
+    "disease": "cutaneous leishmaniasis caused by leishmania braziliensis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 6.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D016773",
+    "drug_id": "drkg:Compound::DB00254"
+  },
+  {
+    "drug": "Tecovirimat",
+    "disease": "smallpox",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012899",
+    "drug_id": "drkg:Compound::DB12020"
+  },
+  {
+    "drug": "Piperacillin",
+    "disease": "pseudomonas aeruginosa infection",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D011552",
+    "drug_id": "drkg:Compound::DB00319"
+  },
+  {
+    "drug": "Azithromycin",
+    "disease": "pseudomonas aeruginosa infection",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D011552",
+    "drug_id": "drkg:Compound::DB00207"
+  },
+  {
+    "drug": "Praziquantel",
+    "disease": "schistosomiasis",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012552",
+    "drug_id": "drkg:Compound::DB01058"
+  },
+  {
+    "drug": "Prednisolone",
+    "disease": "duchenne muscular dystrophy",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020388",
+    "drug_id": "drkg:Compound::DB00860"
+  },
+  {
+    "drug": "Methylprednisolone",
+    "disease": "duchenne muscular dystrophy",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 7.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D020388",
+    "drug_id": "drkg:Compound::DB00959"
+  },
+  {
+    "drug": "Prednisone",
+    "disease": "duchenne muscular dystrophy",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D020388",
+    "drug_id": "drkg:Compound::DB00635"
+  },
+  {
+    "drug": "Hydrocortisone",
+    "disease": "stomatitis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 6.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013280",
+    "drug_id": "drkg:Compound::DB00741"
+  },
+  {
+    "drug": "Dexamethasone",
+    "disease": "stomatitis",
+    "tier": "LOW",
+    "sub_reason": "incoherent_demotion",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D013280",
+    "drug_id": "drkg:Compound::DB01234"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "microscopic polyangiitis",
+    "tier": "LOW",
+    "sub_reason": "default_freq10_nomech_r6_10",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D055953",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Rituximab",
+    "disease": "microscopic polyangiitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D055953",
+    "drug_id": "drkg:Compound::DB00073"
+  },
+  {
+    "drug": "Canakinumab",
+    "disease": "familial cold autoinflammatory syndrome",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 7.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D056587",
+    "drug_id": "drkg:Compound::DB06168"
+  },
+  {
+    "drug": "Dupilumab",
+    "disease": "bullous pemphigoid",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 8.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D010391",
+    "drug_id": "drkg:Compound::DB12159"
+  },
+  {
+    "drug": "Amitriptyline",
+    "disease": "peripheral neuropathic pain",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009437",
+    "drug_id": "drkg:Compound::DB00321"
+  },
+  {
+    "drug": "Ketoconazole",
+    "disease": "mycetoma",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008271",
+    "drug_id": "drkg:Compound::DB01026"
+  },
+  {
+    "drug": "Itraconazole",
+    "disease": "mycetoma",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 7.5,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008271",
+    "drug_id": "drkg:Compound::DB01167"
+  },
+  {
+    "drug": "Fluconazole",
+    "disease": "mycetoma",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D008271",
+    "drug_id": "drkg:Compound::DB00196"
+  },
+  {
+    "drug": "Foscarnet",
+    "disease": "cytomegalovirus infection",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003586",
+    "drug_id": "drkg:Compound::DB00529"
+  },
+  {
+    "drug": "Valganciclovir",
+    "disease": "cytomegalovirus infection",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D003586",
+    "drug_id": "drkg:Compound::DB01610"
+  },
+  {
+    "drug": "Azathioprine",
+    "disease": "scleroderma",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 4.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012595",
+    "drug_id": "drkg:Compound::DB00993"
+  },
+  {
+    "drug": "Rituximab",
+    "disease": "autoimmune hepatitis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_r1_5_low_score",
+    "score": 4.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D019693",
+    "drug_id": "drkg:Compound::DB00073"
+  },
+  {
+    "drug": "Sulfadiazine",
+    "disease": "congenital toxoplasmosis",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D014125",
+    "drug_id": "drkg:Compound::DB00359"
+  },
+  {
+    "drug": "Ranibizumab",
+    "disease": "retinopathy of prematurity",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012178",
+    "drug_id": "drkg:Compound::DB01270"
+  },
+  {
+    "drug": "Aflibercept",
+    "disease": "retinopathy of prematurity",
+    "tier": "LOW",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D012178",
+    "drug_id": "drkg:Compound::DB08885"
+  },
+  {
+    "drug": "Denosumab",
+    "disease": "osteogenesis imperfecta",
+    "tier": "LOW",
+    "sub_reason": "default_nomech_low_score",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D010013",
+    "drug_id": "drkg:Compound::DB06643"
+  },
+  {
+    "drug": "Citalopram",
+    "disease": "obsessive compulsive disorder",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009771",
+    "drug_id": "drkg:Compound::DB00215"
+  },
+  {
+    "drug": "Mirtazapine",
+    "disease": "obsessive compulsive disorder",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 5.0,
+    "is_gt": true,
+    "disease_id": "drkg:Disease::MESH:D009771",
+    "drug_id": "drkg:Compound::DB00370"
+  },
+  {
+    "drug": "Duloxetine",
+    "disease": "obsessive compulsive disorder",
+    "tier": "FILTER",
+    "sub_reason": "default",
+    "score": 9.0,
+    "is_gt": false,
+    "disease_id": "drkg:Disease::MESH:D009771",
+    "drug_id": "drkg:Compound::DB00476"
+  }
+]

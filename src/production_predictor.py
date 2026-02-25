@@ -4797,9 +4797,30 @@ class DrugRepurposingPredictor:
                         tier = ConfidenceTier.HIGH
                         cat_specific = 'literature_strong_promotion'
 
+                    # h789: LOW/FILTER + STRONG_EVIDENCE → HIGH (76.3% holdout)
+                    # Literature evidence overrides tier for well-evidenced predictions
+                    # that were demoted by rules. Exclude safety sub-reasons.
+                    if (tier in (ConfidenceTier.LOW, ConfidenceTier.FILTER)
+                            and lit_level == 'STRONG_EVIDENCE'
+                            and cat_specific not in (
+                                'inverse_indication', 'non_therapeutic',
+                                'non_therapeutic_compound')):
+                        tier = ConfidenceTier.HIGH
+                        cat_specific = 'literature_strong_low_promotion'
+
+                    # h791: HIGH + NO/WEAK_EVIDENCE → MEDIUM (31.3% holdout)
+                    # HIGH predictions with poor literature evidence underperform MEDIUM.
+                    # Only applies to predictions IN the cache (NOT_ASSESSED untouched).
+                    if (tier == ConfidenceTier.HIGH
+                            and lit_level in ('NO_EVIDENCE', 'WEAK_EVIDENCE')):
+                        tier = ConfidenceTier.MEDIUM
+                        cat_specific = 'literature_high_demotion'
+
                     # h732: MEDIUM + NO_EVIDENCE/WEAK_EVIDENCE → LOW (5-7% holdout)
                     if (tier == ConfidenceTier.MEDIUM
-                            and lit_level in ('NO_EVIDENCE', 'WEAK_EVIDENCE')):
+                            and lit_level in ('NO_EVIDENCE', 'WEAK_EVIDENCE')
+                            # h791: Don't double-demote predictions just demoted from HIGH
+                            and cat_specific != 'literature_high_demotion'):
                         tier = ConfidenceTier.LOW
                         cat_specific = 'literature_weak_demotion'
 

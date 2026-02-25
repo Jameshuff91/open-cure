@@ -15909,13 +15909,15 @@
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all 842 NO_EVIDENCE pairs from cache",
         "Run mine_pair with force_refresh on pairs that have simplification candidates",
         "Compare before/after evidence levels",
         "Validate a sample of newly-rescued pairs for accuracy"
-      ]
+      ],
+      "findings": "Re-mined 285 NO_EVIDENCE pairs with disease name simplification. 174 rescued (61% rescue rate, higher than h766's 53% estimate). 79 STRONG, 41 MODERATE, 54 WEAK newly classified. NO_EVIDENCE reduced from 842 to 668 (21% reduction). Deliverable literature coverage improved from 73.0% to 78.6% non-NO_EVIDENCE. Disease patterns: ADHD (18 pairs), pseudomonas infections (14), lymphoma (13), glaucoma (9), klebsiella (9), acinetobacter (8). Quality spot check: ADHD and antibiotic pairs medically plausible. Some broad simplifications (meningococcal\u2192general meningitis) inflate PubMed counts. Primary value is annotation improvement, not tier changes.",
+      "result_metric": "174/285 rescued (61%), NO_EVIDENCE 842\u2192668"
     },
     {
       "id": "h785",
@@ -15930,6 +15932,152 @@
         "Test CT.gov search with original vs simplified names on 20 pairs",
         "Compare rescue rates to PubMed",
         "Determine if CT.gov needs different simplification strategies"
+      ]
+    },
+    {
+      "id": "h786",
+      "title": "Literature Evidence Tier Integration: Promote MEDIUM+STRONG to HIGH",
+      "description": "h731 showed STRONG_EVIDENCE = 78.7% holdout (above HIGH 59.4%). With h784 expanding STRONG coverage by 79 pairs, there are now 1432 STRONG predictions. Test whether MEDIUM predictions with STRONG literature evidence should be promoted to HIGH. Need to run holdout validation on MEDIUM+STRONG subset to confirm precision exceeds HIGH threshold.",
+      "category": "confidence",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "status": "invalidated",
+      "steps": [
+        "Extract all MEDIUM predictions with STRONG_EVIDENCE from cache",
+        "Run 5-seed holdout validation on MEDIUM+STRONG subset",
+        "Compare precision to HIGH threshold (59.4%)",
+        "If validated, implement promotion rule in confidence_filter.py",
+        "Re-evaluate overall tier precision"
+      ],
+      "findings": "Already implemented in h732. MEDIUM + STRONG_EVIDENCE \u2192 HIGH promotion is live at production_predictor.py:4794-4798. Also MEDIUM + NO/WEAK \u2192 LOW demotion at lines 4800-4804. h784's 79 newly-classified STRONG pairs will automatically benefit from this existing promotion rule."
+    },
+    {
+      "id": "h787",
+      "title": "Literature Mining for Remaining 557 Non-Simplifiable NO_EVIDENCE Pairs",
+      "description": "h784 rescued 174 of 285 simplifiable pairs. 557 NO_EVIDENCE pairs have no simplification candidates. These are either: (1) diseases with already-simple names that genuinely have no evidence, or (2) disease names that need different simplification strategies (e.g., removing clinical qualifiers, standardizing abbreviations). Analyze the 557 remaining NO_EVIDENCE pairs to determine if alternative name transformations could rescue additional pairs.",
+      "category": "literature",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Analyze disease name patterns in 557 remaining NO_EVIDENCE pairs",
+        "Identify common patterns that could benefit from new simplification rules",
+        "Implement additional simplification strategies if warranted",
+        "Re-mine with new strategies"
+      ]
+    },
+    {
+      "id": "h788",
+      "title": "Literature Evidence Score as Continuous Deliverable Feature",
+      "description": "The literature evidence system produces an evidence_score (continuous) but currently only uses the categorical evidence_level. h731 showed Q1 evidence score = 82.5% holdout precision. Adding the raw score to the deliverable would give collaborators finer-grained quality ranking within tiers. Test correlation between evidence_score and holdout precision within MEDIUM tier.",
+      "category": "deliverable",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "validated",
+      "steps": [
+        "Extract evidence_score for all cached predictions",
+        "Run holdout validation stratified by evidence_score quartiles within each tier",
+        "If gradient exists, add evidence_score to deliverable columns",
+        "Document interpretation guide for collaborators"
+      ],
+      "findings": "Evidence score creates massive holdout gradient within every tier:\n- HIGH: score 0-2=31.3%, 2-4=74.4%, 4-6=81.5%, 6-9=90.5% (no_cache=68.1%)\n- LOW: score 0-2=12.5%, 2-4=35.4%, 4-6=65.9%, 6-9=81.0% (no_cache=11.8%)\n- FILTER: score 0-2=15.1%, 2-4=46.7%, 4-6=62.7%, 6-9=90.1% (no_cache=9.0%)\n- MEDIUM: only moderate evidence cached (33.4%), 80% uncached (40.6%)\nKEY: LOW+score6-9 (81.0%) > HIGH overall (73.2%). FILTER+score6-9 (90.1%) > GOLDEN (80.1%).\nEvidence score is the strongest independent predictor found. Already in deliverable columns but only 2% assessed (stale deliverable). Strongly validates h732 literature tier promotion.\nCache coverage: 3115 entries but MEDIUM only 23/seed matched (vs 98/seed no_cache). HIGH has good coverage (148.8/seed cached vs 92/seed no_cache).",
+      "result_metric": "Evidence score gradient: 12-31% (low score) \u2192 81-90% (high score) within tiers"
+    },
+    {
+      "id": "h789",
+      "title": "Literature Tier Override: Promote LOW/FILTER with STRONG Evidence to MEDIUM/HIGH",
+      "description": "h788 proved LOW+STRONG=73.1% and FILTER+STRONG=81.3% holdout. These predictions are tier-misclassified. Implement evidence-based tier override: STRONG_EVIDENCE always promotes to at least HIGH quality. This is distinct from h732 which only promoted MEDIUM+STRONG. The data shows even LOW and FILTER predictions with strong literature evidence are overwhelmingly correct GT gaps.",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "medium",
+      "status": "validated",
+      "steps": [
+        "Identify all LOW/FILTER predictions with STRONG_EVIDENCE in cache",
+        "Verify these are GT gaps (most should be)",
+        "Add evidence_score >= 6 as tier override in _assign_confidence_tier",
+        "Run holdout to confirm improvement (LOW should drop, promoted tier should maintain precision)",
+        "Add corresponding GT gap entries to expanded_ground_truth.json"
+      ],
+      "findings": "STRONG evidence LOW/FILTER \u2192 HIGH promotion validated. 87 predictions/seed promoted at 76.9% \u00b1 6.6% holdout (GENUINE, above full-data 70.8%). Calibrated with HIGH tier (77.9%). LOW -1.9pp (honesty improvement). Safety exclusions: inverse_indication and non_therapeutic NOT promoted.",
+      "result_metric": "HIGH 77.9% (+3.9pp combined with h791), 87 preds/seed promoted"
+    },
+    {
+      "id": "h790",
+      "title": "Evidence Score Coverage Expansion: Mine All MEDIUM Predictions for Literature Evidence",
+      "description": "h788 found MEDIUM has only 19% cache coverage (23/121 per seed). Most MEDIUM predictions have never been literature-mined. Since evidence_score is the strongest predictor, expanding MEDIUM coverage would identify which MEDIUM predictions are HIGH-quality (score 6+) vs LOW-quality (score 0-2). This is higher ROI than mining LOW/FILTER (h733) because MEDIUM is the tier where precision ranking matters most for collaborators.",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "status": "pending",
+      "steps": [
+        "Extract all MEDIUM predictions not yet in literature cache",
+        "Run automated literature mining pipeline on uncached MEDIUM predictions",
+        "Cross-tabulate new evidence scores with holdout precision",
+        "Identify MEDIUM predictions suitable for tier promotion/demotion based on evidence"
+      ]
+    },
+    {
+      "id": "h791",
+      "title": "HIGH No-Evidence Demotion: HIGH Predictions with NO/WEAK Evidence Score \u2192 MEDIUM",
+      "description": "h788 found HIGH+NO_EVIDENCE=28.1% and HIGH+WEAK=33.6% holdout \u2014 both below MEDIUM tier threshold (36-40%). These are HIGH predictions that lack literature support and perform like MEDIUM. Demoting them could improve HIGH precision by removing ~28 false positives per seed while maintaining calibration.",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "validated",
+      "steps": [
+        "Identify HIGH predictions with NO_EVIDENCE or WEAK_EVIDENCE in cache",
+        "Check if these are already covered by other demotion rules",
+        "Test demotion to MEDIUM in holdout (expect HIGH to increase ~3-5pp)",
+        "Ensure remaining HIGH maintains precision target"
+      ],
+      "findings": "HIGH no-evidence demotion validated. 28 HIGH predictions/seed with NO/WEAK evidence demoted to MEDIUM. 31.4% \u00b1 12.4% holdout \u2014 correctly placed below MEDIUM average (38.0%). HIGH +3.9pp (combined with h789: 74.0\u219277.9%). Guard: only affects predictions IN literature cache (NOT_ASSESSED untouched).",
+      "result_metric": "HIGH +3.9pp (74.0\u219277.9%), 28 preds/seed demoted"
+    },
+    {
+      "id": "h793",
+      "title": "Evidence Score Coverage Expansion: Mine All MEDIUM Predictions for Literature Evidence",
+      "description": "h789+h791 proved literature evidence is transformative for tier quality. But cache only covers 3115 entries (19% of MEDIUM). Expanding coverage to ALL MEDIUM predictions would identify many more promotable (STRONG\u2192HIGH) and demotable (NO/WEAK\u2192LOW) predictions. Expected: 50-100 additional tier movements with major precision impact.",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "high",
+      "status": "pending",
+      "steps": [
+        "Extract all MEDIUM predictions not yet in literature cache",
+        "Run automated literature mining pipeline on uncached predictions",
+        "Cross-tabulate new evidence scores with holdout",
+        "Apply h732/h789/h791 rules to newly-cached predictions"
+      ]
+    },
+    {
+      "id": "h794",
+      "title": "Literature Evidence Cache Expansion to HIGH Tier: Mine Uncached HIGH Predictions",
+      "description": "h791 can only demote HIGH predictions that are IN the cache. Many HIGH predictions haven't been literature-mined. Mining uncached HIGH predictions would identify additional weak predictions (NO/WEAK evidence) for demotion, further improving HIGH precision. Current: 28 demotions/seed. Expected: 40-60 after expansion.",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Identify HIGH predictions not in literature cache",
+        "Run literature mining pipeline on uncached HIGH predictions",
+        "Measure additional demotions from h791 rule",
+        "Re-run holdout to confirm improvement"
+      ]
+    },
+    {
+      "id": "h795",
+      "title": "GOLDEN Evidence Gate: Require Literature Support for GOLDEN Tier",
+      "description": "GOLDEN is 80.1% holdout but some rules like rheumatoid_arthritis (69.0%) and colitis (82.4%) vary widely. Literature evidence could serve as a gate: GOLDEN predictions without STRONG evidence \u2192 HIGH. This would tighten GOLDEN but might lose too many predictions (n=47/seed is already small).",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Check literature coverage of GOLDEN predictions",
+        "Test GOLDEN + NOT STRONG \u2192 HIGH demotion",
+        "Evaluate impact on GOLDEN precision and count"
       ]
     }
   ],
@@ -18415,6 +18563,24 @@
       "hypothesis_id": "h766",
       "learning": "DRKG disease names cause 33.8% (285/842) of NO_EVIDENCE false negatives via: concatenated words (stevensjohnson), pathogen qualifiers (caused by X), excessive specificity (>55 chars). Disease name simplification with known overrides + automated rules rescues 53% of testable pairs. Key patterns: pathogen-first ordering for \"caused by\" qualifiers, adjectival pathogen expansion (gonococcal\u2192gonorrhea), and embedded abbreviation removal.",
       "implication": "Future literature mining runs will automatically use fallback names. Re-run on all NO_EVIDENCE pairs to populate evidence. Approximately 151 pairs can be rescued."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h784",
+      "learning": "Disease name simplification rescues 61% of NO_EVIDENCE pairs (174/285). Key patterns: ADHD from verbose clinical descriptions, pseudomonas from pathogen-specific names, lymphoma subtypes. Broad simplification can inflate PubMed counts (meningococcal\u2192general meningitis). Primary value is annotation improvement for deliverable.",
+      "implication": "Literature mining coverage can be improved further with alternative simplification strategies for the remaining 557 pairs."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h788",
+      "learning": "Literature evidence_score is the strongest independent predictor of holdout precision, creating 60-70pp gradients within every tier. LOW+score6-9=81% exceeds HIGH overall=73%. FILTER+score6-9=90% exceeds GOLDEN=80%. Coverage is the bottleneck: MEDIUM only 19% cached, HIGH 62% cached.",
+      "implication": "Prioritize evidence-based tier overrides (h789) and MEDIUM coverage expansion (h790). Evidence score should be primary deliverable sorting criterion within tiers."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h789+h791",
+      "learning": "Literature evidence tier override validated across ALL tiers. STRONG LOW/FILTER\u2192HIGH: 76.9% holdout (n=87). HIGH NO/WEAK\u2192MEDIUM: 31.4% (n=28). Combined: HIGH +3.9pp (74.0\u219277.9%). Literature evidence is now the strongest single signal for tier mobility in both directions.",
+      "implication": "Expanding literature cache coverage is highest-ROI next step. Current 3115 entries only cover ~19% of MEDIUM. Full coverage could double tier movements. Evidence-based tier overrides should be applied LAST in the tier assignment pipeline (after all rule-based assignments)."
     }
   ],
   "collaborations": [

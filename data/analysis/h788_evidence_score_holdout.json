@@ -1,0 +1,541 @@
+{
+  "description": "h788: Evidence score holdout validation within tiers",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "score_bins": {
+    "GOLDEN": {
+      "0-2 (none/weak)": {
+        "holdout_mean": 0.0,
+        "holdout_std": 0.0,
+        "mean_n": 0.2,
+        "seed_hits": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "seed_totals": [
+          0,
+          1,
+          0,
+          0,
+          0
+        ]
+      },
+      "2-4 (moderate)": {
+        "holdout_mean": 100.0,
+        "holdout_std": 0.0,
+        "mean_n": 0.2,
+        "seed_hits": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ],
+        "seed_totals": [
+          1,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "4-6 (strong-low)": {
+        "holdout_mean": 100.0,
+        "holdout_std": 0.0,
+        "mean_n": 0.8,
+        "seed_hits": [
+          3,
+          0,
+          0,
+          1,
+          0
+        ],
+        "seed_totals": [
+          3,
+          0,
+          0,
+          1,
+          0
+        ]
+      },
+      "6-9 (strong-high)": {
+        "holdout_mean": 100.0,
+        "holdout_std": 0.0,
+        "mean_n": 0.4,
+        "seed_hits": [
+          0,
+          1,
+          0,
+          1,
+          0
+        ],
+        "seed_totals": [
+          0,
+          1,
+          0,
+          1,
+          0
+        ]
+      }
+    },
+    "HIGH": {
+      "0-2 (none/weak)": {
+        "holdout_mean": 31.3,
+        "holdout_std": 12.4,
+        "mean_n": 28.2,
+        "seed_hits": [
+          9,
+          8,
+          4,
+          20,
+          6
+        ],
+        "seed_totals": [
+          31,
+          32,
+          19,
+          36,
+          23
+        ]
+      },
+      "2-4 (moderate)": {
+        "holdout_mean": 74.4,
+        "holdout_std": 9.4,
+        "mean_n": 12.8,
+        "seed_hits": [
+          6,
+          9,
+          9,
+          13,
+          11
+        ],
+        "seed_totals": [
+          10,
+          11,
+          12,
+          15,
+          16
+        ]
+      },
+      "4-6 (strong-low)": {
+        "holdout_mean": 81.5,
+        "holdout_std": 8.9,
+        "mean_n": 31.8,
+        "seed_hits": [
+          15,
+          20,
+          24,
+          36,
+          37
+        ],
+        "seed_totals": [
+          23,
+          24,
+          29,
+          39,
+          44
+        ]
+      },
+      "6-9 (strong-high)": {
+        "holdout_mean": 90.5,
+        "holdout_std": 3.0,
+        "mean_n": 76.0,
+        "seed_hits": [
+          52,
+          67,
+          70,
+          68,
+          87
+        ],
+        "seed_totals": [
+          60,
+          70,
+          77,
+          75,
+          98
+        ]
+      }
+    },
+    "MEDIUM": {
+      "0-2 (none/weak)": {
+        "holdout_mean": null,
+        "holdout_std": null,
+        "mean_n": 0.0,
+        "seed_hits": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "seed_totals": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "2-4 (moderate)": {
+        "holdout_mean": 33.4,
+        "holdout_std": 7.2,
+        "mean_n": 23.0,
+        "seed_hits": [
+          10,
+          6,
+          8,
+          7,
+          7
+        ],
+        "seed_totals": [
+          23,
+          24,
+          20,
+          22,
+          26
+        ]
+      },
+      "4-6 (strong-low)": {
+        "holdout_mean": null,
+        "holdout_std": null,
+        "mean_n": 0.0,
+        "seed_hits": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "seed_totals": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "6-9 (strong-high)": {
+        "holdout_mean": null,
+        "holdout_std": null,
+        "mean_n": 0.0,
+        "seed_hits": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "seed_totals": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "LOW": {
+      "0-2 (none/weak)": {
+        "holdout_mean": 12.5,
+        "holdout_std": 2.2,
+        "mean_n": 141.6,
+        "seed_hits": [
+          25,
+          19,
+          13,
+          15,
+          16
+        ],
+        "seed_totals": [
+          175,
+          121,
+          122,
+          126,
+          164
+        ]
+      },
+      "2-4 (moderate)": {
+        "holdout_mean": 35.4,
+        "holdout_std": 6.2,
+        "mean_n": 39.6,
+        "seed_hits": [
+          10,
+          8,
+          8,
+          25,
+          20
+        ],
+        "seed_totals": [
+          40,
+          25,
+          20,
+          65,
+          48
+        ]
+      },
+      "4-6 (strong-low)": {
+        "holdout_mean": 65.9,
+        "holdout_std": 6.3,
+        "mean_n": 32.8,
+        "seed_hits": [
+          14,
+          20,
+          25,
+          22,
+          26
+        ],
+        "seed_totals": [
+          23,
+          29,
+          38,
+          29,
+          45
+        ]
+      },
+      "6-9 (strong-high)": {
+        "holdout_mean": 81.0,
+        "holdout_std": 9.6,
+        "mean_n": 29.8,
+        "seed_hits": [
+          18,
+          27,
+          27,
+          21,
+          26
+        ],
+        "seed_totals": [
+          21,
+          28,
+          34,
+          28,
+          38
+        ]
+      }
+    },
+    "FILTER": {
+      "0-2 (none/weak)": {
+        "holdout_mean": 15.1,
+        "holdout_std": 3.6,
+        "mean_n": 13.2,
+        "seed_hits": [
+          2,
+          3,
+          2,
+          2,
+          1
+        ],
+        "seed_totals": [
+          12,
+          14,
+          17,
+          15,
+          8
+        ]
+      },
+      "2-4 (moderate)": {
+        "holdout_mean": 46.7,
+        "holdout_std": 32.3,
+        "mean_n": 3.6,
+        "seed_hits": [
+          1,
+          2,
+          2,
+          0,
+          3
+        ],
+        "seed_totals": [
+          3,
+          4,
+          4,
+          4,
+          3
+        ]
+      },
+      "4-6 (strong-low)": {
+        "holdout_mean": 62.7,
+        "holdout_std": 19.8,
+        "mean_n": 9.0,
+        "seed_hits": [
+          7,
+          4,
+          9,
+          5,
+          3
+        ],
+        "seed_totals": [
+          9,
+          10,
+          12,
+          6,
+          8
+        ]
+      },
+      "6-9 (strong-high)": {
+        "holdout_mean": 90.1,
+        "holdout_std": 4.4,
+        "mean_n": 17.8,
+        "seed_hits": [
+          10,
+          26,
+          13,
+          19,
+          13
+        ],
+        "seed_totals": [
+          12,
+          28,
+          15,
+          20,
+          14
+        ]
+      }
+    }
+  },
+  "evidence_levels": {
+    "GOLDEN": {
+      "NO_EVIDENCE": {
+        "holdout_mean": null,
+        "holdout_std": null,
+        "mean_n": 0.0
+      },
+      "WEAK_EVIDENCE": {
+        "holdout_mean": 0.0,
+        "holdout_std": 0.0,
+        "mean_n": 0.2
+      },
+      "MODERATE_EVIDENCE": {
+        "holdout_mean": 100.0,
+        "holdout_std": 0.0,
+        "mean_n": 0.2
+      },
+      "STRONG_EVIDENCE": {
+        "holdout_mean": 100.0,
+        "holdout_std": 0.0,
+        "mean_n": 1.2
+      }
+    },
+    "HIGH": {
+      "NO_EVIDENCE": {
+        "holdout_mean": 28.1,
+        "holdout_std": 15.7,
+        "mean_n": 12.4
+      },
+      "WEAK_EVIDENCE": {
+        "holdout_mean": 33.6,
+        "holdout_std": 10.7,
+        "mean_n": 15.8
+      },
+      "MODERATE_EVIDENCE": {
+        "holdout_mean": 74.4,
+        "holdout_std": 9.4,
+        "mean_n": 12.8
+      },
+      "STRONG_EVIDENCE": {
+        "holdout_mean": 88.1,
+        "holdout_std": 4.1,
+        "mean_n": 107.8
+      }
+    },
+    "MEDIUM": {
+      "NO_EVIDENCE": {
+        "holdout_mean": null,
+        "holdout_std": null,
+        "mean_n": 0.0
+      },
+      "WEAK_EVIDENCE": {
+        "holdout_mean": null,
+        "holdout_std": null,
+        "mean_n": 0.0
+      },
+      "MODERATE_EVIDENCE": {
+        "holdout_mean": 33.4,
+        "holdout_std": 7.2,
+        "mean_n": 23.0
+      },
+      "STRONG_EVIDENCE": {
+        "holdout_mean": null,
+        "holdout_std": null,
+        "mean_n": 0.0
+      }
+    },
+    "LOW": {
+      "NO_EVIDENCE": {
+        "holdout_mean": 8.6,
+        "holdout_std": 2.3,
+        "mean_n": 76.4
+      },
+      "WEAK_EVIDENCE": {
+        "holdout_mean": 17.2,
+        "holdout_std": 3.5,
+        "mean_n": 65.2
+      },
+      "MODERATE_EVIDENCE": {
+        "holdout_mean": 35.4,
+        "holdout_std": 6.2,
+        "mean_n": 39.6
+      },
+      "STRONG_EVIDENCE": {
+        "holdout_mean": 73.1,
+        "holdout_std": 6.4,
+        "mean_n": 62.6
+      }
+    },
+    "FILTER": {
+      "NO_EVIDENCE": {
+        "holdout_mean": 4.7,
+        "holdout_std": 6.0,
+        "mean_n": 6.0
+      },
+      "WEAK_EVIDENCE": {
+        "holdout_mean": 23.8,
+        "holdout_std": 6.3,
+        "mean_n": 7.2
+      },
+      "MODERATE_EVIDENCE": {
+        "holdout_mean": 46.7,
+        "holdout_std": 32.3,
+        "mean_n": 3.6
+      },
+      "STRONG_EVIDENCE": {
+        "holdout_mean": 81.3,
+        "holdout_std": 6.3,
+        "mean_n": 26.8
+      }
+    }
+  },
+  "cache_coverage": {
+    "GOLDEN": {
+      "cached_per_seed": 1.6,
+      "not_cached_per_seed": 45.0,
+      "coverage_pct": 3.4
+    },
+    "HIGH": {
+      "cached_per_seed": 148.8,
+      "not_cached_per_seed": 92.0,
+      "coverage_pct": 61.8
+    },
+    "MEDIUM": {
+      "cached_per_seed": 23.0,
+      "not_cached_per_seed": 98.0,
+      "coverage_pct": 19.0
+    },
+    "LOW": {
+      "cached_per_seed": 243.8,
+      "not_cached_per_seed": 1673.4,
+      "coverage_pct": 12.7
+    },
+    "FILTER": {
+      "cached_per_seed": 43.6,
+      "not_cached_per_seed": 1832.4,
+      "coverage_pct": 2.3
+    }
+  }
+}
