@@ -16361,7 +16361,7 @@
       "id": "h811",
       "title": "Autoimmune RA Hierarchy GOLDEN\u2192HIGH Demotion: 69.0% Holdout Below GOLDEN Threshold",
       "description": "autoimmune_hierarchy_rheumatoid_arthritis shows 89.7% full-data but 69.0% \u00b1 28.8% holdout (n=16/seed). Flagged as OVERFITTED with -20.7pp delta. Currently GOLDEN tier. The 69.0% holdout is well below GOLDEN (85.3%). However, variance is very high (\u00b128.8%) suggesting seed-sensitive results. Check if demotion to HIGH would improve GOLDEN precision without hurting HIGH.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -16370,6 +16370,52 @@
         "Identify if variance is from specific seed outliers or consistent underperformance",
         "If consistently <80%, implement demotion to HIGH",
         "Run holdout validation to confirm impact"
+      ],
+      "findings": "RA hierarchy holdout: 69.0% \u00b1 28.8% (n=16/seed, 4 seeds with data). Per-seed: 22.2%, 72.2%, 100.0%, 81.8%. Seed 42 has 0 RA in holdout. Well below GOLDEN (85.3%). Demoted to HIGH. GOLDEN +1.6pp (85.3\u219286.9%), HIGH -0.5pp (81.8\u219281.3%, within noise). RA full-data 90.3% vs holdout 70.3% = 20pp gap driven by small-n seed instability.",
+      "result_metric": "GOLDEN +1.6pp (85.3\u219286.9%), HIGH -0.5pp (81.8\u219281.3%)"
+    },
+    {
+      "id": "h812",
+      "title": "Holdout-Invisible HIGH Hierarchy Rules: Are MS/Sepsis/Asthma Correctly Placed?",
+      "description": "autoimmune_hierarchy_multiple_sclerosis (n=17 full, 0/seed holdout), infectious_hierarchy_sepsis (n=13 full, 0/seed), respiratory_hierarchy_asthma (n=18 full, 0/seed) all show 100% full-data but 0% holdout because they never appear in holdout sets. These are holdout-invisible \u2014 we cannot validate them. Check if 15-seed evaluation (h781) would make them visible. Alternatively, use literature mining to validate quality.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Count how many diseases map to each hierarchy group (MS, sepsis, asthma)",
+        "If only 1-2 diseases, they are structurally holdout-invisible at 80/20 split",
+        "Check if literature mining can validate these (h765 may have already done this)",
+        "If unvalidatable, consider whether to keep at HIGH or demote to MEDIUM as precaution"
+      ]
+    },
+    {
+      "id": "h813",
+      "title": "GOLDEN Variance Reduction: Does RA Demotion Reduce Seed Sensitivity?",
+      "description": "GOLDEN went from \u00b12.6% to \u00b12.7% after RA demotion, actually slightly worse. But RA was contributing 0-36 predictions per seed with 22-100% precision \u2014 extreme variance. Check if the variance improvement is real by running 10+ seeds to get tighter confidence intervals.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Run 10-seed holdout to get better variance estimate",
+        "Compare to pre-demotion 10-seed if available",
+        "Document whether GOLDEN is more stable post-RA-demotion"
+      ]
+    },
+    {
+      "id": "h814",
+      "title": "HIGH Sub-Reason Audit: Identify Weakest HIGH Rules for MEDIUM Demotion",
+      "description": "Current HIGH holdout is 81.3% \u00b1 4.8%. Some HIGH sub-reasons may be dragging the average down. corticosteroid_soc_promotion (61.4%), autoimmune_hierarchy_rheumatoid_arthritis (70.3%), and infectious_hierarchy_tuberculosis (50.0%) are the weakest. Audit all HIGH sub-reasons with n>=5/seed for potential MEDIUM demotion.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "List all HIGH sub-reasons with holdout precision and n/seed",
+        "Identify sub-reasons below HIGH average by >15pp",
+        "For each candidate, check if demotion to MEDIUM would improve HIGH without hurting MEDIUM",
+        "Implement demotions that pass validation"
       ]
     }
   ],
@@ -18903,6 +18949,12 @@
       "hypothesis_id": "h808",
       "learning": "Literature-demoted HIGH predictions are NOT uniform quality. Only default_freq10_nomech_r1_5 (36.4%) maintains MEDIUM quality. All other sub-reasons (cancer_same_type_mech_rank10: 13.4%, default: 15.7%) are LOW quality when literature evidence is weak. Double-demotion freed +1.5pp MEDIUM.",
       "implication": "Blanket protection rules should be audited for sub-group heterogeneity. Composite rules (like literature \u00d7 original-tier) may mask quality differences."
+    },
+    {
+      "date": "2026-02-25",
+      "hypothesis_id": "h811",
+      "learning": "RA hierarchy dropped from 86.4% (h615) to 69.0% (current) holdout due to GT/rule changes reducing RA prediction count (23\u219216/seed). Seed 42 had 0 RA preds in holdout. Extreme per-seed variance (22-100%) flags small-n instability. Hierarchy rules with <20 preds/seed are unreliable \u2014 always check per-seed breakdown before trusting aggregate.",
+      "implication": "Audit all hierarchy GOLDEN promotions for n<20/seed instability. Consider minimum n threshold for GOLDEN eligibility."
     }
   ],
   "collaborations": [

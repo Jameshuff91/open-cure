@@ -1,6 +1,46 @@
 # Research Loop Progress
 
-## Current Session: h808 - Literature High Demotion Sub-Reason Audit (2026-02-25)
+## Current Session: h811 - RA Hierarchy GOLDEN→HIGH Demotion (2026-02-25)
+
+### h811: Autoimmune RA Hierarchy GOLDEN→HIGH Demotion — VALIDATED
+
+**Methodology:** Ran 5-seed holdout evaluation with per-seed breakdown for autoimmune_hierarchy_rheumatoid_arthritis. Previously promoted to GOLDEN at h615 (86.4% ± 8.7%, n=23/seed). Current measurement: 69.0% ± 28.8% (n=16/seed).
+
+**Key findings:**
+1. Seed 42: 0 RA predictions in holdout (all RA diseases in training)
+2. Seed 123: 22.2% (2/9) — terrible outlier
+3. Seed 456: 72.2% (26/36) — below GOLDEN
+4. Seed 789: 100.0% (9/9) — perfect but tiny n
+5. Seed 2024: 81.8% (9/11) — borderline
+
+**Root cause:** n dropped from 23→16/seed due to GT and rule changes since h615. Extreme variance (22-100%) indicates small-n instability. RA at 69.0% is well below GOLDEN (85.3%) and below HIGH average (81.3%).
+
+**Implementation:** Removed rheumatoid_arthritis from HIERARCHY_PROMOTE_TO_GOLDEN and TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES.
+
+**Tier impact:**
+| Tier | Before | After | Delta |
+|------|--------|-------|-------|
+| GOLDEN | 85.3% ± 2.6% | 86.9% ± 2.7% | **+1.6pp** |
+| HIGH | 81.8% ± 5.5% | 81.3% ± 4.8% | -0.5pp |
+| MEDIUM | 36.3% ± 4.6% | 36.3% ± 4.6% | 0pp |
+| LOW | 11.9% ± 0.5% | 11.9% ± 0.5% | 0pp |
+| FILTER | 9.2% ± 0.5% | 9.2% ± 0.5% | 0pp |
+
+**Key learning:** Hierarchy rules with <20 preds/seed are unreliable — always check per-seed breakdown before trusting aggregate. Small-n rules can show 86% one evaluation and 69% another due to GT/rule changes affecting which predictions appear.
+
+### New Hypotheses Generated (3)
+- h812: Holdout-invisible HIGH hierarchy rules (MS/sepsis/asthma all 0% holdout)
+- h813: GOLDEN variance reduction post-RA demotion
+- h814: HIGH sub-reason audit for weakest rules
+
+### Recommended Next Steps
+1. h814: HIGH sub-reason audit (low effort, directly builds on h811 findings)
+2. h812: Holdout-invisible hierarchy rules (medium effort, important for tier integrity)
+3. h807: Literature evidence score gradient (low effort, refine existing feature)
+
+---
+
+## Previous Session: h808 - Literature High Demotion Sub-Reason Audit (2026-02-25)
 
 ### h808: Literature High Demotion Sub-Reason Audit — VALIDATED
 

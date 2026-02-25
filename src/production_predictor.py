@@ -1714,7 +1714,7 @@ TARGET_OVERLAP_GOLDEN_ELIGIBLE_RULES: set[str] = {
     'cardiovascular_hierarchy_arrhythmia',
     'cardiovascular_hierarchy_coronary',
     'comp_to_base_high_87',
-    'autoimmune_hierarchy_rheumatoid_arthritis',
+    # h811: rheumatoid_arthritis demoted to HIGH (69.0% holdout < GOLDEN 85.3%)
     'autoimmune_hierarchy_multiple_sclerosis',
     'autoimmune_hierarchy_spondylitis',
     'autoimmune_hierarchy_lupus',
@@ -3709,9 +3709,10 @@ class DrugRepurposingPredictor:
         HIERARCHY_GOLDEN_CATEGORIES = {'metabolic', 'neurological'}
         # h615: Group-level GOLDEN promotions validated with expanded GT holdout
         # coronary: 65.5% ± 1.2% holdout (n=13/seed), arrhythmia: 72.9% ± 1.5% (n=11/seed)
-        # rheumatoid_arthritis: 86.4% ± 8.7% (n=23/seed), colitis: 85.7% ± 0.0% (n=7/seed)
+        # colitis: 85.7% ± 0.0% (n=7/seed)
+        # h811: rheumatoid_arthritis demoted to HIGH — 69.0% ± 28.8% holdout (n=16/seed), below GOLDEN 85.3%
         HIERARCHY_PROMOTE_TO_GOLDEN = {
-            'coronary', 'arrhythmia', 'rheumatoid_arthritis', 'colitis',
+            'coronary', 'arrhythmia', 'colitis',
             'uti',  # h757: 80.0% ± 0.0% holdout (n=10/seed), above GOLDEN 78%
         }
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH

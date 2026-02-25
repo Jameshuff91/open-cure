@@ -1,55 +1,55 @@
 {
   "tier_comparison": {
     "GOLDEN": {
-      "full_precision": 91.9,
-      "holdout_mean": 85.3,
-      "holdout_std": 2.6,
-      "delta": -6.6,
+      "full_precision": 92.2,
+      "holdout_mean": 86.9,
+      "holdout_std": 2.7,
+      "delta": -5.3,
       "seed_values": [
         82.4,
-        85.8,
-        82.8,
-        89.7,
-        85.6
+        89.9,
+        87.2,
+        89.1,
+        85.9
       ]
     },
     "HIGH": {
-      "full_precision": 84.3,
-      "holdout_mean": 81.8,
-      "holdout_std": 5.5,
-      "delta": -2.5,
+      "full_precision": 84.9,
+      "holdout_mean": 81.3,
+      "holdout_std": 4.8,
+      "delta": -3.6,
       "seed_values": [
         75.9,
-        92.2,
-        79.1,
-        81.5,
-        80.2
+        89.9,
+        78.4,
+        82.2,
+        80.3
       ]
     },
     "MEDIUM": {
-      "full_precision": 39.9,
-      "holdout_mean": 34.8,
-      "holdout_std": 5.1,
-      "delta": -5.1,
+      "full_precision": 40.0,
+      "holdout_mean": 36.3,
+      "holdout_std": 4.6,
+      "delta": -3.7,
       "seed_values": [
-        34.3,
-        30.7,
-        35.0,
-        44.2,
-        29.6
+        35.5,
+        32.6,
+        38.3,
+        44.1,
+        31.1
       ]
     },
     "LOW": {
-      "full_precision": 19.4,
-      "holdout_mean": 11.8,
-      "holdout_std": 0.6,
-      "delta": -7.6,
+      "full_precision": 19.6,
+      "holdout_mean": 11.9,
+      "holdout_std": 0.5,
+      "delta": -7.7,
       "seed_values": [
-        11.9,
+        12.0,
         12.2,
-        10.7,
-        12.1,
-        12.2
+        10.8,
+        12.3,
+        12.1
       ]
     },
     "FILTER": {
@@ -207,16 +207,6 @@
       "mean_n": 0,
       "status": "small-n"
     },
-    "autoimmune_hierarchy_rheumatoid_arthritis": {
-      "tier": "GOLDEN",
-      "full_precision": 89.7,
-      "full_n": 126,
-      "holdout_mean": 69.0,
-      "holdout_std": 28.8,
-      "delta": -20.7,
-      "mean_n": 16.2,
-      "status": "OVERFITTED?"
-    },
     "metabolic_hierarchy_lipid": {
       "tier": "GOLDEN",
       "full_precision": 90.6,
@@ -357,6 +347,16 @@
       "mean_n": 0,
       "status": "OVERFITTED?"
     },
+    "autoimmune_hierarchy_rheumatoid_arthritis": {
+      "tier": "HIGH",
+      "full_precision": 90.3,
+      "full_n": 124,
+      "holdout_mean": 70.3,
+      "holdout_std": 27.8,
+      "delta": -20.0,
+      "mean_n": 15.8,
+      "status": "OVERFITTED?"
+    },
     "metabolic_hierarchy_thyroid": {
       "tier": "HIGH",
       "full_precision": 90.9,
@@ -429,13 +429,13 @@
     },
     "literature_weak_demotion": {
       "tier": "LOW",
-      "full_precision": 23.3,
-      "full_n": 356,
-      "holdout_mean": 19.4,
-      "holdout_std": 5.5,
-      "delta": -3.9,
-      "mean_n": 53.4,
-      "status": "GENUINE"
+      "full_precision": 27.0,
+      "full_n": 456,
+      "holdout_mean": 19.8,
+      "holdout_std": 5.7,
+      "delta": -7.2,
+      "mean_n": 69.0,
+      "status": "degraded"
     },
     "gastrointestinal_medium_demotion": {
       "tier": "LOW",
@@ -529,12 +529,12 @@
     },
     "broad_class_isolated": {
       "tier": "LOW",
-      "full_precision": 36.8,
-      "full_n": 38,
-      "holdout_mean": 23.3,
-      "holdout_std": 23.2,
-      "delta": -13.5,
-      "mean_n": 7.6,
+      "full_precision": 35.9,
+      "full_n": 39,
+      "holdout_mean": 22.9,
+      "holdout_std": 23.4,
+      "delta": -13.0,
+      "mean_n": 7.8,
       "status": "degraded"
     },
     "cancer_same_type_no_mechanism": {
@@ -717,16 +717,6 @@
       "mean_n": 8.0,
       "status": "OVERFITTED?"
     },
-    "literature_high_demotion": {
-      "tier": "MEDIUM",
-      "full_precision": 43.2,
-      "full_n": 287,
-      "holdout_mean": 31.1,
-      "holdout_std": 12.4,
-      "delta": -12.1,
-      "mean_n": 44.8,
-      "status": "degraded"
-    },
     "cv_established_drug_rescue": {
       "tier": "MEDIUM",
       "full_precision": 57.1,
@@ -736,6 +726,16 @@
       "delta": -22.9,
       "mean_n": 4.0,
       "status": "small-n"
+    },
+    "literature_high_demotion": {
+      "tier": "MEDIUM",
+      "full_precision": 45.2,
+      "full_n": 188,
+      "holdout_mean": 36.4,
+      "holdout_std": 10.7,
+      "delta": -8.8,
+      "mean_n": 29.4,
+      "status": "degraded"
     },
     "cardiovascular": {
       "tier": "MEDIUM",
@@ -862,10 +862,10 @@
     "corticosteroid_iatrogenic",
     "base_to_complication",
     "non_therapeutic_compound",
-    "autoimmune_hierarchy_rheumatoid_arthritis",
     "autoimmune_hierarchy_multiple_sclerosis",
     "infectious_hierarchy_sepsis",
     "respiratory_hierarchy_asthma",
+    "autoimmune_hierarchy_rheumatoid_arthritis",
     "infectious_hierarchy_tuberculosis",
     "metabolic_hierarchy_diabetes",
     "cancer_targeted_therapy",
@@ -874,13 +874,13 @@
     "cv_pathway_comprehensive"
   ],
   "summary": {
-    "golden_holdout_precision": 85.3,
+    "golden_holdout_precision": 86.9,
     "golden_pass": true,
     "tier_ordering_correct": true,
     "n_rules_tested": 79,
-    "n_genuine": 27,
+    "n_genuine": 26,
     "n_overfitted": 13,
-    "n_degraded": 24,
+    "n_degraded": 25,
     "n_small_sample": 15
   }
 }

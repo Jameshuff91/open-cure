@@ -147,13 +147,13 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h808 update, 2026-02-25):**
-- GOLDEN: 85.3% ± 2.6% holdout (1109 predictions)
-- HIGH: 81.8% ± 5.5% holdout (1127 predictions)
+**Tier System (h811 update, 2026-02-25):**
+- GOLDEN: 86.9% ± 2.7% holdout (983 predictions)
+- HIGH: 81.3% ± 4.8% holdout (1251 predictions)
 - MEDIUM: 36.3% ± 4.6% holdout (420 predictions)
 - LOW: 11.9% ± 0.5% holdout (9530 predictions)
 - FILTER: 9.2% ± 0.5% holdout (8978 predictions)
-- **h808:** Lit double-demotion: only freq10_nomech_r1_5 protected; other lit-demoted HIGH sub-reasons→LOW. **MEDIUM +1.5pp (34.8→36.3%)**.
+- **h811:** RA hierarchy GOLDEN→HIGH (69.0% holdout < 85.3% GOLDEN). **GOLDEN +1.6pp (85.3→86.9%)**. h808: Lit double-demotion. **MEDIUM +1.5pp (34.8→36.3%)**.
 - **h798:** Excluded 'other' from lit_strong_low. HIGH +2.3pp. h797 cancer GOLDEN INVALIDATED (69.5% holdout).
 - **h795:** lit_strong→GOLDEN (88.1% holdout). GOLDEN +5.2pp, variance halved.
 - **h789+h791:** STRONG LOW→HIGH (80.4%), NO/WEAK HIGH→MEDIUM (31.1%). Combined HIGH +3.9pp.
