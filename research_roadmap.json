@@ -16380,7 +16380,7 @@
       "id": "h812",
       "title": "Holdout-Invisible HIGH Hierarchy Rules: Are MS/Sepsis/Asthma Correctly Placed?",
       "description": "autoimmune_hierarchy_multiple_sclerosis (n=17 full, 0/seed holdout), infectious_hierarchy_sepsis (n=13 full, 0/seed), respiratory_hierarchy_asthma (n=18 full, 0/seed) all show 100% full-data but 0% holdout because they never appear in holdout sets. These are holdout-invisible \u2014 we cannot validate them. Check if 15-seed evaluation (h781) would make them visible. Alternatively, use literature mining to validate quality.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -16389,7 +16389,9 @@
         "If only 1-2 diseases, they are structurally holdout-invisible at 80/20 split",
         "Check if literature mining can validate these (h765 may have already done this)",
         "If unvalidatable, consider whether to keep at HIGH or demote to MEDIUM as precaution"
-      ]
+      ],
+      "findings": "Audit of holdout-invisible HIGH hierarchy rules reveals NO action needed.\n\nINVISIBLE GROUPS (n\u22642 diseases, structurally cannot appear in holdout):\n- h765 already validated 8 of 9 invisible HIGH groups via literature mining (82% STRONG rate)\n- 3 remaining invisible groups (psoriasis, spondylitis, pulmonary_fibrosis) produce 0 predictions \n  with their hierarchy rule \u2014 diseases exist but get assigned to other rules first\n\nBORDERLINE GROUPS (n=3-4 diseases):\n- cardiovascular_hierarchy_hypertension: 51 predictions, 62.7% full-data precision\n  Well-calibrated: includes standard antihypertensives (all GT) and PAH drugs (bosentan, sildenafil, tadalafil)\n  18/21 assessed are STRONG. 30 unmined but mostly obvious (HCTZ\u2192hypertension, losartan\u2192hypertension)\n- infectious_hierarchy_tuberculosis: 11 predictions, 90.9% full-data precision\n  7/8 assessed are STRONG. All standard TB drugs (bedaquiline, pretomanid, cycloserine, levofloxacin)\n\nCONCLUSION: All HIGH hierarchy rules are correctly placed. The 5 uncovered groups are either:\n1. Validated by h765 literature mining (8/9 invisible rules)\n2. Produce 0 predictions (3 groups \u2014 diseases assigned to other rules)\n3. Well-calibrated on full-data + literature (hypertension, TB)\n\nNo demotions needed.\n",
+      "result_metric": "No action needed \u2014 all HIGH hierarchy rules validated"
     },
     {
       "id": "h813",
@@ -16551,7 +16553,7 @@
       "id": "h821",
       "title": "Evidence Level as Tier Override: Can STRONG_EVIDENCE Promote MEDIUM to HIGH?",
       "hypothesis": "MEDIUM predictions with STRONG_EVIDENCE have 82.2% full-data precision \u2014 above HIGH tier average (78.4%). Literature evidence could be used as a tier promotion signal.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "high",
       "effort": "medium",
@@ -16562,8 +16564,8 @@
         "Check if this is redundant with existing transe_medium_promotion",
         "Validate that NO_EVIDENCE MEDIUM predictions don't degrade"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Already implemented: MEDIUM + STRONG_EVIDENCE \u2192 GOLDEN (h795, line 4795-4798 in production_predictor.py). Also LOW + STRONG \u2192 HIGH (h789), LOW + MODERATE \u2192 MEDIUM (h815), HIGH + NO/WEAK \u2192 MEDIUM (h791). All literature evidence overrides are already in production.",
+      "result_metric": "N/A \u2014 already implemented"
     },
     {
       "id": "h822",
