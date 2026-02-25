@@ -1,0 +1,137 @@
+======================================================================
+h817: NO_EVIDENCE vs WEAK_EVIDENCE Split Analysis
+======================================================================
+
+Seed 42...
+  Evaluated 207 diseases
+
+Seed 123...
+  Evaluated 207 diseases
+
+Seed 456...
+  Evaluated 207 diseases
+
+Seed 789...
+  Evaluated 207 diseases
+
+Seed 2024...
+  Evaluated 207 diseases
+
+======================================================================
+TIER SUMMARY (5-seed holdout)
+======================================================================
+  GOLDEN    : 87.6% +/- 5.1%
+  HIGH      : 80.7% +/- 3.8%
+  MEDIUM    : 40.9% +/- 1.7%
+  LOW       : 11.9% +/- 1.4%
+  FILTER    : 8.2% +/- 1.6%
+
+======================================================================
+TIER x EVIDENCE LEVEL (5-seed holdout)
+======================================================================
+
+Tier       Evidence              Holdout%   Std   N/seed
+-------------------------------------------------------
+  GOLDEN     STRONG_EVIDENCE          90.3%  2.7     78.0
+  GOLDEN     MODERATE_EVIDENCE       100.0%  0.0      1.0
+  GOLDEN     WEAK_EVIDENCE             0.0%  0.0      1.0
+  GOLDEN     NO_EVIDENCE               0.0%  0.0      3.0
+  GOLDEN     NOT_ASSESSED             84.9%  9.2     33.0
+
+  HIGH       STRONG_EVIDENCE          89.4%  1.7    158.6
+  HIGH       MODERATE_EVIDENCE        62.3%  6.5     20.6
+  HIGH       NOT_ASSESSED             46.2% 15.8     28.0
+
+  MEDIUM     MODERATE_EVIDENCE        37.0%  3.0     65.8
+  MEDIUM     WEAK_EVIDENCE            48.7% 19.7     14.4
+  MEDIUM     NO_EVIDENCE              40.6% 11.3     13.4
+  MEDIUM     NOT_ASSESSED             43.3%  2.6     99.4
+
+  LOW        STRONG_EVIDENCE          42.7% 19.8     10.0
+  LOW        WEAK_EVIDENCE            24.3%  5.1     80.4
+  LOW        NO_EVIDENCE              11.9%  4.8     87.6
+  LOW        NOT_ASSESSED             11.1%  1.5   1651.2
+
+  FILTER     STRONG_EVIDENCE          19.4% 25.6      3.8
+  FILTER     MODERATE_EVIDENCE        48.3% 21.3      5.4
+  FILTER     WEAK_EVIDENCE            16.0%  5.3      7.0
+  FILTER     NO_EVIDENCE              15.8%  9.3      7.4
+  FILTER     NOT_ASSESSED              7.9%  1.6   1837.2
+
+======================================================================
+KEY: literature_weak_demotion sub-reason (currently at LOW tier)
+Split by NO_EVIDENCE vs WEAK_EVIDENCE
+======================================================================
+  NO_EVIDENCE         : 14.3% +/- 6.9% (n=35/seed)
+  WEAK_EVIDENCE       : 34.1% +/- 11.0% (n=30/seed)
+
+======================================================================
+KEY: literature_high_demotion sub-reason (currently at MEDIUM tier)
+Split by NO_EVIDENCE vs WEAK_EVIDENCE
+======================================================================
+  NO_EVIDENCE         : 40.6% +/- 11.3% (n=13/seed)
+  WEAK_EVIDENCE       : 48.7% +/- 19.7% (n=14/seed)
+
+======================================================================
+COUNTERFACTUAL: What if WEAK_EVIDENCE was NOT demoted?
+======================================================================
+  Current MEDIUM holdout: 40.9%
+  WEAK demoted preds: 34.1% (n=30/seed)
+  If kept at MEDIUM: would HURT MEDIUM
+
+  Current HIGH holdout: 80.7%
+  WEAK demoted preds: 48.7% (n=14/seed)
+  If kept at HIGH: would HURT HIGH
+
+======================================================================
+ALL SUB-REASONS: NO vs WEAK evidence (n>=5/seed)
+======================================================================
+
+  default (tier=LOW):
+    NO_EVIDENCE:     12.7% +/- 8.6% (n=13/seed)
+    WEAK_EVIDENCE:   19.0% +/- 9.7% (n=15/seed)
+    Gap (WEAK-NO): +6.3pp
+
+  default_no_mech_high_rank (tier=LOW):
+    NO_EVIDENCE:      2.9% +/- 5.7% (n=6/seed)
+    WEAK_EVIDENCE:   39.8% +/- 20.2% (n=6/seed)
+    Gap (WEAK-NO): +37.0pp
+
+  default_nomech_low_score (tier=LOW):
+    NO_EVIDENCE:      4.2% +/- 5.9% (n=23/seed)
+    WEAK_EVIDENCE:   16.9% +/- 9.1% (n=17/seed)
+    Gap (WEAK-NO): +12.7pp
+
+  default_nomech_r1_5_low_score (tier=LOW):
+    NO_EVIDENCE:     26.9% +/- 38.0% (n=9/seed)
+    WEAK_EVIDENCE:   11.4% +/- 8.2% (n=9/seed)
+    Gap (WEAK-NO): -15.5pp
+
+  literature_high_demotion (tier=MEDIUM):
+    NO_EVIDENCE:     40.6% +/- 11.3% (n=13/seed)
+    WEAK_EVIDENCE:   48.7% +/- 19.7% (n=14/seed)
+    Gap (WEAK-NO): +8.1pp
+
+  literature_weak_demotion (tier=LOW):
+    NO_EVIDENCE:     14.3% +/- 6.9% (n=35/seed)
+    WEAK_EVIDENCE:   34.1% +/- 11.0% (n=30/seed)
+    Gap (WEAK-NO): +19.8pp
+
+======================================================================
+RECOMMENDATION
+======================================================================
+
+  h732 (MEDIUM->LOW):
+    NO:   14.3% (n=35)
+    WEAK: 34.1% (n=30)
+    Gap:  +19.8pp
+    -> ACTIONABLE: Split demotion rule
+
+  h791 (HIGH->MEDIUM):
+    NO:   40.6% (n=13)
+    WEAK: 48.7% (n=14)
+    Gap:  +8.1pp
+    -> MARGINAL: Gap exists but may not be reliable
+
+  OVERALL: Split demotion rules to treat WEAK differently from NO.
+  h817 VALIDATED.

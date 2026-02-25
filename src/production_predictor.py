@@ -4729,15 +4729,11 @@ class DrugRepurposingPredictor:
                     # but flagged for downstream prioritization.
                     in_transe_top30 = drug_id in transe_top30
 
-                    # h520: Corticosteroid SOC promotion for non-hematological categories
-                    # Corticosteroid MEDIUM predictions in autoimmune/dermatological/respiratory/ophthalmic
-                    # have 50.1% holdout precision (p=0.0065), comparable to HIGH (51.5%).
-                    # Hematological excluded (19.1% holdout, below MEDIUM avg).
-                    if (tier == ConfidenceTier.MEDIUM
-                            and category in _CORTICOSTEROID_SOC_PROMOTE_CATEGORIES
-                            and drug_name.lower() in _CORTICOSTEROID_LOWER):
-                        tier = ConfidenceTier.HIGH
-                        cat_specific = 'corticosteroid_soc_promotion'
+                    # h520: Corticosteroid SOC promotion — REVERTED by h814
+                    # Originally promoted autoimmune/dermatological/respiratory/ophthalmic CS to HIGH.
+                    # h814 audit: 61.4% ± 22.5% holdout (per-seed 36.4-96.2%), below HIGH avg 81.3%.
+                    # Demotion to MEDIUM: HIGH +2.1pp (81.3→83.4%), MEDIUM +3.4pp (36.3→39.7%).
+                    # CS predictions now stay at MEDIUM where they naturally land.
 
                     # h522: Hematological corticosteroid demotion MEDIUM→LOW
                     # Hematological corticosteroid MEDIUM = 19.1% holdout (below MEDIUM avg 31.1%)
@@ -4816,6 +4812,18 @@ class DrugRepurposingPredictor:
                         tier = ConfidenceTier.HIGH
                         cat_specific = 'literature_strong_low_promotion'
 
+                    # h815: LOW + MODERATE_EVIDENCE → MEDIUM (36.7% holdout)
+                    # MODERATE literature evidence rescues LOW predictions
+                    # that were demoted by rules. Exclude safety sub-reasons
+                    # and FILTER tier (safety demotions should stay).
+                    if (tier == ConfidenceTier.LOW
+                            and lit_level == 'MODERATE_EVIDENCE'
+                            and cat_specific not in (
+                                'inverse_indication', 'non_therapeutic',
+                                'non_therapeutic_compound')):
+                        tier = ConfidenceTier.MEDIUM
+                        cat_specific = 'literature_moderate_low_promotion'
+
                     # h791: HIGH + NO/WEAK_EVIDENCE → MEDIUM (31.3% holdout)
                     # HIGH predictions with poor literature evidence underperform MEDIUM.
                     # Only applies to predictions IN the cache (NOT_ASSESSED untouched).
@@ -4828,6 +4836,8 @@ class DrugRepurposingPredictor:
                         cat_specific = 'literature_high_demotion'
 
                     # h732: MEDIUM + NO_EVIDENCE/WEAK_EVIDENCE → LOW (5-7% holdout)
+                    # h817 INVALIDATED: Splitting WEAK from NO hurts MEDIUM
+                    # (WEAK=34.1% < MEDIUM avg 38.5%, dilutes tier by -2.0pp)
                     # h808: Only protect literature_high_demotion if original
                     # sub-reason has >=MEDIUM holdout. Sub-reasons with LOW
                     # holdout (cancer_same_type_mech_rank10: 13.4%, default:

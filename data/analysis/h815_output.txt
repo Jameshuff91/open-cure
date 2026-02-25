@@ -1,0 +1,56 @@
+================================================================================
+h815: MODERATE_EVIDENCE LOW/FILTER → MEDIUM Promotion Analysis
+================================================================================
+  Seed 42...
+  Seed 123...
+  Seed 456...
+  Seed 789...
+  Seed 1024...
+
+--- MODERATE_EVIDENCE by current tier ---
+  moderate_FILTER                    :  23.3% ± 19.0% (n=5/seed)
+  moderate_HIGH                      :  65.4% ±  7.2% (n=22/seed)
+  moderate_LOW                       :  36.7% ±  9.7% (n=41/seed)
+  moderate_MEDIUM                    :  31.2% ± 15.2% (n=24/seed)
+  moderate_low_filter                :  35.5% ±  8.6% (n=46/seed)
+  moderate_low_safe                  :  36.7% ±  9.7% (n=41/seed)
+
+--- MODERATE LOW/FILTER by CATEGORY ---
+  autoimmune                         :  72.2% ± 25.5% (n=1/seed)
+  cardiovascular                     :   0.0% ±  0.0% (n=1/seed)
+  dermatological                     :  60.0% ± 41.8% (n=2/seed)
+  endocrine                          :  33.3% ± 57.7% (n=1/seed)
+  hematological                      :   0.0% ±  0.0% (n=1/seed)
+  infectious                         :  36.6% ±  8.9% (n=22/seed)
+  musculoskeletal                    :  25.0% ± 25.0% (n=2/seed)
+  ophthalmic                         :  46.7% ±  5.8% (n=2/seed)
+  other                              :  36.5% ±  8.0% (n=8/seed)
+  renal                              :  25.0% ± 50.0% (n=2/seed)
+  respiratory                        :  33.3% ± 23.6% (n=2/seed)
+
+--- MODERATE LOW/FILTER by SUB-REASON ---
+  broad_class_isolated               :   0.0% ±  0.0% (n=0/seed, 1 seeds)
+  cancer                             : 100.0% ±  0.0% (n=0/seed, 1 seeds)
+  default                            :  40.1% ± 10.5% (n=10/seed, 5 seeds)
+  default_freq10_nomech_r6_10        :  52.6% ± 16.0% (n=7/seed, 5 seeds)
+  default_no_mech_high_rank          :  45.3% ± 17.8% (n=7/seed, 5 seeds)
+  default_nomech_low_score           :  27.9% ± 11.5% (n=11/seed, 5 seeds)
+  default_nomech_r1_5_low_score      :  25.8% ± 19.7% (n=6/seed, 5 seeds)
+  hematological_corticosteroid_demotion:   0.0% ±  0.0% (n=0/seed, 1 seeds)
+  hematological_medium_demotion      :   0.0% ±  0.0% (n=0/seed, 1 seeds)
+  incoherent_demotion                :  30.0% ± 44.7% (n=3/seed, 5 seeds)
+  neurological_hierarchy_parkinsons  :   0.0% ±  0.0% (n=0/seed, 1 seeds)
+
+--- SAFETY: MODERATE by TIER|SUB-REASON ---
+  FILTER|default                               :  23.3% ± 19.0% (n=5/seed, 5 seeds)
+  LOW|broad_class_isolated                     :   0.0% ±  0.0% (n=0/seed, 1 seeds)
+  LOW|cancer                                   : 100.0% ±  0.0% (n=0/seed, 1 seeds)
+  LOW|default                                  :  52.7% ± 16.9% (n=5/seed, 5 seeds)
+  LOW|default_freq10_nomech_r6_10              :  52.6% ± 16.0% (n=7/seed, 5 seeds)
+  LOW|default_no_mech_high_rank                :  45.3% ± 17.8% (n=7/seed, 5 seeds)
+  LOW|default_nomech_low_score                 :  27.9% ± 11.5% (n=11/seed, 5 seeds)
+  LOW|default_nomech_r1_5_low_score            :  25.8% ± 19.7% (n=6/seed, 5 seeds)
+  LOW|hematological_corticosteroid_demotion    :   0.0% ±  0.0% (n=0/seed, 1 seeds)
+  LOW|hematological_medium_demotion            :   0.0% ±  0.0% (n=0/seed, 1 seeds)
+  LOW|incoherent_demotion                      :  30.0% ± 44.7% (n=3/seed, 5 seeds)
+  LOW|neurological_hierarchy_parkinsons        :   0.0% ±  0.0% (n=0/seed, 1 seeds)

@@ -1,6 +1,49 @@
 # Research Loop Progress
 
-## Current Session: h811 - RA Hierarchy GOLDEN→HIGH Demotion (2026-02-25)
+## Current Session: h814+h815+h817 - HIGH Sub-Reason Audit + MODERATE Promotion + Evidence Split (2026-02-25)
+
+### h814: HIGH Sub-Reason Audit (CS SOC Revert) — VALIDATED
+
+**Methodology:** Analyzed all HIGH sub-reasons for demotion candidates. Found corticosteroid_soc_promotion at 61.4% ± 22.5% holdout (per-seed: 37.5%, 96.2%, 64.0%, 36.4%, 72.7%), 19.9pp below HIGH average. Already implemented by previous session (CS SOC promotion code reverted).
+
+**Impact:** HIGH +2.1pp (81.3% → 83.4%), HIGH variance reduced (±4.8% → ±4.0%).
+
+### h815: MODERATE_EVIDENCE LOW → MEDIUM Promotion — VALIDATED
+
+**Methodology:** Verified already-implemented promotion of LOW predictions with MODERATE literature evidence to MEDIUM. 36.7% holdout (n=41/seed, well above LOW avg of 11.3%). Excludes safety sub-reasons.
+
+**Impact:** MEDIUM +2.2pp (36.3% → 38.5%), MEDIUM variance reduced (±4.6% → ±3.6%). ~213 predictions promoted LOW→MEDIUM.
+
+### h817: NO_EVIDENCE vs WEAK_EVIDENCE Split — INVALIDATED
+
+**Methodology:** Tested splitting h732 demotion: only demote NO_EVIDENCE (14.3%) to LOW, keep WEAK_EVIDENCE (34.1%) at MEDIUM. Implemented change and ran 5-seed holdout.
+
+**Result:** MEDIUM -2.0pp (38.5% → 36.5%). WEAK_EVIDENCE at 34.1% is below the post-h815 MEDIUM average of 38.5%, diluting the tier. REVERTED.
+
+**Key learning:** When baseline improves (h815 raised MEDIUM from 36.3% to 38.5%), previously borderline sub-groups become below-average. Always check against current tier averages.
+
+### Current Tier State
+| Tier | Holdout | Δ from h811 |
+|------|---------|-------------|
+| GOLDEN | 87.1% ± 2.7% | +0.2pp |
+| HIGH | 83.4% ± 4.0% | +2.1pp |
+| MEDIUM | 38.5% ± 3.6% | +2.2pp |
+| LOW | 11.3% ± 0.5% | -0.6pp |
+| FILTER | 9.2% ± 0.5% | 0pp |
+
+### New Hypotheses Generated (3)
+- h818: WEAK_EVIDENCE per-sub-reason rescue (selective, not blanket)
+- h819: Literature evidence coverage gap analysis (% NOT_ASSESSED)
+- h820: HIGH variance decomposition by rule
+
+### Recommended Next Steps
+1. h818: Selective WEAK rescue for high-holdout sub-reasons (low effort)
+2. h819: Literature coverage gap analysis (low effort, informs mining strategy)
+3. h812: Holdout-invisible HIGH hierarchy rules (medium effort)
+
+---
+
+## Previous Session: h811 - RA Hierarchy GOLDEN→HIGH Demotion (2026-02-25)
 
 ### h811: Autoimmune RA Hierarchy GOLDEN→HIGH Demotion — VALIDATED
 

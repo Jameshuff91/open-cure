@@ -147,13 +147,14 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h811 update, 2026-02-25):**
-- GOLDEN: 86.9% ± 2.7% holdout (983 predictions)
-- HIGH: 81.3% ± 4.8% holdout (1251 predictions)
-- MEDIUM: 36.3% ± 4.6% holdout (420 predictions)
-- LOW: 11.9% ± 0.5% holdout (9530 predictions)
+**Tier System (h815 update, 2026-02-25):**
+- GOLDEN: 87.1% ± 2.7% holdout (991 predictions)
+- HIGH: 83.4% ± 4.0% holdout (1168 predictions)
+- MEDIUM: 38.5% ± 3.6% holdout (914 predictions)
+- LOW: 11.3% ± 0.5% holdout (9113 predictions)
 - FILTER: 9.2% ± 0.5% holdout (8978 predictions)
-- **h811:** RA hierarchy GOLDEN→HIGH (69.0% holdout < 85.3% GOLDEN). **GOLDEN +1.6pp (85.3→86.9%)**. h808: Lit double-demotion. **MEDIUM +1.5pp (34.8→36.3%)**.
+- **h814+h815:** CS SOC revert + MODERATE LOW promotion. **HIGH +2.1pp, MEDIUM +2.2pp**. h817 WEAK/NO split INVALIDATED.
+- **h811+h808:** RA GOLDEN→HIGH + lit double-demotion. **GOLDEN +1.6pp, MEDIUM +1.5pp**.
 - **h798:** Excluded 'other' from lit_strong_low. HIGH +2.3pp. h797 cancer GOLDEN INVALIDATED (69.5% holdout).
 - **h795:** lit_strong→GOLDEN (88.1% holdout). GOLDEN +5.2pp, variance halved.
 - **h789+h791:** STRONG LOW→HIGH (80.4%), NO/WEAK HIGH→MEDIUM (31.1%). Combined HIGH +3.9pp.
@@ -292,9 +293,8 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 
 ## Production & Deployment
 
-**Deliverable:** `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx` - 13,416 predictions
-**Note (h349):** File has 58% stale categories - needs regeneration with current code.
+**Deliverable:** `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx` - 13,416 predictions (58% stale categories)
 
 ## Archives
 
-**Full docs:** `docs/archive/experiment_history.md`, `docs/archive/txgnn_learnings.md`, `docs/methodology_limitations.md`
+`docs/archive/experiment_history.md`, `docs/archive/txgnn_learnings.md`, `docs/methodology_limitations.md`

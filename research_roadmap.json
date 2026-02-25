@@ -16300,7 +16300,7 @@
       "id": "h807",
       "title": "Literature Evidence Score Gradient: Use Continuous Score Instead of Categorical Level",
       "description": "h805 showed NO_EVIDENCE and WEAK_EVIDENCE have identical holdout (29.1-29.3%), suggesting the categorical bucketing loses information. The literature_mining_cache stores both evidence_level (categorical) and evidence_score (continuous). A continuous score threshold might separate HIGH-quality from LOW-quality predictions within the same evidence level. Check if evidence_score gradient within WEAK_EVIDENCE predicts holdout precision (e.g., WEAK with score>1.5 vs score<0.5).",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -16308,7 +16308,9 @@
         "For all literature_high_demotion predictions, compute holdout precision by evidence_score quartile",
         "Check if score gradient within WEAK is meaningful",
         "If yes, consider score-based threshold instead of categorical level for demotion"
-      ]
+      ],
+      "findings": "INVALIDATED: Continuous evidence_score within WEAK_EVIDENCE provides NO gradient for holdout precision. All WEAK sub-buckets overlap: weak_0.5 (22.6%), weak_0.6-0.8 (21.3%), weak_1.1+ (24.9%). The categorical evidence_level system (STRONG/MODERATE/WEAK/NO) already captures all relevant information.\n\nInteresting secondary findings:\n- NO_EVIDENCE (16.6%) vs WEAK_EVIDENCE (22.1%) shows 5.5pp gap across ALL assessed predictions, but both correctly treated identically for demotion.\n- MODERATE_EVIDENCE = 41.5% holdout (above MEDIUM 36.3%). Currently unused for promotions.\n- literature_high_demotion: NO=43.6% (n=17/seed), WEAK=39.6% (n=16/seed) \u2014 above MEDIUM avg but correctly placed (below HIGH 81.3%).",
+      "result_metric": "No gradient within WEAK (all 21-25%). Categorical system confirmed optimal."
     },
     {
       "id": "h808",
@@ -16407,7 +16409,7 @@
       "id": "h814",
       "title": "HIGH Sub-Reason Audit: Identify Weakest HIGH Rules for MEDIUM Demotion",
       "description": "Current HIGH holdout is 81.3% \u00b1 4.8%. Some HIGH sub-reasons may be dragging the average down. corticosteroid_soc_promotion (61.4%), autoimmune_hierarchy_rheumatoid_arthritis (70.3%), and infectious_hierarchy_tuberculosis (50.0%) are the weakest. Audit all HIGH sub-reasons with n>=5/seed for potential MEDIUM demotion.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -16416,6 +16418,111 @@
         "Identify sub-reasons below HIGH average by >15pp",
         "For each candidate, check if demotion to MEDIUM would improve HIGH without hurting MEDIUM",
         "Implement demotions that pass validation"
+      ],
+      "findings": "HIGH sub-reason audit identified corticosteroid_soc_promotion at 61.4% \u00b1 22.5% holdout \u2014 19.9pp below HIGH avg (81.3%). Per-seed: 37.5%, 96.2%, 64.0%, 36.4%, 72.7% \u2014 extreme variance. Reverted h520 CS SOC promotion: CS predictions now stay at MEDIUM where they naturally land. Other candidates: CV_heart_failure (0% holdout, n=1) too small. RA already demoted by h811. Validated: HIGH +2.1pp (81.3% \u2192 83.4%), MEDIUM +2.2pp absorbed CS predictions (36.3% \u2192 38.5% combined with h815).",
+      "result_metric": "HIGH +2.1pp (81.3% \u2192 83.4%)"
+    },
+    {
+      "id": "h815",
+      "title": "MODERATE_EVIDENCE LOW/FILTER Promotion: Can 41.5% Evidence Level Rescue LOW Predictions?",
+      "description": "h807 found MODERATE_EVIDENCE holdout = 41.5% across all predictions (above MEDIUM 36.3%). Currently only STRONG_EVIDENCE triggers LOW\u2192HIGH promotion (h789). MODERATE_EVIDENCE predictions in LOW/FILTER may be promotable to MEDIUM. Check: (1) How many LOW/FILTER predictions have MODERATE_EVIDENCE? (2) What is their holdout precision? (3) If >30%, promote to MEDIUM.",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "validated",
+      "steps": [
+        "Count LOW/FILTER predictions with MODERATE_EVIDENCE",
+        "Run holdout evaluation on this subset",
+        "If holdout > 30%, implement MODERATE + LOW/FILTER \u2192 MEDIUM promotion",
+        "Re-run full holdout to measure tier impact"
+      ],
+      "dependencies": [
+        "h807"
+      ],
+      "findings": "MODERATE_EVIDENCE LOW predictions have 36.7% holdout (n=41/seed, MEDIUM quality). Already implemented as literature_moderate_low_promotion. Validated: MEDIUM +2.2pp (36.3% -> 38.5%), LOW -0.6pp (11.9% -> 11.3%), MEDIUM variance reduced (4.6% -> 3.6%). Excludes safety sub-reasons (inverse_indication, non_therapeutic). FILTER MODERATE only 23.3% (n=5/seed, too small to promote).",
+      "result_metric": "MEDIUM +2.2pp (36.3% -> 38.5%)"
+    },
+    {
+      "id": "h816",
+      "title": "Literature High Demotion Sub-Reason Audit: Which Original HIGH Rules Survive Demotion Best?",
+      "description": "h807 found lit_high_demotion (HIGH\u2192MEDIUM for NO/WEAK evidence) averages ~40% holdout (above MEDIUM 36.3%). But n=33/seed is small. Break down by ORIGINAL sub-reason (before demotion): which HIGH rules maintain quality even without literature evidence? Rules that maintain >45% could be protected from demotion. This would tighten the literature demotion to only demote genuinely weak HIGH sub-reasons.",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Modify h807 script to track _orig_cat_specific for lit_high_demotion preds",
+        "Run holdout by original sub-reason \u00d7 evidence level",
+        "Identify sub-reasons where demotion may be too aggressive",
+        "If any sub-reason has >50% holdout even with NO/WEAK evidence, protect it"
+      ],
+      "dependencies": [
+        "h807"
+      ]
+    },
+    {
+      "id": "h817",
+      "title": "NO_EVIDENCE vs WEAK_EVIDENCE Split: Should We Treat Them Differently?",
+      "description": "h807 found 5.5pp gap between NO_EVIDENCE (16.6%) and WEAK_EVIDENCE (22.1%) across all predictions. Currently both trigger identical demotions. For MEDIUM\u2192LOW demotion (h732), the gap might mean WEAK should stay MEDIUM while NO goes LOW. Check the gap specifically for MEDIUM predictions: if WEAK_MEDIUM > 30% but NO_MEDIUM < 25%, split the demotion rule.",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "invalidated",
+      "steps": [
+        "Extract MEDIUM predictions with NO vs WEAK evidence",
+        "Compare holdout precision for each",
+        "If gap is significant (>10pp), implement split demotion",
+        "Re-run holdout to measure impact"
+      ],
+      "dependencies": [
+        "h807"
+      ],
+      "findings": "WEAK_EVIDENCE predictions in literature_weak_demotion have 34.1% holdout (MEDIUM-range), while NO_EVIDENCE have 14.3% (LOW quality). However, splitting the demotion to only demote NO_EVIDENCE HURT MEDIUM by -2.0pp (38.5% -> 36.5%) because 34.1% is BELOW the new MEDIUM average (38.5%, boosted by h815). The h815 MODERATE promotion raised the MEDIUM bar, making WEAK predictions sub-par. WEAK_EVIDENCE correctly stays demoted. KEY LEARNING: When baseline improves, sub-groups that were borderline become below-average.",
+      "result_metric": "MEDIUM -2.0pp (38.5% -> 36.5%) \u2014 REVERTED"
+    },
+    {
+      "id": "h818",
+      "title": "WEAK_EVIDENCE LOW Sub-Reason Rescue: Promote Specific HIGH-Holdout Sub-Reasons to MEDIUM",
+      "description": "h817 showed blanket WEAK_EVIDENCE rescue fails (-2.0pp MEDIUM dilution). But h817 data revealed specific sub-reasons with HIGH holdout when WEAK_EVIDENCE: default_no_mech_high_rank WEAK=39.8% (n=6/seed), default_freq10_nomech_r6_10 WEAK=52.6% (n=7/seed). Can we selectively rescue these sub-reasons without diluting MEDIUM?",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Extract per-sub-reason WEAK_EVIDENCE holdout from h817 data",
+        "Identify sub-reasons where WEAK > MEDIUM avg (38.5%)",
+        "Implement selective rescue for those sub-reasons only",
+        "Run holdout to verify MEDIUM improvement without dilution"
+      ]
+    },
+    {
+      "id": "h819",
+      "title": "Literature Evidence Coverage Gap: What % of Predictions Are NOT_ASSESSED?",
+      "description": "h815/h817 show literature evidence strongly stratifies prediction quality. But NOT_ASSESSED predictions (never mined) could hide both high and low quality predictions. Understanding coverage is key to deciding whether to mine more predictions.",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Count predictions by evidence level per tier",
+        "Calculate % NOT_ASSESSED by tier",
+        "Compare NOT_ASSESSED holdout vs ASSESSED holdout per tier",
+        "Estimate ROI of mining remaining NOT_ASSESSED predictions"
+      ]
+    },
+    {
+      "id": "h820",
+      "title": "HIGH Variance Decomposition: Which Rules Drive the \u00b14.0% Swing?",
+      "description": "HIGH precision is 83.4% \u00b1 4.0%. h814 improved from \u00b14.8% but still varies. Decompose variance by sub-reason to find which rules are stable vs volatile. Stable rules could be treated as more reliable.",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Extract per-seed per-rule precision from h393 data",
+        "Calculate per-rule variance contribution",
+        "Identify rules contributing most to tier variance",
+        "Determine if unstable rules should be handled differently"
       ]
     }
   ],
@@ -18955,6 +19062,18 @@
       "hypothesis_id": "h811",
       "learning": "RA hierarchy dropped from 86.4% (h615) to 69.0% (current) holdout due to GT/rule changes reducing RA prediction count (23\u219216/seed). Seed 42 had 0 RA preds in holdout. Extreme per-seed variance (22-100%) flags small-n instability. Hierarchy rules with <20 preds/seed are unreliable \u2014 always check per-seed breakdown before trusting aggregate.",
       "implication": "Audit all hierarchy GOLDEN promotions for n<20/seed instability. Consider minimum n threshold for GOLDEN eligibility."
+    },
+    {
+      "date": "2026-02-25",
+      "hypothesis_id": "h817",
+      "learning": "WEAK_EVIDENCE predictions (34.1% holdout) are MEDIUM-range but below the post-h815 MEDIUM average (38.5%). Blanket WEAK rescue dilutes MEDIUM by -2.0pp. However, per-sub-reason analysis reveals heterogeneity: some WEAK sub-reasons (default_no_mech_high_rank 39.8%, default_freq10_nomech_r6_10 52.6%) are above MEDIUM while others (nomech_r1_5_low_score 11.4%) are below.",
+      "implication": "When evaluating tier changes, always check against current tier averages (not historical). Per-sub-reason rescue may succeed where blanket rescue fails (h818)."
+    },
+    {
+      "date": "2026-02-25",
+      "hypothesis_id": "h814+h815",
+      "learning": "CS SOC revert (h814) + MODERATE LOW promotion (h815) combined for HIGH +2.1pp and MEDIUM +2.2pp. These were independently implemented but their effects compound: CS predictions dropping from HIGH to MEDIUM absorbed into the MODERATE-boosted MEDIUM pool.",
+      "implication": "Track cumulative tier state, not just individual hypothesis deltas. Compounding effects between hypotheses can be significant."
     }
   ],
   "collaborations": [
