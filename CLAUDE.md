@@ -147,14 +147,16 @@ vastai destroy instance <INSTANCE_ID>
 
 ### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
 
-**Tier System (h789+h791 update, 2026-02-24):**
-- GOLDEN: 80.1% ± 5.5% holdout (397 predictions)
-- HIGH: 77.9% ± 4.4% holdout (2003 predictions)
-- MEDIUM: 38.0% ± 4.1% holdout (373 predictions)
-- LOW: 12.4% ± 0.6% holdout (9416 predictions)
-- FILTER: 9.2% ± 0.5% holdout (8975 predictions)
-- **h789:** STRONG evidence LOW/FILTER → HIGH promotion (76.9% holdout, 87 preds/seed). Literature evidence overrides rule-based demotion for well-evidenced predictions.
-- **h791:** HIGH NO/WEAK evidence → MEDIUM demotion (31.4% holdout, 28 preds/seed). Combined h789+h791: HIGH +3.9pp.
+**Tier System (h798 update, 2026-02-25):**
+- GOLDEN: 85.3% ± 2.6% holdout (1109 predictions)
+- HIGH: 81.8% ± 5.5% holdout (1127 predictions)
+- MEDIUM: 34.8% ± 5.1% holdout (519 predictions)
+- LOW: 11.8% ± 0.6% holdout (9431 predictions)
+- FILTER: 9.2% ± 0.5% holdout (8978 predictions)
+- **h798:** Excluded category='other' from lit_strong_low (39% vs 86% non-other). 69 preds demoted. HIGH +2.3pp. h797 INVALIDATED: cancer_same_type_mech_rank10 GOLDEN=69.5% holdout (OVERFITTED), stays HIGH.
+- **h795:** literature_strong_promotion promoted HIGH→GOLDEN (88.1% holdout, 86 preds/seed). Fixed tier ordering violation. GOLDEN +5.2pp, variance halved (5.5→2.6%).
+- **h789:** STRONG evidence LOW/FILTER → HIGH promotion (80.4% holdout, 106 preds/seed). Literature evidence overrides rule-based demotion for well-evidenced predictions.
+- **h791:** HIGH NO/WEAK evidence → MEDIUM demotion (31.1% holdout, 45 preds/seed). Combined h789+h791: HIGH +3.9pp.
 - **h757:** Comprehensive sub-reason audit. Demoted weak HIGH rules (fluoroquinolones, neuro class match, reproductive hormones, comp_to_base_high) to MEDIUM. Demoted freq10_nomech_r6_10 MEDIUM→LOW. UTI→GOLDEN, diabetes/skin_infection→MEDIUM, epilepsy/gout→LOW. Combined: GOLDEN +9.2pp, HIGH +5.7pp, MEDIUM +2.6pp.
 - **h686:** Drug name aliasing: 34 new aliases, +85 GT pairs, +10 diseases. Key drugs: piperacillin (F=16), HCTZ (F=11), clopidogrel (F=9).
 - **h718/h730:** Cancer targeted therapy confirmed LOW across ALL sub-classes. Holdout=6.1% (full-data=36%, 5.9x inflation). Checkpoint inhibitors=10.1%, kinase=5.9%, PARP=0%. h598 demotion CORRECT.

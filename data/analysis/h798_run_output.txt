@@ -1,0 +1,164 @@
+======================================================================
+h798: Literature Strong Low Promotion Sub-Analysis
+======================================================================
+Total diseases: 1034
+Expanded GT: 57805 pairs
+Seed 42: 63/90 = 70.0%
+Seed 123: 75/97 = 77.3%
+Seed 456: 68/89 = 76.4%
+Seed 789: 76/96 = 79.2%
+Seed 1337: 62/80 = 77.5%
+
+======================================================================
+SUB-ANALYSIS BY DIMENSION
+======================================================================
+
+--- rank ---
+  R21+                                    :  86.1% ± 17.1% (n=5/seed) *** GOLDEN CANDIDATE
+  R11-20                                  :  78.2% ±  7.2% (n=17/seed)
+  R1-5                                    :  77.4% ±  5.5% (n=31/seed)
+  R6-10                                   :  73.6% ±  8.2% (n=37/seed)
+
+--- mechanism ---
+  with_mech                               :  80.7% ±  7.9% (n=19/seed) ** HIGH+
+  no_mech                                 :  74.3% ±  4.4% (n=72/seed)
+
+--- transe ---
+  transe_yes                              :  93.0% ±  9.8% (n=10/seed) *** GOLDEN CANDIDATE
+  transe_no                               :  74.2% ±  3.9% (n=81/seed)
+
+--- lit_score ---
+  Q1_75+                                  :  76.1% ±  3.2% (n=90/seed)
+
+--- category ---
+  cancer                                  : 100.0% ±  0.0% (n=3/seed) ** HIGH+
+  cardiovascular                          : 100.0% ±  0.0% (n=8/seed) *** GOLDEN CANDIDATE
+  gastrointestinal                        : 100.0% ±  0.0% (n=2/seed) ** HIGH+
+  hematological                           : 100.0% ±  0.0% (n=1/seed) ** HIGH+
+  reproductive                            : 100.0% ±  0.0% (n=1/seed) ** HIGH+
+  renal                                   :  93.3% ±  8.9% (n=8/seed) *** GOLDEN CANDIDATE
+  metabolic                               :  93.3% ±  9.4% (n=4/seed) ** HIGH+
+  neurological                            :  93.3% ±  9.4% (n=3/seed) ** HIGH+
+  respiratory                             :  90.3% ± 12.2% (n=4/seed) ** HIGH+
+  autoimmune                              :  90.0% ± 20.0% (n=3/seed) ** HIGH+
+  infectious                              :  78.9% ±  6.8% (n=36/seed)
+  ophthalmic                              :  71.6% ± 37.0% (n=4/seed)
+  psychiatric                             :  70.0% ± 40.0% (n=2/seed)
+  dermatological                          :  57.5% ± 40.0% (n=4/seed)
+  musculoskeletal                         :  50.0% ± 35.4% (n=4/seed)
+  other                                   :  39.0% ±  6.1% (n=12/seed)
+
+--- freq ---
+  freq0                                   : 100.0% ±  0.0% (n=2/seed) ** HIGH+
+  freq1-2                                 :  96.6% ±  4.3% (n=16/seed) *** GOLDEN CANDIDATE
+  freq3-5                                 :  80.5% ± 10.2% (n=9/seed) ** HIGH+
+  freq6+                                  :  69.3% ±  5.5% (n=64/seed)
+
+--- mech_x_rank ---
+  no_mech_R21+                            : 100.0% ±  0.0% (n=1/seed) ** HIGH+
+  with_mech_R1-5                          :  92.0% ±  9.8% (n=6/seed) *** GOLDEN CANDIDATE
+  with_mech_R21+                          :  84.0% ± 19.6% (n=5/seed) ** HIGH+
+  with_mech_R11-20                        :  82.7% ±  9.7% (n=6/seed) ** HIGH+
+  no_mech_R11-20                          :  79.8% ± 13.4% (n=11/seed)
+  no_mech_R1-5                            :  73.5% ±  4.9% (n=25/seed)
+  no_mech_R6-10                           :  73.4% ±  9.0% (n=36/seed)
+  with_mech_R6-10                         :  50.0% ± 40.8% (n=3/seed)
+
+--- transe_x_mech ---
+  transe_yes_with_mech                    : 100.0% ±  0.0% (n=3/seed) ** HIGH+
+  transe_yes_no_mech                      :  91.5% ± 11.8% (n=7/seed) *** GOLDEN CANDIDATE
+  transe_no_with_mech                     :  77.9% ±  8.9% (n=16/seed)
+  transe_no_no_mech                       :  72.9% ±  5.2% (n=65/seed)
+
+--- score_x_rank ---
+  Q1_75+_R21+                             :  86.1% ± 17.1% (n=5/seed) *** GOLDEN CANDIDATE
+  Q1_75+_R11-20                           :  78.2% ±  7.2% (n=17/seed)
+  Q1_75+_R1-5                             :  77.4% ±  5.5% (n=31/seed)
+  Q1_75+_R6-10                            :  73.6% ±  8.2% (n=37/seed)
+
+--- mech_x_transe_x_rank ---
+  no_mech_transe_no_R21+                  : 100.0% ±  0.0% (n=2/seed) ** HIGH+
+  no_mech_transe_yes_R1-5                 : 100.0% ±  0.0% (n=2/seed) ** HIGH+
+  no_mech_transe_yes_R11-20               : 100.0% ±  0.0% (n=1/seed) ** HIGH+
+  no_mech_transe_yes_R21+                 : 100.0% ±  0.0% (n=1/seed) ** HIGH+
+  with_mech_transe_yes_R1-5               : 100.0% ±  0.0% (n=2/seed) ** HIGH+
+  with_mech_transe_yes_R11-20             : 100.0% ±  0.0% (n=1/seed) ** HIGH+
+  with_mech_transe_yes_R21+               : 100.0% ±  0.0% (n=1/seed) ** HIGH+
+  with_mech_transe_yes_R6-10              : 100.0% ±  0.0% (n=1/seed) ** HIGH+
+  with_mech_transe_no_R1-5                :  90.0% ± 12.2% (n=5/seed) *** GOLDEN CANDIDATE
+  no_mech_transe_yes_R6-10                :  86.0% ± 19.6% (n=4/seed) ** HIGH+
+  with_mech_transe_no_R21+                :  81.1% ± 23.2% (n=4/seed) ** HIGH+
+  with_mech_transe_no_R11-20              :  80.0% ± 11.7% (n=5/seed) ** HIGH+
+  no_mech_transe_no_R11-20                :  79.4% ± 13.9% (n=10/seed)
+  no_mech_transe_no_R6-10                 :  72.6% ± 10.7% (n=31/seed)
+  no_mech_transe_no_R1-5                  :  70.7% ±  5.2% (n=22/seed)
+  with_mech_transe_no_R6-10               :  50.0% ± 40.8% (n=3/seed)
+
+======================================================================
+GOLDEN CANDIDATES (≥85% holdout, n≥5/seed)
+======================================================================
+  [category] cardiovascular: 100.0% ± 0.0% (n=8/seed)
+  [freq] freq1-2: 96.6% ± 4.3% (n=16/seed)
+  [category] renal: 93.3% ± 8.9% (n=8/seed)
+  [transe] transe_yes: 93.0% ± 9.8% (n=10/seed)
+  [mech_x_rank] with_mech_R1-5: 92.0% ± 9.8% (n=6/seed)
+  [transe_x_mech] transe_yes_no_mech: 91.5% ± 11.8% (n=7/seed)
+  [mech_x_transe_x_rank] with_mech_transe_no_R1-5: 90.0% ± 12.2% (n=5/seed)
+  [rank] R21+: 86.1% ± 17.1% (n=5/seed)
+  [score_x_rank] Q1_75+_R21+: 86.1% ± 17.1% (n=5/seed)
+
+HIGH+ CANDIDATES (≥80% holdout, n≥5/seed)
+  [category] cardiovascular: 100.0% ± 0.0% (n=8/seed)
+  [freq] freq1-2: 96.6% ± 4.3% (n=16/seed)
+  [category] renal: 93.3% ± 8.9% (n=8/seed)
+  [transe] transe_yes: 93.0% ± 9.8% (n=10/seed)
+  [mech_x_rank] with_mech_R1-5: 92.0% ± 9.8% (n=6/seed)
+  [transe_x_mech] transe_yes_no_mech: 91.5% ± 11.8% (n=7/seed)
+  [mech_x_transe_x_rank] with_mech_transe_no_R1-5: 90.0% ± 12.2% (n=5/seed)
+  [rank] R21+: 86.1% ± 17.1% (n=5/seed)
+  [score_x_rank] Q1_75+_R21+: 86.1% ± 17.1% (n=5/seed)
+  [mech_x_rank] with_mech_R11-20: 82.7% ± 9.7% (n=6/seed)
+  [mechanism] with_mech: 80.7% ± 7.9% (n=19/seed)
+  [freq] freq3-5: 80.5% ± 10.2% (n=9/seed)
+  [mech_x_transe_x_rank] with_mech_transe_no_R11-20: 80.0% ± 11.7% (n=5/seed)
+
+======================================================================
+DETAILED PREDICTIONS (seed 42, n=90)
+======================================================================
+Total: 63/90 = 70.0%
+
+--- HITS ---
+  R 1 Posaconazole              → zygomycosis                         mech=False transe=False lit=6.50 cat=infectious
+  R 1 Prednisolone              → duchenne muscular dystrophy         mech=False transe=True lit=9.00 cat=musculoskeletal
+  R 1 Metronidazole             → gingivitis                          mech=True transe=False lit=9.00 cat=gastrointestinal
+  R 1 Amphotericin B            → esophageal candidiasis              mech=False transe=True lit=6.00 cat=infectious
+  R 1 D-glucose                 → hypoglycemia                        mech=True transe=False lit=8.00 cat=metabolic
+  R 2 Prednisone                → chronic renal failure               mech=True transe=False lit=9.00 cat=renal
+  R 2 Diclofenac                → dysmenorrhea                        mech=False transe=False lit=9.00 cat=other
+  R 2 Verapamil                 → left ventricular hypertrophy        mech=False transe=False lit=5.00 cat=other
+  R 2 Micafungin                → esophageal candidiasis              mech=False transe=False lit=6.00 cat=infectious
+  R 3 Ivermectin                → onchocerciasis                      mech=False transe=False lit=9.00 cat=infectious
+  R 3 Lasmiditan                → migraine                            mech=False transe=False lit=9.00 cat=neurological
+  R 3 Ampicillin                → purulent meningitis                 mech=False transe=False lit=5.00 cat=infectious
+  R 4 Canakinumab               → familial cold autoinflammatory synd mech=False transe=False lit=7.00 cat=autoimmune
+  R 4 Voriconazole              → zygomycosis                         mech=False transe=False lit=4.00 cat=infectious
+  R 4 Tetracycline              → acne vulgaris                       mech=False transe=False lit=6.00 cat=dermatological
+
+--- MISSES ---
+  R 1 Propranolol               → left ventricular hypertrophy        mech=False transe=False lit=5.00 cat=other
+  R 1 Diclofenac                → toothache                           mech=False transe=False lit=5.80 cat=other
+  R 2 Doxycycline               → onchocerciasis                      mech=False transe=False lit=5.00 cat=infectious
+  R 4 Methylprednisolone        → duchenne muscular dystrophy         mech=False transe=False lit=7.00 cat=musculoskeletal
+  R 6 Ciprofloxacin             → surgical wound                      mech=False transe=False lit=8.00 cat=other
+  R 6 Azithromycin              → cellulitis                          mech=False transe=False lit=7.00 cat=infectious
+  R 6 Posaconazole              → onychomycosis                       mech=False transe=False lit=6.50 cat=other
+  R 6 Piperacillin              → pseudomonas aeruginosa infection    mech=False transe=False lit=8.00 cat=infectious
+  R 6 Amikacin                  → infections caused by acinetobacter  mech=False transe=False lit=4.00 cat=infectious
+  R 7 Dupilumab                 → bullous pemphigoid                  mech=False transe=False lit=8.00 cat=dermatological
+  R 7 Azithromycin              → campylobacter fetus infections      mech=False transe=False lit=7.00 cat=infectious
+  R 7 Cefotaxime                → infections caused by acinetobacter  mech=False transe=False lit=4.00 cat=infectious
+  R 8 Clindamycin               → surgical wound                      mech=False transe=False lit=9.00 cat=other
+  R 8 Denosumab                 → hypophosphatemia                    mech=False transe=False lit=5.00 cat=other
+  R 8 Triamcinolone             → bursitis                            mech=False transe=False lit=9.00 cat=musculoskeletal
+
+Results saved to /Users/jimhuff/github/open-cure/data/analysis/h798_lit_strong_low_analysis.json

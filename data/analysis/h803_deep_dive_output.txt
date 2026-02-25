@@ -1,0 +1,109 @@
+======================================================================
+h803 Deep Dive: LOW Tier Rescue Validation
+======================================================================
+
+--- Seed 42 ---
+  rich_high_score: 20/61 = 32.8%
+  transe_high_score: 11/26 = 42.3%
+  score_5plus: 6/10 = 60.0%
+  rich_score5plus: 2/3 = 66.7%
+  default_freq10_nomech: 17/54 = 31.5%
+
+--- Seed 123 ---
+  rich_high_score: 40/84 = 47.6%
+  transe_high_score: 7/23 = 30.4%
+  score_5plus: 11/20 = 55.0%
+  rich_score5plus: 9/13 = 69.2%
+  default_freq10_nomech: 16/51 = 31.4%
+
+--- Seed 456 ---
+  rich_high_score: 17/52 = 32.7%
+  transe_high_score: 4/10 = 40.0%
+  score_5plus: 5/7 = 71.4%
+  rich_score5plus: 0/1 = 0.0%
+  default_freq10_nomech: 12/37 = 32.4%
+
+--- Seed 789 ---
+  rich_high_score: 21/67 = 31.3%
+  transe_high_score: 5/20 = 25.0%
+  score_5plus: 12/21 = 57.1%
+  rich_score5plus: 5/6 = 83.3%
+  default_freq10_nomech: 19/72 = 26.4%
+
+--- Seed 1337 ---
+  rich_high_score: 56/125 = 44.8%
+  transe_high_score: 12/26 = 46.2%
+  score_5plus: 5/9 = 55.6%
+  rich_score5plus: 4/8 = 50.0%
+  default_freq10_nomech: 20/48 = 41.7%
+
+======================================================================
+PER-SEED STABILITY
+======================================================================
+  rich_high_score               : 37.8% ± 6.9% (n=78/seed) [33%, 48%, 33%, 31%, 45%]
+  transe_high_score             : 36.8% ± 7.8% (n=21/seed) [42%, 30%, 40%, 25%, 46%]
+  score_5plus                   : 59.8% ± 6.1% (n=13/seed) [60%, 55%, 71%, 57%, 56%]
+  rich_score5plus               : 53.8% ± 28.9% (n=6/seed) [67%, 69%, 0%, 83%, 50%]
+  default_freq10_nomech         : 32.7% ± 5.0% (n=52/seed) [31%, 31%, 32%, 26%, 42%]
+
+======================================================================
+CS ARTIFACT CHECK
+======================================================================
+  score_5plus                   : CS=64.4% (45), Non-CS=45.5% (22), CS%=67%
+  default_freq10_nomech         : CS=47.2% (108), Non-CS=21.4% (154), CS%=41%
+  transe_high_score             : CS=38.5% (65), Non-CS=35.0% (40), CS%=62%
+  rich_high_score               : CS=52.6% (137), Non-CS=32.5% (252), CS%=35%
+
+======================================================================
+SUB-REASON COMPOSITION
+======================================================================
+
+  score_5plus:
+    default_freq10_nomech_r6_10             : 33
+    incoherent_demotion                     : 15
+    antimicrobial_pathogen_mismatch         : 5
+    literature_weak_demotion                : 4
+    infectious_hierarchy_pneumonia          : 4
+    cardiovascular_medium_demotion          : 3
+    gastrointestinal_medium_demotion        : 2
+    cancer                                  : 1
+
+  transe_high_score:
+    default_freq10_nomech_r6_10             : 35
+    default_nomech_r1_5_low_score           : 33
+    default_low                             : 9
+    cardiovascular_medium_demotion          : 7
+    gastrointestinal_medium_demotion        : 5
+    incoherent_demotion                     : 5
+    default_no_mech_high_rank               : 3
+    infectious_hierarchy_pneumonia          : 3
+    literature_weak_demotion                : 2
+    mechanism_specific                      : 1
+
+  rich_high_score:
+    default_freq10_nomech_r6_10             : 125
+    default_nomech_r1_5_low_score           : 71
+    incoherent_demotion                     : 43
+    default_no_mech_high_rank               : 37
+    infectious_hierarchy_pneumonia          : 26
+    default_low                             : 24
+    literature_weak_demotion                : 13
+    cardiovascular_medium_demotion          : 13
+    antimicrobial_pathogen_mismatch         : 11
+    neurological_medium_demotion            : 11
+
+======================================================================
+EXAMPLE PREDICTIONS (seed 42)
+======================================================================
+
+  rich_high_score:
+    Ketoconazole              → ringworm tinea corporis             score=4.84 rank= 1 dgc= 26 HIT (default_low)
+    Minocycline               → purulent meningitis                 score=4.72 rank= 1 dgc= 86 miss (incoherent_demotion)
+    Oxytetracycline           → pseudomonas aeruginosa infection    score=4.27 rank= 6 dgc= 21 miss (default_freq10_nomech_r6_10)
+    Betamethasone             → aplastic anemia                     score=4.17 rank= 2 dgc= 31 miss [CS] (literature_weak_demotion)
+    Triamcinolone             → aplastic anemia                     score=4.17 rank= 3 dgc= 31 miss [CS] (literature_weak_demotion)
+    Hydrocortisone            → aplastic anemia                     score=4.17 rank= 4 dgc= 31 miss [CS] (literature_weak_demotion)
+    Methylprednisolone        → stomatitis                          score=4.16 rank= 1 dgc= 29 miss [CS] (incoherent_demotion)
+    Azithromycin              → purulent meningitis                 score=3.94 rank= 3 dgc= 86 miss (default_nomech_r1_5_low_score)
+    Piperacillin              → purulent meningitis                 score=3.93 rank= 5 dgc= 86 miss (default_nomech_r1_5_low_score)
+    Levofloxacin              → esophageal candidiasis              score=3.86 rank= 1 dgc= 31 miss (antimicrobial_pathogen_mismatch)

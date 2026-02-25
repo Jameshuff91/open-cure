@@ -3545,8 +3545,9 @@ class DrugRepurposingPredictor:
                 if any(t in drug_lower for t in CANCER_TARGETED_THERAPY):
                     return ConfidenceTier.LOW, False, 'cancer_targeted_therapy'
                 # h633: cancer_same_type + mechanism + rank<=10 = 56.6% ± 9.7% holdout (expanded GT)
-                # Promoted MEDIUM → HIGH. Reopened CLOSED direction #4 with expanded GT.
-                # Non-circular: mechanism is drug-target/disease-gene overlap, rank is kNN score.
+                # h797 INVALIDATED: Attempted GOLDEN promotion but holdout=69.5% ± 13.5% (OVERFITTED).
+                # Full-data 85.4% → holdout 69.5%, -15.9pp delta. Stays HIGH.
+                # Top drugs: doxorubicin, paclitaxel, bevacizumab.
                 if mechanism_support and rank <= 10:
                     return ConfidenceTier.HIGH, True, 'cancer_same_type_mech_rank10'
                 # h634: cancer_same_type without mechanism = 17.9% ± 4.2% holdout (below MEDIUM)
@@ -4791,20 +4792,26 @@ class DrugRepurposingPredictor:
                     # consistently outperform their tier peers.
                     lit_level, lit_score = self._get_literature_evidence(drug_name, disease_name)
 
-                    # h732: MEDIUM + STRONG_EVIDENCE → HIGH (69.1% holdout)
+                    # h732→h795: MEDIUM + STRONG_EVIDENCE → GOLDEN (88.0% holdout)
+                    # h795: Promoted from HIGH to GOLDEN to restore tier ordering.
+                    # Literature evidence is strongest independent predictor.
                     if (tier == ConfidenceTier.MEDIUM
                             and lit_level == 'STRONG_EVIDENCE'):
-                        tier = ConfidenceTier.HIGH
+                        tier = ConfidenceTier.GOLDEN
                         cat_specific = 'literature_strong_promotion'
 
                     # h789: LOW/FILTER + STRONG_EVIDENCE → HIGH (76.3% holdout)
                     # Literature evidence overrides tier for well-evidenced predictions
                     # that were demoted by rules. Exclude safety sub-reasons.
+                    # h798: Exclude category 'other' (39.0% holdout, n=12/seed)
+                    # — uncategorized diseases lack kNN structure, STRONG
+                    # evidence alone insufficient for HIGH quality.
                     if (tier in (ConfidenceTier.LOW, ConfidenceTier.FILTER)
                             and lit_level == 'STRONG_EVIDENCE'
                             and cat_specific not in (
                                 'inverse_indication', 'non_therapeutic',
-                                'non_therapeutic_compound')):
+                                'non_therapeutic_compound')
+                            and category != 'other'):
                         tier = ConfidenceTier.HIGH
                         cat_specific = 'literature_strong_low_promotion'
 

@@ -1,0 +1,100 @@
+======================================================================
+h803 Score Threshold Analysis
+======================================================================
+Seed 42...
+Seed 123...
+Seed 456...
+Seed 789...
+Seed 1337...
+
+==========================================================================================
+Condition                      Thresh    Prec     ±  n/seed  NonCS%   CS%
+------------------------------------------------------------------------------------------
+  score_only                      2.0   23.6%  2.8%    431   21.6%   25%
+  score_only                      2.5   26.8%  3.7%    256   24.1%   29%
+  score_only                      3.0   28.4%  4.0%    165   23.5%   34%
+  score_only                      3.5   34.6%  5.1%     82   28.0%   45%
+  score_only                      4.0   38.1%  5.7%     54   29.0%   49%
+  score_only                      4.5   47.2%  5.9%     28   32.7%   60% ***
+  score_only                      5.0   59.8%  6.1%     13   45.5%   67%
+
+  score+transe                    2.0   36.2%  6.4%     52   41.7%   50% ***
+  score+transe                    2.5   37.7%  8.7%     35   40.0%   49% ***
+  score+transe                    3.0   36.8%  7.8%     21   35.0%   62% ***
+  score+transe                    3.5   36.3% 13.3%     12   21.4%   77%
+  score+transe                    4.0   46.4% 19.5%      9   18.2%   74%
+  score+transe                    4.5   63.5% 27.8%      4    0.0%   90%
+  score+transe                    5.0   40.0% 49.0%      2    0.0%   89%
+
+  score+rich20                    2.0   33.0%  4.1%    201   30.7%   28% ***
+  score+rich20                    2.5   34.9%  5.3%    124   31.8%   30% ***
+  score+rich20                    3.0   37.8%  6.9%     78   32.5%   35% ***
+  score+rich20                    3.5   43.6%  7.1%     43   38.0%   43% ***
+  score+rich20                    4.0   47.0%  9.7%     25   39.4%   47% ***
+  score+rich20                    4.5   56.8%  8.9%     13   50.0%   55%
+  score+rich20                    5.0   53.8% 28.9%      6   61.5%   58%
+
+  score+rich30                    2.0   37.3%  4.5%    143   36.7%   24% ***
+  score+rich30                    2.5   37.3%  6.4%     88   36.8%   26% ***
+  score+rich30                    3.0   38.7%  9.3%     56   38.5%   28% ***
+  score+rich30                    3.5   44.5% 10.1%     31   43.3%   37% ***
+  score+rich30                    4.0   45.6% 17.9%     15   48.9%   42% ***
+  score+rich30                    4.5   50.5% 26.4%      9   53.8%   40%
+  score+rich30                    5.0   65.2% 35.5%      5   61.5%   43%
+
+  score+mech                      2.0   31.9% 12.3%     33    0.0%    0%
+  score+mech                      2.5   35.1% 11.0%     19    0.0%    0%
+  score+mech                      3.0   39.5% 14.6%     13    0.0%    0%
+  score+mech                      3.5   46.0% 19.5%     10    0.0%    0%
+  score+mech                      4.0   41.8% 18.8%      7    0.0%    0%
+  score+mech                      4.5   34.8% 28.9%      5    0.0%    0%
+  score+mech                      5.0   29.3% 28.1%      3    0.0%    0%
+
+  score+rank_le5                  2.0   21.4%  1.8%    199    0.0%    0%
+  score+rank_le5                  2.5   23.3%  2.6%    126    0.0%    0%
+  score+rank_le5                  3.0   23.9%  3.5%     89    0.0%    0%
+  score+rank_le5                  3.5   28.5%  8.6%     50    0.0%    0%
+  score+rank_le5                  4.0   30.6%  8.3%     35    0.0%    0%
+  score+rank_le5                  4.5   35.8% 15.9%     19    0.0%    0%
+  score+rank_le5                  5.0   48.3% 33.2%      7    0.0%    0%
+
+  score+rank_le10                 2.0   23.6%  2.3%    348    0.0%    0%
+  score+rank_le10                 2.5   26.6%  3.3%    217    0.0%    0%
+  score+rank_le10                 3.0   27.4%  3.6%    153    0.0%    0%
+  score+rank_le10                 3.5   33.7%  5.7%     81    0.0%    0%
+  score+rank_le10                 4.0   37.9%  5.9%     54    0.0%    0%
+  score+rank_le10                 4.5   47.2%  5.9%     28    0.0%    0%
+  score+rank_le10                 5.0   59.8%  6.1%     13    0.0%    0%
+
+  score+freq15                    2.0   22.3%  3.1%    248    0.0%    0%
+  score+freq15                    2.5   25.5%  4.5%    170    0.0%    0%
+  score+freq15                    3.0   27.6%  4.8%    127    0.0%    0%
+  score+freq15                    3.5   32.2%  5.3%     71    0.0%    0%
+  score+freq15                    4.0   36.6%  6.3%     48    0.0%    0%
+  score+freq15                    4.5   45.6%  6.2%     26    0.0%    0%
+  score+freq15                    5.0   58.4%  7.4%     13    0.0%    0%
+
+
+Sub-reason composition at score >= 3.0:
+  default_freq10_nomech_r6_10             :   84/  262 =  32.1% (52/seed)
+  default_nomech_r1_5_low_score           :   37/  230 =  16.1% (46/seed)
+  default_low                             :   20/   58 =  34.5% (12/seed)
+  incoherent_demotion                     :   23/   49 =  46.9% (10/seed)
+  antimicrobial_pathogen_mismatch         :    1/   42 =   2.4% (8/seed)
+  default_no_mech_high_rank               :   18/   41 =  43.9% (8/seed)
+  gastrointestinal_medium_demotion        :    5/   27 =  18.5% (5/seed)
+  neurological_medium_demotion            :    6/   26 =  23.1% (5/seed)
+  infectious_hierarchy_pneumonia          :   14/   26 =  53.8% (5/seed)
+  literature_weak_demotion                :   11/   18 =  61.1% (4/seed)
+  cardiovascular_medium_demotion          :    8/   13 =  61.5% (3/seed)
+
+Sub-reason composition at score >= 4.0:
+  default_nomech_r1_5_low_score           :   15/   93 =  16.1% (19/seed)
+  default_freq10_nomech_r6_10             :   41/   85 =  48.2% (17/seed)
+  incoherent_demotion                     :   15/   32 =  46.9% (6/seed)
+  infectious_hierarchy_pneumonia          :   10/   13 =  76.9% (3/seed)
+  antimicrobial_pathogen_mismatch         :    0/   12 =   0.0% (2/seed)
+
+Sub-reason composition at score >= 5.0:
+  default_freq10_nomech_r6_10             :   22/   33 =  66.7% (7/seed)
+  incoherent_demotion                     :    6/   15 =  40.0% (3/seed)

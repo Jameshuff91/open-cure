@@ -16117,7 +16117,7 @@
       "id": "h797",
       "title": "Cancer Same-Type Mech Rank10 \u2192 GOLDEN Promotion: 86.2% Holdout Warrants Upgrade",
       "description": "cancer_same_type_mech_rank10 has 86.2% \u00b1 9.2% holdout (n=29), clearly above GOLDEN threshold. Higher variance (\u00b19.2%) than literature_strong_promotion (\u00b12.9%) but still well above 80%. Would add ~29 preds/seed to GOLDEN. Need to verify variance is acceptable and won't destabilize GOLDEN precision.",
-      "status": "in_progress",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -16125,13 +16125,15 @@
         "Promote cancer_same_type_mech_rank10 from HIGH to GOLDEN",
         "Run holdout validation",
         "Check if GOLDEN variance increases unacceptably"
-      ]
+      ],
+      "findings": "cancer_same_type_mech_rank10 has 69.5% \u00b1 13.5% holdout (full-data 85.4%), flagged OVERFITTED with -15.9pp delta. Well below GOLDEN threshold of 85.3%. Cancer same-type predictions have high full-data/holdout gap because many cancer drugs treat the SAME cancer subtypes in training, inflating full-data precision. Reverted to HIGH where it achieves 86.2% \u00b1 9.2% holdout (n=29/seed), correctly placed.",
+      "result_metric": "INVALIDATED: 69.5% \u00b1 13.5% holdout (below GOLDEN 85.3%)"
     },
     {
       "id": "h798",
       "title": "Literature Strong Low Promotion \u2192 GOLDEN Assessment: 80.4% Borderline",
       "description": "literature_strong_low_promotion (LOW/FILTER + STRONG \u2192 HIGH) has 80.4% \u00b1 5.7% holdout (n=106). Borderline GOLDEN (current threshold ~85.3%). Explore whether tightening criteria (e.g., requiring mechanism or rank \u2264 10 in addition to STRONG evidence) could push a subset above GOLDEN threshold.",
-      "status": "pending",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -16139,7 +16141,9 @@
         "Sub-analyze literature_strong_low_promotion by original sub-reason",
         "Check if HIGH sub-reason + STRONG evidence subset exceeds GOLDEN threshold",
         "Identify subset that could be safely promoted"
-      ]
+      ],
+      "findings": "Excluding category='other' from literature_strong_low_promotion removes ~69 low-quality predictions from HIGH (other: 39.0% \u00b1 6.1% holdout vs non-other: 85.7% \u00b1 6.0%). Uncategorized diseases lack kNN structure, so literature evidence alone is insufficient for HIGH quality. HIGH tier improved +2.3pp (79.5% \u2192 81.8%). All other tiers unchanged. Tier ordering maintained: GOLDEN 85.3% > HIGH 81.8% > MEDIUM 34.8% > LOW 11.8% > FILTER 9.2%.",
+      "result_metric": "VALIDATED: HIGH +2.3pp (79.5% \u2192 81.8%), 69 predictions demoted"
     },
     {
       "id": "h799",
@@ -16176,7 +16180,7 @@
       "id": "h801",
       "title": "Mine 478 Uncached GOLDEN Predictions for Validation and GT Gaps",
       "description": "h800 found 478 GOLDEN predictions lacking literature mining cache entries. These are mostly hierarchy rules (RA=125, arrhythmia=60, lipid=44, colitis=36, coronary=35). Expected ~90% STRONG rate based on cached GOLDEN. Mining these provides: (1) validation that hierarchy rules have literature support, (2) GT gap detection for FDA-approved uses, (3) safety catch for any misclassified predictions. Low effort, medium impact.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -16209,7 +16213,7 @@
       "id": "h803",
       "title": "Literature-Free LOW Tier Rescue: Can Drug/Disease Features Identify Hidden HIGH-Quality Predictions?",
       "description": "h800 showed mining LOW/FILTER broadly is futile (0% STRONG in 1,056 cached LOW). But 8,675 LOW predictions at 11.6% holdout means ~1,006 ARE correct. Instead of literature mining, can drug/disease-level features identify which LOW predictions are high-quality? Features to test: (1) disease GT richness (GT count), (2) drug therapeutic breadth (number of indications), (3) kNN neighborhood quality (mean neighbor GT overlap), (4) TransE rank. If a feature subset achieves >30% holdout, those LOW predictions could be promoted to MEDIUM.",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "medium",
@@ -16219,6 +16223,53 @@
         "Identify any feature threshold achieving >30% holdout",
         "If found, implement as LOW\u2192MEDIUM promotion rule",
         "Validate on 5-seed holdout"
+      ],
+      "findings": "Analysis found several LOW subsets with MEDIUM-quality holdout: (1) rich_disease(GT\u226530)+high_score(\u22653): 37.8% \u00b1 6.9% (n=78/seed), non-CS 32.5% \u2014 borderline MEDIUM but would rescue predictions from correctly-calibrated demotion rules (antimicrobial_pathogen_mismatch, neurological_medium_demotion, etc.). (2) score\u22655: 59.8% \u00b1 6.1% (n=13/seed) \u2014 too small and 67% CS. (3) default_freq10_nomech_r6_10 sub-reason: 32.1% (n=52/seed) but already demoted from MEDIUM. (4) TransE+score\u22653: 37.1% (n=21/seed), 62% CS. Key insight: disease GT richness (24.0% for GT\u226550 vs 3.0% for GT\u22644) and kNN score are strongest LOW-internal signals, but promoting broadly would undo safety demotions. No clean, safe promotion rule identified.",
+      "result_metric": "INCONCLUSIVE: Best LOW subset 37.8% (rich+high_score) but unsafe to promote broadly"
+    },
+    {
+      "id": "h804",
+      "title": "LOW Rich-Disease Score-Gate Rescue: Promote LOW Predictions with GT\u226530 AND Score\u22654 AND Mechanism Support",
+      "description": "h803 found rich_disease(GT\u226530)+high_score(\u22653) at 37.8% holdout, but promoting broadly rescues unsafe demotions. Tighter gate: GT\u226530 + score\u22654 + mechanism + NOT in safety-demoted sub-reasons (antimicrobial_pathogen_mismatch, cancer_targeted_therapy, reproductive_medium_demotion). This excludes the dangerous sub-reasons while targeting the ~54/seed predictions at 47.0% holdout (score\u22654 + rich20). Mechanism gate should further improve precision. Non-CS 39.4% is above MEDIUM threshold.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Filter h803 results to: GT\u226530 + score\u22654 + mechanism + exclude safety sub-reasons",
+        "Run holdout evaluation on filtered subset",
+        "Check CS artifact and sub-reason composition",
+        "If \u226535% non-CS holdout and n\u226515/seed, implement as MEDIUM promotion"
+      ]
+    },
+    {
+      "id": "h805",
+      "title": "Literature High Demotion Tightening: Only Demote NO_EVIDENCE (Not WEAK_EVIDENCE)",
+      "description": "h791 demotes HIGH + NO/WEAK_EVIDENCE \u2192 MEDIUM. Current holdout: literature_high_demotion 31.1% \u00b1 12.4% (n=45/seed). But WEAK_EVIDENCE means SOME literature support exists, just not strong. Splitting: NO_EVIDENCE may be worse than WEAK_EVIDENCE. If WEAK_EVIDENCE alone is \u2265HIGH quality, removing it from the demotion could improve HIGH precision. Analysis needed to separate NO vs WEAK within the demotion pool.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Split literature_high_demotion by NO_EVIDENCE vs WEAK_EVIDENCE",
+        "Run holdout evaluation on each subset",
+        "If WEAK_EVIDENCE subset \u226555% holdout (HIGH threshold), remove from demotion",
+        "Validate overall tier impact"
+      ]
+    },
+    {
+      "id": "h806",
+      "title": "Autoimmune RA Hierarchy \u2192 HIGH Demotion: 69.0% Holdout Flagged OVERFITTED",
+      "description": "autoimmune_hierarchy_rheumatoid_arthritis shows 89.7% full-data but 69.0% \u00b1 28.8% holdout (n=16/seed). Flagged OVERFITTED with -20.7pp delta. Current tier: GOLDEN. Should be demoted to HIGH (69.0% < GOLDEN 85.3%). High variance (\u00b128.8%) suggests small effective sample or disease-split sensitivity. Check if this is structural or if a subset is salvageable for GOLDEN.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Check per-seed breakdown for autoimmune_hierarchy_rheumatoid_arthritis",
+        "Identify if variance is from specific seed outliers or consistent underperformance",
+        "If consistently <80%, demote to HIGH",
+        "Validate GOLDEN tier improvement"
       ]
     }
   ],
@@ -18728,6 +18779,12 @@
       "hypothesis_id": "h800",
       "learning": "Literature mining cache is nearly complete for actionable tiers (GOLDEN 69%, HIGH 99.6%, MEDIUM 98.5%). LOW/FILTER mining has 0% STRONG rate across all sub-reasons (n=1,056 cached). Mining 17,826 uncached LOW/FILTER predictions would yield near-zero tier promotions. Future literature work should focus on GOLDEN validation (478 predictions) and GT gap expansion, not broad LOW/FILTER mining.",
       "implication": "Literature mining has hit diminishing returns for tier mobility. Pivot to: (1) GOLDEN validation, (2) GT gap expansion, (3) non-literature signals for LOW rescue."
+    },
+    {
+      "date": "2026-02-25",
+      "hypothesis_id": "h797+h798+h803",
+      "learning": "Cancer same-type full-data inflation is 15.9pp (85.4%\u219269.5%) even for mech+rank\u226410 subset. 'Other' category literature_strong_low has only 39% holdout (vs 85.7% non-other). Disease GT richness (24% for GT\u226550 vs 3% for GT\u22644) is strongest LOW-internal signal but cannot promote safely due to mix of correctly-demoted sub-reasons.",
+      "implication": "Never trust full-data cancer precision. Disease GT count is strong quality proxy but cannot be used alone for tier promotion. 'Other' category should be excluded from any evidence-based promotion rules."
     }
   ],
   "collaborations": [

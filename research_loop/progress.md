@@ -1,6 +1,32 @@
 # Research Loop Progress
 
-## Current Session: h757 - Post-h744 MEDIUM/HIGH Sub-Reason Audit (2026-02-24)
+## Current Session: h797+h798+h803 - Cancer GOLDEN Promotion + Other Category Exclusion + LOW Rescue (2026-02-25)
+
+### h797: Cancer Same-Type Mech Rank10 → GOLDEN — INVALIDATED
+
+cancer_same_type_mech_rank10 has 69.5% ± 13.5% holdout (full-data 85.4%, -15.9pp delta). Well below GOLDEN threshold (85.3%). Flagged as OVERFITTED. Cancer same-type predictions have large full-data/holdout gap because many cancer drugs treat the same subtypes in training. Reverted to HIGH where it achieves 86.2% ± 9.2% holdout (n=29/seed).
+
+### h798: Literature Strong Low 'Other' Category Exclusion — VALIDATED
+
+Excluding category='other' from literature_strong_low_promotion: other=39.0% ± 6.1% vs non-other=85.7% ± 6.0%. Uncategorized diseases lack kNN structure. 69 predictions moved HIGH→LOW. **HIGH +2.3pp (79.5% → 81.8%)**.
+
+### h803: Literature-Free LOW Tier Rescue — INCONCLUSIVE
+
+Best LOW subset: rich_disease(GT≥30)+high_score(≥3) at 37.8% ± 6.9% (n=78/seed, non-CS=32.5%). But would rescue predictions from correctly-calibrated safety demotion rules. Disease GT richness is strongest LOW signal (24% for GT≥50 vs 3% for GT≤4). No clean, safe promotion rule found.
+
+### New Hypotheses Generated (3)
+- h804: LOW rich-disease score-gate rescue with mechanism + safety exclusions
+- h805: Literature high demotion tightening (NO vs WEAK evidence split)
+- h806: Autoimmune RA hierarchy GOLDEN→HIGH demotion (69.0% holdout)
+
+### Recommended Next Steps
+1. h806: Quick RA hierarchy demotion check (low effort, clear signal)
+2. h805: Literature demotion tightening (low effort)
+3. h804: LOW rescue with safety gates (medium effort)
+
+---
+
+## Previous Session: h757 - Post-h744 MEDIUM/HIGH Sub-Reason Audit (2026-02-24)
 
 ### h757: Comprehensive Sub-Reason Holdout Audit — VALIDATED
 

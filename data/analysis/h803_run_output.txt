@@ -1,0 +1,154 @@
+======================================================================
+h803: Literature-Free LOW Tier Rescue Analysis
+======================================================================
+Expanded GT: 57805 pairs
+Loading predictor...
+Diseases with GT + embeddings: 965
+
+--- Seed 42 ---
+  LOW: 233/1972 = 11.8% (n=10/disease)
+
+--- Seed 123 ---
+  LOW: 219/1857 = 11.8% (n=10/disease)
+
+--- Seed 456 ---
+  LOW: 190/1786 = 10.6% (n=9/disease)
+
+--- Seed 789 ---
+  LOW: 215/1805 = 11.9% (n=9/disease)
+
+--- Seed 1337 ---
+  LOW: 263/1762 = 14.9% (n=9/disease)
+
+======================================================================
+FEATURE ANALYSIS RESULTS (5-seed holdout)
+======================================================================
+
+--- category ---
+  autoimmune                    :   44/  312 =  14.1% (n=62/seed)
+  cancer                        :  137/ 1253 =  10.9% (n=251/seed)
+  cardiovascular                :   62/  431 =  14.4% (n=86/seed)
+  dermatological                :   78/  427 =  18.3% (n=85/seed)
+  endocrine                     :    0/   32 =   0.0% (n=6/seed)
+  gastrointestinal              :   51/  432 =  11.8% (n=86/seed)
+  hematological                 :   24/  241 =  10.0% (n=48/seed)
+  immunological                 :   17/   93 =  18.3% (n=19/seed)
+  infectious                    :  251/ 1790 =  14.0% (n=358/seed)
+  metabolic                     :   57/  450 =  12.7% (n=90/seed)
+  musculoskeletal               :    5/  123 =   4.1% (n=25/seed)
+  neurological                  :   41/  419 =   9.8% (n=84/seed)
+  ophthalmic                    :   10/  126 =   7.9% (n=25/seed)
+  other                         :  237/ 2319 =  10.2% (n=464/seed)
+  psychiatric                   :   36/  208 =  17.3% (n=42/seed)
+  renal                         :   42/  208 =  20.2% (n=42/seed)
+  reproductive                  :    1/   48 =   2.1% (n=10/seed)
+  respiratory                   :   27/  270 =  10.0% (n=54/seed)
+
+--- disease_gt_count ---
+  1-4                           :   34/ 1151 =   3.0% (n=230/seed)
+  10-19                         :  231/ 2285 =  10.1% (n=457/seed)
+  20-29                         :  140/ 1149 =  12.2% (n=230/seed)
+  30-49                         :  233/ 1323 =  17.6% (n=265/seed)
+  5-9                           :   62/ 1526 =   4.1% (n=305/seed)
+  50+                           :  420/ 1748 =  24.0% (n=350/seed)
+
+--- drug_breadth ---
+  1-4                           :   20/ 1210 =   1.7% (n=242/seed)
+  10-19                         :  110/ 1564 =   7.0% (n=313/seed)
+  20-29                         :   92/  733 =  12.6% (n=147/seed)
+  30-49                         :  153/  969 =  15.8% (n=194/seed)
+  5-9                           :   56/ 1358 =   4.1% (n=272/seed)
+  50+                           :  689/ 3348 =  20.6% (n=670/seed)
+
+--- high_gt_and_high_score ---
+  poor_disease+high_score       :   79/  435 =  18.2% (n=87/seed)
+  poor_disease+low_score        :  248/ 4527 =   5.5% (n=905/seed)
+  rich_disease+high_score       :  154/  389 =  39.6% (n=78/seed) ***
+  rich_disease+low_score        :  639/ 3831 =  16.7% (n=766/seed)
+
+--- knn_score ---
+  1.0-1.9                       :  351/ 3568 =   9.8% (n=714/seed)
+  2.0-2.9                       :  273/ 1331 =  20.5% (n=266/seed)
+  3.0-4.9                       :  194/  757 =  25.6% (n=151/seed)
+  5.0+                          :   39/   67 =  58.2% (n=13/seed)
+  <1.0                          :  263/ 3459 =   7.6% (n=692/seed)
+
+--- mechanism ---
+  no                            :  900/ 7942 =  11.3% (n=1588/seed)
+  yes                           :  220/ 1240 =  17.7% (n=248/seed)
+
+--- norm_score ---
+  0.2-0.39                      :  268/ 2687 =  10.0% (n=537/seed)
+  0.4-0.59                      :  354/ 2888 =  12.3% (n=578/seed)
+  0.6-0.79                      :  258/ 1635 =  15.8% (n=327/seed)
+  0.8+                          :  164/ 1110 =  14.8% (n=222/seed)
+  <0.2                          :   76/  862 =   8.8% (n=172/seed)
+
+--- rank ---
+  1-5                           :  323/ 2019 =  16.0% (n=404/seed)
+  11-15                         :  230/ 2319 =   9.9% (n=464/seed)
+  16-20                         :  210/ 2124 =   9.9% (n=425/seed)
+  21-30                         :   22/  375 =   5.9% (n=75/seed)
+  6-10                          :  335/ 2345 =  14.3% (n=469/seed)
+
+--- sub_reason ---
+  antimicrobial_pathogen_mismatch:   14/  453 =   3.1% (n=91/seed)
+  broad_class_isolated          :    8/   26 =  30.8% (n=5/seed)
+  cancer                        :   45/  533 =   8.4% (n=107/seed)
+  cancer_same_type_no_mechanism :   50/  320 =  15.6% (n=64/seed)
+  cancer_targeted_therapy       :   29/  347 =   8.4% (n=69/seed)
+  cardiovascular_medium_demotion:   54/  395 =  13.7% (n=79/seed)
+  default_freq10_nomech_r6_10   :   84/  262 =  32.1% (n=52/seed) ***
+  default_low                   :  268/ 2385 =  11.2% (n=477/seed)
+  default_no_mech_high_rank     :  122/ 1119 =  10.9% (n=224/seed)
+  default_nomech_low_score      :   83/  805 =  10.3% (n=161/seed)
+  default_nomech_r1_5_low_score :   37/  230 =  16.1% (n=46/seed)
+  gastrointestinal_medium_demotion:   49/  416 =  11.8% (n=83/seed)
+  hematological_corticosteroid_demotion:    1/   29 =   3.4% (n=6/seed)
+  hematological_medium_demotion :   17/  189 =   9.0% (n=38/seed)
+  highly_repurposable           :    3/   20 =  15.0% (n=4/seed)
+  immunological_medium_demotion :   12/   70 =  17.1% (n=14/seed)
+  incoherent_demotion           :   59/  212 =  27.8% (n=42/seed)
+  infectious_hierarchy_pneumonia:   15/   42 =  35.7% (n=8/seed)
+  literature_weak_demotion      :   54/  261 =  20.7% (n=52/seed)
+  local_anesthetic_procedural   :   14/  103 =  13.6% (n=21/seed)
+  mechanism_specific            :    6/   89 =   6.7% (n=18/seed)
+  metabolic                     :   13/   40 =  32.5% (n=8/seed)
+  metabolic_hierarchy_diabetes  :    2/    6 =  33.3% (n=1/seed)
+  metabolic_medium_demotion     :   41/  374 =  11.0% (n=75/seed)
+  neurological_hierarchy_epilepsy:    6/   20 =  30.0% (n=4/seed)
+  neurological_hierarchy_parkinsons:    0/    2 =   0.0% (n=0/seed)
+  neurological_medium_demotion  :   33/  390 =   8.5% (n=78/seed)
+  reproductive_medium_demotion  :    1/   44 =   2.3% (n=9/seed)
+
+--- train_freq ---
+  1-2                           :   30/  290 =  10.3% (n=58/seed)
+  10-14                         :  161/ 1245 =  12.9% (n=249/seed)
+  15+                           :  413/ 2728 =  15.1% (n=546/seed)
+  3-4                           :  209/ 2291 =   9.1% (n=458/seed)
+  5-9                           :  307/ 2628 =  11.7% (n=526/seed)
+
+--- transe ---
+  no                            :  962/ 8443 =  11.4% (n=1689/seed)
+  yes                           :  158/  739 =  21.4% (n=148/seed)
+
+--- transe_and_high_score ---
+  no_transe+score<3             :  768/ 7724 =   9.9% (n=1545/seed)
+  no_transe+score>=3            :  194/  719 =  27.0% (n=144/seed)
+  transe+score<3                :  119/  634 =  18.8% (n=127/seed)
+  transe+score>=3               :   39/  105 =  37.1% (n=21/seed) ***
+
+--- transe_and_mech ---
+  mech_only                     :  197/ 1164 =  16.9% (n=233/seed)
+  neither                       :  765/ 7279 =  10.5% (n=1456/seed)
+  transe+mech                   :   23/   76 =  30.3% (n=15/seed)
+  transe_only                   :  135/  663 =  20.4% (n=133/seed)
+
+======================================================================
+PROMOTABLE SUBSETS (>30% holdout, n>=20/seed)
+======================================================================
+  high_gt_and_high_score=rich_disease+high_score: 39.6% (78/seed)
+  transe_and_high_score=transe+score>=3: 37.1% (21/seed)
+  sub_reason=default_freq10_nomech_r6_10: 32.1% (52/seed)
+
+Results saved to data/analysis/h803_low_rescue_analysis.json
