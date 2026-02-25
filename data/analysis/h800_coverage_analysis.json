@@ -1,0 +1,397 @@
+{
+  "tier_total": {
+    "HIGH": 855,
+    "MEDIUM": 464,
+    "FILTER": 10263,
+    "LOW": 8675,
+    "GOLDEN": 1563
+  },
+  "tier_cached": {
+    "HIGH": 852,
+    "MEDIUM": 457,
+    "GOLDEN": 1085,
+    "LOW": 1056,
+    "FILTER": 56
+  },
+  "tier_evidence": {
+    "HIGH": {
+      "STRONG_EVIDENCE": 716,
+      "MODERATE_EVIDENCE": 136
+    },
+    "MEDIUM": {
+      "WEAK_EVIDENCE": 146,
+      "MODERATE_EVIDENCE": 158,
+      "NO_EVIDENCE": 153
+    },
+    "GOLDEN": {
+      "STRONG_EVIDENCE": 1004,
+      "WEAK_EVIDENCE": 28,
+      "MODERATE_EVIDENCE": 28,
+      "NO_EVIDENCE": 25
+    },
+    "LOW": {
+      "MODERATE_EVIDENCE": 164,
+      "WEAK_EVIDENCE": 396,
+      "NO_EVIDENCE": 491,
+      "STRONG_EVIDENCE": 5
+    },
+    "FILTER": {
+      "NO_EVIDENCE": 17,
+      "MODERATE_EVIDENCE": 14,
+      "WEAK_EVIDENCE": 16,
+      "STRONG_EVIDENCE": 9
+    }
+  },
+  "sub_reason_total": {
+    "default_freq10_nomech_r1_5": 246,
+    "literature_high_demotion": 299,
+    "literature_strong_low_promotion": 314,
+    "zero_precision_mismatch": 926,
+    "atc_coherent_dermatological": 1,
+    "default_nomech_low_score": 726,
+    "default": 10369,
+    "default_no_mech_high_rank": 1147,
+    "cancer_same_type_mech_rank10": 292,
+    "cancer": 365,
+    "cancer_targeted_therapy": 485,
+    "literature_strong_promotion": 778,
+    "cancer_same_type_high_rank": 19,
+    "cancer_only_non_cancer": 37,
+    "cross_domain_isolated": 219,
+    "non_therapeutic_compound": 10,
+    "literature_weak_demotion": 397,
+    "local_anesthetic_procedural": 108,
+    "gastrointestinal_medium_demotion": 237,
+    "default_nomech_r1_5_low_score": 223,
+    "default_freq10_nomech_r6_10": 255,
+    "immunological_medium_demotion": 89,
+    "incoherent_demotion": 133,
+    "cancer_same_type_no_mechanism": 373,
+    "cancer_no_gt": 493,
+    "transe_medium_promotion": 44,
+    "metabolic_hierarchy_lipid": 53,
+    "metabolic_medium_demotion": 307,
+    "mechanism_specific": 200,
+    "inverse_indication": 168,
+    "cardiovascular_hierarchy_coronary": 39,
+    "cardiovascular_medium_demotion": 374,
+    "antimicrobial_pathogen_mismatch": 335,
+    "target_overlap_promotion": 17,
+    "metabolic_hierarchy_thyroid": 11,
+    "gastrointestinal": 37,
+    "reproductive_medium_demotion": 30,
+    "default_freq5_mechanism": 25,
+    "neurological_medium_demotion": 423,
+    "neurological_hierarchy_epilepsy": 67,
+    "broad_class_isolated": 21,
+    "hematological_medium_demotion": 247,
+    "hematological": 15,
+    "infectious_hierarchy_tuberculosis": 11,
+    "cancer_same_type": 20,
+    "infectious_hierarchy_skin_infection": 5,
+    "neurological_hierarchy_neuropathy": 2,
+    "complication_non_validated": 114,
+    "infectious_hierarchy_respiratory_infection": 6,
+    "atc_coherent_infectious": 19,
+    "cv_established_drug_rescue": 7,
+    "cardiovascular": 11,
+    "neurological_hierarchy_parkinsons": 25,
+    "corticosteroid_soc_promotion": 15,
+    "autoimmune_hierarchy_rheumatoid_arthritis": 126,
+    "neurological_hierarchy_alzheimers": 6,
+    "cardiovascular_hierarchy_hypertension": 33,
+    "hematological_corticosteroid_demotion": 54,
+    "respiratory": 5,
+    "metabolic_hierarchy_diabetes": 46,
+    "cardiovascular_hierarchy_heart_failure": 1,
+    "corticosteroid_iatrogenic": 13,
+    "autoimmune_hierarchy_multiple_sclerosis": 17,
+    "cardiovascular_hierarchy_atherosclerosis": 3,
+    "base_to_complication": 23,
+    "cv_pathway_comprehensive": 10,
+    "neurological_hierarchy_migraine": 1,
+    "highly_repurposable": 26,
+    "infectious_hierarchy_pneumonia": 51,
+    "metabolic": 12,
+    "cardiovascular_hierarchy_arrhythmia": 65,
+    "autoimmune_hierarchy_lupus": 21,
+    "neurological": 3,
+    "autoimmune_hierarchy_scleroderma": 3,
+    "atc_coherent_autoimmune": 1,
+    "metabolic_hierarchy_gout": 8,
+    "respiratory_hierarchy_asthma": 18,
+    "infectious_cs_tb_demotion": 3,
+    "infectious_hierarchy_uti": 19,
+    "infectious_hierarchy_sepsis": 13,
+    "respiratory_hierarchy_copd": 5,
+    "autoimmune_hierarchy_colitis": 36,
+    "metabolic_hierarchy_obesity": 9
+  },
+  "sub_reason_cached": {
+    "default_freq10_nomech_r1_5": 246,
+    "literature_high_demotion": 299,
+    "literature_strong_low_promotion": 314,
+    "atc_coherent_dermatological": 1,
+    "cancer_same_type_mech_rank10": 277,
+    "literature_strong_promotion": 778,
+    "cancer_same_type_high_rank": 19,
+    "default_nomech_low_score": 360,
+    "literature_weak_demotion": 397,
+    "default_nomech_r1_5_low_score": 96,
+    "default_freq10_nomech_r6_10": 98,
+    "default": 150,
+    "transe_medium_promotion": 43,
+    "metabolic_hierarchy_lipid": 9,
+    "default_no_mech_high_rank": 71,
+    "cancer": 5,
+    "target_overlap_promotion": 17,
+    "metabolic_hierarchy_thyroid": 8,
+    "default_freq5_mechanism": 21,
+    "broad_class_isolated": 5,
+    "inverse_indication": 9,
+    "hematological": 15,
+    "infectious_hierarchy_tuberculosis": 8,
+    "cancer_same_type": 17,
+    "infectious_hierarchy_skin_infection": 5,
+    "infectious_hierarchy_respiratory_infection": 6,
+    "atc_coherent_infectious": 19,
+    "cv_established_drug_rescue": 7,
+    "cardiovascular": 10,
+    "neurological_hierarchy_parkinsons": 15,
+    "incoherent_demotion": 2,
+    "cardiovascular_hierarchy_hypertension": 20,
+    "respiratory": 5,
+    "corticosteroid_soc_promotion": 14,
+    "cardiovascular_hierarchy_heart_failure": 1,
+    "cancer_no_gt": 3,
+    "autoimmune_hierarchy_multiple_sclerosis": 8,
+    "cardiovascular_hierarchy_atherosclerosis": 3,
+    "cv_pathway_comprehensive": 10,
+    "neurological_hierarchy_migraine": 1,
+    "cardiovascular_hierarchy_arrhythmia": 5,
+    "gastrointestinal": 36,
+    "autoimmune_hierarchy_lupus": 13,
+    "local_anesthetic_procedural": 3,
+    "neurological": 3,
+    "autoimmune_hierarchy_scleroderma": 3,
+    "atc_coherent_autoimmune": 1,
+    "respiratory_hierarchy_asthma": 15,
+    "neurological_hierarchy_neuropathy": 1,
+    "infectious_cs_tb_demotion": 3,
+    "infectious_hierarchy_pneumonia": 1,
+    "infectious_hierarchy_sepsis": 13,
+    "autoimmune_hierarchy_rheumatoid_arthritis": 1,
+    "respiratory_hierarchy_copd": 5,
+    "cross_domain_isolated": 2,
+    "cardiovascular_hierarchy_coronary": 4,
+    "mechanism_specific": 5
+  },
+  "sub_reason_evidence": {
+    "default_freq10_nomech_r1_5": {
+      "STRONG_EVIDENCE": 150,
+      "MODERATE_EVIDENCE": 96
+    },
+    "literature_high_demotion": {
+      "WEAK_EVIDENCE": 146,
+      "NO_EVIDENCE": 153
+    },
+    "literature_strong_low_promotion": {
+      "STRONG_EVIDENCE": 314
+    },
+    "atc_coherent_dermatological": {
+      "MODERATE_EVIDENCE": 1
+    },
+    "cancer_same_type_mech_rank10": {
+      "STRONG_EVIDENCE": 209,
+      "WEAK_EVIDENCE": 24,
+      "MODERATE_EVIDENCE": 25,
+      "NO_EVIDENCE": 19
+    },
+    "literature_strong_promotion": {
+      "STRONG_EVIDENCE": 778
+    },
+    "cancer_same_type_high_rank": {
+      "MODERATE_EVIDENCE": 19
+    },
+    "default_nomech_low_score": {
+      "MODERATE_EVIDENCE": 76,
+      "NO_EVIDENCE": 181,
+      "WEAK_EVIDENCE": 103
+    },
+    "literature_weak_demotion": {
+      "WEAK_EVIDENCE": 188,
+      "NO_EVIDENCE": 209
+    },
+    "default_nomech_r1_5_low_score": {
+      "WEAK_EVIDENCE": 39,
+      "MODERATE_EVIDENCE": 27,
+      "NO_EVIDENCE": 30
+    },
+    "default_freq10_nomech_r6_10": {
+      "WEAK_EVIDENCE": 29,
+      "MODERATE_EVIDENCE": 39,
+      "NO_EVIDENCE": 30
+    },
+    "default": {
+      "STRONG_EVIDENCE": 74,
+      "NO_EVIDENCE": 20,
+      "MODERATE_EVIDENCE": 36,
+      "WEAK_EVIDENCE": 20
+    },
+    "transe_medium_promotion": {
+      "MODERATE_EVIDENCE": 7,
+      "STRONG_EVIDENCE": 36
+    },
+    "metabolic_hierarchy_lipid": {
+      "STRONG_EVIDENCE": 7,
+      "MODERATE_EVIDENCE": 1,
+      "NO_EVIDENCE": 1
+    },
+    "default_no_mech_high_rank": {
+      "NO_EVIDENCE": 24,
+      "WEAK_EVIDENCE": 30,
+      "MODERATE_EVIDENCE": 17
+    },
+    "cancer": {
+      "MODERATE_EVIDENCE": 1,
+      "STRONG_EVIDENCE": 3,
+      "NO_EVIDENCE": 1
+    },
+    "target_overlap_promotion": {
+      "MODERATE_EVIDENCE": 17
+    },
+    "metabolic_hierarchy_thyroid": {
+      "STRONG_EVIDENCE": 6,
+      "MODERATE_EVIDENCE": 2
+    },
+    "default_freq5_mechanism": {
+      "MODERATE_EVIDENCE": 21
+    },
+    "broad_class_isolated": {
+      "STRONG_EVIDENCE": 5
+    },
+    "inverse_indication": {
+      "STRONG_EVIDENCE": 9
+    },
+    "hematological": {
+      "MODERATE_EVIDENCE": 15
+    },
+    "infectious_hierarchy_tuberculosis": {
+      "STRONG_EVIDENCE": 7,
+      "WEAK_EVIDENCE": 1
+    },
+    "cancer_same_type": {
+      "MODERATE_EVIDENCE": 17
+    },
+    "infectious_hierarchy_skin_infection": {
+      "MODERATE_EVIDENCE": 5
+    },
+    "infectious_hierarchy_respiratory_infection": {
+      "STRONG_EVIDENCE": 6
+    },
+    "atc_coherent_infectious": {
+      "MODERATE_EVIDENCE": 19
+    },
+    "cv_established_drug_rescue": {
+      "MODERATE_EVIDENCE": 7
+    },
+    "cardiovascular": {
+      "STRONG_EVIDENCE": 7,
+      "MODERATE_EVIDENCE": 3
+    },
+    "neurological_hierarchy_parkinsons": {
+      "NO_EVIDENCE": 12,
+      "MODERATE_EVIDENCE": 3
+    },
+    "incoherent_demotion": {
+      "WEAK_EVIDENCE": 1,
+      "MODERATE_EVIDENCE": 1
+    },
+    "cardiovascular_hierarchy_hypertension": {
+      "STRONG_EVIDENCE": 19,
+      "MODERATE_EVIDENCE": 1
+    },
+    "respiratory": {
+      "MODERATE_EVIDENCE": 5
+    },
+    "corticosteroid_soc_promotion": {
+      "MODERATE_EVIDENCE": 6,
+      "STRONG_EVIDENCE": 8
+    },
+    "cardiovascular_hierarchy_heart_failure": {
+      "STRONG_EVIDENCE": 1
+    },
+    "cancer_no_gt": {
+      "NO_EVIDENCE": 2,
+      "WEAK_EVIDENCE": 1
+    },
+    "autoimmune_hierarchy_multiple_sclerosis": {
+      "STRONG_EVIDENCE": 8
+    },
+    "cardiovascular_hierarchy_atherosclerosis": {
+      "STRONG_EVIDENCE": 3
+    },
+    "cv_pathway_comprehensive": {
+      "MODERATE_EVIDENCE": 10
+    },
+    "neurological_hierarchy_migraine": {
+      "MODERATE_EVIDENCE": 1
+    },
+    "cardiovascular_hierarchy_arrhythmia": {
+      "STRONG_EVIDENCE": 4,
+      "MODERATE_EVIDENCE": 1
+    },
+    "gastrointestinal": {
+      "STRONG_EVIDENCE": 33,
+      "MODERATE_EVIDENCE": 3
+    },
+    "autoimmune_hierarchy_lupus": {
+      "STRONG_EVIDENCE": 13
+    },
+    "local_anesthetic_procedural": {
+      "NO_EVIDENCE": 1,
+      "WEAK_EVIDENCE": 2
+    },
+    "neurological": {
+      "MODERATE_EVIDENCE": 3
+    },
+    "autoimmune_hierarchy_scleroderma": {
+      "STRONG_EVIDENCE": 3
+    },
+    "atc_coherent_autoimmune": {
+      "MODERATE_EVIDENCE": 1
+    },
+    "respiratory_hierarchy_asthma": {
+      "STRONG_EVIDENCE": 15
+    },
+    "neurological_hierarchy_neuropathy": {
+      "NO_EVIDENCE": 1
+    },
+    "infectious_cs_tb_demotion": {
+      "MODERATE_EVIDENCE": 3
+    },
+    "infectious_hierarchy_pneumonia": {
+      "NO_EVIDENCE": 1
+    },
+    "infectious_hierarchy_sepsis": {
+      "STRONG_EVIDENCE": 13
+    },
+    "autoimmune_hierarchy_rheumatoid_arthritis": {
+      "NO_EVIDENCE": 1
+    },
+    "respiratory_hierarchy_copd": {
+      "MODERATE_EVIDENCE": 5
+    },
+    "cross_domain_isolated": {
+      "MODERATE_EVIDENCE": 1,
+      "WEAK_EVIDENCE": 1
+    },
+    "cardiovascular_hierarchy_coronary": {
+      "STRONG_EVIDENCE": 3,
+      "WEAK_EVIDENCE": 1
+    },
+    "mechanism_specific": {
+      "MODERATE_EVIDENCE": 5
+    }
+  }
+}

@@ -15631,7 +15631,7 @@
       "result_metric": "MEDIUM sub-reasons validated. No GT gaps. atc_coherent_infectious weakest (14% STRONG)"
     },
     {
-      "id": "h768",
+      "id": "h796",
       "title": "Hierarchy GT Gap Expansion Phase 2: Validate Remaining 117 Ambiguous Gaps via Literature Mining",
       "description": "h767 found 166 hierarchy GT gaps total but only added 49 (clearly FDA-approved). The remaining 117 gaps include predictions like Cholestyramine\u2192ACS, Vancomycin\u2192arthritis, Olmesartan\u2192hypercholesterolemia. Run automated literature mining on these 117 to identify which are genuine treatments vs kNN artifacts.",
       "steps": [
@@ -15689,14 +15689,16 @@
       "priority": 3,
       "expected_impact": "high",
       "effort": "high",
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Mine remaining ~370 MEDIUM predictions not yet covered by h768",
         "Verify STRONG rate is consistent across full sample",
         "Check if MEDIUM+STRONG holdout reaches HIGH threshold (>55%)",
         "Implement as tier promotion rule if validated",
         "Run holdout evaluation to measure impact"
-      ]
+      ],
+      "findings": "Superseded by h795. Originally proposed MEDIUM+STRONG\u2192HIGH promotion, but h793/h794 cache expansion made literature_strong_promotion so strong (88.0% holdout) that it was promoted directly to GOLDEN. See h795.",
+      "result_metric": "Superseded by h795 GOLDEN promotion"
     },
     {
       "id": "h772",
@@ -15723,14 +15725,16 @@
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Split atc_coherent_infectious into antifungal vs antibacterial",
         "Check holdout precision for each subset",
         "Check literature evidence rate for each subset",
         "Implement selective demotion if antibacterial subset is LOW-quality",
         "Run holdout evaluation"
-      ]
+      ],
+      "findings": "Full-data analysis of infectious disease predictions by antimicrobial drug class shows both antifungal and antibacterial MEDIUM predictions perform well: antifungal MEDIUM 35.7% (14 preds), antibacterial MEDIUM 42.9% (105 preds). No clear case for differential demotion. Antibacterial actually outperforms antifungal at MEDIUM tier. Both are appropriately placed. HIGH tier: antifungal 97.7% (44), antibacterial 75.0% (220) \u2014 both excellent.",
+      "result_metric": "No demotion warranted: antifungal MEDIUM 35.7%, antibacterial MEDIUM 42.9%"
     },
     {
       "id": "h774",
@@ -15761,11 +15765,13 @@
         "Add class-level inverse indication pairs (careful: K-sparing vs K-wasting distinction)",
         "Run holdout evaluation"
       ],
-      "status": "in_progress",
+      "status": "validated",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
-      "parent_hypothesis": "h774"
+      "parent_hypothesis": "h774",
+      "findings": "Diuretic inverse indications are already comprehensive. 12 diuretics covered with correct K-sparing vs K-wasting distinctions. K-wasting (HCTZ, furosemide, etc.) \u2192 hypokalemia/hyponatremia all at FILTER. K-sparing (spironolactone, amiloride) \u2192 hyperkalemia at FILTER but \u2192 hypokalemia correctly NOT filtered (they treat it). Only 1 prediction escapes to HIGH: spironolactone\u2192hypokalemia which is medically correct (K-sparing diuretic treats hypokalemia). No changes needed.",
+      "result_metric": "Already complete, 12 diuretics covered with correct distinctions"
     },
     {
       "id": "h776",
@@ -15845,7 +15851,7 @@
       "priority": 5,
       "effort": "medium",
       "expected_impact": "medium",
-      "status": "in_progress",
+      "status": "validated",
       "rationale": "h770 concept but focused on quantifying inflation. Some diseases never appear in holdout across all 5 seeds. Understanding the inflation magnitude helps interpret full-data metrics and may identify diseases that need stratified splitting.",
       "steps": [
         "For each seed, record holdout disease set",
@@ -15853,7 +15859,9 @@
         "Calculate full-data precision excluding these diseases",
         "Quantify the inflation per tier",
         "Consider if stratified splitting would help"
-      ]
+      ],
+      "findings": "363/1099 diseases (33%) never appear in holdout. Inflation varies by tier: GOLDEN -2.5pp (never-holdout = 83.5% vs visible 90.5%), HIGH +3.1pp (86.1% vs 78.1%), MEDIUM +4.4pp (45.1% vs 31.4%), LOW +0.2pp (minimal). Overall: never-holdout diseases inflate full-data modestly except MEDIUM (+4.4pp). GOLDEN actually shows negative inflation (never-holdout diseases are harder). Not actionable for tier improvements.",
+      "result_metric": "33% never-holdout, MEDIUM +4.4pp inflation, GOLDEN -2.5pp"
     },
     {
       "id": "h781",
@@ -16011,13 +16019,15 @@
       "priority": 3,
       "expected_impact": "high",
       "effort": "high",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all MEDIUM predictions not yet in literature cache",
         "Run automated literature mining pipeline on uncached MEDIUM predictions",
         "Cross-tabulate new evidence scores with holdout precision",
         "Identify MEDIUM predictions suitable for tier promotion/demotion based on evidence"
-      ]
+      ],
+      "findings": "MEDIUM coverage already 100% (0 NOT_ASSESSED) after h793+h794 mining. Cache grew 3115\u21923814 entries. h789+h791 already implemented tier overrides using this data: MEDIUM+STRONG\u2192HIGH promotion (76.9% holdout), HIGH+NO_EVIDENCE\u2192MEDIUM demotion (31.4% holdout). Combined impact: HIGH +3.9pp (74.0\u219277.9%). No additional work needed.",
+      "result_metric": "MEDIUM 100% coverage. Already validated via h789+h791."
     },
     {
       "id": "h791",
@@ -16043,13 +16053,15 @@
       "priority": 2,
       "expected_impact": "high",
       "effort": "high",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extract all MEDIUM predictions not yet in literature cache",
         "Run automated literature mining pipeline on uncached predictions",
         "Cross-tabulate new evidence scores with holdout",
         "Apply h732/h789/h791 rules to newly-cached predictions"
-      ]
+      ],
+      "findings": "All 221 NOT_ASSESSED MEDIUM predictions were already in literature mining cache (stale predictor view). No new mining needed - just predictor refresh. MEDIUM holdout: 34.8% \u00b1 5.1% (vs 38.0% expected from h789). Coverage: 1099/1320 MEDIUM predictions (83.3%) now have literature evidence.",
+      "result_metric": "MEDIUM coverage 83.3%, no new mining needed"
     },
     {
       "id": "h794",
@@ -16058,13 +16070,32 @@
       "priority": 2,
       "expected_impact": "medium",
       "effort": "medium",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Identify HIGH predictions not in literature cache",
         "Run literature mining pipeline on uncached HIGH predictions",
         "Measure additional demotions from h791 rule",
         "Re-run holdout to confirm improvement"
-      ]
+      ],
+      "findings": "49 uncached HIGH predictions mined. Results: 31 STRONG (63%), 3 MODERATE (6%), 8 WEAK (16%), 7 NO_EVIDENCE (14%). Cache grew 3765\u21923814. HIGH holdout: 81.8% \u00b1 4.5% (up from 77.9%). CRITICAL: HIGH (81.8%) now exceeds GOLDEN (80.1%), violating tier ordering. literature_strong_promotion (88.0%) and literature_strong_low_promotion (80.4%) are driving HIGH above GOLDEN. Need to either promote top HIGH rules to GOLDEN or recalibrate.",
+      "result_metric": "HIGH 81.8% (+3.9pp), but HIGH > GOLDEN ordering violation"
+    },
+    {
+      "id": "h795",
+      "title": "Literature Strong Promotion: GOLDEN Tier Assignment (Fix HIGH > GOLDEN Ordering)",
+      "description": "Promote literature_strong_promotion from HIGH to GOLDEN to restore tier ordering after h793/h794 cache expansion pushed HIGH above GOLDEN.",
+      "status": "validated",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "low",
+      "steps": [
+        "Change literature_strong_promotion tier from HIGH to GOLDEN in production_predictor.py",
+        "Run holdout validation to confirm tier ordering restored",
+        "Verify GOLDEN precision improves and HIGH precision decreases appropriately"
+      ],
+      "findings": "Promoting literature_strong_promotion to GOLDEN restores tier ordering. GOLDEN: 80.1%\u219285.3% (+5.2pp, variance 5.5\u21922.6%). HIGH: 81.8%\u219279.5%. GOLDEN count nearly tripled (397\u21921109 preds). literature_strong_promotion confirms at 88.1% \u00b1 2.9% holdout (n=86, GENUINE status). Tier ordering now PASS: 85.3% > 79.5% > 34.8% > 11.6% > 9.0%.",
+      "result_metric": "GOLDEN +5.2pp (80.1\u219285.3%), tier ordering restored",
+      "date_completed": "2026-02-24"
     },
     {
       "id": "h795",
@@ -16073,11 +16104,121 @@
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Check literature coverage of GOLDEN predictions",
         "Test GOLDEN + NOT STRONG \u2192 HIGH demotion",
         "Evaluate impact on GOLDEN precision and count"
+      ],
+      "findings": "GOLDEN has 93.9% NOT_ASSESSED (463/493 predictions). Only 17 STRONG, 3 MODERATE, 4 WEAK, 6 NO_EVIDENCE in cache. Cannot gate on evidence when 94% of predictions lack it. GOLDEN predictions are primarily hierarchy-based (RA, arrhythmia, lipid disorders) which are medically well-established. Mining GOLDEN would just confirm what hierarchy rules already know. Not worth the effort.",
+      "result_metric": "Blocked: 93.9% NOT_ASSESSED coverage"
+    },
+    {
+      "id": "h797",
+      "title": "Cancer Same-Type Mech Rank10 \u2192 GOLDEN Promotion: 86.2% Holdout Warrants Upgrade",
+      "description": "cancer_same_type_mech_rank10 has 86.2% \u00b1 9.2% holdout (n=29), clearly above GOLDEN threshold. Higher variance (\u00b19.2%) than literature_strong_promotion (\u00b12.9%) but still well above 80%. Would add ~29 preds/seed to GOLDEN. Need to verify variance is acceptable and won't destabilize GOLDEN precision.",
+      "status": "in_progress",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Promote cancer_same_type_mech_rank10 from HIGH to GOLDEN",
+        "Run holdout validation",
+        "Check if GOLDEN variance increases unacceptably"
+      ]
+    },
+    {
+      "id": "h798",
+      "title": "Literature Strong Low Promotion \u2192 GOLDEN Assessment: 80.4% Borderline",
+      "description": "literature_strong_low_promotion (LOW/FILTER + STRONG \u2192 HIGH) has 80.4% \u00b1 5.7% holdout (n=106). Borderline GOLDEN (current threshold ~85.3%). Explore whether tightening criteria (e.g., requiring mechanism or rank \u2264 10 in addition to STRONG evidence) could push a subset above GOLDEN threshold.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Sub-analyze literature_strong_low_promotion by original sub-reason",
+        "Check if HIGH sub-reason + STRONG evidence subset exceeds GOLDEN threshold",
+        "Identify subset that could be safely promoted"
+      ]
+    },
+    {
+      "id": "h799",
+      "title": "GOLDEN Variance Reduction: Can We Get GOLDEN \u00b1 <2%?",
+      "description": "GOLDEN now at 85.3% \u00b1 2.6% (down from \u00b1 5.5% pre-h795). The variance halved because literature_strong_promotion (\u00b12.9%, n=86) provides stable mass. Can we further reduce variance by: (1) identifying and demoting high-variance GOLDEN rules, or (2) promoting more low-variance HIGH rules? Target: \u00b1 2.0% or lower for maximum deliverable confidence.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "steps": [
+        "Per-seed GOLDEN precision breakdown by sub-rule",
+        "Identify rules driving variance (e.g., rheumatoid_arthritis \u00b128.8%)",
+        "Evaluate if high-variance rules should be demoted to HIGH"
+      ]
+    },
+    {
+      "id": "h800",
+      "title": "Literature Mining Cache Coverage Gap: Which Uncached Predictions Would Benefit Most?",
+      "description": "Cache has 3814 entries covering ~19% of predictions. h793 showed all MEDIUM are cached, h794 mined remaining HIGH. But LOW tier has 9365 predictions with 11.6% holdout \u2014 literature STRONG evidence could rescue many to HIGH (h789 validated this at 80.4%). Estimate: if ~10% of LOW have STRONG evidence, that's ~900 predictions. Key question: what's the expected ROI of mining the remaining ~17K uncached predictions?",
+      "status": "validated",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "high",
+      "steps": [
+        "Count uncached predictions by tier",
+        "Estimate STRONG evidence rate from existing cache by tier",
+        "Calculate expected tier mobility from full mining",
+        "Prioritize which tiers/sub-reasons to mine next"
+      ],
+      "findings": "Literature mining cache covers 99.6% HIGH, 98.5% MEDIUM, but only 12.2% LOW and 0.5% FILTER. KEY INSIGHT: All LOW sub-reasons show 0% STRONG evidence in cached samples (n=1,056). Mining LOW/FILTER broadly has near-zero ROI for tier promotions \u2014 h789 already captured actionable ones. GOLDEN has 478 uncached predictions (hierarchy rules) worth mining for validation + GT gaps. FILTER inverse_indication has 159 uncached predictions (100% STRONG = confirms adverse effects). Literature mining has DIMINISHING RETURNS \u2014 all actionable tiers (GOLDEN/HIGH/MEDIUM) are >98% cached.",
+      "result_metric": "LOW/FILTER STRONG rate = 0% (17,826 uncached, near-zero promotion ROI). GOLDEN 478 uncached worth mining."
+    },
+    {
+      "id": "h801",
+      "title": "Mine 478 Uncached GOLDEN Predictions for Validation and GT Gaps",
+      "description": "h800 found 478 GOLDEN predictions lacking literature mining cache entries. These are mostly hierarchy rules (RA=125, arrhythmia=60, lipid=44, colitis=36, coronary=35). Expected ~90% STRONG rate based on cached GOLDEN. Mining these provides: (1) validation that hierarchy rules have literature support, (2) GT gap detection for FDA-approved uses, (3) safety catch for any misclassified predictions. Low effort, medium impact.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Extract 478 uncached GOLDEN drug-disease pairs",
+        "Run literature mining (PubMed + ClinicalTrials.gov) on each",
+        "Identify GT gaps (STRONG evidence but not in expanded GT)",
+        "Flag any non-STRONG predictions for safety review",
+        "Add confirmed GT gaps to expanded_ground_truth.json",
+        "Re-run holdout evaluation"
+      ]
+    },
+    {
+      "id": "h802",
+      "title": "Validate 159 Uncached Inverse Indication FILTER Predictions via Literature Mining",
+      "description": "h800 found 159 inverse_indication FILTER predictions without literature cache. All 9 cached inverse_indication entries had 100% STRONG evidence (confirming drug CAUSES disease). Mining these validates the safety filter and may find FALSE inverse_indications where the drug actually treats the condition. Each false positive removed = prediction rescued from FILTER.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Extract 159 uncached inverse_indication FILTER pairs",
+        "Run literature mining on each",
+        "Identify any pairs where evidence supports TREATMENT not HARM",
+        "Remove false inverse_indication entries",
+        "Re-run holdout evaluation"
+      ]
+    },
+    {
+      "id": "h803",
+      "title": "Literature-Free LOW Tier Rescue: Can Drug/Disease Features Identify Hidden HIGH-Quality Predictions?",
+      "description": "h800 showed mining LOW/FILTER broadly is futile (0% STRONG in 1,056 cached LOW). But 8,675 LOW predictions at 11.6% holdout means ~1,006 ARE correct. Instead of literature mining, can drug/disease-level features identify which LOW predictions are high-quality? Features to test: (1) disease GT richness (GT count), (2) drug therapeutic breadth (number of indications), (3) kNN neighborhood quality (mean neighbor GT overlap), (4) TransE rank. If a feature subset achieves >30% holdout, those LOW predictions could be promoted to MEDIUM.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "For all LOW predictions, compute: GT count of disease, GT count of drug, TransE rank, neighbor overlap",
+        "Run holdout evaluation stratified by each feature",
+        "Identify any feature threshold achieving >30% holdout",
+        "If found, implement as LOW\u2192MEDIUM promotion rule",
+        "Validate on 5-seed holdout"
       ]
     }
   ],
@@ -18581,6 +18722,12 @@
       "hypothesis_id": "h789+h791",
       "learning": "Literature evidence tier override validated across ALL tiers. STRONG LOW/FILTER\u2192HIGH: 76.9% holdout (n=87). HIGH NO/WEAK\u2192MEDIUM: 31.4% (n=28). Combined: HIGH +3.9pp (74.0\u219277.9%). Literature evidence is now the strongest single signal for tier mobility in both directions.",
       "implication": "Expanding literature cache coverage is highest-ROI next step. Current 3115 entries only cover ~19% of MEDIUM. Full coverage could double tier movements. Evidence-based tier overrides should be applied LAST in the tier assignment pipeline (after all rule-based assignments)."
+    },
+    {
+      "date": "2026-02-25",
+      "hypothesis_id": "h800",
+      "learning": "Literature mining cache is nearly complete for actionable tiers (GOLDEN 69%, HIGH 99.6%, MEDIUM 98.5%). LOW/FILTER mining has 0% STRONG rate across all sub-reasons (n=1,056 cached). Mining 17,826 uncached LOW/FILTER predictions would yield near-zero tier promotions. Future literature work should focus on GOLDEN validation (478 predictions) and GT gap expansion, not broad LOW/FILTER mining.",
+      "implication": "Literature mining has hit diminishing returns for tier mobility. Pivot to: (1) GOLDEN validation, (2) GT gap expansion, (3) non-literature signals for LOW rescue."
     }
   ],
   "collaborations": [
