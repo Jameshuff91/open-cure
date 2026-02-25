@@ -1045,10 +1045,17 @@ INVERSE_INDICATION_PAIRS = {
     'carbamazepine': {'dyskinesia'},
     # h486: Sulfadiazine nephrotoxicity → nephrotic syndrome
     'sulfadiazine': {'nephrotic syndrome'},
-    # h731: Aminoglycoside nephrotoxicity — dose-dependent renal tubular damage
-    # Gentamicin is the most nephrotoxic aminoglycoside (10-25% incidence)
-    # Predicting nephrotoxic drugs for kidney failure is inverse
-    'gentamicin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury'},
+    # h731+h777: Aminoglycoside nephrotoxicity — dose-dependent renal tubular damage
+    # CLASS EFFECT: All aminoglycosides cause direct proximal tubular cell damage
+    # Gentamicin 10-25%, tobramycin 10-15%, amikacin 5-10%, neomycin highest (topical only)
+    # h777: Expanded from gentamicin-only to full class + added nephropathy
+    'gentamicin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury', 'nephropathy'},
+    'tobramycin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury', 'nephropathy'},
+    'amikacin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury', 'nephropathy'},
+    'neomycin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury', 'nephropathy'},
+    'streptomycin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury', 'nephropathy'},
+    'kanamycin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury', 'nephropathy'},
+    'plazomicin': {'kidney failure', 'chronic kidney disease', 'acute kidney injury', 'nephropathy'},
     # h486: GnRH agonists cause ovarian hyperstimulation syndrome
     'nafarelin': {'ovarian hyperstimulation syndrome'},
     # h486: Everolimus causes acute pancreatitis
@@ -1057,11 +1064,22 @@ INVERSE_INDICATION_PAIRS = {
     # WHI trial: HR 1.24 for breast cancer, 2-10x endometrial cancer risk
     # IARC Group 1 carcinogen (estrogen-progestogen combinations)
     'conjugated estrogens': {'breast cancer', 'endometrial cancer'},
-    # h526: ACE inhibitors → angioedema (bradykinin accumulation class effect)
+    # h526+h776: ACE inhibitors → angioedema (bradykinin accumulation class effect)
     # ACEi block bradykinin degradation → can cause life-threatening angioedema
     # Especially dangerous in hereditary angioedema (already bradykinin-mediated)
+    # h776: Expanded from 2 to all ACEi. Class effect — ALL ACEi carry angioedema risk
+    # (FDA black box warning). ~1-7% incidence, higher in Black patients.
     'benazepril': {'angioedema', 'hereditary angioedema'},
-    'quinapril': {'angioedema'},
+    'captopril': {'angioedema', 'hereditary angioedema'},
+    'enalapril': {'angioedema', 'hereditary angioedema'},
+    'enalaprilat': {'angioedema', 'hereditary angioedema'},
+    'fosinopril': {'angioedema', 'hereditary angioedema'},
+    'lisinopril': {'angioedema', 'hereditary angioedema'},
+    'moexipril': {'angioedema', 'hereditary angioedema'},
+    'perindopril': {'angioedema', 'hereditary angioedema'},
+    'quinapril': {'angioedema', 'hereditary angioedema'},
+    'ramipril': {'angioedema', 'hereditary angioedema'},
+    'trandolapril': {'angioedema', 'hereditary angioedema'},
     # h408+h544: Anti-TNF biologics INDUCE paradoxical autoimmune conditions
     # CLASS EFFECTS (all anti-TNF agents):
     #   SLE: 12,080 FAERS reports, >90% serious, median onset 7+ months
@@ -1147,6 +1165,25 @@ INVERSE_INDICATION_PAIRS = {
     'timolol': {'hypotension', 'orthostatic hypotension'},
     'esmolol': {'hypotension', 'orthostatic hypotension'},
     'sotalol': {'hypotension', 'orthostatic hypotension'},
+    # h775: Diuretics CAUSE hypotension (reduce blood volume/pressure by design)
+    # Predicting antihypertensives for LOW blood pressure is inverse
+    # Also: diuretics CAUSE hyponatremia (dilutional or depletional, class effect)
+    # Thiazides are #1 cause of drug-induced hyponatremia (BMJ 2024)
+    'spironolactone': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hyperkalemia'},
+    'eplerenone': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hyperkalemia'},
+    'amiloride': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hyperkalemia'},
+    'triamterene': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hyperkalemia'},
+    # h775: Thiazides/loop diuretics → hyponatremia + hypokalemia (K-wasting)
+    'hydrochlorothiazide': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hypokalemia'},
+    'chlorthalidone': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hypokalemia'},
+    'indapamide': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hypokalemia'},
+    'metolazone': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hypokalemia'},
+    'furosemide': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hypokalemia'},
+    'bumetanide': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hypokalemia'},
+    'torsemide': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hypokalemia'},
+    'ethacrynic acid': {'hypotension', 'orthostatic hypotension', 'hyponatremia', 'hypokalemia'},
+    # h775: Acetazolamide — carbonic anhydrase inhibitor, causes metabolic acidosis + hyponatremia
+    'acetazolamide': {'hypotension', 'orthostatic hypotension', 'hyponatremia'},
 }
 
 # h481: Drug class → disease category standard-of-care mappings

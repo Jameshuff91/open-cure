@@ -15755,7 +15755,7 @@
         "Add class-level inverse indication pairs (careful: K-sparing vs K-wasting distinction)",
         "Run holdout evaluation"
       ],
-      "status": "pending",
+      "status": "in_progress",
       "priority": 4,
       "expected_impact": "low",
       "effort": "low",
@@ -15771,11 +15771,13 @@
         "Add all ACEi\u2192angioedema/hereditary angioedema",
         "Consider ARBs\u2192angioedema (lower risk, 0.1-0.4%)"
       ],
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
-      "parent_hypothesis": "h774"
+      "parent_hypothesis": "h774",
+      "findings": "Expanded ACEi inverse indication from 2 drugs (benazepril, quinapril) to all 11 ACEi: benazepril, captopril, enalapril, enalaprilat, fosinopril, lisinopril, moexipril, perindopril, quinapril, ramipril, trandolapril. Added hereditary angioedema to all entries. Actual impact: 1 prediction moved (enalaprilat\u2192angioedema LOW\u2192FILTER). Most entries are defensive (other ACEi do not appear in angioedema predictions). Fosinoprilat was already FILTER via other rules.",
+      "result_metric": "No holdout change (defensive). 1 prediction moved LOW\u2192FILTER."
     },
     {
       "id": "h777",
@@ -15787,11 +15789,61 @@
         "Add all aminoglycosides\u2192kidney failure/CKD/AKI",
         "Check vancomycin, cisplatin coverage"
       ],
-      "status": "pending",
+      "status": "validated",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
-      "parent_hypothesis": "h774"
+      "parent_hypothesis": "h774",
+      "findings": "Expanded aminoglycoside nephrotoxicity from gentamicin-only to full class: gentamicin, tobramycin, amikacin, neomycin, streptomycin, kanamycin, plazomicin. Added nephropathy to all entries. Actual impact: gentamicin\u2192nephropathy LOW\u2192FILTER, plazomicin\u2192nephropathy already FILTER. Vancomycin and cisplatin do not appear in kidney predictions. Most entries defensive.",
+      "result_metric": "No holdout change (defensive). 1 prediction moved LOW\u2192FILTER."
+    },
+    {
+      "id": "h778",
+      "title": "NSAID\u2192GI Bleeding Inverse Indication Class Expansion: Audit NSAID Coverage for GI Adverse Effects",
+      "priority": 5,
+      "effort": "low",
+      "expected_impact": "low",
+      "status": "pending",
+      "rationale": "NSAIDs cause GI bleeding/ulcers (class effect). Current INVERSE_INDICATION_PAIRS may only cover some NSAIDs. Expanding to all NSAIDs for peptic ulcer, GI hemorrhage, gastritis.",
+      "steps": [
+        "List all NSAIDs in DRKG and current INVERSE_INDICATION_PAIRS",
+        "Check for NSAID\u2192GI disease predictions that should be FILTER",
+        "Add missing NSAIDs\u2192GI disease inverse indication pairs",
+        "Run holdout evaluation"
+      ]
+    },
+    {
+      "id": "h779",
+      "title": "Systematic Inverse Indication Audit: Which Drug Classes Still Have Incomplete Coverage?",
+      "priority": 4,
+      "effort": "medium",
+      "expected_impact": "medium",
+      "status": "pending",
+      "rationale": "h774/h776/h777 expanded individual drug classes. A systematic audit would identify ALL remaining partially-covered inverse indication classes at once, rather than doing them one-by-one.",
+      "steps": [
+        "Extract all unique drug names from INVERSE_INDICATION_PAIRS",
+        "Group by likely drug class (beta-blockers, ACEi, aminoglycosides, etc.)",
+        "For each class, check if all members of the class are covered",
+        "Identify classes with <50% member coverage",
+        "Prioritize by number of predictions affected",
+        "Expand top 3-5 incomplete classes"
+      ]
+    },
+    {
+      "id": "h780",
+      "title": "Holdout-Invisible Disease Inflation Quantification: How Much Do Never-Holdout Diseases Inflate Full-Data Precision?",
+      "priority": 5,
+      "effort": "medium",
+      "expected_impact": "medium",
+      "status": "pending",
+      "rationale": "h770 concept but focused on quantifying inflation. Some diseases never appear in holdout across all 5 seeds. Understanding the inflation magnitude helps interpret full-data metrics and may identify diseases that need stratified splitting.",
+      "steps": [
+        "For each seed, record holdout disease set",
+        "Identify diseases that appear in 0/5 holdout sets",
+        "Calculate full-data precision excluding these diseases",
+        "Quantify the inflation per tier",
+        "Consider if stratified splitting would help"
+      ]
     }
   ],
   "completed": [
@@ -18252,6 +18304,12 @@
       "hypothesis_id": "h774",
       "learning": "Class-level inverse indication expansion has diminishing returns \u2014 most drug-disease pairs are already caught by other filters (cross_domain_isolated, category demotion, etc.). The main value is safety/defensive coverage. Propranolol\u2192hypotension was the only MEDIUM-tier catch. Diuretics\u2192hyponatremia discovered as new inverse indication class (spironolactone\u2192hyponatremia [MEDIUM]).",
       "implication": "Focus inverse indication work on MEDIUM-tier predictions only \u2014 LOW/FILTER are already caught. Diuretic inverse indications (h775) are the highest-value next step."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h776+h777",
+      "learning": "Inverse indication class expansion (ACEi\u2192angioedema, aminoglycosides\u2192nephrotoxicity) is low-impact since most class members do not generate relevant predictions. Only 2 predictions moved. Defensive entries still valuable for safety.",
+      "implication": "Future inverse indication expansions should check actual prediction counts BEFORE implementation to assess whether effort is justified."
     }
   ],
   "collaborations": [
