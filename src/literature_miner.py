@@ -47,6 +47,146 @@ EXISTING_CACHE_PATH = VALIDATION_DIR / "validation_cache.json"
 EFETCH_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
 
 
+# --- Disease Name Simplification (h766) ---
+
+# Known DRKG name → PubMed-friendly name mappings
+# These handle concatenated words, missing hyphens, and abbreviation issues
+_DISEASE_NAME_OVERRIDES: dict[str, str] = {
+    "stevensjohnson syndrome": "Stevens-Johnson syndrome",
+    "wolffparkinsonwhite syndrome": "Wolff-Parkinson-White syndrome",
+    "lowgrade bcell nonhodgkins lymphoma": "non-Hodgkin lymphoma",
+    "vasospastic prinzmetals variant angina": "Prinzmetal angina",
+    "heparininduced thrombocytopenia hit type ii": "heparin-induced thrombocytopenia",
+    "fgf23related hypophosphatemic ricketsosteomalacia": "hypophosphatemic rickets",
+    "processingdeficient progeroid laminopathy": "progeroid laminopathy",
+    "polyarticularcourse juvenile idiopathic arthritis": "juvenile idiopathic arthritis",
+    "druginduced postanesthesia respiratory depression": "post-anesthesia respiratory depression",
+    "opioiddrug dependence": "opioid dependence",
+    "transthyretin familial amyloid polyneuropathy": "transthyretin amyloid polyneuropathy",
+    "cardiomyopathy of variant transthyretinmediated amyloidosis": "transthyretin amyloid cardiomyopathy",
+    "primary openangle glaucoma": "open-angle glaucoma",
+    "hyperactive children who show excessive motor activity with accompanying conduct disorders": "ADHD",
+    "cin 2": "cervical intraepithelial neoplasia",
+    "igan": "IgA nephropathy",
+    "autosomal dominant polycystic kidney disease adpkd": "polycystic kidney disease",
+    "disseminated intravascular coagulation dic": "disseminated intravascular coagulation",
+    "acquired thrombotic thrombocytopenic purpura": "thrombotic thrombocytopenic purpura",
+    "mycobacterium avium complex mac infection": "Mycobacterium avium complex",
+    "acute bacterial skin and skin structure infections absssi": "acute bacterial skin infection",
+    "shift work sleep disorder": "shift work disorder",
+    "idiopathic interstitial pneumonia": "interstitial pneumonia",
+    "lamellar ichthyosis": "lamellar ichthyosis",
+    "recurrent herpes labialis": "herpes labialis",
+}
+
+
+def simplify_disease_name(disease: str) -> list[str]:
+    """Generate simplified disease name variants for PubMed searching.
+
+    Returns a list of simplified names to try (in priority order).
+    Empty list if no simplification is possible.
+
+    h766: Addresses false negatives from overly-specific DRKG disease names.
+    """
+    import re
+    disease_lower = disease.lower().strip()
+    simplified: list[str] = []
+
+    # 1. Check known overrides first
+    if disease_lower in _DISEASE_NAME_OVERRIDES:
+        simplified.append(_DISEASE_NAME_OVERRIDES[disease_lower])
+        return simplified
+
+    # 2. Remove "caused by X" / "caused by X in Y" qualifiers
+    m = re.match(r"^(.+?)\s+caused by\b.*", disease_lower)
+    if m:
+        core = m.group(1).strip()
+        # Extract pathogen name for pathogen-specific search
+        pathogen_match = re.search(r"caused by\s+(.+?)(?:\s+in\s+|$)", disease_lower)
+        if pathogen_match:
+            pathogen = pathogen_match.group(1).strip()
+            # Try pathogen FIRST (more specific than generic core)
+            simplified.append(pathogen)
+        if len(core) > 10:  # Only add core if it's specific enough
+            simplified.append(core)
+        # Also check for "in Y" context (e.g., "in cystic fibrosis")
+        in_match = re.search(r"\bin\s+(.+)$", disease_lower)
+        if in_match:
+            context = in_match.group(1).strip()
+            if len(context) > 5:
+                simplified.append(context)
+
+    # 3. Remove "associated with X" → keep the symptom
+    m = re.match(r"^(.+?)\s+associated with\b\s*(.*)", disease_lower)
+    if m:
+        symptom = m.group(1).strip()
+        context = m.group(2).strip()
+        if len(symptom) > 5:
+            simplified.append(symptom)
+        # Also try the context disease (e.g., "Noonan syndrome")
+        if context and len(context) > 5:
+            simplified.append(context)
+
+    # 4. Remove "of the X" and trailing modifiers for very long names
+    if len(disease_lower) > 55:
+        # Try removing "of the X" and rephrasing
+        m = re.match(r"^(.+?)\s+of the\s+(.+)", disease_lower)
+        if m:
+            simplified.append(f"{m.group(2)} {m.group(1)}")
+
+        # Try just the last significant medical term
+        for term in ["carcinoma", "lymphoma", "leukemia", "sarcoma",
+                     "syndrome", "disease", "disorder", "infection"]:
+            if term in disease_lower:
+                # Get ~3-4 words around the term
+                idx = disease_lower.index(term)
+                words_before = disease_lower[:idx].strip().split()
+                context_words = words_before[-3:] if len(words_before) > 3 else words_before
+                excerpt = " ".join(context_words) + " " + term
+                if excerpt != disease_lower and len(excerpt) > 8:
+                    simplified.append(excerpt)
+                break
+
+    # 5. For "infections caused by X" or "infections X" patterns
+    m = re.match(r"^infections?\s+(?:caused by\s+)?(.+)", disease_lower)
+    if m and not simplified:
+        pathogen = m.group(1).strip()
+        simplified.append(f"{pathogen} infection")
+
+    # 6. For "pathogen species infections" → "pathogen infection"
+    m = re.match(r"^(\w+)\s+\w+\s+infections?$", disease_lower)
+    if m and not simplified:
+        genus = m.group(1)
+        simplified.append(f"{genus} infection")
+
+    # 7. For adjectival pathogen forms (gonococcal, staphylococcal, etc.)
+    _PATHOGEN_ADJECTIVES: dict[str, str] = {
+        "gonococcal": "gonorrhea",
+        "staphylococcal": "staphylococcus",
+        "streptococcal": "streptococcus",
+        "pneumococcal": "pneumococcus",
+        "meningococcal": "meningococcus",
+        "chlamydial": "chlamydia",
+        "candidal": "candida",
+    }
+    for adj, pathogen in _PATHOGEN_ADJECTIVES.items():
+        if disease_lower.startswith(adj + " "):
+            rest = disease_lower[len(adj):].strip()
+            simplified.append(f"{pathogen} {rest}")
+            simplified.append(rest)
+            break
+
+    # Deduplicate while preserving order
+    seen: set[str] = set()
+    unique: list[str] = []
+    for s in simplified:
+        s_lower = s.lower()
+        if s_lower not in seen and s_lower != disease_lower:
+            seen.add(s_lower)
+            unique.append(s)
+    return unique
+
+
 @dataclass
 class LiteratureEvidence:
     """Structured evidence result for a drug-disease pair."""
@@ -390,11 +530,36 @@ IMPORTANT: Set adverse_detected=true ONLY if an abstract clearly states the drug
             evidence.sample_pmids = pm_result.sample_pmids
             evidence.direct_hit_count = pm_result.publication_count
 
+            # h766: Fallback to simplified disease names if 0 hits
+            if pm_result.publication_count == 0:
+                simplified_names = simplify_disease_name(disease)
+                for alt_name in simplified_names:
+                    alt_result = self.pubmed.search(drug, alt_name)
+                    if alt_result.publication_count > 0:
+                        evidence.pubmed_total = alt_result.publication_count
+                        evidence.pubmed_recent = alt_result.recent_count
+                        evidence.pubmed_clinical_trial = alt_result.clinical_trial_pubs
+                        evidence.pubmed_review = alt_result.review_count
+                        evidence.sample_pmids = alt_result.sample_pmids
+                        evidence.direct_hit_count = alt_result.publication_count
+                        break
+
             # Fresh ClinicalTrials search
             ct_result = self.ct_api.search(drug, disease)
             evidence.trial_count = ct_result.trial_count
             evidence.trial_phases = ct_result.phases
             evidence.trial_statuses = ct_result.statuses
+
+            # h766: ClinicalTrials fallback with simplified names
+            if ct_result.trial_count == 0:
+                simplified_names = simplify_disease_name(disease)
+                for alt_name in simplified_names:
+                    alt_ct = self.ct_api.search(drug, alt_name)
+                    if alt_ct.trial_count > 0:
+                        evidence.trial_count = alt_ct.trial_count
+                        evidence.trial_phases = alt_ct.phases
+                        evidence.trial_statuses = alt_ct.statuses
+                        break
 
         # Check for Phase 3+
         evidence.has_phase3_plus = any(
