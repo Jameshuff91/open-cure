@@ -1,0 +1,98 @@
+{
+  "coverage_by_tier": {
+    "GOLDEN": {
+      "total": 507,
+      "assessed": 43,
+      "pct_assessed": 8.5,
+      "pct_not_assessed": 91.5
+    },
+    "HIGH": {
+      "total": 1123,
+      "assessed": 781,
+      "pct_assessed": 69.5,
+      "pct_not_assessed": 30.5
+    },
+    "MEDIUM": {
+      "total": 2162,
+      "assessed": 2162,
+      "pct_assessed": 100.0,
+      "pct_not_assessed": 0.0
+    },
+    "LOW": {
+      "total": 6253,
+      "assessed": 187,
+      "pct_assessed": 3.0,
+      "pct_not_assessed": 97.0
+    },
+    "FILTER": {
+      "total": 8672,
+      "assessed": 58,
+      "pct_assessed": 0.7,
+      "pct_not_assessed": 99.3
+    }
+  },
+  "strong_rate_by_tier": {
+    "GOLDEN": {
+      "strong_rate": 67.4,
+      "n_assessed": 43
+    },
+    "HIGH": {
+      "strong_rate": 66.1,
+      "n_assessed": 781
+    },
+    "MEDIUM": {
+      "strong_rate": 43.6,
+      "n_assessed": 2162
+    },
+    "LOW": {
+      "strong_rate": 57.8,
+      "n_assessed": 187
+    },
+    "FILTER": {
+      "strong_rate": 51.7,
+      "n_assessed": 58
+    }
+  },
+  "full_data_precision_assessed_vs_na": {
+    "GOLDEN": {
+      "assessed": 83.7,
+      "not_assessed": 86.9,
+      "delta": -3.1
+    },
+    "HIGH": {
+      "assessed": 78.4,
+      "not_assessed": 41.2,
+      "delta": 37.1
+    },
+    "MEDIUM": {
+      "assessed": 50.5,
+      "not_assessed": "N/A"
+    },
+    "LOW": {
+      "assessed": 56.7,
+      "not_assessed": 18.3,
+      "delta": 38.4
+    },
+    "FILTER": {
+      "assessed": 48.3,
+      "not_assessed": 15.1,
+      "delta": 33.2
+    }
+  },
+  "key_findings": [
+    "MEDIUM is 100% literature-mined (2162/2162). No coverage gap.",
+    "GOLDEN is 91.5% unmined \u2014 but full-data precision is HIGHER for unmined (86.9%) vs mined (83.7%), so mining won't improve tier.",
+    "HIGH has 342 unmined predictions (30.5%) with only 41.2% full-data precision vs 78.4% for mined \u2014 this is the key gap.",
+    "HIGH unmined are dominated by: corticosteroid_soc_promotion (167), metabolic_hierarchy_diabetes (50), transe_medium_promotion (37), cancer_same_type_mech_rank10 (31)",
+    "HIGH CS SOC unmined: 39.5% full-data precision \u2014 below HIGH average. Mining could reveal demotion candidates.",
+    "HIGH cancer_same_type unmined: 19.4% full-data precision \u2014 very low, likely cancer subtypes without expanded GT coverage.",
+    "LOW/FILTER are 97-99% unmined \u2014 previous h800 found 0% STRONG ROI for these. Confirmed not worth mining.",
+    "Literature mining is highly selective: assessed predictions have much higher full-data precision, confirming mining was strategically targeted at actionable predictions."
+  ],
+  "roi_estimate": {
+    "HIGH_342_unmined": "MEDIUM ROI \u2014 342 predictions, many CS SOC (known high-quality). Mining could identify ~20 NO_EVIDENCE for sub-reason audit. Estimated effort: 2-3 hours mining.",
+    "GOLDEN_464_unmined": "LOW ROI \u2014 86.9% full-data precision already high. Mining confirms quality but won't change tiers.",
+    "LOW_6066_unmined": "ZERO ROI \u2014 h800 established LOW/FILTER mining has 0% STRONG evidence rate.",
+    "FILTER_8614_unmined": "ZERO ROI \u2014 same as LOW."
+  }
+}

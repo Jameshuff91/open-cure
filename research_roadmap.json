@@ -16487,13 +16487,15 @@
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Extract per-sub-reason WEAK_EVIDENCE holdout from h817 data",
         "Identify sub-reasons where WEAK > MEDIUM avg (38.5%)",
         "Implement selective rescue for those sub-reasons only",
         "Run holdout to verify MEDIUM improvement without dilution"
-      ]
+      ],
+      "findings": "Only default_no_mech_high_rank WEAK has above-MEDIUM holdout (39.8% \u00b1 20.2%, n=6/seed), but n is too small for reliable estimation (below ~30 threshold). All other WEAK sub-reasons are below MEDIUM avg 38.5%: default 19.0%, nomech_low_score 16.9%, nomech_r1_5_low_score 11.4%. No sub-reason has BOTH above-MEDIUM holdout AND sufficient sample size. WEAK_EVIDENCE predictions correctly stay demoted to LOW.",
+      "result_metric": "No actionable sub-reasons found"
     },
     {
       "id": "h819",
@@ -16502,13 +16504,15 @@
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Count predictions by evidence level per tier",
         "Calculate % NOT_ASSESSED by tier",
         "Compare NOT_ASSESSED holdout vs ASSESSED holdout per tier",
         "Estimate ROI of mining remaining NOT_ASSESSED predictions"
-      ]
+      ],
+      "findings": "Literature evidence coverage analysis reveals strategic mining patterns:\n\nCOVERAGE BY TIER:\n- MEDIUM: 100% assessed (2162/2162) \u2014 comprehensive mining already complete\n- HIGH: 69.5% assessed (781/1123) \u2014 342 unmined predictions  \n- GOLDEN: 8.5% assessed (43/507) \u2014 464 unmined but already 86.9% full-data precision\n- LOW: 3.0% assessed (187/6253) \u2014 h800 confirmed 0% STRONG ROI\n- FILTER: 0.7% assessed (58/8672) \u2014 same as LOW\n\nKEY INSIGHT: Assessed predictions have much higher full-data precision than NOT_ASSESSED:\n- HIGH: 78.4% (assessed) vs 41.2% (not assessed) \u2014 37pp gap\n- This is because mining was strategically targeted at predictions with evidence\n\nHIGH UNMINED BREAKDOWN (342 predictions):\n- corticosteroid_soc_promotion: 167 preds, 39.5% full-data precision\n- metabolic_hierarchy_diabetes: 50 preds, 68.0% full-data precision\n- transe_medium_promotion: 37 preds, 37.8% full-data precision\n- cancer_same_type_mech_rank10: 31 preds, 19.4% full-data precision\n- infectious_hierarchy_uti: 19 preds, 100% full-data precision\n\nGOLDEN unmined (464 preds) have 86.9% full-data precision \u2014 mining won't improve tier.\nLOW/FILTER unmined (14,680 preds) have near-zero STRONG evidence \u2014 not worth mining.\n\nCONCLUSION: The only productive mining target is HIGH tier's 342 unmined predictions, particularly:\n1. CS SOC 167 preds (could reveal demotion candidates within CS SOC)\n2. Cancer same-type 31 preds (19.4% precision suggests some are wrong cancer subtypes)\n",
+      "result_metric": "HIGH tier 30.5% unmined (342/1123), with 41.2% full-data precision gap"
     },
     {
       "id": "h820",
@@ -16524,6 +16528,77 @@
         "Identify rules contributing most to tier variance",
         "Determine if unstable rules should be handled differently"
       ]
+    },
+    {
+      "id": "h820",
+      "title": "HIGH CS SOC Unmined Deep Dive: Are 167 Unmined CS SOC Predictions Lower Quality?",
+      "hypothesis": "The 167 unmined corticosteroid SOC HIGH predictions have only 39.5% full-data precision vs 78.4% for mined CS SOC. Mining these could reveal a sub-population that should be demoted to MEDIUM.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "steps": [
+        "Extract the 167 unmined CS SOC HIGH predictions",
+        "Analyze what differentiates them from the 102 mined CS SOC HIGH (which had 78.4% precision)",
+        "Check if there's a disease category or rank pattern that explains the 39pp gap",
+        "If pattern found, test whether a sub-reason split improves holdout precision",
+        "Mine a sample (20-30) via literature to validate"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h821",
+      "title": "Evidence Level as Tier Override: Can STRONG_EVIDENCE Promote MEDIUM to HIGH?",
+      "hypothesis": "MEDIUM predictions with STRONG_EVIDENCE have 82.2% full-data precision \u2014 above HIGH tier average (78.4%). Literature evidence could be used as a tier promotion signal.",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Run holdout evaluation on MEDIUM + STRONG_EVIDENCE predictions",
+        "Compare holdout precision to HIGH tier holdout (83.4%)",
+        "If holdout > HIGH threshold, implement as promotion rule",
+        "Check if this is redundant with existing transe_medium_promotion",
+        "Validate that NO_EVIDENCE MEDIUM predictions don't degrade"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h822",
+      "title": "NO_EVIDENCE HIGH Demotion: Are 93 HIGH NO_EVIDENCE Predictions Correctly Placed?",
+      "hypothesis": "93 HIGH predictions have NO_EVIDENCE in literature mining, with only 41.9% full-data precision. Standard HIGH sub-reason with NO_EVIDENCE has 15.8% precision (19 preds). These could be demotion candidates.",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Extract 93 HIGH NO_EVIDENCE predictions by sub-reason",
+        "Run holdout evaluation on each sub-reason x evidence_level combination",
+        "Identify sub-reasons where NO_EVIDENCE holdout < MEDIUM threshold",
+        "Implement targeted demotions for LOW-performing combinations",
+        "Validate combined holdout impact"
+      ],
+      "findings": null,
+      "result_metric": null
+    },
+    {
+      "id": "h823",
+      "title": "MEDIUM Evidence Gradient Stratification: Does Evidence Level Predict Within-MEDIUM Quality?",
+      "hypothesis": "MEDIUM precision varies dramatically by evidence level: STRONG=82.2%, MODERATE=41.1%, WEAK=24.9%, NO=16.4%. This gradient could be used to create MEDIUM sub-tiers or improve the deliverable quality annotation.",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Verify evidence gradient on holdout (not just full-data)",
+        "Check if evidence level is redundant with existing medium_quality annotation",
+        "If independent signal, add evidence_level as a quality stratification in deliverable",
+        "Compute MEDIUM holdout by evidence_level x sub-reason matrix"
+      ],
+      "findings": null,
+      "result_metric": null
     }
   ],
   "completed": [
