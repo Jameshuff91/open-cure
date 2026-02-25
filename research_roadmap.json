@@ -15675,8 +15675,10 @@
       "expected_impact": "low",
       "effort": "medium",
       "priority": 5,
-      "status": "pending",
-      "category": "evaluation"
+      "status": "validated",
+      "category": "evaluation",
+      "findings": "337/1034 diseases (32.6%) never appear in holdout across all 5 seeds, exactly matching theoretical P(never)=0.8^5=32.8%. This is NOT a bias but a structural property of 5-seed 80/20 splits.\n\nINFLATION BY TIER:\n- GOLDEN: +7.8pp (95.8% NH vs 88.0% visible). 53.9% of GOLDEN preds from NH diseases.\n- HIGH: -1.9pp (80.8% NH vs 82.6% visible). No inflation.\n- MEDIUM: +8.2pp (42.1% NH vs 33.9% visible). 32.3% of MEDIUM preds from NH diseases.\n- LOW: +1.8pp (22.8% NH vs 21.0% visible). Minimal.\n\nKEY INSIGHT: GOLDEN has 53.9% never-holdout predictions (vs 31-32% for other tiers) because GOLDEN diseases tend to be high-GT, well-studied diseases (RA 54 drugs, hypertension 79 drugs, UC 27 drugs) that generate many GOLDEN predictions per disease.\n\nTIER ORDERING PRESERVED: Visible-only precision maintains perfect tier separation (88.0% > 82.6% > 33.9% > 21.0%). The tier system is valid.\n\nCALIBRATION IMPACT: Full-data precision overestimates GOLDEN by ~8pp and MEDIUM by ~8pp. True GOLDEN ~88%, true MEDIUM ~34%.\n\nACTIONABLE: Using 15+ seeds would reduce never-holdout from 32.6% to <3.5%. Not immediately needed since tier ordering is preserved.",
+      "result_metric": "337 diseases (32.6%) never-holdout; GOLDEN +7.8pp inflation, MEDIUM +8.2pp, tier ordering preserved"
     },
     {
       "id": "h771",
@@ -15805,14 +15807,16 @@
       "priority": 5,
       "effort": "low",
       "expected_impact": "low",
-      "status": "pending",
+      "status": "invalidated",
       "rationale": "NSAIDs cause GI bleeding/ulcers (class effect). Current INVERSE_INDICATION_PAIRS may only cover some NSAIDs. Expanding to all NSAIDs for peptic ulcer, GI hemorrhage, gastritis.",
       "steps": [
         "List all NSAIDs in DRKG and current INVERSE_INDICATION_PAIRS",
         "Check for NSAID\u2192GI disease predictions that should be FILTER",
         "Add missing NSAIDs\u2192GI disease inverse indication pairs",
         "Run holdout evaluation"
-      ]
+      ],
+      "findings": "NSAIDs are NOT in the kNN drug pool (0 internal GT entries, 0 drug_to_diseases entries). They generate zero predictions across all 1,099 diseases. The stale deliverable showed 11 NSAID\u2192GI predictions from an earlier pipeline, but the current production predictor generates none. Inverse indication additions would have no effect. The existing diclofenac\u2192peptic ulcer entry is also inert.",
+      "result_metric": "0 NSAID predictions exist \u2014 nothing to filter"
     },
     {
       "id": "h779",
@@ -15839,7 +15843,7 @@
       "priority": 5,
       "effort": "medium",
       "expected_impact": "medium",
-      "status": "pending",
+      "status": "in_progress",
       "rationale": "h770 concept but focused on quantifying inflation. Some diseases never appear in holdout across all 5 seeds. Understanding the inflation magnitude helps interpret full-data metrics and may identify diseases that need stratified splitting.",
       "steps": [
         "For each seed, record holdout disease set",
@@ -15847,6 +15851,52 @@
         "Calculate full-data precision excluding these diseases",
         "Quantify the inflation per tier",
         "Consider if stratified splitting would help"
+      ]
+    },
+    {
+      "id": "h781",
+      "title": "15-Seed Holdout Evaluation: Reduce Never-Holdout Diseases from 33% to 3.5%",
+      "description": "h770 found 337 diseases (32.6%) never appear in 5-seed holdout, causing +7.8pp GOLDEN and +8.2pp MEDIUM inflation. Using 15 seeds would reduce never-holdout to ~36 diseases (3.5%). This gives more accurate precision estimates without changing the tier system. Main cost: 3x longer evaluation runs.",
+      "category": "evaluation",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Modify h393 evaluator to support configurable seed count (default 5)",
+        "Run 15-seed evaluation and compare tier precisions to 5-seed",
+        "If precisions change significantly (>3pp), update all reference precision values",
+        "Assess runtime cost vs precision improvement tradeoff"
+      ]
+    },
+    {
+      "id": "h782",
+      "title": "GOLDEN Calibration: Adjust Full-Data GOLDEN Precision Reporting from 92% to 88%",
+      "description": "h770 showed GOLDEN full-data precision (92.2%) is inflated by +7.8pp due to 53.9% of predictions coming from never-holdout diseases. The visible-only precision (88.0%) is closer to true holdout. Consider whether GOLDEN precision constants should use visible-only estimates for more honest calibration.",
+      "category": "calibration",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Compare h770 visible-only precision to actual 5-seed holdout precision for each tier",
+        "If visible-only is within 3pp of holdout, adopt visible-only as calibration reference",
+        "Update precision constants in production_predictor.py if warranted"
+      ]
+    },
+    {
+      "id": "h783",
+      "title": "Per-Disease Holdout Coverage: Annotate Predictions with Holdout Evaluation Confidence",
+      "description": "h770 found diseases with 0 holdout appearances have +8pp higher precision than diseases seen in holdout. Annotating each prediction with how often its disease appears in holdout (0-5 seeds) would help users understand which precision estimates are more vs less reliable. Diseases seen in 3+ seeds have the most reliable precision estimates.",
+      "category": "deliverable",
+      "priority": 5,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Add holdout_appearances (0-5) to each disease in deliverable",
+        "Flag diseases with 0 appearances as holdout_invisible",
+        "Include visible-only precision as alternative calibration for these diseases"
       ]
     }
   ],
@@ -18320,6 +18370,12 @@
       "hypothesis_id": "h779",
       "learning": "Systematic inverse indication audit shows 6/13 drug classes have incomplete class coverage, but ZERO actual predictions need filtering. kNN does not generate predictions for drugs\u2192diseases they cause (the embeddings naturally separate them). Inverse indications are mostly defensive entries.",
       "implication": "Future inverse indication work has diminishing returns. Only add entries when actual predictions are found (check predictions FIRST, then add entries). The kNN embedding space already separates most harmful drug-disease pairs."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h770",
+      "learning": "32.6% of diseases never appear in holdout across 5 seeds (theoretical: 32.8%). GOLDEN is most inflated (+7.8pp) because 53.9% of GOLDEN preds come from never-holdout high-GT diseases (RA, hypertension, UC). MEDIUM inflation +8.2pp. Tier ordering perfectly preserved in visible-only analysis. Using 15+ seeds would reduce never-holdout to <3.5%.",
+      "implication": "Full-data precision overestimates by ~8pp for GOLDEN/MEDIUM. Not actionable for tier design (ordering preserved). Could use more seeds for calibration."
     }
   ],
   "collaborations": [

@@ -1,0 +1,3181 @@
+{
+  "summary": {
+    "total_diseases": 1034,
+    "never_holdout": 337,
+    "rare_holdout": 422,
+    "sometimes_holdout": 269,
+    "often_holdout": 6,
+    "theoretical_pct": 0.3276800000000001,
+    "actual_pct": 0.32591876208897486
+  },
+  "tier_inflation": {
+    "GOLDEN": {
+      "total_preds": 397,
+      "never_holdout_preds": 214,
+      "never_holdout_pct": 0.5390428211586902,
+      "never_holdout_precision": 0.9579439252336449,
+      "visible_precision": 0.8797814207650273,
+      "inflation_pp": 0.07816250446861761,
+      "full_data_precision": 0.9219143576826196
+    },
+    "HIGH": {
+      "total_preds": 1728,
+      "never_holdout_preds": 541,
+      "never_holdout_pct": 0.3130787037037037,
+      "never_holdout_precision": 0.8077634011090573,
+      "visible_precision": 0.8264532434709352,
+      "inflation_pp": -0.018689842361877873,
+      "full_data_precision": 0.8206018518518519
+    },
+    "MEDIUM": {
+      "total_preds": 449,
+      "never_holdout_preds": 145,
+      "never_holdout_pct": 0.32293986636971045,
+      "never_holdout_precision": 0.4206896551724138,
+      "visible_precision": 0.33881578947368424,
+      "inflation_pp": 0.08187386569872956,
+      "full_data_precision": 0.36525612472160357
+    },
+    "LOW": {
+      "total_preds": 9806,
+      "never_holdout_preds": 3089,
+      "never_holdout_pct": 0.3150112176218642,
+      "never_holdout_precision": 0.22822920038847525,
+      "visible_precision": 0.21006401667411045,
+      "inflation_pp": 0.01816518371436479,
+      "full_data_precision": 0.21578625331429738
+    }
+  },
+  "never_holdout_diseases": [
+    {
+      "disease_id": "drkg:Disease::MESH:D006258",
+      "disease_name": "head and neck cancers",
+      "n_predictions": 30,
+      "internal_gt": 6,
+      "expanded_gt": 109,
+      "gt_hits": 14,
+      "precision": 0.4666666666666666
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008223",
+      "disease_name": "malignant lymphoma",
+      "n_predictions": 30,
+      "internal_gt": 31,
+      "expanded_gt": 130,
+      "gt_hits": 22,
+      "precision": 0.7333333333333333
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D051474",
+      "disease_name": "postherpetic neuralgia",
+      "n_predictions": 30,
+      "internal_gt": 5,
+      "expanded_gt": 27,
+      "gt_hits": 8,
+      "precision": 0.26666666666666666
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013274",
+      "disease_name": "stomach cancer",
+      "n_predictions": 28,
+      "internal_gt": 21,
+      "expanded_gt": 186,
+      "gt_hits": 16,
+      "precision": 0.5714285714285715
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005910",
+      "disease_name": "oligodendroglioma",
+      "n_predictions": 27,
+      "internal_gt": 6,
+      "expanded_gt": 171,
+      "gt_hits": 12,
+      "precision": 0.4444444444444444
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015179",
+      "disease_name": "colorectal cancer",
+      "n_predictions": 27,
+      "internal_gt": 19,
+      "expanded_gt": 283,
+      "gt_hits": 20,
+      "precision": 0.7407407407407408
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004832",
+      "disease_name": "typical absence seizures",
+      "n_predictions": 26,
+      "internal_gt": 6,
+      "expanded_gt": 15,
+      "gt_hits": 6,
+      "precision": 0.23076923076923075
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008175",
+      "disease_name": "lung cancer",
+      "n_predictions": 26,
+      "internal_gt": 9,
+      "expanded_gt": 200,
+      "gt_hits": 11,
+      "precision": 0.4230769230769231
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007251",
+      "disease_name": "influenza",
+      "n_predictions": 25,
+      "internal_gt": 7,
+      "expanded_gt": 44,
+      "gt_hits": 1,
+      "precision": 0.04
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008881",
+      "disease_name": "migraine",
+      "n_predictions": 24,
+      "internal_gt": 25,
+      "expanded_gt": 139,
+      "gt_hits": 22,
+      "precision": 0.9166666666666667
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003453",
+      "disease_name": "cryptococcosis",
+      "n_predictions": 23,
+      "internal_gt": 3,
+      "expanded_gt": 11,
+      "gt_hits": 8,
+      "precision": 0.34782608695652173
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006528",
+      "disease_name": "hepatocellular carcinoma",
+      "n_predictions": 23,
+      "internal_gt": 15,
+      "expanded_gt": 252,
+      "gt_hits": 9,
+      "precision": 0.391304347826087
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008105",
+      "disease_name": "primary biliary cholangitis",
+      "n_predictions": 23,
+      "internal_gt": 2,
+      "expanded_gt": 54,
+      "gt_hits": 5,
+      "precision": 0.21739130434782608
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012004",
+      "disease_name": "rectal cancer",
+      "n_predictions": 23,
+      "internal_gt": 7,
+      "expanded_gt": 13,
+      "gt_hits": 9,
+      "precision": 0.391304347826087
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018358",
+      "disease_name": "neuroendocrine tumors of the gastrointestinal tract",
+      "n_predictions": 23,
+      "internal_gt": 5,
+      "expanded_gt": 12,
+      "gt_hits": 4,
+      "precision": 0.17391304347826086
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003027",
+      "disease_name": "episodic cluster headache",
+      "n_predictions": 22,
+      "internal_gt": 5,
+      "expanded_gt": 35,
+      "gt_hits": 8,
+      "precision": 0.36363636363636365
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012640",
+      "disease_name": "tonicclonic seizure",
+      "n_predictions": 22,
+      "internal_gt": 20,
+      "expanded_gt": 166,
+      "gt_hits": 21,
+      "precision": 0.9545454545454546
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014062",
+      "disease_name": "tongue cancer",
+      "n_predictions": 22,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 3,
+      "precision": 0.13636363636363635
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015451",
+      "disease_name": "relapsed or refractory chronic lymphocytic leukemia",
+      "n_predictions": 22,
+      "internal_gt": 14,
+      "expanded_gt": 94,
+      "gt_hits": 16,
+      "precision": 0.7272727272727273
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002779",
+      "disease_name": "hereditary chronic cholestasis",
+      "n_predictions": 21,
+      "internal_gt": 4,
+      "expanded_gt": 34,
+      "gt_hits": 4,
+      "precision": 0.19047619047619047
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010003",
+      "disease_name": "osteoarthritis",
+      "n_predictions": 21,
+      "internal_gt": 25,
+      "expanded_gt": 175,
+      "gt_hits": 21,
+      "precision": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012175",
+      "disease_name": "retinoblastoma",
+      "n_predictions": 21,
+      "internal_gt": 1,
+      "expanded_gt": 26,
+      "gt_hits": 4,
+      "precision": 0.19047619047619047
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016919",
+      "disease_name": "cryptococcal meningitis",
+      "n_predictions": 21,
+      "internal_gt": 3,
+      "expanded_gt": 17,
+      "gt_hits": 6,
+      "precision": 0.28571428571428575
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D060585",
+      "disease_name": "fusariosis",
+      "n_predictions": 21,
+      "internal_gt": 3,
+      "expanded_gt": 4,
+      "gt_hits": 3,
+      "precision": 0.14285714285714288
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000151",
+      "disease_name": "infections caused by acinetobacter",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 10,
+      "gt_hits": 4,
+      "precision": 0.2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001168",
+      "disease_name": "arthritis",
+      "n_predictions": 20,
+      "internal_gt": 10,
+      "expanded_gt": 127,
+      "gt_hits": 17,
+      "precision": 0.85
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001172",
+      "disease_name": "rheumatoid arthritis",
+      "n_predictions": 20,
+      "internal_gt": 54,
+      "expanded_gt": 359,
+      "gt_hits": 20,
+      "precision": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001607",
+      "disease_name": "berylliosis",
+      "n_predictions": 20,
+      "internal_gt": 8,
+      "expanded_gt": 10,
+      "gt_hits": 7,
+      "precision": 0.35
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001762",
+      "disease_name": "blepharitis",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 16,
+      "gt_hits": 7,
+      "precision": 0.35
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001987",
+      "disease_name": "bronchiectasis",
+      "n_predictions": 20,
+      "internal_gt": 1,
+      "expanded_gt": 17,
+      "gt_hits": 5,
+      "precision": 0.25
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001991",
+      "disease_name": "chronic bronchitis",
+      "n_predictions": 20,
+      "internal_gt": 38,
+      "expanded_gt": 98,
+      "gt_hits": 14,
+      "precision": 0.7
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002481",
+      "disease_name": "cellulitis",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 25,
+      "gt_hits": 10,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002602",
+      "disease_name": "chancroid",
+      "n_predictions": 20,
+      "internal_gt": 8,
+      "expanded_gt": 11,
+      "gt_hits": 9,
+      "precision": 0.45
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002764",
+      "disease_name": "cholecystitis",
+      "n_predictions": 20,
+      "internal_gt": 2,
+      "expanded_gt": 15,
+      "gt_hits": 2,
+      "precision": 0.1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002833",
+      "disease_name": "choroiditis",
+      "n_predictions": 20,
+      "internal_gt": 7,
+      "expanded_gt": 10,
+      "gt_hits": 8,
+      "precision": 0.4
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003093",
+      "disease_name": "ulcerative colitis",
+      "n_predictions": 20,
+      "internal_gt": 27,
+      "expanded_gt": 116,
+      "gt_hits": 20,
+      "precision": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003316",
+      "disease_name": "corneal injury from penetration of foreign bodies",
+      "n_predictions": 20,
+      "internal_gt": 2,
+      "expanded_gt": 12,
+      "gt_hits": 3,
+      "precision": 0.15
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003874",
+      "disease_name": "bullous dermatitis herpetiformis",
+      "n_predictions": 20,
+      "internal_gt": 10,
+      "expanded_gt": 18,
+      "gt_hits": 11,
+      "precision": 0.55
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004342",
+      "disease_name": "drug hypersensitivity reactions",
+      "n_predictions": 20,
+      "internal_gt": 8,
+      "expanded_gt": 176,
+      "gt_hits": 9,
+      "precision": 0.45
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004485",
+      "disease_name": "eczema",
+      "n_predictions": 20,
+      "internal_gt": 10,
+      "expanded_gt": 41,
+      "gt_hits": 16,
+      "precision": 0.8
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004716",
+      "disease_name": "postpartum endomyometritis",
+      "n_predictions": 20,
+      "internal_gt": 9,
+      "expanded_gt": 20,
+      "gt_hits": 7,
+      "precision": 0.35
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006973",
+      "disease_name": "hypertension",
+      "n_predictions": 20,
+      "internal_gt": 79,
+      "expanded_gt": 500,
+      "gt_hits": 20,
+      "precision": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007414",
+      "disease_name": "small intestine cancer",
+      "n_predictions": 20,
+      "internal_gt": 2,
+      "expanded_gt": 4,
+      "gt_hits": 2,
+      "precision": 0.1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007500",
+      "disease_name": "iritis",
+      "n_predictions": 20,
+      "internal_gt": 8,
+      "expanded_gt": 10,
+      "gt_hits": 8,
+      "precision": 0.4
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007877",
+      "disease_name": "legionella infection",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 2,
+      "gt_hits": 1,
+      "precision": 0.05
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007918",
+      "disease_name": "leprosy",
+      "n_predictions": 20,
+      "internal_gt": 1,
+      "expanded_gt": 28,
+      "gt_hits": 5,
+      "precision": 0.25
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008219",
+      "disease_name": "lymphogranuloma venereum",
+      "n_predictions": 20,
+      "internal_gt": 5,
+      "expanded_gt": 6,
+      "gt_hits": 4,
+      "precision": 0.2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009203",
+      "disease_name": "myocardial infarction",
+      "n_predictions": 20,
+      "internal_gt": 66,
+      "expanded_gt": 349,
+      "gt_hits": 20,
+      "precision": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009617",
+      "disease_name": "nocardiosis",
+      "n_predictions": 20,
+      "internal_gt": 1,
+      "expanded_gt": 13,
+      "gt_hits": 4,
+      "precision": 0.2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009902",
+      "disease_name": "optic neuritis",
+      "n_predictions": 20,
+      "internal_gt": 7,
+      "expanded_gt": 16,
+      "gt_hits": 7,
+      "precision": 0.35
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010019",
+      "disease_name": "osteomyelitis",
+      "n_predictions": 20,
+      "internal_gt": 18,
+      "expanded_gt": 68,
+      "gt_hits": 13,
+      "precision": 0.65
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010032",
+      "disease_name": "otitis externa",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 17,
+      "gt_hits": 5,
+      "precision": 0.25
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011014",
+      "disease_name": "pneumonia",
+      "n_predictions": 20,
+      "internal_gt": 33,
+      "expanded_gt": 182,
+      "gt_hits": 17,
+      "precision": 0.85
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011565",
+      "disease_name": "psoriasis vulgaris",
+      "n_predictions": 20,
+      "internal_gt": 40,
+      "expanded_gt": 200,
+      "gt_hits": 14,
+      "precision": 0.7
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012010",
+      "disease_name": "erythroblastopenia",
+      "n_predictions": 20,
+      "internal_gt": 8,
+      "expanded_gt": 15,
+      "gt_hits": 7,
+      "precision": 0.35
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012516",
+      "disease_name": "osteosarcoma",
+      "n_predictions": 20,
+      "internal_gt": 5,
+      "expanded_gt": 78,
+      "gt_hits": 9,
+      "precision": 0.45
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013167",
+      "disease_name": "nonradiographic axial spondyloarthritis",
+      "n_predictions": 20,
+      "internal_gt": 27,
+      "expanded_gt": 67,
+      "gt_hits": 19,
+      "precision": 0.95
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013587",
+      "disease_name": "syphilis",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 16,
+      "gt_hits": 8,
+      "precision": 0.4
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013625",
+      "disease_name": "aortitis syndrome",
+      "n_predictions": 20,
+      "internal_gt": 3,
+      "expanded_gt": 8,
+      "gt_hits": 3,
+      "precision": 0.15
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013700",
+      "disease_name": "temporal arteritis",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 19,
+      "gt_hits": 10,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013716",
+      "disease_name": "epicondylitis",
+      "n_predictions": 20,
+      "internal_gt": 8,
+      "expanded_gt": 14,
+      "gt_hits": 9,
+      "precision": 0.45
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013742",
+      "disease_name": "tetanus",
+      "n_predictions": 20,
+      "internal_gt": 4,
+      "expanded_gt": 10,
+      "gt_hits": 6,
+      "precision": 0.3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014141",
+      "disease_name": "trachoma",
+      "n_predictions": 20,
+      "internal_gt": 7,
+      "expanded_gt": 19,
+      "gt_hits": 7,
+      "precision": 0.35
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014552",
+      "disease_name": "complicated urinary tract infections",
+      "n_predictions": 20,
+      "internal_gt": 38,
+      "expanded_gt": 160,
+      "gt_hits": 19,
+      "precision": 0.95
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014606",
+      "disease_name": "iridocyclitis",
+      "n_predictions": 20,
+      "internal_gt": 10,
+      "expanded_gt": 9,
+      "gt_hits": 4,
+      "precision": 0.2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014946",
+      "disease_name": "surgical wound",
+      "n_predictions": 20,
+      "internal_gt": 16,
+      "expanded_gt": 12,
+      "gt_hits": 2,
+      "precision": 0.1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015464",
+      "disease_name": "chronic myeloid leukemia",
+      "n_predictions": 20,
+      "internal_gt": 10,
+      "expanded_gt": 65,
+      "gt_hits": 12,
+      "precision": 0.6
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016470",
+      "disease_name": "staphylococcus aureus bacteraemia",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 63,
+      "gt_hits": 7,
+      "precision": 0.35
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D034161",
+      "disease_name": "pelvic cellulitis",
+      "n_predictions": 20,
+      "internal_gt": 6,
+      "expanded_gt": 8,
+      "gt_hits": 2,
+      "precision": 0.1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054988",
+      "disease_name": "idiopathic interstitial pneumonia",
+      "n_predictions": 20,
+      "internal_gt": 1,
+      "expanded_gt": 2,
+      "gt_hits": 1,
+      "precision": 0.05
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D059413",
+      "disease_name": "intraabdominal infections",
+      "n_predictions": 20,
+      "internal_gt": 15,
+      "expanded_gt": 54,
+      "gt_hits": 10,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D065631",
+      "disease_name": "allergic rhinitis",
+      "n_predictions": 20,
+      "internal_gt": 15,
+      "expanded_gt": 33,
+      "gt_hits": 13,
+      "precision": 0.65
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000038",
+      "disease_name": "peritonsillar abscess",
+      "n_predictions": 19,
+      "internal_gt": 6,
+      "expanded_gt": 8,
+      "gt_hits": 2,
+      "precision": 0.10526315789473685
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000544",
+      "disease_name": "dementia with lewy bodies",
+      "n_predictions": 19,
+      "internal_gt": 7,
+      "expanded_gt": 211,
+      "gt_hits": 8,
+      "precision": 0.4210526315789474
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002446",
+      "disease_name": "nontropical sprue",
+      "n_predictions": 19,
+      "internal_gt": 4,
+      "expanded_gt": 8,
+      "gt_hits": 3,
+      "precision": 0.15789473684210525
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002547",
+      "disease_name": "cerebral palsy",
+      "n_predictions": 19,
+      "internal_gt": 6,
+      "expanded_gt": 26,
+      "gt_hits": 5,
+      "precision": 0.2631578947368421
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003248",
+      "disease_name": "chronic constipation",
+      "n_predictions": 19,
+      "internal_gt": 10,
+      "expanded_gt": 49,
+      "gt_hits": 13,
+      "precision": 0.6842105263157895
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003872",
+      "disease_name": "dermatitis",
+      "n_predictions": 19,
+      "internal_gt": 21,
+      "expanded_gt": 56,
+      "gt_hits": 16,
+      "precision": 0.8421052631578948
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003924",
+      "disease_name": "type 2 diabetes mellitus",
+      "n_predictions": 19,
+      "internal_gt": 51,
+      "expanded_gt": 174,
+      "gt_hits": 19,
+      "precision": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004646",
+      "disease_name": "emphysema",
+      "n_predictions": 19,
+      "internal_gt": 14,
+      "expanded_gt": 20,
+      "gt_hits": 7,
+      "precision": 0.368421052631579
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005334",
+      "disease_name": "fever",
+      "n_predictions": 19,
+      "internal_gt": 2,
+      "expanded_gt": 144,
+      "gt_hits": 9,
+      "precision": 0.4736842105263158
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005759",
+      "disease_name": "gastroenteritis",
+      "n_predictions": 19,
+      "internal_gt": 1,
+      "expanded_gt": 14,
+      "gt_hits": 2,
+      "precision": 0.10526315789473685
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005764",
+      "disease_name": "gastroesophageal reflux disease gerd",
+      "n_predictions": 19,
+      "internal_gt": 14,
+      "expanded_gt": 48,
+      "gt_hits": 10,
+      "precision": 0.5263157894736842
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006561",
+      "disease_name": "herpes simplex virus infection",
+      "n_predictions": 19,
+      "internal_gt": 3,
+      "expanded_gt": 7,
+      "gt_hits": 2,
+      "precision": 0.10526315789473685
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006949",
+      "disease_name": "hyperlipidemia",
+      "n_predictions": 19,
+      "internal_gt": 28,
+      "expanded_gt": 74,
+      "gt_hits": 19,
+      "precision": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007752",
+      "disease_name": "preterm labour",
+      "n_predictions": 19,
+      "internal_gt": 1,
+      "expanded_gt": 33,
+      "gt_hits": 3,
+      "precision": 0.15789473684210525
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008103",
+      "disease_name": "hepatic cirrhosis",
+      "n_predictions": 19,
+      "internal_gt": 13,
+      "expanded_gt": 162,
+      "gt_hits": 4,
+      "precision": 0.2105263157894737
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008193",
+      "disease_name": "early lyme disease erythema migrans",
+      "n_predictions": 19,
+      "internal_gt": 1,
+      "expanded_gt": 11,
+      "gt_hits": 5,
+      "precision": 0.2631578947368421
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008305",
+      "disease_name": "malignant hyperthermia",
+      "n_predictions": 19,
+      "internal_gt": 1,
+      "expanded_gt": 16,
+      "gt_hits": 1,
+      "precision": 0.052631578947368425
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009041",
+      "disease_name": "motion sickness",
+      "n_predictions": 19,
+      "internal_gt": 6,
+      "expanded_gt": 17,
+      "gt_hits": 5,
+      "precision": 0.2631578947368421
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009450",
+      "disease_name": "lichen simplex chronicus neurodermatitis",
+      "n_predictions": 19,
+      "internal_gt": 6,
+      "expanded_gt": 10,
+      "gt_hits": 6,
+      "precision": 0.3157894736842105
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009468",
+      "disease_name": "neuromuscular disease",
+      "n_predictions": 19,
+      "internal_gt": 1,
+      "expanded_gt": 15,
+      "gt_hits": 1,
+      "precision": 0.052631578947368425
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010437",
+      "disease_name": "stomal ulcer",
+      "n_predictions": 19,
+      "internal_gt": 8,
+      "expanded_gt": 32,
+      "gt_hits": 7,
+      "precision": 0.368421052631579
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011711",
+      "disease_name": "chronic pyoderma",
+      "n_predictions": 19,
+      "internal_gt": 11,
+      "expanded_gt": 18,
+      "gt_hits": 4,
+      "precision": 0.2105263157894737
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012173",
+      "disease_name": "inflammation",
+      "n_predictions": 19,
+      "internal_gt": 13,
+      "expanded_gt": 20,
+      "gt_hits": 1,
+      "precision": 0.052631578947368425
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012220",
+      "disease_name": "seasonal allergic rhinitis",
+      "n_predictions": 19,
+      "internal_gt": 28,
+      "expanded_gt": 47,
+      "gt_hits": 16,
+      "precision": 0.8421052631578948
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012859",
+      "disease_name": "sjogrens syndrome",
+      "n_predictions": 19,
+      "internal_gt": 3,
+      "expanded_gt": 5,
+      "gt_hits": 3,
+      "precision": 0.15789473684210525
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014123",
+      "disease_name": "toxoplasmosis encephalitis",
+      "n_predictions": 19,
+      "internal_gt": 2,
+      "expanded_gt": 17,
+      "gt_hits": 4,
+      "precision": 0.2105263157894737
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014397",
+      "disease_name": "pulmonary tuberculosis",
+      "n_predictions": 19,
+      "internal_gt": 5,
+      "expanded_gt": 85,
+      "gt_hits": 10,
+      "precision": 0.5263157894736842
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016491",
+      "disease_name": "peripheral vascular disease",
+      "n_predictions": 19,
+      "internal_gt": 6,
+      "expanded_gt": 42,
+      "gt_hits": 9,
+      "precision": 0.4736842105263158
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020803",
+      "disease_name": "herpes simplex encephalitis",
+      "n_predictions": 19,
+      "internal_gt": 1,
+      "expanded_gt": 6,
+      "gt_hits": 2,
+      "precision": 0.10526315789473685
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054058",
+      "disease_name": "acute coronary syndrome",
+      "n_predictions": 19,
+      "internal_gt": 6,
+      "expanded_gt": 104,
+      "gt_hits": 15,
+      "precision": 0.7894736842105263
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D058729",
+      "disease_name": "peripheral arterial diseases",
+      "n_predictions": 19,
+      "internal_gt": 7,
+      "expanded_gt": 38,
+      "gt_hits": 6,
+      "precision": 0.3157894736842105
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000741",
+      "disease_name": "aplastic anemia",
+      "n_predictions": 18,
+      "internal_gt": 6,
+      "expanded_gt": 31,
+      "gt_hits": 9,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000881",
+      "disease_name": "anthrax",
+      "n_predictions": 18,
+      "internal_gt": 9,
+      "expanded_gt": 12,
+      "gt_hits": 8,
+      "precision": 0.4444444444444444
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001229",
+      "disease_name": "allergic bronchopulmonary aspergillosis",
+      "n_predictions": 18,
+      "internal_gt": 1,
+      "expanded_gt": 11,
+      "gt_hits": 4,
+      "precision": 0.2222222222222222
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002056",
+      "disease_name": "thermal burns",
+      "n_predictions": 18,
+      "internal_gt": 2,
+      "expanded_gt": 15,
+      "gt_hits": 1,
+      "precision": 0.05555555555555555
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002318",
+      "disease_name": "atherosclerotic cardiovascular disease",
+      "n_predictions": 18,
+      "internal_gt": 6,
+      "expanded_gt": 151,
+      "gt_hits": 11,
+      "precision": 0.6111111111111112
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002561",
+      "disease_name": "ischemic cerebrovascular disorder",
+      "n_predictions": 18,
+      "internal_gt": 4,
+      "expanded_gt": 20,
+      "gt_hits": 4,
+      "precision": 0.2222222222222222
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002819",
+      "disease_name": "chorea",
+      "n_predictions": 18,
+      "internal_gt": 3,
+      "expanded_gt": 17,
+      "gt_hits": 4,
+      "precision": 0.2222222222222222
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003877",
+      "disease_name": "contact dermatitis",
+      "n_predictions": 18,
+      "internal_gt": 11,
+      "expanded_gt": 16,
+      "gt_hits": 10,
+      "precision": 0.5555555555555556
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004461",
+      "disease_name": "eclampsia",
+      "n_predictions": 18,
+      "internal_gt": 3,
+      "expanded_gt": 11,
+      "gt_hits": 1,
+      "precision": 0.05555555555555555
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004715",
+      "disease_name": "endometriosis",
+      "n_predictions": 18,
+      "internal_gt": 7,
+      "expanded_gt": 67,
+      "gt_hits": 7,
+      "precision": 0.38888888888888884
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006105",
+      "disease_name": "chronic granulomatous disease",
+      "n_predictions": 18,
+      "internal_gt": 1,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006467",
+      "disease_name": "acquired hemophilia a",
+      "n_predictions": 18,
+      "internal_gt": 10,
+      "expanded_gt": 24,
+      "gt_hits": 5,
+      "precision": 0.2777777777777778
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007674",
+      "disease_name": "renal diseases",
+      "n_predictions": 18,
+      "internal_gt": 1,
+      "expanded_gt": 412,
+      "gt_hits": 3,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009190",
+      "disease_name": "myelodysplastic syndrome",
+      "n_predictions": 18,
+      "internal_gt": 8,
+      "expanded_gt": 79,
+      "gt_hits": 3,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009437",
+      "disease_name": "peripheral neuropathic pain",
+      "n_predictions": 18,
+      "internal_gt": 5,
+      "expanded_gt": 126,
+      "gt_hits": 8,
+      "precision": 0.4444444444444444
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010195",
+      "disease_name": "pancreatitis",
+      "n_predictions": 18,
+      "internal_gt": 5,
+      "expanded_gt": 14,
+      "gt_hits": 3,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011030",
+      "disease_name": "pneumothorax",
+      "n_predictions": 18,
+      "internal_gt": 1,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011537",
+      "disease_name": "pruritus cutaneous",
+      "n_predictions": 18,
+      "internal_gt": 13,
+      "expanded_gt": 76,
+      "gt_hits": 10,
+      "precision": 0.5555555555555556
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011654",
+      "disease_name": "dyspnea associated with acute left ventricular and pulmonary edema",
+      "n_predictions": 18,
+      "internal_gt": 3,
+      "expanded_gt": 27,
+      "gt_hits": 3,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012373",
+      "disease_name": "rocky mountain spotted fever",
+      "n_predictions": 18,
+      "internal_gt": 5,
+      "expanded_gt": 5,
+      "gt_hits": 3,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013262",
+      "disease_name": "stevensjohnson syndrome",
+      "n_predictions": 18,
+      "internal_gt": 10,
+      "expanded_gt": 19,
+      "gt_hits": 8,
+      "precision": 0.4444444444444444
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014987",
+      "disease_name": "dry skin",
+      "n_predictions": 18,
+      "internal_gt": 1,
+      "expanded_gt": 15,
+      "gt_hits": 1,
+      "precision": 0.05555555555555555
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015535",
+      "disease_name": "psoriatic arthritis",
+      "n_predictions": 18,
+      "internal_gt": 27,
+      "expanded_gt": 52,
+      "gt_hits": 18,
+      "precision": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017681",
+      "disease_name": "hypereosinophilic syndrome",
+      "n_predictions": 18,
+      "internal_gt": 2,
+      "expanded_gt": 12,
+      "gt_hits": 3,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018856",
+      "disease_name": "interstitial cystitis",
+      "n_predictions": 18,
+      "internal_gt": 1,
+      "expanded_gt": 11,
+      "gt_hits": 1,
+      "precision": 0.05555555555555555
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020177",
+      "disease_name": "idiopathic hypersomnia",
+      "n_predictions": 18,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 1,
+      "precision": 0.05555555555555555
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D051436",
+      "disease_name": "chronic renal failure",
+      "n_predictions": 18,
+      "internal_gt": 9,
+      "expanded_gt": 166,
+      "gt_hits": 9,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054219",
+      "disease_name": "dysproteinemias",
+      "n_predictions": 18,
+      "internal_gt": 2,
+      "expanded_gt": 11,
+      "gt_hits": 2,
+      "precision": 0.1111111111111111
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054556",
+      "disease_name": "recurrent venous thromboembolism",
+      "n_predictions": 18,
+      "internal_gt": 9,
+      "expanded_gt": 48,
+      "gt_hits": 9,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D058186",
+      "disease_name": "acute renal failure",
+      "n_predictions": 18,
+      "internal_gt": 3,
+      "expanded_gt": 69,
+      "gt_hits": 4,
+      "precision": 0.2222222222222222
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D063806",
+      "disease_name": "myalgia",
+      "n_predictions": 18,
+      "internal_gt": 4,
+      "expanded_gt": 25,
+      "gt_hits": 3,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001986",
+      "disease_name": "bronchospasm",
+      "n_predictions": 17,
+      "internal_gt": 10,
+      "expanded_gt": 25,
+      "gt_hits": 2,
+      "precision": 0.11764705882352942
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002546",
+      "disease_name": "transient ischaemic attack",
+      "n_predictions": 17,
+      "internal_gt": 6,
+      "expanded_gt": 7,
+      "gt_hits": 2,
+      "precision": 0.11764705882352942
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005901",
+      "disease_name": "glaucoma",
+      "n_predictions": 17,
+      "internal_gt": 12,
+      "expanded_gt": 103,
+      "gt_hits": 16,
+      "precision": 0.9411764705882354
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007299",
+      "disease_name": "insect bites",
+      "n_predictions": 17,
+      "internal_gt": 2,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008708",
+      "disease_name": "toxic methemoglobinemia",
+      "n_predictions": 17,
+      "internal_gt": 2,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009293",
+      "disease_name": "opioid overdose",
+      "n_predictions": 17,
+      "internal_gt": 6,
+      "expanded_gt": 29,
+      "gt_hits": 6,
+      "precision": 0.35294117647058826
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009471",
+      "disease_name": "neuromyelitis optica spectrum disorder",
+      "n_predictions": 17,
+      "internal_gt": 4,
+      "expanded_gt": 18,
+      "gt_hits": 3,
+      "precision": 0.17647058823529413
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010022",
+      "disease_name": "severe malignant osteopetrosis",
+      "n_predictions": 17,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 1,
+      "precision": 0.05882352941176471
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010024",
+      "disease_name": "osteoporosis",
+      "n_predictions": 17,
+      "internal_gt": 16,
+      "expanded_gt": 109,
+      "gt_hits": 16,
+      "precision": 0.9411764705882354
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011349",
+      "disease_name": "proctitis",
+      "n_predictions": 17,
+      "internal_gt": 2,
+      "expanded_gt": 10,
+      "gt_hits": 1,
+      "precision": 0.05882352941176471
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011697",
+      "disease_name": "acquired thrombotic thrombocytopenic purpura",
+      "n_predictions": 17,
+      "internal_gt": 3,
+      "expanded_gt": 14,
+      "gt_hits": 2,
+      "precision": 0.11764705882352942
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013119",
+      "disease_name": "neuropathic pain associated with spinal cord injury",
+      "n_predictions": 17,
+      "internal_gt": 3,
+      "expanded_gt": 128,
+      "gt_hits": 2,
+      "precision": 0.11764705882352942
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013610",
+      "disease_name": "paroxysmal tachycardia",
+      "n_predictions": 17,
+      "internal_gt": 3,
+      "expanded_gt": 51,
+      "gt_hits": 11,
+      "precision": 0.6470588235294117
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013789",
+      "disease_name": "thalassemia syndromes",
+      "n_predictions": 17,
+      "internal_gt": 4,
+      "expanded_gt": 22,
+      "gt_hits": 2,
+      "precision": 0.11764705882352942
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016585",
+      "disease_name": "bacterial vaginosis",
+      "n_predictions": 17,
+      "internal_gt": 4,
+      "expanded_gt": 17,
+      "gt_hits": 4,
+      "precision": 0.23529411764705885
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017497",
+      "disease_name": "hidradenitis suppurativa",
+      "n_predictions": 17,
+      "internal_gt": 3,
+      "expanded_gt": 17,
+      "gt_hits": 2,
+      "precision": 0.11764705882352942
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D019693",
+      "disease_name": "autoimmune hepatitis",
+      "n_predictions": 17,
+      "internal_gt": 1,
+      "expanded_gt": 23,
+      "gt_hits": 7,
+      "precision": 0.411764705882353
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020514",
+      "disease_name": "hypokalemic familial periodic paralysis",
+      "n_predictions": 17,
+      "internal_gt": 3,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D050177",
+      "disease_name": "overweight",
+      "n_predictions": 17,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D051437",
+      "disease_name": "kidney failure",
+      "n_predictions": 17,
+      "internal_gt": 4,
+      "expanded_gt": 372,
+      "gt_hits": 10,
+      "precision": 0.5882352941176471
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D052018",
+      "disease_name": "bulimia nervosa",
+      "n_predictions": 17,
+      "internal_gt": 1,
+      "expanded_gt": 19,
+      "gt_hits": 4,
+      "precision": 0.23529411764705885
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D055728",
+      "disease_name": "myelofibrosis",
+      "n_predictions": 17,
+      "internal_gt": 3,
+      "expanded_gt": 37,
+      "gt_hits": 5,
+      "precision": 0.29411764705882354
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D061218",
+      "disease_name": "treatment resistant depression",
+      "n_predictions": 17,
+      "internal_gt": 2,
+      "expanded_gt": 15,
+      "gt_hits": 2,
+      "precision": 0.11764705882352942
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000430",
+      "disease_name": "acute alcohol withdrawal",
+      "n_predictions": 16,
+      "internal_gt": 5,
+      "expanded_gt": 18,
+      "gt_hits": 3,
+      "precision": 0.1875
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000690",
+      "disease_name": "amyotrophic lateral sclerosis",
+      "n_predictions": 16,
+      "internal_gt": 2,
+      "expanded_gt": 55,
+      "gt_hits": 1,
+      "precision": 0.0625
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000740",
+      "disease_name": "anemia",
+      "n_predictions": 16,
+      "internal_gt": 22,
+      "expanded_gt": 111,
+      "gt_hits": 12,
+      "precision": 0.75
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000795",
+      "disease_name": "fabry disease",
+      "n_predictions": 16,
+      "internal_gt": 2,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000855",
+      "disease_name": "anorexia",
+      "n_predictions": 16,
+      "internal_gt": 2,
+      "expanded_gt": 10,
+      "gt_hits": 2,
+      "precision": 0.125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003047",
+      "disease_name": "coccidioidomycosis",
+      "n_predictions": 16,
+      "internal_gt": 4,
+      "expanded_gt": 12,
+      "gt_hits": 7,
+      "precision": 0.4375
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003327",
+      "disease_name": "chd",
+      "n_predictions": 16,
+      "internal_gt": 4,
+      "expanded_gt": 126,
+      "gt_hits": 9,
+      "precision": 0.5625
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006330",
+      "disease_name": "congenital heart disease",
+      "n_predictions": 16,
+      "internal_gt": 4,
+      "expanded_gt": 9,
+      "gt_hits": 6,
+      "precision": 0.375
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006646",
+      "disease_name": "langerhans cell histiocytosis",
+      "n_predictions": 16,
+      "internal_gt": 1,
+      "expanded_gt": 13,
+      "gt_hits": 2,
+      "precision": 0.125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006952",
+      "disease_name": "primary dysbetalipoproteinemia fredrickson type iii",
+      "n_predictions": 16,
+      "internal_gt": 1,
+      "expanded_gt": 11,
+      "gt_hits": 7,
+      "precision": 0.4375
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007008",
+      "disease_name": "hypokalemia",
+      "n_predictions": 16,
+      "internal_gt": 7,
+      "expanded_gt": 13,
+      "gt_hits": 5,
+      "precision": 0.3125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008181",
+      "disease_name": "lupus nephritis",
+      "n_predictions": 16,
+      "internal_gt": 6,
+      "expanded_gt": 35,
+      "gt_hits": 12,
+      "precision": 0.75
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008268",
+      "disease_name": "agerelated macular degeneration",
+      "n_predictions": 16,
+      "internal_gt": 6,
+      "expanded_gt": 36,
+      "gt_hits": 3,
+      "precision": 0.1875
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008269",
+      "disease_name": "diabetic macular edema",
+      "n_predictions": 16,
+      "internal_gt": 5,
+      "expanded_gt": 35,
+      "gt_hits": 7,
+      "precision": 0.4375
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009765",
+      "disease_name": "obesity",
+      "n_predictions": 16,
+      "internal_gt": 12,
+      "expanded_gt": 188,
+      "gt_hits": 10,
+      "precision": 0.625
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009771",
+      "disease_name": "obsessive compulsive disorder",
+      "n_predictions": 16,
+      "internal_gt": 1,
+      "expanded_gt": 64,
+      "gt_hits": 6,
+      "precision": 0.375
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012080",
+      "disease_name": "renal bone disease",
+      "n_predictions": 16,
+      "internal_gt": 2,
+      "expanded_gt": 11,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012772",
+      "disease_name": "distributive shock",
+      "n_predictions": 16,
+      "internal_gt": 6,
+      "expanded_gt": 73,
+      "gt_hits": 5,
+      "precision": 0.3125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013921",
+      "disease_name": "heparininduced thrombocytopenia hit type ii",
+      "n_predictions": 16,
+      "internal_gt": 19,
+      "expanded_gt": 63,
+      "gt_hits": 12,
+      "precision": 0.75
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014693",
+      "disease_name": "ventricular fibrillation",
+      "n_predictions": 16,
+      "internal_gt": 2,
+      "expanded_gt": 30,
+      "gt_hits": 8,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017719",
+      "disease_name": "diabetic foot infections of the skin and soft tissue",
+      "n_predictions": 16,
+      "internal_gt": 2,
+      "expanded_gt": 11,
+      "gt_hits": 2,
+      "precision": 0.125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018879",
+      "disease_name": "extrasystole",
+      "n_predictions": 16,
+      "internal_gt": 3,
+      "expanded_gt": 32,
+      "gt_hits": 8,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D050171",
+      "disease_name": "dyslipidaemia",
+      "n_predictions": 16,
+      "internal_gt": 13,
+      "expanded_gt": 48,
+      "gt_hits": 10,
+      "precision": 0.625
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006526",
+      "disease_name": "chronic hepatitis c",
+      "n_predictions": 15,
+      "internal_gt": 13,
+      "expanded_gt": 48,
+      "gt_hits": 4,
+      "precision": 0.26666666666666666
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009128",
+      "disease_name": "muscle stiffness",
+      "n_predictions": 15,
+      "internal_gt": 8,
+      "expanded_gt": 33,
+      "gt_hits": 5,
+      "precision": 0.33333333333333337
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010911",
+      "disease_name": "pituitary adenomas",
+      "n_predictions": 15,
+      "internal_gt": 1,
+      "expanded_gt": 21,
+      "gt_hits": 5,
+      "precision": 0.33333333333333337
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012532",
+      "disease_name": "scabies",
+      "n_predictions": 15,
+      "internal_gt": 6,
+      "expanded_gt": 9,
+      "gt_hits": 1,
+      "precision": 0.06666666666666667
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013832",
+      "disease_name": "thiamine deficiency",
+      "n_predictions": 15,
+      "internal_gt": 1,
+      "expanded_gt": 2,
+      "gt_hits": 2,
+      "precision": 0.13333333333333333
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017490",
+      "disease_name": "lamellar ichthyosis",
+      "n_predictions": 15,
+      "internal_gt": 1,
+      "expanded_gt": 8,
+      "gt_hits": 1,
+      "precision": 0.06666666666666667
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D034721",
+      "disease_name": "systemic mastocytosis with associated hematological neoplasm",
+      "n_predictions": 15,
+      "internal_gt": 7,
+      "expanded_gt": 32,
+      "gt_hits": 7,
+      "precision": 0.4666666666666666
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D053201",
+      "disease_name": "overactive bladder",
+      "n_predictions": 15,
+      "internal_gt": 10,
+      "expanded_gt": 35,
+      "gt_hits": 7,
+      "precision": 0.4666666666666666
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054990",
+      "disease_name": "idiopathic pulmonary fibrosis",
+      "n_predictions": 15,
+      "internal_gt": 1,
+      "expanded_gt": 34,
+      "gt_hits": 1,
+      "precision": 0.06666666666666667
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D065766",
+      "disease_name": "atypical hemolytic uremic syndrome",
+      "n_predictions": 15,
+      "internal_gt": 2,
+      "expanded_gt": 3,
+      "gt_hits": 2,
+      "precision": 0.13333333333333333
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005902",
+      "disease_name": "primary openangle glaucoma",
+      "n_predictions": 14,
+      "internal_gt": 14,
+      "expanded_gt": 39,
+      "gt_hits": 7,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006323",
+      "disease_name": "cardiac arrest",
+      "n_predictions": 14,
+      "internal_gt": 4,
+      "expanded_gt": 63,
+      "gt_hits": 6,
+      "precision": 0.42857142857142855
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010013",
+      "disease_name": "osteogenesis imperfecta",
+      "n_predictions": 14,
+      "internal_gt": 1,
+      "expanded_gt": 16,
+      "gt_hits": 1,
+      "precision": 0.07142857142857144
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D053159",
+      "disease_name": "dysuria",
+      "n_predictions": 14,
+      "internal_gt": 3,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054559",
+      "disease_name": "hyperphosphatemia",
+      "n_predictions": 14,
+      "internal_gt": 7,
+      "expanded_gt": 22,
+      "gt_hits": 2,
+      "precision": 0.14285714285714288
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003371",
+      "disease_name": "cough",
+      "n_predictions": 13,
+      "internal_gt": 2,
+      "expanded_gt": 16,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003554",
+      "disease_name": "cystinosis",
+      "n_predictions": 13,
+      "internal_gt": 1,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003920",
+      "disease_name": "diabetes mellitus",
+      "n_predictions": 13,
+      "internal_gt": 9,
+      "expanded_gt": 628,
+      "gt_hits": 9,
+      "precision": 0.6923076923076923
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004915",
+      "disease_name": "acute erythroid leukemia",
+      "n_predictions": 13,
+      "internal_gt": 1,
+      "expanded_gt": 6,
+      "gt_hits": 1,
+      "precision": 0.07692307692307693
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010698",
+      "disease_name": "phobic disorders",
+      "n_predictions": 13,
+      "internal_gt": 4,
+      "expanded_gt": 24,
+      "gt_hits": 5,
+      "precision": 0.3846153846153846
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011629",
+      "disease_name": "central precocious puberty",
+      "n_predictions": 13,
+      "internal_gt": 4,
+      "expanded_gt": 6,
+      "gt_hits": 1,
+      "precision": 0.07692307692307693
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015043",
+      "disease_name": "zollinger ellison syndrome",
+      "n_predictions": 13,
+      "internal_gt": 3,
+      "expanded_gt": 14,
+      "gt_hits": 3,
+      "precision": 0.23076923076923075
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003929",
+      "disease_name": "diabetic peripheral neuropathic pain",
+      "n_predictions": 12,
+      "internal_gt": 5,
+      "expanded_gt": 57,
+      "gt_hits": 5,
+      "precision": 0.41666666666666663
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015877",
+      "disease_name": "miosis",
+      "n_predictions": 12,
+      "internal_gt": 2,
+      "expanded_gt": 2,
+      "gt_hits": 1,
+      "precision": 0.08333333333333334
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018223",
+      "disease_name": "dermatofibrosarcoma protuberans",
+      "n_predictions": 12,
+      "internal_gt": 1,
+      "expanded_gt": 4,
+      "gt_hits": 1,
+      "precision": 0.08333333333333334
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D050500",
+      "disease_name": "chronic pancreatitis",
+      "n_predictions": 12,
+      "internal_gt": 1,
+      "expanded_gt": 13,
+      "gt_hits": 1,
+      "precision": 0.08333333333333334
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054179",
+      "disease_name": "hereditary angioedema",
+      "n_predictions": 12,
+      "internal_gt": 5,
+      "expanded_gt": 12,
+      "gt_hits": 1,
+      "precision": 0.08333333333333334
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D056806",
+      "disease_name": "urea cycle disorders",
+      "n_predictions": 12,
+      "internal_gt": 2,
+      "expanded_gt": 12,
+      "gt_hits": 2,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000140",
+      "disease_name": "severe primary lactic acidosis",
+      "n_predictions": 11,
+      "internal_gt": 1,
+      "expanded_gt": 14,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006073",
+      "disease_name": "gout",
+      "n_predictions": 11,
+      "internal_gt": 19,
+      "expanded_gt": 21,
+      "gt_hits": 2,
+      "precision": 0.18181818181818182
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007022",
+      "disease_name": "hypotension",
+      "n_predictions": 10,
+      "internal_gt": 6,
+      "expanded_gt": 76,
+      "gt_hits": 3,
+      "precision": 0.3
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011305",
+      "disease_name": "presbyopia",
+      "n_predictions": 10,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020790",
+      "disease_name": "central diabetes insipidus",
+      "n_predictions": 10,
+      "internal_gt": 1,
+      "expanded_gt": 10,
+      "gt_hits": 1,
+      "precision": 0.1
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005776",
+      "disease_name": "gaucher disease",
+      "n_predictions": 9,
+      "internal_gt": 5,
+      "expanded_gt": 8,
+      "gt_hits": 3,
+      "precision": 0.33333333333333337
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006929",
+      "disease_name": "bilateral micro or macronodular adrenal hyperplasia idiopathic hyperaldosteronism",
+      "n_predictions": 9,
+      "internal_gt": 1,
+      "expanded_gt": 20,
+      "gt_hits": 2,
+      "precision": 0.2222222222222222
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013971",
+      "disease_name": "thyrotoxicosis",
+      "n_predictions": 9,
+      "internal_gt": 1,
+      "expanded_gt": 7,
+      "gt_hits": 1,
+      "precision": 0.1111111111111111
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D049970",
+      "disease_name": "thyroid eye disease",
+      "n_predictions": 9,
+      "internal_gt": 1,
+      "expanded_gt": 14,
+      "gt_hits": 3,
+      "precision": 0.33333333333333337
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014511",
+      "disease_name": "uremia",
+      "n_predictions": 8,
+      "internal_gt": 1,
+      "expanded_gt": 24,
+      "gt_hits": 1,
+      "precision": 0.125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000224",
+      "disease_name": "addisons disease",
+      "n_predictions": 7,
+      "internal_gt": 3,
+      "expanded_gt": 14,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003919",
+      "disease_name": "diabetes insipidus",
+      "n_predictions": 7,
+      "internal_gt": 1,
+      "expanded_gt": 15,
+      "gt_hits": 1,
+      "precision": 0.14285714285714288
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010523",
+      "disease_name": "neuropathy",
+      "n_predictions": 7,
+      "internal_gt": 1,
+      "expanded_gt": 50,
+      "gt_hits": 4,
+      "precision": 0.5714285714285715
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001342",
+      "disease_name": "nondiabetic autonomic neuropathy",
+      "n_predictions": 6,
+      "internal_gt": 1,
+      "expanded_gt": 9,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008303",
+      "disease_name": "carcinoid syndrome diarrhoea",
+      "n_predictions": 6,
+      "internal_gt": 3,
+      "expanded_gt": 4,
+      "gt_hits": 1,
+      "precision": 0.16666666666666669
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015223",
+      "disease_name": "lysosomal acid lipase deficiency",
+      "n_predictions": 6,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016606",
+      "disease_name": "thyroid nodules",
+      "n_predictions": 6,
+      "internal_gt": 2,
+      "expanded_gt": 4,
+      "gt_hits": 2,
+      "precision": 0.33333333333333337
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003928",
+      "disease_name": "diabetic nephropathy",
+      "n_predictions": 5,
+      "internal_gt": 26,
+      "expanded_gt": 99,
+      "gt_hits": 1,
+      "precision": 0.2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009202",
+      "disease_name": "cardiomyopathy of variant transthyretinmediated amyloidosis",
+      "n_predictions": 4,
+      "internal_gt": 2,
+      "expanded_gt": 90,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002311",
+      "disease_name": "dilated cardiomyopathy",
+      "n_predictions": 3,
+      "internal_gt": 1,
+      "expanded_gt": 58,
+      "gt_hits": 2,
+      "precision": 0.6666666666666667
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006392",
+      "disease_name": "hemangioendothelioma",
+      "n_predictions": 2,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 1,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008202",
+      "disease_name": "lymphangioma",
+      "n_predictions": 2,
+      "internal_gt": 1,
+      "expanded_gt": 5,
+      "gt_hits": 1,
+      "precision": 0.5
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D024821",
+      "disease_name": "gastrointestinal stromal tumor",
+      "n_predictions": 2,
+      "internal_gt": 4,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C535860",
+      "disease_name": "infantile hemangioma",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 12,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C537290",
+      "disease_name": "processingdeficient progeroid laminopathies with either homozygous or compound heterozygous zmpste24 mutations",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C538090",
+      "disease_name": "advanced carcinoma of the ovary",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C538139",
+      "disease_name": "congenital sucraseisomaltase deficiency",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C562832",
+      "disease_name": "pulmonary atresia",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C563016",
+      "disease_name": "shaving bumps",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C563258",
+      "disease_name": "nesidioblastosis",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C565273",
+      "disease_name": "erosive or ulcerative disease",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C579969",
+      "disease_name": "cap",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000080424",
+      "disease_name": "cytokine release syndrome",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000086002",
+      "disease_name": "malignant pleural mesothelioma",
+      "n_predictions": 0,
+      "internal_gt": 4,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000163",
+      "disease_name": "congenital aids",
+      "n_predictions": 0,
+      "internal_gt": 8,
+      "expanded_gt": 115,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000238",
+      "disease_name": "chromophobe adenoma",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000432",
+      "disease_name": "methanol poisoning",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000858",
+      "disease_name": "ovulation disorders",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 8,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001165",
+      "disease_name": "arteriovenous malformations",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 8,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001282",
+      "disease_name": "flutter",
+      "n_predictions": 0,
+      "internal_gt": 12,
+      "expanded_gt": 26,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001361",
+      "disease_name": "vitamine deficiency",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001442",
+      "disease_name": "bacteroides fragilis infections",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001528",
+      "disease_name": "behcets disease",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 9,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001744",
+      "disease_name": "bladder calculi",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001765",
+      "disease_name": "blind loop syndrome",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001862",
+      "disease_name": "bone loss",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002032",
+      "disease_name": "binge eating disorder",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 8,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002340",
+      "disease_name": "extracranial carotid arteries",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 9,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003003",
+      "disease_name": "clonorchis sinensis infection",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003555",
+      "disease_name": "severe homozygous cystinuria",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 11,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003668",
+      "disease_name": "pressure ulcers",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 5,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004238",
+      "disease_name": "diverticulitis",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004541",
+      "disease_name": "eisenmengers physiology",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004828",
+      "disease_name": "focal onset seizures",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 24,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004830",
+      "disease_name": "primary generalised tonicclonic seizures",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004886",
+      "disease_name": "erysipelas",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004933",
+      "disease_name": "congenital esophageal atresia",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005168",
+      "disease_name": "congenital factor vii deficiency",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005211",
+      "disease_name": "fascioliasis",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 13,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005317",
+      "disease_name": "sga smallforgestational age dwarfism",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 13,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005348",
+      "disease_name": "fibrocystic breast disease",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005687",
+      "disease_name": "galactorrhea",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006327",
+      "disease_name": "heart block",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 39,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006331",
+      "disease_name": "heart disease",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 211,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006349",
+      "disease_name": "acquired valvular heart disease",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 19,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006394",
+      "disease_name": "angiosarcoma",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 16,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006402",
+      "disease_name": "haematological diseases",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 55,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006504",
+      "disease_name": "hepatic venoocclusive disease",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 5,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006530",
+      "disease_name": "hepatorenal syndrome",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 8,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006556",
+      "disease_name": "heroin addiction",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 7,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007402",
+      "disease_name": "intertrigo",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007634",
+      "disease_name": "inflammation of the cornea",
+      "n_predictions": 0,
+      "internal_gt": 16,
+      "expanded_gt": 68,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007724",
+      "disease_name": "kraurosis vulvae",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 9,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007876",
+      "disease_name": "legionella pneumophila",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007947",
+      "disease_name": "m7",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008048",
+      "disease_name": "lip cancer",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008088",
+      "disease_name": "listeria monocytogenes",
+      "n_predictions": 0,
+      "internal_gt": 7,
+      "expanded_gt": 8,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008415",
+      "disease_name": "mastocytosis",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 14,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008589",
+      "disease_name": "neisseria meningitidis infection",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 9,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009021",
+      "disease_name": "morphine addiction",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009845",
+      "disease_name": "oligozoospermia",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 9,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010025",
+      "disease_name": "radiation to bone",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010900",
+      "disease_name": "pituitary hypothalamic injury from trauma",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 14,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011081",
+      "disease_name": "relapsing polychrondritis",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 5,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011512",
+      "disease_name": "infections caused by proteus spp",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011658",
+      "disease_name": "ipf",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 32,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012167",
+      "disease_name": "macular hole",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 4,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012221",
+      "disease_name": "allergic perennial rhinitis",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 40,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012555",
+      "disease_name": "schistosoma mansoni",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 38,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013118",
+      "disease_name": "spinal cord compression",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 17,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014137",
+      "disease_name": "tracheobronchitis",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014188",
+      "disease_name": "transposition of the great vessels",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014257",
+      "disease_name": "trichuris trichiura",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 8,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014605",
+      "disease_name": "nonbehcets noninfectious uveitis",
+      "n_predictions": 0,
+      "internal_gt": 12,
+      "expanded_gt": 55,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014777",
+      "disease_name": "disease caused by vaccinia virus",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 29,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014813",
+      "disease_name": "hypoprothrombinemia secondary to factors limiting absorption or synthesis of vitamin k",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015352",
+      "disease_name": "dry eye",
+      "n_predictions": 0,
+      "internal_gt": 4,
+      "expanded_gt": 25,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015605",
+      "disease_name": "cowpox",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016532",
+      "disease_name": "mucopolysaccharidosis type ii",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016538",
+      "disease_name": "mucopolysaccharidosis vii mps vii sly syndrome",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017118",
+      "disease_name": "acute porphyria",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 10,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D017241",
+      "disease_name": "melas",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018088",
+      "disease_name": "tb resistant to isoniazid and rifampin",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 37,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018212",
+      "disease_name": "giant cell tumor of bone",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018243",
+      "disease_name": "teratocarcinoma",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D019121",
+      "disease_name": "infections caused by burkholderia spp",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D019142",
+      "disease_name": "ebola virus disease evd",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D019588",
+      "disease_name": "early skin aging",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D019896",
+      "disease_name": "alpha1proteinase inhibitor deficiency",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020096",
+      "disease_name": "mucormycosis",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020163",
+      "disease_name": "ornithine transcarbamylase deficiency",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020165",
+      "disease_name": "carbamylphosphate synthetase deficiency",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020181",
+      "disease_name": "obstructive sleep apnoea",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 45,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020190",
+      "disease_name": "juvenile myoclonic epilepsy",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 6,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020256",
+      "disease_name": "choroidal neovascularization",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 16,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D020945",
+      "disease_name": "central nervous system lupus",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D023521",
+      "disease_name": "chlamydia trachomatis infections",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D029242",
+      "disease_name": "lebers hereditary optic neuropathy lhon",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 3,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D041781",
+      "disease_name": "obstructive jaundice",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 15,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D049913",
+      "disease_name": "cushings disease",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D052496",
+      "disease_name": "familial partial ld",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054508",
+      "disease_name": "hematopoietic syndrome of acute radiation syndrome hsars",
+      "n_predictions": 0,
+      "internal_gt": 3,
+      "expanded_gt": 3,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054970",
+      "disease_name": "pure autonomic failure",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D054973",
+      "disease_name": "malignant perivascular epithelioid cell tumor pecoma",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D055496",
+      "disease_name": "neurogenic bowel disturbances",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 1,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D055959",
+      "disease_name": "degenerative disc disease",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 2,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D056486",
+      "disease_name": "acetaminopheninduced hepatic injury",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 210,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D056586",
+      "disease_name": "acute chest syndrome",
+      "n_predictions": 0,
+      "internal_gt": 2,
+      "expanded_gt": 8,
+      "gt_hits": 0,
+      "precision": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D058499",
+      "disease_name": "inherited retinal dystrophy",
+      "n_predictions": 0,
+      "internal_gt": 1,
+      "expanded_gt": 0,
+      "gt_hits": 0,
+      "precision": 0.0
+    }
+  ],
+  "category_breakdown": {
+    "autoimmune": {
+      "never_holdout": 13,
+      "total": 34,
+      "pct": 0.38235294117647056
+    },
+    "cancer": {
+      "never_holdout": 28,
+      "total": 108,
+      "pct": 0.25925925925925924
+    },
+    "cardiovascular": {
+      "never_holdout": 21,
+      "total": 59,
+      "pct": 0.3559322033898305
+    },
+    "dermatological": {
+      "never_holdout": 14,
+      "total": 37,
+      "pct": 0.3783783783783784
+    },
+    "endocrine": {
+      "never_holdout": 3,
+      "total": 5,
+      "pct": 0.6
+    },
+    "gastrointestinal": {
+      "never_holdout": 13,
+      "total": 40,
+      "pct": 0.325
+    },
+    "hematological": {
+      "never_holdout": 10,
+      "total": 26,
+      "pct": 0.38461538461538464
+    },
+    "immunological": {
+      "never_holdout": 2,
+      "total": 12,
+      "pct": 0.16666666666666666
+    },
+    "infectious": {
+      "never_holdout": 35,
+      "total": 131,
+      "pct": 0.26717557251908397
+    },
+    "metabolic": {
+      "never_holdout": 25,
+      "total": 64,
+      "pct": 0.390625
+    },
+    "musculoskeletal": {
+      "never_holdout": 4,
+      "total": 14,
+      "pct": 0.2857142857142857
+    },
+    "neurological": {
+      "never_holdout": 21,
+      "total": 47,
+      "pct": 0.44680851063829785
+    },
+    "ophthalmic": {
+      "never_holdout": 9,
+      "total": 20,
+      "pct": 0.45
+    },
+    "other": {
+      "never_holdout": 95,
+      "total": 304,
+      "pct": 0.3125
+    },
+    "psychiatric": {
+      "never_holdout": 5,
+      "total": 16,
+      "pct": 0.3125
+    },
+    "renal": {
+      "never_holdout": 9,
+      "total": 22,
+      "pct": 0.4090909090909091
+    },
+    "reproductive": {
+      "never_holdout": 0,
+      "total": 3,
+      "pct": 0.0
+    },
+    "respiratory": {
+      "never_holdout": 9,
+      "total": 23,
+      "pct": 0.391304347826087
+    },
+    "unknown": {
+      "never_holdout": 21,
+      "total": 69,
+      "pct": 0.30434782608695654
+    }
+  }
+}
