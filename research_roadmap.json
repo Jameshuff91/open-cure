@@ -15701,14 +15701,16 @@
       "priority": 4,
       "expected_impact": "low",
       "effort": "medium",
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "List all hematological MEDIUM predictions with their diseases",
         "Classify diseases: autoimmune-mediated (ITP, AIHA) vs non-immune (DIC, anemia of chronic disease)",
         "Check holdout precision for immune vs non-immune subsets",
         "Demote non-immune CS\u2192hematological to LOW if holdout confirms",
         "Run holdout evaluation"
-      ]
+      ],
+      "findings": "All 12 hematological MEDIUM predictions are corticosteroids. 10/12 are for immune-mediated diseases (ITP, TTP, acquired hemophilia A, aplastic anemia, hypereosinophilic syndrome, aHUS) where CS is genuinely first-line therapy. The 2 non-immune predictions (CS\u2192congenital hypoplastic anemia) are also medically valid (Diamond-Blackfan anemia responds to CS). No non-CS predictions exist to demote. Holdout 15.6% \u00b1 20.5% (n=3/seed) is unreliable due to tiny sample.",
+      "result_metric": "No change. 0 predictions to demote."
     },
     {
       "id": "h773",
@@ -15818,7 +15820,7 @@
       "priority": 4,
       "effort": "medium",
       "expected_impact": "medium",
-      "status": "pending",
+      "status": "validated",
       "rationale": "h774/h776/h777 expanded individual drug classes. A systematic audit would identify ALL remaining partially-covered inverse indication classes at once, rather than doing them one-by-one.",
       "steps": [
         "Extract all unique drug names from INVERSE_INDICATION_PAIRS",
@@ -15827,7 +15829,9 @@
         "Identify classes with <50% member coverage",
         "Prioritize by number of predictions affected",
         "Expand top 3-5 incomplete classes"
-      ]
+      ],
+      "findings": "Systematic audit of 13 drug classes found 6 classes with incomplete coverage: NSAIDs (25%), antipsychotics (0%), fluoroquinolones (0%), estrogens (40%), corticosteroids (79%), SSRIs (83%). However, checking actual predictions revealed ZERO predictions to filter for any of the missing drugs. Missing NSAIDs (ibuprofen etc.) do not generate peptic ulcer/GI bleeding predictions. Missing antipsychotics do not generate Parkinson/diabetes predictions. Missing fluoroquinolones do not generate tendinopathy/neuropathy predictions. The kNN model simply does not predict these drugs for the diseases they cause. CONCLUSION: Current inverse indication coverage is functionally complete \u2014 all drug-disease predictions that NEED filtering are already filtered. Remaining gaps are defensive only.",
+      "result_metric": "No predictions to filter. Coverage functionally complete."
     },
     {
       "id": "h780",
@@ -18310,6 +18314,12 @@
       "hypothesis_id": "h776+h777",
       "learning": "Inverse indication class expansion (ACEi\u2192angioedema, aminoglycosides\u2192nephrotoxicity) is low-impact since most class members do not generate relevant predictions. Only 2 predictions moved. Defensive entries still valuable for safety.",
       "implication": "Future inverse indication expansions should check actual prediction counts BEFORE implementation to assess whether effort is justified."
+    },
+    {
+      "date": "2026-02-24",
+      "hypothesis_id": "h779",
+      "learning": "Systematic inverse indication audit shows 6/13 drug classes have incomplete class coverage, but ZERO actual predictions need filtering. kNN does not generate predictions for drugs\u2192diseases they cause (the embeddings naturally separate them). Inverse indications are mostly defensive entries.",
+      "implication": "Future inverse indication work has diminishing returns. Only add entries when actual predictions are found (check predictions FIRST, then add entries). The kNN embedding space already separates most harmful drug-disease pairs."
     }
   ],
   "collaborations": [
