@@ -4632,7 +4632,80 @@ class DrugRepurposingPredictor:
                         drug_scores[drug_id] += neighbor_sim
 
             if not drug_scores:
-                coverage_warning = "No drugs found in kNN neighborhood."
+                # h900: Mechanism-only fallback for rare diseases with zero kNN coverage.
+                # When kNN finds no drugs (15.3% of diseases), fall back to ranking
+                # all drugs by gene target overlap with the disease. This provides
+                # predictions where kNN gives nothing, at lower confidence (LOW tier).
+                # Expected precision: 10-20% (comparable to LOW tier).
+                mech_scores = self._get_target_scores(disease_id) if disease_id else {}
+                if mech_scores:
+                    coverage_warning = (
+                        f"No kNN coverage. Using mechanism-only fallback "
+                        f"({len(mech_scores)} drugs with gene overlap)."
+                    )
+                    # Sort by overlap count desc, drug_id for determinism
+                    sorted_mech = sorted(
+                        mech_scores.items(),
+                        key=lambda x: (-x[1], x[0])
+                    )[:top_n]
+                    max_overlap = sorted_mech[0][1] if sorted_mech else 1
+
+                    for rank, (drug_id, overlap) in enumerate(sorted_mech, 1):
+                        drug_name = self.drug_id_to_name.get(drug_id, drug_id)
+                        norm_score = overlap / max_overlap if max_overlap > 0 else 0
+                        train_freq = self.drug_train_freq.get(drug_id, 0)
+                        has_targets = drug_id in self.drug_targets and len(self.drug_targets[drug_id]) > 0
+
+                        # Use _assign_confidence_tier for safety checks (inverse
+                        # indications, non-therapeutic filtering), then override
+                        # tier to LOW since mechanism alone is weak signal.
+                        assigned_tier, rescue_applied, assigned_cat = self._assign_confidence_tier(
+                            rank, train_freq, True, has_targets, disease_tier, category,
+                            drug_name, disease_name, drug_id, 0.0
+                        )
+
+                        # If safety filters triggered FILTER, respect that
+                        if assigned_tier == ConfidenceTier.FILTER:
+                            tier = ConfidenceTier.FILTER
+                            cat_specific = assigned_cat
+                        else:
+                            # Cap at LOW — mechanism alone insufficient for higher tiers
+                            tier = ConfidenceTier.LOW
+                            cat_specific = 'mechanism_only_fallback'
+
+                        # Literature evidence can still promote (h789/h815)
+                        lit_level, lit_score = self._get_literature_evidence(drug_name, disease_name)
+                        if lit_level == 'STRONG_EVIDENCE' and category != 'other' and tier != ConfidenceTier.FILTER:
+                            tier = ConfidenceTier.HIGH
+                            cat_specific = 'mechanism_fallback_literature_strong'
+                        elif lit_level == 'MODERATE_EVIDENCE' and tier != ConfidenceTier.FILTER:
+                            tier = ConfidenceTier.MEDIUM
+                            cat_specific = 'mechanism_fallback_literature_moderate'
+
+                        pred = DrugPrediction(
+                            drug_name=drug_name,
+                            drug_id=drug_id,
+                            rank=rank,
+                            knn_score=0.0,  # No kNN score
+                            norm_score=norm_score,
+                            confidence_tier=tier,
+                            train_frequency=train_freq,
+                            mechanism_support=True,  # All fallback preds have mechanism
+                            has_targets=has_targets,
+                            category=category,
+                            disease_tier=disease_tier,
+                            category_rescue_applied=False,
+                            category_specific_tier=cat_specific,
+                            transe_consilience=False,
+                            rank_bucket_precision=get_rank_bucket_precision(tier.value, rank),
+                            category_holdout_precision=get_category_holdout_precision(category, tier.value),
+                            literature_evidence_level=lit_level,
+                            literature_evidence_score=lit_score,
+                        )
+                        if include_filtered or tier != ConfidenceTier.FILTER:
+                            predictions.append(pred)
+                else:
+                    coverage_warning = "No drugs found in kNN neighborhood or mechanism fallback."
             else:
                 # h374: Apply MinRank ensemble for cancer/neuro/metabolic categories
                 # For these categories, combine kNN and target overlap via min-rank fusion
