@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>preprint_draft</title>
+    <style>
+    @page { size: A4; margin: 2.5cm; }
+    @media print {
+      body { font-size: 10pt; }
+      h1 { font-size: 16pt; }
+      h2 { font-size: 13pt; page-break-after: avoid; }
+      h3 { font-size: 11pt; page-break-after: avoid; }
+      table { page-break-inside: avoid; }
+      .figure { page-break-inside: avoid; }
+    }
+    body {
+      font-family: "Times New Roman", Georgia, serif;
+      max-width: 750px;
+      margin: 0 auto;
+      padding: 2rem;
+      line-height: 1.5;
+      color: #1a1a1a;
+      font-size: 11pt;
+    }
+    h1 {
+      font-size: 18pt;
+      text-align: center;
+      margin-bottom: 0.5em;
+      line-height: 1.3;
+    }
+    h1 + p, h1 + p + p, h1 + p + p + p {
+      text-align: center;
+    }
+    h2 {
+      font-size: 14pt;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.2em;
+      margin-top: 1.8em;
+    }
+    h3 { font-size: 12pt; margin-top: 1.4em; }
+    p { text-align: justify; margin: 0.6em 0; }
+    blockquote {
+      border-left: 3px solid #2980b9;
+      background: #f0f5fa;
+      padding: 0.8em 1.2em;
+      margin: 1em 0;
+      font-size: 10pt;
+      color: #333;
+    }
+    blockquote p { text-align: left; }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1em 0;
+      font-size: 9.5pt;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.4em 0.6em;
+      text-align: center;
+    }
+    th {
+      background: #f0f0f5;
+      font-weight: bold;
+    }
+    tr:nth-child(even) { background: #fafafa; }
+    code { white-space: pre-wrap; font-size: 9pt; background: #f5f5f5; padding: 0.1em 0.3em; border-radius: 2px; }
+    .display.math { display: block; text-align: center; margin: 0.5rem auto; font-family: monospace; background: #f8f8fc; padding: 0.5em; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 1.5em 0; }
+    .figure {
+      text-align: center;
+      margin: 1.5em 0;
+    }
+    .figure img {
+      max-width: 100%;
+      height: auto;
+    }
+    .figure .caption {
+      font-size: 9pt;
+      font-style: italic;
+      color: #555;
+      margin-top: 0.5em;
+      text-align: left;
+      padding: 0 0.5em;
+    }
+    .figure-pair {
+      display: flex;
+      gap: 1em;
+      margin: 1.5em 0;
+      page-break-inside: avoid;
+    }
+    .figure-pair .figure {
+      flex: 1;
+      margin: 0;
+    }
+    .figure-pair .figure img {
+      width: 100%;
+    }
+    .figure-pair .figure:only-child {
+      max-width: 85%;
+      margin: 0 auto;
+    }
+    ul, ol { margin: 0.5em 0; padding-left: 2em; }
+    li { margin: 0.3em 0; }
+  </style>
+</head>
+<body>
+<h1
+id="confidence-stratified-drug-repurposing-via-collaborative-filtering-on-biomedical-knowledge-graphs">Confidence-Stratified
+Drug Repurposing via Collaborative Filtering on Biomedical Knowledge
+Graphs</h1>
+<p><strong>James Huff</strong>¹</p>
+<p>¹ Independent Researcher</p>
+<p><strong>Correspondence:</strong> jamesdanielhuff@gmail.com</p>
+<hr />
+<blockquote>
+<p><strong>AI Disclosure:</strong> This manuscript was drafted with
+assistance from Claude Code (Anthropic). All computational experiments,
+data analysis, hypothesis generation, and confidence system development
+were conducted collaboratively between the author and Claude Code over
+approximately 800+ experimental iterations. The author directed all
+research decisions, validated results, and assumes full responsibility
+for scientific claims.</p>
+</blockquote>
+<hr />
+<h2 id="abstract">Abstract</h2>
+<p>Drug repurposing—identifying new therapeutic uses for existing
+drugs—offers a faster, cheaper path to treatment than de novo drug
+discovery. We present a confidence-stratified collaborative filtering
+approach for systematic drug repurposing using the Drug Repurposing
+Knowledge Graph (DRKG). Our method applies k-nearest neighbor (kNN)
+collaborative filtering on Node2Vec graph embeddings, combined with a
+30-rule confidence tier system that stratifies predictions by expected
+clinical plausibility. On a disease-level holdout evaluation across 368
+diseases using 5-seed cross-validation, the method achieves 26.06% ±
+3.84% Recall@30 in transductive evaluation and 15.73% ± 1.82% in fully
+inductive evaluation using pathway features alone—competitive with TxGNN
+(6.7–14.5%). The confidence tier system achieves 87.1% ± 2.7% holdout
+precision for its highest tier (GOLDEN, 991 predictions) and 83.4% ±
+4.0% for the HIGH tier (1,168 predictions), incorporating
+mechanism-of-action validation, inverse indication safety filters (163
+drug-disease contraindication pairs), and TransE embedding consilience.
+Five predictions are retrospectively corroborated by independent
+clinical evidence, including Dantrolene for heart failure (RCT P=0.034),
+Rituximab for multiple sclerosis (WHO Essential Medicines 2023), and
+Empagliflozin for Parkinson’s disease (HR 0.80, Korean cohort study).
+The full pipeline produces 13,416 confidence-scored predictions across
+455 diseases as a computational prioritization resource. We characterize
+fundamental performance ceilings—37% R@30 maximum with DRKG-only
+features, 60% oracle ceiling—and document systematic failure modes
+including biologic drug underperformance, rare disease coverage gaps,
+and a 2.4× performance ratio between well-studied and rare diseases.
+Code and predictions are available at
+https://github.com/jimhuff/open-cure.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Drug repurposing leverages existing safety and pharmacokinetic data
+to identify new therapeutic applications for approved drugs, reducing
+the typical 10–15 year drug development timeline to 3–5 years and costs
+from $2.6 billion to $300 million on average (Pushpakom et al., 2019).
+Notable successes include thalidomide for multiple myeloma, sildenafil
+for pulmonary hypertension, and most recently, baricitinib for
+COVID-19.</p>
+<p>Computational approaches to drug repurposing have proliferated,
+broadly falling into three categories: network-based methods that
+exploit drug-disease proximity in biological networks (Cheng et al.,
+2018), machine learning on knowledge graph embeddings (Mohamed et al.,
+2020), and deep learning approaches including graph neural networks
+(Huang et al., 2024). TxGNN, a leading graph neural network approach,
+achieves 6.7–14.5% Recall@30 on zero-shot (inductive) evaluation across
+unseen diseases (Huang et al., 2024).</p>
+<p>However, most computational repurposing methods share two critical
+limitations. First, they produce ranked lists without calibrated
+confidence estimates, making it impossible for domain experts to
+prioritize which predictions merit expensive wet-lab validation. Second,
+they rarely incorporate safety constraints—a high-scoring prediction is
+useless if the drug is known to cause the predicted disease (e.g.,
+corticosteroids for osteoporosis, antipsychotics for parkinsonism).</p>
+<p>We address both gaps with a two-stage approach:</p>
+<ol type="1">
+<li><p><strong>Collaborative filtering on knowledge graph
+embeddings.</strong> We apply kNN collaborative filtering (k=20) on
+Node2Vec embeddings of the DRKG, treating drug repurposing as a
+recommendation problem: diseases with similar graph neighborhoods should
+respond to similar treatments. This simple approach achieves 26.06% ±
+3.84% R@30 in honest transductive evaluation, comparing favorably with
+more complex graph neural network architectures under different
+evaluation paradigms (see Section 3.1 for caveats).</p></li>
+<li><p><strong>Confidence-stratified post-processing.</strong> We
+develop a 30-rule confidence tier system that stratifies predictions
+into five tiers (GOLDEN, HIGH, MEDIUM, LOW, FILTER) based on
+mechanism-of-action support, disease hierarchy matching, drug class
+validation, TransE embedding consilience, and inverse indication safety
+filters. The highest tier achieves 87.1% holdout precision, providing
+actionable prioritization for experimental validation.</p></li>
+</ol>
+<h2 id="methods">Methods</h2>
+<h3 id="knowledge-graph">2.1 Knowledge Graph</h3>
+<p>We use the Drug Repurposing Knowledge Graph (DRKG; Ioannidis et al.,
+2020), a comprehensive biomedical knowledge graph integrating six
+databases (DrugBank, Hetionet, GNBR, String, IntAct, and DGIdb). DRKG
+contains approximately 97,000 entities and 5.8 million edges spanning
+drug-gene, gene-disease, drug-disease, and protein-protein interaction
+relationships.</p>
+<h3 id="ground-truth-construction">2.2 Ground Truth Construction</h3>
+<p>Ground truth drug-disease treatment pairs were compiled from two
+sources:</p>
+<ul>
+<li><strong>Every Cure indicationList</strong> (Every Cure Foundation):
+3,996 disease entries with curated drug indications.</li>
+<li><strong>Expanded ground truth</strong>: Additional pairs mined from
+DrugBank, SIDER, and literature, totaling 57,495 validated drug-disease
+pairs across 3,454 diseases and 11,656 drugs.</li>
+</ul>
+<p>Disease entities were mapped to Medical Subject Headings (MeSH)
+identifiers for alignment with DRKG. This mapping introduced significant
+attrition: of 3,996 initial diseases, 454 (11.4%) successfully mapped to
+DRKG entities, yielding 368 diseases with at least one evaluable ground
+truth drug after treatment edge removal (90.8% total attrition). We
+characterize this selection bias in the Limitations section.</p>
+<p>Circularity analysis revealed that 32% of ground truth pairs
+(1,184/3,695) correspond to existing DRKG treatment edges, while 68%
+(2,511 pairs) are novel to the graph—establishing that the majority of
+evaluation targets require genuine inference rather than
+memorization.</p>
+<h3 id="graph-embeddings">2.3 Graph Embeddings</h3>
+<p>We generated 256-dimensional Node2Vec embeddings (Grover &amp;
+Leskovec, 2016) for all DRKG entities using the following
+hyperparameters: walk length = 80, walks per node = 10, p = 1.0 (return
+parameter), q = 1.0 (in-out parameter). These parameters were inherited
+from prior work and not independently optimized; sensitivity analysis
+via kNN performance suggested robustness to moderate perturbations.</p>
+<p>For honest evaluation, we trained two embedding sets:</p>
+<ul>
+<li><strong>Original embeddings</strong>: Node2Vec on the complete DRKG
+including treatment edges.</li>
+<li><strong>Honest embeddings</strong>: Node2Vec on DRKG with all 64,000
+treatment edges removed prior to training.</li>
+</ul>
+<p>The honest embedding evaluation revealed that 71.0% of predictive
+performance is retained through indirect graph paths (gene-disease,
+drug-gene, protein-protein interactions), with a 10.5 percentage point
+drop from 36.59% to 26.06% R@30. This drop quantifies the contribution
+of direct treatment edge leakage versus genuine biological signal.
+Removal of treatment edges disconnected 51 diseases from the graph
+entirely, including clinically important conditions such as Parkinson’s
+disease (19 ground truth drugs).</p>
+<h3 id="knn-collaborative-filtering">2.4 kNN Collaborative
+Filtering</h3>
+<p>We frame drug repurposing as a collaborative filtering problem:
+diseases that are “similar” (proximal in embedding space) should respond
+to similar drugs—analogous to how users with similar preferences receive
+similar recommendations.</p>
+<p>For each query disease <em>d</em>:</p>
+<ol type="1">
+<li>Compute cosine similarity between <em>d</em>’s Node2Vec embedding
+and all other disease embeddings.</li>
+<li>Select the <em>k</em> = 20 nearest neighbor diseases.</li>
+<li>Aggregate ground truth treatments across neighbors, ranking
+candidate drugs by frequency of occurrence (i.e., how many of the
+<em>k</em> neighbors are treated by each drug).</li>
+<li>Apply the Quad Boost scoring adjustment (Section 2.5).</li>
+<li>Return the top-ranked drugs as predictions.</li>
+</ol>
+<p>The value <em>k</em> = 20 was selected via grid search over 72
+configurations (k ∈ {5, 10, 15, 20, 25, 30, 40, 50}) and validated on
+held-out diseases. Ties in drug frequency are broken by drug identifier
+for reproducibility.</p>
+<h3 id="feature-enhanced-scoring-quad-boost">2.5 Feature-Enhanced
+Scoring (Quad Boost)</h3>
+<p>Raw kNN frequency scores are adjusted by four biologically-motivated
+features:</p>
+<p><span
+class="math display">score<sub>adj</sub> = score × (1 + 0.01 ⋅ <em>o</em> + 0.05 ⋅ <em>a</em> + 0.01 ⋅ <em>p</em>) × <em>m</em></span></p>
+<p>where:</p>
+<ul>
+<li><em>o</em> = min(target gene overlap count, 10): number of shared
+gene targets between drug and disease (capped at 10; DrugBank, 11,656
+drug-gene pairs)</li>
+<li><em>a</em> = ATC mechanism score: anatomical therapeutic chemical
+classification coherence (12.2% drug coverage)</li>
+<li><em>p</em> = KEGG pathway overlap: Jaccard similarity of drug target
+pathways and disease-associated pathways (~82% coverage)</li>
+<li><em>m</em> = chemical similarity multiplier: 1.2 if Tanimoto
+similarity (Morgan fingerprints, 2048-bit ECFP4) to a known treatment
+exceeds 0.7, else 1.0 (91.5% drug coverage, 9,584 drugs)</li>
+</ul>
+<p>The Quad Boost improved R@30 from 38.72% to 47.47% in
+within-distribution evaluation. The target gene overlap component was
+statistically validated: McNemar’s test P = 0.000014, paired t-test P =
+0.025, Cohen’s d = 2.44.</p>
+<h3 id="confidence-tier-system">2.6 Confidence Tier System</h3>
+<p>We developed a hierarchical rule-based confidence system that assigns
+each prediction to one of five tiers based on 30 validated rules
+organized into the following categories:</p>
+<p><strong>GOLDEN tier</strong> (87.1% ± 2.7% holdout precision,
+<em>n</em> = 991): - Disease hierarchy subtype matching for
+metabolic/neurological categories (63–65% precision) -
+Literature-validated strong evidence pairs - Specific high-precision
+disease categories (e.g., urinary tract infections)</p>
+<p><strong>HIGH tier</strong> (83.4% ± 4.0%, <em>n</em> = 1,168): -
+Disease hierarchy matching for
+autoimmune/respiratory/cardiovascular/infectious categories (22–45%
+base, elevated by convergent evidence) - Mechanism-of-action support
+with cardiovascular/neurological requirement gates - CV
+pathway-comprehensive drugs (28.9% vs 1.1% for non-pathway, 26× lift) -
+ATC class rescue for validated drug classes (L04AX: 82%, H02AB: 77%) -
+TransE consilience with mechanism support - Corticosteroid
+standard-of-care for autoimmune/dermatological/respiratory
+conditions</p>
+<p><strong>MEDIUM tier</strong> (38.5% ± 3.6%, <em>n</em> = 914): -
+Predictions meeting baseline kNN rank thresholds without additional
+validation signals - Cancer same-type predictions with mechanism
+support</p>
+<p><strong>LOW tier</strong> (11.3% ± 0.5%, <em>n</em> = 9,113): -
+Predictions lacking mechanism support, hierarchy matching, or TransE
+consilience - Domain-isolated drug cross-predictions - Broad class
+isolated predictions (IL/TNF inhibitors, anesthetics, steroids alone:
+0–3% precision)</p>
+<p><strong>FILTER tier</strong> (9.2% ± 0.5%, <em>n</em> = 8,978): -
+Cancer-only drugs for non-cancer indications (69 drugs, 0% cross-domain
+precision) - Inverse indication pairs: drug known to cause the predicted
+disease (67 drugs, 163 pairs) - Sources: SIDER adverse effect mining (47
+pairs, 93.3% filter precision), FDA labels, FAERS reports, published
+case series - Examples: corticosteroids →
+tuberculosis/glaucoma/osteoporosis; NSAIDs → Stevens-Johnson
+syndrome/peptic ulcer; anti-TNF agents → lupus/demyelination -
+Non-therapeutic compounds (surgical dyes, obsolete ganglionic blockers)
+- Withdrawn drugs with known toxicity (pergolide, cisapride) -
+Antimicrobial-pathogen spectrum mismatches (antibacterial →
+fungal/parasitic: 0% holdout)</p>
+<p>Each rule was validated on held-out diseases with a minimum sample
+size of <em>n</em> ≈ 30 for reliable precision estimation. Rules
+producing holdout precision below the tier threshold were demoted. The
+system underwent 800+ iterative refinements, with each change validated
+against holdout performance before acceptance.</p>
+<p><strong>Important methodological note:</strong> The confidence rules
+were developed iteratively using disease-level holdout splits, where
+held-out <em>diseases</em> (not held-out rules) served as the evaluation
+set. Each candidate rule was tested on diseases excluded from the rule
+development process. However, the overall rule set was not frozen prior
+to a final independent evaluation—the reported precision estimates
+reflect the cumulative result of iterative development and holdout
+testing on the same ground truth distribution. We acknowledge this
+creates a risk of overfitting to the specific ground truth composition
+(see Limitations).</p>
+<h3 id="transe-consilience-scoring">2.7 TransE Consilience Scoring</h3>
+<p>We trained a TransE embedding model (Bordes et al., 2013) on DRKG to
+provide an independent validation signal. For each prediction, we check
+whether the drug-disease pair appears in the TransE model’s top-30
+ranked predictions. TransE agreement provides a consistent boost across
+all tiers: GOLDEN +11.4 pp, HIGH +6.1 pp, MEDIUM +13.6 pp, LOW +6.5 pp,
+FILTER +7.2 pp. TransE consilience is implemented as a boolean flag
+rather than a tier promotion, as full-data precision (37.4%) falls below
+the HIGH tier threshold (50.8%).</p>
+<h3 id="evaluation-protocol">2.8 Evaluation Protocol</h3>
+<p>All reported metrics use disease-level holdout evaluation with 5-seed
+cross-validation:</p>
+<ol type="1">
+<li>Randomly partition diseases into 80% training / 20% test
+splits.</li>
+<li>For honest evaluation: remove all treatment edges from DRKG before
+Node2Vec training.</li>
+<li>Train kNN on training disease treatments only.</li>
+<li>Evaluate R@30 (Recall at 30) on test diseases: for each test
+disease, what fraction of its ground truth treatments appear in the top
+30 predictions?</li>
+<li>Repeat across 5 random seeds and report mean ± standard
+deviation.</li>
+</ol>
+<p>We additionally report a fully inductive evaluation using KEGG
+pathway features alone (no graph embeddings), providing a fair
+comparison point with TxGNN’s zero-shot evaluation paradigm.</p>
+<h2 id="results">Results</h2>
+<h3 id="primary-performance">3.1 Primary Performance</h3>
+<p>Figure 3 and Table 1 summarize performance across evaluation
+paradigms.</p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 18%" />
+<col style="width: 36%" />
+<col style="width: 21%" />
+</colgroup>
+<thead>
+<tr>
+<th>Method</th>
+<th>R@30</th>
+<th>Evaluation</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>kNN k=20 (original embeddings)</td>
+<td>36.59% ± 3.90%</td>
+<td>Transductive (with treatment edges)</td>
+<td>Upper bound; includes leakage</td>
+</tr>
+<tr>
+<td><strong>kNN k=20 (honest embeddings)</strong></td>
+<td><strong>26.06% ± 3.84%</strong></td>
+<td><strong>Transductive (no treatment edges)</strong></td>
+<td><strong>Primary reported result</strong></td>
+</tr>
+<tr>
+<td>KEGG Pathway kNN</td>
+<td>15.73% ± 1.82%</td>
+<td>Inductive (no graph)</td>
+<td>Fair TxGNN comparison</td>
+</tr>
+<tr>
+<td>Node2Vec + XGBoost (tuned)</td>
+<td>25.85% ± 4.06%</td>
+<td>Disease holdout</td>
+<td>md=6, ne=500, lr=0.1</td>
+</tr>
+<tr>
+<td>Node2Vec cosine (no ML)</td>
+<td>1.27%</td>
+<td>Honest</td>
+<td>Confirms ML contribution</td>
+</tr>
+<tr>
+<td>TxGNN (Huang et al., 2024)</td>
+<td>6.7–14.5%</td>
+<td>Inductive zero-shot</td>
+<td>Published baseline</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What this demonstrates:</strong> The transductive result
+(26.06%) establishes that collaborative filtering captures meaningful
+biological signal beyond direct treatment edges, but does not constitute
+a direct comparison to inductive methods that evaluate on entirely
+unseen diseases. The inductive result (15.73%) provides a fairer
+comparison to TxGNN (6.7–14.5%) but uses different features (pathway
+similarity vs. learned GNN embeddings), so the comparison remains
+approximate.</p>
+<p>The kNN collaborative filtering approach achieves 26.06% R@30 in
+honest transductive evaluation. In a fair inductive comparison (KEGG
+pathway kNN, 15.73%), our method compares favorably with TxGNN’s upper
+range, though the evaluation paradigms differ. The 10.5 pp gap between
+original and honest embeddings quantifies the treatment edge leakage
+contribution, with 71.0% of performance retained through indirect
+biological paths.</p>
+<p>Notably, the kNN approach outperformed XGBoost with identical
+features (26.06% vs 25.85%), and adding ML models on top of kNN scores
+consistently failed to improve performance (tested across hypotheses
+h41–h45), suggesting the collaborative filtering signal is already
+well-captured by frequency-based ranking.</p>
+<div class="figure-pair"><div class="figure"><img src="fig3_method_comparison.png" alt="Figure 3"><p class="caption"><strong>Figure 3.</strong> Method comparison across transductive and inductive evaluation paradigms. The gray bar includes treatment edge leakage (10.5 pp). TxGNN results from Huang et al. (2024).</p></div></div>
+
+<h3 id="confidence-tier-performance">3.2 Confidence Tier
+Performance</h3>
+<p>Figure 1 and Table 2 show holdout precision by confidence tier.</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Holdout Precision</th>
+<th>95% CI</th>
+<th>Predictions</th>
+<th>Cumulative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GOLDEN</td>
+<td>87.1% ± 2.7%</td>
+<td>[84.4%, 89.8%]</td>
+<td>991</td>
+<td>991</td>
+</tr>
+<tr>
+<td>HIGH</td>
+<td>83.4% ± 4.0%</td>
+<td>[79.4%, 87.4%]</td>
+<td>1,168</td>
+<td>2,159</td>
+</tr>
+<tr>
+<td>MEDIUM</td>
+<td>38.5% ± 3.6%</td>
+<td>[34.9%, 42.1%]</td>
+<td>914</td>
+<td>3,073</td>
+</tr>
+<tr>
+<td>LOW</td>
+<td>11.3% ± 0.5%</td>
+<td>[10.8%, 11.8%]</td>
+<td>9,113</td>
+<td>12,186</td>
+</tr>
+<tr>
+<td>FILTER</td>
+<td>9.2% ± 0.5%</td>
+<td>[8.7%, 9.7%]</td>
+<td>8,978</td>
+<td>21,164</td>
+</tr>
+</tbody>
+</table>
+<p><strong>What this demonstrates:</strong> The confidence tiers provide
+a computational prioritization framework, not clinical validation. The
+precision estimates are based on retrospective holdout evaluation
+against existing ground truth databases, not prospective experimental
+confirmation.</p>
+<p>The confidence tier system provides strong separation: the GOLDEN
+tier (87.1%) is 9.5× more precise than LOW (11.3%), enabling domain
+experts to focus validation efforts on the 2,159 GOLDEN+HIGH predictions
+with &gt;83% expected precision rather than reviewing all 13,416
+predictions.</p>
+<div class="figure-pair"><div class="figure"><img src="fig1_confidence_tiers.png" alt="Figure 1"><p class="caption"><strong>Figure 1.</strong> Confidence tier holdout precision. Error bars show standard error. GOLDEN and HIGH tiers (2,159 predictions combined) achieve &gt;83% precision.</p></div></div>
+
+<h3 id="performance-ceiling-analysis">3.3 Performance Ceiling
+Analysis</h3>
+<p>We conducted an oracle analysis to determine the theoretical maximum
+performance achievable with DRKG-only features. For each disease, we
+computed the fraction of ground truth drugs that are reachable through
+any DRKG path (excluding direct treatment edges). The oracle ceiling is
+approximately 60% R@30, meaning 40% of ground truth treatments are
+entirely absent from DRKG and cannot be recovered by any graph-based
+method. Our kNN at 37% (original embeddings) achieves 62% of this
+theoretical ceiling.</p>
+<p>This ceiling analysis (Figure 5) motivated our decision to
+characterize the confidence system rather than pursue further
+algorithmic improvements, as the remaining 23 pp gap between our method
+and the oracle ceiling likely requires fundamentally new data sources
+(clinical trial databases, literature mining, patient phenotype
+ontologies) rather than methodological refinement.</p>
+<div class="figure-pair"><div class="figure"><img src="fig5_ceiling_analysis.png" alt="Figure 5"><p class="caption"><strong>Figure 5.</strong> Performance ceiling analysis. Our kNN method reaches 62% of the oracle ceiling (60%), establishing that remaining gains require external data sources beyond DRKG.</p></div></div>
+
+<h3 id="coverage-and-rare-disease-performance">3.4 Coverage and Rare
+Disease Performance</h3>
+<p>Performance exhibits a strong bimodal distribution driven by kNN
+neighborhood coverage (Figure 4):</p>
+<table>
+<thead>
+<tr>
+<th>Disease Category</th>
+<th>Fraction</th>
+<th>R@30</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>With kNN coverage</td>
+<td>84.7%</td>
+<td>24.2%</td>
+</tr>
+<tr>
+<td>Without kNN coverage</td>
+<td>15.3%</td>
+<td>0.0%</td>
+</tr>
+</tbody>
+</table>
+<p>Performance also correlates with the number of known treatments:</p>
+<table>
+<thead>
+<tr>
+<th>Known Treatments</th>
+<th>R@30</th>
+<th>Ratio to Best</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 (rare)</td>
+<td>13.5%</td>
+<td>0.42×</td>
+</tr>
+<tr>
+<td>2–5</td>
+<td>19–21%</td>
+<td>0.59–0.65×</td>
+</tr>
+<tr>
+<td>6–10 (well-studied)</td>
+<td>32.2%</td>
+<td>1.00×</td>
+</tr>
+<tr>
+<td>11+</td>
+<td>27.8%</td>
+<td>0.86×</td>
+</tr>
+</tbody>
+</table>
+<p>Rare diseases with only one known treatment perform 2.4× worse than
+well-studied diseases (Figure 2)—an inherent limitation of collaborative
+filtering, which requires sufficient neighborhood signal to generate
+predictions.</p>
+<div class="figure-pair"><div class="figure"><img src="fig4_bimodal_coverage.png" alt="Figure 4"><p class="caption"><strong>Figure 4.</strong> Bimodal performance distribution. 84.7% of diseases have kNN coverage (24.2% R@30); 15.3% have zero coverage.</p></div><div class="figure"><img src="fig2_rare_disease.png" alt="Figure 2"><p class="caption"><strong>Figure 2.</strong> Performance by disease rarity. Orphan diseases achieve 13.5% R@30 versus 32.2% for well-studied diseases, a 2.4x gap.</p></div></div>
+
+<h3 id="retrospectively-corroborated-predictions">3.5 Retrospectively
+Corroborated Predictions</h3>
+<p>We identified five predictions that are retrospectively corroborated
+by independent clinical or regulatory evidence (Table 3). These
+corroborations were identified after prediction, but the clinical
+evidence itself predates or is independent of our pipeline—they
+represent concordance with existing knowledge, not prospective
+validation. Importantly, none of these pairs correspond to direct DRKG
+treatment edges—all require multi-hop inference.</p>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 25%" />
+<col style="width: 30%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Drug</th>
+<th>Disease</th>
+<th>DRKG Path</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dantrolene</td>
+<td>Heart failure</td>
+<td>Drug→Drug→Disease</td>
+<td>RCT: P=0.034, 66% VT reduction</td>
+</tr>
+<tr>
+<td>Lovastatin</td>
+<td>Multiple myeloma</td>
+<td>Drug→Drug→Disease</td>
+<td>RCT: improved OS/PFS</td>
+</tr>
+<tr>
+<td>Rituximab</td>
+<td>Multiple sclerosis</td>
+<td>Drug→Drug→Disease</td>
+<td>WHO Essential Medicines 2023</td>
+</tr>
+<tr>
+<td>Pitavastatin</td>
+<td>Rheumatoid arthritis</td>
+<td>Drug→Gene→Disease</td>
+<td>Clinical: superior to MTX alone</td>
+</tr>
+<tr>
+<td>Empagliflozin</td>
+<td>Parkinson’s disease</td>
+<td>Drug→Drug→Disease</td>
+<td>Cohort: HR 0.80 (95% CI: 0.68–0.92)</td>
+</tr>
+</tbody>
+</table>
+<p>Each validated prediction has traceable biological mechanisms: shared
+gene targets (1–42 genes), overlapping pathways (28–301), and plausible
+pharmacological rationale. Four of five (80%) were discovered via drug
+functional similarity (drugs with similar graph neighborhoods), while
+one (Pitavastatin→RA) was discovered via shared gene-disease
+mechanisms.</p>
+<h3 id="safety-filter-impact">3.6 Safety Filter Impact</h3>
+<p>The inverse indication filter identified 163 drug-disease pairs where
+the drug is known to cause or exacerbate the predicted disease. Examples
+include:</p>
+<ul>
+<li>Adalimumab → systemic lupus erythematosus (12,080 FAERS reports of
+drug-induced lupus)</li>
+<li>Corticosteroids → tuberculosis, glaucoma, osteoporosis, myasthenia
+gravis</li>
+<li>NSAIDs → Stevens-Johnson syndrome, peptic ulcer disease</li>
+<li>Anti-TNF agents → demyelinating diseases, paradoxical
+autoimmunity</li>
+</ul>
+<p>Without the inverse indication filter, these harmful predictions
+would appear in the HIGH or MEDIUM confidence tiers based on graph
+structure alone. The SIDER-mined subset (47 pairs) achieved 93.3% filter
+precision—confirming that adverse effect databases are a reliable source
+for contraindication identification.</p>
+<h2 id="discussion">Discussion</h2>
+<h3 id="collaborative-filtering-as-drug-repurposing">4.1 Collaborative
+Filtering as Drug Repurposing</h3>
+<p>Our results suggest that simple collaborative filtering on knowledge
+graph embeddings is a surprisingly effective approach to drug
+repurposing—outperforming XGBoost ensembles trained on the same features
+and comparing favorably with state-of-the-art GNN approaches, though
+direct comparison is limited by differences in evaluation paradigm
+(transductive vs. inductive). This aligns with observations in
+recommender systems literature that neighborhood methods often match or
+exceed model-based approaches when the item space is well-connected
+(Koren et al., 2009).</p>
+<p>The key insight is that drug repurposing is fundamentally a
+recommendation problem: diseases with similar biological contexts
+(shared genes, pathways, comorbidity patterns) respond to similar
+pharmacological interventions. The kNN approach directly exploits this
+structure without learning a parametric model, making it inherently
+interpretable—each prediction can be traced to specific neighbor
+diseases and their known treatments.</p>
+<h3 id="confidence-stratification-as-actionable-output">4.2 Confidence
+Stratification as Actionable Output</h3>
+<p>Raw ranked lists are of limited value to experimental researchers who
+must decide which predictions to validate in wet-lab assays or clinical
+studies. The confidence tier system transforms predictions from a ranked
+list into an actionable decision framework:</p>
+<ul>
+<li><strong>GOLDEN/HIGH</strong> (2,159 predictions, &gt;83% precision):
+Candidates for direct experimental validation or literature-supported
+clinical hypotheses.</li>
+<li><strong>MEDIUM</strong> (914 predictions, 38.5% precision):
+Screening-stage candidates requiring additional computational or
+mechanistic evidence.</li>
+<li><strong>LOW/FILTER</strong> (18,091 predictions, &lt;12% precision):
+Unlikely to be productive; useful primarily for identifying safety
+signals.</li>
+</ul>
+<p>The 30 rules in the confidence system encode domain knowledge that
+would otherwise require expert review for each prediction:
+mechanism-of-action plausibility, drug class safety profiles, disease
+taxonomy coherence, and known contraindications. This represents a form
+of structured scientific reasoning over model outputs that, to our
+knowledge, has not been previously reported at this scale for drug
+repurposing.</p>
+<h3 id="limitations">4.3 Limitations</h3>
+<p>We identify several important limitations:</p>
+<p><strong>Transductive evaluation.</strong> Our primary result (26.06%
+R@30) evaluates on diseases present in the graph with non-treatment
+edges. This is not directly comparable to TxGNN’s inductive evaluation
+on entirely unseen diseases. Our inductive evaluation (15.73% via KEGG
+pathways) provides a fairer comparison but uses different features.</p>
+<p><strong>Selection bias.</strong> MeSH identifier mapping discards
+90.8% of diseases (3,996 → 368), introducing systematic bias toward
+well-characterized diseases with standardized terminology. Rare and
+emerging diseases are disproportionately excluded.</p>
+<p><strong>Bimodal coverage.</strong> 15.3% of evaluable diseases have
+zero kNN coverage, receiving no predictions. This is an inherent
+limitation of collaborative filtering—diseases without informative
+neighbors cannot benefit from the approach.</p>
+<p><strong>Rare disease gap.</strong> The 2.4× performance ratio between
+well-studied and rare diseases limits clinical utility for the orphan
+diseases that arguably need repurposing most urgently.</p>
+<p><strong>Biologic drug underperformance.</strong> Monoclonal
+antibodies (27% vs 32% for small molecules) and antibiotics (6–20%) are
+systematically underserved, likely due to their narrower
+mechanism-of-action profiles and sparser graph connectivity.</p>
+<p><strong>Confidence system overfitting risk.</strong> Despite holdout
+validation, the 800+ iterative refinements to the confidence rules
+create a risk of overfitting to the specific ground truth distribution.
+The rule set was not frozen prior to a single final evaluation; rather,
+reported precision estimates reflect cumulative iterative development
+(see Section 2.6). Independent prospective validation with a locked rule
+set is needed to confirm that the reported tier precision generalizes
+beyond the development dataset.</p>
+<h3 id="future-directions">4.4 Future Directions</h3>
+<p>The 37% R@30 ceiling with DRKG-only features and 60% oracle ceiling
+suggest three paths forward:</p>
+<ol type="1">
+<li><p><strong>External data integration.</strong> LINCS gene expression
+signatures, clinical trial outcome data, and patient phenotype
+ontologies (HPO) could provide complementary signals that break the
+current ceiling. Initial experiments with HPO features showed no
+improvement, but more sophisticated integration (e.g., expression
+reversal signatures) remains untested.</p></li>
+<li><p><strong>Prospective wet-lab validation.</strong> We have prepared
+855 dermatology-specific predictions for collaboration with domain
+experts, including specific candidates such as Montelukast for
+idiopathic pulmonary fibrosis. Experimental validation of even a small
+number of GOLDEN-tier predictions would establish the clinical utility
+of the confidence system.</p></li>
+<li><p><strong>Inductive architecture.</strong> Replacing Node2Vec
+transductive embeddings with purely biological features (pathway
+enrichment, structural similarity, gene expression profiles) would
+enable true zero-shot prediction for diseases entirely absent from DRKG,
+addressing the coverage gap for novel and rare diseases.</p></li>
+<li><p><strong>Prospective validation protocol.</strong> We are
+preparing a blinded expert review of GOLDEN-tier predictions in
+dermatology (855 predictions) in collaboration with domain specialists.
+The planned protocol involves: (a) freezing the confidence rule set and
+prediction output prior to review, (b) blinded assessment by
+dermatologists who score each prediction for mechanistic plausibility
+and clinical actionability without knowledge of the assigned tier, and
+(c) comparison of expert plausibility ratings against computational
+confidence scores to assess calibration. A subset of top-ranked
+candidates (e.g., Montelukast for idiopathic pulmonary fibrosis) will be
+evaluated for suitability as wet-lab validation targets with predefined
+success criteria. This prospective evaluation would provide the
+independent validation that the current retrospective analysis
+cannot.</p></li>
+</ol>
+<h2 id="data-and-code-availability">Data and Code Availability</h2>
+<p>All code, trained models, and prediction outputs are available at
+https://github.com/jimhuff/open-cure. The full prediction set (13,416
+predictions with confidence tiers across 455 diseases) is provided as a
+supplementary Excel file.</p>
+<h2 id="acknowledgments">Acknowledgments</h2>
+<p>We thank Every Cure Foundation for making their indication dataset
+publicly available. The DRKG was developed by Amazon Web Services.</p>
+<h2 id="references">References</h2>
+<p>Bordes, A., Usunier, N., Garcia-Duran, A., Weston, J., &amp;
+Yakhnenko, O. (2013). Translating embeddings for modeling
+multi-relational data. <em>Advances in Neural Information Processing
+Systems</em>, 26.</p>
+<p>Cheng, F., Desai, R. J., Handy, D. E., Wang, R., Schneeweiss, S.,
+Barabási, A. L., &amp; Loscalzo, J. (2018). Network-based approach to
+prediction and population-based validation of in silico drug
+repurposing. <em>Nature Communications</em>, 9(1), 2691.
+https://doi.org/10.1038/s41467-018-05116-5</p>
+<p>Grover, A., &amp; Leskovec, J. (2016). node2vec: Scalable feature
+learning for networks. <em>Proceedings of the 22nd ACM SIGKDD
+International Conference on Knowledge Discovery and Data Mining</em>,
+855–864. https://doi.org/10.1145/2939672.2939754</p>
+<p>Huang, K., Chandak, P., Wang, Q., Havaldar, S., Vaid, A., Leskovec,
+J., Nadkarni, G. N., Glicksberg, B. S., Gehlenborg, N., &amp; Zitnik, M.
+(2024). A foundation model for clinician-centered drug repurposing.
+<em>Nature Medicine</em>, 30(12), 3601–3613.
+https://doi.org/10.1038/s41591-024-03233-x</p>
+<p>Ioannidis, V. N., Song, X., Manchanda, S., Li, M., Pan, X., Zheng,
+D., Ning, X., Zeng, X., &amp; Karypis, G. (2020). DRKG - Drug
+Repurposing Knowledge Graph for Covid-19. GitHub repository.
+https://github.com/gnn4dr/DRKG/</p>
+<p>Koren, Y., Bell, R., &amp; Volinsky, C. (2009). Matrix factorization
+techniques for recommender systems. <em>Computer</em>, 42(8), 30–37.
+https://doi.org/10.1109/MC.2009.263</p>
+<p>Mohamed, S. K., Nováček, V., &amp; Nounu, A. (2020). Discovering
+protein drug targets using knowledge graph embeddings.
+<em>Bioinformatics</em>, 36(2), 603–610.
+https://doi.org/10.1093/bioinformatics/btz600</p>
+<p>Pushpakom, S., Iorio, F., Eyers, P. A., Escott, K. J., Hopper, S.,
+Wells, A., … &amp; Pirmohamed, M. (2019). Drug repurposing: progress,
+challenges and recommendations. <em>Nature Reviews Drug Discovery</em>,
+18(1), 41–58. https://doi.org/10.1038/nrd.2018.168</p>
+</body>
+</html>

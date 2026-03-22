@@ -1,0 +1,89 @@
+# Open-Cure Patterns & Architecture
+
+Reference for key algorithmic patterns, filters, and signal integrations.
+
+## TransE Consilience (h405/h439/h440)
+
+TransE agreement is a strong, holdout-validated signal:
+- MEDIUM + TransE top-30: 34.7% ± 4.2% holdout (+13.6pp over MEDIUM avg)
+- Works across ALL tiers: GOLDEN +11.4pp, HIGH +6.1pp, LOW +6.5pp, FILTER +7.2pp
+- **NOT a tier promotion** (37.4% full-data < HIGH 50.8%)
+- Implemented as `transe_consilience` boolean flag on DrugPrediction
+- `_load_transe_model()` + `_get_transe_top_n()` in production_predictor.py
+- TransE top-30 optimal (38.9% precision) vs top-100 (38.2% but 2x coverage)
+
+**Key learning (h434):** LOO frequency provides negligible improvement (0-0.5pp). The rank>20 filter compensates for kNN NEIGHBORHOOD INSTABILITY (5-10pp), not frequency inflation. Mean 4.1 drugs cross rank-20 boundary per disease.
+
+## Mechanism & ATC Integration (h96, h259, h152, h189)
+
+- **Mechanism = PRECISION signal** (2.62x lift), NOT recall signal
+- **CV/Neuro:** REQUIRE mechanism (>10x lift, 236 excluded, 2 GT lost)
+- **ATC rescue:** L04AX (82%), H02AB (77%); EXCLUDE biologics L04AB/L04AC (<17%)
+- Details: `docs/archive/experiment_history.md`
+
+## Disease Hierarchy Matching (h273/h276/h278)
+
+Subtype refinements (psoriasis → plaque psoriasis):
+- Metabolic/Neuro 63-65% → GOLDEN
+- Autoimmune/Resp/CV/Inf 22-45% → HIGH
+- Implementation: `DISEASE_HIERARCHY_GROUPS` + `_check_disease_hierarchy_match()`
+
+## Key Filters (all validated 2026-02-05)
+
+- **Domain-Isolated (h271):** 828 drugs treat ONE category. Cross-domain = 0% precision. `_is_cross_domain_isolated()`
+- **Broad Class Isolation (h307/h326/h328):** IL/TNF/anesthetics/steroids alone = 0-3%. `_is_broad_class_isolated()` demotes to LOW
+- **Cancer-Only (h346):** 69 drugs (BRAF,PD-1,BCL2,PARP,etc.) = 0% non-cancer. `CANCER_ONLY_DRUGS` → FILTER
+
+## CV Pathway-Comprehensive Boost (h351/h354/h356)
+
+Drugs with GT for BOTH CV base (hypertension/lipids) AND CV complications perform much better:
+- **Pathway-comprehensive: 28.9%** vs Non-pathway: **1.1%** (+27.8 pp, 26x lift!)
+- 129 CV pathway-comprehensive drugs identified (statins, ACEi, ARBs, anticoagulants, etc.)
+- **Why CV is special:** Shared vascular pathology — statins treat atherosclerosis → also treat MI/stroke/HF
+- Implementation: `CV_PATHWAY_COMPREHENSIVE_DRUGS` + `_is_cv_pathway_comprehensive()` → HIGH tier
+
+## Complication Drug Class Filter (h353)
+
+Complication diseases (nephropathy/retinopathy/cardiomyopathy): non-validated drug classes = 0%. `COMPLICATION_VALIDATED_DRUGS` → FILTER
+
+## Key Finding: Organ Proximity Doesn't Transfer (h294)
+
+Within-organ novel predictions have **1.2% precision**. Only **CV pathway-comprehensive** transfer works.
+
+## Performance Gaps & Error Patterns
+
+**Gaps:** Biologics (mAbs 17% vs small mol 32%), Antibiotics (wrong diseases), GI (5% kNN blind spot)
+**Best:** ACE inhibitors 67%, Autoimmune 63%, Infectious 52% | **Worst:** mAbs 27%, Antibiotics 6-20%, PPIs 17%
+
+## Confidence Filter (`src/confidence_filter.py`)
+
+Excludes harmful patterns:
+- Withdrawn drugs (Pergolide, Cisapride, etc.)
+- Antibiotics for metabolic diseases
+- Sympathomimetics for diabetes
+- TCAs/PPIs for hypertension
+- Alpha blockers for heart failure
+- Non-DHP CCBs (Verapamil/Diltiazem) + HF (ACC/AHA 2022)
+- Class Ic/Ia antiarrhythmics + structural heart (CAST/SWORD trials)
+- Dronedarone + HF (ANDROMEDA trial: 2.13x mortality)
+- **Inverse indications** (drug CAUSES condition): 67 drugs, 157 pairs
+  - Corticosteroids → TB, glaucoma, osteoporosis, MG, pancreatitis
+  - NSAIDs → TEN, SLE, peptic ulcer, stroke (COX-2)
+  - Estradiol → endometrial/uterine cancer, hereditary angioedema
+  - Proarrhythmic drugs → ventricular tachycardia
+  - Azathioprine → TEN, hepatitis B, erythema multiforme
+  - h486: 47 new pairs from SIDER mining (93.3% filter precision)
+  - h408+h544: Anti-TNF → SLE/MG/MS/AIH/sarcoidosis/vasculitis/polymyositis/lichen planus
+  - Ganglionic blockers (obsolete), surgical dyes (not therapeutic)
+
+**Total inverse indication filters:** ~141 predictions (67 drugs, 157 pairs)
+
+## Key Validated Predictions
+
+| Drug | Disease | Evidence |
+|------|---------|----------|
+| **Dantrolene** | Heart Failure/VT | RCT P=0.034, 66% reduction |
+| **Lovastatin** | Multiple Myeloma | RCT: improved OS/PFS |
+| **Rituximab** | MS | WHO Essential Medicine 2023 |
+| **Pitavastatin** | RA | Superior to MTX alone |
+| **Empagliflozin** | Parkinson's | HR 0.80 in Korean study |

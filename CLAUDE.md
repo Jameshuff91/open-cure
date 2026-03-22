@@ -5,8 +5,9 @@
 **After each research session:** Update this file with key learnings before committing.
 
 **Periodically ask:** "Should we prune working memory and move details to long-term storage?"
-- Archive location: `docs/archive/`
-- Keep CLAUDE.md lean (<400 lines) for efficient context loading
+- Long-term storage: `docs/claude/` (patterns, confidence history)
+- Archive location: `docs/archive/` (experiment history)
+- Keep CLAUDE.md lean (<150 lines) for efficient context loading
 
 ## Session End Protocol
 
@@ -28,62 +29,37 @@ You are an execution engine, not a scientist. You lack epistemic discipline by d
 - Distinguish between "I measured X" and "X is true." Measurement errors, data leakage, and confounding are the default assumption until ruled out.
 
 ### 2. Check Preconditions Before Running Experiments
-- Before committing to a hypothesis, spend 5-10 minutes checking whether the basic premise holds. Examples:
-  - h4 (GT expansion): Could have checked set overlap between DRKG and Every Cure GT in 2 minutes before building a whole pipeline.
-  - h3 (specialist model): Could have checked training data size for infectious diseases before building a specialist.
+- Before committing to a hypothesis, spend 5-10 minutes checking whether the basic premise holds.
 - **Ask: "What would need to be true for this hypothesis to work? Can I verify that cheaply first?"**
 
 ### 3. Run Positive Controls
 - Before evaluating a new approach, verify that known-good drug-disease pairs (e.g., Metformin→T2D, Rituximab→MS) score highly. If your positive controls fail, your experiment is broken.
-- Compare new results against the established baseline (currently 41.8% R@30) and explain any discrepancy.
+- Compare new results against the established baseline and explain any discrepancy.
 
 ### 4. Validate Against Published Evidence
 - For any novel prediction or surprising result, search ClinicalTrials.gov and PubMed for corroborating or contradicting evidence BEFORE reporting the result as valid.
-- A high model score means nothing if the drug is known to CAUSE the disease (e.g., statins → T2D, antipsychotics → parkinsonism).
 
 ### 5. Stop Early When Evidence Contradicts
-- If initial data (first 10% of an experiment) contradicts the hypothesis, STOP. Do not complete the full experiment hoping it will turn around. Report the early negative signal and move on.
-- A failed hypothesis identified in 5 minutes is more valuable than one identified after an hour of compute.
+- If initial data (first 10% of an experiment) contradicts the hypothesis, STOP. Report the early negative signal and move on.
 
 ### 6. Question Your Methodology
-- Before reporting results, ask:
-  - "Am I evaluating on training data?" (data leakage)
-  - "Are my features derived from the labels?" (circularity)
-  - "Could this correlation be confounded by comorbidity, polypharmacy, or indication overlap?"
-  - "Would a domain expert find this result plausible?"
+- Before reporting results, ask: "Am I evaluating on training data?" / "Are my features derived from the labels?" / "Could this correlation be confounded?"
 
-### 7. Benchmark Against Known Drugs
-- When evaluating predictions for a disease, check: does the model rank FDA-approved treatments highly? If Metformin doesn't appear in the top 30 for T2D, something is wrong with the evaluation, not insightful about Metformin.
-- Use known drug-disease pairs as sanity checks, not just aggregate metrics.
-
-### 8. Report Uncertainty and Limitations
+### 7. Report Uncertainty and Limitations
 - Never write "improvement achieved" without quantifying confidence. Include effect size, sample size, and whether the improvement exceeds noise.
-- If an experiment is inconclusive, say so plainly. Do not dress up a null result as "promising direction for future work."
 
 ## Cloud GPU (Vast.ai)
 
 **Current instance**: None | Balance: $4.41
-
-### Quick Commands
-```bash
-# Search for GPU instances (RTX 3090/4090)
-vastai search offers 'gpu_name in [RTX_3090, RTX_4090] disk_space >= 50 reliability > 0.95' -o 'dph_total' --limit 10
-
-# Create instance from offer ID
-vastai create instance <OFFER_ID> --image pytorch/pytorch:2.0.1-cuda11.7-cudnn8-devel --disk 50
-
-# Get SSH connection details
-vastai show instances
-vastai ssh-url <INSTANCE_ID>
-
-# Setup TxGNN (after getting PORT and HOST)
-./scripts/vastai_txgnn_setup.sh <PORT> <HOST>
-
-# IMPORTANT: Destroy when done
-vastai destroy instance <INSTANCE_ID>
-```
-
 **Skill**: Use `/vastai-gpu` for detailed GPU provisioning instructions
+
+```bash
+vastai search offers 'gpu_name in [RTX_3090, RTX_4090] disk_space >= 50 reliability > 0.95' -o 'dph_total' --limit 10
+vastai create instance <OFFER_ID> --image pytorch/pytorch:2.0.1-cuda11.7-cudnn8-devel --disk 50
+vastai show instances && vastai ssh-url <INSTANCE_ID>
+./scripts/vastai_txgnn_setup.sh <PORT> <HOST>
+vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
+```
 
 ## Models
 
@@ -91,12 +67,8 @@ vastai destroy instance <INSTANCE_ID>
 - `models/drug_repurposing_gb_enhanced.pkl` + Quad Boost ensemble
 - Formula: `score × (1 + 0.01×overlap + 0.05×atc + 0.01×pathway) × (1.2 if chem_sim > 0.7 else 1.0)`
 - Script: `scripts/evaluate_pathway_boost.py`
-- Requires: `data/reference/drug_targets.json`, `data/reference/disease_genes.json`, `data/reference/chemical/`, `data/reference/pathway/`
 
-**Other Models:**
-- `models/drug_repurposing_gb.pkl` - Original baseline (7.0% R@30)
-- `models/transe.pt` - TransE embeddings
-- `models/confidence_calibrator.pkl` - Predicts top-30 probability
+**Other Models:** `models/drug_repurposing_gb.pkl` (baseline 7.0%), `models/transe.pt`, `models/confidence_calibrator.pkl`
 
 ## Key Metrics
 
@@ -105,184 +77,30 @@ vastai destroy instance <INSTANCE_ID>
 | **kNN k=20 (original embeddings)** | **36.59% ± 3.90%** | Honest (5-seed) | Has treatment edge leakage |
 | **kNN k=20 (no-treatment embeddings)** | **26.06% ± 3.84%** | **FAIR (5-seed)** | **Best fair transductive comparison** |
 | **KEGG Pathway kNN** | **15.73% ± 1.82%** | **INDUCTIVE (5-seed)** | **Fair inductive comparison to TxGNN** |
-| Node2Vec+XGBoost TUNED (disease holdout) | 25.85% ± 4.06% | Honest (5-seed) | md=6,ne=500,lr=0.1,alpha=1.0 (h38/h40) |
-| Node2Vec+XGBoost default (disease holdout) | 23.73% ± 3.73% | Honest (5-seed) | md=6,ne=100,lr=0.1 (h40) |
-| GB + Fuzzy Matcher (fixed) | 41.8% | Within-dist | 1,236 diseases, pair-level (inflated) |
-| GB + TransE (existing, on test) | 45.9% | Pair-trained | Trained on ALL diseases, tested on subset |
-| TransE+XGBoost (disease holdout) | ~16% | Honest | TransE fails to generalize |
-| Node2Vec Cosine (no ML) | 1.27% | Honest | ML model IS required |
+| Node2Vec+XGBoost TUNED (disease holdout) | 25.85% ± 4.06% | Honest (5-seed) | md=6,ne=500,lr=0.1,alpha=1.0 |
 | TxGNN | 6.7-14.5% | Inductive | Zero-shot on unseen diseases |
 
-**CRITICAL (2026-01-27):** Multi-seed evaluation (h40) revealed seed 42 was lucky. True means are lower than single-seed reports:
-- Previously reported 31.09% (XGBoost tuned) → actual mean **25.85% ± 4.06%**
-- Previously reported 28.73% (XGBoost default) → actual mean **23.73% ± 3.73%**
+**DRKG CEILING:** 37% R@30 is the maximum achievable with DRKG-only approaches. Oracle ceiling is 60%.
+**LEAKAGE:** Honest embeddings (no treatment edges): 26.06% vs 36.59%. 71.2% retained from indirect paths.
 
-**BREAKTHROUGH (h39):** kNN collaborative filtering (k=20 nearest diseases by Node2Vec similarity) achieves **37.04% ± 5.81%** — a **+10.47 pp** improvement over the best ML model (p=0.002). No ML model needed.
+## Confidence Tiers (current)
 
-**Progression:** 37.4% → 41.8% (fuzzy, pair-level) → Generalization crisis → 25.85% (honest XGBoost, 5-seed) → **37.04% (kNN collab filtering, 5-seed)**
+| Tier | Holdout | Preds | Details |
+|------|---------|-------|---------|
+| GOLDEN | 87.1% ± 2.7% | 991 | See `docs/claude/confidence_system_history.md` |
+| HIGH | 83.4% ± 4.0% | 1168 | |
+| MEDIUM | 38.5% ± 3.6% | 914 | |
+| LOW | 11.3% ± 0.5% | 9113 | |
+| FILTER | 9.2% ± 0.5% | 8978 | |
 
-**DRKG CEILING (2026-01-28):** 37% R@30 is the maximum achievable with DRKG-only approaches. Oracle ceiling is 60%.
+**Rules:** Full-data is inflated; use HOLDOUT only. Always use `expanded_ground_truth.json` (19x more pairs).
 
-**LEAKAGE QUANTIFIED (2026-02-01):** Retrained Node2Vec WITHOUT 64K treatment edges:
-- Original embeddings: 36.59% ± 3.90% R@30 (includes leakage)
-- **Honest embeddings: 26.06% ± 3.84% R@30** (fair comparison)
-- 10.5 pp drop (29% was leakage), 71.2% retained from indirect paths
-- Fair TxGNN comparison: **26.06%** vs 6.7-14.5% (gap ~12-19 pp, not ~23-30 pp)
+## Reference Docs
 
-**EXTERNAL DATA TESTED & FAILED (2026-01-28):** HPO/PPI features WORSE than Node2Vec — details in `docs/archive/experiment_history.md`
-
-## Key Learnings
-
-### What Works
-1. **kNN Collaborative Filtering** (h39) - **37.04% ± 5.81% R@30** — BEST METHOD
-   - k=20 nearest diseases by Node2Vec cosine, rank drugs by weighted frequency
-   - +10.47 pp over XGBoost (p=0.002)
-2. **Fuzzy Disease Matching** - 41.8% R@30 (pair-level, inflated)
-3. **Multi-seed evaluation** (h40) - Must use 5+ seeds (±4 pp noise)
-
-### What Fails
-- **37% = DRKG ceiling** - kNN at 37%, oracle 60%; gap needs external data
-- **ML on top of kNN** adds nothing (h41-h45)
-- Details: `docs/archive/experiment_history.md`
-
-### Confidence System Summary (h135, h378, h393, h396, h399, h402, h462, h410, h469, h480, h478, h520)
-
-**Tier System (h815 update, 2026-02-25):**
-- GOLDEN: 87.1% ± 2.7% holdout (991 predictions)
-- HIGH: 83.4% ± 4.0% holdout (1168 predictions)
-- MEDIUM: 38.5% ± 3.6% holdout (914 predictions)
-- LOW: 11.3% ± 0.5% holdout (9113 predictions)
-- FILTER: 9.2% ± 0.5% holdout (8978 predictions)
-- **h814+h815:** CS SOC revert + MODERATE LOW promotion. **HIGH +2.1pp, MEDIUM +2.2pp**. h817 WEAK/NO split INVALIDATED.
-- **h811+h808:** RA GOLDEN→HIGH + lit double-demotion. **GOLDEN +1.6pp, MEDIUM +1.5pp**.
-- **h798:** Excluded 'other' from lit_strong_low. HIGH +2.3pp. h797 cancer GOLDEN INVALIDATED (69.5% holdout).
-- **h795:** lit_strong→GOLDEN (88.1% holdout). GOLDEN +5.2pp, variance halved.
-- **h789+h791:** STRONG LOW→HIGH (80.4%), NO/WEAK HIGH→MEDIUM (31.1%). Combined HIGH +3.9pp.
-- **h757:** Comprehensive sub-reason audit. Demoted weak HIGH rules (fluoroquinolones, neuro class match, reproductive hormones, comp_to_base_high) to MEDIUM. Demoted freq10_nomech_r6_10 MEDIUM→LOW. UTI→GOLDEN, diabetes/skin_infection→MEDIUM, epilepsy/gout→LOW. Combined: GOLDEN +9.2pp, HIGH +5.7pp, MEDIUM +2.6pp.
-- **h686:** Drug name aliasing: 34 new aliases, +85 GT pairs, +10 diseases. Key drugs: piperacillin (F=16), HCTZ (F=11), clopidogrel (F=9).
-- **h718/h730:** Cancer targeted therapy confirmed LOW across ALL sub-classes. Holdout=6.1% (full-data=36%, 5.9x inflation). Checkpoint inhibitors=10.1%, kinase=5.9%, PARP=0%. h598 demotion CORRECT.
-- **h677:** GT quality audit: 6% error rate in EC data. 82 false lidocaine/bupivacaine + 3 B12 GT entries removed (combo product drug mismatch). Blocked LA rescue via target_overlap. GT: 59,626→59,541.
-- **h673/h670/h671:** Safety fixes: CS→TEN/PAP/OSA filtered (15 preds), 18 false GT removed (NLP extraction errors), AmB antiparasitic spectrum narrowed (3 HIGH→LOW). Fixed duplicate dict key bug in INVERSE_INDICATION_PAIRS. HIGH +0.3pp.
-- **h669:** CS HIGH novel quality audit: 97.2% medically acceptable. Fixed DI comp_to_base bug (9 wrong HIGH), removed 6 false GT (NLP errors), +12 CS GT gaps. HIGH +3.5pp (58.0→61.5%).
-- **h658/h636/h668:** Literature validation + GT gap search: 54 pairs added. HIGH +3.2pp (54.8→58.0%). Key: DOACs→atrial flutter, cancer drugs→subtypes, antibiotics→prescribing info uses.
-- **h661:** Ryland collaboration prep: 230 derm predictions, EGFR gap identified, Montelukast→IPF top wet-lab candidate.
-- **h649/h648/h647/h643:** MEDIUM optimization: pneumonia→LOW, cancer R21+→LOW, metabolic leak fix, CV mech gate. Combined +4.8pp (38.1→42.9%).
-- **h633/h634:** Cancer same-type: mech+R≤10→HIGH (62.4%), no-mech→LOW (23.6%). Reopened CLOSED #4.
-- **h630:** TransE→HIGH promotion: TransE+(mech OR R≤5) non-CS. 56.1% holdout.
-- **h629:** MEDIUM quartiles: Q1 60-72%, Q2 50-57%, Q3 44-54%, Q4 ~31%. TransE +19.3pp.
-- **h625/h618:** Rescues: hematological immune-mediated (+0.6pp), CV drug-class w/mech gate (+2.7pp).
-- **h615:** GT recalibration: 4 groups HIGH→GOLDEN (+139 preds, GOLDEN std 17.9→4.3%).
-- **h606:** Psychiatric ATC coherent exclusion: 17.2% holdout (p=0.0006 < MEDIUM). 47 preds MEDIUM→LOW.
-- **h611:** CRITICAL: Always use expanded_ground_truth.json for holdout eval (19x more pairs than internal GT).
-- **h613:** Expanded GT adds +15pp across tiers (MEDIUM: 38.8% internal → 54.2% expanded).
-- **h598:** Expanded CANCER_TARGETED_THERAPY: +15 drugs (trastuzumab, pertuzumab, cetuximab, ramucirumab, olaparib, niraparib, rucaparib, tirabrutinib, acalabrutinib, zanubrutinib, ivosidenib, everolimus, trabectedin, eribulin, lanreotide). 6.1% holdout vs 40.2% existing cancer_same_type. 202 preds MEDIUM→LOW. **MEDIUM +3.3pp**.
-- **h592:** Composite quality score (rank+TransE+gene_overlap+mechanism+disease_holdout+non_SR) beats kNN rank by +2.6pp for Q1 MEDIUM. Added to deliverable as `composite_quality_score`.
-- **h593+h596+h597:** GT gap expansion: 18 FDA-approved pairs added (antifungals, cancer drugs). MEDIUM +1.2pp.
-- **h560:** Antimicrobial-pathogen mismatch filter: 0% holdout for all mismatches. Antibacterial→fungal/parasitic/viral, antifungal→parasitic/viral/bacterial. Dual-activity drugs handled. ~30 MEDIUM→LOW. +0.9pp MEDIUM. Also fixed target_overlap rescue leakage.
-- **h553-h562:** MEDIUM precision improvements: cancer_types bug fix (+0.7pp), CS→infectious demotion (+0.3pp), sub-rule demotions (+3.8pp).
-- **h542+h544+h546:** Safety audits + gene overlap annotation: non-therapeutic→FILTER, anti-TNF paradoxical autoimmunity, gene overlap +11.4pp (circular, annotation only).
-- **h537+h540:** Quality audits, LA procedural demotion. Details in experiment_history.md.
-- **h520:** Corticosteroid SOC promotion: 333 MEDIUM→HIGH for autoimmune/dermatological/respiratory/ophthalmic. HIGH +2.3pp, MEDIUM +1.2pp.
-- **h486:** SIDER adverse effect mining: 47 new inverse indication pairs (55 drugs, 124 total). 105 predictions → FILTER, 93.3% precision.
-- **h526:** Inverse indication taxonomy (10 mechanism classes). +10 new pairs (SSRIs→bipolar, estrogens→cancer, ACEi→angioedema). Bug fix: moved inverse_indication before cancer_same_type. Total: 63 drugs, 135 pairs.
-- **h529:** GT quality audit: removed 19 false DRKG-derived GT entries (drug CAUSES disease). 14 Every Cure errors flagged.
-- **NOTE:** Full-data inflated; use HOLDOUT only.
-
-**h478:** GT sync: expanded_ground_truth.json was missing 1503 pairs from production GT. All holdout numbers improved ~7-8pp.
-
-**h497:** Standard GOLDEN (62.2% holdout) ≈ Hierarchy GOLDEN (70.3%), NOT significant (p>0.35). No demotion needed.
-**h501:** Fixed kNN non-determinism: drug_id tiebreaker for tied scores. Predictions now reproducible across processes.
-**h498:** Updated all precision constants to h478 holdout values. Full-data is misleading — use holdout only.
-
-**h490:** CV standard MEDIUM demoted to LOW (2.0% holdout), ATC coherent CV also demoted (8.4%). cv_pathway_comprehensive (21.4%) and target_overlap (16.2%) preserved. MEDIUM +0.4pp. 114 predictions moved. PAH is 100% self-referential.
-
-**Safety audits (h479-h495):** 10 harmful preds → FILTER. CCBs+HF, antiarrhythmics+VT (CAST), inverse indications.
-**Prior work:** h487/h488 demotions (+1.8pp), h485 cross-type (+1.4pp), h462 category demotions, h393 holdout validation.
-**Key learnings:** Min n≈30 for reliable holdout. Full-data inflated; use holdout only. confidence_filter.py separate from production_predictor.py.
-
-### TransE Consilience (h405/h439/h440 - NEW 2026-02-06)
-
-**TransE agreement is a strong, holdout-validated signal:**
-- MEDIUM + TransE top-30: 34.7% ± 4.2% holdout (+13.6pp over MEDIUM avg)
-- Works across ALL tiers: GOLDEN +11.4pp, HIGH +6.1pp, LOW +6.5pp, FILTER +7.2pp
-- **NOT a tier promotion** (37.4% full-data < HIGH 50.8%)
-- Implemented as `transe_consilience` boolean flag on DrugPrediction
-- `_load_transe_model()` + `_get_transe_top_n()` in production_predictor.py
-- TransE top-30 optimal (38.9% precision) vs top-100 (38.2% but 2x coverage)
-
-**Key learning (h434):** LOO frequency provides negligible improvement (0-0.5pp). The rank>20 filter compensates for kNN NEIGHBORHOOD INSTABILITY (5-10pp), not frequency inflation. Mean 4.1 drugs cross rank-20 boundary per disease.
-
-### Mechanism & ATC Integration (h96, h259, h152, h189)
-
-**Mechanism = PRECISION signal** (2.62x lift), NOT recall signal
-**CV/Neuro:** REQUIRE mechanism (>10x lift, 236 excluded, 2 GT lost)
-**ATC rescue:** L04AX (82%), H02AB (77%); EXCLUDE biologics L04AB/L04AC (<17%)
-**Details:** `docs/archive/experiment_history.md`
-
-### Disease Hierarchy Matching (h273/h276/h278)
-Subtype refinements (psoriasis → plaque psoriasis): Metabolic/Neuro 63-65% → GOLDEN; Autoimmune/Resp/CV/Inf 22-45% → HIGH
-**Impl:** `DISEASE_HIERARCHY_GROUPS` + `_check_disease_hierarchy_match()`
-
-### Key Filters (all validated 2026-02-05)
-- **Domain-Isolated (h271):** 828 drugs treat ONE category. Cross-domain = 0% precision. `_is_cross_domain_isolated()`
-- **Broad Class Isolation (h307/h326/h328):** IL/TNF/anesthetics/steroids alone = 0-3%. `_is_broad_class_isolated()` demotes to LOW
-- **Cancer-Only (h346):** 69 drugs (BRAF,PD-1,BCL2,PARP,etc.) = 0% non-cancer. `CANCER_ONLY_DRUGS` → FILTER
-
-### CV Pathway-Comprehensive Boost (h351/h354/h356)
-
-Drugs with GT for BOTH CV base (hypertension/lipids) AND CV complications perform much better:
-- **Pathway-comprehensive: 28.9%** vs Non-pathway: **1.1%** (+27.8 pp, 26x lift!)
-- 129 CV pathway-comprehensive drugs identified (statins, ACEi, ARBs, anticoagulants, etc.)
-
-**Why CV is special:** Shared vascular pathology - statins treat atherosclerosis → also treat MI/stroke/HF
-
-**Implementation:** `CV_PATHWAY_COMPREHENSIVE_DRUGS` + `_is_cv_pathway_comprehensive()` → HIGH tier
-
-### Complication Drug Class Filter (h353)
-Complication diseases (nephropathy/retinopathy/cardiomyopathy): non-validated drug classes = 0%. `COMPLICATION_VALIDATED_DRUGS` → FILTER
-
-### Key Finding: Organ Proximity Doesn't Transfer (h294)
-Within-organ novel predictions have **1.2% precision**. Only **CV pathway-comprehensive** transfer works.
-
-## Performance Gaps & Error Patterns
-
-**Gaps:** Biologics (mAbs 17% vs small mol 32%), Antibiotics (wrong diseases), GI (5% kNN blind spot)
-**Best:** ACE inhibitors 67%, Autoimmune 63%, Infectious 52% | **Worst:** mAbs 27%, Antibiotics 6-20%, PPIs 17%
-
-## Confidence Filter
-
-Use `src/confidence_filter.py` to exclude harmful patterns:
-- Withdrawn drugs (Pergolide, Cisapride, etc.)
-- Antibiotics for metabolic diseases
-- Sympathomimetics for diabetes
-- TCAs/PPIs for hypertension
-- Alpha blockers for heart failure
-- **NEW (h250/h255/h258):**
-  - Non-DHP CCBs (Verapamil/Diltiazem) + HF (ACC/AHA 2022)
-  - Class Ic/Ia antiarrhythmics + structural heart (CAST/SWORD trials)
-  - Dronedarone + HF (ANDROMEDA trial: 2.13x mortality)
-  - **Inverse indications** (drug CAUSES condition): 67 drugs, 157 pairs
-    - Corticosteroids → TB, glaucoma, osteoporosis, MG, pancreatitis
-    - NSAIDs → TEN, SLE, peptic ulcer, stroke (COX-2)
-    - Estradiol → endometrial/uterine cancer, hereditary angioedema
-    - Proarrhythmic drugs → ventricular tachycardia
-    - Azathioprine → TEN, hepatitis B, erythema multiforme
-    - h486: 47 new pairs from SIDER mining (93.3% filter precision)
-    - h408+h544: Anti-TNF → SLE/MG/MS/AIH/sarcoidosis/vasculitis/polymyositis/lichen planus (class effect + drug-specific)
-  - Ganglionic blockers (obsolete), surgical dyes (not therapeutic)
-
-**Total inverse indication filters:** ~141 predictions (67 drugs, 157 pairs)
-**Validation precision:** 20-25% for top predictions (batches 1+2)
-
-## Key Validated Predictions
-
-| Drug | Disease | Evidence |
-|------|---------|----------|
-| **Dantrolene** | Heart Failure/VT | RCT P=0.034, 66% reduction |
-| **Lovastatin** | Multiple Myeloma | RCT: improved OS/PFS |
-| **Rituximab** | MS | WHO Essential Medicine 2023 |
-| **Pitavastatin** | RA | Superior to MTX alone |
-| **Empagliflozin** | Parkinson's | HR 0.80 in Korean study |
+- **Patterns & filters:** `docs/claude/patterns.md` (TransE, mechanism, filters, validated predictions)
+- **Confidence history:** `docs/claude/confidence_system_history.md` (all h-number experiments)
+- **Experiment archive:** `docs/archive/experiment_history.md`
+- **TxGNN notes:** `docs/archive/txgnn_learnings.md`
 
 ## Data Sources
 
@@ -291,10 +109,6 @@ Use `src/confidence_filter.py` to exclude harmful patterns:
 - DrugBank: `data/reference/drugbank_lookup.json`
 - Disease mapping: `data/reference/disease_ontology_mapping.json`
 
-## Production & Deployment
+## Production
 
-**Deliverable:** `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx` - 13,416 predictions (58% stale categories)
-
-## Archives
-
-`docs/archive/experiment_history.md`, `docs/archive/txgnn_learnings.md`, `docs/methodology_limitations.md`
+**Deliverable:** `data/deliverables/drug_repurposing_predictions_with_confidence.xlsx` — 13,416 predictions
