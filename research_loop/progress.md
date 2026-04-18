@@ -1,6 +1,40 @@
 # Research Loop Progress
 
-## Current Session: h909 - External-Data Bottleneck Diagnosis (2026-04-18)
+## Current Session: h903 — h900 Mechanism-Only Fallback Dead-Code Audit (2026-04-18)
+
+### Hypothesis
+Measure holdout precision of the h900 mechanism-only fallback and decide whether to
+formalize it as a tier (MECHANISM tier, promote to MEDIUM, keep as internal, or remove).
+
+### Status: INVALIDATED — fallback is dead code
+
+### Key Findings
+- **Fallback never fires.** 0/1034 train_diseases at full data; 0/207 at seed-42 holdout.
+  Root cause: `self.train_diseases` is pre-filtered to require both GT and embeddings,
+  so every top-20 kNN neighborhood populates `drug_scores`. The `if not drug_scores:`
+  guard at `src/production_predictor.py:4634` is unreachable.
+- **Forced fallback is worse than FILTER.** Running target-overlap ranking directly on
+  the 722 diseases with `disease_genes` ∩ expanded GT yields 5.96% prec@30, 4.21% mean
+  per-disease R@30, 0% median. Compare FILTER 9.2%, LOW 11.3%. Not a viable tier.
+- **Smoke test was misleading.** `scripts/test_mechanism_fallback.py` reported "MECHANISM
+  FALLBACK ACTIVE" via substring match `'mechanism' in category_specific_tier`, which
+  collides with the unrelated `mechanism_specific` tag (h297). The h900 fallback never
+  actually ran in the smoke test either.
+
+### Recommendation
+- Proceed with **h910** (remove 75 lines of dead code at production_predictor.py:4634-4709).
+- Do not extend the fallback mechanism — target-overlap alone is a weak repurposing signal
+  (5.96% vs FILTER 9.2%). The "rare disease coverage gap" is not solvable by mechanism ranking.
+- New hypotheses added: h910 (remove code), h911 (softer trigger audit), h912 (target-overlap
+  signal validity by subpopulation), h913 (true zero-coverage rare-disease inventory).
+
+### Files
+- Analysis: `data/analysis/h903_fallback_analysis.json`
+- Evaluator: `scripts/h903_mechanism_fallback_eval.py` (superseded by direct analysis; kept for reference)
+
+---
+
+## Previous Session: h909 - External-Data Bottleneck Diagnosis (2026-04-18)
 
 ### Hypothesis
 Identify whether the 569 h901 mappings that failed to become evaluable (per h902) are blocked by

@@ -83,6 +83,7 @@ vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
 **DRKG CEILING:** 37% R@30 is the maximum achievable with DRKG-only approaches. Oracle ceiling is 60%.
 **LEAKAGE:** Honest embeddings (no treatment edges): 26.06% vs 36.59%. 71.2% retained from indirect paths.
 **COVERAGE BOTTLENECK (h909):** External-data pivots (h905 LINCS, h906 DrugBank) CANNOT be justified as coverage expansions. 95.4% of 1,534 MeSH mappings already have both DRKG embedding and GT drugs; of h901's 638 new mappings, 100% have an embedding and 98.1% have GT drugs. The 557 data-complete-but-non-evaluable mappings are blocked by pipeline hygiene (symptom filter, holdout sampling, name-resolution), not external data. h905/h906 must be re-justified as **precision** pivots on already-evaluable diseases (biologics, rare-disease features).
+**H900 FALLBACK IS DEAD CODE (h903):** The mechanism-only fallback at `production_predictor.py:4634` never fires — `self.train_diseases` is pre-filtered to require GT+embeddings, so the top-20 kNN always populates `drug_scores`. Verified 0/1034 triggers at full data and 0/207 at seed-42 holdout. When forced, target-overlap ranking alone hits only 5.96% prec@30 (below FILTER's 9.2% and LOW's 11.3%) with 0% median per-disease R@30. Smoke test's "MECHANISM FALLBACK ACTIVE" was a substring collision with `mechanism_specific` (h297). Do not extend the fallback; remove it (h910).
 
 ## Confidence Tiers (current)
 

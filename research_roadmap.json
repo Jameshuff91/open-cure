@@ -16632,7 +16632,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Enumerate holdout diseases that trigger the mechanism fallback path (zero kNN neighbors)",
         "Compute per-drug R@30 and top-k precision on that subset, 5 seeds",
@@ -16641,8 +16641,8 @@
         "Decide: introduce MECHANISM tier, promote to MEDIUM, keep as internal fallback only, or remove",
         "If formalizing as tier, update production_predictor.py and deliverable schema"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "h900 mechanism-only fallback is DEAD CODE in the current predictor. It never fires because self.train_diseases (1034 entries) are all pre-filtered to require both ground_truth and embeddings, so every top-20 kNN neighborhood always contributes drugs \u2014 drug_scores is never empty. Verified: 0/1034 full-data and 0/207 seed-42 holdout diseases trigger the fallback path. When forced to run (directly ranking drugs by target overlap for 722 evaluable diseases), fallback achieves only 5.96% precision@30 and 0% median per-disease R@30, below FILTER tier baseline (9.2%) and worse than LOW (11.3%). The smoke test (scripts/test_mechanism_fallback.py) reported false-positive 'fallback active' because its substring match 'mechanism' in sub_reason collided with the unrelated 'mechanism_specific' tag (h297).",
+      "result_metric": "0/1034 fallback triggers at full data; forced fallback prec@30=5.96% < FILTER 9.2%"
     },
     {
       "id": "h904",
@@ -16815,6 +16815,80 @@
         "Keep h903 and h904 as priority 1",
         "Confirm h905/h906/h907 still unblocked",
         "Flag that mapping expansion is CLOSED direction (add to MEMORY.md CLOSED list)"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h910",
+      "title": "Remove h900 mechanism-only fallback dead code",
+      "category": "cleanup",
+      "rationale": "h903 proved the fallback never fires (0/1034 at full data, 0/207 at seed 42 holdout) because self.train_diseases always have GT drugs in embeddings. Forced-fallback precision (5.96% prec@30) is below FILTER tier. Keeping 75 lines of unreachable code with three literature-promotion branches adds maintenance cost and confusion (the smoke test already reported false-positive 'fallback active' due to substring collision with 'mechanism_specific').",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Remove src/production_predictor.py lines 4634-4709 (h900 else-branch and subsidiary lit promotion code)",
+        "Simplify to original: if not drug_scores: coverage_warning = 'No drugs found in kNN neighborhood.'",
+        "Delete scripts/test_mechanism_fallback.py (misleading) or replace with a commentary-only assertion that the kNN path always populates drug_scores",
+        "Re-run h393 5-seed holdout; confirm tier precisions unchanged (delta should be exactly 0 since fallback never fired)",
+        "Remove mechanism_only_fallback / mechanism_fallback_literature_strong / mechanism_fallback_literature_moderate tag handling from deliverable schema"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h911",
+      "title": "Broaden fallback trigger: fire when <3 neighbor-contributed drugs, evaluate vs LOW baseline",
+      "category": "coverage",
+      "rationale": "h903 showed the fallback's binary 'drug_scores empty' trigger is unreachable. A softer trigger (e.g. kNN aggregated drug_scores has fewer than N=3 entries) could capture diseases with sparse neighborhoods where mechanism could fill the gap. But it must be validated: the fallback's forced precision is 5.96% overall, so broadening must be paired with a confidence-cap that places such preds BELOW LOW (not above). Question is whether fallback-augmented LOW is better than LOW alone for sparse-kNN diseases.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Identify holdout diseases with |drug_scores| < 3 after kNN aggregation (count across 5 seeds)",
+        "For those diseases, compute R@30 with kNN alone vs kNN + target-overlap top-up",
+        "If augmentation lifts R@30 without degrading precision, add as FILTER-tier-only fallback",
+        "If no gain, mark fallback concept as closed"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h912",
+      "title": "Is target-overlap ranking a valid repurposing signal at all?",
+      "category": "analysis",
+      "rationale": "h903 forced-fallback measurement (mean R@30 = 4.21%, median = 0%) suggests drug-target \u2229 disease-gene overlap is a very weak ranking signal in isolation. But it's intuitive that some diseases (e.g. monogenic disorders, well-characterized pathways) should benefit more than others. Splitting the 722 evaluable diseases by gene-set size or category could reveal a usable sub-population (e.g. diseases with 10-50 characterized genes may get 20%+ R@30 while generic categories get 0%). If found, mechanism-only ranking could be a targeted deliverable annotation rather than a general tier.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Compute per-disease fallback R@30 for all 722 evaluable diseases",
+        "Regress R@30 against: disease_genes size, drug_targets size (aggregated), category, kNN baseline R@30, train_freq",
+        "If a covariate isolates a subset with R@30 > 15%, propose as 'mechanism_strong' annotation",
+        "If no covariate separates strong from weak, close the mechanism-ranking direction"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h913",
+      "title": "Inventory diseases in DRKG embeddings but not in train_diseases \u2014 actionable rare-disease gaps",
+      "category": "coverage",
+      "rationale": "The h900 fallback was motivated by 'rare diseases with zero kNN coverage'. h903 showed that population does not exist inside the current train_diseases. But there ARE 1,672 diseases in embeddings + disease_genes that are NOT in train_diseases \u2014 they lack any GT at all. Those are the TRUE zero-coverage population. Today they return 'disease not found in DRKG' (from disease-name resolution) or normal kNN (if name resolves to DRKG ID). Audit: for those that DO resolve to a DRKG ID, what do we predict today? Are any of them actually requested by end users?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Enumerate diseases in self.embeddings \u2229 self.disease_genes \\ self.train_diseases",
+        "Group by disease_name resolution status (resolves / doesn't resolve)",
+        "For those that resolve, run predict() and measure: tier distribution, top-1 drug, mechanism support",
+        "Cross-reference with the Every Cure indicationList for requested rare diseases that aren't in current GT",
+        "Output an 'un-evaluable rare diseases' deliverable so we know the actual zero-coverage gap"
       ],
       "findings": "",
       "result_metric": ""
@@ -19380,6 +19454,12 @@
       "hypothesis_id": "h909",
       "learning": "The h901 mapping expansion did NOT hit an external-data bottleneck. All 638 new mappings have DRKG embeddings; 626/638 have GT drugs. The 569 'missing evaluable' are blocked INSIDE the pipeline (symptoms 54%, holdout sampling, name-resolution). External data (LINCS, DrugBank) gives <60 new evaluable diseases across the full 1,555 \u2014 it cannot be justified as a coverage pivot.",
       "implication": "Reframe h905/h906 as PRECISION pivots (biologics, rare-disease features) not coverage pivots. Prioritize h907 (Ryland blinded labels) and pipeline-hygiene hypotheses (h908 symptom filter, new h910 below) over external data coverage."
+    },
+    {
+      "date": "2026-04-18",
+      "hypothesis_id": "h903",
+      "learning": "h900 mechanism-only fallback never fires (0/1034 full-data, 0/207 seed-42 holdout). self.train_diseases are pre-filtered to require GT+embeddings, so drug_scores is always populated from kNN neighbors. If forced to run, fallback precision is 5.96% (below FILTER 9.2%).",
+      "implication": "Remove h900 fallback (75 lines, production_predictor.py:4634-4709). Do NOT extend it; target-overlap ranking alone is a weak repurposing signal. Future rare-disease coverage work should increase the population of train_diseases (GT expansion for evaluable rare diseases), not add a parallel ranking path."
     }
   ],
   "collaborations": [

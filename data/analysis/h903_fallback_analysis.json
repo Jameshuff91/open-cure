@@ -1,0 +1,47 @@
+{
+  "hypothesis": "h903",
+  "title": "Holdout evaluation of h900 mechanism-only fallback",
+  "status": "INVALIDATED",
+  "summary": "The h900 mechanism fallback is dead code: it never fires in the current predictor because every train disease's top-20 kNN neighbors contain at least one GT drug in embeddings. Even if forced to fire, its precision is below the FILTER tier baseline.",
+  "trigger_population": {
+    "description": "Diseases where predict() would hit the fallback code path (`drug_scores` empty after kNN aggregation).",
+    "full_data": {
+      "n_train_diseases": 1034,
+      "n_triggering_fallback_k20_self_excluded": 0,
+      "n_triggering_fallback_k20_self_included": 0,
+      "note": "Across all 1034 diseases with GT+embeddings, every top-20 neighborhood contains GT drugs in embeddings. Fallback never fires."
+    },
+    "holdout_seed_42": {
+      "n_holdout_diseases": 207,
+      "n_triggering_fallback": 0,
+      "note": "Also zero under 80/20 holdout split. Confirms fallback is dead code."
+    }
+  },
+  "forced_fallback_precision_full_data": {
+    "description": "Evaluate what the fallback WOULD produce if it were forced to run for every disease with disease_genes.",
+    "n_diseases_with_disease_genes": 787,
+    "n_diseases_evaluable_vs_expanded_gt": 722,
+    "precision_at_30_pooled": 0.0596,
+    "mean_recall_at_30": 0.0421,
+    "std_recall_at_30": 0.0859,
+    "median_recall_at_30": 0.0,
+    "n_diseases_with_any_hit_at_30": 339,
+    "fraction_diseases_with_any_hit": 0.47,
+    "baseline_comparisons": {
+      "random_precision_at_30_density": 0.0017,
+      "FILTER_tier_holdout_prec": 0.092,
+      "LOW_tier_holdout_prec": 0.113,
+      "MEDIUM_tier_holdout_prec": 0.385
+    },
+    "interpretation": "Forced fallback precision 5.96% is 35x random but only ~54% of LOW tier and 65% of FILTER tier. Median per-disease R@30 = 0% (most diseases get no hits). Not a viable tier."
+  },
+  "root_cause_of_dead_code": {
+    "trigger_condition": "drug_scores empty after kNN aggregation (src/production_predictor.py:4634)",
+    "reason_never_triggered": "self.train_diseases (1034 entries) is built from diseases with BOTH ground_truth entries AND embeddings. Every train_disease has >=1 GT drug that is in self.embeddings. Therefore any top-20 neighbor in train_diseases contributes drugs, and drug_scores is never empty."
+  },
+  "smoke_test_was_misleading": {
+    "note": "scripts/test_mechanism_fallback.py reported 'MECHANISM FALLBACK ACTIVE' for Gaucher, ALS, Huntington, Wilson, etc., but this matched sub_reason 'mechanism_specific' (h297 MECHANISM_SPECIFIC_DISEASES list) — NOT the h900 tier tags (mechanism_only_fallback / mechanism_fallback_literature_*). The test's substring match `'mechanism' in sub_reason` was too loose.",
+    "verified": "Calling predict('Gaucher disease') directly returns preds with sub_reason='mechanism_specific', confirming the kNN-MinRank path ran normally (no fallback)."
+  },
+  "recommendation": "Remove h900 fallback code (75 lines in src/production_predictor.py:4634-4709). It is unreachable under current configuration, adds maintenance cost, and would underperform existing tiers if somehow reached. File a new hypothesis h910 to execute the removal after a confirming code review."
+}
