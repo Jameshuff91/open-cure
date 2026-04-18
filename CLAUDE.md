@@ -85,15 +85,25 @@ vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
 **COVERAGE BOTTLENECK (h909):** External-data pivots (h905 LINCS, h906 DrugBank) CANNOT be justified as coverage expansions. 95.4% of 1,534 MeSH mappings already have both DRKG embedding and GT drugs; of h901's 638 new mappings, 100% have an embedding and 98.1% have GT drugs. The 557 data-complete-but-non-evaluable mappings are blocked by pipeline hygiene (symptom filter, holdout sampling, name-resolution), not external data. h905/h906 must be re-justified as **precision** pivots on already-evaluable diseases (biologics, rare-disease features).
 **H900 FALLBACK IS DEAD CODE (h903):** The mechanism-only fallback at `production_predictor.py:4634` never fires — `self.train_diseases` is pre-filtered to require GT+embeddings, so the top-20 kNN always populates `drug_scores`. Verified 0/1034 triggers at full data and 0/207 at seed-42 holdout. When forced, target-overlap ranking alone hits only 5.96% prec@30 (below FILTER's 9.2% and LOW's 11.3%) with 0% median per-disease R@30. Smoke test's "MECHANISM FALLBACK ACTIVE" was a substring collision with `mechanism_specific` (h297). Do not extend the fallback; remove it (h910).
 
-## Confidence Tiers (current)
+## Confidence Tiers (current — post-h904+h908)
 
 | Tier | Holdout | Preds | Details |
 |------|---------|-------|---------|
-| GOLDEN | 87.1% ± 2.7% | 991 | See `docs/claude/confidence_system_history.md` |
-| HIGH | 83.4% ± 4.0% | 1168 | |
-| MEDIUM | 38.5% ± 3.6% | 914 | |
-| LOW | 11.3% ± 0.5% | 9113 | |
-| FILTER | 9.2% ± 0.5% | 8978 | |
+| GOLDEN | 83.7% ± 1.3% | 94/seed | See `docs/claude/confidence_system_history.md` |
+| HIGH | 78.5% ± 2.4% | 230/seed | |
+| MEDIUM | 42.1% ± 3.0% | 200/seed | |
+| LOW | 11.2% ± 1.1% | 2062/seed | |
+| FILTER | 8.2% ± 0.6% | 2196/seed | |
+
+**h904 (VALIDATED):** 10 overfitted rules demoted after h393 per-rule audit —
+cancer_targeted_therapy LOW→FILTER, cv_pathway_comprehensive MEDIUM→LOW, hierarchy_uti
+off-GOLDEN, hierarchy_multiple_sclerosis/lupus/asthma HIGH→MEDIUM, hierarchy_skin_infection
+HIGH→LOW, hierarchy_diabetes LOW→FILTER, highly_repurposable LOW→FILTER, metabolic rescue
+LOW→FILTER. Net: MEDIUM +1.1pp, GOLDEN +0.4pp, no regressions.
+**h908 (VALIDATED):** 45-name MeSH C23 symptom blocklist removes 300 deliverable rows
+(0 GOLDEN/HIGH, 44 MEDIUM antibiotic→symptom artifacts, 96 LOW, 160 FILTER). All tier
+shifts ≤1.5σ vs h904-demoted baseline. GOLDEN/HIGH nominal drops are population-shuffle
+from evaluable-disease pool 1034→1016 (zero rows actually removed from GOLDEN/HIGH).
 
 **Rules:** Full-data is inflated; use HOLDOUT only. Always use `expanded_ground_truth.json` (19x more pairs).
 

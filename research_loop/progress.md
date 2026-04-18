@@ -1,6 +1,46 @@
 # Research Loop Progress
 
-## Current Session: h907 — Ryland Blinded-Review Integration Protocol (2026-04-18)
+## Current Session: h908 — MeSH C23 Symptom Blocklist Validation (2026-04-18)
+
+### Hypothesis
+The h901 MeSH expansion (+638 mappings) introduced C23 symptom-level IDs that generate
+antibiotic→symptom artifacts in the deliverable (piperacillin→fever, metronidazole→
+dysmenorrhea, gentamicin→inflammation). Audit by MeSH tree class, block pure symptom
+names, and confirm no tier-precision regression.
+
+### Status: VALIDATED — 45-name blocklist, 300 deliverable rows removed, ≤1.5σ shifts.
+
+### Key findings
+- Tree-class classification: 582/638 = 91.2% real diseases, 52/638 = 8.2% C23 symptoms
+  (much lower than h902's 54% keyword-only estimate — most keyword-flagged names were real
+  cancer descriptors like "advanced breast cancer").
+- Conservative blocklist (45 names): pure symptoms with no disorder equivalent. Kept 11
+  C23-classified names that have legitimate treatment status (emphysema, hyperuricemia,
+  anxiety, recurrent depression); scheduled for remap in h928.
+- Deliverable impact: 0 GOLDEN, 0 HIGH, 44 MEDIUM, 96 LOW, 160 FILTER rows removed = 300
+  total. The 47 MEDIUM tier antibiotic→symptom artifacts flagged in h902 are eliminated.
+- Holdout (5 seeds, vs h904-demoted baseline): MEDIUM +1.3pp (0.23σ), HIGH -2.4pp
+  (0.75σ), GOLDEN -3.4pp (1.44σ — attributable to disease-pool change 1034→1016, not
+  the blocklist itself since zero GOLDEN rows were removed).
+
+### Files
+- `data/reference/h908_symptom_blocklist.json` — 45 blocklist names with provenance.
+- `data/analysis/h908_analysis.md` — full audit + validation writeup.
+- `data/analysis/h908_classified.json` — tree-class classification for 638 mappings.
+- `data/analysis/h908_leaks.json` — 188 non-FILTER deliverable leak predictions.
+- `data/analysis/h908_holdout_run.txt` — h393 5-seed holdout output.
+- `scripts/h908_classify_mesh.py` — classifier script.
+- `src/disease_name_matcher.py:1889`, `src/production_predictor.py:2197` — blocklist loader/filter.
+- `src/production_predictor.py:2356` — blocklist added to GT cache key.
+
+### Follow-up hypotheses queued
+- **h928** (P3): Remap the 11 kept C23 symptom-level names to their disorder-level MeSH IDs.
+- **h929** (P3): Extend tree-class filter to the pre-h901 base set of 917 mappings.
+- **h930** (P3): Generic detector for antibiotic/NSAID→non-infectious-non-inflammatory artifacts.
+
+---
+
+## Previous Session: h907 — Ryland Blinded-Review Integration Protocol (2026-04-18)
 
 ### Hypothesis
 External expert labels (Ryland Mortlock's blinded review of ~855 GOLDEN-tier derm

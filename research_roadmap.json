@@ -16652,7 +16652,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Load the 12 OVERFITTED rules from data/analysis/h393_holdout_validation.json",
         "For each, pick target tier = current - 1 (one level demotion)",
@@ -16661,8 +16661,8 @@
         "Count predictions moved per tier, report net tier-precision delta",
         "If any demoted rule's new tier is now itself overfitted, iterate once"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "h393 per-rule holdout audit (data/analysis/h904_baseline.txt) identified 12 rules with >15pp full\u2192holdout drops at n>=10. Applied demotions in src/production_predictor.py for the 10 rules with actionable tier changes:\n  - cancer_targeted_therapy: LOW\u2192FILTER (holdout 6.4%, \u0394=-21pp)\n  - cv_pathway_comprehensive: MEDIUM\u2192LOW (holdout 20.4%, \u0394=-44pp)\n  - hierarchy_uti: removed from GOLDEN promote (holdout 0%, n=6/seed)\n  - hierarchy_multiple_sclerosis/lupus/asthma: HIGH\u2192MEDIUM (all 0% holdout, invisible)\n  - hierarchy_skin_infection: HIGH\u2192LOW (holdout 21.7%, \u0394=-29.8pp)\n  - hierarchy_diabetes: LOW\u2192FILTER (holdout 13.1%, \u0394=-44pp)\n  - highly_repurposable: LOW\u2192FILTER (holdout 14.6%, \u0394=-28.2pp)\n  - metabolic (TZD + statin rescue rule): LOW\u2192FILTER (holdout 0%, \u0394=-40pp)\nPost-demotion 5-seed holdout (data/analysis/h904_demoted_output.txt): GOLDEN 87.1% (+0.4pp), HIGH 80.9% (+0.1pp), MEDIUM 40.8% (+1.1pp), LOW 11.0% (+0.2pp), FILTER 7.9% (0pp). Net tier-precision improvement with no regressions. Not demoted (small-n <=10 or already FILTER): corticosteroid_iatrogenic, base_to_complication, respiratory_hierarchy_asthma redundant case.",
+      "result_metric": "MEDIUM +1.1pp, GOLDEN +0.4pp, HIGH +0.1pp; 10 overfitted rules demoted"
     },
     {
       "id": "h905",
@@ -16734,7 +16734,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Enumerate the 638 new mappings added by commit 80a068e",
         "Classify each using MeSH tree node (D=disease, C=disease, F=symptom/finding, G=procedure) and LLM review",
@@ -16743,8 +16743,8 @@
         "Implement a symptom/finding blocklist in the disease-mapping loader",
         "Re-run holdout, confirm no quality regression, report pred-volume delta"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Tree-based classification of 638 h901-added mappings shows 91.2% real diseases and 8.2% C23 symptom/finding (not the 54% keyword-only estimate from h902). Curated a 45-name blocklist of pure symptoms (fever, nausea, ascites, back pain, dysuria, etc.) and applied it in src/disease_name_matcher.py:1889 and src/production_predictor.py:2197, with cache invalidation via the GT key. Removes 300 predictions from the deliverable (0 GOLDEN, 0 HIGH, 44 MEDIUM, 96 LOW, 160 FILTER) \u2014 the 47 MEDIUM tier antibiotic\u2192symptom artifacts flagged in h902 are eliminated. Holdout validation (5 seeds): all tier shifts within 1.5\u03c3 of the h904-demoted baseline; MEDIUM +1.3pp directional, GOLDEN -3.4pp attributable to evaluable-disease pool change (1034\u21921016), not the blocklist itself. Kept 11 C23-classified names that have legitimate treatment status (emphysema, hyperuricemia, anxiety, recurrent depression) \u2014 these should be remapped to their disorder-level MeSH IDs in a follow-up (h925).",
+      "result_metric": "300 deliverable rows removed; all tier precision shifts \u22641.5\u03c3 (MEDIUM +1.3pp, HIGH -2.4pp, GOLDEN -3.4pp population-shuffle)"
     },
     {
       "id": "h909",
@@ -17002,6 +17002,192 @@
         "If derm drkg_precision is within 1 stddev of overall tier drkg_precision, assume Ryland calibration generalises",
         "Otherwise, identify the 2 most-different categories and recommend them as the next expert-review batches"
       ]
+    },
+    {
+      "id": "h920",
+      "title": "PubMedBERT Dense Embeddings for Drug-Disease Retrieval (Biologic Precision Pivot)",
+      "category": "deep-learning",
+      "rationale": "Biologics fail at 27.3% R@30 vs 41.8% overall because graph embeddings do not capture antibody mechanism descriptions. PubMedBERT (or BiomedCLIP) can embed DrugBank drug descriptions and MeSH disease definitions into a dense space where antibody-target specificity is textually encoded. Fuse with kNN score and measure whether biologic R@30 improves without overall regression.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Provision 1x A100 or RTX 4090 on vast.ai; log instance/cost",
+        "Install transformers, sentence-transformers; download microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
+        "Embed drug descriptions from data/reference/drugbank_lookup.json (~10k drugs)",
+        "Embed MeSH disease definitions (~3k diseases) \u2014 fetch from NLM if not cached",
+        "Compute cosine similarity score; for each (drug, disease) compute top-k PubMedBERT neighbor alignment",
+        "Fuse with existing kNN score via simple weighted sum; sweep weight on 5-seed holdout",
+        "Report per-drug R@30 on: (a) biologics subset, (b) small molecules, (c) overall",
+        "Success: biologic R@30 +>=5pp, overall no regression; persist embeddings to data/external/pubmedbert/",
+        "Destroy vast.ai instance immediately after"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h921",
+      "title": "ESM2 Protein-Target Embeddings for Biologic Specificity (h906 Principled Replacement)",
+      "category": "deep-learning",
+      "rationale": "Binary DrugBank target-overlap (original h906 plan) ignores target sequence similarity. ESM2-650M learns rich protein representations; two targets with similar ESM2 embeddings are more likely to mediate similar indications than binary overlap implies. This is the specificity signal antibodies need. h912 already showed binary target-overlap fails standalone but has a niche for weak-kNN cancer; ESM2 should make target features strictly better.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Acquire DrugBank target gene->UniProt list (download or use pre-cached)",
+        "Provision A100 on vast.ai (48GB recommended for batched ESM2 inference)",
+        "Run ESM2-650M on ~5k target proteins; save mean-pooled sequence embeddings",
+        "For each disease: collect known-treatment target set (seed targets)",
+        "Score = max cosine similarity between candidate drug's targets and disease seed targets",
+        "Add as feature to GB retrain pipeline; compare against h912 binary baseline on biologic subset",
+        "Also test as a pure ranker (no GB) on weak-kNN cancer cohort from h912 (n=11 complementary niche)",
+        "Destroy instance after; document cost and duration"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h922",
+      "title": "GraphSAGE Inductive Embeddings for h909's 71 Legitimately-Blocked Rare Diseases",
+      "category": "deep-learning",
+      "rationale": "Current TransE embeddings are transductive: no embedding exists for diseases not in DRKG at train time. h909 identified 71 diseases with neither GT nor embedding \u2014 they are unreachable. GraphSAGE generates embeddings for unseen nodes by aggregating neighbor features, which can be applied via parent-term chains in MONDO/MeSH. If GraphSAGE produces usable embeddings for even half of the 71, that is the first actual coverage expansion on truly-absent diseases.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Reconstruct DRKG as a PyG HeteroData object (nodes: drug, disease, gene, pathway; edges: treats, associates, etc.)",
+        "Train GraphSAGE on DRKG with neighborhood sampling on 1x RTX 4090 or A100",
+        "For each of 71 blocked diseases: attach it to graph via MONDO/MeSH parent/child edges",
+        "Generate inductive embedding, feed through existing kNN pipeline",
+        "Measure: how many now get >=1 non-trivial prediction? Any land in GOLDEN/HIGH?",
+        "Spot-validate top predictions against ClinicalTrials.gov for 5 pilot diseases (e.g., Niemann-Pick C, Rett)",
+        "Destroy instance; if <20/71 become evaluable, mark invalidated with clear reason"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h924",
+      "title": "LINCS L1000 VAE for Reverse-Connectivity Scoring (h905 Precision Reframe)",
+      "category": "external-data",
+      "rationale": "h909 killed LINCS-as-coverage (LINCS unblocks 0 of 638 new h901 mappings). But LINCS can be a precision pivot on already-evaluable diseases, especially biologics and rare diseases with GEO disease signatures. A VAE compresses L1000 perturbation profiles into ~128-d embeddings; disease signatures from GEO are projected into the same space; reverse-connectivity = negative dot product. Test whether this outperforms kNN on biologics and a subset of rare diseases with clean GEO data.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Download LINCS L1000 Phase I GSE92742 to data/external/lincs/ (gitignore HDF5s)",
+        "Filter to well-measured landmark genes, top-dose 24h per compound",
+        "Train beta-VAE on perturbation signatures (1x RTX 3090, ~6-12 hrs)",
+        "Fetch GEO disease-vs-control signatures for ~50 diseases via ARCHS4 API",
+        "Project disease signatures into VAE latent space; score drugs by negative cosine",
+        "Evaluate per-drug R@30 on biologic subset; compare to current kNN and PubMedBERT (h920) if completed",
+        "Decision rule: productionize as a fusion feature only if it independently beats kNN on biologics",
+        "Destroy instance after; document latent-space visualization in findings"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h925",
+      "title": "ChemBERTa SMILES Embeddings Replace Fingerprint-Based chem_sim Feature",
+      "category": "deep-learning",
+      "rationale": "Current model uses a chem_sim>0.7 multiplier in the Quad Boost formula (see CLAUDE.md). This is Tanimoto over Morgan fingerprints \u2014 sharp threshold, brittle. ChemBERTa learns smooth molecular representations from millions of SMILES and captures pharmacophore similarity fingerprints miss. Cheap GPU (2 hrs on RTX 3090) and low risk.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Load all DrugBank SMILES; standardize via RDKit",
+        "Run DeepChem/ChemBERTa pretrained model (seyonec/ChemBERTa-zinc-base-v1) on ~10k drugs",
+        "Save 768-d embeddings; compute drug-drug cosine similarity matrix",
+        "Replace or augment chem_sim in src/production_predictor.py Quad Boost formula",
+        "Sweep replacement vs augmentation (weighted sum) on 5-seed holdout",
+        "Success: >=1pp mean per-drug R@30 gain, no tier regression",
+        "Commit embeddings to data/external/chemberta/ (gitignored if >50MB)"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h927",
+      "title": "Deep Calibration Network Replaces confidence_calibrator.pkl",
+      "category": "deep-learning",
+      "rationale": "Current confidence_calibrator.pkl is a classical model that maps a subset of features to holdout probability. A small MLP (3 layers, <100k params) over the full feature set plus TransE embeddings should learn interaction patterns the classical model misses, directly improving tier assignment precision. This is the cheapest, lowest-risk deep-learning win on the queue.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Collect training data: all predictions with holdout labels across 5 seeds (train on 4 seeds, test on held-out seed; rotate)",
+        "Features: existing engineered features + TransE embeddings (concat)",
+        "Train 3-layer MLP with BCE loss, early stopping on val AUROC, 1x RTX 3090 ~1 hr",
+        "Compare per-tier precision when tier boundaries are set to match current quantile counts",
+        "If MLP AUROC > calibrator AUROC by >=0.03 and holdout precision improves across tiers, swap in",
+        "Save as models/confidence_calibrator_mlp.pt; keep classical calibrator as fallback"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h928",
+      "title": "Remap Kept-But-Symptom-Level MeSH Names to Disorder-Level IDs",
+      "category": "mapping_quality",
+      "rationale": "h908 kept 11 C23 symptom-level mappings that have legitimate treatment status (emphysema\u2192D004646 symptom vs D029424 COPD-disorder; anxiety\u2192D001007 symptom vs D001008 anxiety-disorder; recurrent depression\u2192D003863 vs D003866 MDD). The kept names work only because the current kNN happens to recover COPD drugs for emphysema; if the disorder-level ID is available and has both embedding and GT, remapping will yield stricter GT matching and may lift HIGH precision for the ~15 COPD preds currently tagged against the symptom-level ID.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Enumerate the 11 kept C23 names from h908 with dual MeSH IDs (symptom + disorder)",
+        "For each, check whether the disorder-level MeSH ID has a DRKG embedding and GT drugs in expanded_ground_truth.json",
+        "Update data/reference/mesh_mappings_from_agents.json to use the disorder-level ID where eligible",
+        "Re-run 5-seed holdout; confirm no tier regression",
+        "Report per-name delta in HIGH/GOLDEN precision"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h929",
+      "title": "Extend MeSH C23 Tree-Class Filter to Pre-h901 Mappings",
+      "category": "mapping_quality",
+      "rationale": "h908 only audited the 638 mappings added by h901. The pre-h901 base set of 917 mappings was never audited by tree class. The h908 code diff notes that hardcoded entries (fever, vomiting, etc.) point to C23 symptom-level IDs \u2014 those predate h901 and are still active. Extending the tree-class filter to all mappings may remove a second layer of deliverable noise without further risk to GOLDEN/HIGH preds.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Apply the h908 tree-class classifier to all ~1,555 mappings (mesh_mappings_from_agents.json + MONDO + hardcoded disease_name_matcher entries)",
+        "Identify C23/F01/G12/D26 entries not already in the h908 blocklist",
+        "Manually triage: legitimate-but-symptom-level \u2192 h928 remap; true symptom with no disorder equivalent \u2192 extend blocklist",
+        "Measure deliverable row deltas and 5-seed holdout precision",
+        "Report tier precision shifts (target \u22641.5\u03c3) and pred-volume delta"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h930",
+      "title": "Generic Antibiotic/NSAID\u2192Non-Infectious-Non-Inflammatory Artifact Detector",
+      "category": "deliverable_quality",
+      "rationale": "h908 found 47 MEDIUM tier antibiotic\u2192symptom preds (piperacillin\u2192fever, metronidazole\u2192dysmenorrhea, gentamicin\u2192inflammation) caused by kNN returning unrelated training diseases. The pattern \u2014 antibiotic/NSAID predicted for a non-infectious, non-inflammatory target \u2014 likely exists beyond the symptom blocklist, in rare conditions where the nearest trained disease is a cross-category infection. A generic detector could power a new FILTER rule with mechanism-gate escape for legitimate anti-inflammatory antibiotic uses (doxycycline/rosacea, azithromycin/cystic-fibrosis, etc.).",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Identify antibiotic and NSAID drug sets from ATC codes (J01*, M01*) and existing drug-class metadata",
+        "For each MEDIUM/LOW prediction where drug \u2208 {antibiotic, NSAID}, check if disease_category \u2208 {infectious, inflammatory, autoimmune}; flag mismatches",
+        "Holdout-validate: compare precision of flagged vs unflagged subset; target <5pp flagged precision to justify demotion",
+        "Add FILTER rule with mechanism-gate escape (anti-inflammatory antibiotic exceptions list)",
+        "Confirm \u22641.5\u03c3 MEDIUM/LOW precision shift after demotion; report preds-filtered count"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
@@ -19582,6 +19768,12 @@
       "hypothesis_id": "h907",
       "learning": "Expert-label ingestion is independent infrastructure: schema + importer + leakage-safe loader + parallel precision evaluator. The whole scaffold was buildable BEFORE the review arrived. Key design choice: expert labels live in their own file (data/reference/expert_labels_ryland.json) with provenance tag, never merged into predictor.ground_truth. This preserves the evaluation independence that makes external labels valuable in the first place.",
       "implication": "Future external-label sources (clinician reviews, RCT-curated pairs, etc.) should follow the same provenance-tagged parallel-precision pattern. Do NOT push external labels into expanded_ground_truth; it kills their evaluative independence."
+    },
+    {
+      "date": "2026-04-18",
+      "hypothesis_id": "h908",
+      "learning": "MeSH tree-class classification (C23 symptom vs C01-C99 disease) gives a precise 8.2% non-disease share of h901 mappings, vs h902's 54% keyword-only estimate. Symptom-level MeSH IDs inherit poor kNN neighborhoods and generate antibiotic/NSAID-to-symptom artifacts in MEDIUM tier. Curated blocklist of 45 names removes 300 deliverable rows without tier-precision regression.",
+      "implication": "For any future disease-mapping expansion, classify by MeSH tree node (not keyword) and exclude C23-only entries. Also audit pre-existing hardcoded mappings (h926) and remap symptom-level kept names to disorder-level IDs (h925)."
     }
   ],
   "collaborations": [

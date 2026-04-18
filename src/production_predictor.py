@@ -2193,6 +2193,15 @@ class DrugRepurposingPredictor:
         # (done during GT loading, not here — but we need the lookup ready)
         self._salt_suffixes = _SALT_SUFFIXES
 
+        # h908: Block symptom/sign/finding-level mappings introduced by h901
+        blocklist_path = self.reference_dir / "h908_symptom_blocklist.json"
+        self._h908_blocklist: Set[str] = set()
+        if blocklist_path.exists():
+            with open(blocklist_path) as f:
+                self._h908_blocklist = {
+                    n.lower() for n in json.load(f).get("blocklist", [])
+                }
+
         # Load MESH mappings
         mesh_path = self.reference_dir / "mesh_mappings_from_agents.json"
         self.mesh_mappings: Dict[str, str] = {}
@@ -2202,6 +2211,8 @@ class DrugRepurposingPredictor:
             for batch_data in mesh_data.values():
                 if isinstance(batch_data, dict):
                     for disease_name, mesh_id in batch_data.items():
+                        if disease_name.lower() in self._h908_blocklist:
+                            continue
                         if mesh_id:
                             mesh_str = str(mesh_id)
                             if mesh_str.startswith("D") or mesh_str.startswith("C"):
@@ -2355,6 +2366,7 @@ class DrugRepurposingPredictor:
         source_files = [
             self.reference_dir / "everycure" / "indicationList.xlsx",
             self.reference_dir / "mesh_mappings_from_agents.json",
+            self.reference_dir / "h908_symptom_blocklist.json",
             self.reference_dir / "mondo_to_mesh.json",
             self.reference_dir / "drugbank_lookup.json",
             self.data_dir / "src" / "disease_name_matcher.py",  # Include matcher code
@@ -3541,9 +3553,9 @@ class DrugRepurposingPredictor:
             if same_type_match:
                 # h538: Targeted therapy (kinase inhibitors + immunotherapy) has 12.6% holdout
                 # vs cytotoxic 53%. They don't transfer across cancer subtypes via kNN.
-                # Demote targeted therapy cancer_same_type MEDIUM → LOW.
+                # h904: Holdout 6.4% (n=79/seed, Δ=-21pp from full 27.4%). Demote LOW→FILTER.
                 if any(t in drug_lower for t in CANCER_TARGETED_THERAPY):
-                    return ConfidenceTier.LOW, False, 'cancer_targeted_therapy'
+                    return ConfidenceTier.FILTER, False, 'cancer_targeted_therapy'
                 # h633: cancer_same_type + mechanism + rank<=10 = 56.6% ± 9.7% holdout (expanded GT)
                 # h797 INVALIDATED: Attempted GOLDEN promotion but holdout=69.5% ± 13.5% (OVERFITTED).
                 # Full-data 85.4% → holdout 69.5%, -15.9pp delta. Stays HIGH.
@@ -3684,8 +3696,10 @@ class DrugRepurposingPredictor:
         if self._is_cv_complication(disease_name):
             if self._is_cv_pathway_comprehensive(drug_name):
                 # h402: 26.0% ± 4.9% holdout precision (n=105) vs HIGH avg 44.1%
-                # Demoted from HIGH to MEDIUM
-                return ConfidenceTier.MEDIUM, True, 'cv_pathway_comprehensive'
+                # Demoted from HIGH to MEDIUM.
+                # h904: 20.4% ± 13.7% holdout (n=10/seed, Δ=-44.3pp from full 64.7%).
+                # Demoted MEDIUM→LOW (above LOW avg 10.8% but below MEDIUM 39.7%).
+                return ConfidenceTier.LOW, True, 'cv_pathway_comprehensive'
             # Non-pathway-comprehensive CV complication: 7.6% precision
             # Don't filter (some GT hits exist), but don't boost either
             # Standard tier assignment will apply (likely MEDIUM/LOW)
@@ -3711,9 +3725,9 @@ class DrugRepurposingPredictor:
         # coronary: 65.5% ± 1.2% holdout (n=13/seed), arrhythmia: 72.9% ± 1.5% (n=11/seed)
         # colitis: 85.7% ± 0.0% (n=7/seed)
         # h811: rheumatoid_arthritis demoted to HIGH — 69.0% ± 28.8% holdout (n=16/seed), below GOLDEN 85.3%
+        # h904: uti removed — h393 holdout 0% (n=6/seed, Δ=-70.8pp from full 70.8%). Demote GOLDEN→HIGH.
         HIERARCHY_PROMOTE_TO_GOLDEN = {
             'coronary', 'arrhythmia', 'colitis',
-            'uti',  # h757: 80.0% ± 0.0% holdout (n=10/seed), above GOLDEN 78%
         }
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
         # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
@@ -3722,18 +3736,30 @@ class DrugRepurposingPredictor:
         # h757: skin_infection 25.0% ± 12.5% holdout (n=8/seed) — below HIGH avg (57.0%)
         # h760: copd 25.9% ± 36.7% holdout (n=3.7/seed) — below HIGH avg (59.4%), demoted HIGH→MEDIUM
         # h764: parkinsons demoted MEDIUM→LOW (18.2% full-data, 0% holdout n=0/seed — invisible and low quality)
-        HIERARCHY_DEMOTE_TO_MEDIUM = {'migraine', 'skin_infection', 'copd'}
+        # h904: multiple_sclerosis/lupus/asthma added — all at 0% holdout invisible (mean_n=0/seed)
+        #   with very high full-data (100%/100%/61.8%). Demoted HIGH→MEDIUM.
+        # h904: skin_infection moved to DEMOTE_TO_LOW (holdout 21.7%, Δ=-29.8pp from full 51.5%).
+        HIERARCHY_DEMOTE_TO_MEDIUM = {'migraine', 'copd',
+                                      'multiple_sclerosis', 'lupus', 'asthma'}
         # h649: pneumonia demoted MEDIUM→LOW (16.7% ± 0.0% holdout, n=6/seed)
         # h757: epilepsy 20.0% ± 14.1% holdout (n=10/seed), gout 0.0% (n=4/seed) — below MEDIUM avg (37.2%)
         # h760: diabetes 11.1% ± 15.7% holdout (n=3.7/seed) — below MEDIUM avg (36.0%), demoted MEDIUM→LOW
         # h764: parkinsons 18.2% full-data (below MEDIUM), 0% holdout (invisible) — demoted MEDIUM→LOW
-        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia', 'epilepsy', 'gout', 'diabetes', 'parkinsons'}
+        # h904: skin_infection added — holdout 21.7% ± 15.4% (n=13/seed, Δ=-29.8pp from full 51.5%).
+        HIERARCHY_DEMOTE_TO_LOW = {'pneumonia', 'epilepsy', 'gout', 'diabetes', 'parkinsons',
+                                   'skin_infection'}
+        # h904: diabetes hierarchy LOW→FILTER — holdout 13.1% ± 8.9% (n=10.8/seed),
+        #   Δ=-44pp from full 57.1%. Largest hierarchy overfit after FILTER conversion.
+        HIERARCHY_DEMOTE_TO_FILTER: set[str] = {'diabetes'}
 
         if category in DISEASE_HIERARCHY_GROUPS and drug_id:
             has_category_gt, same_group_match, matching_group = self._check_disease_hierarchy_match(
                 drug_id, disease_name, category
             )
             if same_group_match:
+                # h904: Demote to FILTER for hierarchy groups with massive full-vs-holdout gap
+                if matching_group in HIERARCHY_DEMOTE_TO_FILTER:
+                    return ConfidenceTier.FILTER, True, f'{category}_hierarchy_{matching_group}'
                 # h649: Demote to LOW for groups with near-LOW holdout
                 if matching_group in HIERARCHY_DEMOTE_TO_LOW:
                     return ConfidenceTier.LOW, True, f'{category}_hierarchy_{matching_group}'
@@ -3882,8 +3908,9 @@ class DrugRepurposingPredictor:
         # generate noisy predictions (Omeprazole→pain, Palivizumab→bronchospasm).
         # Known indications (80%) inflate the full-data precision to 28.8%.
         # Rule retained as LOW-tier annotation for deliverable transparency.
+        # h904: Holdout 14.6% ± 12.6% (n=9/seed, Δ=-28.2pp from full 42.9%). LOW→FILTER.
         if is_highly_repurposable and (mechanism_support or train_frequency >= 5):
-            return ConfidenceTier.LOW, False, 'highly_repurposable'
+            return ConfidenceTier.FILTER, False, 'highly_repurposable'
 
         # h309/h310: ATC coherence boost for LOW tier predictions
         # Coherent predictions have 35.5% precision vs 18.7% for incoherent
@@ -4032,14 +4059,16 @@ class DrugRepurposingPredictor:
             # h265/h395: TZDs for metabolic → was MEDIUM (was GOLDEN)
             # h395 found 6.9% precision — TZDs only work for diabetes, not thyroid/rare metabolic
             # h553: Demoted to LOW (8.3% ± 14.4% holdout, n=4.2/seed — below LOW avg 16.2%)
+            # h904: Rule 'metabolic' holdout 0% (n=1.7/seed, Δ=-40pp from full 40%). LOW→FILTER.
             if any(tzd in drug_lower for tzd in THIAZOLIDINEDIONES):
-                return ConfidenceTier.LOW  # h553: demoted from MEDIUM (8.3% holdout)
+                return ConfidenceTier.FILTER  # h904: demoted LOW→FILTER
 
             # h144/h395: Statins for metabolic → was MEDIUM (was GOLDEN)
             # h395 found 6.9% overall — statins get boosted for non-lipid metabolic diseases
             # h553: Demoted to LOW (8.3% ± 14.4% holdout, n=4.2/seed — below LOW avg 16.2%)
+            # h904: Rule 'metabolic' holdout 0% (n=1.7/seed, Δ=-40pp from full 40%). LOW→FILTER.
             if rank <= 10 and any(statin in drug_lower for statin in STATIN_DRUGS):
-                return ConfidenceTier.LOW  # h553: demoted from MEDIUM (8.3% holdout)
+                return ConfidenceTier.FILTER  # h904: demoted LOW→FILTER
 
         elif category == 'cancer':
             # h150/h274: Drug class rescue for cancer

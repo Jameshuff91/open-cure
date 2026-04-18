@@ -1886,6 +1886,13 @@ def load_mesh_mappings() -> Dict[str, str]:
         "cross infection": "drkg:Disease::MESH:D003428",
     }
 
+    # h908: Block symptom/sign/finding-level mappings introduced by h901
+    blocklist_path = REFERENCE_DIR / "h908_symptom_blocklist.json"
+    h908_blocklist: set = set()
+    if blocklist_path.exists():
+        with open(blocklist_path) as f:
+            h908_blocklist = {n.lower() for n in json.load(f).get("blocklist", [])}
+
     # Agent mappings
     agent_path = REFERENCE_DIR / "mesh_mappings_from_agents.json"
     agent_mappings = {}
@@ -1898,6 +1905,8 @@ def load_mesh_mappings() -> Dict[str, str]:
             if batch_name == "metadata" or not isinstance(batch_data, dict):
                 continue
             for disease_name, mesh_id in batch_data.items():
+                if disease_name.lower() in h908_blocklist:
+                    continue
                 if mesh_id is not None and mesh_id.startswith("D"):
                     agent_mappings[disease_name.lower()] = f"drkg:Disease::MESH:{mesh_id}"
 
@@ -1919,6 +1928,17 @@ def load_mesh_mappings() -> Dict[str, str]:
 
     # Merge (agent takes priority over hardcoded, mondo is separate lookup)
     name_mappings = {**hardcoded, **agent_mappings}
+
+    # h908: Apply symptom blocklist across all sources, not just agent mappings.
+    # Some hardcoded entries (fever, vomiting, etc.) point to C23 symptom-level
+    # MeSH IDs and inflate the deliverable with antibiotic→symptom artifacts.
+    if h908_blocklist:
+        name_mappings = {
+            k: v for k, v in name_mappings.items() if k not in h908_blocklist
+        }
+        mondo_mappings = {
+            k: v for k, v in mondo_mappings.items() if k not in h908_blocklist
+        }
 
     # Return combined dict - name_mappings + mondo_mappings
     return {**name_mappings, **mondo_mappings}
