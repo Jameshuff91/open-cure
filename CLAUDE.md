@@ -82,6 +82,7 @@ vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
 
 **DRKG CEILING:** 37% R@30 is the maximum achievable with DRKG-only approaches. Oracle ceiling is 60%.
 **LEAKAGE:** Honest embeddings (no treatment edges): 26.06% vs 36.59%. 71.2% retained from indirect paths.
+**COVERAGE BOTTLENECK (h909):** External-data pivots (h905 LINCS, h906 DrugBank) CANNOT be justified as coverage expansions. 95.4% of 1,534 MeSH mappings already have both DRKG embedding and GT drugs; of h901's 638 new mappings, 100% have an embedding and 98.1% have GT drugs. The 557 data-complete-but-non-evaluable mappings are blocked by pipeline hygiene (symptom filter, holdout sampling, name-resolution), not external data. h905/h906 must be re-justified as **precision** pivots on already-evaluable diseases (biologics, rare-disease features).
 
 ## Confidence Tiers (current)
 
