@@ -1,6 +1,46 @@
 # Research Loop Progress
 
-## Current Session: h903 — h900 Mechanism-Only Fallback Dead-Code Audit (2026-04-18)
+## Current Session: h912 — Is Target-Overlap Ranking a Valid Repurposing Signal? (2026-04-18)
+
+### Hypothesis
+Follow-up to h903. Forced target-overlap ranking gave 5.96% pooled prec@30, below FILTER.
+But pooled hides heterogeneity. Segment per-disease R@30 by gene-set size, max overlap,
+disease category, kNN baseline, GT size — is there ANY subpopulation where target-overlap
+alone supports a usable annotation (mean R@30 ≥ 15% at n ≥ 30)?
+
+### Status: INVALIDATED — no actionable subpopulation, but fusion niche found
+
+### Key Findings
+- **No subpopulation reaches R@30 ≥ 15% at n ≥ 30.** Across 2,253 evaluable diseases
+  (embed ∩ disease_genes ∩ expanded GT), overall mean target_r30 = 3.47% (median 0%)
+  vs kNN baseline 17.95% on the same diseases. kNN dominates 5.2×.
+- **Category ordering**: cancer 11.89% (n=104, only category >10%), metabolic 4.41%,
+  psychiatric 4.41%, gastrointestinal 2.09%, infectious 0.59%. Cardio, neuro, derm,
+  immun all <5%. Cancer's lead is likely drug-target database density, not biology (see h916).
+- **Gene-set size**: non-monotonic peak at 51–100 genes (7.36%), not near 15%. Monogenic
+  diseases (1–5 genes, n=1,223) are the WORST (2.16%) — opposite of the intuitive
+  "mechanism ranking rewards well-characterized pathways" prior.
+- **Max overlap**: mean rises with top-1 overlap count (2.50% @ ov=1 → 7.84% @ ov=6–10)
+  then plateaus. Even the "max_ov 11+" subpopulation (n=168) sits at 6.35%.
+- **Complementary niche found**: 11/104 cancer diseases have target_r30 > knn_r30,
+  and on those 11: target mean 25.32% vs kNN 11.22% — a concrete 2× reversal. This
+  motivates MinRank fusion for weak-kNN cancer cases (h914), not a general fallback.
+
+### Recommendation
+- Close the "mechanism-only as a tier" direction permanently.
+- Run **h914** (MinRank fusion for cancer diseases with weak kNN) — existing
+  `_minrank_fusion` at `production_predictor.py:3327` is not used in production.
+- Pending h914 result, run **h915** (remove fallback block ± helpers) and
+  **h916** (audit cancer signal — drug-target density vs biology).
+
+### Files
+- Script: `scripts/h912_target_overlap_subpopulation.py`
+- Summary: `data/analysis/h912_subpopulation_summary.json`
+- Raw records: `data/analysis/h912_per_disease_records.json`
+
+---
+
+## Previous Session: h903 — h900 Mechanism-Only Fallback Dead-Code Audit (2026-04-18)
 
 ### Hypothesis
 Measure holdout precision of the h900 mechanism-only fallback and decide whether to

@@ -16652,7 +16652,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Load the 12 OVERFITTED rules from data/analysis/h393_holdout_validation.json",
         "For each, pick target tier = current - 1 (one level demotion)",
@@ -16732,7 +16732,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Enumerate the 638 new mappings added by commit 80a068e",
         "Classify each using MeSH tree node (D=disease, C=disease, F=symptom/finding, G=procedure) and LLM review",
@@ -16864,15 +16864,16 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Compute per-disease fallback R@30 for all 722 evaluable diseases",
         "Regress R@30 against: disease_genes size, drug_targets size (aggregated), category, kNN baseline R@30, train_freq",
         "If a covariate isolates a subset with R@30 > 15%, propose as 'mechanism_strong' annotation",
         "If no covariate separates strong from weak, close the mechanism-ranking direction"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Target-overlap ranking is NOT a valid standalone repurposing signal. Measured per-disease R@30 for 2,253 diseases with embedding+disease_genes+expanded GT. Overall mean=3.47% (median=0%) vs kNN baseline 17.95% on same diseases (5.2x dominance). No covariate isolates a subpopulation with mean R@30 >=15% at n>=30. Best segments: cancer (n=104, mean 11.89%, median 8.28%) and genes 21-100 & max_ov>=5 (n=167, mean 9.66%) \u2014 both below LOW tier 11.3%. However, target-overlap shows COMPLEMENTARITY: 11/104 cancer diseases (10.6%) have target_r30>knn_r30, and on those 11 target mean=25.32% vs kNN 11.22%. This rules out mechanism-only as a tier but suggests MinRank-style fusion (already in production_predictor._minrank_fusion) may be useful as a cancer-specific tiebreaker. Definitively closes the \"mechanism-only fallback tier\" direction started in h900/h903.",
+      "result_metric": "3.47% mean R@30 (vs kNN 17.95%); no subpop >=15% at n>=30",
+      "completion_date": "2026-04-18"
     },
     {
       "id": "h913",
@@ -16892,6 +16893,54 @@
       ],
       "findings": "",
       "result_metric": ""
+    },
+    {
+      "id": "h914",
+      "title": "MinRank fusion for cancer diseases where kNN is weak",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h912 found target-overlap ranking beats kNN on 11/104 cancer diseases (target mean 25.32% vs kNN 11.22% on those 11). The existing _minrank_fusion in production_predictor.py:3327 is currently only used in h374 experimentation, not in production. Hypothesis: enabling MinRank fusion for cancer diseases with kNN R@30 < 0.15 could lift their precision without hurting high-kNN diseases. Risk: MinRank boosts noisy target overlaps for biomarker-dependent drugs (h718/h730 lesson).",
+      "steps": [
+        "Enumerate cancer diseases where target_r30 > knn_r30 from h912 records (11 cases)",
+        "Characterize them: subtype, rare vs common, biomarker drugs?",
+        "Run fusion simulation: what fraction of cancer drugs lift to top-30 under MinRank vs kNN-only?",
+        "Measure pooled cancer precision@30 with and without MinRank on holdout",
+        "If cancer fusion lifts >=2pp without hurting non-cancer, propose production switch"
+      ],
+      "success_criteria": "Cancer holdout precision@30 gain >=2pp with zero regression on non-cancer categories"
+    },
+    {
+      "id": "h915",
+      "title": "Definitively close mechanism-only direction: remove h900 fallback and MinRank stub",
+      "priority": 4,
+      "status": "pending",
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h903 proved the h900 fallback is dead code (0 triggers). h912 proved target-overlap is not a valid standalone signal (3.47% R@30, no subpop above 15%). Combined, the 75 lines at production_predictor.py:4664-4713 plus related helpers (_get_target_scores, _minrank_fusion) can be pruned UNLESS h914 validates fusion. Only remove after h914 resolves; otherwise keep _get_target_scores + _minrank_fusion for fusion experiments and remove only the unreachable fallback block.",
+      "steps": [
+        "Wait for h914 result",
+        "If h914 invalidated: remove fallback block + _get_target_scores + _minrank_fusion",
+        "If h914 validated: remove only the dead fallback; keep fusion helpers",
+        "Verify no regression on 5-seed holdout after removal"
+      ],
+      "success_criteria": "Dead code removed without holdout regression"
+    },
+    {
+      "id": "h916",
+      "title": "Why does target-overlap signal concentrate in cancer? Drug-target density audit",
+      "priority": 4,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h912 showed cancer is the only category with mean R@30 >=10% under target-overlap. Hypothesis: this reflects drug-target database bias \u2014 cancer drugs are disproportionately well-characterized targeted therapies (kinase inhibitors, mAbs, PARP), while cardio/psych/infectious drugs have fewer canonical targets. If so, target-overlap signal will scale with drug_targets size per category, not with biological specificity. A quick audit can confirm and inform whether DrugBank expansion (h906) would benefit non-cancer categories.",
+      "steps": [
+        "Compute mean |drug_targets| per drug for drugs indicated in each category (using expanded GT)",
+        "Correlate category mean |drug_targets| with target_r30 mean from h912",
+        "If r > 0.7, conclude target-overlap is a drug-target-density signal, not a biological signal",
+        "Use this to scope h906 DrugBank priority: target biologics in under-represented categories first"
+      ]
     }
   ],
   "completed": [
@@ -19460,6 +19509,12 @@
       "hypothesis_id": "h903",
       "learning": "h900 mechanism-only fallback never fires (0/1034 full-data, 0/207 seed-42 holdout). self.train_diseases are pre-filtered to require GT+embeddings, so drug_scores is always populated from kNN neighbors. If forced to run, fallback precision is 5.96% (below FILTER 9.2%).",
       "implication": "Remove h900 fallback (75 lines, production_predictor.py:4634-4709). Do NOT extend it; target-overlap ranking alone is a weak repurposing signal. Future rare-disease coverage work should increase the population of train_diseases (GT expansion for evaluable rare diseases), not add a parallel ranking path."
+    },
+    {
+      "date": "2026-04-18",
+      "hypothesis_id": "h912",
+      "learning": "Target-overlap ranking (|drug_targets \u2229 disease_genes|) is NOT a valid standalone repurposing signal. Per-disease mean R@30 = 3.47% across 2,253 evaluable diseases, vs kNN 17.95% on same. No covariate (gene-set size, max overlap, category, GT size, in-train, kNN strength) isolates a subpopulation above 15% R@30 at n>=30. Cancer is the only category >10% (11.89%) and reveals a complementary niche: 11/104 cancer diseases where target > kNN (target mean 25.32% vs kNN 11.22% on those).",
+      "implication": "(1) h900 mechanism-only fallback is permanently invalidated as a tier. (2) MinRank fusion (_minrank_fusion at production_predictor.py:3327) deserves one more test on cancer diseases with weak kNN (h914). (3) If cancer fusion fails, remove all target-overlap-only infrastructure including h900 fallback + helpers (h915). (4) The cancer-only signal likely reflects drug-target database density, not biology (h916) \u2014 informs h906 DrugBank scoping."
     }
   ],
   "collaborations": [
