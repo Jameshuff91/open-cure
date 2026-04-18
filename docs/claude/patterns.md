@@ -78,6 +78,22 @@ Excludes harmful patterns:
 
 **Total inverse indication filters:** ~141 predictions (67 drugs, 157 pairs)
 
+## Expert-Label Ingestion (h907 — Ryland blinded review)
+
+**Flow:**
+1. Ryland returns review (CSV/XLSX/JSON) with one row per prediction and a `verdict` in {plausible, known, implausible, adverse, unsure}.
+2. `python scripts/import_ryland_review.py <file>` validates against `data/reference/ryland_review_schema.json`, resolves drug/disease names to DRKG IDs via the predictor's alias map, and writes `data/reference/expert_labels_ryland.json` keyed by `prediction_id = '<disease_id>||<drug_id>'`.
+3. `src/expert_labels.py` loads those records into an `ExpertLabels` helper for evaluation-side lookup.
+4. `python scripts/h907_eval_expert_labels.py` produces a parallel precision split per tier: `drkg_precision` (against `expanded_ground_truth.json`) vs `expert_precision` (against Ryland's verdicts).
+
+**Leakage-safe rules (DO NOT BREAK):**
+- Expert labels carry `provenance = 'expert_ryland'` and are NEVER merged into `predictor.ground_truth`, `expanded_ground_truth.json`, `drug_train_freq`, `drug_to_diseases`, or anything that feeds kNN/embedding training. Merging would contaminate the very predictions Ryland is judging.
+- Predictions Ryland did not review are excluded from the expert-precision denominator (not counted as misses).
+- Low-confidence verdicts (`reviewer_confidence < 3`) and `unsure` verdicts are excluded from expert precision by default; override with `--min-reviewer-confidence`.
+- `adverse` and `implausible` verdicts count as expert misses; they are also candidate inputs for the inverse-indication and safety-filter rules but MUST be reviewed per-prediction before codifying — Ryland's sample is not a systematic adverse-event survey.
+
+**When the review has not arrived yet:** `expert_labels_ryland.json` is absent, `load_expert_labels` returns an empty helper, and `h907_eval_expert_labels.py` leaves the `expert_precision` column null. The DRKG-GT column stays live so tier metrics keep flowing.
+
 ## Key Validated Predictions
 
 | Drug | Disease | Evidence |

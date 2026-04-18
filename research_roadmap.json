@@ -16712,7 +16712,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Define Ryland review schema (prediction_id, drug, disease, verdict in {plausible, implausible, known, adverse}, reasoning, reviewer_confidence)",
         "Write scripts/import_ryland_review.py that validates the schema and writes to data/reference/expert_labels_ryland.json",
@@ -16721,8 +16721,10 @@
         "Document the flow in docs/claude/patterns.md so future sessions do not re-leak",
         "If the review itself has not arrived, tag hypothesis status=inconclusive with 'blocked on Ryland delivery' and file a follow-up h-number to resume once data lands"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Built leakage-safe ingestion scaffold for Ryland Mortlock blinded review. Deliverables: (1) data/reference/ryland_review_schema.json (JSON Schema, 5 verdicts: plausible/known/implausible/adverse/unsure); (2) scripts/import_ryland_review.py \u2014 accepts CSV/XLSX/JSON, validates schema, resolves drug/disease names via production_predictor alias map, synthesizes prediction_id = <disease_id>||<drug_id> when missing, writes data/reference/expert_labels_ryland.json with provenance=\"expert_ryland\"; (3) src/expert_labels.py \u2014 ExpertLabels lookup helper that loads from the JSON but NEVER merges into predictor.ground_truth or expanded_ground_truth.json (leakage guarantee); (4) scripts/h907_eval_expert_labels.py \u2014 parallel precision split per tier (drkg_precision vs expert_precision) with review-coverage column. Dry-run tested on 5-row synthetic sample: 3/5 accepted (one bogus-name row correctly rejected, one invalid-verdict row correctly rejected). Scaffold run on current deliverable emits null expert column as expected. Ryland review has not arrived, so precision calibration cannot be measured. Follow-up hypotheses (h917, h918, h919) enqueued for when the review lands.",
+      "result_metric": "Infrastructure complete; expert precision column null until review arrives",
+      "started_date": "2026-04-18",
+      "completed_date": "2026-04-18"
     },
     {
       "id": "h908",
@@ -16940,6 +16942,65 @@
         "Correlate category mean |drug_targets| with target_r30 mean from h912",
         "If r > 0.7, conclude target-overlap is a drug-target-density signal, not a biological signal",
         "Use this to scope h906 DrugBank priority: target biologics in under-represented categories first"
+      ]
+    },
+    {
+      "id": "h917",
+      "title": "Ryland Expert-Label Tier Recalibration (triggered on review arrival)",
+      "category": "calibration",
+      "rationale": "h907 built the leakage-safe ingestion scaffold. When Ryland returns the ~855 GOLDEN-tier derm review, the parallel expert_precision column will reveal whether DRKG-GT precision tracks expert judgement. If expert_precision diverges from drkg_precision by >=10pp for any tier, the tier thresholds need external-label calibration. Concretely: (1) for GOLDEN, is expert_precision below drkg_precision because anti-TNF-style inverse-indication predictions inflate DRKG precision? (2) for HIGH, does expert_precision match the 58.8% holdout estimate?",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "depends_on": [
+        "h907"
+      ],
+      "steps": [
+        "python scripts/import_ryland_review.py path/to/ryland_review.xlsx",
+        "python scripts/h907_eval_expert_labels.py --tier GOLDEN --tier HIGH --tier MEDIUM",
+        "Compute abs(drkg_precision - expert_precision) per tier",
+        "If delta >=10pp for any tier, extract the misaligned sub-reasons (tier_rule column) and propose targeted demotions/promotions based on expert verdicts \u2014 not on delta alone",
+        "Validate any proposed rule change via 5-seed holdout on the non-derm subset to confirm the signal generalises beyond Ryland sample"
+      ]
+    },
+    {
+      "id": "h918",
+      "title": "Mine Ryland Implausible/Adverse Verdicts for Inverse-Indication Rules",
+      "category": "filter_rules",
+      "rationale": "Historical inverse-indication rules (h408, h486, h544) were derived from SIDER FAERS mining and literature review. Expert verdicts tagged \"adverse\" or \"implausible with reasoning\" are a cheaper-per-pair signal. But Ryland sample is non-systematic \u2014 cannot blindly add every adverse verdict to INVERSE_INDICATION_PAIRS. This hypothesis codifies the review gate: (a) require >=2 independent citations in the reasoning field OR reviewer_confidence >=4 with a mechanistic explanation, (b) verify the pair is not already in expanded_ground_truth (would indicate context-dependent use), (c) spot-check on holdout that demoting the pair does not drop legitimate related GT.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "depends_on": [
+        "h907",
+        "h917"
+      ],
+      "steps": [
+        "Extract all verdict in {implausible, adverse} from expert_labels_ryland.json",
+        "Apply citation/confidence gate described in rationale",
+        "For survivors, check expanded_ground_truth for the drug-disease pair",
+        "Propose additions to INVERSE_INDICATION_PAIRS only for pairs absent from GT",
+        "Run 5-seed holdout before/after to confirm no collateral damage"
+      ]
+    },
+    {
+      "id": "h919",
+      "title": "Expert-Review Coverage Gap: What Tiers Does Ryland Not See?",
+      "category": "meta_science",
+      "rationale": "Ryland reviews ~855 derm-category GOLDEN predictions. MEDIUM (~914 preds), LOW (9,113), and non-derm GOLDEN are unreviewed. expert_review_coverage_pct emitted by the h907 evaluator will quantify the gap per tier. Question: is derm representative enough that the expert-label calibration in h917 generalises to other categories, or do we need a second round? Analyse variance in drkg_precision across derm vs non-derm within each tier to decide.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "depends_on": [
+        "h907"
+      ],
+      "steps": [
+        "Split drkg_precision per tier by category in {derm, infectious, cancer, autoimmune, other}",
+        "If derm drkg_precision is within 1 stddev of overall tier drkg_precision, assume Ryland calibration generalises",
+        "Otherwise, identify the 2 most-different categories and recommend them as the next expert-review batches"
       ]
     }
   ],
@@ -19515,6 +19576,12 @@
       "hypothesis_id": "h912",
       "learning": "Target-overlap ranking (|drug_targets \u2229 disease_genes|) is NOT a valid standalone repurposing signal. Per-disease mean R@30 = 3.47% across 2,253 evaluable diseases, vs kNN 17.95% on same. No covariate (gene-set size, max overlap, category, GT size, in-train, kNN strength) isolates a subpopulation above 15% R@30 at n>=30. Cancer is the only category >10% (11.89%) and reveals a complementary niche: 11/104 cancer diseases where target > kNN (target mean 25.32% vs kNN 11.22% on those).",
       "implication": "(1) h900 mechanism-only fallback is permanently invalidated as a tier. (2) MinRank fusion (_minrank_fusion at production_predictor.py:3327) deserves one more test on cancer diseases with weak kNN (h914). (3) If cancer fusion fails, remove all target-overlap-only infrastructure including h900 fallback + helpers (h915). (4) The cancer-only signal likely reflects drug-target database density, not biology (h916) \u2014 informs h906 DrugBank scoping."
+    },
+    {
+      "date": "2026-04-18",
+      "hypothesis_id": "h907",
+      "learning": "Expert-label ingestion is independent infrastructure: schema + importer + leakage-safe loader + parallel precision evaluator. The whole scaffold was buildable BEFORE the review arrived. Key design choice: expert labels live in their own file (data/reference/expert_labels_ryland.json) with provenance tag, never merged into predictor.ground_truth. This preserves the evaluation independence that makes external labels valuable in the first place.",
+      "implication": "Future external-label sources (clinician reviews, RCT-curated pairs, etc.) should follow the same provenance-tagged parallel-precision pattern. Do NOT push external labels into expanded_ground_truth; it kills their evaluative independence."
     }
   ],
   "collaborations": [

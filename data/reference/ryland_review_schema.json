@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "ryland_review_schema.json",
+  "title": "Ryland Expert Blinded Review Record",
+  "description": "Schema for expert-labeled drug-disease predictions returned by Ryland Mortlock (Yale, dermatology). Each record is one predicted pair evaluated by the expert. Records are ingested by scripts/import_ryland_review.py and written to data/reference/expert_labels_ryland.json. Expert labels are tagged with provenance = 'expert_ryland' and are kept out of any data structure that feeds embedding/kNN training to avoid leakage.",
+  "type": "object",
+  "required": [
+    "prediction_id",
+    "drug",
+    "disease",
+    "verdict",
+    "provenance"
+  ],
+  "properties": {
+    "prediction_id": {
+      "type": "string",
+      "description": "Opaque identifier linking back to a row in drug_repurposing_predictions_with_confidence.xlsx. Preferred form: '<disease_id>||<drug_id>' (DRKG entity IDs). Must be unique within a review batch."
+    },
+    "drug": {
+      "type": "string",
+      "description": "Human-readable drug name exactly as shown to the reviewer."
+    },
+    "drug_id": {
+      "type": "string",
+      "description": "Optional DRKG compound entity (e.g., 'drkg:Compound::DB00945'). If absent, the importer will attempt to resolve from the drug name using production_predictor's alias map.",
+      "pattern": "^drkg:Compound::.+$"
+    },
+    "disease": {
+      "type": "string",
+      "description": "Human-readable disease name exactly as shown to the reviewer."
+    },
+    "disease_id": {
+      "type": "string",
+      "description": "Optional DRKG disease entity (e.g., 'drkg:Disease::MESH:D003550'). If absent, the importer will attempt to resolve via disease_name_matcher.",
+      "pattern": "^drkg:Disease::.+$"
+    },
+    "verdict": {
+      "type": "string",
+      "enum": ["plausible", "implausible", "known", "adverse", "unsure"],
+      "description": "Expert verdict. 'known' = already standard-of-care; 'plausible' = novel but biologically reasonable; 'implausible' = not supported by mechanism or evidence; 'adverse' = drug actively harms this disease (drug-induced or contraindicated); 'unsure' = reviewer could not decide (excluded from precision)."
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Free-text rationale for the verdict. Required for 'implausible' and 'adverse' verdicts to aid GT-gap / inverse-indication rules; optional otherwise."
+    },
+    "reviewer_confidence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "1 = low confidence, 5 = certain. Predictions with reviewer_confidence <= 2 should be excluded from tier precision unless explicitly opted in."
+    },
+    "reviewer": {
+      "type": "string",
+      "description": "Reviewer handle. For this batch, always 'ryland_mortlock'.",
+      "default": "ryland_mortlock"
+    },
+    "review_date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date when the review was completed."
+    },
+    "provenance": {
+      "type": "string",
+      "enum": ["expert_ryland"],
+      "description": "Fixed tag. Used downstream to keep expert labels out of kNN/embedding training. NEVER merge into predictor.ground_truth or expanded_ground_truth.json."
+    },
+    "evidence_citations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Optional PMIDs / NCT IDs / DOIs supporting the verdict."
+    }
+  },
+  "additionalProperties": false
+}

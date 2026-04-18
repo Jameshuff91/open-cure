@@ -1,6 +1,41 @@
 # Research Loop Progress
 
-## Current Session: h912 — Is Target-Overlap Ranking a Valid Repurposing Signal? (2026-04-18)
+## Current Session: h907 — Ryland Blinded-Review Integration Protocol (2026-04-18)
+
+### Hypothesis
+External expert labels (Ryland Mortlock's blinded review of ~855 GOLDEN-tier derm
+predictions) are the cleanest signal the project has for calibrating tiers beyond
+the DRKG ceiling. Build the leakage-safe ingestion scaffold NOW so the agent does
+not stall when the review arrives.
+
+### Status: INCONCLUSIVE — infrastructure complete, review not yet delivered
+
+### Deliverables
+- `data/reference/ryland_review_schema.json` — JSON Schema with 5 verdicts (plausible, known, implausible, adverse, unsure).
+- `scripts/import_ryland_review.py` — accepts CSV/XLSX/JSON, validates schema, resolves drug/disease names via `production_predictor` alias map, synthesizes `prediction_id = <disease_id>||<drug_id>` when missing, writes `data/reference/expert_labels_ryland.json` with `provenance='expert_ryland'`.
+- `src/expert_labels.py` — `ExpertLabels` lookup helper; loads labels but NEVER merges them into `predictor.ground_truth` or `expanded_ground_truth.json` (leakage guarantee).
+- `scripts/h907_eval_expert_labels.py` — parallel precision split per tier (`drkg_precision` vs `expert_precision`) with review-coverage column. Runs cleanly today and emits `null` expert column until the review lands.
+- `docs/claude/patterns.md` — "Expert-Label Ingestion" section documents flow + leakage-safe rules.
+
+### Validation
+- Dry-run on synthetic 5-row sample: 3/5 accepted, 2 correctly rejected (unresolvable name; invalid verdict).
+- Eval scaffold on current deliverable (GOLDEN + HIGH): `drkg_precision` = 87.0% / 70.8%, `expert_precision` = null (expected).
+
+### Follow-up hypotheses queued
+- **h917** (P2): Run expert_precision split when review lands; flag tiers with |drkg - expert| >= 10pp.
+- **h918** (P3): Mine Ryland "adverse" / "implausible" verdicts for new inverse-indication rules, gated on citations + confidence.
+- **h919** (P3): Quantify coverage gap — does derm tier precision generalise to other categories?
+
+### Files
+- Schema: `data/reference/ryland_review_schema.json`
+- Importer: `scripts/import_ryland_review.py`
+- Loader: `src/expert_labels.py`
+- Evaluator: `scripts/h907_eval_expert_labels.py`
+- Baseline output: `data/analysis/h907_expert_label_precision.json`
+
+---
+
+## Previous Session: h912 — Is Target-Overlap Ranking a Valid Repurposing Signal? (2026-04-18)
 
 ### Hypothesis
 Follow-up to h903. Forced target-overlap ranking gave 5.96% pooled prec@30, below FILTER.
