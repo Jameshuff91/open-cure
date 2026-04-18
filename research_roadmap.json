@@ -16752,7 +16752,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "For each of 1555 mapped MeSH IDs, check presence in DRKG disease node list",
         "For each present ID, count GT drug pairs in expanded_ground_truth.json",
@@ -16760,8 +16760,8 @@
         "Identify which cell contains the 569 mappings that did not become evaluable",
         "Recommend whether h905 (LINCS, fills embedding gap) or h906 (DrugBank, fills GT gap) is higher ROI"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "2x2 over 1,534 valid MeSH mappings: 95.4% are evaluable (embed+GT), only 71 blocked by missing external data. On the 638 h901-NEW mappings specifically, 100% have a DRKG embedding and 626/638 (98.1%) also have GT drugs, yet only 69 (10.8%) became pipeline-evaluable (h902). 557 data-complete mappings fail for pipeline reasons (symptom/finding exclusion, holdout sampling, name-resolution), not data reasons. LINCS (h905) unblocks 0 of the 638 new mappings; DrugBank (h906) unblocks at most 12. External data CANNOT be justified as a coverage pivot \u2014 it must be justified as a precision pivot on already-evaluable diseases (biologics for h906, rare-disease features for h905). h907 (Ryland labels) is the highest-ROI external pivot because it targets precision, not coverage. See data/analysis/h909_bottleneck_report.md.",
+      "result_metric": "LINCS 0-diseases unblockable; DrugBank \u226412; 557 blocked on pipeline not data"
     },
     {
       "id": "h910",
@@ -19374,6 +19374,12 @@
       "hypothesis_id": "h902",
       "learning": "h901 MeSH mapping expansion (917->1555, +70%) yielded only +7.2% evaluable diseases (965->1034) and 0 new GOLDEN predictions. 54% of new mappings were symptoms/findings/clinical qualifiers that should not generate treatment predictions (agitation, vomiting, back pain). Mapping expansion is at diminishing returns; the real bottleneck is DRKG embedding coverage for rare diseases, not disease-name normalization.",
       "implication": "Pivot research loop to external data hypotheses (h905 LINCS, h906 DrugBank, h907 Ryland). Mapping expansion is CLOSED. Audit h901 additions for symptom/finding leakage (h908). Establish predicted-coverage scoring so future mapping rounds are targeted, not blind (h910)."
+    },
+    {
+      "date": "2026-04-18",
+      "hypothesis_id": "h909",
+      "learning": "The h901 mapping expansion did NOT hit an external-data bottleneck. All 638 new mappings have DRKG embeddings; 626/638 have GT drugs. The 569 'missing evaluable' are blocked INSIDE the pipeline (symptoms 54%, holdout sampling, name-resolution). External data (LINCS, DrugBank) gives <60 new evaluable diseases across the full 1,555 \u2014 it cannot be justified as a coverage pivot.",
+      "implication": "Reframe h905/h906 as PRECISION pivots (biologics, rare-disease features) not coverage pivots. Prioritize h907 (Ryland blinded labels) and pipeline-hygiene hypotheses (h908 symptom filter, new h910 below) over external data coverage."
     }
   ],
   "collaborations": [

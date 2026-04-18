@@ -1,6 +1,42 @@
 # Research Loop Progress
 
-## Current Session: h902 - h901 MeSH Expansion Impact (2026-04-18)
+## Current Session: h909 - External-Data Bottleneck Diagnosis (2026-04-18)
+
+### Hypothesis
+Identify whether the 569 h901 mappings that failed to become evaluable (per h902) are blocked by
+missing DRKG embeddings (fixable by LINCS/h905), missing GT drug pairs (fixable by DrugBank/h906),
+or neither. A 2x2 table over {embedding present, GT drugs present} should locate the bottleneck.
+
+### Status: VALIDATED (surprising — invalidates coverage motive for h905/h906)
+
+### Key Findings
+- All 1,534 valid MeSH mappings: 95.4% are evaluable (embed+GT). Only 71 (4.6%) blocked on either axis.
+- **638 h901-new mappings: 100% have a DRKG embedding. 98.1% also have GT drugs. Yet only 69 (10.8%)
+  became pipeline-evaluable per h902.** → 557 data-complete mappings fail for PIPELINE reasons,
+  not data reasons (symptom/finding exclusion 54%, holdout sampling, name-resolution).
+- LINCS/h905 could unblock 0 of the 638 new mappings; DrugBank/h906 could unblock ≤12. Neither
+  can be justified as a **coverage** pivot — they must be justified as **precision** pivots.
+- Full report: `data/analysis/h909_bottleneck_report.md`; raw counts: `data/analysis/h909_bottleneck_2x2.json`.
+
+### Strategic Implications
+1. **Reframe h905/h906** — precision pivots on biologics / rare-disease features, not coverage.
+2. **Prioritize h907 (Ryland labels)** — the only external pivot that already targets precision.
+3. **Pipeline hygiene is the real coverage lever** — h908 (symptom filter) and new h910 audit.
+
+### New Hypotheses Generated (3)
+- h910 (P2, low): Audit the 557 data-complete-but-non-evaluable h901 mappings; categorize drop points.
+- h911 (P2, medium): Reframe h906 as biologic-precision fix (mAbs 27.3% → target ≥32%).
+- h912 (P3, low): Quantify holdout-sampling loss per disease across 5 seeds.
+
+### Recommended Next Steps
+1. h903 (priority 1) — formalize h900 mechanism-only fallback with holdout eval.
+2. h904 (priority 1) — but only demote `infectious_hierarchy_uti` (GOLDEN→HIGH, 0% holdout);
+   other flagged rules are FILTER-tier or zero-n and not actionable.
+3. h910 (priority 2) — trace the 557 non-evaluable mappings to their pipeline drop point.
+
+---
+
+## Previous Session: h902 - h901 MeSH Expansion Impact (2026-04-18)
 
 ### h902: Measure h901 MeSH Expansion Impact on Coverage and Precision — VALIDATED (coverage) + INVALIDATED (precision)
 
