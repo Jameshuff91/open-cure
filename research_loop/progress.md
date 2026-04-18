@@ -1,6 +1,76 @@
 # Research Loop Progress
 
-## Current Session: h814+h815+h817 - HIGH Sub-Reason Audit + MODERATE Promotion + Evidence Split (2026-02-25)
+## Current Session: h902 - h901 MeSH Expansion Impact (2026-04-18)
+
+### h902: Measure h901 MeSH Expansion Impact on Coverage and Precision — VALIDATED (coverage) + INVALIDATED (precision)
+
+**Methodology:** Compared pre-h901 (commit 80a068e^, `data/analysis/h900_holdout_run.txt`) vs post-h901 (`data/analysis/h901_full_eval_output.txt`) 5-seed holdout evaluations. Diffed MeSH mappings (`git show 80a068e -- data/reference/mesh_mappings_from_agents.json`). Categorized 638 new mappings by keyword heuristics.
+
+**Coverage results:**
+- MeSH mappings: 917 → 1,555 (+638, +70%)
+- Evaluable diseases (GT + embeddings): **965 → 1,034 (+69, +7.2%)**
+- Full-data predictions: 21,164 → 24,713 (+3,549, +16.8%)
+- Mapping conversion rate: **10.8%** (638 new mappings → 69 new evaluable diseases)
+
+**Tier precision (holdout, 5-seed mean):**
+
+| Tier | Pre | Post | Δ | σ-units |
+|---|---|---|---|---|
+| GOLDEN | 87.1% ± 2.7% | 86.7% ± 2.4% | -0.4pp | 0.11σ |
+| HIGH | 83.4% ± 4.0% | 80.8% ± 2.8% | -2.6pp | 0.53σ |
+| MEDIUM | 38.5% ± 3.6% | 39.7% ± 4.7% | +1.2pp | 0.20σ |
+| LOW | 11.3% ± 0.5% | 10.8% ± 0.3% | -0.5pp | 0.86σ |
+| FILTER | 9.2% ± 0.5% | 7.9% ± 0.7% | -1.3pp | 1.51σ |
+
+All tier precision shifts are **within noise** (|Δ| < 1.6σ). No significant quality gain or loss.
+
+**Tier volume (predictions per holdout seed):** GOLDEN **0 new preds** (-4%), HIGH +12%, MEDIUM +11%, LOW +23%, FILTER +22%. New diseases generate almost exclusively LOW/FILTER predictions.
+
+**New-mapping category breakdown (638 total):**
+- Other (symptoms/findings/qualifiers): **346 (54%)** — e.g., agitation, anorexia, back pain, bradycardia, ascites, vomiting
+- Cancer: 82 (13%)
+- Pain/symptom: 41 (6%)
+- Metabolic: 40 (6%)
+- Rare genetic: 36 (6%)
+- Infectious: 35 (5%)
+- Cardiovascular: 30 (5%)
+- Autoimmune: 22 (3%)
+- Neurological: 6 (1%)
+
+**Key learnings:**
+1. Mapping expansion is at diminishing returns. The 10.8% conversion rate plus zero new GOLDEN predictions disconfirms the hypothesis that disease-name normalization is the binding constraint on rare-disease coverage.
+2. 54% of h901 additions are symptoms/findings that should never generate repurposing predictions. Quality-risk audit needed (h908).
+3. DRKG embedding coverage is the actual bottleneck for rare diseases — validates the h905 LINCS pilot and h906 DrugBank target-features direction.
+
+**Recommendation (per research_spec.md priority-1 decision point):** Pivot to external data. The DRKG-expansion loop is CLOSED.
+
+### New Hypotheses Generated (5)
+- h908: Audit + filter symptom/finding entries from h901 (priority 2, quality risk)
+- h909: 2x2 table {embedding, GT} to identify real bottleneck (priority 2, informs h905 vs h906)
+- h910: Per-disease predicted-coverage score for targeted mapping (priority 3)
+- h911: Deliverable impact audit of h901 (priority 3)
+- h912: Update research_spec.md + MEMORY.md CLOSED list (priority 4)
+
+### Recommended Next Steps
+1. **h903** (priority 1, low effort): Holdout eval of h900 mechanism-only fallback as formal tier
+2. **h904** (priority 1, low effort): Demote 12 overfitted tier rules from h393 audit
+3. **h909** (priority 2, low effort): Identify embedding-vs-GT bottleneck before committing to h905/h906
+4. **h905** (priority 2, high effort): LINCS L1000 pilot for 5 DRKG-absent rare diseases
+
+### Current Tier State (post-h901, unchanged from h815 within noise)
+| Tier | Holdout | Volume |
+|------|---------|--------|
+| GOLDEN | 86.7% ± 2.4% | 927 preds |
+| HIGH | 80.8% ± 2.8% | 1,261 preds |
+| MEDIUM | 39.7% ± 4.7% | 895 preds |
+| LOW | 10.8% ± 0.3% | 11,195 preds |
+| FILTER | 7.9% ± 0.7% | 10,435 preds |
+
+Coverage: 1,034 evaluable diseases.
+
+---
+
+## Previous Session: h814+h815+h817 - HIGH Sub-Reason Audit + MODERATE Promotion + Evidence Split (2026-02-25)
 
 ### h814: HIGH Sub-Reason Audit (CS SOC Revert) — VALIDATED
 

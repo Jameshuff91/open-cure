@@ -1,0 +1,81 @@
+h901: MeSH Mapping Resolution via NLM API
+============================================================
+Unmapped diseases to resolve: 1829
+DRKG MESH IDs available: 3864
+[1/1829] (0.1%) Resolved: 0, Failed: 0
+[50/1829] (2.7%) Resolved: 10, Failed: 39
+[100/1829] (5.5%) Resolved: 22, Failed: 77
+[150/1829] (8.2%) Resolved: 29, Failed: 120
+[200/1829] (10.9%) Resolved: 32, Failed: 167
+[250/1829] (13.7%) Resolved: 45, Failed: 204
+[300/1829] (16.4%) Resolved: 53, Failed: 246
+[350/1829] (19.1%) Resolved: 61, Failed: 288
+[400/1829] (21.9%) Resolved: 69, Failed: 330
+[450/1829] (24.6%) Resolved: 86, Failed: 363
+[500/1829] (27.3%) Resolved: 92, Failed: 407
+[550/1829] (30.1%) Resolved: 101, Failed: 448
+[600/1829] (32.8%) Resolved: 110, Failed: 489
+[650/1829] (35.5%) Resolved: 121, Failed: 528
+[700/1829] (38.3%) Resolved: 128, Failed: 571
+[750/1829] (41.0%) Resolved: 134, Failed: 615
+[800/1829] (43.7%) Resolved: 145, Failed: 654
+[850/1829] (46.5%) Resolved: 161, Failed: 688
+[900/1829] (49.2%) Resolved: 175, Failed: 724
+[950/1829] (51.9%) Resolved: 186, Failed: 763
+[1000/1829] (54.7%) Resolved: 202, Failed: 797
+[1050/1829] (57.4%) Resolved: 215, Failed: 834
+[1100/1829] (60.1%) Resolved: 228, Failed: 871
+[1150/1829] (62.9%) Resolved: 240, Failed: 909
+[1200/1829] (65.6%) Resolved: 259, Failed: 940
+[1250/1829] (68.3%) Resolved: 268, Failed: 981
+[1300/1829] (71.1%) Resolved: 281, Failed: 1018
+[1350/1829] (73.8%) Resolved: 297, Failed: 1052
+[1400/1829] (76.5%) Resolved: 318, Failed: 1081
+[1450/1829] (79.3%) Resolved: 331, Failed: 1118
+[1500/1829] (82.0%) Resolved: 343, Failed: 1156
+[1550/1829] (84.7%) Resolved: 358, Failed: 1191
+[1600/1829] (87.5%) Resolved: 372, Failed: 1227
+[1650/1829] (90.2%) Resolved: 385, Failed: 1264
+[1700/1829] (92.9%) Resolved: 399, Failed: 1300
+[1750/1829] (95.7%) Resolved: 414, Failed: 1335
+[1800/1829] (98.4%) Resolved: 426, Failed: 1373
+
+============================================================
+RESOLUTION COMPLETE
+============================================================
+Total processed: 1829
+Resolved: 437 (23.9%)
+Failed: 1392 (76.1%)
+
+By confidence: {
+  "high": 324,
+  "low": 9,
+  "medium": 104
+}
+
+By method: {
+  "abbreviation_expansion": 1,
+  "base_disease_contains": 9,
+  "base_disease_exact": 57,
+  "exact_match": 323,
+  "contains_match": 47
+}
+
+Results saved to: /Users/jimhuff/github/open-cure/data/analysis/h901_resolved_mappings.json
+
+Sample resolutions:
+  AIDS → MESH:D000163 (Acquired Immunodeficiency Syndrome) [high, abbreviation_expansion (AIDS → acquired immunodeficiency syndrome)]
+  Acute Rejection → MESH:D006084 (Graft Rejection) [low, base_disease_contains (Acute Rejection → Rejection)]
+  Acute enterocolitis → MESH:D004760 (Enterocolitis) [medium, base_disease_exact (Acute enterocolitis → enterocolitis)]
+  Acute gastritis → MESH:D005756 (Gastritis) [medium, base_disease_exact (Acute gastritis → gastritis)]
+  Acute glomerulonephritis → MESH:D005921 (Glomerulonephritis) [medium, base_disease_exact (Acute glomerulonephritis → glomerulonephritis)]
+  Acute hyperammonemia → MESH:D022124 (Hyperammonemia) [medium, base_disease_exact (Acute hyperammonemia → hyperammonemia)]
+  Acute prostatitis → MESH:D011472 (Prostatitis) [medium, base_disease_exact (Acute prostatitis → prostatitis)]
+  Acute pulmonary edema → MESH:D011654 (Pulmonary Edema) [medium, base_disease_exact (Acute pulmonary edema → pulmonary edema)]
+  Acute respiratory insufficiency → MESH:D012131 (Respiratory Insufficiency) [medium, base_disease_exact (Acute respiratory insufficiency → respiratory insufficiency)]
+  Acute ulcer → MESH:D014456 (Ulcer) [medium, base_disease_exact (Acute ulcer → ulcer)]
+  Adams-Stokes syndrome → MESH:D000219 (Adams-Stokes Syndrome) [high, exact_match]
+  Adrenal hyperplasia → MESH:D000312 (Adrenal Hyperplasia, Congenital) [medium, contains_match]
+  Agitation → MESH:D011595 (Psychomotor Agitation) [medium, contains_match]
+  Alagille syndrome → MESH:D016738 (Alagille Syndrome) [high, exact_match]
+  Alcoholic Intoxication → MESH:D000435 (Alcoholic Intoxication) [high, exact_match]

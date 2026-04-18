@@ -1,0 +1,87 @@
+h901: MeSH Mapping Gap Analysis
+============================================================
+Unique Every Cure diseases: 2688
+Currently mapped: 823 (30.6%)
+Currently unmapped: 1865 (69.4%)
+DRKG disease entities: 4067
+
+============================================================
+Phase 1: Programmatic Resolution
+============================================================
+Programmatically resolved: 36
+Still unmapped: 1829
+
+Sample resolutions:
+  spinal muscular atrophy, type 1 → drkg:Disease::MESH:D009134
+  spinal muscular atrophy, type II → drkg:Disease::MESH:D009134
+  ACUTE ALCOHOL WITHDRAWAL → drkg:Disease::MESH:D000430
+  Acute Pain → drkg:Disease::MESH:D010146
+  Acute bronchitis → drkg:Disease::MESH:D001991
+  Acute bursitis → drkg:Disease::MESH:D002062
+  Acute coccidioidomycosis → drkg:Disease::MESH:D003047
+  Acute congestive heart failure → drkg:Disease::MESH:D006333
+  Acute heart failure → drkg:Disease::MESH:D006333
+  Acute malaria → drkg:Disease::MESH:D008288
+  Acute pelvic inflammatory disease → drkg:Disease::MESH:D000292
+  Acute pulmonary embolism → drkg:Disease::MESH:D011655
+  Acute pulmonary thromboembolism → drkg:Disease::MESH:D011655
+  Acute sinusitis → drkg:Disease::MESH:D012852
+  Acute urticaria → drkg:Disease::MESH:D014581
+  Chronic atrial flutter → drkg:Disease::MESH:D001282
+  Chronic constipation → drkg:Disease::MESH:D003248
+  Chronic ulcerative colitis → drkg:Disease::MESH:D003093
+  Chronic uremia → drkg:Disease::MESH:D014511
+  Chronic urinary tract infection → drkg:Disease::MESH:D014552
+
+============================================================
+Unmapped Disease Categories (for LLM prioritization)
+============================================================
+
+other: 1346 diseases
+  - ABSSSI
+  - ADHF
+  - AIDS
+  - AIDS related illness
+  - ATTRV30M amyloidosis
+  ... and 1341 more
+
+cancer: 225 diseases
+  - Adult T-cell lymphoma/leukemia recurrent
+  - Advanced Gastric Adenocarcinoma
+  - Advanced Gastroesophageal Junction Adenocarcinoma
+  - Advanced Ovarian Carcinoma
+  - Advanced Soft Tissue Sarcoma
+  ... and 220 more
+
+infectious: 142 diseases
+  - Abdominal Infection
+  - Abdominal and gastrointestinal infections
+  - Acinetobacter infectious disease
+  - Acute bacterial exacerbation of chronic bronchitis
+  - Acute bacterial sinusitis
+  ... and 137 more
+
+rare_genetic: 86 diseases
+  - 5q-syndrome
+  - Adams-Stokes syndrome
+  - Alagille syndrome
+  - Anticholinergic Syndrome
+  - Blue rubber bleb nevus syndrome
+  ... and 81 more
+
+neurological: 30 diseases
+  - Atonic seizure
+  - Bilateral tonic-clonic seizure
+  - Bilateral tonic-clonic seizure with focal onset
+  - Clonic seizure
+  - Dementia due to Parkinson's disease
+  ... and 25 more
+
+============================================================
+Impact Assessment
+============================================================
+GT pairs behind unmapped diseases: 5251 / 10224 (51.4%)
+If resolved, evaluable diseases could grow from 823 to 2688
+
+Results saved to: /Users/jimhuff/github/open-cure/data/analysis/h901_mesh_mapping_analysis.json
+Unmapped disease list saved to: /Users/jimhuff/github/open-cure/data/analysis/h901_unmapped_diseases.txt

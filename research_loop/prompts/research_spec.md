@@ -1,5 +1,24 @@
 # Open-Cure Drug Repurposing Research Specification
 
+## Current Phase (2026-04-18): Post-Tier-Calibration Pivot
+
+Tier-rule calibration on DRKG-only data has hit diminishing returns (h808–h821: ±2pp deltas, invalidations roughly equal to validations). The DRKG ceiling (~37% R@30) is structural, not fixable by more rule tweaking.
+
+Two March commits opened new fronts that were never iterated on:
+- **h900** shipped a mechanism-only fallback for zero-kNN-coverage diseases but only with a 64-line smoke test — no holdout eval, no formal tier.
+- **h901** expanded MeSH disease mappings 917 → 1,555 (+70%) — no before/after coverage or precision measurement.
+
+Three new directions are authorised beyond DRKG:
+1. **External signal (LINCS L1000)** for diseases absent from DRKG entirely.
+2. **Drug-target features (DrugBank)** for the largest failure class (biologics).
+3. **External labels (Ryland blinded review, ~855 GOLDEN derm predictions)** as calibration ground truth independent of DRKG.
+
+**Priority-1 hypotheses (h902–h904) must be completed first** — they measure whether the DRKG ceiling is truly structural before we commit effort to the external-data pivots (h905–h907). If h902 shows h901 moved the needle, the mapping-expansion loop may resume; otherwise the agent should move to LINCS/DrugBank/Ryland.
+
+**2026-04-18 update — h902 RESOLVED:** Mapping expansion is at diminishing returns. h901 added 638 mappings but only +69 evaluable diseases (10.8% conversion rate), 0 new GOLDEN predictions, and all tier precision shifts were within 1.6σ noise. 54% of new mappings were symptoms/findings (agitation, vomiting, back pain) that should not produce predictions at all. Mapping expansion is **CLOSED**. Remaining priority-1 items: h903 (h900 fallback formalization) and h904 (12 overfitted rule demotions). After those, proceed directly to h905–h907. New priority-2 audits: h908 (symptom leakage) and h909 ({embedding, GT} bottleneck table to prioritize h905 vs h906).
+
+Tier-calibration hypotheses below priority 3 are deprioritised unless they are needed to unlock a priority-1/2 result.
+
 ## Project Goal
 Improve drug repurposing predictions using the DRKG knowledge graph and machine learning models.
 

@@ -9,7 +9,7 @@
     "ceiling": "60.4% (oracle)",
     "gap": "23 pp requires external data"
   },
-  "last_updated": "2026-02-07",
+  "last_updated": "2026-04-18",
   "hypotheses": [
     {
       "id": "h1",
@@ -16523,16 +16523,17 @@
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Extract per-seed per-rule precision from h393 data",
         "Calculate per-rule variance contribution",
         "Identify rules contributing most to tier variance",
         "Determine if unstable rules should be handled differently"
-      ]
+      ],
+      "findings": "Abandoned - analysis script ran but produced no holdout data for CS SOC HIGH (0 predictions in all seeds). The variance decomposition approach was not completed."
     },
     {
-      "id": "h820",
+      "id": "h824",
       "title": "HIGH CS SOC Unmined Deep Dive: Are 167 Unmined CS SOC Predictions Lower Quality?",
       "hypothesis": "The 167 unmined corticosteroid SOC HIGH predictions have only 39.5% full-data precision vs 78.4% for mined CS SOC. Mining these could reveal a sub-population that should be demoted to MEDIUM.",
       "status": "pending",
@@ -16571,7 +16572,7 @@
       "id": "h822",
       "title": "NO_EVIDENCE HIGH Demotion: Are 93 HIGH NO_EVIDENCE Predictions Correctly Placed?",
       "hypothesis": "93 HIGH predictions have NO_EVIDENCE in literature mining, with only 41.9% full-data precision. Standard HIGH sub-reason with NO_EVIDENCE has 15.8% precision (19 preds). These could be demotion candidates.",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 4,
       "expected_impact": "medium",
       "effort": "low",
@@ -16582,14 +16583,14 @@
         "Implement targeted demotions for LOW-performing combinations",
         "Validate combined holdout impact"
       ],
-      "findings": null,
-      "result_metric": null
+      "findings": "Already implemented by h791: HIGH + NO/WEAK_EVIDENCE \u2192 MEDIUM (31.3% holdout). Line 4833-4836 in production_predictor.py. The 93 NO_EVIDENCE HIGH predictions are already being demoted to MEDIUM.",
+      "result_metric": "N/A \u2014 already implemented"
     },
     {
       "id": "h823",
       "title": "MEDIUM Evidence Gradient Stratification: Does Evidence Level Predict Within-MEDIUM Quality?",
       "hypothesis": "MEDIUM precision varies dramatically by evidence level: STRONG=82.2%, MODERATE=41.1%, WEAK=24.9%, NO=16.4%. This gradient could be used to create MEDIUM sub-tiers or improve the deliverable quality annotation.",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 5,
       "expected_impact": "low",
       "effort": "low",
@@ -16601,6 +16602,222 @@
       ],
       "findings": null,
       "result_metric": null
+    },
+    {
+      "id": "h902",
+      "title": "Measure h901 MeSH Expansion Impact on Coverage and Precision",
+      "category": "evaluation",
+      "rationale": "h901 expanded MeSH disease mappings from 917 to 1,555 (+70%). Prior analysis framed 56.9% disease-name-mapping failure as the rare-disease bottleneck, but h901 landed without a before/after precision measurement. Need: (a) how many previously-unmapped diseases now have predictions, (b) does tier precision shift on 5-seed holdout, (c) which disease categories show meaningful R@30 gains. This answer decides the next direction \u2014 if expansion unlocked real headroom, keep mining mappings; if DRKG ceiling holds, pivot to LINCS (h905).",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 1,
+      "status": "validated",
+      "steps": [
+        "Count diseases with >=1 prediction and diseases with GT+embeddings pre- vs post-h901 (use git stash/checkout 80a068e^ for baseline)",
+        "Run 5-seed holdout eval on current tree (reuse scripts/h393-style validation)",
+        "Diff tier precision vs the last measurement in progress.md (GOLDEN 87.1%, HIGH 83.4%, MEDIUM 38.5%, LOW 11.3%)",
+        "Break down delta by disease category (cancer, autoimmune, metabolic, rare)",
+        "List top-20 newly-mapped diseases that now receive GOLDEN/HIGH predictions",
+        "Spot-validate 10 of those against ClinicalTrials.gov and PubMed",
+        "Write findings with explicit coverage delta, precision delta, and recommendation (continue mapping vs pivot to external data)"
+      ],
+      "findings": "Coverage: 965 -> 1034 evaluable diseases (+69, +7.2%); predictions 21,164 -> 24,713 (+16.8%). Mapping conversion rate: 638 new mappings -> 69 new evaluable diseases (10.8%). Tier precision unchanged within noise: GOLDEN 87.1->86.7% (0.11 sigma), HIGH 83.4->80.8% (0.53 sigma), MEDIUM 38.5->39.7% (0.20 sigma), LOW 11.3->10.8% (0.86 sigma), FILTER 9.2->7.9% (1.51 sigma). Zero new GOLDEN-tier predictions; new diseases land overwhelmingly in LOW/FILTER (+23%). 54% of 638 new mappings are symptoms/findings/qualifiers (agitation, anorexia, vomiting) that should not generate repurposing predictions. Verdict: expansion is safe-but-low-value coverage gain. Pivot to external data for rare-disease discovery. See data/analysis/h902_analysis.md.",
+      "result_metric": "+69 evaluable diseases (+7.2%), 0 new GOLDEN preds, all tier precision shifts <1.6 sigma"
+    },
+    {
+      "id": "h903",
+      "title": "Holdout Evaluation of h900 Mechanism-Only Fallback \u2014 Formalize as Tier",
+      "category": "evaluation",
+      "rationale": "h900 added a mechanism-only fallback path for diseases with zero kNN coverage, but only shipped with a 64-line smoke test (Riluzole->ALS, Imiglucerase->Gaucher, Tetrabenazine->Huntington all rank #1). No holdout eval, no tier assignment. If fallback precision is >40% it deserves a formal tier (likely between MEDIUM and LOW); if <15% it's cosmetic.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Enumerate holdout diseases that trigger the mechanism fallback path (zero kNN neighbors)",
+        "Compute per-drug R@30 and top-k precision on that subset, 5 seeds",
+        "Compare to size-matched kNN-tier diseases to rule out a size confound",
+        "Compare fallback-path predictions to ClinicalTrials.gov for the FDA-approved mechanism cases",
+        "Decide: introduce MECHANISM tier, promote to MEDIUM, keep as internal fallback only, or remove",
+        "If formalizing as tier, update production_predictor.py and deliverable schema"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h904",
+      "title": "Demote 12 Overfitted Tier Rules from h393 Audit",
+      "category": "calibration",
+      "rationale": "h393 validation surfaced 12 rules with full-data/holdout gaps >15pp, still live in production_predictor.py: UTI GOLDEN (-71pp), MS HIGH (-100pp), lupus HIGH (-100pp), asthma HIGH (-62pp), diabetes LOW (-44pp), CV pathway MEDIUM (-44pp), cancer_targeted_therapy LOW (-21pp), highly_repurposable LOW (-28pp), skin_infection MEDIUM (-30pp), metabolic LOW (-40pp), corticosteroid_iatrogenic FILTER (-28pp), base_to_complication FILTER (-23pp). Each drags its tier's expected precision.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Load the 12 OVERFITTED rules from data/analysis/h393_holdout_validation.json",
+        "For each, pick target tier = current - 1 (one level demotion)",
+        "Implement demotions in src/production_predictor.py (preserve rule names, change tier assignment)",
+        "Run 5-seed holdout and diff all tier precisions",
+        "Count predictions moved per tier, report net tier-precision delta",
+        "If any demoted rule's new tier is now itself overfitted, iterate once"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h905",
+      "title": "LINCS L1000 Connectivity Score Pilot for 5 DRKG-Absent Rare Diseases",
+      "category": "external-data",
+      "rationale": "Prior analysis concluded Niemann-Pick gets zero predictions not because scoring fails but because it is not in DRKG at all. h901 surfaced ~1,829 disease names still unmapped. LINCS L1000 lets us compute a drug-disease connectivity score (drug expression signature reversing disease signature) independent of DRKG, unlocking the absent-from-DRKG bucket. Start small: 5 pilot diseases, measure whether known treatments rank highly.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Download LINCS L1000 Phase I (GSE92742) to data/external/lincs/ (gitignore the HDF5)",
+        "Pick 5 pilots with known FDA-approved treatments but absent from DRKG: Niemann-Pick C (miglustat), XLMTM (AT132), Rett (trofinetide), Friedreich ataxia (omaveloxolone), Alkaptonuria (nitisinone)",
+        "Find disease-state expression signatures in GEO (or use ARCHS4 query)",
+        "Compute reverse-connectivity score for top-500 LINCS drugs per disease",
+        "For each disease, record rank of the known-effective drug and top-10 novel predictions",
+        "If median known-drug rank is <=50/500, green-light building a parallel LINCS scorer; otherwise record as blocked with reason"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h906",
+      "title": "DrugBank Target Features to Fix Biologic Prediction Failures",
+      "category": "feature-engineering",
+      "rationale": "Biologics (mAbs) are the largest single failure class: 27.3% R@30 vs 41.8% overall, driven by data sparsity (2.1 vs 11.1 diseases/drug). RESEARCH_ROADMAP Priority 3 named DrugBank target features as the fix and has sat untouched. Drug targets are the right feature space for antibodies because antibody-target specificity is what the embedding fails to capture.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Register for DrugBank academic license if not already; download full XML",
+        "Extract drug->target mappings to data/reference/drugbank_targets.json",
+        "Build disease->target matrix using DisGeNET (or OMIM) gene-disease associations",
+        "Add target_overlap and target_family features to the GB model pipeline",
+        "Retrain on existing train split; evaluate separately on (a) biologics subset, (b) small molecules, (c) overall",
+        "Report R@30 delta per subset; success = biologic R@30 improves by >=5pp without overall regression"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h907",
+      "title": "Ryland Blinded-Review Integration Protocol (External Labels -> Recalibration)",
+      "category": "collaboration",
+      "rationale": "Ryland (Yale, dermatology) has a blinded review of ~855 GOLDEN-tier derm predictions pending. Once returned these are expert labels independent of DRKG, which is exactly what the tier system needs to calibrate beyond the DRKG ceiling. Protocol has to be in place before the labels arrive so we do not stall; also need leakage-safe ingestion.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Define Ryland review schema (prediction_id, drug, disease, verdict in {plausible, implausible, known, adverse}, reasoning, reviewer_confidence)",
+        "Write scripts/import_ryland_review.py that validates the schema and writes to data/reference/expert_labels_ryland.json",
+        "Extend expanded_ground_truth.json loader to accept a provenance tag and keep expert labels out of training splits that feed embeddings",
+        "Split 5-seed holdout precision into (DRKG-derived GT) vs (expert-labeled) columns",
+        "Document the flow in docs/claude/patterns.md so future sessions do not re-leak",
+        "If the review itself has not arrived, tag hypothesis status=inconclusive with 'blocked on Ryland delivery' and file a follow-up h-number to resume once data lands"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h908",
+      "title": "Audit and filter symptom/finding entries from h901 MeSH expansion",
+      "category": "deliverable_quality",
+      "rationale": "h902 found 54% of 638 new mappings are symptoms/signs/acute presentations (agitation, vomiting, back pain, bradycardia, ascites) - these should NOT generate drug-repurposing predictions because they are clinical findings, not treatable diseases. Risk: surfacing nonsense predictions in the deliverable. Action: classify all h901-added mappings into {primary disease, syndrome, symptom, finding, procedure, acute event} and strip non-disease entries from evaluation and deliverable.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Enumerate the 638 new mappings added by commit 80a068e",
+        "Classify each using MeSH tree node (D=disease, C=disease, F=symptom/finding, G=procedure) and LLM review",
+        "Count how many of the 69 new evaluable diseases fall in each class",
+        "Check whether any filter-class entries received non-FILTER predictions (quality leak)",
+        "Implement a symptom/finding blocklist in the disease-mapping loader",
+        "Re-run holdout, confirm no quality regression, report pred-volume delta"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h909",
+      "title": "Identify real bottleneck: missing DRKG embeddings vs missing GT drugs",
+      "category": "coverage_analysis",
+      "rationale": "h902 shows only 10.8% of new mappings became evaluable. For the other 89.2%, we do not know whether the MeSH ID is absent from DRKG embeddings, or present but with no GT drugs, or present but filtered for other reasons. Need a 2x2 table: {embedding yes/no} x {GT yes/no}. This determines which external data source unblocks the most diseases: LINCS (new embeddings), DrugBank (new GT drugs), or neither (diseases fundamentally out of scope).",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "For each of 1555 mapped MeSH IDs, check presence in DRKG disease node list",
+        "For each present ID, count GT drug pairs in expanded_ground_truth.json",
+        "Produce 2x2 table: N diseases in each {embedding, GT} cell",
+        "Identify which cell contains the 569 mappings that did not become evaluable",
+        "Recommend whether h905 (LINCS, fills embedding gap) or h906 (DrugBank, fills GT gap) is higher ROI"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h910",
+      "title": "Per-disease predicted-coverage score to triage mapping-expansion ROI",
+      "category": "precision_calibration",
+      "rationale": "Mapping expansion is blind: we add names and hope predictions emerge. A per-disease predicted-coverage score (combining kNN neighbor density, GT drug abundance in disease category, and embedding quality) would let us predict in advance whether a new mapping will yield useful predictions. This converts h901-style blind expansion into targeted curation - map only diseases likely to clear GOLDEN/HIGH.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "For each evaluable disease, compute features: kNN k=20 neighbor count, GT drug count, category match to top hierarchy rules, embedding norm",
+        "Fit a simple model to predict 'disease produces >=1 GOLDEN/HIGH prediction' (binary)",
+        "Validate with 5-fold CV",
+        "Apply to the ~1200 still-unmapped Every Cure diseases; rank by expected yield",
+        "If top-100 predicted-yield diseases convert at >30%, justify a targeted mapping round"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h911",
+      "title": "Measure deliverable impact of h901: per-user coverage gain vs quality risk",
+      "category": "production_optimization",
+      "rationale": "h902 measured coverage and tier precision but not end-user deliverable impact. The production deliverable is filtered and formatted for clinicians. Key questions: (1) How many deliverable rows does h901 add? (2) Are any of them symptoms/findings that should be filtered per h908? (3) Does h901 improve rare-disease representation?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Re-run production_predictor.py with post-h901 mappings, generate new deliverable",
+        "Diff against data/deliverables/drug_repurposing_predictions_with_confidence.xlsx (Feb 7 pre-h901)",
+        "Count added rows per tier, per disease category, per orphan/rare designation",
+        "Flag any rows whose disease name is a symptom/finding (overlap with h908 blocklist)",
+        "Report on whether the deliverable rare-disease coverage (US prevalence <200K) improved"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h912",
+      "title": "Re-prioritize h903/h904 now that h902 is resolved",
+      "category": "meta_science",
+      "rationale": "h902 resolved the DRKG-ceiling question: mapping expansion is at diminishing returns. h903 (mechanism fallback tier) and h904 (12 overfitted rule demotions) are the remaining priority-1 tier-calibration items. After completing those, the research loop should proceed directly to h905-h907 external-data hypotheses rather than generating more tier-calibration hypotheses.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Update research_loop/prompts/research_spec.md: mark h902 resolved, note 10.8% conversion rate",
+        "Keep h903 and h904 as priority 1",
+        "Confirm h905/h906/h907 still unblocked",
+        "Flag that mapping expansion is CLOSED direction (add to MEMORY.md CLOSED list)"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
@@ -19151,6 +19368,12 @@
       "hypothesis_id": "h814+h815",
       "learning": "CS SOC revert (h814) + MODERATE LOW promotion (h815) combined for HIGH +2.1pp and MEDIUM +2.2pp. These were independently implemented but their effects compound: CS predictions dropping from HIGH to MEDIUM absorbed into the MODERATE-boosted MEDIUM pool.",
       "implication": "Track cumulative tier state, not just individual hypothesis deltas. Compounding effects between hypotheses can be significant."
+    },
+    {
+      "date": "2026-04-18",
+      "hypothesis_id": "h902",
+      "learning": "h901 MeSH mapping expansion (917->1555, +70%) yielded only +7.2% evaluable diseases (965->1034) and 0 new GOLDEN predictions. 54% of new mappings were symptoms/findings/clinical qualifiers that should not generate treatment predictions (agitation, vomiting, back pain). Mapping expansion is at diminishing returns; the real bottleneck is DRKG embedding coverage for rare diseases, not disease-name normalization.",
+      "implication": "Pivot research loop to external data hypotheses (h905 LINCS, h906 DrugBank, h907 Ryland). Mapping expansion is CLOSED. Audit h901 additions for symptom/finding leakage (h908). Establish predicted-coverage scoring so future mapping rounds are targeted, not blind (h910)."
     }
   ],
   "collaborations": [
