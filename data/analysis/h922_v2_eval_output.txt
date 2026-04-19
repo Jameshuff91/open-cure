@@ -1,0 +1,18 @@
+Running h393 on Node2Vec baseline ...
+  Node2Vec h393 done (9s)
+Running h393 on GraphSAGE ...
+  GraphSAGE h393 done (7s)
+
+======================================================================
+  h922-v2: GraphSAGE vs Node2Vec — 5-seed holdout
+======================================================================
+  Tier             Node2Vec         GraphSAGE       Δpp
+  GOLDEN     82.6%± 4.0    88.6%± 7.9    +6.0  OK
+  HIGH       80.4%± 3.6    67.0%± 7.3   -13.4  DROP
+  MEDIUM     39.9%± 4.5    27.1%± 0.9   -12.8  DROP
+  LOW        10.0%± 0.7     6.4%± 0.9    -3.6  DROP
+  FILTER      6.8%± 0.7     3.9%± 0.3    -2.9  DROP
+
+  Decision: REGRESSION
+
+  Saved to data/analysis/h922_v2_vs_node2vec.json

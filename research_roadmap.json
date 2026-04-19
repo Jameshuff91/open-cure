@@ -1897,9 +1897,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 1,
-      "status": "in_progress",
-      "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T10:28:39",
+      "status": "invalidated",
       "steps": [
         "Build PyG HeteroData from data/raw/drkg/drkg_no_treatment.tsv (no leakage)",
         "Train 3-layer GraphSAGE with neighbour sampling, unsupervised link-prediction loss, ~50 epochs on 1x RTX 4090 (vast.ai, ~4-8 hrs)",
@@ -1908,8 +1906,9 @@
         "Compare per-tier precision and per-drug R@30 vs Node2Vec baseline",
         "If R@30 improves by >=3pp with no tier regression: productionize and update CLAUDE.md baseline; otherwise document failure mode"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "DON'T PRODUCTIONIZE GraphSAGE as a drop-in Node2Vec replacement. Training converged cleanly (val AUC 0.9889 on link prediction, early stop at epoch 24/50, 40 min on RTX 4090, $0.40 spent), and produced 94,247 x 256-d embeddings. But side-by-side evaluation (h393 5-seed + positive controls) shows a tier-wide regression: HIGH -13.4pp (80.4->67.0), MEDIUM -12.8pp (39.9->27.1), LOW -3.6pp, FILTER -2.9pp. GOLDEN rose +6.0pp (82.6->88.6) but std doubled (4.0->7.9), suggesting small-n noise rather than real gain. Positive controls fell 8/20 -> 4/20 in top-30, with specific regressions on Rituximab->MS (55 HIGH -> not top-100), Sildenafil->PAH, Bupropion->smoking, Riluzole->ALS. ROOT CAUSE: tier rules are calibrated to Node2Vec-specific kNN neighbourhoods. Swapping embeddings changes which predictions hit which rules, which breaks the tier-precision contract. GraphSAGE isn't 'worse' absolutely; it's miscalibrated with the current 30-rule confidence system. Paths forward if we want to revisit (not priorities today): (1) train GraphSAGE supervised on treatment edges (different objective than unsupervised link-prediction), (2) recalibrate the entire 30-rule system against GraphSAGE-generated kNN neighbourhoods (huge effort, ~800 iterations of the original confidence work), (3) use GraphSAGE as a secondary fusion signal rather than primary embedding (rank fusion), (4) try a different GNN architecture (HGT, RGCN) that captures heterogeneous relations that SAGE's single-relation collapse loses. Artifacts preserved: data/embeddings/graphsage_256_*.npy, data/analysis/h922_v2_vs_node2vec.json, data/analysis/positive_controls_graphsage.json. The OPEN_CURE_EMBEDDINGS_PREFIX env-var hook remains in production_predictor.py for future experiments.",
+      "result_metric": "GraphSAGE val_auc 0.9889; tier precision regression: HIGH -13.4pp, MEDIUM -12.8pp; positive controls 8/20 -> 4/20 top-30",
+      "resolved_at": "2026-04-19T11:45:51"
     },
     {
       "id": "h1003",
