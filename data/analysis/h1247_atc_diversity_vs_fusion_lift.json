@@ -1,0 +1,471 @@
+{
+  "hypothesis": "h1247",
+  "title": "ATC sub-class diversity vs fusion lift / variance on h1218 high-density strata",
+  "n_relevant_diseases": 248,
+  "strata": [
+    {
+      "stratum": "21-50",
+      "n_diseases": 126,
+      "mean_atc_coverage": 0.6077455257611647,
+      "mean_l3_unique": 9.15079365079365,
+      "mean_l3_entropy_bits": 2.5230985746507617,
+      "mean_l1_unique": 5.515873015873016,
+      "correlations": {
+        "pearson(l3_unique,delta_r30)": {
+          "r": -0.15305817545423575,
+          "p_two_sided": 0.08709174151818662,
+          "n": 126
+        },
+        "pearson(l3_unique,abs_delta_r30)": {
+          "r": -0.07586780161591895,
+          "p_two_sided": 0.39920909626476736,
+          "n": 126
+        },
+        "pearson(l3_unique,delta_hits30)": {
+          "r": -0.08218273303666673,
+          "p_two_sided": 0.36097388444312223,
+          "n": 126
+        },
+        "pearson(l3_unique,abs_delta_hits30)": {
+          "r": 0.015323815940479543,
+          "p_two_sided": 0.8650395145733698,
+          "n": 126
+        },
+        "pearson(l3_entropy_bits,delta_r30)": {
+          "r": -0.1709207832802547,
+          "p_two_sided": 0.05556996099596389,
+          "n": 126
+        },
+        "pearson(l3_entropy_bits,abs_delta_r30)": {
+          "r": -0.08194280329038625,
+          "p_two_sided": 0.36238392767417055,
+          "n": 126
+        },
+        "pearson(l3_entropy_bits,delta_hits30)": {
+          "r": -0.11213300275468091,
+          "p_two_sided": 0.21171366197511446,
+          "n": 126
+        },
+        "pearson(l3_entropy_bits,abs_delta_hits30)": {
+          "r": -0.027291614835541326,
+          "p_two_sided": 0.7620774693807039,
+          "n": 126
+        },
+        "pearson(l3_gini_simpson,delta_r30)": {
+          "r": -0.17888428436662837,
+          "p_two_sided": 0.04490961261778463,
+          "n": 126
+        },
+        "pearson(l3_gini_simpson,abs_delta_r30)": {
+          "r": -0.08413684093295984,
+          "p_two_sided": 0.3496162156839681,
+          "n": 126
+        },
+        "pearson(l3_gini_simpson,delta_hits30)": {
+          "r": -0.13092584426110374,
+          "p_two_sided": 0.14417440880610827,
+          "n": 126
+        },
+        "pearson(l3_gini_simpson,abs_delta_hits30)": {
+          "r": -0.0452274659321192,
+          "p_two_sided": 0.6157102253246961,
+          "n": 126
+        },
+        "pearson(l1_unique,delta_r30)": {
+          "r": -0.10358581413637688,
+          "p_two_sided": 0.24892767583970773,
+          "n": 126
+        },
+        "pearson(l1_unique,abs_delta_r30)": {
+          "r": -0.06688959830413665,
+          "p_two_sided": 0.4575114084799623,
+          "n": 126
+        },
+        "pearson(l1_unique,delta_hits30)": {
+          "r": -0.05336105604141353,
+          "p_two_sided": 0.5536059292409892,
+          "n": 126
+        },
+        "pearson(l1_unique,abs_delta_hits30)": {
+          "r": -0.002501968240266718,
+          "p_two_sided": 0.977862958108542,
+          "n": 126
+        }
+      },
+      "entropy_terciles": {
+        "low": {
+          "n": 42,
+          "entropy_range": [
+            -0.0,
+            2.1475203422266143
+          ],
+          "mean_entropy_bits": 1.281504722937756,
+          "mean_delta_r30_pp": 2.2537360159598134,
+          "std_delta_r30_pp": 4.490074759039109,
+          "mean_delta_hits30": 0.6626984126984127,
+          "std_delta_hits30": 1.3447116611162908
+        },
+        "mid": {
+          "n": 42,
+          "entropy_range": [
+            2.1599894156993225,
+            3.1692486956952326
+          ],
+          "mean_entropy_bits": 2.7689052447192695,
+          "mean_delta_r30_pp": 0.6917993943942117,
+          "std_delta_r30_pp": 6.093066397407303,
+          "mean_delta_hits30": 0.12698412698412698,
+          "std_delta_hits30": 1.9801896667423218
+        },
+        "high": {
+          "n": 42,
+          "entropy_range": [
+            3.169925001442312,
+            4.208410187268525
+          ],
+          "mean_entropy_bits": 3.518885756295259,
+          "mean_delta_r30_pp": 1.2634588468563477,
+          "std_delta_r30_pp": 4.824515126316001,
+          "mean_delta_hits30": 0.4920634920634921,
+          "std_delta_hits30": 1.8493214096222534
+        }
+      },
+      "most_homogeneous_5": [
+        {
+          "disease_id": "drkg:Disease::MESH:D046152",
+          "name": "gastrointestinal stromal tumour",
+          "category": "gastrointestinal",
+          "n_gt": 21,
+          "l3_entropy_bits": -0.0,
+          "l3_unique": 1,
+          "delta_r30_pp": 0.0,
+          "delta_hits30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D001661",
+          "name": "biliary tract cancer",
+          "category": "cancer",
+          "n_gt": 25,
+          "l3_entropy_bits": -0.0,
+          "l3_unique": 1,
+          "delta_r30_pp": 12.0,
+          "delta_hits30": 3.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D008527",
+          "name": "medulloblastoma",
+          "category": "cancer",
+          "n_gt": 27,
+          "l3_entropy_bits": -0.0,
+          "l3_unique": 1,
+          "delta_r30_pp": 1.2345679012345678,
+          "delta_hits30": 0.3333333333333333
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D001254",
+          "name": "malignant astrocytoma",
+          "category": "cancer",
+          "n_gt": 23,
+          "l3_entropy_bits": -0.0,
+          "l3_unique": 1,
+          "delta_r30_pp": 4.3478260869565215,
+          "delta_hits30": 1.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D018410",
+          "name": "hospitalacquired bacterial pneumonia",
+          "category": "infectious",
+          "n_gt": 30,
+          "l3_entropy_bits": 0.2974722489192896,
+          "l3_unique": 2,
+          "delta_r30_pp": 3.3333333333333353,
+          "delta_hits30": 1.0000000000000007
+        }
+      ],
+      "most_heterogeneous_5": [
+        {
+          "disease_id": "drkg:Disease::MESH:D007003",
+          "name": "hypoglycemia",
+          "category": "metabolic",
+          "n_gt": 40,
+          "l3_entropy_bits": 4.208410187268525,
+          "l3_unique": 20,
+          "delta_r30_pp": 0.8333333333333331,
+          "delta_hits30": 0.33333333333333326
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D001480",
+          "name": "extrapyramidal disorders",
+          "category": "other",
+          "n_gt": 30,
+          "l3_entropy_bits": 4.001822825622231,
+          "l3_unique": 18,
+          "delta_r30_pp": -1.6666666666666676,
+          "delta_hits30": -0.5000000000000003
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020388",
+          "name": "duchenne muscular dystrophy",
+          "category": "musculoskeletal",
+          "n_gt": 42,
+          "l3_entropy_bits": 3.916126946588284,
+          "l3_unique": 17,
+          "delta_r30_pp": 0.0,
+          "delta_hits30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D010523",
+          "name": "neuropathy",
+          "category": "neurological",
+          "n_gt": 50,
+          "l3_entropy_bits": 3.865764637179023,
+          "l3_unique": 17,
+          "delta_r30_pp": 7.000000000000001,
+          "delta_hits30": 3.5000000000000004
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D002779",
+          "name": "hereditary chronic cholestasis",
+          "category": "gastrointestinal",
+          "n_gt": 34,
+          "l3_entropy_bits": 3.85216872360328,
+          "l3_unique": 15,
+          "delta_r30_pp": -2.941176470588235,
+          "delta_hits30": -1.0
+        }
+      ]
+    },
+    {
+      "stratum": "51+",
+      "n_diseases": 122,
+      "mean_atc_coverage": 0.517570902886981,
+      "mean_l3_unique": 23.62295081967213,
+      "mean_l3_entropy_bits": 3.5140169457187036,
+      "mean_l1_unique": 9.655737704918034,
+      "correlations": {
+        "pearson(l3_unique,delta_r30)": {
+          "r": 0.02516071176556092,
+          "p_two_sided": 0.7836781956957501,
+          "n": 122
+        },
+        "pearson(l3_unique,abs_delta_r30)": {
+          "r": -0.21892185431175437,
+          "p_two_sided": 0.015205642245602523,
+          "n": 122
+        },
+        "pearson(l3_unique,delta_hits30)": {
+          "r": 0.1576827877423474,
+          "p_two_sided": 0.0828136450180049,
+          "n": 122
+        },
+        "pearson(l3_unique,abs_delta_hits30)": {
+          "r": 0.2246268544018126,
+          "p_two_sided": 0.012670542138758263,
+          "n": 122
+        },
+        "pearson(l3_entropy_bits,delta_r30)": {
+          "r": -0.06798780852519545,
+          "p_two_sided": 0.4575995390995749,
+          "n": 122
+        },
+        "pearson(l3_entropy_bits,abs_delta_r30)": {
+          "r": -0.09796753464066787,
+          "p_two_sided": 0.2836578492568838,
+          "n": 122
+        },
+        "pearson(l3_entropy_bits,delta_hits30)": {
+          "r": 0.035280325892156225,
+          "p_two_sided": 0.7002205843515487,
+          "n": 122
+        },
+        "pearson(l3_entropy_bits,abs_delta_hits30)": {
+          "r": 0.1612025312579238,
+          "p_two_sided": 0.07606540227804576,
+          "n": 122
+        },
+        "pearson(l3_gini_simpson,delta_r30)": {
+          "r": -0.154246428437197,
+          "p_two_sided": 0.08985406332856807,
+          "n": 122
+        },
+        "pearson(l3_gini_simpson,abs_delta_r30)": {
+          "r": -0.03299649923471472,
+          "p_two_sided": 0.7187872861257285,
+          "n": 122
+        },
+        "pearson(l3_gini_simpson,delta_hits30)": {
+          "r": -0.05138192373415319,
+          "p_two_sided": 0.5747943568986515,
+          "n": 122
+        },
+        "pearson(l3_gini_simpson,abs_delta_hits30)": {
+          "r": 0.1200296666744554,
+          "p_two_sided": 0.18827069810728322,
+          "n": 122
+        },
+        "pearson(l1_unique,delta_r30)": {
+          "r": -0.02308844043648566,
+          "p_two_sided": 0.8011106928039926,
+          "n": 122
+        },
+        "pearson(l1_unique,abs_delta_r30)": {
+          "r": -0.197001938247539,
+          "p_two_sided": 0.029442944740559498,
+          "n": 122
+        },
+        "pearson(l1_unique,delta_hits30)": {
+          "r": 0.09856948774312224,
+          "p_two_sided": 0.28069071012558794,
+          "n": 122
+        },
+        "pearson(l1_unique,abs_delta_hits30)": {
+          "r": 0.19465279604753855,
+          "p_two_sided": 0.03148752918309873,
+          "n": 122
+        }
+      },
+      "entropy_terciles": {
+        "low": {
+          "n": 40,
+          "entropy_range": [
+            0.9014828729297168,
+            3.1781116297886958
+          ],
+          "mean_entropy_bits": 2.426532531701257,
+          "mean_delta_r30_pp": 0.8145294374173786,
+          "std_delta_r30_pp": 2.092277572492807,
+          "mean_delta_hits30": 0.8416666666666667,
+          "std_delta_hits30": 1.8124097383950075
+        },
+        "mid": {
+          "n": 41,
+          "entropy_range": [
+            3.214185324963406,
+            3.9467669066713214
+          ],
+          "mean_entropy_bits": 3.6183408279407847,
+          "mean_delta_r30_pp": -0.7259800170537779,
+          "std_delta_r30_pp": 2.953860569722464,
+          "mean_delta_hits30": -0.621951219512195,
+          "std_delta_hits30": 2.890843876756958
+        },
+        "high": {
+          "n": 41,
+          "entropy_range": [
+            3.9587470240872515,
+            5.241433470972915
+          ],
+          "mean_entropy_bits": 4.470653467416083,
+          "mean_delta_r30_pp": 0.4073891091985331,
+          "std_delta_r30_pp": 2.2314513440763113,
+          "mean_delta_hits30": 0.9491869918699188,
+          "std_delta_hits30": 3.993435500952908
+        }
+      },
+      "most_homogeneous_5": [
+        {
+          "disease_id": "drkg:Disease::MESH:D004938",
+          "name": "esophageal cancer",
+          "category": "cancer",
+          "n_gt": 62,
+          "l3_entropy_bits": 0.9014828729297168,
+          "l3_unique": 5,
+          "delta_r30_pp": 6.451612903225806,
+          "delta_hits30": 4.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D012509",
+          "name": "malignant bone and soft tissue tumors",
+          "category": "cancer",
+          "n_gt": 81,
+          "l3_entropy_bits": 0.9301152828357953,
+          "l3_unique": 6,
+          "delta_r30_pp": 1.2345679012345678,
+          "delta_hits30": 1.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D011704",
+          "name": "pyelonephritis",
+          "category": "renal",
+          "n_gt": 71,
+          "l3_entropy_bits": 1.3599770518597558,
+          "l3_unique": 7,
+          "delta_r30_pp": 1.4084507042253502,
+          "delta_hits30": 0.9999999999999987
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D008228",
+          "name": "small lymphocytic lymphoma",
+          "category": "cancer",
+          "n_gt": 76,
+          "l3_entropy_bits": 1.522615858614742,
+          "l3_unique": 9,
+          "delta_r30_pp": 1.3157894736842104,
+          "delta_hits30": 1.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D006069",
+          "name": "neisseria gonorrhoeae infections",
+          "category": "infectious",
+          "n_gt": 68,
+          "l3_entropy_bits": 1.5633565098575133,
+          "l3_unique": 8,
+          "delta_r30_pp": -2.941176470588236,
+          "delta_hits30": -2.0000000000000004
+        }
+      ],
+      "most_heterogeneous_5": [
+        {
+          "disease_id": "drkg:Disease::MESH:D008107",
+          "name": "hepatic disease",
+          "category": "gastrointestinal",
+          "n_gt": 299,
+          "l3_entropy_bits": 5.241433470972915,
+          "l3_unique": 51,
+          "delta_r30_pp": 0.0,
+          "delta_hits30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D051437",
+          "name": "kidney failure",
+          "category": "renal",
+          "n_gt": 372,
+          "l3_entropy_bits": 5.171126691838734,
+          "l3_unique": 58,
+          "delta_r30_pp": 2.4193548387096775,
+          "delta_hits30": 9.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D056486",
+          "name": "acetaminopheninduced hepatic injury",
+          "category": "gastrointestinal",
+          "n_gt": 210,
+          "l3_entropy_bits": 5.170976186986682,
+          "l3_unique": 44,
+          "delta_r30_pp": 0.0,
+          "delta_hits30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D007674",
+          "name": "renal diseases",
+          "category": "renal",
+          "n_gt": 412,
+          "l3_entropy_bits": 5.1286669799680995,
+          "l3_unique": 54,
+          "delta_r30_pp": 0.0,
+          "delta_hits30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D008103",
+          "name": "hepatic cirrhosis",
+          "category": "gastrointestinal",
+          "n_gt": 162,
+          "l3_entropy_bits": 5.120191026294642,
+          "l3_unique": 42,
+          "delta_r30_pp": 3.0864197530864197,
+          "delta_hits30": 5.0
+        }
+      ]
+    }
+  ]
+}

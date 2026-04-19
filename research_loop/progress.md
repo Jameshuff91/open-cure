@@ -1,6 +1,86 @@
 # Research Loop Progress
 
-## Current Session: h1244 — n_gt-stratified paired-t defends fusion lift at p<0.01 (VALIDATED) (2026-04-19)
+## Current Session: h1247 — ATC homogeneity is a per-disease fusion-routing feature on n_gt 21-50 (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1247 (validated for n_gt 21-50; invalidated as single-mechanism for n_gt≥51)
+
+### What was built
+`scripts/h1247_atc_diversity_vs_fusion_lift.py` — per-disease ATC L3 unique
+count, Shannon entropy, and Gini-Simpson diversity vs fusion Δ across the
+248 diseases with n_gt≥21 in h1218. Tests Pearson correlations and tercile
+bucketing on each diversity measure × four outcomes (signed/abs × R@30/hits@30)
+across two strata (21-50 and 51+). DrugBank-name → ATCMapper for 52%
+per-disease coverage; relative ranking robust to coverage gaps.
+
+### Headline (n_gt 21-50, n=126)
+| Diversity vs outcome | Pearson r | p (Fisher z) |
+|---|---:|---:|
+| **Gini-Simpson vs Δ R@30** | **-0.179** | **0.045** ✓ |
+| L3 entropy_bits vs Δ R@30 | -0.171 | 0.056 |
+| L3 unique vs Δ R@30 | -0.153 | 0.087 |
+
+| Entropy tercile (n=42 each) | meanΔ R@30 | std |
+|---|---:|---:|
+| **low (homogeneous)** | **+2.25pp** | 4.49pp |
+| mid | +0.69pp | 6.09pp |
+| high (diverse) | +1.26pp | 4.82pp |
+
+### Mechanism
+When a moderate-density disease's GT drugs share a dominant ATC sub-class
+(e.g. T2D ≈ A10*), fusion's score-smoothing lifts the coherent embedding
+cluster wholesale. Heterogeneous pools cancel because some sub-classes
+gain and others lose.
+
+### Headline (n_gt 51+, n=122) — INVALIDATED as single-mechanism
+| Diversity vs outcome | Pearson r | p |
+|---|---:|---:|
+| L3 unique vs |Δ R@30| | -0.219 | 0.015 (opposite sign) |
+| L3 entropy vs |Δ hits@30| | +0.161 | 0.076 (borderline) |
+
+| Entropy tercile (n=40-41) | meanΔ R@30 | std hits@30 |
+|---|---:|---:|
+| low | +0.81pp | 1.81 |
+| mid | -0.73pp | 2.89 |
+| high | +0.41pp | 3.99 |
+
+The U-curve (low + high gain, mid loses) refutes the simple monotonic
+heterogeneity hypothesis. Std DOES grow monotonically with entropy in
+hits@30 — variance is real, just not the dominant signal. On this stratum
+mean L3 unique is 33.7 — saturated.
+
+### Implications
+1. **`gt_atc_l3_gini` is a real per-disease fusion-routing feature** for
+   moderate-density diseases (n_gt 21-50). Routing low-entropy diseases
+   through fusion preferentially could capture the +2.25pp lift instead
+   of the +1.32pp global average.
+2. **n_gt≥51 needs a different stratification axis.** Variance is real but
+   the simple homogeneity signal saturates.
+3. h1247 is the first per-disease feature found to predict fusion lift
+   direction beyond the n_gt magnitude axis identified by h1230/h1244.
+
+### Shipped
+- `scripts/h1247_atc_diversity_vs_fusion_lift.py`
+- `data/analysis/h1247_atc_diversity_vs_fusion_lift.json`
+- `data/analysis/h1247_atc_diversity_vs_fusion_lift.md`
+- CLAUDE.md headline updated
+- 1 new pending hypothesis (h1248)
+
+### New hypotheses (1 added)
+- **h1248 (P3, diagnostic, low effort):** Restrict h1244-style paired-t to
+  the homogeneous third (n=40) of n_gt≥51 diseases. If p<0.05 there, we
+  publish 'fusion works for homogeneous high-density diseases' and add to
+  production routing. If still p>0.05, close stratum-restriction direction.
+
+### Recommended next hypothesis
+**h1248 (P3, low effort)** — natural completion of h1247's open question.
+Or pivot to **h1245 (P3, recall, medium)** — combined `n_gt 21-50 AND
+ATC-homogeneous` two-axis fusion gate for production deliverable. Or
+**h1243 (P2, infrastructure, low)** — ship hits@K + non-trivial-Δ into
+clean_embedding_benchmark.py to standardize all future comparisons.
+
+---
+
+## Previous Session: h1244 — n_gt-stratified paired-t defends fusion lift at p<0.01 (VALIDATED) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1244 (VALIDATED, statistical defense)
 

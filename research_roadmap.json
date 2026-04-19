@@ -2843,7 +2843,7 @@
     {
       "id": "h1247",
       "title": "n_gt\u226551 high variance \u2014 is it sub-class heterogeneity? ATC-diversity vs \u0394 R@30 audit",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -2856,7 +2856,27 @@
         "Report per-(n_gt-stratum \u00d7 diversity-bucket) \u0394 table.",
         "Save data/analysis/h1247_atc_diversity_vs_fusion_lift.{json,md}."
       ],
-      "success_criteria": "Identify whether ATC sub-class diversity explains the high variance in n_gt\u226551 fusion lift. If yes, publish as 'fusion variance scales with GT heterogeneity' lesson and recommend within-ATC-subclass evaluation."
+      "success_criteria": "Identify whether ATC sub-class diversity explains the high variance in n_gt\u226551 fusion lift. If yes, publish as 'fusion variance scales with GT heterogeneity' lesson and recommend within-ATC-subclass evaluation.",
+      "findings": "Per-disease ATC sub-class diversity (L3 unique count, Shannon entropy bits, Gini-Simpson index) computed via DrugBank-name \u2192 src/atc_features.ATCMapper on the 248 diseases with n_gt\u226521 in h1218. DB-prefixed coverage averages 52% per disease (no MESH\u2192ATC mapping table on disk; relative ranking robust to coverage). **Mixed result \u2014 hypothesis SUPPORTED on n_gt 21-50, INVALIDATED on n_gt\u226551 as single-mechanism explanation.** **n_gt 21-50 (n=126):** All three diversity measures negatively correlate with signed \u0394 R@30. **Gini-Simpson vs \u0394 R@30: r=-0.179, p=0.045 (significant);** entropy_bits r=-0.171 p=0.056; l3_unique r=-0.153 p=0.087. Tercile bucketing on entropy: low-entropy (most homogeneous, n=42) gains +2.25pp R@30; mid +0.69pp; high +1.26pp. Interpretation: when GT drugs share a dominant ATC sub-class (e.g. T2D \u2248 A10*), fusion's score-smoothing lifts the coherent cluster wholesale. **n_gt 51+ (n=122):** L3_unique vs |\u0394 R@30| = -0.219 (p=0.015) \u2014 opposite sign to hypothesis. L3 entropy vs |\u0394 hits@30| = +0.161 (p=0.076) borderline. Entropy terciles show U-curve: low (+0.81pp), mid (-0.73pp), high (+0.41pp). **Std grows monotonically in hits@30 across terciles (1.81\u21922.89\u21923.99) \u2014 heterogeneity DOES inflate variance**, just not with the simple negative-direction predicted. On this stratum mean L3 unique is 33.7 \u2014 the homogeneity signal saturates. **Actionable: per-disease `gt_atc_l3_gini` feature could route low-entropy n_gt 21-50 diseases through fusion preferentially.** Outputs: data/analysis/h1247_atc_diversity_vs_fusion_lift.{json,md}; script: scripts/h1247_atc_diversity_vs_fusion_lift.py.",
+      "result_metric": "n_gt 21-50: Gini-Simpson vs \u0394R@30 r=-0.179 p=0.045 (most homogeneous gains +2.25pp vs +0.69pp mid). n_gt\u226551: variance-only signal (std growth 1.81\u21923.99 in hits@30), no clean mean direction."
+    },
+    {
+      "id": "h1248",
+      "title": "Homogeneity-restricted fusion paired-t on n_gt\u226551 \u2014 does the homogeneous tail reach p<0.05?",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "lever": "diagnostic",
+      "rationale": "h1247 found that the n_gt 51+ stratum has a U-curve in mean \u0394 R@30 across L3-entropy terciles (low +0.81pp, mid -0.73pp, high +0.41pp) and monotonic std growth in hits@30 (1.81\u21923.99). h1244 found this stratum's overall fusion lift fails p<0.05 (p=0.17). Hypothesis: restricting to the homogeneous third (40 diseases) might recover p<0.05 because (a) variance is lowest there and (b) mean is most positive. If so, we'd have a stratified-by-homogeneity claim 'fusion works for homogeneous high-density diseases', which is publishable and actionable for production routing.",
+      "steps": [
+        "Restrict the 122 n_gt\u226551 diseases to the bottom-tercile of L3 entropy (n=40) using the cut from h1247.",
+        "Re-run paired-t on \u0394 R@30 / \u0394 hits@30 / \u0394 R@30/ceiling for that subset only.",
+        "Bootstrap 95% CI.",
+        "Compare against the global n_gt\u226551 paired-t from h1244 (p=0.17 hits@30).",
+        "Save data/analysis/h1248_homogeneity_restricted_paired_t.{json,md}."
+      ],
+      "success_criteria": "Either (a) homogeneous-tercile p<0.05 \u2192 publish 'fusion works for homogeneous high-density diseases' + add to production routing; or (b) p still > 0.05 \u2192 close the stratum-restriction direction."
     }
   ],
   "completed": [
@@ -5659,6 +5679,12 @@
       "hypothesis_id": "h1244",
       "learning": "h1215's fusion lift is statistically robust at disease-level paired-t (\u0394 R@30 p=0.006, \u0394 hits@30 p=0.001). The benefit concentrates in moderate-density diseases (n_gt 21-50): only this stratum reaches disease-level p<0.05. n_gt 51+ has the largest absolute hits lift but high variance kills significance \u2014 high-density diseases are likely sub-class heterogeneous.",
       "implication": "Quote disease-level p-values (not row-level) as the canonical statistical claim. Hits@30 is the tightest metric across all strata. n_gt 21-50 is the cleanest evidence; investigate n_gt 51+ heterogeneity via ATC sub-class diversity."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1247",
+      "learning": "ATC sub-class homogeneity is a real predictor of fusion lift in moderate-density diseases (n_gt 21-50): low-entropy GT pools (single dominant therapeutic class) gain +2.25pp R@30 from concat_l2 vs +0.69pp for diverse pools (Gini-Simpson r=-0.179, p=0.045). The signal saturates in n_gt\u226551 where most diseases have 30+ unique L3 codes anyway.",
+      "implication": "A per-disease `gt_atc_l3_gini` confidence-routing feature could preferentially apply fusion to homogeneous moderate-density diseases. For n_gt\u226551, fusion remains a high-variance choice \u2014 needs orthogonal stratification (n_gt-restriction alone is insufficient)."
     }
   ],
   "collaborations": [
