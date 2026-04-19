@@ -1,0 +1,70 @@
+==============================================================================
+h965: Cancer-restricted zero-overlap biologic filter — 5-seed h393 holdout
+==============================================================================
+Loading predictor ...
+Biologic pool: 266
+Evaluable diseases: 1011
+
+--- Seed 42 ---
+  evaluated=202  cancer=25  non-cancer=177
+  GLOBAL    base_p30= 7.22%  filt_p30= 7.48%  Δ=+0.26pp  |  base_r30=31.96%  filt_r30=31.67%  Δ=-0.28pp  |  Δoverall=+0.01pp
+  CANCER    base_p30= 6.36%  filt_p30= 8.13%  base_r30=15.27%  filt_r30=13.94%  drops=71
+  NON-CAN   base_p30= 7.38%  filt_p30= 7.38% (should be unchanged)  base_r30=36.51%  filt_r30=36.51% drops=0
+
+--- Seed 123 ---
+  evaluated=200  cancer=20  non-cancer=180
+  GLOBAL    base_p30= 7.10%  filt_p30= 7.42%  Δ=+0.33pp  |  base_r30=31.09%  filt_r30=31.09%  Δ=+0.00pp  |  Δoverall=+0.13pp
+  CANCER    base_p30=12.00%  filt_p30=15.56%  base_r30=20.64%  filt_r30=20.64%  drops=67
+  NON-CAN   base_p30= 6.43%  filt_p30= 6.43% (should be unchanged)  base_r30=32.98%  filt_r30=32.98% drops=0
+
+--- Seed 456 ---
+  evaluated=200  cancer=25  non-cancer=175
+  GLOBAL    base_p30= 2.09%  filt_p30= 2.45%  Δ=+0.36pp  |  base_r30=24.13%  filt_r30=23.56%  Δ=-0.57pp  |  Δoverall=-0.01pp
+  CANCER    base_p30= 4.24%  filt_p30= 7.38%  base_r30=35.00%  filt_r30=32.92%  drops=86
+  NON-CAN   base_p30= 1.66%  filt_p30= 1.66% (should be unchanged)  base_r30=20.05%  filt_r30=20.05% drops=0
+
+--- Seed 789 ---
+  evaluated=200  cancer=23  non-cancer=177
+  GLOBAL    base_p30= 4.78%  filt_p30= 4.86%  Δ=+0.08pp  |  base_r30=34.93%  filt_r30=33.50%  Δ=-1.43pp  |  Δoverall=+0.03pp
+  CANCER    base_p30= 7.17%  filt_p30= 8.52%  base_r30=31.51%  filt_r30=23.73%  drops=90
+  NON-CAN   base_p30= 4.37%  filt_p30= 4.37% (should be unchanged)  base_r30=35.69%  filt_r30=35.69% drops=0
+
+--- Seed 2024 ---
+  evaluated=200  cancer=23  non-cancer=177
+  GLOBAL    base_p30= 7.00%  filt_p30= 7.36%  Δ=+0.36pp  |  base_r30=29.46%  filt_r30=29.46%  Δ=+0.00pp  |  Δoverall=+0.04pp
+  CANCER    base_p30= 7.77%  filt_p30=10.63%  base_r30=20.85%  filt_r30=20.85%  drops=65
+  NON-CAN   base_p30= 6.88%  filt_p30= 6.88% (should be unchanged)  base_r30=31.21%  filt_r30=31.21% drops=0
+
+Skip reasons: {'no_gt': 13}
+
+==============================================================================
+5-SEED AGGREGATE
+==============================================================================
+
+[ALL HOLDOUT (global)]
+  bio_p30  base=  5.64%± 1.99  filt=  5.92%± 2.00  Δ=+0.28pp
+  bio_r30  base= 30.31%± 3.57  filt= 29.86%± 3.40  Δ=-0.46pp
+  sm_r30   base= 19.29%± 1.51  filt= 19.35%± 1.55  Δ=+0.06pp
+  overall  base= 19.79%± 1.59  filt= 19.83%± 1.64  Δ=+0.04pp
+
+[CANCER ONLY]
+  bio_p30  base=  7.51%± 2.54  filt= 10.04%± 2.96  Δ=+2.54pp
+  bio_r30  base= 24.65%± 7.39  filt= 22.41%± 6.16  Δ=-2.24pp
+  sm_r30   base= 14.06%± 2.85  filt= 14.60%± 2.96  Δ=+0.54pp
+  overall  base= 14.40%± 2.81  filt= 14.80%± 3.00  Δ=+0.40pp
+
+[NON-CANCER ONLY (control — should be 0pp)]
+  bio_p30  base=  5.34%± 2.11  filt=  5.34%± 2.11  Δ=+0.00pp
+  bio_r30  base= 31.29%± 5.93  filt= 31.29%± 5.93  Δ=+0.00pp
+  sm_r30   base= 19.98%± 1.67  filt= 19.98%± 1.67  Δ=+0.00pp
+  overall  base= 20.49%± 1.81  filt= 20.49%± 1.81  Δ=+0.00pp
+
+==============================================================================
+DECISION (h965)
+==============================================================================
+  global delta bio_p30 = +0.28pp  (target: >=+0.5pp)
+  global delta bio_r30 = -0.46pp  (cap: >=-1.0pp)
+  global delta overall = +0.04pp
+  VERDICT: REJECT — global lift too small to justify
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h965_cancer_restricted_filter.json

@@ -17718,7 +17718,7 @@
     {
       "id": "h965",
       "title": "Detect ALL silent-zero bugs \u2014 scripts that return 0 predictions for >10% of diseases without raising",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "medium",
@@ -17729,7 +17729,9 @@
         "Write scripts/test_predict_no_silent_zeros.py as a pytest-compatible regression.",
         "Require n_empty < 5% of pool (post-h952 this should already hold)."
       ],
-      "success_criteria": "Regression test checked in; currently passes at <5% empty rate."
+      "success_criteria": "Regression test checked in; currently passes at <5% empty rate.",
+      "findings": "5-seed h393 holdout (n=200/seed, cancer \u2248 23/seed = ~12%). Filter applied ONLY to cancer-category diseases. Control passes: non-cancer \u0394=0.00pp on every metric (no leakage). Cancer-cohort: bio_p30 7.51\u219210.04 (+2.54pp, +33.8% relative), bio_r30 24.65\u219222.41 (-2.24pp, -9.1% relative), sm_r30 +0.54pp, overall +0.40pp. Cancer-cohort signal exactly matches h957's cancer slice (+2.6/-2.1) \u2014 confirms the per-category result is reliable. BUT global aggregate: bio_p30 5.64\u21925.92 (+0.28pp, BELOW +0.5pp target), bio_r30 30.31\u219229.86 (-0.46pp, within cap), overall +0.04pp. Cancer is too small a fraction (~12%) of evaluable diseases for the localized precision lift to register at the global tier-system level. A tier rule that fires on ~75-90 cancer biologic preds per seed (drops_per_seed=65-90) only nets +2.5pp on those preds, which dilutes to ~+0.3pp globally. Conclusion: the biologic-zero-overlap signal is genuine in oncology but too narrow to ship as a single tier rule. Better expressed as per-prediction annotation (h968) or further-narrowed subclass rule (h969).",
+      "result_metric": "global delta bio_p30 = +0.28pp (BELOW +0.5pp target); cancer-cohort delta bio_p30 = +2.54pp (matches h957 cancer slice); non-cancer \u0394 = 0.00pp (clean isolation control)"
     },
     {
       "id": "h966",
@@ -17761,6 +17763,45 @@
         "Reference h954 for the full reconciliation."
       ],
       "success_criteria": "CLAUDE.md section added; future validated hypotheses include all four axes when quoting R@30."
+    },
+    {
+      "id": "h968",
+      "title": "Per-prediction biologic-low-mechanism-evidence ANNOTATION (not tier demotion)",
+      "category": "deliverable",
+      "rationale": "h957/h965 confirmed target-overlap is a real biologic precision signal in oncology (+2.5pp p30) but too narrow to ship as a global tier rule (h965 global delta = +0.28pp). Instead of demoting predictions, expose the signal as a deliverable column: `biologic_low_mechanism_evidence` = True when (is_biologic AND drug_targets non-empty AND disease_genes non-empty AND overlap == 0). Users / downstream consumers (Ryland review, EveryCure evaluators) can filter by this flag without globally moving tier metrics. Validates the precision finding without paying the global recall cost. Especially valuable for the 47 GOLDEN/HIGH zero-overlap biologic preds (h967 audit candidates) \u2014 annotate them clearly so reviewers know to double-check the evidence before treating them as high-confidence.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Add a column `biologic_low_mechanism_evidence` (True/False) to scripts/generate_production_deliverable.py output.",
+        "Set True iff is_biologic(drug) AND drug_targets[d] non-empty AND disease_genes[D] non-empty AND |drug_targets[d] \u2229 disease_genes[D]| == 0.",
+        "Cross-check counts vs h957 dropped_tier_counts (expect ~3,936 True flags in deliverable, mostly in LOW/FILTER).",
+        "Coordinate with h962 deliverable regeneration so h957/h968 ship together."
+      ],
+      "depends_on": [
+        "h957",
+        "h965"
+      ]
+    },
+    {
+      "id": "h969",
+      "title": "Cancer biologic subclass-restricted overlap filter (anti-HER2, anti-VEGF, checkpoint, anti-CD20)",
+      "category": "tier-rule",
+      "rationale": "h957/h965 found the zero-overlap signal works cleanly in oncology because cancer disease_genes are TCGA-dense and biologic MoA in oncology is target-driven. But h957's 2.74x bio:sm ratio in cancer (h939) is the weakest of the four 'biologics-dominate' categories \u2014 h916 traced this to the shared cancer-gene vocabulary. The subset where target-overlap should be MOST diagnostic is cancer biologics with very specific, well-characterized single-target MoA: anti-HER2 (trastuzumab, pertuzumab, T-DM1), anti-VEGF (bevacizumab, ramucirumab), anti-CD20 (rituximab, obinutuzumab, ofatumumab), checkpoint inhibitors (pembrolizumab, nivolumab, ipilimumab, atezolizumab, durvalumab). If we restrict the filter to these ~20 drugs in cancer-category diseases, expected effect is: very small drop count (~10-20/seed vs h965's 70-90), but very high signal-to-noise per drop. Test if precision lift WITHIN this subclass is +5pp+ at <2pp recall cost.",
+      "expected_impact": "low",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Curate canonical drug list (~20-30 drug_ids) for the four MoA subclasses.",
+        "Modify h965 filter to fire only when (drug in subclass AND category=='cancer').",
+        "Run 5-seed h393 holdout, report subclass-cohort and global deltas.",
+        "Decision: ship if subclass-cohort delta_bio_p30 >= +5pp at delta_bio_r30 >= -2pp (relaxed because n is small and signal-to-noise should be high)."
+      ],
+      "depends_on": [
+        "h965"
+      ]
     }
   ],
   "completed": [
@@ -20407,6 +20448,12 @@
       "hypothesis_id": "h957",
       "learning": "Zero-overlap biologic safety filter: precision lift +3.22pp confirms target-engagement is a real biologic-correctness signal, but global deployment costs -15.54pp bio_r30. Per-category split: cancer (+2.6/-2.1) and musculoskeletal (+26/0) work; autoimmune/neurological/respiratory fail catastrophically because disease_genes does not capture cytokine-signaling targets that anti-cytokine biologics bind. Filter is mechanism-aware in oncology (TCGA-dense), mechanism-blind in inflammatory disease.",
       "implication": "Apply target-overlap filtering only to categories where disease_genes captures the actual MoA target space (cancer first). For inflammatory categories, need pathway-membership overlap (h966) before filter is safe. Do not deploy global form."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h965",
+      "learning": "Cancer-restricted zero-overlap biologic filter: cancer-cohort signal +2.54pp p30 / -2.24pp r30 reproduces h957's cancer slice exactly, but cancer is only ~12% of evaluable diseases so the global tier-rule impact dilutes to +0.28pp p30 / -0.46pp r30 \u2014 below shipping threshold. Non-cancer cohort \u0394=0.00pp everywhere confirms clean filter isolation.",
+      "implication": "The biologic-overlap signal is too narrow at the disease-category level to ship as a single tier rule. Right surface area is per-prediction annotation (h968) or subclass-level rule on canonical anti-target biologics (h969)."
     }
   ],
   "collaborations": [

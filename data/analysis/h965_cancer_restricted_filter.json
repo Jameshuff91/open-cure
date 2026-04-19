@@ -1,0 +1,388 @@
+{
+  "hypothesis": "h965",
+  "title": "Cancer-restricted zero-overlap biologic safety filter",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "biologic_pool_size": 266,
+  "evaluable_diseases": 1011,
+  "candidate_pool_depth": 200,
+  "final_top_n": 30,
+  "skip_summary": {
+    "no_gt": 13
+  },
+  "per_seed": [
+    {
+      "seed": 42,
+      "agg_all": {
+        "label": "all",
+        "n_diseases": 202,
+        "n_with_bio_gt": 56,
+        "n_with_sm_gt": 200,
+        "n_with_bio_in_top30_baseline": 159,
+        "n_with_bio_in_top30_filtered": 155,
+        "base_overall_r30": 0.18918188540747471,
+        "filt_overall_r30": 0.18933090969445163,
+        "base_bio_r30": 0.31957521645021647,
+        "filt_bio_r30": 0.31673430735930735,
+        "base_sm_r30": 0.18009822766830957,
+        "filt_sm_r30": 0.18040333827090302,
+        "base_bio_p30": 0.07218024812364435,
+        "filt_bio_p30": 0.07481357352325094,
+        "n_dropped_total": 71
+      },
+      "agg_cancer": {
+        "label": "cancer",
+        "n_diseases": 25,
+        "n_with_bio_gt": 12,
+        "n_with_sm_gt": 25,
+        "n_with_bio_in_top30_baseline": 25,
+        "n_with_bio_in_top30_filtered": 21,
+        "base_overall_r30": 0.09829659134969898,
+        "filt_overall_r30": 0.09950070758847258,
+        "base_bio_r30": 0.15265151515151518,
+        "filt_bio_r30": 0.1393939393939394,
+        "base_sm_r30": 0.09585835629744871,
+        "filt_sm_r30": 0.09829924111819623,
+        "base_bio_p30": 0.06355555555555555,
+        "filt_bio_p30": 0.08134920634920634,
+        "n_dropped_total": 71
+      },
+      "agg_noncancer": {
+        "label": "noncancer",
+        "n_diseases": 177,
+        "n_with_bio_gt": 44,
+        "n_with_sm_gt": 175,
+        "n_with_bio_in_top30_baseline": 134,
+        "n_with_bio_in_top30_filtered": 134,
+        "base_overall_r30": 0.20201879134783854,
+        "filt_overall_r30": 0.20201879134783854,
+        "base_bio_r30": 0.36509986225895313,
+        "filt_bio_r30": 0.36509986225895313,
+        "base_sm_r30": 0.19213249500700394,
+        "filt_sm_r30": 0.19213249500700394,
+        "base_bio_p30": 0.07378933255798928,
+        "filt_bio_p30": 0.07378933255798928,
+        "n_dropped_total": 0
+      }
+    },
+    {
+      "seed": 123,
+      "agg_all": {
+        "label": "all",
+        "n_diseases": 200,
+        "n_with_bio_gt": 59,
+        "n_with_sm_gt": 198,
+        "n_with_bio_in_top30_baseline": 167,
+        "n_with_bio_in_top30_filtered": 165,
+        "base_overall_r30": 0.22220085394984912,
+        "filt_overall_r30": 0.22352585394984914,
+        "base_bio_r30": 0.31094357619781343,
+        "filt_bio_r30": 0.31094357619781343,
+        "base_sm_r30": 0.21522674198673125,
+        "filt_sm_r30": 0.21656512582511508,
+        "base_bio_p30": 0.07095808383233533,
+        "filt_bio_p30": 0.07424242424242425,
+        "n_dropped_total": 67
+      },
+      "agg_cancer": {
+        "label": "cancer",
+        "n_diseases": 20,
+        "n_with_bio_gt": 9,
+        "n_with_sm_gt": 20,
+        "n_with_bio_in_top30_baseline": 20,
+        "n_with_bio_in_top30_filtered": 18,
+        "base_overall_r30": 0.1634364196943417,
+        "filt_overall_r30": 0.1766864196943417,
+        "base_bio_r30": 0.2063973063973064,
+        "filt_bio_r30": 0.2063973063973064,
+        "base_sm_r30": 0.16117766459950494,
+        "filt_sm_r30": 0.17442766459950493,
+        "base_bio_p30": 0.12000000000000002,
+        "filt_bio_p30": 0.15555555555555556,
+        "n_dropped_total": 67
+      },
+      "agg_noncancer": {
+        "label": "noncancer",
+        "n_diseases": 180,
+        "n_with_bio_gt": 50,
+        "n_with_sm_gt": 178,
+        "n_with_bio_in_top30_baseline": 147,
+        "n_with_bio_in_top30_filtered": 147,
+        "base_overall_r30": 0.2287302355337944,
+        "filt_overall_r30": 0.2287302355337944,
+        "base_bio_r30": 0.3297619047619048,
+        "filt_bio_r30": 0.3297619047619048,
+        "base_sm_r30": 0.2212996720302398,
+        "filt_sm_r30": 0.2212996720302398,
+        "base_bio_p30": 0.06428571428571428,
+        "filt_bio_p30": 0.06428571428571428,
+        "n_dropped_total": 0
+      }
+    },
+    {
+      "seed": 456,
+      "agg_all": {
+        "label": "all",
+        "n_diseases": 200,
+        "n_with_bio_gt": 44,
+        "n_with_sm_gt": 198,
+        "n_with_bio_in_top30_baseline": 150,
+        "n_with_bio_in_top30_filtered": 145,
+        "base_overall_r30": 0.17938863738302488,
+        "filt_overall_r30": 0.17929394041332788,
+        "base_bio_r30": 0.2412878787878788,
+        "filt_bio_r30": 0.23560606060606057,
+        "base_sm_r30": 0.17795888247137115,
+        "filt_sm_r30": 0.178017609274284,
+        "base_bio_p30": 0.02092335442335442,
+        "filt_bio_p30": 0.024510202441236927,
+        "n_dropped_total": 86
+      },
+      "agg_cancer": {
+        "label": "cancer",
+        "n_diseases": 25,
+        "n_with_bio_gt": 12,
+        "n_with_sm_gt": 25,
+        "n_with_bio_in_top30_baseline": 25,
+        "n_with_bio_in_top30_filtered": 20,
+        "base_overall_r30": 0.16622262561148102,
+        "filt_overall_r30": 0.16546504985390528,
+        "base_bio_r30": 0.35000000000000003,
+        "filt_bio_r30": 0.32916666666666666,
+        "base_sm_r30": 0.16073206761424733,
+        "filt_sm_r30": 0.16119718389331708,
+        "base_bio_p30": 0.04242857142857143,
+        "filt_bio_p30": 0.0738095238095238,
+        "n_dropped_total": 86
+      },
+      "agg_noncancer": {
+        "label": "noncancer",
+        "n_diseases": 175,
+        "n_with_bio_gt": 32,
+        "n_with_sm_gt": 173,
+        "n_with_bio_in_top30_baseline": 125,
+        "n_with_bio_in_top30_filtered": 125,
+        "base_overall_r30": 0.1812694962075311,
+        "filt_overall_r30": 0.1812694962075311,
+        "base_bio_r30": 0.20052083333333331,
+        "filt_bio_r30": 0.20052083333333331,
+        "base_sm_r30": 0.1804483065836723,
+        "filt_sm_r30": 0.1804483065836723,
+        "base_bio_p30": 0.016622311022311025,
+        "filt_bio_p30": 0.016622311022311025,
+        "n_dropped_total": 0
+      }
+    },
+    {
+      "seed": 789,
+      "agg_all": {
+        "label": "all",
+        "n_diseases": 200,
+        "n_with_bio_gt": 49,
+        "n_with_sm_gt": 197,
+        "n_with_bio_in_top30_baseline": 157,
+        "n_with_bio_in_top30_filtered": 152,
+        "base_overall_r30": 0.21072231435964725,
+        "filt_overall_r30": 0.21102298591031882,
+        "base_bio_r30": 0.3492549400712666,
+        "filt_bio_r30": 0.3349692257855523,
+        "base_sm_r30": 0.2065138912762466,
+        "filt_sm_r30": 0.2073650014467755,
+        "base_bio_p30": 0.047810363733930605,
+        "filt_bio_p30": 0.04861552920763447,
+        "n_dropped_total": 90
+      },
+      "agg_cancer": {
+        "label": "cancer",
+        "n_diseases": 23,
+        "n_with_bio_gt": 9,
+        "n_with_sm_gt": 23,
+        "n_with_bio_in_top30_baseline": 23,
+        "n_with_bio_in_top30_filtered": 18,
+        "base_overall_r30": 0.12386455019266357,
+        "filt_overall_r30": 0.12647908541589442,
+        "base_bio_r30": 0.31507936507936507,
+        "filt_bio_r30": 0.2373015873015873,
+        "base_sm_r30": 0.1177766581840073,
+        "filt_sm_r30": 0.12506660181853738,
+        "base_bio_p30": 0.07173913043478261,
+        "filt_bio_p30": 0.08518518518518518,
+        "n_dropped_total": 90
+      },
+      "agg_noncancer": {
+        "label": "noncancer",
+        "n_diseases": 177,
+        "n_with_bio_gt": 40,
+        "n_with_sm_gt": 174,
+        "n_with_bio_in_top30_baseline": 134,
+        "n_with_bio_in_top30_filtered": 134,
+        "base_overall_r30": 0.2220089164830406,
+        "filt_overall_r30": 0.2220089164830406,
+        "base_bio_r30": 0.3569444444444444,
+        "filt_bio_r30": 0.3569444444444444,
+        "base_sm_r30": 0.21824352553556564,
+        "filt_sm_r30": 0.21824352553556564,
+        "base_bio_p30": 0.04370318735990378,
+        "filt_bio_p30": 0.04370318735990378,
+        "n_dropped_total": 0
+      }
+    },
+    {
+      "seed": 2024,
+      "agg_all": {
+        "label": "all",
+        "n_diseases": 200,
+        "n_with_bio_gt": 71,
+        "n_with_sm_gt": 198,
+        "n_with_bio_in_top30_baseline": 158,
+        "n_with_bio_in_top30_filtered": 156,
+        "base_overall_r30": 0.18801955457964314,
+        "filt_overall_r30": 0.18845433718833882,
+        "base_bio_r30": 0.2946238034266203,
+        "filt_bio_r30": 0.2946238034266203,
+        "base_sm_r30": 0.1847147952345745,
+        "filt_sm_r30": 0.18515396958679237,
+        "base_bio_p30": 0.07001525197727729,
+        "filt_bio_p30": 0.07358382358382358,
+        "n_dropped_total": 65
+      },
+      "agg_cancer": {
+        "label": "cancer",
+        "n_diseases": 23,
+        "n_with_bio_gt": 12,
+        "n_with_sm_gt": 23,
+        "n_with_bio_in_top30_baseline": 22,
+        "n_with_bio_in_top30_filtered": 20,
+        "base_overall_r30": 0.1680292325462198,
+        "filt_overall_r30": 0.17180995088270376,
+        "base_bio_r30": 0.2084686147186147,
+        "filt_bio_r30": 0.2084686147186147,
+        "base_sm_r30": 0.16731005357488768,
+        "filt_sm_r30": 0.17109077191137162,
+        "base_bio_p30": 0.07770562770562771,
+        "filt_bio_p30": 0.10630952380952378,
+        "n_dropped_total": 65
+      },
+      "agg_noncancer": {
+        "label": "noncancer",
+        "n_diseases": 177,
+        "n_with_bio_gt": 59,
+        "n_with_sm_gt": 175,
+        "n_with_bio_in_top30_baseline": 136,
+        "n_with_bio_in_top30_filtered": 136,
+        "base_overall_r30": 0.19061716704726314,
+        "filt_overall_r30": 0.19061716704726314,
+        "base_bio_r30": 0.31214689265536727,
+        "filt_bio_r30": 0.31214689265536727,
+        "base_sm_r30": 0.18700227556699048,
+        "filt_sm_r30": 0.18700227556699048,
+        "base_bio_p30": 0.0687712206094559,
+        "filt_bio_p30": 0.0687712206094559,
+        "n_dropped_total": 0
+      }
+    }
+  ],
+  "five_seed": {
+    "all": {
+      "bio_p30": {
+        "base": 0.056377460418108406,
+        "filt": 0.05915311059967403,
+        "delta": 0.002775650181565621,
+        "base_std": 0.01989321901808945,
+        "filt_std": 0.019961736746529263
+      },
+      "bio_r30": {
+        "base": 0.3031370829867591,
+        "filt": 0.29857539467507077,
+        "delta": -0.00456168831168835,
+        "base_std": 0.035653359726644566,
+        "filt_std": 0.03402346564781705
+      },
+      "sm_r30": {
+        "base": 0.1929025077274466,
+        "filt": 0.19350100888077398,
+        "delta": 0.0005985011533273799,
+        "base_std": 0.01508602901275697,
+        "filt_std": 0.015524957224073708
+      },
+      "overall": {
+        "base": 0.19790264913592784,
+        "filt": 0.19832560543125727,
+        "delta": 0.0004229562953294297,
+        "base_std": 0.015945171575308337,
+        "filt_std": 0.016351310393389773
+      }
+    },
+    "cancer": {
+      "bio_p30": {
+        "base": 0.07508577702490746,
+        "filt": 0.10044179894179894,
+        "delta": 0.025356021916891486,
+        "base_std": 0.02543536974741457,
+        "filt_std": 0.029592315884871656
+      },
+      "bio_r30": {
+        "base": 0.24651936026936028,
+        "filt": 0.2241456228956229,
+        "delta": -0.02237373737373738,
+        "base_std": 0.0738613943133457,
+        "filt_std": 0.061556670173891666
+      },
+      "sm_r30": {
+        "base": 0.1405709600540192,
+        "filt": 0.14601629266818544,
+        "delta": 0.005445332614166243,
+        "base_std": 0.02851274376495917,
+        "filt_std": 0.029604734682297622
+      },
+      "overall": {
+        "base": 0.14396988387888104,
+        "filt": 0.14798824268706356,
+        "delta": 0.0040183588081825206,
+        "base_std": 0.028082937462663597,
+        "filt_std": 0.030033923620130784
+      }
+    },
+    "noncancer": {
+      "bio_p30": {
+        "base": 0.05343435316707486,
+        "filt": 0.05343435316707486,
+        "delta": 0.0,
+        "base_std": 0.021057629315340137,
+        "filt_std": 0.021057629315340137
+      },
+      "bio_r30": {
+        "base": 0.3128947874908006,
+        "filt": 0.3128947874908006,
+        "delta": 0.0,
+        "base_std": 0.059293687141193555,
+        "filt_std": 0.059293687141193555
+      },
+      "sm_r30": {
+        "base": 0.19982525494469444,
+        "filt": 0.19982525494469444,
+        "delta": 0.0,
+        "base_std": 0.016729953760176323,
+        "filt_std": 0.016729953760176323
+      },
+      "overall": {
+        "base": 0.20492892132389356,
+        "filt": 0.20492892132389356,
+        "delta": 0.0,
+        "base_std": 0.01806262636796687,
+        "filt_std": 0.01806262636796687
+      }
+    }
+  },
+  "delta_global": {
+    "bio_p30_pp": 0.2775650181565621,
+    "bio_r30_pp": -0.456168831168835,
+    "overall_r30_pp": 0.04229562953294297
+  },
+  "verdict": "REJECT \u2014 global lift too small to justify"
+}

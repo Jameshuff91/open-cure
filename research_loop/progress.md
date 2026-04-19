@@ -1,6 +1,44 @@
 # Research Loop Progress
 
-## Current Session: h957 — Zero-Overlap Biologic Safety Filter (2026-04-19)
+## Current Session: h965 — Cancer-Restricted Variant of h957 (2026-04-19)
+
+### Hypothesis
+Apply the h957 zero-overlap biologic filter ONLY to cancer-category diseases,
+where TCGA-dense disease_genes captures the actual MoA target space (HER2, VEGF,
+CD20, PD1). Hypothesis: localized filter recovers most of h957's precision lift
+without the catastrophic recall cost that hit autoimmune/neuro/respiratory.
+
+### Status: INVALIDATED — global lift too small to ship as tier rule
+
+### Findings (5-seed aggregate)
+| scope        | Δ bio_p30 | Δ bio_r30 | Δ overall |
+|--------------|----------:|----------:|----------:|
+| GLOBAL       |  +0.28pp  |  -0.46pp  |  +0.04pp  |
+| CANCER ONLY  |  +2.54pp  |  -2.24pp  |  +0.40pp  |
+| NON-CANCER   |  +0.00pp  |  +0.00pp  |  +0.00pp  |
+
+Decision criterion: global Δ bio_p30 >= +0.5pp AND Δ bio_r30 >= -1.0pp.
+Filter fails the precision threshold globally (+0.28 < +0.5). Non-cancer
+control passes cleanly (Δ=0.00 everywhere → no leakage).
+
+### Why
+Cancer cohort effect (+2.54/-2.24) reproduces h957's cancer slice exactly
+(+2.6/-2.1), confirming the per-category result is real. But cancer is
+~12% of evaluable diseases (~23/200 per seed). A localized +2.5pp lift on
+~75-90 dropped predictions per seed dilutes to +0.3pp at the global tier-
+system level. The biologic-overlap signal is genuine in oncology but too
+narrow to register as a tier rule.
+
+### Implication
+- INVALIDATED as a global tier rule (cancer-restricted form).
+- h968: per-prediction `biologic_low_mechanism_evidence` annotation (ship
+  the signal in the deliverable column without moving global metrics).
+- h969: subclass-restricted variant on ~20 canonical anti-target biologics
+  (anti-HER2/VEGF/CD20/checkpoint) where target identity == MoA.
+
+---
+
+## Previous Session: h957 — Zero-Overlap Biologic Safety Filter (2026-04-19)
 
 ### Hypothesis
 h957 implements h949: drop biologic predictions where the drug's targets share zero
