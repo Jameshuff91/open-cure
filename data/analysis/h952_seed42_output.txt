@@ -1,0 +1,62 @@
+==============================================================================
+h952: Plain kNN vs Production top-30 diagnostic (seed=42)
+==============================================================================
+Loading predictor ...
+Biologic pool: 266
+Train: 808  Holdout: 203
+  ... 25/203 diseases
+  ... 50/203 diseases
+  ... 75/203 diseases
+  ... 100/203 diseases
+  ... 125/203 diseases
+  ... 150/203 diseases
+  ... 175/203 diseases
+  ... 200/203 diseases
+
+Evaluated 202 diseases  (skipped 1)
+
+--- Overall (seed 42) ---
+  n                      = 202
+  overall_prod           = 0.1542
+  overall_plain          = 0.1871
+  bio_prod               = 0.2723
+  bio_plain              = 0.3017
+  sm_prod                = 0.1457
+  sm_plain               = 0.1814
+  mean_lost              = 8.851
+  mean_lost_gt_hits      = 0.752
+  mean_added_gt_hits     = 0.089
+
+--- Per-category delta (production - plain kNN) ---
+category               n  boost   supp   prod_ovr  plain_ovr    delta  mean_lost  mean_lost_hit
+  autoimmune           8      -      -     25.75%     31.67%   -5.92pp       3.62           1.12
+  cancer              25      -      -      7.42%      9.83%   -2.41pp       7.20           0.84
+  cardiovascular      17      -      -     11.36%     11.87%   -0.51pp       3.53           0.65
+  dermatological       9      -      -     21.34%     22.56%   -1.22pp       3.33           1.89
+  endocrine            2      -      -      0.00%     25.00%  -25.00pp      15.00           3.50
+  gastrointestinal     8      -      Y     10.22%     11.41%   -1.19pp       3.75           0.25
+  hematological        1      Y      -     66.67%      0.00%  +66.67pp      21.00           0.00
+  infectious          27      -      -     19.02%     25.56%   -6.54pp       5.56           0.59
+  metabolic            9      Y      -     10.85%     13.98%   -3.13pp      20.00           0.33
+  musculoskeletal      3      -      -      9.23%      9.23%   +0.00pp       0.00           0.00
+  neurological        16      Y      Y     11.62%     14.47%   -2.85pp      22.88           0.88
+  ophthalmic           6      -      -     48.61%     51.87%   -3.26pp       5.00           1.50
+  other               60      -      -     15.93%     19.26%   -3.33pp       8.50           0.40
+  psychiatric          2      -      -      6.91%      6.91%   +0.00pp       0.00           0.00
+  renal                5      Y      -     15.64%     18.07%   -2.43pp      16.60           1.40
+  respiratory          4      Y      -      6.41%     21.99%  -15.58pp      22.25           3.00
+
+--- Grouped strata ---
+  boost_eligible             n=35    prod=12.97%  plain=15.30%  delta=-2.33pp  mean_lost=21.11  mean_lost_gt=1.03  mean_added_gt=0.51
+  NOT boost_eligible         n=167   prod=15.94%  plain=19.43%  delta=-3.49pp  mean_lost=6.28  mean_lost_gt=0.69  mean_added_gt=0.00
+  supplement_eligible        n=24    prod=11.15%  plain=13.45%  delta=-2.30pp  mean_lost=16.50  mean_lost_gt=0.67  mean_added_gt=0.38
+  neither boost nor supp     n=159   prod=16.22%  plain=19.83%  delta=-3.61pp  mean_lost=6.41  mean_lost_gt=0.72  mean_added_gt=0.00
+
+--- Lost-prediction class breakdown ---
+  total lost biologic drugs     = 196
+  total lost biologic GT hits   = 7
+  total lost small-mol drugs    = 1592
+  total lost small-mol GT hits  = 145
+  biologic fraction of all lost = 0.110
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h952_prod_vs_plain_knn.json

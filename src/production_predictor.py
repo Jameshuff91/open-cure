@@ -4590,6 +4590,22 @@ class DrugRepurposingPredictor:
         if disease_lower in self.mesh_mappings:
             return self.mesh_mappings[disease_lower]
 
+        # h952: Reverse-index fallback. disease_names (id→name) is a superset of
+        # mesh_mappings (name→id): 668 names live only in disease_names. Holdout
+        # evaluation pulled canonical names from disease_names and passed them
+        # here, causing find_disease_id to miss 19.7% of holdout diseases and
+        # return zero predictions. Before fuzzy matching, check whether the
+        # lowercased name matches any known disease name directly.
+        if not hasattr(self, "_name_lower_to_id"):
+            self._name_lower_to_id = {
+                n.lower(): did
+                for did, n in self.disease_names.items()
+                if n
+            }
+        reverse_hit = self._name_lower_to_id.get(disease_lower)
+        if reverse_hit is not None:
+            return reverse_hit
+
         # Try fuzzy matching
         sys.path.insert(0, str(self.data_dir / "src"))
         from disease_name_matcher import DiseaseMatcher, load_mesh_mappings

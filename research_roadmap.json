@@ -16688,7 +16688,7 @@
       "id": "h906",
       "title": "DrugBank Target Features to Fix Biologic Prediction Failures",
       "category": "feature-engineering",
-      "rationale": "ORIGINAL (DISSOLVED): 'Biologics (mAbs) are the largest single failure class: 27.3% R@30 vs 41.8% overall, driven by data sparsity (2.1 vs 11.1 diseases/drug).' h951 (2026-04-19) DISSOLVED this premise: production bio_r30 = 27.06% > overall_r30 = 16.39% (+10.67pp). Biologics OUTPERFORM overall. Subsequent findings further weakened the recall angle: h912 INVALIDATED target-overlap as a standalone signal; h940 INVALIDATED biologic-pool target-overlap fusion (HURTS R@30 at every alpha). The remaining DrugBank target-feature use cases are now (a) zero-overlap precision filter (h949 covers this without DrugBank — h939 proxy is sufficient); (b) ESM2 protein embeddings (h921 — but same recall-fusion failure mode applies). No defensible recall motivation remains, and precision motivation is better served by lower-effort hypotheses that do not require licensing.",
+      "rationale": "ORIGINAL (DISSOLVED): 'Biologics (mAbs) are the largest single failure class: 27.3% R@30 vs 41.8% overall, driven by data sparsity (2.1 vs 11.1 diseases/drug).' h951 (2026-04-19) DISSOLVED this premise: production bio_r30 = 27.06% > overall_r30 = 16.39% (+10.67pp). Biologics OUTPERFORM overall. Subsequent findings further weakened the recall angle: h912 INVALIDATED target-overlap as a standalone signal; h940 INVALIDATED biologic-pool target-overlap fusion (HURTS R@30 at every alpha). The remaining DrugBank target-feature use cases are now (a) zero-overlap precision filter (h949 covers this without DrugBank \u2014 h939 proxy is sufficient); (b) ESM2 protein embeddings (h921 \u2014 but same recall-fusion failure mode applies). No defensible recall motivation remains, and precision motivation is better served by lower-effort hypotheses that do not require licensing.",
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
@@ -17011,7 +17011,7 @@
       "id": "h920",
       "title": "PubMedBERT Dense Embeddings for Drug-Disease Retrieval (Biologic Precision Pivot)",
       "category": "deep-learning",
-      "rationale": "ORIGINAL (DISSOLVED): 'Biologics fail at 27.3% R@30 vs 41.8% overall because graph embeddings do not capture antibody mechanism descriptions.' h951 DISSOLVED this premise (production bio_r30 27.06% > overall 16.39%). Reframe candidate: text embeddings as an OVERALL precision/recall lift on the 16.39% production overall_r30 baseline (not biologic-specific) — captures literature signal absent from the graph. Could also help h909's 71 truly-blocked diseases by providing text-similarity for diseases without DRKG embeddings. Reframe is plausible but the biologic-specific motivation is gone, and overall-recall fusion is a known regressor pattern (see h940). Recommend re-validating motivation via h956 (proposed) before committing GPU.",
+      "rationale": "ORIGINAL (DISSOLVED): 'Biologics fail at 27.3% R@30 vs 41.8% overall because graph embeddings do not capture antibody mechanism descriptions.' h951 DISSOLVED this premise (production bio_r30 27.06% > overall 16.39%). Reframe candidate: text embeddings as an OVERALL precision/recall lift on the 16.39% production overall_r30 baseline (not biologic-specific) \u2014 captures literature signal absent from the graph. Could also help h909's 71 truly-blocked diseases by providing text-similarity for diseases without DRKG embeddings. Reframe is plausible but the biologic-specific motivation is gone, and overall-recall fusion is a known regressor pattern (see h940). Recommend re-validating motivation via h956 (proposed) before committing GPU.",
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
@@ -17034,7 +17034,7 @@
       "id": "h921",
       "title": "ESM2 Protein-Target Embeddings for Biologic Specificity (h906 Principled Replacement)",
       "category": "deep-learning",
-      "rationale": "ORIGINAL (DISSOLVED): replace binary DrugBank target-overlap with ESM2 sequence similarity to give antibodies the specificity signal they need. h951 DISSOLVED the biologic-failure premise. h940 showed any biologic-pool overlap fusion HURTS recall (every alpha 0.3-0.9 negative). ESM2 is unlikely to invert this — the failure mode is fusion-into-mixed-pool, not the granularity of the overlap measure. The 'weak-kNN cancer cohort' niche from h912 (n=11) is the only remaining viable use, and the cohort is too small to justify A100 cost. Recommend closing or pivoting to a within-pool biologic ranker (the original h939 framing) — but that ranking is annotation-only, not promotable to a re-ranker.",
+      "rationale": "ORIGINAL (DISSOLVED): replace binary DrugBank target-overlap with ESM2 sequence similarity to give antibodies the specificity signal they need. h951 DISSOLVED the biologic-failure premise. h940 showed any biologic-pool overlap fusion HURTS recall (every alpha 0.3-0.9 negative). ESM2 is unlikely to invert this \u2014 the failure mode is fusion-into-mixed-pool, not the granularity of the overlap measure. The 'weak-kNN cancer cohort' niche from h912 (n=11) is the only remaining viable use, and the cohort is too small to justify A100 cost. Recommend closing or pivoting to a within-pool biologic ranker (the original h939 framing) \u2014 but that ranking is annotation-only, not promotable to a re-ranker.",
       "expected_impact": "low",
       "effort": "medium",
       "priority": 3,
@@ -17077,7 +17077,7 @@
       "id": "h924",
       "title": "LINCS L1000 VAE for Reverse-Connectivity Scoring (h905 Precision Reframe)",
       "category": "external-data",
-      "rationale": "ORIGINAL (DISSOLVED): 'LINCS can be a precision pivot on already-evaluable diseases, especially biologics.' Two findings dissolve this: (1) h951 DISSOLVED biologic-failure premise — biologics are not a precision-priority class on production; (2) LINCS L1000 is overwhelmingly small-molecule perturbation data — biologic compound coverage is sparse, so even a working VAE would have low biologic applicability. h909 already killed the LINCS-as-coverage angle. The remaining 'rare-disease GEO signature' use case is a niche that does not justify the high effort (download + VAE training + GEO ETL + integration). Closing.",
+      "rationale": "ORIGINAL (DISSOLVED): 'LINCS can be a precision pivot on already-evaluable diseases, especially biologics.' Two findings dissolve this: (1) h951 DISSOLVED biologic-failure premise \u2014 biologics are not a precision-priority class on production; (2) LINCS L1000 is overwhelmingly small-molecule perturbation data \u2014 biologic compound coverage is sparse, so even a working VAE would have low biologic applicability. h909 already killed the LINCS-as-coverage angle. The remaining 'rare-disease GEO signature' use case is a niche that does not justify the high effort (download + VAE training + GEO ETL + integration). Closing.",
       "expected_impact": "low",
       "effort": "high",
       "priority": 3,
@@ -17480,13 +17480,13 @@
     },
     {
       "id": "h952",
-      "title": "Production-pipeline biologic recall regression vs plain kNN — diagnose lost biologic recall",
+      "title": "Production-pipeline biologic recall regression vs plain kNN \u2014 diagnose lost biologic recall",
       "category": "meta",
       "rationale": "h951 production bio_r30 = 27.06% but h940 plain-kNN baseline bio_r30 = 31.42% (-4.36pp). Production overall_r30 = 16.39% vs h940 baseline overall_r30 = 20.30% (-3.91pp). The production pipeline systematically loses ~4pp of recall (both biologic and overall) compared to plain kNN. Suspects: SELECTIVE_BOOST_CATEGORIES boosting same-category neighbors hurts cross-category transfer; tier rules / safety filters dropping correct predictions out of top-30; MinRank or non-therapeutic filters demoting biologics. Find the cause, decide whether to revert or accept the trade-off (production may have higher precision per top-30 even if R@30 drops).",
       "expected_impact": "high",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "For seed=42, run plain kNN top-30 (h940 framework) and production predict() top-30 on the same holdout 203 diseases.",
         "Per-disease, identify drugs that are in plain-kNN top-30 but NOT in production top-30 (lost predictions).",
@@ -17496,13 +17496,15 @@
       ],
       "depends_on": [
         "h951"
-      ]
+      ],
+      "findings": "ROOT CAUSE IDENTIFIED: The ~4pp production-vs-plain-kNN recall regression (h940 20.30% -> h951 16.39%) is NOT caused by SELECTIVE_BOOST, supplements, MinRank, or tier rules. It is caused by a NAME-RESOLUTION BUG in DrugRepurposingPredictor.find_disease_id(). 668 of 1146 disease_names entries (58%) are not in mesh_mappings; the fuzzy matcher covers most but fails on 40 of 203 holdout diseases (19.7%) at seed 42. These 40 diseases return ZERO predictions, contributing -16.28pp per-disease (40/202 \u00d7 16.28pp ~= -3.22pp of the -3.29pp observed seed-42 regression). VERIFIED: For the 162 diseases where production actually runs, prod overall_r30 == plain kNN overall_r30 (delta = -0.08pp). Stratified: 'neither boost nor supp' n=125 exact match (delta=0.00pp, mean_lost=0.00); 'supp_only' (GI) n=7 exact match; 'boost_only' n=17 +1.41pp (SELECTIVE_BOOST actually HELPS when supplements don't run); 'boost+supp' (neurological) n=13 -2.85pp. FIX SHIPPED: Added reverse-index fallback to find_disease_id (src/production_predictor.py:4586). Before falling back to the fuzzy matcher, check the lowercased name against a cached reverse index built from disease_names. Post-fix seed-42: overall_r30 15.42% -> 18.72% (+3.30pp, matches plain kNN 18.71%); bio_r30 27.23% -> 31.96% (+4.73pp, exceeds plain kNN 30.17%); sm_r30 14.57% -> 17.81%. Failing-to-resolve examples: 'cerebrotendinous xanthomatosis', 'squamouscell carcinoma', 'ewings sarcoma', 'autoimmune haemolytic anaemia', 'obstructive sleep apnoea' \u2014 compound names, British spellings, missing-space variants. IMPLICATION: h951 bio_r30 = 27.06% was artificially suppressed by the bug. True post-fix bio_r30 is ~32% (estimated from seed 42). The biologic-failure narrative dissolution (h951/h955) is even stronger than originally reported. SELECTIVE_BOOST (h170) remains net-positive. h940's -4.36pp bio gap vs production disappears.",
+      "result_metric": "Seed 42 post-fix: overall_r30 18.72% (+3.30pp from pre-fix 15.42%, matches plain kNN 18.71%); bio_r30 31.96% (+4.73pp, exceeds plain kNN 30.17%); sm_r30 17.81% (+3.24pp)."
     },
     {
       "id": "h953",
-      "title": "Biologic precision pivot — exploit bio_p30 = 6.37% with biologic-aware tier promotion",
+      "title": "Biologic precision pivot \u2014 exploit bio_p30 = 6.37% with biologic-aware tier promotion",
       "category": "meta",
-      "rationale": "h951 found bio_r30 = 27.06% (recall is fine) but bio_p30 = 6.37% (precision is poor — fewer than 2 of 30 top-30 predictions are biologics that hit GT). For diseases with no biologic GT, ANY biologic in top-30 is a precision drag. For diseases with biologic GT, the biologic predictions are sparse and often wrong. Test: for each disease, compute a 'biologic-likelihood' prior from disease features (immunological category, ATC L code, treatment class history) and DEMOTE biologic predictions in top-30 for diseases with low biologic prior. Should improve overall precision without hurting overall recall.",
+      "rationale": "h951 found bio_r30 = 27.06% (recall is fine) but bio_p30 = 6.37% (precision is poor \u2014 fewer than 2 of 30 top-30 predictions are biologics that hit GT). For diseases with no biologic GT, ANY biologic in top-30 is a precision drag. For diseases with biologic GT, the biologic predictions are sparse and often wrong. Test: for each disease, compute a 'biologic-likelihood' prior from disease features (immunological category, ATC L code, treatment class history) and DEMOTE biologic predictions in top-30 for diseases with low biologic prior. Should improve overall precision without hurting overall recall.",
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
@@ -17519,7 +17521,7 @@
     },
     {
       "id": "h954",
-      "title": "Reconcile 41.8% historical overall R@30 vs h951 production 16.39% — eval framework drift audit",
+      "title": "Reconcile 41.8% historical overall R@30 vs h951 production 16.39% \u2014 eval framework drift audit",
       "category": "meta",
       "rationale": "research_spec.md and RESEARCH_ROADMAP.md cite '41.8% overall R@30' as the baseline. CLAUDE.md cites '26.06% kNN k=20 (no-treatment embeddings)' as the FAIR transductive number and '15.73% KEGG Pathway kNN' as the FAIR inductive number. h951 production 5-seed holdout gives 16.39%. There is at least a 25pp gap between research_spec's 41.8% claim and current production reality. Audit which evaluation framework gave 41.8% (training-on-test full-data? loose GT? per-disease R@30 vs per-drug R@30?), update research_spec.md to cite the correct current baseline, and confirm that all currently-active hypothesis rationales reference an honest baseline.",
       "expected_impact": "medium",
@@ -17538,9 +17540,9 @@
     },
     {
       "id": "h955",
-      "title": "h906/h920/h921/h924 — re-justify or close on h951's MOTIVATION DISSOLVED finding",
+      "title": "h906/h920/h921/h924 \u2014 re-justify or close on h951's MOTIVATION DISSOLVED finding",
       "category": "meta",
-      "rationale": "h906 (DrugBank target features), h920 (PubMedBERT dense embeddings), h921 (ESM2 protein embeddings), h924 (LINCS L1000 VAE) were all justified by 'biologics fail at 27.3% R@30 vs 41.8% overall'. h951 dissolved that motivation: biologics are at 27.06% AND overall is at 16.39% — biologics outperform overall on apples-to-apples holdout. Each pivot now needs new justification (precision instead of recall? specific subcategory? non-biologic motivation?) or should be closed-no-longer-motivated.",
+      "rationale": "h906 (DrugBank target features), h920 (PubMedBERT dense embeddings), h921 (ESM2 protein embeddings), h924 (LINCS L1000 VAE) were all justified by 'biologics fail at 27.3% R@30 vs 41.8% overall'. h951 dissolved that motivation: biologics are at 27.06% AND overall is at 16.39% \u2014 biologics outperform overall on apples-to-apples holdout. Each pivot now needs new justification (precision instead of recall? specific subcategory? non-biologic motivation?) or should be closed-no-longer-motivated.",
       "expected_impact": "high",
       "effort": "low",
       "priority": 1,
@@ -17580,7 +17582,7 @@
     },
     {
       "id": "h957",
-      "title": "h949 zero-overlap biologic safety filter — execute the precision pivot freed by h955",
+      "title": "h949 zero-overlap biologic safety filter \u2014 execute the precision pivot freed by h955",
       "category": "tier-rule",
       "rationale": "h955 closed h906/h921 partly because h949 already covers the only remaining biologic precision use: a zero-target-overlap safety filter that demotes biologic predictions for diseases where the biologic has no shared targets in disease_genes. h951 found bio_p30 = 6.37% (low precision driven largely by biologic predictions for non-biologic-relevant diseases). The h949 filter is exactly the precision pivot h951 motivates and h955 frees budget for. Low-effort, in-pipeline change to _assign_confidence_tier.",
       "expected_impact": "medium",
@@ -17597,6 +17599,81 @@
         "h951",
         "h955"
       ]
+    },
+    {
+      "id": "h958",
+      "title": "h952 fix \u2014 full 5-seed post-fix holdout baseline for overall_r30 / bio_r30 / sm_r30",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "low",
+      "rationale": "h952 fixed find_disease_id name-resolution on seed 42: overall_r30 15.42% -> 18.72% (+3.30pp), bio_r30 27.23% -> 31.96% (+4.73pp). The h951 'biologic failure dissolved' verdict was based on the pre-fix bio_r30 27.06%; the real post-fix biologic R@30 likely exceeds overall R@30 by more than 10pp. Re-run h951's 5-seed production holdout on the post-fix predictor to lock in the corrected baseline numbers; update CLAUDE.md / research_spec.md 'current baseline' accordingly.",
+      "steps": [
+        "Re-run scripts/h951_biologic_baseline_reality_check.py (5 seeds: 42, 123, 456, 789, 2024).",
+        "Confirm post-fix overall_r30 mean ~=18.7%, bio_r30 mean ~=32%, sm_r30 mean ~=18%.",
+        "Update CLAUDE.md 'H951 BIOLOGIC FAILURE NARRATIVE' section with corrected numbers.",
+        "Update research_spec.md current-baseline line."
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "h959",
+      "title": "Audit all predictor.predict(disease_name) call sites for pre-fix name-resolution risk",
+      "priority": 1,
+      "expected_impact": "high",
+      "effort": "low",
+      "rationale": "h952 found find_disease_id fails on 58% of disease_names entries (668 of 1146). Pre-fix, this silently produced zero-prediction diseases in evaluation and possibly in production deliverable generation. Audit every call site of .predict() to confirm: (a) the deliverable pipeline uses disease_id directly (not name->id lookup) OR is now covered by the fix; (b) no historical eval script silently dropped diseases; (c) how many past h-number validations were affected by the same bug. Update CLAUDE.md with which prior baselines need re-verification.",
+      "steps": [
+        "grep for predictor.predict(, predict(disease_name, etc.; classify each call by whether input is name or id.",
+        "Re-check whether the 13,416-row deliverable was generated from names (suspect) or IDs; regenerate if affected.",
+        "Spot-check 5 prior h-number results (h904, h908, h939, h940, h951) to see if the bug biased their conclusions.",
+        "Publish a bug-impact table: which experiments were affected, which are unaffected."
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "h960",
+      "title": "Neurological supplement (h173) + SELECTIVE_BOOST interaction hurts neurological R@30",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h952 post-fix seed-42 stratification showed 'boost+supp' (neurological) category delta = -2.85pp vs plain kNN, while 'boost_only' = +1.41pp and 'supp_only' (GI) = 0.00pp. The h173 neurological supplement (class_injected drugs) re-sorts by tier priority and can displace kNN top-30 drugs with lower-ranked class-matched drugs (capped at MEDIUM per h395). Once boost is also active, the combination over-replaces kNN predictions. Test: disable the neurological supplement (keep boost) and measure.",
+      "steps": [
+        "Temporarily bypass _supplement_neurological_predictions for neurological category in predict().",
+        "Run 5-seed h951-style evaluation focusing on neurological subset.",
+        "Compare neurological overall_r30 with vs without supplement; success if +1pp without.",
+        "If confirmed, propose demoting class_injected to LOW (annotation-only) or disabling the re-sort."
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "h961",
+      "title": "MeSH disease-name aliasing: ingest british-spelling / hyphenation variants into mesh_mappings",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h952 fix uses disease_names as reverse index, but many DRKG IDs only appear with one spelling. Failing examples include British spellings ('haemolytic', 'apnoea'), possessives without apostrophe ('ewings'), hyphenation loss ('cd20positive', 'squamouscell'). A principled fix: augment mesh_mappings with algorithmically-generated aliases (US<->UK, strip/restore hyphens, possessive stripping) at load time. Measure what % of disease_names entries gain a name-key path after augmentation.",
+      "steps": [
+        "Build alias generator: US/UK spelling map (haem/hem, oe/e, ise/ize), hyphenation variants, possessive stripping.",
+        "Augment mesh_mappings at load; count new keys.",
+        "Measure: of the 668 disease_names entries missing from mesh_mappings, how many now resolve?",
+        "Target: cover 90%+ of the original 668 missing."
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "h962",
+      "title": "Regenerate deliverable and measure whether the 13,416-row XLSX is affected by the h952 bug",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "If the deliverable pipeline iterates predictor.predict(disease_name) for name-ordered input, then up to 19.7% of diseases may have been silently skipped or had zero rows. Re-run the deliverable-generation script post-fix; compare row counts, tier distributions, and per-disease coverage. Diff vs the shipped XLSX to determine whether to re-publish.",
+      "steps": [
+        "Locate the deliverable-generation script (grep 'drug_repurposing_predictions_with_confidence').",
+        "Re-run it on the post-fix predictor.",
+        "Diff new vs old XLSX: added rows (previously dropped diseases), changed tier counts.",
+        "If substantive change, re-publish and update CLAUDE.md deliverable row count."
+      ],
+      "status": "pending"
     }
   ],
   "completed": [
@@ -20212,13 +20289,19 @@
       "date": "2026-04-19",
       "hypothesis_id": "h951",
       "learning": "The biologic-failure narrative driving h906/h920/h921/h924 is FALSE on the current production pipeline. 5-seed apples-to-apples holdout: bio_r30 = 27.06% +/- 3.12% vs overall_r30 = 16.39% +/- 1.10%. Biologics OUTPERFORM overall by +10.67pp. The historical 27.3% biologic R@30 was numerically correct (we measured 27.06%) but it was being compared to a 41.8% overall number from a different evaluation framework that no longer reflects honest holdout performance. Bio precision is the genuine remaining gap (bio_p30 = 6.37%); recall is fine. Per-category bio:sm ratios where biologics dominate: gastrointestinal 7.9x, hematological 7.4x, metabolic 3.8x, neurological 3.2x, musculoskeletal 3.0x.",
-      "implication": "Close or re-justify h906/h920/h921/h924 (h955). Pivot any biologic work from RECALL to PRECISION (h953). Diagnose the production-vs-plain-kNN regression of -4.36pp bio_r30 / -3.91pp overall_r30 (h952) — likely SELECTIVE category boost or tier safety filters demoting correct predictions. Fix the documented 41.8% baseline that is misleading every hypothesis rationale (h954). Generic lesson: motivation baselines decay silently; require rationale-baselines to be re-measured on the current framework before greenlighting external-data efforts."
+      "implication": "Close or re-justify h906/h920/h921/h924 (h955). Pivot any biologic work from RECALL to PRECISION (h953). Diagnose the production-vs-plain-kNN regression of -4.36pp bio_r30 / -3.91pp overall_r30 (h952) \u2014 likely SELECTIVE category boost or tier safety filters demoting correct predictions. Fix the documented 41.8% baseline that is misleading every hypothesis rationale (h954). Generic lesson: motivation baselines decay silently; require rationale-baselines to be re-measured on the current framework before greenlighting external-data efforts."
     },
     {
       "date": "2026-04-19",
       "hypothesis_id": "h955",
       "learning": "Walked h906/h920/h921/h924 rationales after h951's MOTIVATION DISSOLVED finding. All four moved to status=inconclusive. h920/h921/h924 demoted P2->P3. Re-justification attempts failed: h906 (no remaining recall path; h949 covers the only precision use); h920 (text-precision pivot is plausible but unvalidated, gated on h956 CPU smoke test); h921 (h940 pool-fusion failure mode is granularity-independent, ESM2 won't fix it); h924 (LINCS is small-molecule-biased, biologic precision use is moot). Net effect: ~1 month of GPU/license effort freed for h952/h953/h954/h957.",
-      "implication": "Generic lesson: when a motivating baseline is dissolved, the dependent hypotheses rarely have a clean alternative motivation — most close cleanly. Always interrogate dependent hypotheses immediately when a motivating finding lands; do not let them sit in pending limbo. Three new actionable hypotheses generated: h956 (PubMedBERT CPU smoke test, low-cost precision-impact estimate), h957 (h949 zero-overlap biologic safety filter, in-pipeline precision pivot)."
+      "implication": "Generic lesson: when a motivating baseline is dissolved, the dependent hypotheses rarely have a clean alternative motivation \u2014 most close cleanly. Always interrogate dependent hypotheses immediately when a motivating finding lands; do not let them sit in pending limbo. Three new actionable hypotheses generated: h956 (PubMedBERT CPU smoke test, low-cost precision-impact estimate), h957 (h949 zero-overlap biologic safety filter, in-pipeline precision pivot)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h952",
+      "learning": "The h940 plain-kNN vs h951 production recall gap (~4pp) was entirely a find_disease_id name-resolution bug, not a methodology or SELECTIVE_BOOST issue. Adding a reverse-index fallback (disease_names lowercased -> disease_id) restores overall_r30 to plain-kNN parity (18.72% vs 18.71% at seed 42) and actually pushes bio_r30 slightly above plain kNN (31.96% vs 30.17%). 58% of disease_names entries were missing from mesh_mappings.",
+      "implication": "Any past experiment that used predictor.predict(disease_name_from_disease_names) silently dropped ~20% of holdout diseases. Historical baselines (h951 bio_r30 27.06%, h904 tier precisions, many per-category deltas) need re-verification against the fixed predictor. The biologic-failure dissolution (h951) is strengthened, not weakened, by the fix."
     }
   ],
   "collaborations": [

@@ -1,0 +1,18 @@
+cerebrotendinous xanthomatosis -> drkg:Disease::MESH:D019294
+squamouscell carcinoma -> drkg:Disease::MESH:D002294
+ewings sarcoma -> drkg:Disease::MESH:D012512
+
+Seed 42 POST-FIX:
+  overall_r30 = 18.72%   (n=202)
+  bio_r30     = 31.96%   (n=56)
+  sm_r30      = 17.81%   (n=200)
+
+Seed 42 PRE-FIX (h951/h952):
+  overall_r30 = 15.42%   (n=202)
+  bio_r30     = 27.23%   (n~54)
+  sm_r30      = 14.57%   (n~180)
+
+Plain kNN baseline (h952, no boost, no supp):
+  overall_r30 = 18.71%   (n=202)
+  bio_r30     = 30.17%
+  sm_r30      = 18.14%
