@@ -4298,3 +4298,59 @@ Remaining viable surfaces:
 
 ### Recommended next hypothesis
 **h1006** (P3) — surgical version of h1000 that concentrates the shift effect at tier boundaries. If it fails too, the entire in-window re-rank family is closed and the biologic precision problem is STRUCTURALLY unsolvable via rank manipulation.
+
+
+## Current Session (continued): h1100 — FILTER Known-Indication Carve-Outs (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1100 (VALIDATED)
+
+### What was tested
+Added a known-indication flag (`is_known_indication = drug_id in self.ground_truth.get(disease_id, set())`) to `_assign_confidence_tier` and wired three FILTER-demoting rules to carve out known indications:
+1. `cancer_targeted_therapy` — fall through to cancer_same_type paths (lands MEDIUM/LOW) instead of FILTER.
+2. `HIERARCHY_DEMOTE_TO_FILTER` — route to LOW via new sub_reason `<cat>_hierarchy_<group>_known_cap` instead of FILTER.
+3. `freq<=2 AND not mech` — fall through to default paths.
+
+Also named 5 previously-anonymous FILTER sub_reasons (`rank_over_20`, `no_targets`, `low_freq_no_mech`, `corticosteroid_metabolic_iatrogenic`) for audit clarity. Safety filters (`inverse_indication`, `corticosteroid_iatrogenic`, `non_therapeutic_compound`, `rank_over_20`, `no_targets`) were NOT carved out — they remain structural/safety signals.
+
+### Headline result
+| metric | before | after | Δ |
+|---|---|---|---|
+| Known-indication FILTER misfires @rank<=30 | 1,366 | 779 | **-43%** |
+| Diseases with >=1 misfire | 492 | 270 | -222 |
+| FILTER aggregate precision | 6.8% ± 0.7% | 6.1% ± 0.6% | -0.7pp (within 1pp tolerance) |
+| GOLDEN / HIGH / MEDIUM / LOW | 78.5 / 80.0 / 39.9 / 10.0 | 82.6 / 80.5 / 40.4 / 10.5 | stable (within noise) |
+
+### Positive-control impact (paper-visible)
+| pair | rank | baseline tier | post-h1100 tier |
+|---|---|---|---|
+| metformin -> T2D | 5 | FILTER | **LOW** |
+| tetrabenazine -> Huntington | 1 | FILTER | **LOW** |
+| trastuzumab -> breast neoplasms | 20 | FILTER | **MEDIUM** |
+| sildenafil -> PAH | 100 | FILTER | FILTER (rank>20 structural, unchanged — correct) |
+
+Three paper crown-jewel FILTER mis-fires resolved. Sildenafil stays in FILTER because rank=100 is a genuine kNN weakness, not a rule mis-application (see h1103 follow-up).
+
+### Remaining 779 known-indication FILTER cases — structural, not rule-based
+| sub_reason | count | type |
+|---|---|---|
+| rank_over_20 | 543 | structural kNN |
+| no_targets | 130 | structural kNN |
+| corticosteroid_metabolic_iatrogenic | 28 | safety filter (CORRECT) |
+| inverse_indication | 24 | safety filter (CORRECT) |
+| other rules | 54 | smaller misc |
+
+543/779 (70%) are rank>20 — kNN truly does not rank these FDA-approved pairs in the top 20. Not fixable by tier rules; only by improving the ranker (h1200).
+
+### Methodology lesson
+Before adding any FILTER-demoting rule, decide explicitly whether to carve out `is_known_indication=True`. Safety filters (inverse indication, iatrogenic effect) should NOT carve out. Blanket tier rules that assume "drug-class X is low quality for disease-type Y" probably should — the drug may be FDA-approved for this specific disease.
+
+### New hypotheses (4 added)
+- **h1102 (P2):** Deliverable annotation — surface `is_known_indication`, `filter_reason` (plain-English sub_reason), `known_but_low_rank`. Improves reader transparency without touching tiers.
+- **h1103 (P2):** Audit the 543 rank>20 known-indication residuals. If they cluster by drug class or disease category, that guides h1200 supervised-GNN loss weighting.
+- **h1104 (P3):** Inverse positive-control suite — 20 contraindication cases checked for HIGH/GOLDEN mis-assignment. Symmetric safety audit.
+- **h1105 (P3):** Wire positive controls into CI/pre-commit. Prevents silent regression on the 20 fixed cases.
+
+### Recommended next hypothesis
+**h1102 (P2)** — low-effort, high-value annotation. The is_known_indication plumbing is already in the predictor; just surface it in the deliverable. Fully decouples from GNN work.
+
+Or alternatively **h1103 (P2)** — diagnostic for h1200 (supervised GNN). Identifies which mis-rankings matter most for the upcoming training, so h1200 loss weighting has a principled prior.

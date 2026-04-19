@@ -1943,7 +1943,7 @@
       "expected_impact": "high",
       "effort": "medium",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "For each of the 20 positive-control cases landing in FILTER (see data/analysis/positive_controls_baseline.json), identify the specific sub_reason / tier_rule that fired",
         "Expand the scan: for all predictions with rank <= 30 AND tier = FILTER AND is_known_indication = True in the current deliverable, cluster by tier_rule",
@@ -1953,8 +1953,8 @@
         "Re-run positive controls (scripts/positive_controls.py --label post_h1100) to verify famous cases no longer land in FILTER at top ranks",
         "Commit changes with before/after positive-control snapshots"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "VALIDATED. Added known-indication carve-outs to 3 FILTER-demoting rules in production_predictor._assign_confidence_tier: (1) cancer_targeted_therapy \u2014 fall through to cancer_same_type paths when is_known_indication=True; (2) HIERARCHY_DEMOTE_TO_FILTER \u2014 route known indications to LOW with sub_reason '<cat>_hierarchy_<group>_known_cap' instead of FILTER; (3) low_freq_no_mech (freq<=2 and not mech) \u2014 fall through for known indications. Safety filters (inverse_indication, corticosteroid_iatrogenic, non_therapeutic_compound, rank_over_20, no_targets) were NOT carved out \u2014 they are structural/safety signals. Known-indication FILTER misfires at rank<=30 dropped 1366->779 (-43%). Of the 779 remaining, 543 are 'rank_over_20' and 130 are 'no_targets' (both structural kNN signals, not rule mis-applications). Positive controls: metformin->T2D@r5 FILTER->LOW, tetrabenazine->Huntington@r1 FILTER->LOW, trastuzumab->breast@r20 FILTER->MEDIUM (paper crown-jewel fix). FILTER aggregate precision 6.1% +/- 0.6% vs 6.8% +/- 0.7% baseline (-0.7pp, within 1pp tolerance). GOLDEN 82.6%, HIGH 80.5%, MEDIUM 40.4%, LOW 10.5% \u2014 tier ordering preserved, no regression >1pp. Also named 5 anonymous FILTER sub_reasons for audit clarity (rank_over_20, no_targets, low_freq_no_mech, corticosteroid_metabolic_iatrogenic).",
+      "result_metric": "Known-indication FILTER misfires @rank<=30: 1366->779 (-43%); FILTER aggregate precision 6.8->6.1% (within tolerance); 3 paper crown-jewel cases moved out of FILTER at top ranks"
     },
     {
       "id": "h1101",
@@ -2169,6 +2169,75 @@
       ],
       "findings": "",
       "result_metric": ""
+    },
+    {
+      "id": "h1102",
+      "title": "Deliverable annotation column: is_known_indication flag + sub_reason transparency",
+      "priority": 2,
+      "status": "pending",
+      "category": "calibration",
+      "rationale": "h1100 introduced is_known_indication internally but it's not surfaced in the deliverable. Readers seeing sildenafil->PAH at rank 100, FILTER, would not know the model at least RANKED the drug (just weakly). Paper reviewers and clinicians need to see (a) is_known_indication (did the drug have GT for this disease?), (b) exact sub_reason that fired, and (c) for rank>20 cases, a 'known-but-low-rank' flag distinguishing safety filter from kNN weakness. Pure annotation \u2014 no ranker change, no tier change.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Add is_known_indication column to data/deliverables/drug_repurposing_predictions_with_confidence.xlsx",
+        "Add filter_reason column with a human-readable description of sub_reason (map internal sub_reasons to plain-English labels)",
+        "Add known_but_low_rank boolean = is_known_indication AND rank>20",
+        "Verify via spot-check: sildenafil->PAH@rank100 should show is_known_indication=True, filter_reason='rank > 20 (kNN signal weak)', known_but_low_rank=True",
+        "Re-run deliverable generation and diff the new column against existing output"
+      ]
+    },
+    {
+      "id": "h1103",
+      "title": "Rank>20 known-indication audit \u2014 which drug categories dominate the 543 residuals",
+      "priority": 2,
+      "status": "pending",
+      "category": "error_analysis",
+      "rationale": "h1100 closed the tier-rule misfire family but left 543 known-indication FILTER cases at rank>20 that are structural kNN mis-rankings. If these cluster into specific drug classes (biologics? targeted oncology? orphan drugs?), they become a targeted h1200 training signal: weight these pairs up during supervised GNN training to fix the kNN rank directly. Also identifies paper-visible mis-rankings most worth highlighting.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Filter h1100_filter_known_scan.json to sub_reason='rank_over_20' (543 rows)",
+        "Join with drug_name, drug category (biologic/sm), and disease category",
+        "Cluster: (a) drug class frequency, (b) disease category frequency, (c) rank distribution (21-30 vs 31-50 vs 50+)",
+        "Identify top 5 drug-class x disease-category buckets by residual count",
+        "Write to data/analysis/h1103_rank_over_20_audit.json + markdown table",
+        "Propose concrete weighting scheme for h1200 GNN loss if clusters are clean"
+      ]
+    },
+    {
+      "id": "h1104",
+      "title": "Inverse positive-control suite \u2014 high-confidence predictions that are contraindicated",
+      "priority": 3,
+      "status": "pending",
+      "category": "safety",
+      "rationale": "h1100 fixed false negatives (known indications hidden in FILTER). The opposite failure mode \u2014 false positives where HIGH/GOLDEN predictions are for drugs known to WORSEN the disease \u2014 is equally dangerous and currently untested. Examples to check: statins->diabetes, corticosteroids->avascular necrosis, anti-TNF->SLE/MS, NSAIDs->ulcers/AKI. Build a 20-case contraindication benchmark, run it, report any HIGH/GOLDEN hits.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Assemble 20-case contraindication suite in scripts/negative_controls.py (mirror positive_controls.py structure)",
+        "Each case is (drug, disease, contraindication_source) \u2014 e.g., (atorvastatin, diabetes, '2024 Lancet meta-analysis 10-36% increase')",
+        "Run through production predictor; report any landing HIGH/GOLDEN + any landing outside FILTER when they should be there",
+        "If any mis-classify, trace the rule and propose targeted safety filter",
+        "Save baseline data/analysis/negative_controls_baseline.json",
+        "Add to CI suite alongside positive_controls.py"
+      ]
+    },
+    {
+      "id": "h1105",
+      "title": "Positive control as regression gate \u2014 wire into CI/pre-commit for tier-rule edits",
+      "priority": 3,
+      "status": "pending",
+      "category": "meta",
+      "rationale": "h1100 and h922-v2 both show that tier-rule changes can silently demote famous FDA-approved indications. The positive_controls.py suite exists but isn't enforced. Wire it in: any commit touching production_predictor._assign_confidence_tier or any rule list must re-run positive controls and show diff. Halts on regression (metformin dropping from LOW back to FILTER, etc.).",
+      "expected_impact": "meta",
+      "effort": "low",
+      "steps": [
+        "Add scripts/ci_check_positive_controls.py that diffs current run vs data/analysis/positive_controls_baseline.json",
+        "Regression defined as any control moving from LOW+ to FILTER, or any control's rank worsening by >=5 positions",
+        "Wire into git pre-commit hook (optional, opt-in via env var)",
+        "Document in CLAUDE.md + research_spec.md"
+      ]
     }
   ],
   "completed": [
@@ -4887,6 +4956,12 @@
       "hypothesis_id": "h1005",
       "learning": "In-window biologic score-perturbation re-rank fails at BOTH \u00b11.5 and \u00b13.5. Magnitude is not the bottleneck \u2014 signal density is. Only 22% of biologics have target_match_loo_neighbor=True (bump candidates); 78% are False (demote candidates, most already at LOW/FILTER going to FILTER). High-precision promotions from biologic match=True are rare (4-6 hits across 5 seeds at 100% precision) \u2014 numerically too small to lift 53-slot GOLDEN or 213-slot HIGH tiers. Demotion side works as intended (legitimate LOW\u2192FILTER per rank>20 rule) but cannot LIFT any tier.",
       "implication": "Abandon score-perturbation re-rank as a tier-precision surface. Move to: (1) boundary-targeted shift (h1006) that only activates near rank 5/10/15/20 thresholds to maximize boundary-crossing rate; (2) deliverable annotation column (h1003, h1007) that doesn't touch tier assignment. Score-perturbation is mechanically safe (bio_r30 preserved) but cannot lift tiers because the match=True bump signal is too concentrated in few biologics."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1100",
+      "learning": "Known-indication flag (drug_id in self.ground_truth.get(disease_id)) is a clean carve-out signal for FILTER-demoting rules. 3 rules correctly exempted; safety filters (inverse indication, rank>20, no targets) intentionally NOT exempted. 543/779 remaining known-indication FILTER cases are rank>20 \u2014 genuine kNN mis-ranking, not a rule fix.",
+      "implication": "The rank>20 structural floor is the dominant remaining source of paper-visible FILTER misfires on FDA-approved indications. Not fixable by tier rules; only by improving the underlying ranker (h1200 supervised GNN). Also: every new tier-demoting rule should explicitly decide whether to exempt known indications before shipping."
     }
   ],
   "collaborations": [

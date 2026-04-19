@@ -1,0 +1,40 @@
+Loading predictor ...
+  Loaded in 0s
+Scanning 1011 diseases ...
+  [100/1011] elapsed=1s, hits_so_far=284
+  [200/1011] elapsed=1s, hits_so_far=531
+  [300/1011] elapsed=1s, hits_so_far=739
+  [400/1011] elapsed=2s, hits_so_far=863
+  [500/1011] elapsed=2s, hits_so_far=963
+  [600/1011] elapsed=2s, hits_so_far=1056
+  [700/1011] elapsed=3s, hits_so_far=1151
+  [800/1011] elapsed=3s, hits_so_far=1248
+  [900/1011] elapsed=3s, hits_so_far=1327
+  [1000/1011] elapsed=4s, hits_so_far=1364
+
+Scan complete in 4s
+
+==============================================================================
+  Known-indication FILTER misfires (rank<=30)
+==============================================================================
+  Total FILTER@rank<=30: 13783
+  Total known@rank<=30: 4940
+  Total known+FILTER@rank<=30: 1366
+  Diseases with >=1 misfire: 492
+
+  sub_reason                                    count
+  -------------------------------------------- ------
+  <raw_filter>                                   1073
+  cancer_targeted_therapy                         175
+  metabolic_hierarchy_diabetes                     42
+  inverse_indication                               24
+  complication_non_validated                       11
+  highly_repurposable                              11
+  base_to_complication                              9
+  cancer_only_non_cancer                            9
+  cancer_no_gt                                      6
+  corticosteroid_iatrogenic                         2
+  metabolic                                         2
+  non_therapeutic_compound                          2
+
+  Saved to /Users/jimhuff/github/open-cure/data/analysis/h1100_filter_known_scan.json

@@ -1,0 +1,18 @@
+Loading predictor ...
+  Loaded in 0s
+
+========================================================================================================================
+drug             disease                        rank   tier assign sub_reason                           in_gt match
+------------------------------------------------------------------------------------------------------------------------
+metformin        diabetes mellitus, type 2         5 FILTER FILTER metabolic_hierarchy_diabetes          True  True
+tetrabenazine    huntington disease                1 FILTER FILTER None                                  True  True
+trastuzumab      breast neoplasms                 20 FILTER FILTER cancer_targeted_therapy               True  True
+sildenafil       hypertension, pulmonary         100 FILTER FILTER None                                  True  True
+riluzole         amyotrophic lateral sclerosis     1    LOW    LOW mechanism_specific                    True  True
+dantrolene       ventricular tachycardia          34 FILTER FILTER None                                  True  True
+dantrolene       ventricular fibrillation         36 FILTER FILTER None                                 False  True
+dantrolene       tachycardia                      28 FILTER FILTER None                                 False  True
+dantrolene       arrhythmia                       67 FILTER FILTER None                                  True  True
+dantrolene       heart failure                  not_in_top_100
+
+Saved to /Users/jimhuff/github/open-cure/data/analysis/h1100_filter_misfire_diagnostic.json

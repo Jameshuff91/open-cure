@@ -1,0 +1,559 @@
+{
+  "summary": {
+    "eval_diseases": 1011,
+    "total_filter_in_top30": 13196,
+    "total_known_in_top30": 4940,
+    "total_known_filter_in_top30": 779,
+    "diseases_with_known_filter_misfire": 270,
+    "sub_reason_counts": {
+      "rank_over_20": 543,
+      "no_targets": 130,
+      "corticosteroid_metabolic_iatrogenic": 28,
+      "inverse_indication": 24,
+      "complication_non_validated": 12,
+      "highly_repurposable": 11,
+      "cancer_only_non_cancer": 10,
+      "base_to_complication": 9,
+      "cancer_no_gt": 6,
+      "corticosteroid_iatrogenic": 2,
+      "metabolic": 2,
+      "non_therapeutic_compound": 2
+    }
+  },
+  "examples": {
+    "inverse_indication": [
+      {
+        "drug": "Verapamil",
+        "disease": "chronic heart failure",
+        "disease_id": "drkg:Disease::MESH:D006333",
+        "rank": 2,
+        "freq": 16,
+        "mech": true,
+        "has_targets": true,
+        "category": "cardiovascular"
+      },
+      {
+        "drug": "Glimepiride",
+        "disease": "type 1 diabetes mellitus",
+        "disease_id": "drkg:Disease::MESH:D003922",
+        "rank": 4,
+        "freq": 3,
+        "mech": true,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Rosiglitazone",
+        "disease": "type 1 diabetes mellitus",
+        "disease_id": "drkg:Disease::MESH:D003922",
+        "rank": 6,
+        "freq": 3,
+        "mech": true,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Glyburide",
+        "disease": "type 1 diabetes mellitus",
+        "disease_id": "drkg:Disease::MESH:D003922",
+        "rank": 8,
+        "freq": 3,
+        "mech": true,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Glipizide",
+        "disease": "type 1 diabetes mellitus",
+        "disease_id": "drkg:Disease::MESH:D003922",
+        "rank": 9,
+        "freq": 4,
+        "mech": true,
+        "has_targets": true,
+        "category": "metabolic"
+      }
+    ],
+    "rank_over_20": [
+      {
+        "drug": "Edoxaban",
+        "disease": "chronic heart failure",
+        "disease_id": "drkg:Disease::MESH:D006333",
+        "rank": 21,
+        "freq": 9,
+        "mech": false,
+        "has_targets": true,
+        "category": "cardiovascular"
+      },
+      {
+        "drug": "Furosemide",
+        "disease": "chronic heart failure",
+        "disease_id": "drkg:Disease::MESH:D006333",
+        "rank": 22,
+        "freq": 9,
+        "mech": true,
+        "has_targets": true,
+        "category": "cardiovascular"
+      },
+      {
+        "drug": "Valsartan",
+        "disease": "chronic heart failure",
+        "disease_id": "drkg:Disease::MESH:D006333",
+        "rank": 28,
+        "freq": 3,
+        "mech": false,
+        "has_targets": true,
+        "category": "cardiovascular"
+      },
+      {
+        "drug": "Torasemide",
+        "disease": "chronic heart failure",
+        "disease_id": "drkg:Disease::MESH:D006333",
+        "rank": 29,
+        "freq": 8,
+        "mech": false,
+        "has_targets": true,
+        "category": "cardiovascular"
+      },
+      {
+        "drug": "Milrinone",
+        "disease": "chronic heart failure",
+        "disease_id": "drkg:Disease::MESH:D006333",
+        "rank": 30,
+        "freq": 2,
+        "mech": false,
+        "has_targets": true,
+        "category": "cardiovascular"
+      }
+    ],
+    "complication_non_validated": [
+      {
+        "drug": "Furosemide",
+        "disease": "nephrotic syndrome",
+        "disease_id": "drkg:Disease::MESH:D009404",
+        "rank": 7,
+        "freq": 9,
+        "mech": false,
+        "has_targets": true,
+        "category": "renal"
+      },
+      {
+        "drug": "Chlorthalidone",
+        "disease": "nephrotic syndrome",
+        "disease_id": "drkg:Disease::MESH:D009404",
+        "rank": 10,
+        "freq": 8,
+        "mech": false,
+        "has_targets": true,
+        "category": "renal"
+      },
+      {
+        "drug": "Hydroflumethiazide",
+        "disease": "nephrotic syndrome",
+        "disease_id": "drkg:Disease::MESH:D009404",
+        "rank": 11,
+        "freq": 6,
+        "mech": false,
+        "has_targets": true,
+        "category": "renal"
+      },
+      {
+        "drug": "Chlorothiazide",
+        "disease": "nephrotic syndrome",
+        "disease_id": "drkg:Disease::MESH:D009404",
+        "rank": 12,
+        "freq": 7,
+        "mech": false,
+        "has_targets": true,
+        "category": "renal"
+      },
+      {
+        "drug": "Hydrochlorothiazide",
+        "disease": "nephrotic syndrome",
+        "disease_id": "drkg:Disease::MESH:D009404",
+        "rank": 13,
+        "freq": 11,
+        "mech": false,
+        "has_targets": true,
+        "category": "renal"
+      }
+    ],
+    "no_targets": [
+      {
+        "drug": "Ceftaroline fosamil",
+        "disease": "acute bacterial skin and skin structure infections absssi",
+        "disease_id": "drkg:Disease::MESH:D001424",
+        "rank": 20,
+        "freq": 4,
+        "mech": false,
+        "has_targets": false,
+        "category": "infectious"
+      },
+      {
+        "drug": "Gepotidacin",
+        "disease": "infections caused by colistinsensitive escherichia coli",
+        "disease_id": "drkg:Disease::MESH:D004927",
+        "rank": 16,
+        "freq": 3,
+        "mech": false,
+        "has_targets": false,
+        "category": "infectious"
+      },
+      {
+        "drug": "Obiltoxaximab",
+        "disease": "anthrax",
+        "disease_id": "drkg:Disease::MESH:D000881",
+        "rank": 14,
+        "freq": 1,
+        "mech": false,
+        "has_targets": false,
+        "category": "infectious"
+      },
+      {
+        "drug": "Benzoyl peroxide",
+        "disease": "acne vulgaris",
+        "disease_id": "drkg:Disease::MESH:D000152",
+        "rank": 13,
+        "freq": 3,
+        "mech": false,
+        "has_targets": false,
+        "category": "dermatological"
+      },
+      {
+        "drug": "Sodium cation",
+        "disease": "duodenal ulcer",
+        "disease_id": "drkg:Disease::MESH:D004381",
+        "rank": 10,
+        "freq": 15,
+        "mech": false,
+        "has_targets": false,
+        "category": "gastrointestinal"
+      }
+    ],
+    "cancer_no_gt": [
+      {
+        "drug": "Cromoglicic acid",
+        "disease": "mastocytosis",
+        "disease_id": "drkg:Disease::MESH:D008415",
+        "rank": 10,
+        "freq": 4,
+        "mech": false,
+        "has_targets": true,
+        "category": "cancer"
+      },
+      {
+        "drug": "Phentolamine",
+        "disease": "pheochromocytoma",
+        "disease_id": "drkg:Disease::MESH:D010673",
+        "rank": 5,
+        "freq": 1,
+        "mech": false,
+        "has_targets": true,
+        "category": "cancer"
+      },
+      {
+        "drug": "Phenoxybenzamine",
+        "disease": "pheochromocytoma",
+        "disease_id": "drkg:Disease::MESH:D010673",
+        "rank": 8,
+        "freq": 1,
+        "mech": false,
+        "has_targets": true,
+        "category": "cancer"
+      },
+      {
+        "drug": "Telotristat ethyl",
+        "disease": "carcinoid syndrome diarrhoea",
+        "disease_id": "drkg:Disease::MESH:D008303",
+        "rank": 5,
+        "freq": 1,
+        "mech": false,
+        "has_targets": true,
+        "category": "cancer"
+      },
+      {
+        "drug": "Telotristat",
+        "disease": "carcinoid syndrome diarrhoea",
+        "disease_id": "drkg:Disease::MESH:D008303",
+        "rank": 6,
+        "freq": 1,
+        "mech": false,
+        "has_targets": true,
+        "category": "cancer"
+      }
+    ],
+    "highly_repurposable": [
+      {
+        "drug": "Cidofovir",
+        "disease": "aids",
+        "disease_id": "drkg:Disease::MESH:D000163",
+        "rank": 3,
+        "freq": 2,
+        "mech": true,
+        "has_targets": true,
+        "category": "infectious"
+      },
+      {
+        "drug": "Ganciclovir",
+        "disease": "aids",
+        "disease_id": "drkg:Disease::MESH:D000163",
+        "rank": 4,
+        "freq": 2,
+        "mech": true,
+        "has_targets": true,
+        "category": "infectious"
+      },
+      {
+        "drug": "Dronabinol",
+        "disease": "aids",
+        "disease_id": "drkg:Disease::MESH:D000163",
+        "rank": 7,
+        "freq": 2,
+        "mech": true,
+        "has_targets": true,
+        "category": "infectious"
+      },
+      {
+        "drug": "Beclomethasone",
+        "disease": "bronchospasm",
+        "disease_id": "drkg:Disease::MESH:D001986",
+        "rank": 2,
+        "freq": 6,
+        "mech": false,
+        "has_targets": true,
+        "category": "other"
+      },
+      {
+        "drug": "Mometasone",
+        "disease": "bronchospasm",
+        "disease_id": "drkg:Disease::MESH:D001986",
+        "rank": 3,
+        "freq": 6,
+        "mech": false,
+        "has_targets": true,
+        "category": "other"
+      }
+    ],
+    "base_to_complication": [
+      {
+        "drug": "Olmesartan",
+        "disease": "diabetic nephropathy",
+        "disease_id": "drkg:Disease::MESH:D003928",
+        "rank": 1,
+        "freq": 8,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Atenolol",
+        "disease": "diabetic nephropathy",
+        "disease_id": "drkg:Disease::MESH:D003928",
+        "rank": 2,
+        "freq": 8,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Prazosin",
+        "disease": "diabetic nephropathy",
+        "disease_id": "drkg:Disease::MESH:D003928",
+        "rank": 3,
+        "freq": 8,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Doxazosin",
+        "disease": "diabetic nephropathy",
+        "disease_id": "drkg:Disease::MESH:D003928",
+        "rank": 4,
+        "freq": 9,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Verapamil",
+        "disease": "diabetic nephropathy",
+        "disease_id": "drkg:Disease::MESH:D003928",
+        "rank": 5,
+        "freq": 16,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      }
+    ],
+    "corticosteroid_metabolic_iatrogenic": [
+      {
+        "drug": "Methylprednisolone",
+        "disease": "congenital adrenal hyperplasia",
+        "disease_id": "drkg:Disease::MESH:D000312",
+        "rank": 1,
+        "freq": 79,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Dexamethasone",
+        "disease": "congenital adrenal hyperplasia",
+        "disease_id": "drkg:Disease::MESH:D000312",
+        "rank": 2,
+        "freq": 81,
+        "mech": true,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Betamethasone",
+        "disease": "congenital adrenal hyperplasia",
+        "disease_id": "drkg:Disease::MESH:D000312",
+        "rank": 3,
+        "freq": 55,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Prednisone",
+        "disease": "congenital adrenal hyperplasia",
+        "disease_id": "drkg:Disease::MESH:D000312",
+        "rank": 4,
+        "freq": 61,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Hydrocortisone",
+        "disease": "congenital adrenal hyperplasia",
+        "disease_id": "drkg:Disease::MESH:D000312",
+        "rank": 5,
+        "freq": 69,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      }
+    ],
+    "corticosteroid_iatrogenic": [
+      {
+        "drug": "Prednisolone",
+        "disease": "rosacea",
+        "disease_id": "drkg:Disease::MESH:D012393",
+        "rank": 2,
+        "freq": 77,
+        "mech": false,
+        "has_targets": true,
+        "category": "dermatological"
+      },
+      {
+        "drug": "Dexamethasone",
+        "disease": "rosacea",
+        "disease_id": "drkg:Disease::MESH:D012393",
+        "rank": 4,
+        "freq": 81,
+        "mech": true,
+        "has_targets": true,
+        "category": "dermatological"
+      }
+    ],
+    "cancer_only_non_cancer": [
+      {
+        "drug": "Pembrolizumab",
+        "disease": "metastasis",
+        "disease_id": "drkg:Disease::MESH:D009362",
+        "rank": 1,
+        "freq": 24,
+        "mech": true,
+        "has_targets": true,
+        "category": "other"
+      },
+      {
+        "drug": "Paclitaxel",
+        "disease": "metastasis",
+        "disease_id": "drkg:Disease::MESH:D009362",
+        "rank": 2,
+        "freq": 15,
+        "mech": true,
+        "has_targets": true,
+        "category": "other"
+      },
+      {
+        "drug": "Cisplatin",
+        "disease": "metastasis",
+        "disease_id": "drkg:Disease::MESH:D009362",
+        "rank": 6,
+        "freq": 8,
+        "mech": true,
+        "has_targets": true,
+        "category": "other"
+      },
+      {
+        "drug": "Doxorubicin",
+        "disease": "metastasis",
+        "disease_id": "drkg:Disease::MESH:D009362",
+        "rank": 19,
+        "freq": 21,
+        "mech": true,
+        "has_targets": true,
+        "category": "other"
+      },
+      {
+        "drug": "Nintedanib",
+        "disease": "systemic sclerosis associated interstitial lung disease",
+        "disease_id": "drkg:Disease::MESH:D017563",
+        "rank": 9,
+        "freq": 4,
+        "mech": false,
+        "has_targets": true,
+        "category": "respiratory"
+      }
+    ],
+    "metabolic": [
+      {
+        "drug": "Lovastatin",
+        "disease": "type i hyperlipoproteinemia",
+        "disease_id": "drkg:Disease::MESH:D006951",
+        "rank": 1,
+        "freq": 12,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      },
+      {
+        "drug": "Rosuvastatin",
+        "disease": "type i hyperlipoproteinemia",
+        "disease_id": "drkg:Disease::MESH:D006951",
+        "rank": 3,
+        "freq": 10,
+        "mech": false,
+        "has_targets": true,
+        "category": "metabolic"
+      }
+    ],
+    "non_therapeutic_compound": [
+      {
+        "drug": "Indocyanine green acid form",
+        "disease": "advanced or recurrent cervical cancer",
+        "disease_id": "drkg:Disease::MESH:D002583",
+        "rank": 10,
+        "freq": 3,
+        "mech": false,
+        "has_targets": true,
+        "category": "cancer"
+      },
+      {
+        "drug": "Indocyanine green acid form",
+        "disease": "uterine cancer",
+        "disease_id": "drkg:Disease::MESH:D014594",
+        "rank": 4,
+        "freq": 3,
+        "mech": false,
+        "has_targets": true,
+        "category": "cancer"
+      }
+    ]
+  }
+}

@@ -3408,6 +3408,7 @@ class DrugRepurposingPredictor:
         disease_name: str = "",
         drug_id: str = "",
         knn_score: float = 0.0,
+        disease_id: str = "",
     ) -> Tuple[ConfidenceTier, bool, Optional[str]]:
         """
         Assign confidence tier based on h135 criteria.
@@ -3419,6 +3420,18 @@ class DrugRepurposingPredictor:
         # Must precede all positive tier assignments (cancer_same_type, hierarchy, etc.)
         drug_lower = drug_name.lower()
         disease_lower = disease_name.lower()
+
+        # h1100: Known-indication flag. True when (drug_id, disease_id) is in
+        # our training GT — i.e., the prediction is re-surfacing an
+        # FDA/EC-labeled indication the model already knows. Used below to
+        # carve out three rules that were blanket-demoting these to FILTER:
+        # cancer_targeted_therapy, HIERARCHY_DEMOTE_TO_FILTER, low_freq_no_mech.
+        # Safety filters (inverse_indication, non_therapeutic_compound,
+        # corticosteroid_iatrogenic, rank_over_20) are NOT overridden.
+        is_known_indication = bool(
+            drug_id and disease_id
+            and drug_id in self.ground_truth.get(disease_id, set())
+        )
         for inv_drug, inv_diseases in INVERSE_INDICATION_PAIRS.items():
             if inv_drug in drug_lower:
                 if any(inv_d in disease_lower for inv_d in inv_diseases):
@@ -3583,7 +3596,11 @@ class DrugRepurposingPredictor:
                 # h538: Targeted therapy (kinase inhibitors + immunotherapy) has 12.6% holdout
                 # vs cytotoxic 53%. They don't transfer across cancer subtypes via kNN.
                 # h904: Holdout 6.4% (n=79/seed, Δ=-21pp from full 27.4%). Demote LOW→FILTER.
-                if any(t in drug_lower for t in CANCER_TARGETED_THERAPY):
+                # h1100: Known-indication carve-out. Trastuzumab→breast, bevacizumab→CRC,
+                # etc. are the exact indications the targeted therapy is FDA-approved for —
+                # demoting to FILTER hides the model's correct recognition. Fall through
+                # to cancer_same_type paths (MEDIUM tier) for known indications.
+                if any(t in drug_lower for t in CANCER_TARGETED_THERAPY) and not is_known_indication:
                     return ConfidenceTier.FILTER, False, 'cancer_targeted_therapy'
                 # h633: cancer_same_type + mechanism + rank<=10 = 56.6% ± 9.7% holdout (expanded GT)
                 # h797 INVALIDATED: Attempted GOLDEN promotion but holdout=69.5% ± 13.5% (OVERFITTED).
@@ -3623,10 +3640,14 @@ class DrugRepurposingPredictor:
         # without first solving the underlying freq/mechanism inflation at full data.
 
         # FILTER tier (h123 negative signals)
+        # h1100: Anonymous FILTER sub_reasons named for audit clarity
+        # ('rank_over_20', 'no_targets', 'low_freq_no_mech'). Only
+        # low_freq_no_mech has a known-indication carve-out (rank_over_20
+        # and no_targets are structural kNN signals, not rule demotions).
         if rank > 20:
-            return ConfidenceTier.FILTER, False, None
+            return ConfidenceTier.FILTER, False, 'rank_over_20'
         if not has_targets:
-            return ConfidenceTier.FILTER, False, None
+            return ConfidenceTier.FILTER, False, 'no_targets'
 
         # h708: Validated complication drugs bypass freq<=2 filter.
         # Anti-VEGF drugs (ranibizumab, aflibercept) have small GT footprint (2-3 diseases)
@@ -3641,8 +3662,12 @@ class DrugRepurposingPredictor:
                     break
 
         if train_frequency <= 2 and not mechanism_support:
-            if not is_validated_complication_drug:
-                return ConfidenceTier.FILTER, False, None
+            # h1100: Known-indication carve-out — tetrabenazine→Huntington
+            # (freq=2, no DRKG mech path) is the canonical FDA indication;
+            # fall through so it lands in LOW via category rescue / default
+            # paths rather than being hidden in FILTER.
+            if not is_validated_complication_drug and not is_known_indication:
+                return ConfidenceTier.FILTER, False, 'low_freq_no_mech'
 
         # h153/h476: Corticosteroids for iatrogenic conditions = FILTER
         # Corticosteroids CAUSE these conditions (inverse indications):
@@ -3655,7 +3680,7 @@ class DrugRepurposingPredictor:
         # - Endocrine: Cushing syndrome (h476 - exogenous steroids ARE the cause)
         if any(steroid in drug_lower for steroid in CORTICOSTEROID_DRUGS):
             if category == 'metabolic':
-                return ConfidenceTier.FILTER, False, None
+                return ConfidenceTier.FILTER, False, 'corticosteroid_metabolic_iatrogenic'
             steroid_iatrogenic = ['rosacea', 'osteoporosis', 'avascular necrosis',
                                   'glaucoma', 'cataract', 'pancreatitis', 'cushing']
             if any(iatrogen in disease_lower for iatrogen in steroid_iatrogenic):
@@ -3802,7 +3827,11 @@ class DrugRepurposingPredictor:
             )
             if same_group_match:
                 # h904: Demote to FILTER for hierarchy groups with massive full-vs-holdout gap
+                # h1100: Known-indication carve-out — route known indications through the
+                # LOW path instead of FILTER (e.g. metformin→T2D hidden by diabetes hierarchy).
                 if matching_group in HIERARCHY_DEMOTE_TO_FILTER:
+                    if is_known_indication:
+                        return ConfidenceTier.LOW, True, f'{category}_hierarchy_{matching_group}_known_cap'
                     return ConfidenceTier.FILTER, True, f'{category}_hierarchy_{matching_group}'
                 # h649: Demote to LOW for groups with near-LOW holdout
                 if matching_group in HIERARCHY_DEMOTE_TO_LOW:
@@ -4422,6 +4451,7 @@ class DrugRepurposingPredictor:
                 drug_name=drug_name,
                 disease_name=disease_name,
                 drug_id=drug_id,
+                disease_id=disease_id,
             )
 
             # h395: Cap class-injected drugs at MEDIUM (was HIGH+)
@@ -4575,6 +4605,7 @@ class DrugRepurposingPredictor:
                 drug_name=drug_name,
                 disease_name=disease_name,
                 drug_id=drug_id,
+                disease_id=disease_id,
             )
 
             # h395: Cap GI class-injected drugs at MEDIUM (was HIGH+)
@@ -4759,7 +4790,7 @@ class DrugRepurposingPredictor:
                         # tier to LOW since mechanism alone is weak signal.
                         assigned_tier, rescue_applied, assigned_cat = self._assign_confidence_tier(
                             rank, train_freq, True, has_targets, disease_tier, category,
-                            drug_name, disease_name, drug_id, 0.0
+                            drug_name, disease_name, drug_id, 0.0, disease_id
                         )
 
                         # If safety filters triggered FILTER, respect that
@@ -4860,7 +4891,7 @@ class DrugRepurposingPredictor:
 
                     tier, rescue_applied, cat_specific = self._assign_confidence_tier(
                         rank, train_freq, mech_support, has_targets, disease_tier, category,
-                        drug_name, disease_name, drug_id, knn_score
+                        drug_name, disease_name, drug_id, knn_score, disease_id
                     )
 
                     # h388: Target overlap tier promotion (no rank change)

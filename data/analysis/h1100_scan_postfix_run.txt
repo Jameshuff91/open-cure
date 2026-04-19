@@ -1,0 +1,40 @@
+Loading predictor ...
+  Loaded in 0s
+Scanning 1011 diseases ...
+  [100/1011] elapsed=1s, hits_so_far=217
+  [200/1011] elapsed=1s, hits_so_far=425
+  [300/1011] elapsed=1s, hits_so_far=538
+  [400/1011] elapsed=2s, hits_so_far=604
+  [500/1011] elapsed=2s, hits_so_far=654
+  [600/1011] elapsed=2s, hits_so_far=682
+  [700/1011] elapsed=3s, hits_so_far=713
+  [800/1011] elapsed=3s, hits_so_far=736
+  [900/1011] elapsed=3s, hits_so_far=765
+  [1000/1011] elapsed=4s, hits_so_far=779
+
+Scan complete in 4s
+
+==============================================================================
+  Known-indication FILTER misfires (rank<=30)
+==============================================================================
+  Total FILTER@rank<=30: 13196
+  Total known@rank<=30: 4940
+  Total known+FILTER@rank<=30: 779
+  Diseases with >=1 misfire: 270
+
+  sub_reason                                    count
+  -------------------------------------------- ------
+  rank_over_20                                    543
+  no_targets                                      130
+  corticosteroid_metabolic_iatrogenic              28
+  inverse_indication                               24
+  complication_non_validated                       12
+  highly_repurposable                              11
+  cancer_only_non_cancer                           10
+  base_to_complication                              9
+  cancer_no_gt                                      6
+  corticosteroid_iatrogenic                         2
+  metabolic                                         2
+  non_therapeutic_compound                          2
+
+  Saved to /Users/jimhuff/github/open-cure/data/analysis/h1100_filter_known_scan.json
