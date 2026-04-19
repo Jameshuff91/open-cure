@@ -2218,6 +2218,30 @@ class DrugRepurposingPredictor:
                             if mesh_str.startswith("D") or mesh_str.startswith("C"):
                                 self.mesh_mappings[disease_name.lower()] = f"drkg:Disease::MESH:{mesh_str}"
 
+        # h961: principled aliasing. Two augmentations from
+        # data/reference/h961_disease_name_aliases.json:
+        #   (1) disease_names_backfill — 668 canonical disease_names whose ids
+        #       live in disease_names but were previously unreachable via
+        #       mesh_mappings. Safe because disease_names is the authoritative
+        #       id source. Supersedes h952's runtime reverse-index fallback for
+        #       these names.
+        #   (2) reverse_british_variants — 114 British-spelling variants of
+        #       existing mm keys (e.g. "sleep apnoea" → MESH:D012891). Catches
+        #       user-typed UK-spelling queries for canonical American terms.
+        # Generator: scripts/h961_alias_generator.py
+        alias_path = self.reference_dir / "h961_disease_name_aliases.json"
+        if alias_path.exists():
+            with open(alias_path) as f:
+                alias_data = json.load(f)
+            for name, did in alias_data.get("disease_names_backfill", {}).items():
+                if name.lower() in self._h908_blocklist:
+                    continue
+                self.mesh_mappings.setdefault(name.lower(), did)
+            for name, did in alias_data.get("reverse_british_variants", {}).items():
+                if name.lower() in self._h908_blocklist:
+                    continue
+                self.mesh_mappings.setdefault(name.lower(), did)
+
         # Load ground truth (for training drug frequencies)
         self._load_ground_truth()
 
@@ -3726,8 +3750,11 @@ class DrugRepurposingPredictor:
         # colitis: 85.7% ± 0.0% (n=7/seed)
         # h811: rheumatoid_arthritis demoted to HIGH — 69.0% ± 28.8% holdout (n=16/seed), below GOLDEN 85.3%
         # h904: uti removed — h393 holdout 0% (n=6/seed, Δ=-70.8pp from full 70.8%). Demote GOLDEN→HIGH.
+        # h977: uti RESTORED. h952 name-resolution bug was suppressing UTI-disease predictions;
+        # post-h952-fix h393 shows uti at 90.9% ± 0.0% holdout (n=11/seed), +20.1pp above full
+        # and well above GOLDEN mean (78.5%). The h904 demotion was correcting for the bug.
         HIERARCHY_PROMOTE_TO_GOLDEN = {
-            'coronary', 'arrhythmia', 'colitis',
+            'coronary', 'arrhythmia', 'colitis', 'uti',
         }
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
         # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
@@ -4969,14 +4996,22 @@ class DrugRepurposingPredictor:
                     # sub-reason has >=MEDIUM holdout. Sub-reasons with LOW
                     # holdout (cancer_same_type_mech_rank10: 13.4%, default:
                     # 15.7%) should fall through to LOW.
+                    # h984: Protect rank<=5 + WEAK_EVIDENCE — stratified audit
+                    # found this subgroup holds at 44.4% (n=36/5seeds), ABOVE
+                    # MEDIUM avg 43.0%. Demotion is correct for rank 6+ (12-30%
+                    # holdout range) and for NO_EVIDENCE at every rank (0-28%).
                     _LIT_DEMOTION_PROTECTED = {
                         'default_freq10_nomech_r1_5',  # 36.4% holdout (n=29/seed)
                     }
+                    _skip_lit_demotion = (
+                        cat_specific == 'literature_high_demotion'
+                        and _orig_cat_specific in _LIT_DEMOTION_PROTECTED
+                    ) or (
+                        lit_level == 'WEAK_EVIDENCE' and rank <= 5
+                    )
                     if (tier == ConfidenceTier.MEDIUM
                             and lit_level in ('NO_EVIDENCE', 'WEAK_EVIDENCE')
-                            and not (cat_specific == 'literature_high_demotion'
-                                     and _orig_cat_specific
-                                     in _LIT_DEMOTION_PROTECTED)):
+                            and not _skip_lit_demotion):
                         tier = ConfidenceTier.LOW
                         cat_specific = 'literature_weak_demotion'
 

@@ -17668,9 +17668,12 @@
         "Measure: of the 668 disease_names entries missing from mesh_mappings, how many now resolve?",
         "Target: cover 90%+ of the original 668 missing."
       ],
-      "status": "in_progress",
+      "status": "validated",
       "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T09:04:33"
+      "claimed_at": "2026-04-19T09:04:33",
+      "findings": "5-layer generator measured against 668 disease_names entries missing from mesh_mappings. Principled spelling/hyphen/possessive/plural/trailing-abbrev transformations hit only 53/668 (7.9%, 83% precision vs disease_names) \u2014 the '90% via principled aliasing' route does not work. Most misses (408/668 = 61%) are name-granularity differences (e.g. 'acne vulgaris' \u2194 mm's 'acne'), where the id lives in disease_names but no alias transformation can recover it. Combined with a disease_names backfill (authoritative name\u2192id from the predictor's id\u2192name map), coverage reaches 100% of the 668. Produced 114 reverse British-spelling variants of existing mesh_mappings keys (sleep apnoea, oedema, coeliac disease, etc.), all distinct from existing keys and safely shipped. mesh_mappings grew 1489 \u2192 2265. Integration: data/reference/h961_disease_name_aliases.json + production_predictor.py load path. Less-specific-prefix/suffix fallback REJECTED: 43% of its hits mapped to a different id than disease_names (e.g. 'allergic dermatitis' \u2192 'dermatitis' gave D003872 instead of the correct atopic-dermatitis D017449). The h952 reverse-index fallback remains a safety net for names not yet canonicalized in disease_names.",
+      "result_metric": "668/668 (100%) via backfill + 53/668 (7.9%) via principled transformations. 114 British-variant aliases added. mesh_mappings 1489\u21922265.",
+      "updated_at": "2026-04-19"
     },
     {
       "id": "h962",
@@ -17911,7 +17914,7 @@
     {
       "id": "h977",
       "title": "Re-validate infectious_hierarchy_uti GOLDEN rescue post-h952-fix",
-      "status": "in_progress",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -17924,8 +17927,9 @@
         "Otherwise keep demotion and file as confirmed overfit on current pool."
       ],
       "success_criteria": "Either re-promote UTI to GOLDEN OR confirm h904 demotion stands.",
-      "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T09:04:33"
+      "resolved_at": "2026-04-19T09:09:25",
+      "findings": "UTI RESTORED to HIERARCHY_PROMOTE_TO_GOLDEN. h393 post-restoration: infectious_hierarchy_uti classified GOLDEN with 90.9% \u00b1 0.0% holdout at n=11/seed (55 across 5 seeds), +20.1pp above full-data 70.8%, status GENUINE. Tier-level impact is minor: GOLDEN 78.5% -> 78.6% (+0.1pp), HIGH 80.0% -> 79.9% (-0.1pp) \u2014 because UTI's 11 preds/seed are a small fraction of GOLDEN's ~119. The rescue is correctness (rule belongs in GOLDEN) not precision (tier means barely move). SIDE-FINDING (unrelated to h977): tier ordering is inverted in the current h393, GOLDEN (78.6%) < HIGH (79.9%). Present before this change; caused by post-h952-fix calibration drift per h964. Recommend a dedicated hypothesis to recalibrate GOLDEN/HIGH boundary \u2014 current GOLDEN mean at 78.6% is below the HIGH mean, making the tier labels misleading.",
+      "result_metric": "UTI rule 0% -> 90.9% holdout (n=11/seed); GOLDEN tier +0.1pp; UTI correctly re-promoted from HIGH to GOLDEN"
     },
     {
       "id": "h978",
@@ -18064,6 +18068,50 @@
       ],
       "created_date": "2026-04-19",
       "motivated_by": "h980"
+    },
+    {
+      "id": "h987",
+      "title": "Measure h961 downstream impact on h393 5-seed tier precisions",
+      "description": "h961 added 776 new mesh_mappings entries and moved the 668 disease_names entries from the h952 runtime fallback to direct mm resolution. Does this affect any downstream eval? Run h393 5-seed post-h961, diff vs h964 post-fix, report tier-precision deltas. Expected: ~zero change since h393 passes disease_id via the h963 fast-path; but callers that use disease_name (full-data deliverable, external-query scripts) may shift. If deltas >1pp on any tier, investigate and decide whether to surface the change in the deliverable row count.",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Run scripts/h393_holdout_tier_validation.py 5 seeds post-h961.",
+        "Diff tier precisions vs h964 baseline (GOLDEN 78.5%, HIGH 80.0%, MEDIUM 39.9%, LOW 10.0%, FILTER 6.8%).",
+        "If any |\u0394|>1pp, trace to newly-resolvable diseases added by h961.",
+        "Re-generate the 13,416-row deliverable and diff row count."
+      ]
+    },
+    {
+      "id": "h988",
+      "title": "Retire h952 runtime fallback once h961 canonicalization covers all disease_names",
+      "description": "h952 added a reverse-index fallback in find_disease_id for 668 disease_names missing from mesh_mappings. h961 now populates those 668 directly into mesh_mappings at load time, so the fallback is dead code for the original failure cases. BUT the fallback may still fire for out-of-band canonical names not in the h961 alias file. Approach: instrument find_disease_id for 1k production calls to measure fallback hit-rate post-h961. If hit-rate \u22480, retire the fallback; if it still fires, regenerate h961 aliases and re-ship. Includes a small CI regression test asserting the disease_names backfill coverage.",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Add a counter to find_disease_id that increments when the reverse-index fallback fires.",
+        "Run full-data deliverable generation and capture counter.",
+        "If counter >0, log the failing names, update data/reference/h961_disease_name_aliases.json, re-run.",
+        "Once counter == 0, remove the fallback block (keep only mm.get() + fuzzy matcher)."
+      ]
+    },
+    {
+      "id": "h989",
+      "title": "Alias generator as a MeSH-expansion signal for h901-descendant mappings",
+      "description": "The 260 'true new entities' (disease_names entries whose ids are NOT in mesh_mappings under ANY alias) look like candidates for h901-style MeSH expansion. Compare these 260 ids to the h901 delivered mappings. If a large fraction came from h901 MeSH expansion, it suggests h901 inflated the disease_names pool with entries that were never back-propagated to mesh_mappings. If not, these 260 ids are genuinely separate MeSH supplementary records (C-numbered) that need a dedicated pipeline.",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Extract the 260 ids from data/reference/h961_disease_name_aliases_unresolved_samples.json or recompute.",
+        "Cross-reference against h901 deliverables to classify provenance.",
+        "Report breakdown: D-numbered vs C-numbered; provenance by source."
+      ]
     }
   ],
   "completed": [
@@ -20734,6 +20782,12 @@
       "hypothesis_id": "h975",
       "learning": "h952 bug-fix changed per-rule status for 30 of 80 tier rules. 3 actionable candidates emerge: infectious_hierarchy_uti rescue (h904 may have over-demoted), immunological_medium_demotion LOW\u2192FILTER, cancer_same_type_mech_rank10 HIGH\u2192MEDIUM question.",
       "implication": "Tier rule calibration is eval-framework-sensitive. Confirms h964 conclusion that h904/h908 directional decisions hold but absolute magnitudes shifted enough to warrant per-rule re-audit."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h961",
+      "learning": "Principled spelling-variant aliasing covers only ~8% of the disease-name coverage gap. The real gap is name-granularity mismatch between mesh_mappings (mostly MeSH canonical short form) and disease_names (DRKG-side canonical, often more specific). Less-specific-prefix fallback is DANGEROUS: 43% of its hits produce wrong ids. Always validate alias hits against an authoritative id source.",
+      "implication": "When the question is 'can X mapping recover the Y missing entries?', validate every X hit against an authoritative source (here: disease_names). An 'alias' that points to a different id than ground truth is worse than no alias at all."
     }
   ],
   "collaborations": [
