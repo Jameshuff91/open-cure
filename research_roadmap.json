@@ -17465,7 +17465,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Cite and verify source of 27.3% biologic R@30 (CLAUDE.md, research_spec.md, or old commit).",
         "Re-measure biologic R@30 under the CURRENT production pipeline (with all tier rules, fusion, etc.) on expanded-GT holdout.",
@@ -17474,6 +17474,84 @@
       ],
       "depends_on": [
         "h940"
+      ],
+      "findings": "MOTIVATION DISSOLVED. 5-seed holdout (80/20 disease split, expanded GT, production predict() top-30 by rank including FILTER tier): bio_r30 = 27.06% +/- 3.12%, overall_r30 = 16.39% +/- 1.10%, sm_r30 = 15.91% +/- 1.12%, bio_p30 = 6.37% +/- 2.06%. Biologics OUTPERFORM overall by +10.67pp and outperform small molecules by +11.15pp on the production pipeline. The historical 27.3% biologic R@30 was numerically correct (we measured 27.06%) but the comparison baseline of 41.8% overall R@30 (research_spec.md, RESEARCH_ROADMAP.md) was a different metric / different evaluation framework. On apples-to-apples 5-seed holdout, biologics are not the failure class. Per-category bio_r30/sm_r30 ratios: gastrointestinal 7.9x, hematological 7.4x, metabolic 3.8x, neurological 3.2x, musculoskeletal 3.0x, respiratory 2.7x, autoimmune 1.9x. Inverted ratios in tiny-n strata: infectious 0.17 (n_bio=2.2), psychiatric 0.0 (n_bio=1.5), endocrine 0.71 (n_bio=1.0). h906/h921/h924/h920 motivation premise no longer binds. Bio precision is the genuine remaining gap (6.37%); recall is fine.",
+      "result_metric": "bio_r30 27.06% > overall_r30 16.39% (+10.67pp); biologics not failing"
+    },
+    {
+      "id": "h952",
+      "title": "Production-pipeline biologic recall regression vs plain kNN — diagnose lost biologic recall",
+      "category": "meta",
+      "rationale": "h951 production bio_r30 = 27.06% but h940 plain-kNN baseline bio_r30 = 31.42% (-4.36pp). Production overall_r30 = 16.39% vs h940 baseline overall_r30 = 20.30% (-3.91pp). The production pipeline systematically loses ~4pp of recall (both biologic and overall) compared to plain kNN. Suspects: SELECTIVE_BOOST_CATEGORIES boosting same-category neighbors hurts cross-category transfer; tier rules / safety filters dropping correct predictions out of top-30; MinRank or non-therapeutic filters demoting biologics. Find the cause, decide whether to revert or accept the trade-off (production may have higher precision per top-30 even if R@30 drops).",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "For seed=42, run plain kNN top-30 (h940 framework) and production predict() top-30 on the same holdout 203 diseases.",
+        "Per-disease, identify drugs that are in plain-kNN top-30 but NOT in production top-30 (lost predictions).",
+        "Stratify lost-prediction count by category, by drug class (biologic vs SM), and by category-boost-eligible category.",
+        "Compute per-category overall_r30 delta to localize the regression.",
+        "If SELECTIVE_BOOST is the cause and biologic-bearing categories lose disproportionately, propose disabling boost for those categories or fusing scores."
+      ],
+      "depends_on": [
+        "h951"
+      ]
+    },
+    {
+      "id": "h953",
+      "title": "Biologic precision pivot — exploit bio_p30 = 6.37% with biologic-aware tier promotion",
+      "category": "meta",
+      "rationale": "h951 found bio_r30 = 27.06% (recall is fine) but bio_p30 = 6.37% (precision is poor — fewer than 2 of 30 top-30 predictions are biologics that hit GT). For diseases with no biologic GT, ANY biologic in top-30 is a precision drag. For diseases with biologic GT, the biologic predictions are sparse and often wrong. Test: for each disease, compute a 'biologic-likelihood' prior from disease features (immunological category, ATC L code, treatment class history) and DEMOTE biologic predictions in top-30 for diseases with low biologic prior. Should improve overall precision without hurting overall recall.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Compute per-disease biologic-prior: P(disease has >=1 biologic GT) from train-only categorical features (category, has_immunology_keywords, has_targeted_therapy_keywords).",
+        "On holdout, simulate demoting biologic predictions to FILTER for diseases with biologic_prior < 0.1.",
+        "Measure overall precision@30, bio precision, bio recall on holdout.",
+        "Decision: if overall precision improves >=2pp without bio_r30 dropping >5pp, ship as a tier rule."
+      ],
+      "depends_on": [
+        "h951"
+      ]
+    },
+    {
+      "id": "h954",
+      "title": "Reconcile 41.8% historical overall R@30 vs h951 production 16.39% — eval framework drift audit",
+      "category": "meta",
+      "rationale": "research_spec.md and RESEARCH_ROADMAP.md cite '41.8% overall R@30' as the baseline. CLAUDE.md cites '26.06% kNN k=20 (no-treatment embeddings)' as the FAIR transductive number and '15.73% KEGG Pathway kNN' as the FAIR inductive number. h951 production 5-seed holdout gives 16.39%. There is at least a 25pp gap between research_spec's 41.8% claim and current production reality. Audit which evaluation framework gave 41.8% (training-on-test full-data? loose GT? per-disease R@30 vs per-drug R@30?), update research_spec.md to cite the correct current baseline, and confirm that all currently-active hypothesis rationales reference an honest baseline.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Find the commit / experiment that produced 41.8% (git log -S '41.8' should locate it).",
+        "Identify methodology delta: GT version, holdout vs full-data, per-disease vs per-drug.",
+        "Document on CLAUDE.md and update research_spec.md current-baseline section.",
+        "Audit any pending hypothesis rationale that still cites 41.8% and rewrite with honest current baseline (16.39% production, 20.30% plain kNN, 26.06% no-treatment kNN)."
+      ],
+      "depends_on": [
+        "h951"
+      ]
+    },
+    {
+      "id": "h955",
+      "title": "h906/h920/h921/h924 — re-justify or close on h951's MOTIVATION DISSOLVED finding",
+      "category": "meta",
+      "rationale": "h906 (DrugBank target features), h920 (PubMedBERT dense embeddings), h921 (ESM2 protein embeddings), h924 (LINCS L1000 VAE) were all justified by 'biologics fail at 27.3% R@30 vs 41.8% overall'. h951 dissolved that motivation: biologics are at 27.06% AND overall is at 16.39% — biologics outperform overall on apples-to-apples holdout. Each pivot now needs new justification (precision instead of recall? specific subcategory? non-biologic motivation?) or should be closed-no-longer-motivated.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "For each of h906/h920/h921/h924, propose alternative motivation grounded in h951 results (e.g., 'improve bio_p30 from 6% to 15%' instead of 'improve bio_r30 from 27% to 35%').",
+        "If no defensible alternative motivation exists, mark INCONCLUSIVE-no-longer-motivated.",
+        "Free up GPU / license budget for higher-ROI directions (e.g., h952 production-regression diagnosis, h953 biologic-precision pivot)."
+      ],
+      "depends_on": [
+        "h951"
       ]
     }
   ],
@@ -20085,6 +20163,12 @@
       "hypothesis_id": "h940",
       "learning": "Biologic target-overlap is NOT additive to kNN when biologics compete against small molecules. h939's 3-11x biologic/SM ratio held only within the biologic-only 266-drug pool. In a mixed ranking, kNN transfer learning is strictly stronger for biologic R@30 (31.4% baseline vs 22-27% under any fusion alpha). Target-overlap should be used as an annotation/audit signal, not a re-ranker.",
       "implication": "Reframe h906 motivation away from 'fix biologic recall via target features.' Remaining viable biologic-signal uses: (a) precision-side demotion rules for biologic predictions with zero disease-gene overlap; (b) h921 ESM2 protein embeddings as a DEEPER target signal; (c) fusion by annotation (feature in meta-confidence model) rather than re-ranking."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h951",
+      "learning": "The biologic-failure narrative driving h906/h920/h921/h924 is FALSE on the current production pipeline. 5-seed apples-to-apples holdout: bio_r30 = 27.06% +/- 3.12% vs overall_r30 = 16.39% +/- 1.10%. Biologics OUTPERFORM overall by +10.67pp. The historical 27.3% biologic R@30 was numerically correct (we measured 27.06%) but it was being compared to a 41.8% overall number from a different evaluation framework that no longer reflects honest holdout performance. Bio precision is the genuine remaining gap (bio_p30 = 6.37%); recall is fine. Per-category bio:sm ratios where biologics dominate: gastrointestinal 7.9x, hematological 7.4x, metabolic 3.8x, neurological 3.2x, musculoskeletal 3.0x.",
+      "implication": "Close or re-justify h906/h920/h921/h924 (h955). Pivot any biologic work from RECALL to PRECISION (h953). Diagnose the production-vs-plain-kNN regression of -4.36pp bio_r30 / -3.91pp overall_r30 (h952) — likely SELECTIVE category boost or tier safety filters demoting correct predictions. Fix the documented 41.8% baseline that is misleading every hypothesis rationale (h954). Generic lesson: motivation baselines decay silently; require rationale-baselines to be re-measured on the current framework before greenlighting external-data efforts."
     }
   ],
   "collaborations": [

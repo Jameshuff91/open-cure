@@ -1,6 +1,76 @@
 # Research Loop Progress
 
-## Current Session: h940 — Biologic Target-Overlap + kNN Fusion (2026-04-19)
+## Current Session: h951 — Biologic Failure-Class Reality Check (2026-04-19)
+
+### Hypothesis
+h951 was filed by h940 as a sanity check before committing GPU/license effort
+to h906 (DrugBank), h920 (PubMedBERT), h921 (ESM2), h924 (LINCS VAE) — all of
+which cited "biologics fail at 27.3% R@30 vs 41.8% overall" as motivation. Is
+that gap still real on the current production pipeline + expanded GT?
+
+### Status: VALIDATED — motivation dissolved
+
+### Experiment
+5-seed (42/123/456/789/2024) 80/20 disease holdout. h393 train-only GT
+recompute (drug_train_freq, drug_to_diseases, drug_cancer_types,
+drug_disease_groups, train_diseases, train_embeddings, train_disease_categories).
+Then `predictor.predict(disease_name, top_n=30, include_filtered=True)` on each
+holdout disease — top-30 by rank from the FULL production pipeline (kNN +
+selective category boost + tier rules). Per-disease bio_r30, sm_r30,
+overall_r30 against expanded_ground_truth.json. Biologic pool = 266 of 11,656
+drugs (USAN suffix + keyword proxy from h939/h940).
+
+### Key findings (5-seed aggregate)
+| metric            | mean ± std       |
+|-------------------|------------------|
+| bio_r30           | 27.06% ± 3.12%   |
+| overall_r30       | 16.39% ± 1.10%   |
+| sm_r30            | 15.91% ± 1.12%   |
+| bio_p30           |  6.37% ± 2.06%   |
+
+**Biologics OUTPERFORM overall by +10.67pp.** Per-category bio:sm ratios:
+gastrointestinal 7.9x, hematological 7.4x, metabolic 3.8x, neurological 3.2x,
+musculoskeletal 3.0x, respiratory 2.7x, autoimmune 1.9x, dermatological 1.7x,
+'other' 1.7x, renal 1.4x, immunological 1.0x, ophthalmic 0.75x (n=2.2),
+endocrine 0.71x (n=1.0), infectious 0.17x (n=2.2), psychiatric 0.0x (n=1.5).
+
+### Why
+The historical "27.3% biologic R@30" was numerically correct (we measured
+27.06%). But the comparison number — "41.8% overall R@30" cited in
+research_spec.md — came from a different evaluation framework. CLAUDE.md
+already lists honest-baseline numbers (26.06% no-treatment kNN, 15.73% KEGG
+pathway kNN). Production today gives 16.39% overall. There is no biologic-
+recall failure. There IS a biologic-precision gap (bio_p30 = 6.37%).
+
+### Implication
+- h906 (DrugBank), h920 (PubMedBERT), h921 (ESM2), h924 (LINCS VAE) all
+  need re-justification or closure. Recall premise is dead. Filed as h955.
+- Biologic work pivots from RECALL to PRECISION (h953).
+- Production loses 4.4pp bio_r30 / 3.91pp overall_r30 vs h940 plain kNN.
+  Suspect SELECTIVE_BOOST_CATEGORIES or tier safety filters demoting correct
+  top-30 predictions. Filed as h952 (P1, low effort).
+- research_spec.md 41.8% baseline must be corrected — it is silently
+  poisoning every motivation-baseline calculation. Filed as h954 (P1).
+
+### New hypotheses generated (5)
+- h952 (P1): production-pipeline -4pp recall regression diagnosis
+- h953 (P2): biologic precision pivot (bio_p30 6.37% → ?)
+- h954 (P1): reconcile 41.8% historical vs 16.39% production overall_r30
+- h955 (P1): re-justify or close h906/h920/h921/h924
+- (h951 itself moved from pending → validated)
+
+### Recommended next steps
+1. **h952** (P1, low effort): diagnose where production pipeline loses 4pp.
+   Plain-kNN vs production top-30 diff per-disease, stratified by category +
+   biologic-vs-SM. If SELECTIVE_BOOST is the cause, decide revert vs accept.
+2. **h955** (P1, low effort): walk h906/h920/h921/h924 rationales and re-write
+   on a precision motivation, or mark inconclusive-no-longer-motivated.
+3. **h954** (P1, low effort): find the commit that produced 41.8% overall
+   R@30 and document the methodology delta in research_spec.md.
+
+---
+
+## Previous Session: h940 — Biologic Target-Overlap + kNN Fusion (2026-04-19)
 
 ### Hypothesis
 h940 is the direct follow-up to h939 (VALIDATED — target-overlap is a biologic-
