@@ -1,6 +1,83 @@
 # Research Loop Progress
 
-## Current Session: h964 — Post-h952-fix tier precision re-run (2026-04-19)
+## Current Session: h963 — predict(disease_id) fast-path (2026-04-19)
+
+### Hypothesis
+h952/h959 established that `find_disease_id(disease_name)` is a fragile
+name-resolution bottleneck that silently drops diseases. Callers that
+already have a disease_id (h393 evaluator, h771 literature mining, future
+deliverable regen) should not be round-tripping through name resolution.
+h963 extends `predict()` to detect `drkg:Disease::` prefix and skip
+`find_disease_id` entirely, and updates the h393 evaluator accordingly.
+
+### Status: VALIDATED — zero regression, repairs a silently-broken caller
+
+### Code changes
+- `src/production_predictor.py:4636-4645` — `predict()` now checks for
+  `drkg:Disease::` prefix; when matched, sets `disease_id = arg` and looks up
+  canonical `disease_name` from `self.disease_names`. Otherwise falls back to
+  the original `find_disease_id` path.
+- `scripts/h393_holdout_tier_validation.py:167-175` — evaluator now passes
+  `disease_id` directly instead of the canonical name.
+
+### Equivalence test (`scripts/h963_smoke_test.py`)
+- 25/25 diseases produced identical predictions between canonical-name path
+  and id-path (drug_id order, tier, and rank all match per-rank).
+- Justification: when h393 passed a canonical disease_name pre-change, the
+  h952 reverse-index fallback in `find_disease_id` resolved it to the same
+  disease_id, and the pipeline used the same canonical `disease_name`
+  downstream. Post-change, the id-path produces the same (disease_id,
+  canonical_name) pair. Pipeline state is identical.
+
+### 5-seed h393 holdout (post-h963)
+
+| Tier   | h964 post-fix | h963 id-path | Δ   |
+|--------|---------------|--------------|-----|
+| GOLDEN | 78.5% ± 6.0%  | 78.5% ± 6.0% | 0pp |
+| HIGH   | 80.0% ± 3.3%  | 80.0% ± 3.3% | 0pp |
+| MEDIUM | 39.9% ± 5.1%  | 39.9% ± 5.1% | 0pp |
+| LOW    | 10.0% ± 0.7%  | 10.0% ± 0.7% | 0pp |
+| FILTER | 6.8%  ± 0.7%  | 6.8%  ± 0.7% | 0pp |
+
+Exact per-seed match (GOLDEN seeds: 71.4 / 78.8 / 85.1 / 71.9 / 85.2%).
+
+### h771 side benefit
+`scripts/h771_literature_coverage_analysis.py:101` was calling
+`predictor.predict(disease_id)` — which pre-h963 routed through
+`find_disease_id(disease_id)`. Live verification on `drkg:Disease::MESH:D014141`
+shows that call returns `None` (disease_id strings are neither in mesh_mappings
+nor disease_names-as-values), so `predict()` fell through to
+"No kNN coverage" and produced zero predictions for every disease. h771's
+literature-coverage output was therefore suspect. Post-h963 the same call
+returns the expected 30 predictions. Filed **h980** to re-run h771 and diff.
+
+### New Hypotheses Generated (3)
+- **h980** (P2, low effort): re-run h771 literature coverage analysis on
+  post-h963 predictor; diff vs prior output to quantify what was masked.
+- **h981** (P3, low effort): audit all `.predict(` call sites for accidental
+  disease_id-in-name-string usages; add a lint / load-time warning.
+- **h982** (P3, low effort): add an explicit `predict_by_id()` method as the
+  documented production interface, replacing the prefix-sniffing heuristic in
+  callers that already hold a disease_id.
+
+### Recommended Next Steps
+1. **h980** (P2, low effort): quickest follow-on — if h771's cache is live
+   it may invalidate h731/h768 STRONG/MODERATE attribution.
+2. **h962** (P2, medium effort): deliverable regen — still open, unrelated
+   to h963 (deliverable uses its own `knn_predict(disease_id, ...)` not
+   `predict()`), so unaffected by the bug. Pure bug-fix refresh.
+3. **h961** (P2, low effort): mesh_mappings aliasing — the remaining piece
+   of the name-resolution triad.
+
+### Artifacts
+- `data/analysis/h393_holdout_validation.json` (post-h963, identical to
+  h964 to the tenth of a percent)
+- `data/analysis/h963_h393_run.txt` (full stdout)
+- `scripts/h963_smoke_test.py` (regression marker for future changes)
+
+---
+
+## Previous Session: h964 — Post-h952-fix tier precision re-run (2026-04-19)
 
 ### Hypothesis
 h959 flagged that h904/h908 tier precisions (GOLDEN 83.7%, HIGH 78.5%, MEDIUM 42.1%, LOW 11.2%, FILTER 8.2%) were measured pre-h952-fix. h964 re-runs the 5-seed h393 evaluator on current main to quantify magnitude drift and check whether any h-number decision flips.

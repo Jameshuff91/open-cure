@@ -4625,7 +4625,12 @@ class DrugRepurposingPredictor:
         Generate drug predictions for a disease.
 
         Args:
-            disease_name: Name of the disease
+            disease_name: Name of the disease, OR a disease_id of the form
+                "drkg:Disease::MESH:..." / "drkg:Disease::DOID:..." etc. When a
+                disease_id is supplied, find_disease_id is bypassed and the
+                canonical disease_name is looked up from self.disease_names.
+                This avoids the silent zero-prediction failure mode from h952
+                where name-resolution missed 19.7% of holdout diseases.
             k: Number of nearest neighbors for kNN (default 20 from h39)
             top_n: Number of top predictions to return
             include_filtered: If True, include FILTER tier predictions
@@ -4633,8 +4638,12 @@ class DrugRepurposingPredictor:
         Returns:
             PredictionResult with ranked predictions and confidence tiers
         """
-        # Find disease ID
-        disease_id = self.find_disease_id(disease_name)
+        # h963: Fast-path — if caller passed a disease_id, skip find_disease_id.
+        if isinstance(disease_name, str) and disease_name.startswith("drkg:Disease::"):
+            disease_id = disease_name
+            disease_name = self.disease_names.get(disease_id, disease_id)
+        else:
+            disease_id = self.find_disease_id(disease_name)
 
         # Categorize disease
         category = self.categorize_disease(disease_name)

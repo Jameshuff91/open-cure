@@ -165,11 +165,12 @@ def evaluate_on_diseases(
     n_preds = 0
 
     for disease_id in disease_ids:
-        disease_name = predictor.disease_names.get(disease_id, disease_id)
-
+        # h963: Pass disease_id directly to bypass find_disease_id. This
+        # avoids the h952-class failure mode where name-resolution silently
+        # missed ~20% of holdout diseases.
         try:
             result = predictor.predict(
-                disease_name, top_n=30, include_filtered=True
+                disease_id, top_n=30, include_filtered=True
             )
         except Exception:
             continue

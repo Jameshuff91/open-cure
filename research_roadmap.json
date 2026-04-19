@@ -17688,7 +17688,7 @@
     {
       "id": "h963",
       "title": "Validate predict(disease_id) fast-path \u2014 enable ID input to bypass find_disease_id entirely",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -17699,7 +17699,11 @@
         "Re-run h393 5-seed baseline to confirm no regression.",
         "Audit h771 (only disease_id caller) \u2014 confirm it works post-change without needing wrapper hacks."
       ],
-      "success_criteria": "Overall_r30 within 0.5pp of h958 baseline; no new zero-prediction diseases on the holdout."
+      "success_criteria": "Overall_r30 within 0.5pp of h958 baseline; no new zero-prediction diseases on the holdout.",
+      "started_date": "2026-04-19",
+      "completed_date": "2026-04-19",
+      "findings": "predict() extended to accept disease_id strings with 'drkg:Disease::' prefix; skips find_disease_id and looks up canonical disease_name from self.disease_names. h393 evaluator updated to pass disease_id directly. 5-seed h393 post-change tier precisions EXACTLY match h964 post-fix baseline: GOLDEN 78.5%\u00b16.0%, HIGH 80.0%\u00b13.3%, MEDIUM 39.9%\u00b15.1%, LOW 10.0%\u00b10.7%, FILTER 6.8%\u00b10.7%. Smoke test: 25/25 diseases identical between canonical-name path and id-path. Side benefit: h771 was silently broken pre-change \u2014 passing disease_id through find_disease_id returned None for all 100% of calls (verified on drkg:Disease::MESH:D014141 \u2192 None), producing zero predictions for every holdout disease. h963 fix restores h771 functionality. Any future caller that has a disease_id in hand (h393, h771, deliverable regen, h940 analogs) can now bypass the fragile name-resolution path entirely. h952 remains as a safety net for legitimate name-only callers.",
+      "result_metric": "0pp regression on all 5 tiers; id-path == canonical-name path at the prediction level"
     },
     {
       "id": "h964",
@@ -17947,6 +17951,56 @@
         "Otherwise leave \u2014 the rule is still well above the MEDIUM floor and HIGH tier noise tolerates it."
       ],
       "success_criteria": "Decisive numeric call. Either demote for HIGH calibration OR document why the rule stays despite post-fix drop."
+    },
+    {
+      "id": "h980",
+      "title": "Audit h771 literature-coverage results post-h963 \u2014 was the silently-broken disease_id input masking real evidence patterns?",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "hypothesis": "",
+      "steps": [
+        "Re-run h771 literature coverage analysis on post-h963 predictor.",
+        "Diff new vs old results: were the cached 590 mined predictions even produced by valid kNN runs, or were they from upstream cached predictions?",
+        "If h771 had been silently empty, the downstream STRONG/MODERATE/WEAK/ADVERSE classification is still valid (literature evidence is GT-independent), but the per-tier ATTRIBUTION may need recomputation.",
+        "Report impact on h731/h768 memory entries."
+      ],
+      "created_date": "2026-04-19",
+      "motivated_by": "h963"
+    },
+    {
+      "id": "h981",
+      "title": "Audit all predict(name) call sites for disease_id-in-name-string bug",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "hypothesis": "",
+      "steps": [
+        "grep all '.predict(' call sites across scripts/ and src/.",
+        "For each, check whether the first arg could be a disease_id (drkg: prefix) or only a name.",
+        "Flag mismatches; migrate disease_id callers to use the h963 fast-path.",
+        "Emit a lint/warning helper so future disease_id accidents are detected at load time."
+      ],
+      "created_date": "2026-04-19",
+      "motivated_by": "h963"
+    },
+    {
+      "id": "h982",
+      "title": "Add a public predict_by_id() method as the preferred production interface",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "hypothesis": "",
+      "steps": [
+        "Introduce `DrugRepurposingPredictor.predict_by_id(disease_id, ...)` as a thin wrapper that validates disease_id in embeddings and calls the internal fast-path.",
+        "Keep predict(disease_name) for the user-facing name path.",
+        "Update scripts/generate_production_deliverable.py and h771 to use predict_by_id \u2014 this formalizes the contract and eliminates the prefix-sniffing heuristic."
+      ],
+      "created_date": "2026-04-19",
+      "motivated_by": "h963"
     }
   ],
   "completed": [
