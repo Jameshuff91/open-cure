@@ -1,0 +1,329 @@
+{
+  "hypothesis": "h1211",
+  "description": "Per-category R@30 explanation via drug-Jaccard density, kNN isolation, and GT completeness.",
+  "n_eligible_diseases": 3566,
+  "category_rows": [
+    {
+      "category": "endocrine",
+      "r30": 0.4107142857142857,
+      "n_diseases": 5,
+      "mean_gt_drugs": 14.0,
+      "median_gt_drugs": 14.0,
+      "total_gt_pairs": 70,
+      "density_mean_jaccard": 0.04048451548451548,
+      "density_median_jaccard": 0.0,
+      "isolation_same_cat_frac": 0.030000000000000002,
+      "isolation_chance_frac": 0.0011220196353436186,
+      "isolation_lift": 0.028877980364656382,
+      "r30_ceiling": 1.0,
+      "r30_over_ceiling": 0.4107142857142857
+    },
+    {
+      "category": "ophthalmic",
+      "r30": 0.38330382757339276,
+      "n_diseases": 21,
+      "mean_gt_drugs": 21.333333333333332,
+      "median_gt_drugs": 12.0,
+      "total_gt_pairs": 448,
+      "density_mean_jaccard": 0.06157661330239182,
+      "density_median_jaccard": 0.020442219440967878,
+      "isolation_same_cat_frac": 0.02380952380952381,
+      "isolation_chance_frac": 0.005610098176718092,
+      "isolation_lift": 0.01819942563280572,
+      "r30_ceiling": 0.9217529029686059,
+      "r30_over_ceiling": 0.41584227870497714
+    },
+    {
+      "category": "reproductive",
+      "r30": 0.3333333333333333,
+      "n_diseases": 3,
+      "mean_gt_drugs": 25.333333333333332,
+      "median_gt_drugs": 10.0,
+      "total_gt_pairs": 76,
+      "density_mean_jaccard": 0.019413919413919414,
+      "density_median_jaccard": 0.015384615384615385,
+      "isolation_same_cat_frac": 0.0,
+      "isolation_chance_frac": 0.0005610098176718093,
+      "isolation_lift": -0.0005610098176718093,
+      "r30_ceiling": 0.8253968253968255,
+      "r30_over_ceiling": 0.4038461538461538
+    },
+    {
+      "category": "infectious",
+      "r30": 0.3044956184057738,
+      "n_diseases": 142,
+      "mean_gt_drugs": 26.43661971830986,
+      "median_gt_drugs": 12.5,
+      "total_gt_pairs": 3754,
+      "density_mean_jaccard": 0.030721011817759686,
+      "density_median_jaccard": 0.0,
+      "isolation_same_cat_frac": 0.2830985915492958,
+      "isolation_chance_frac": 0.03955119214586255,
+      "isolation_lift": 0.24354739940343323,
+      "r30_ceiling": 0.8985777085276483,
+      "r30_over_ceiling": 0.338863979727141
+    },
+    {
+      "category": "autoimmune",
+      "r30": 0.26657707941810443,
+      "n_diseases": 35,
+      "mean_gt_drugs": 57.4,
+      "median_gt_drugs": 25.0,
+      "total_gt_pairs": 2009,
+      "density_mean_jaccard": 0.08431872516856881,
+      "density_median_jaccard": 0.05687203791469194,
+      "isolation_same_cat_frac": 0.06857142857142857,
+      "isolation_chance_frac": 0.009537166900420757,
+      "isolation_lift": 0.059034261671007816,
+      "r30_ceiling": 0.7413308933548285,
+      "r30_over_ceiling": 0.3595925676478057
+    },
+    {
+      "category": "dermatological",
+      "r30": 0.25999678867575704,
+      "n_diseases": 40,
+      "mean_gt_drugs": 27.125,
+      "median_gt_drugs": 16.0,
+      "total_gt_pairs": 1085,
+      "density_mean_jaccard": 0.044485193386365335,
+      "density_median_jaccard": 0.020135135135135138,
+      "isolation_same_cat_frac": 0.0475,
+      "isolation_chance_frac": 0.01093969144460028,
+      "isolation_lift": 0.03656030855539972,
+      "r30_ceiling": 0.8858750720480231,
+      "r30_over_ceiling": 0.2934914830312131
+    },
+    {
+      "category": "musculoskeletal",
+      "r30": 0.21988305960957963,
+      "n_diseases": 16,
+      "mean_gt_drugs": 27.75,
+      "median_gt_drugs": 14.0,
+      "total_gt_pairs": 444,
+      "density_mean_jaccard": 0.038903060375559906,
+      "density_median_jaccard": 0.0111261372018687,
+      "isolation_same_cat_frac": 0.05,
+      "isolation_chance_frac": 0.004207573632538569,
+      "isolation_lift": 0.04579242636746143,
+      "r30_ceiling": 0.848915358313197,
+      "r30_over_ceiling": 0.25901647020085655
+    },
+    {
+      "category": "respiratory",
+      "r30": 0.21639785289910302,
+      "n_diseases": 28,
+      "mean_gt_drugs": 44.285714285714285,
+      "median_gt_drugs": 22.0,
+      "total_gt_pairs": 1240,
+      "density_mean_jaccard": 0.03508486008322072,
+      "density_median_jaccard": 0.01780666296795329,
+      "isolation_same_cat_frac": 0.053571428571428575,
+      "isolation_chance_frac": 0.007573632538569425,
+      "isolation_lift": 0.04599779603285915,
+      "r30_ceiling": 0.7974588116854467,
+      "r30_over_ceiling": 0.2713592849287619
+    },
+    {
+      "category": "other",
+      "r30": 0.18075902094371407,
+      "n_diseases": 2858,
+      "mean_gt_drugs": 9.117914625612316,
+      "median_gt_drugs": 3.0,
+      "total_gt_pairs": 26059,
+      "density_mean_jaccard": 0.003560526805224263,
+      "density_median_jaccard": 0.0,
+      "isolation_same_cat_frac": 0.8891666666666667,
+      "isolation_chance_frac": 0.8014025245441795,
+      "isolation_lift": 0.08776414212248718,
+      "r30_ceiling": 0.975104500175178,
+      "r30_over_ceiling": 0.18537399931108986
+    },
+    {
+      "category": "renal",
+      "r30": 0.164815114603625,
+      "n_diseases": 21,
+      "mean_gt_drugs": 79.71428571428571,
+      "median_gt_drugs": 42.0,
+      "total_gt_pairs": 1674,
+      "density_mean_jaccard": 0.0332570208671894,
+      "density_median_jaccard": 0.015874015748031496,
+      "isolation_same_cat_frac": 0.02857142857142857,
+      "isolation_chance_frac": 0.005610098176718092,
+      "isolation_lift": 0.022961330394710478,
+      "r30_ceiling": 0.6688592130743639,
+      "r30_over_ceiling": 0.24641226641113909
+    },
+    {
+      "category": "cancer",
+      "r30": 0.14424723598658393,
+      "n_diseases": 113,
+      "mean_gt_drugs": 70.24778761061947,
+      "median_gt_drugs": 23.0,
+      "total_gt_pairs": 7938,
+      "density_mean_jaccard": 0.046655636124210094,
+      "density_median_jaccard": 0.02857142857142857,
+      "isolation_same_cat_frac": 0.16991150442477876,
+      "isolation_chance_frac": 0.03141654978962132,
+      "isolation_lift": 0.13849495463515743,
+      "r30_ceiling": 0.7438544647667344,
+      "r30_over_ceiling": 0.19391862631599377
+    },
+    {
+      "category": "metabolic",
+      "r30": 0.14160506799778544,
+      "n_diseases": 65,
+      "mean_gt_drugs": 32.84615384615385,
+      "median_gt_drugs": 12.0,
+      "total_gt_pairs": 2135,
+      "density_mean_jaccard": 0.011787222209696697,
+      "density_median_jaccard": 0.0,
+      "isolation_same_cat_frac": 0.046153846153846156,
+      "isolation_chance_frac": 0.017952314165497897,
+      "isolation_lift": 0.02820153198834826,
+      "r30_ceiling": 0.8937759721990837,
+      "r30_over_ceiling": 0.15843463284135334
+    },
+    {
+      "category": "gastrointestinal",
+      "r30": 0.13808344225746413,
+      "n_diseases": 45,
+      "mean_gt_drugs": 38.044444444444444,
+      "median_gt_drugs": 13.0,
+      "total_gt_pairs": 1712,
+      "density_mean_jaccard": 0.019068476305972155,
+      "density_median_jaccard": 0.0,
+      "isolation_same_cat_frac": 0.051111111111111114,
+      "isolation_chance_frac": 0.012342215988779803,
+      "isolation_lift": 0.03876889512233131,
+      "r30_ceiling": 0.8414645410680033,
+      "r30_over_ceiling": 0.16409894358971552
+    },
+    {
+      "category": "immunological",
+      "r30": 0.1354895104895105,
+      "n_diseases": 11,
+      "mean_gt_drugs": 42.54545454545455,
+      "median_gt_drugs": 2.0,
+      "total_gt_pairs": 468,
+      "density_mean_jaccard": 0.012977167403656537,
+      "density_median_jaccard": 0.0,
+      "isolation_same_cat_frac": 0.013636363636363637,
+      "isolation_chance_frac": 0.002805049088359046,
+      "isolation_lift": 0.010831314548004591,
+      "r30_ceiling": 0.8441270067445615,
+      "r30_over_ceiling": 0.16050844174745202
+    },
+    {
+      "category": "cardiovascular",
+      "r30": 0.12939989492258386,
+      "n_diseases": 62,
+      "mean_gt_drugs": 70.79032258064517,
+      "median_gt_drugs": 37.0,
+      "total_gt_pairs": 4389,
+      "density_mean_jaccard": 0.036509702777548496,
+      "density_median_jaccard": 0.02,
+      "isolation_same_cat_frac": 0.1338709677419355,
+      "isolation_chance_frac": 0.017110799438990184,
+      "isolation_lift": 0.1167601683029453,
+      "r30_ceiling": 0.6855323032315009,
+      "r30_over_ceiling": 0.188758274865548
+    },
+    {
+      "category": "neurological",
+      "r30": 0.1135333649911348,
+      "n_diseases": 55,
+      "mean_gt_drugs": 37.89090909090909,
+      "median_gt_drugs": 17.0,
+      "total_gt_pairs": 2084,
+      "density_mean_jaccard": 0.02040571684166717,
+      "density_median_jaccard": 0.0,
+      "isolation_same_cat_frac": 0.06636363636363636,
+      "isolation_chance_frac": 0.01514726507713885,
+      "isolation_lift": 0.05121637128649751,
+      "r30_ceiling": 0.8358663790953366,
+      "r30_over_ceiling": 0.13582717026375996
+    },
+    {
+      "category": "hematological",
+      "r30": 0.10265207307312571,
+      "n_diseases": 29,
+      "mean_gt_drugs": 25.586206896551722,
+      "median_gt_drugs": 14.0,
+      "total_gt_pairs": 742,
+      "density_mean_jaccard": 0.026930491825240876,
+      "density_median_jaccard": 0.0,
+      "isolation_same_cat_frac": 0.03620689655172414,
+      "isolation_chance_frac": 0.00785413744740533,
+      "isolation_lift": 0.02835275910431881,
+      "r30_ceiling": 0.884997786435869,
+      "r30_over_ceiling": 0.11599133313828276
+    },
+    {
+      "category": "psychiatric",
+      "r30": 0.10140245664994571,
+      "n_diseases": 17,
+      "mean_gt_drugs": 84.3529411764706,
+      "median_gt_drugs": 64.0,
+      "total_gt_pairs": 1434,
+      "density_mean_jaccard": 0.07695939375003721,
+      "density_median_jaccard": 0.0641025641025641,
+      "isolation_same_cat_frac": 0.07941176470588235,
+      "isolation_chance_frac": 0.004488078541374474,
+      "isolation_lift": 0.07492368616450787,
+      "r30_ceiling": 0.607413583583382,
+      "r30_over_ceiling": 0.16694137139925486
+    }
+  ],
+  "correlations": {
+    "density_mean_jaccard_vs_r30": {
+      "r": 0.24794624186246242,
+      "n": 18
+    },
+    "isolation_same_cat_frac_vs_r30": {
+      "r": -0.0830797465642582,
+      "n": 18
+    },
+    "isolation_lift_vs_r30": {
+      "r": -0.04100613017718068,
+      "n": 18
+    },
+    "mean_gt_drugs_vs_r30": {
+      "r": -0.5134864592716926,
+      "n": 18
+    },
+    "median_gt_drugs_vs_r30": {
+      "r": -0.3225915157224481,
+      "n": 18
+    },
+    "n_diseases_vs_r30": {
+      "r": -0.07828529081233976,
+      "n": 18
+    },
+    "log_n_diseases_vs_r30": {
+      "r": -0.32825977613324275,
+      "n": 18
+    },
+    "ceiling_vs_r30": {
+      "r": 0.49127800261976334,
+      "n": 18
+    },
+    "density_vs_r30_over_ceiling": {
+      "r": 0.3890476474766549,
+      "n": 18
+    },
+    "isolation_vs_r30_over_ceiling": {
+      "r": -0.15866247021065497,
+      "n": 18
+    },
+    "mean_gt_drugs_vs_r30_over_ceiling": {
+      "r": -0.3111925883686583,
+      "n": 18
+    }
+  },
+  "ols_joint_density_isolation_to_r30": {
+    "coef_density": 1.1103755674516462,
+    "coef_isolation": -0.002441466576245045,
+    "intercept": 0.16875908312892235,
+    "r2": 0.06150087700821927
+  }
+}

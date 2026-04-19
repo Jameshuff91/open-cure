@@ -4829,3 +4829,67 @@ Scanned all 543 known-indication FILTER cases at rank<=30 whose sub_reason is `r
 
 ### Recommended next hypothesis
 **h1199 (P1, infrastructure)** — this and the three preceding hypotheses (h1100, h1101, h1107, h1103) have now established clear diagnostic + corrective targets for the h1200 supervised GNN. The infrastructure benchmark is the last gating step before the big GNN training run.
+
+
+## Current Session: h1211 — Per-category R@30 explainer (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1211 (VALIDATED — recall-denominator artifact + within-category heterogeneity)
+
+### What was tested
+Decomposed the 3x per-category R@30 spread (endocrine 41% ... psychiatric 10%, hematological 10%) reported by h1199 into three mechanistic diagnostics over 3,566 GT∩embedding diseases:
+- (a) **density**: mean pairwise drug-Jaccard between GT diseases in the category
+- (b) **isolation**: fraction of top-20 Node2Vec-kNN neighbours landing in the same category (+ chance baseline)
+- (c) **GT completeness**: mean / median GT drugs per disease
+Also added **ceiling-adjusted R@30** = R@30 / E[min(30,|GT|)/|GT|] per category to separate the recall-cap mechanical effect from "real" retrieval quality.
+
+### Headline correlations (n=18 categories)
+| Diagnostic | Pearson r vs R@30 |
+|---|---:|
+| density (mean drug-Jaccard) | **+0.248** |
+| mean GT drugs / disease | **-0.513** |
+| R@30 ceiling = E[min(30,|GT|)/|GT|] | **+0.491** |
+| isolation (same-cat kNN frac) | -0.083 |
+| isolation lift over chance | -0.041 |
+
+OLS (density + isolation → R@30): R²=0.062 — isolation adds nothing; density alone explains the small positive component.
+
+### Ceiling-adjusted ranking (R@30 / E[ceiling]) — re-orders the story
+| Category | R@30 (h1199) | Ceiling | R@30 / Ceiling |
+|---|---:|---:|---:|
+| ophthalmic | 38.3% | 92% | **41.6%** |
+| endocrine | 41.1% | 100% | **41.1%** |
+| reproductive | 33.3% | 83% | **40.4%** |
+| autoimmune | 26.7% | 74% | 36.0% |
+| infectious | 30.5% | 90% | 33.9% |
+| dermatological | 26.0% | 89% | 29.4% |
+| respiratory | 21.6% | 80% | 27.1% |
+| musculoskeletal | 22.0% | 85% | 25.9% |
+| renal | 16.5% | 67% | 24.6% |
+| cancer | 14.4% | 74% | 19.4% |
+| cardiovascular | 12.9% | 69% | **18.9%** |
+| other | 18.1% | 98% | 18.5% |
+| psychiatric | 10.1% | 61% | **16.7%** |
+| gastrointestinal | 13.8% | 84% | 16.4% |
+| immunological | 13.5% | 84% | 16.0% |
+| metabolic | 14.2% | 89% | 15.8% |
+| neurological | 11.4% | 84% | 13.6% |
+| hematological | 10.3% | 88% | 11.6% |
+
+### Key mechanistic insights
+1. **~25% of R@30 spread is mechanical** (ceiling r=+0.49, r²=0.24). Psychiatric (ceil 61%), CV (69%), renal (67%), cancer (74%) structurally cannot score above ceiling.
+2. **Mean GT drugs correlates r=-0.51 with R@30 and r=-0.31 with R@30/ceiling** — large-GT categories keep underperforming even after ceiling adjustment. Likely cause: within-category drug-class heterogeneity (e.g., psychiatric spans antipsychotic/antidepressant/anxiolytic sub-clusters that Node2Vec maps to different regions).
+3. **Isolation is null (r=-0.08)**. The embedding does NOT fail because categories are mixed — "other" (80% of diseases) has 89% same-category kNN fraction driven by class size, but density is a trivial 0.0036 and R@30 is still 18%. Cancer has isolation 17% (lift +13.9 over chance) and R@30 14%. Isolation does not explain recall.
+4. **Density explains the positive signal** (r=+0.39 vs R@30/ceiling). Categories where member diseases share drug vocabulary (autoimmune J̄=0.084, psychiatric J̄=0.077) have higher ceiling-adjusted recall than metabolic (0.012) or "other" (0.004).
+
+### Shipped
+- `scripts/h1211_category_recall_explainer.py` — reusable diagnostic
+- `data/analysis/h1211_category_recall_explainer.json` — full numbers
+- `data/analysis/h1211_category_recall_explainer.md` — ranked table + Pearson correlations + OLS
+
+### New hypotheses (3 added)
+- **h1240 (P2, infrastructure):** Add R@K/ceiling to `clean_embedding_benchmark.py` so every h1200/h1202 run reports ceiling-adjusted metrics.
+- **h1241 (P2, error analysis):** Within-category ATC-subclass decomposition — does restricting to the modal subclass lift psychiatric/CV/cancer R@30 >1.5x?
+- **h1242 (P2, recall lever):** h1200 loss reweighting by inverse mean-GT-per-category — pre-commits a knob that neutralises the denominator bias before GNN training.
+
+### Recommended next hypothesis
+**h1240 (P2, infrastructure)** — low effort, immediately makes the next h1200 / h1202 / h1215 follow-up runs produce defensible, reviewer-proof per-category numbers. Alternatively **h1241 (P2)** if curious about whether psychiatric's 17% ceiling-adjusted R@30 has a clean ATC-subclass story.
