@@ -17124,7 +17124,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Collect training data: all predictions with holdout labels across 5 seeds (train on 4 seeds, test on held-out seed; rotate)",
         "Features: existing engineered features + TransE embeddings (concat)",
@@ -17134,7 +17134,9 @@
         "Save as models/confidence_calibrator_mlp.pt; keep classical calibrator as fallback"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "assigned_to": "interactive-claude",
+      "claimed_at": "2026-04-19T09:15:28"
     },
     {
       "id": "h928",
@@ -17568,7 +17570,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Sample 500 disease IDs from holdout (seed=42) with >=2 expanded GT drugs.",
         "Sample 500 candidate drugs balanced across biologic_pool and SM.",
@@ -17580,7 +17582,9 @@
       "depends_on": [
         "h951",
         "h955"
-      ]
+      ],
+      "assigned_to": "interactive-claude",
+      "claimed_at": "2026-04-19T09:15:28"
     },
     {
       "id": "h957",
@@ -17949,7 +17953,7 @@
     {
       "id": "h979",
       "title": "Evaluate cancer_same_type_mech_rank10 HIGH\u2192MEDIUM demotion post-fix",
-      "status": "pending",
+      "status": "in_progress",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -17960,7 +17964,8 @@
         "Decision: if HIGH improves \u22651pp without MEDIUM dropping >1pp, ship the demotion.",
         "Otherwise leave \u2014 the rule is still well above the MEDIUM floor and HIGH tier noise tolerates it."
       ],
-      "success_criteria": "Decisive numeric call. Either demote for HIGH calibration OR document why the rule stays despite post-fix drop."
+      "success_criteria": "Decisive numeric call. Either demote for HIGH calibration OR document why the rule stays despite post-fix drop.",
+      "started_date": "2026-04-19"
     },
     {
       "id": "h980",
@@ -18111,6 +18116,27 @@
         "Cross-reference against h901 deliverables to classify provenance.",
         "Report breakdown: D-numbered vs C-numbered; provenance by source."
       ]
+    },
+    {
+      "id": "h986",
+      "title": "Recalibrate GOLDEN/HIGH Boundary \u2014 Fix Post-h952 Tier Ordering Inversion",
+      "category": "calibration",
+      "rationale": "h977 side-finding: post-h952-fix h393 shows GOLDEN (78.6%) < HIGH (79.9%) \u2014 tier ordering violated. h964 flagged >1pp drift across all 5 tiers post-fix but did not fix the boundary. Root cause: the old calibration was done pre-h952 when find_disease_id bug suppressed ~19.7% of predictions; several rules were promoted GOLDEN based on full-data precision that included suppression-inflated numbers, and several HIGH rules were conservatively calibrated. With predictions now flowing correctly, GOLDEN has more 'borderline' preds while HIGH is benefiting from concentrated high-precision rules. Need to re-assess per-rule holdout precision and potentially (a) demote a GOLDEN rule or two whose holdout is now below GOLDEN mean, (b) promote a HIGH rule whose holdout is well above GOLDEN mean, or (c) both. Success: GOLDEN > HIGH > MEDIUM > LOW > FILTER restored.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 1,
+      "status": "in_progress",
+      "steps": [
+        "Load current h393 rule_comparison and identify rules where tier=GOLDEN but holdout_mean < 80%",
+        "Identify HIGH-tier rules with holdout_mean > 82% at n>=10 (GOLDEN-worthy)",
+        "Simulate swaps: (a) GOLDEN weak -> HIGH, (b) HIGH strong -> GOLDEN; compute expected tier means",
+        "Implement the swap that restores tier ordering with minimum n movement",
+        "Re-run h393 and verify GOLDEN > HIGH holds; commit if success"
+      ],
+      "findings": "",
+      "result_metric": "",
+      "assigned_to": "interactive-claude",
+      "claimed_at": "2026-04-19T09:15:28"
     }
   ],
   "completed": [
