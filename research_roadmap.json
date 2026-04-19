@@ -16688,11 +16688,11 @@
       "id": "h906",
       "title": "DrugBank Target Features to Fix Biologic Prediction Failures",
       "category": "feature-engineering",
-      "rationale": "Biologics (mAbs) are the largest single failure class: 27.3% R@30 vs 41.8% overall, driven by data sparsity (2.1 vs 11.1 diseases/drug). RESEARCH_ROADMAP Priority 3 named DrugBank target features as the fix and has sat untouched. Drug targets are the right feature space for antibodies because antibody-target specificity is what the embedding fails to capture.",
+      "rationale": "ORIGINAL (DISSOLVED): 'Biologics (mAbs) are the largest single failure class: 27.3% R@30 vs 41.8% overall, driven by data sparsity (2.1 vs 11.1 diseases/drug).' h951 (2026-04-19) DISSOLVED this premise: production bio_r30 = 27.06% > overall_r30 = 16.39% (+10.67pp). Biologics OUTPERFORM overall. Subsequent findings further weakened the recall angle: h912 INVALIDATED target-overlap as a standalone signal; h940 INVALIDATED biologic-pool target-overlap fusion (HURTS R@30 at every alpha). The remaining DrugBank target-feature use cases are now (a) zero-overlap precision filter (h949 covers this without DrugBank — h939 proxy is sufficient); (b) ESM2 protein embeddings (h921 — but same recall-fusion failure mode applies). No defensible recall motivation remains, and precision motivation is better served by lower-effort hypotheses that do not require licensing.",
       "expected_impact": "high",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "inconclusive",
       "steps": [
         "Register for DrugBank academic license if not already; download full XML",
         "Extract drug->target mappings to data/reference/drugbank_targets.json",
@@ -16701,8 +16701,8 @@
         "Retrain on existing train split; evaluate separately on (a) biologics subset, (b) small molecules, (c) overall",
         "Report R@30 delta per subset; success = biologic R@30 improves by >=5pp without overall regression"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "MOTIVATION DISSOLVED by h951. Biologic-recall premise is false (production bio_r30 27.06% > overall 16.39%). Target-overlap fusion (h912/h940) is a known recall regressor. No defensible recall path. The licensed-feature angle (DrugBank's value-add over DisGeNET-style public gene-disease) is too small to justify license + retraining effort given the negative recall evidence. Recommend closing unless a precision-side use case emerges that cannot be met by h949 (zero-overlap biologic safety filter).",
+      "result_metric": "INCONCLUSIVE-no-longer-motivated; closed pending precision-side use case"
     },
     {
       "id": "h907",
@@ -17011,11 +17011,11 @@
       "id": "h920",
       "title": "PubMedBERT Dense Embeddings for Drug-Disease Retrieval (Biologic Precision Pivot)",
       "category": "deep-learning",
-      "rationale": "Biologics fail at 27.3% R@30 vs 41.8% overall because graph embeddings do not capture antibody mechanism descriptions. PubMedBERT (or BiomedCLIP) can embed DrugBank drug descriptions and MeSH disease definitions into a dense space where antibody-target specificity is textually encoded. Fuse with kNN score and measure whether biologic R@30 improves without overall regression.",
-      "expected_impact": "high",
+      "rationale": "ORIGINAL (DISSOLVED): 'Biologics fail at 27.3% R@30 vs 41.8% overall because graph embeddings do not capture antibody mechanism descriptions.' h951 DISSOLVED this premise (production bio_r30 27.06% > overall 16.39%). Reframe candidate: text embeddings as an OVERALL precision/recall lift on the 16.39% production overall_r30 baseline (not biologic-specific) — captures literature signal absent from the graph. Could also help h909's 71 truly-blocked diseases by providing text-similarity for diseases without DRKG embeddings. Reframe is plausible but the biologic-specific motivation is gone, and overall-recall fusion is a known regressor pattern (see h940). Recommend re-validating motivation via h956 (proposed) before committing GPU.",
+      "expected_impact": "medium",
       "effort": "medium",
-      "priority": 2,
-      "status": "pending",
+      "priority": 3,
+      "status": "inconclusive",
       "steps": [
         "Provision 1x A100 or RTX 4090 on vast.ai; log instance/cost",
         "Install transformers, sentence-transformers; download microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
@@ -17027,18 +17027,18 @@
         "Success: biologic R@30 +>=5pp, overall no regression; persist embeddings to data/external/pubmedbert/",
         "Destroy vast.ai instance immediately after"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "MOTIVATION DISSOLVED by h951 in its biologic-specific framing. Reframe to overall-precision pivot is plausible but unvalidated; deprioritized P2->P3 pending a small-scale precision-impact estimate (h956) before paying GPU cost.",
+      "result_metric": "INCONCLUSIVE-no-longer-motivated; deprioritized to P3"
     },
     {
       "id": "h921",
       "title": "ESM2 Protein-Target Embeddings for Biologic Specificity (h906 Principled Replacement)",
       "category": "deep-learning",
-      "rationale": "Binary DrugBank target-overlap (original h906 plan) ignores target sequence similarity. ESM2-650M learns rich protein representations; two targets with similar ESM2 embeddings are more likely to mediate similar indications than binary overlap implies. This is the specificity signal antibodies need. h912 already showed binary target-overlap fails standalone but has a niche for weak-kNN cancer; ESM2 should make target features strictly better.",
-      "expected_impact": "high",
+      "rationale": "ORIGINAL (DISSOLVED): replace binary DrugBank target-overlap with ESM2 sequence similarity to give antibodies the specificity signal they need. h951 DISSOLVED the biologic-failure premise. h940 showed any biologic-pool overlap fusion HURTS recall (every alpha 0.3-0.9 negative). ESM2 is unlikely to invert this — the failure mode is fusion-into-mixed-pool, not the granularity of the overlap measure. The 'weak-kNN cancer cohort' niche from h912 (n=11) is the only remaining viable use, and the cohort is too small to justify A100 cost. Recommend closing or pivoting to a within-pool biologic ranker (the original h939 framing) — but that ranking is annotation-only, not promotable to a re-ranker.",
+      "expected_impact": "low",
       "effort": "medium",
-      "priority": 2,
-      "status": "pending",
+      "priority": 3,
+      "status": "inconclusive",
       "steps": [
         "Acquire DrugBank target gene->UniProt list (download or use pre-cached)",
         "Provision A100 on vast.ai (48GB recommended for batched ESM2 inference)",
@@ -17049,8 +17049,8 @@
         "Also test as a pure ranker (no GB) on weak-kNN cancer cohort from h912 (n=11 complementary niche)",
         "Destroy instance after; document cost and duration"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "MOTIVATION DISSOLVED by h951 + h940. Biologic-recall premise is false (production bio_r30 > overall). Even with ESM2 granularity, the pool-fusion failure mode (h940 alpha sweep all negative) is unlikely to invert. Closing pending a precision-side use case the h949 zero-overlap filter cannot already cover.",
+      "result_metric": "INCONCLUSIVE-no-longer-motivated; deprioritized to P3"
     },
     {
       "id": "h922",
@@ -17077,11 +17077,11 @@
       "id": "h924",
       "title": "LINCS L1000 VAE for Reverse-Connectivity Scoring (h905 Precision Reframe)",
       "category": "external-data",
-      "rationale": "h909 killed LINCS-as-coverage (LINCS unblocks 0 of 638 new h901 mappings). But LINCS can be a precision pivot on already-evaluable diseases, especially biologics and rare diseases with GEO disease signatures. A VAE compresses L1000 perturbation profiles into ~128-d embeddings; disease signatures from GEO are projected into the same space; reverse-connectivity = negative dot product. Test whether this outperforms kNN on biologics and a subset of rare diseases with clean GEO data.",
-      "expected_impact": "medium",
+      "rationale": "ORIGINAL (DISSOLVED): 'LINCS can be a precision pivot on already-evaluable diseases, especially biologics.' Two findings dissolve this: (1) h951 DISSOLVED biologic-failure premise — biologics are not a precision-priority class on production; (2) LINCS L1000 is overwhelmingly small-molecule perturbation data — biologic compound coverage is sparse, so even a working VAE would have low biologic applicability. h909 already killed the LINCS-as-coverage angle. The remaining 'rare-disease GEO signature' use case is a niche that does not justify the high effort (download + VAE training + GEO ETL + integration). Closing.",
+      "expected_impact": "low",
       "effort": "high",
-      "priority": 2,
-      "status": "pending",
+      "priority": 3,
+      "status": "inconclusive",
       "steps": [
         "Download LINCS L1000 Phase I GSE92742 to data/external/lincs/ (gitignore HDF5s)",
         "Filter to well-measured landmark genes, top-dose 24h per compound",
@@ -17092,8 +17092,8 @@
         "Decision rule: productionize as a fusion feature only if it independently beats kNN on biologics",
         "Destroy instance after; document latent-space visualization in findings"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "MOTIVATION DISSOLVED by h951 + h909. Biologic-precision pivot motivation is gone (h951); coverage motivation already gone (h909). LINCS is small-molecule biased so even a working precision pivot would not target biologics. Effort/impact ratio no longer justified.",
+      "result_metric": "INCONCLUSIVE-no-longer-motivated; deprioritized to P3"
     },
     {
       "id": "h925",
@@ -17544,7 +17544,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "For each of h906/h920/h921/h924, propose alternative motivation grounded in h951 results (e.g., 'improve bio_p30 from 6% to 15%' instead of 'improve bio_r30 from 27% to 35%').",
         "If no defensible alternative motivation exists, mark INCONCLUSIVE-no-longer-motivated.",
@@ -17552,6 +17552,50 @@
       ],
       "depends_on": [
         "h951"
+      ],
+      "findings": "All four hypotheses moved to status=inconclusive (no-longer-motivated) and priority demoted P2->P3 (h920/h921/h924). h906 stays P2 status=inconclusive because the DrugBank-license effort decision is the sticking point even if a precision use case emerges. Re-justifications attempted: h906 dissolved (h949 covers the only remaining precision use); h920 reframe-to-overall-precision is plausible but unvalidated and needs h956 first; h921 dissolved (granularity won't fix the pool-fusion failure mode from h940); h924 dissolved (LINCS biologic coverage is sparse anyway). Net: ~1 month of GPU/license effort freed for h952/h953/h954 instead.",
+      "result_metric": "h906/h920/h921/h924 all marked inconclusive; budget freed for P1 follow-ups"
+    },
+    {
+      "id": "h956",
+      "title": "PubMedBERT precision-pivot impact estimate (CPU-only smoke test)",
+      "category": "deep-learning",
+      "rationale": "h920 was demoted to inconclusive because its biologic-recall premise dissolved, but a text-embedding precision angle remains plausible. Before paying GPU cost, estimate impact on a CPU-runnable subset: embed ~500 drug descriptions and ~500 disease definitions with PubMedBERT (CPU is fine at this scale, ~30 min), compute pairwise cosine, and check whether top-PubMedBERT-neighbor predictions for held-out diseases land in expanded GT at higher precision than current production top-30. If precision lift is >=3pp, justify GPU scale-up; otherwise close h920.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Sample 500 disease IDs from holdout (seed=42) with >=2 expanded GT drugs.",
+        "Sample 500 candidate drugs balanced across biologic_pool and SM.",
+        "Embed disease names + MeSH definitions and drug names + DrugBank descriptions with microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext on CPU.",
+        "Compute cosine similarity matrix; for each sampled disease, take top-30 by cosine.",
+        "Compute precision@30 on expanded GT; compare to production precision@30 (~6% per h951 bio_p30 figure).",
+        "If text-only precision@30 >= 9% (i.e., +3pp), justify GPU scale-up; otherwise close h920."
+      ],
+      "depends_on": [
+        "h951",
+        "h955"
+      ]
+    },
+    {
+      "id": "h957",
+      "title": "h949 zero-overlap biologic safety filter — execute the precision pivot freed by h955",
+      "category": "tier-rule",
+      "rationale": "h955 closed h906/h921 partly because h949 already covers the only remaining biologic precision use: a zero-target-overlap safety filter that demotes biologic predictions for diseases where the biologic has no shared targets in disease_genes. h951 found bio_p30 = 6.37% (low precision driven largely by biologic predictions for non-biologic-relevant diseases). The h949 filter is exactly the precision pivot h951 motivates and h955 frees budget for. Low-effort, in-pipeline change to _assign_confidence_tier.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "For each biologic prediction (drug in biologic_pool from h939 proxy), compute target-overlap with disease_genes for the predicted disease.",
+        "If overlap == 0 AND no kNN-mechanism rescue, demote to FILTER (or LOW if already in MEDIUM/HIGH/GOLDEN with non-overlap evidence).",
+        "Run h393 holdout 5-seed before/after; report bio_r30, bio_p30, overall_r30, tier shifts.",
+        "Decision: ship if bio_p30 +>=3pp without bio_r30 dropping >2pp."
+      ],
+      "depends_on": [
+        "h951",
+        "h955"
       ]
     }
   ],
@@ -20169,6 +20213,12 @@
       "hypothesis_id": "h951",
       "learning": "The biologic-failure narrative driving h906/h920/h921/h924 is FALSE on the current production pipeline. 5-seed apples-to-apples holdout: bio_r30 = 27.06% +/- 3.12% vs overall_r30 = 16.39% +/- 1.10%. Biologics OUTPERFORM overall by +10.67pp. The historical 27.3% biologic R@30 was numerically correct (we measured 27.06%) but it was being compared to a 41.8% overall number from a different evaluation framework that no longer reflects honest holdout performance. Bio precision is the genuine remaining gap (bio_p30 = 6.37%); recall is fine. Per-category bio:sm ratios where biologics dominate: gastrointestinal 7.9x, hematological 7.4x, metabolic 3.8x, neurological 3.2x, musculoskeletal 3.0x.",
       "implication": "Close or re-justify h906/h920/h921/h924 (h955). Pivot any biologic work from RECALL to PRECISION (h953). Diagnose the production-vs-plain-kNN regression of -4.36pp bio_r30 / -3.91pp overall_r30 (h952) — likely SELECTIVE category boost or tier safety filters demoting correct predictions. Fix the documented 41.8% baseline that is misleading every hypothesis rationale (h954). Generic lesson: motivation baselines decay silently; require rationale-baselines to be re-measured on the current framework before greenlighting external-data efforts."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h955",
+      "learning": "Walked h906/h920/h921/h924 rationales after h951's MOTIVATION DISSOLVED finding. All four moved to status=inconclusive. h920/h921/h924 demoted P2->P3. Re-justification attempts failed: h906 (no remaining recall path; h949 covers the only precision use); h920 (text-precision pivot is plausible but unvalidated, gated on h956 CPU smoke test); h921 (h940 pool-fusion failure mode is granularity-independent, ESM2 won't fix it); h924 (LINCS is small-molecule-biased, biologic precision use is moot). Net effect: ~1 month of GPU/license effort freed for h952/h953/h954/h957.",
+      "implication": "Generic lesson: when a motivating baseline is dissolved, the dependent hypotheses rarely have a clean alternative motivation — most close cleanly. Always interrogate dependent hypotheses immediately when a motivating finding lands; do not let them sit in pending limbo. Three new actionable hypotheses generated: h956 (PubMedBERT CPU smoke test, low-cost precision-impact estimate), h957 (h949 zero-overlap biologic safety filter, in-pipeline precision pivot)."
     }
   ],
   "collaborations": [
