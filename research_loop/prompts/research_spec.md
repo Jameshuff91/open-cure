@@ -22,10 +22,22 @@ Tier-calibration hypotheses below priority 3 are deprioritised unless they are n
 ## Project Goal
 Improve drug repurposing predictions using the DRKG knowledge graph and machine learning models.
 
-## Current Baseline
-- **Model:** Gradient Boosting + Fuzzy Disease Matcher
-- **Performance:** 41.8% Recall@30 (per-drug)
-- **Evaluation:** 1,236 diseases, 3,618 drug-disease pairs
+## Current Baselines (post-h954 reconciliation)
+
+**DO NOT cite "41.8% R@30" as a comparison target for the production pipeline.** h954 established that 41.8% and the h951/h958 numbers measure fundamentally different things:
+
+| Metric | Value | What it measures |
+|---|---|---|
+| **Production pipeline (h958, POST-fix)** | **19.49% ± 1.42%** | Per-disease macro-averaged R@30, 5-seed 80/20 disease holdout, expanded GT (57K pairs, 1011 diseases), kNN+tier overrides via `production_predictor.predict()` |
+| Production biologics (h958) | 30.31% ± 3.57% | Same eval framework restricted to biologic drug candidates |
+| Plain kNN baseline (h940) | 20.30% | Same holdout but direct kNN on disease_id, bypasses tier logic |
+| No-treatment kNN k=20 (fair transductive) | 26.06% ± 3.84% | kNN on embeddings that exclude treatment edges — honest transductive ceiling |
+| KEGG pathway kNN (fair inductive) | 15.73% ± 1.82% | TxGNN-comparable inductive baseline |
+| DRKG ceiling | ~37% | Maximum achievable from DRKG alone |
+| Oracle ceiling | ~60% | Upper bound with perfect ranking |
+
+**Legacy number (do not compare against production directly):**
+- GB enhanced model: 41.8% R@30 — this is **micro-averaged pool recall** (`total_hits / total_gt_drugs` across all test pairs), computed on a smaller Every-Cure-only GT (3,618 pairs / 442 unique diseases, 1,236 total after fuzzy mapping). It's a feature-classifier model that predicts drug-disease pair plausibility on held-out pairs, not per-disease top-30 recall. The 25pp gap between 41.8% and 16.39%/19.49% is an eval-framework artifact, not a regression.
 
 ## Key Files & Scripts
 

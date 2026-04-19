@@ -31,8 +31,8 @@ This file is the single source of truth for what experiments to run.
 ```json
 {
   "project": "open-cure",
-  "baseline_metric": "41.8% R@30",
-  "last_updated": "2026-01-26",
+  "baseline_metric": "19.49% per-disease R@30 (h958 production, post-h952 fix)",
+  "last_updated": "2026-04-19",
   "hypotheses": [
     {
       "id": "h1",

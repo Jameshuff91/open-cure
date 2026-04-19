@@ -17527,7 +17527,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Find the commit / experiment that produced 41.8% (git log -S '41.8' should locate it).",
         "Identify methodology delta: GT version, holdout vs full-data, per-disease vs per-drug.",
@@ -17536,7 +17536,9 @@
       ],
       "depends_on": [
         "h951"
-      ]
+      ],
+      "findings": "41.8% R@30 originated from GB-enhanced model evaluation (scripts/evaluate_hard_negatives_v2.py:evaluate_recall_at_k, first published 2026-01-25 in docs/archive/detailed_analysis_findings.md). It is MICRO-AVERAGED pool recall (total_hits / total_gt_drugs across ALL test pairs) on Every-Cure-only GT (3,618 pairs, 442 unique diseases, 1,236 total after fuzzy mapping). h951/h958 production numbers (16.39%, 19.49%) are MACRO-AVERAGED per-disease R@30 on expanded GT (57K pairs, 1011 diseases) via kNN+tier production_predictor.predict(). The 25pp gap is an eval-framework artifact, NOT a regression. Research_spec.md Current Baseline section rewritten with a labeled table of FAIR baselines; initializer_prompt.md updated from '41.8%' to '19.49% per-disease'. Zero pending hypothesis rationales reference 41.8% \u2014 the drift was contained to top-level project docs.",
+      "result_metric": "Methodology: 41.8% = per-drug micro-R@30 (GB on EC GT, 442 dx); 19.49% = per-disease macro-R@30 (kNN+tier on expanded GT, 1011 dx). NOT comparable."
     },
     {
       "id": "h955",
@@ -17726,6 +17728,37 @@
         "Require n_empty < 5% of pool (post-h952 this should already hold)."
       ],
       "success_criteria": "Regression test checked in; currently passes at <5% empty rate."
+    },
+    {
+      "id": "h966",
+      "title": "Re-evaluate GB-enhanced model on production eval framework to enable apples-to-apples comparison",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "medium",
+      "rationale": "h954 established that the GB-enhanced 41.8% is micro-averaged per-drug pair recall on a smaller Every-Cure-only GT, while production h951/h958 is macro-averaged per-disease R@30 on expanded GT. To know whether GB is actually better or worse than kNN+tier production, we'd need to run GB through the same eval framework: 5-seed 80/20 disease holdout, per-disease R@30, expanded GT. This is a meta-science question \u2014 not expected to change the production pipeline, but would tell us if we're leaving per-drug-pair signal on the table. If GB scores \u226520% per-disease R@30 under production eval, could justify a hybrid.",
+      "steps": [
+        "Write scripts/h966_gb_enhanced_production_eval.py reusing h393_holdout_tier_validation.py eval harness.",
+        "Replace predictor.predict() with GB model scoring drug\u00d7disease pair features.",
+        "Rank top-30 drugs per holdout disease; compute per-disease R@30 mean across 5 seeds.",
+        "Compare to h958 19.49%; decide whether to pursue GB+kNN hybrid."
+      ],
+      "success_criteria": "Per-disease R@30 comparison to h958 within same eval framework; no commitment to action unless GB \u2265 20%."
+    },
+    {
+      "id": "h967",
+      "title": "Document the micro-vs-macro R@30 pitfall in CLAUDE.md as a scientific-methodology entry",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h954 found that 'baseline drift' was actually an eval-framework mismatch (micro-pool per-drug vs macro per-disease on different GT). Without a named rule, future agents are likely to confuse any R@30 quote. Add a short 'metric hygiene' note to CLAUDE.md: when quoting R@30, always specify (a) macro-per-disease vs micro-per-drug-pair, (b) GT version (EC-only vs expanded), (c) eval split (static vs n-seed holdout), (d) model path (GB classifier vs kNN+tier). This prevents recurrence of the h954 confusion.",
+      "steps": [
+        "Add a 'Metric Hygiene' subsection under 'Key Metrics' in CLAUDE.md.",
+        "List the four disambiguation axes and the current production default (macro per-disease, expanded GT, 5-seed 80/20, production_predictor.predict()).",
+        "Reference h954 for the full reconciliation."
+      ],
+      "success_criteria": "CLAUDE.md section added; future validated hypotheses include all four axes when quoting R@30."
     }
   ],
   "completed": [
@@ -20360,6 +20393,12 @@
       "hypothesis_id": "h959",
       "learning": "The h952 find_disease_id bug suppressed recall for 21.1% of holdout diseases in h393 (213/1011). Deliverable NOT affected (uses disease_id path). h939/h940 custom kNN NOT affected. h904/h908/h951 directionally valid but magnitudes dampened. 111 of 112 callers pass disease_name \u2014 only h771 passes id and was actually broken (find_disease_id can't resolve ids).",
       "implication": "Downstream corrections: (1) add ID fast-path to predict() to eliminate class of bugs, (2) regression test for silent-zero outputs, (3) re-run h904/h908 tier precisions post-fix to update CLAUDE.md magnitudes."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h954",
+      "learning": "Baseline drift was a micro-vs-macro R@30 + GT-version pitfall: 41.8% is micro-averaged pool recall on Every-Cure-only GT (442 diseases) via a GB classifier; 19.49% is macro-averaged per-disease R@30 on expanded GT (1011 diseases) via kNN+tier production_predictor. Zero pending hypotheses cite 41.8% \u2014 drift contained to top-level docs.",
+      "implication": "Document micro-vs-macro explicitly whenever quoting R@30. research_spec.md and initializer_prompt.md updated; a CLAUDE.md metric-hygiene subsection proposed (h967)."
     }
   ],
   "collaborations": [

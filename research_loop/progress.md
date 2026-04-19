@@ -3555,3 +3555,50 @@ Drift caused by accumulated code changes since h478 (69 insertions, 45 deletions
 1. **h954** (P1): Reconcile 41.8% historical overall R@30 vs h951 16.39% — eval framework drift audit
 2. **h957** (P1): h949 zero-overlap biologic safety filter — precision pivot
 3. **h964** (P2): Re-run h904/h908 post-fix to validate quoted tier precisions
+
+---
+
+## Current Session: h954 - Baseline reconciliation (41.8% vs h951 16.39%) (2026-04-19)
+
+### Session Summary
+
+**Status:** Complete
+**Hypothesis: h954 (VALIDATED)**
+
+### Key Finding: Not a regression — an eval-framework mismatch
+
+The 41.8% R@30 baseline cited in research_spec.md and RESEARCH_ROADMAP.md came from
+`scripts/evaluate_hard_negatives_v2.py:evaluate_recall_at_k` (first reported in
+`docs/archive/detailed_analysis_findings.md` 2026-01-25). It is:
+
+- **Model:** GB-enhanced classifier (`drug_repurposing_gb_enhanced.pkl`) scoring drug×disease pair features (concat + product + diff)
+- **Metric:** MICRO-averaged `total_hits / total_gt_drugs` across ALL test pairs
+- **GT:** Every Cure only, 3,618 positive pairs / 442 unique diseases (1,236 after fuzzy mapping)
+- **Split:** static train/test
+
+h951/h958 production numbers (16.39% / 19.49%) are:
+
+- **Model:** `production_predictor.predict()` — kNN(k=20) + tier-override rules
+- **Metric:** MACRO-averaged per-disease R@30 (mean of `hits/gt_drugs` per disease)
+- **GT:** expanded GT, 57,495 pairs / 1011 diseases
+- **Split:** 5-seed 80/20 disease holdout
+
+The 25pp gap is not a regression — it's a methodology mismatch.
+
+### Documents updated
+- `research_loop/prompts/research_spec.md` — "Current Baseline" section rewritten with labeled table of fair baselines and a clear "DO NOT cite 41.8% as production comparison" warning
+- `research_loop/prompts/initializer_prompt.md` — `baseline_metric` updated to "19.49% per-disease R@30 (h958 production, post-h952 fix)"
+- CLAUDE.md already had the fair baselines in "Key Metrics"; no changes needed there
+
+### Drift audit
+- **0 pending hypotheses** reference 41.8% in rationales or success criteria (grepped roadmap)
+- Drift was contained to top-level project docs only
+
+### New Hypotheses Generated (2)
+- h966 (P3): Re-evaluate GB-enhanced model on production eval framework (apples-to-apples)
+- h967 (P3): Document micro-vs-macro R@30 pitfall as CLAUDE.md metric-hygiene subsection
+
+### Recommended Next Steps
+1. **h957** (P1): h949 zero-overlap biologic safety filter — only remaining P1
+2. **h964** (P2): Re-run h904/h908 post-fix to validate quoted tier precisions
+3. **h960** (P2): Neurological supplement + SELECTIVE_BOOST interaction diagnosis
