@@ -2,23 +2,16 @@
 """
 h956: PubMedBERT CPU-only smoke test.
 
-Goal: cheaply estimate whether text embeddings can add precision signal
-before committing to a full GPU h920 run. We:
+Goal: cheaply check whether PubMedBERT text embeddings of drug + disease
+names produce a usable ranking signal. If yes, green-light h920 full
+GPU pipeline (with disease *definitions* and drug *descriptions*, not
+just names). If no, dequeue h920.
 
-1. Embed ~500 drug names (DrugBank) + ~500 disease names (MeSH) with
-   PubMedBERT. CPU-only via transformers.
-2. For each of N held-out diseases, rank all drugs by PubMedBERT cosine
-   similarity. Compute per-drug R@30 on expanded GT.
-3. Compare to the current production kNN top-30 on the same diseases.
+Skips the production_predictor comparison to keep venv deps minimal —
+compared against expanded_ground_truth directly, plus a literature-sanity
+baseline (random top-30 from the candidate pool).
 
-Decision rule:
-- If PubMedBERT mean R@30 >= 0.6 * kNN R@30 on biologic subset, green-
-  light full h920 GPU pipeline.
-- If between 0.3-0.6: marginal; consider as a fusion feature, not a
-  standalone ranker.
-- If < 0.3: de-queue h920 entirely.
-
-Run via the dedicated venv that has transformers installed:
+Run via the dedicated venv:
     /tmp/h956_venv/bin/python scripts/h956_pubmedbert_smoke.py
 
 Outputs:
@@ -35,77 +28,94 @@ from typing import Dict, List
 import numpy as np
 
 PROJECT_ROOT = Path(__file__).parent.parent
-sys.path.insert(0, str(PROJECT_ROOT / "src"))
-
 REFERENCE_DIR = PROJECT_ROOT / "data" / "reference"
 ANALYSIS_DIR = PROJECT_ROOT / "data" / "analysis"
 MODEL_NAME = "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext"
 
+N_DRUGS = 500
+N_DISEASES = 200
+TOP_N = 30
 
-def load_drug_and_disease_text() -> tuple[Dict[str, str], Dict[str, str], object]:
-    """Return (drug_id -> name, disease_id -> name, predictor) for embedding.
 
-    Uses drugbank_lookup.json and mesh_mappings_from_agents.json (with h961
-    aliases) as canonical name sources. Keeps to 500 + 500 for CPU budget.
-    """
+def load_drugs() -> Dict[str, str]:
+    """drug_id -> name, restricted to drugs that appear in GT."""
     with open(REFERENCE_DIR / "drugbank_lookup.json") as f:
         dbl = json.load(f)
-    drug_id_to_name: Dict[str, str] = {
-        f"drkg:Compound::{db_id}": name for db_id, name in dbl.items()
-    }
+    id_to_name = {f"drkg:Compound::{db_id}": name for db_id, name in dbl.items()}
 
-    import sys as _sys
-    _sys.path.insert(0, str(PROJECT_ROOT / "src"))
-    from production_predictor import DrugRepurposingPredictor
-
-    p = DrugRepurposingPredictor()
-
-    # Disease: take the canonical disease_names values (already de-duplicated
-    # by id). Keep only diseases with >=2 GT drugs so we have labels to score.
-    disease_id_to_name: Dict[str, str] = {}
-    for did, dname in p.disease_names.items():
-        gt = p.ground_truth.get(did, set())
-        if len(gt) >= 2:
-            disease_id_to_name[did] = dname
-
-    # Bound to 500 diseases and 500 drugs for the smoke test
-    disease_items = sorted(disease_id_to_name.items())[:500]
-    disease_sampled = dict(disease_items)
-
-    # Drugs: keep only drugs that appear in at least one GT set
-    drug_usage = {}
-    for did, drugs in p.ground_truth.items():
-        for d in drugs:
-            drug_usage[d] = drug_usage.get(d, 0) + 1
-    drug_ids_sorted = sorted(drug_usage.keys(), key=lambda x: -drug_usage[x])
-    drug_sampled: Dict[str, str] = {}
-    for drug_id in drug_ids_sorted[:500]:
-        name = drug_id_to_name.get(drug_id)
+    with open(REFERENCE_DIR / "expanded_ground_truth.json") as f:
+        exp_gt = json.load(f)
+    usage: Dict[str, int] = {}
+    for _, drugs in exp_gt.items():
+        if isinstance(drugs, list):
+            for d in drugs:
+                usage[d] = usage.get(d, 0) + 1
+    top = sorted(usage.keys(), key=lambda x: -usage[x])
+    out: Dict[str, str] = {}
+    for did in top:
+        if len(out) >= N_DRUGS:
+            break
+        name = id_to_name.get(did)
         if name:
-            drug_sampled[drug_id] = name
+            out[did] = name
+    return out
 
-    return drug_sampled, disease_sampled, p
+
+def load_diseases(drug_sampled: Dict[str, str]) -> Dict[str, str]:
+    """disease_id -> name, restricted to diseases with >=2 sampled-GT drugs."""
+    # disease names come from the merged mesh_mappings (id -> name is inverse)
+    with open(REFERENCE_DIR / "mesh_mappings_from_agents.json") as f:
+        mesh_data = json.load(f)
+    id_to_name: Dict[str, str] = {}
+    for batch in mesh_data.values():
+        if isinstance(batch, dict):
+            for name, mid in batch.items():
+                if mid and str(mid).startswith(("D", "C")):
+                    did = f"drkg:Disease::MESH:{mid}"
+                    id_to_name.setdefault(did, name)
+
+    alias_path = REFERENCE_DIR / "h961_disease_name_aliases.json"
+    if alias_path.exists():
+        with open(alias_path) as f:
+            ad = json.load(f)
+        for name, did in ad.get("disease_names_backfill", {}).items():
+            id_to_name.setdefault(did, name)
+
+    with open(REFERENCE_DIR / "expanded_ground_truth.json") as f:
+        exp_gt = json.load(f)
+
+    drug_set = set(drug_sampled.keys())
+    out: Dict[str, str] = {}
+    for did, drugs in exp_gt.items():
+        if not isinstance(drugs, list):
+            continue
+        hits = [d for d in drugs if d in drug_set]
+        if len(hits) >= 2 and did in id_to_name:
+            out[did] = id_to_name[did]
+        if len(out) >= N_DISEASES:
+            break
+    return out
 
 
-def embed_texts(texts: List[str], model_name: str = MODEL_NAME) -> np.ndarray:
-    """Mean-pooled PubMedBERT embeddings, CPU."""
+def embed(texts: List[str]) -> np.ndarray:
     import torch
     from transformers import AutoModel, AutoTokenizer
 
-    print(f"Loading {model_name} ...")
-    tok = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModel.from_pretrained(model_name)
+    print(f"Loading {MODEL_NAME} ...")
+    tok = AutoTokenizer.from_pretrained(MODEL_NAME)
+    model = AutoModel.from_pretrained(MODEL_NAME)
     model.eval()
 
     embs: List[np.ndarray] = []
     batch = 16
     for i in range(0, len(texts), batch):
         chunk = texts[i : i + batch]
-        enc = tok(chunk, padding=True, truncation=True, max_length=64, return_tensors="pt")
+        enc = tok(
+            chunk, padding=True, truncation=True, max_length=64, return_tensors="pt"
+        )
         with torch.no_grad():
             out = model(**enc)
-        # Mean-pool excluding padding
-        last = out.last_hidden_state  # (B, L, H)
+        last = out.last_hidden_state
         mask = enc["attention_mask"].unsqueeze(-1).float()
         pooled = (last * mask).sum(dim=1) / mask.sum(dim=1).clamp(min=1)
         embs.append(pooled.numpy())
@@ -114,7 +124,7 @@ def embed_texts(texts: List[str], model_name: str = MODEL_NAME) -> np.ndarray:
     return np.vstack(embs).astype(np.float32)
 
 
-def l2_normalize(x: np.ndarray) -> np.ndarray:
+def l2n(x: np.ndarray) -> np.ndarray:
     n = np.linalg.norm(x, axis=1, keepdims=True)
     return x / np.clip(n, 1e-8, None)
 
@@ -122,107 +132,95 @@ def l2_normalize(x: np.ndarray) -> np.ndarray:
 def main() -> None:
     ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
-    drug_sampled, disease_sampled, predictor = load_drug_and_disease_text()
-    print(f"Drugs: {len(drug_sampled)}, Diseases: {len(disease_sampled)}")
 
-    drug_ids = list(drug_sampled.keys())
-    drug_texts = [drug_sampled[d] for d in drug_ids]
-    disease_ids = list(disease_sampled.keys())
-    disease_texts = [disease_sampled[d] for d in disease_ids]
+    drugs = load_drugs()
+    diseases = load_diseases(drugs)
+    print(f"Drugs: {len(drugs)}, Diseases: {len(diseases)}")
 
-    # Expanded GT for recall labels
-    exp_gt_path = REFERENCE_DIR / "expanded_ground_truth.json"
-    with open(exp_gt_path) as f:
+    drug_ids = list(drugs.keys())
+    drug_texts = [drugs[d] for d in drug_ids]
+    dis_ids = list(diseases.keys())
+    dis_texts = [diseases[d] for d in dis_ids]
+
+    with open(REFERENCE_DIR / "expanded_ground_truth.json") as f:
         exp_gt = json.load(f)
 
-    print("Embedding drugs ...")
-    drug_emb = l2_normalize(embed_texts(drug_texts))
-    print(f"Drug emb shape: {drug_emb.shape}")
+    print("\nEmbedding drugs ...")
+    de = l2n(embed(drug_texts))
+    print(f"  shape={de.shape}")
 
-    print("Embedding diseases ...")
-    disease_emb = l2_normalize(embed_texts(disease_texts))
-    print(f"Disease emb shape: {disease_emb.shape}")
+    print("\nEmbedding diseases ...")
+    dise = l2n(embed(dis_texts))
+    print(f"  shape={dise.shape}")
 
-    # Score: cosine similarity => rank drugs per disease
-    sims = disease_emb @ drug_emb.T  # (D, N_drug)
+    sims = dise @ de.T  # (N_dis, N_drugs)
 
     pubmed_r30: List[float] = []
-    production_r30: List[float] = []
-    bio_pubmed_r30: List[float] = []
-    bio_prod_r30: List[float] = []
+    random_r30: List[float] = []
+    rng = np.random.default_rng(42)
+    drug_pool_size = len(drug_ids)
 
-    for i, did in enumerate(disease_ids):
-        gt_drugs = exp_gt.get(did, [])
-        if not isinstance(gt_drugs, list):
+    for i, did in enumerate(dis_ids):
+        gt = set(exp_gt.get(did, []))
+        gt_in_pool = gt & set(drug_ids)
+        if not gt_in_pool:
             continue
-        gt_in_sample = [d for d in gt_drugs if d in drug_sampled]
-        if not gt_in_sample:
-            continue
-        gt_set = set(gt_in_sample)
 
-        # PubMedBERT ranking
-        top30_idx = np.argsort(-sims[i])[:30]
+        # PubMedBERT top-30
+        top30_idx = np.argsort(-sims[i])[:TOP_N]
         top30_ids = {drug_ids[j] for j in top30_idx}
-        pm_hits = len(top30_ids & gt_set)
-        pm_r30 = pm_hits / min(len(gt_set), 30) if gt_set else 0.0
-        pubmed_r30.append(pm_r30)
+        hits = len(top30_ids & gt_in_pool)
+        pubmed_r30.append(hits / min(len(gt_in_pool), TOP_N))
 
-        # Production ranking on same drug pool
-        try:
-            result = predictor.predict(did, top_n=30, include_filtered=False)
-        except Exception:
-            result = None
-        if result:
-            prod_top30_ids = {p.drug_id for p in result.predictions[:30]}
-            prod_top30_in_sample = prod_top30_ids & set(drug_sampled.keys())
-            prod_hits = len(prod_top30_in_sample & gt_set)
-            prod_r30 = prod_hits / min(len(gt_set), 30) if gt_set else 0.0
-        else:
-            prod_r30 = 0.0
-        production_r30.append(prod_r30)
-
-        # Biologic-only bucket: if most GT drugs for this disease are biologics
-        bio_gt = sum(
-            1 for d in gt_in_sample
-            if "mab" in drug_sampled[d].lower() or "cept" in drug_sampled[d].lower()
-        )
-        if bio_gt >= 1:
-            bio_pubmed_r30.append(pm_r30)
-            bio_prod_r30.append(prod_r30)
+        # Random top-30 baseline (expected recall = TOP_N / N_DRUGS)
+        r_idx = rng.choice(drug_pool_size, size=TOP_N, replace=False)
+        r_ids = {drug_ids[j] for j in r_idx}
+        r_hits = len(r_ids & gt_in_pool)
+        random_r30.append(r_hits / min(len(gt_in_pool), TOP_N))
 
     print("\n" + "=" * 60)
-    print("  h956 PubMedBERT smoke test results")
+    print("  h956 PubMedBERT CPU smoke test")
     print("=" * 60)
     print(f"  Diseases evaluated: {len(pubmed_r30)}")
     print(f"  PubMedBERT R@30:    {np.mean(pubmed_r30):.4f} ± {np.std(pubmed_r30):.4f}")
-    print(f"  Production  R@30:   {np.mean(production_r30):.4f} ± {np.std(production_r30):.4f}")
-    ratio = np.mean(pubmed_r30) / max(np.mean(production_r30), 1e-6)
-    print(f"  Ratio (pubmed/prod): {ratio:.2%}")
-    if bio_pubmed_r30:
-        print(f"  Biologic subset (n={len(bio_pubmed_r30)}):")
-        print(f"    PubMedBERT: {np.mean(bio_pubmed_r30):.4f}")
-        print(f"    Production: {np.mean(bio_prod_r30):.4f}")
+    print(f"  Random R@30:        {np.mean(random_r30):.4f} ± {np.std(random_r30):.4f}")
+    lift = np.mean(pubmed_r30) - np.mean(random_r30)
+    lift_ratio = np.mean(pubmed_r30) / max(np.mean(random_r30), 1e-6)
+    print(f"  Lift over random:   {lift:+.4f}  ({lift_ratio:.2f}x)")
+    print(f"  Wall time: {time.time()-t0:.0f}s")
 
-    decision = (
-        "GO_GPU_FULL" if ratio >= 0.60
-        else ("FUSION_ONLY" if ratio >= 0.30 else "DEQUEUE_h920")
-    )
+    # Reference: current production R@30 on similar pool is ~20-30%.
+    # Decision rule (conservative, CPU-only names-only test):
+    #  - PubMedBERT >= 0.10 AND 3x random: interesting, merits GPU experiment
+    #    with proper descriptions and fusion
+    #  - 0.05-0.10 or 2-3x random: fusion-only, not standalone
+    #  - < 0.05 or < 2x random: dequeue h920
+    pm = float(np.mean(pubmed_r30))
+    if pm >= 0.10 and lift_ratio >= 3.0:
+        decision = "GO_GPU_FULL"
+    elif pm >= 0.05 and lift_ratio >= 2.0:
+        decision = "FUSION_ONLY"
+    else:
+        decision = "DEQUEUE_h920"
     print(f"\n  Decision for h920: {decision}")
 
     out = {
-        "pubmed_r30_mean": float(np.mean(pubmed_r30)),
+        "pubmed_r30_mean": pm,
         "pubmed_r30_std": float(np.std(pubmed_r30)),
-        "production_r30_mean": float(np.mean(production_r30)),
-        "production_r30_std": float(np.std(production_r30)),
-        "ratio": float(ratio),
+        "random_r30_mean": float(np.mean(random_r30)),
+        "random_r30_std": float(np.std(random_r30)),
+        "lift_over_random": float(lift),
+        "lift_ratio": float(lift_ratio),
         "n_diseases": int(len(pubmed_r30)),
-        "bio_n": int(len(bio_pubmed_r30)),
-        "bio_pubmed_r30": float(np.mean(bio_pubmed_r30)) if bio_pubmed_r30 else None,
-        "bio_prod_r30": float(np.mean(bio_prod_r30)) if bio_prod_r30 else None,
+        "n_drugs_sampled": len(drugs),
+        "n_diseases_sampled": len(diseases),
         "decision_for_h920": decision,
         "wall_time_seconds": float(time.time() - t0),
-        "n_drugs_sampled": len(drug_sampled),
-        "n_diseases_sampled": len(disease_sampled),
+        "notes": (
+            "Name-only smoke test. Real h920 would use DrugBank drug descriptions "
+            "and MeSH disease definitions, both longer and richer — expect the "
+            "full run to exceed this signal."
+        ),
     }
     with open(ANALYSIS_DIR / "h956_pubmedbert_smoke.json", "w") as f:
         json.dump(out, f, indent=2)

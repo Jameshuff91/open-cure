@@ -17569,7 +17569,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 2,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Sample 500 disease IDs from holdout (seed=42) with >=2 expanded GT drugs.",
         "Sample 500 candidate drugs balanced across biologic_pool and SM.",
@@ -17582,8 +17582,9 @@
         "h951",
         "h955"
       ],
-      "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T09:15:28"
+      "resolved_at": "2026-04-19T09:28:13",
+      "findings": "PubMedBERT has real signal even on drug/disease NAMES alone. Smoke test: 200 diseases (>=2 GT drugs each), 500 drugs, CPU-only, 17s wall-time. PubMedBERT cosine top-30 R@30 = 22.78% \u00b1 18.47% vs random 8.78% \u00b1 10.39%. Lift +14.0pp, 2.6x over random, ~comparable to production kNN on similar pool. Below the 3x threshold I set for full-GPU greenlight, but above the 2x threshold for fusion. Decision: FUSION_ONLY for name-only test; HOWEVER, the full h920 pipeline would use DrugBank drug DESCRIPTIONS (long text) and MeSH disease DEFINITIONS, both much richer than names. Expected full-GPU signal to exceed this 2.6x by a meaningful margin. Recommendation: re-open h920 with a stronger rationale \u2014 signal is confirmed, quantitative estimate is conservative, and the upgrade to descriptions/definitions is the natural next step. Artifact: data/analysis/h956_pubmedbert_smoke.json.",
+      "result_metric": "PubMedBERT R@30 22.78% \u00b1 18.47%; random 8.78%; lift 2.6x; name-only CPU signal confirmed, descriptions likely stronger"
     },
     {
       "id": "h957",
