@@ -1,6 +1,32 @@
 # Research Loop Progress
 
-## Current Session: h980 — h771 literature-coverage re-run post-h963 (2026-04-19)
+## Current Session: h961 — MeSH disease-name aliasing (2026-04-19)
+
+### Status: VALIDATED (but original mechanism repudiated)
+
+### Key Finding
+Principled alias generation (British spelling, hyphen insertion, possessive restoration, plural stripping, trailing-abbrev drop) covers only **7.9%** of the 668 disease_names entries missing from mesh_mappings — well below the 90% target. The bulk of the gap is name-granularity mismatch (mm has `acne`, disease_names has `acne vulgaris`), not spelling variation.
+
+### Shipped
+- `scripts/h961_alias_generator.py` — two-layer resolver (transformations + disease_names backfill)
+- `data/reference/h961_disease_name_aliases.json` — 668 backfill entries + 114 reverse British variants
+- `src/production_predictor.py:2221-2244` — load path integration
+- mesh_mappings grew 1489 → 2265; 100% of the 668 missing now resolve directly
+
+### Rejected
+- Less-specific-prefix fallback (43% of its hits produced wrong ids)
+
+### New Hypotheses (3)
+- h987 (P3): Measure h961 downstream impact on h393 5-seed tier precisions
+- h988 (P4): Retire h952 runtime fallback once h961 canonicalization covers all disease_names
+- h989 (P4): Provenance audit for the 260 "true new entities" in disease_names
+
+### Next
+Highest-ROI remaining pending: h961 done, h953 (biologic precision pivot) still P2. h984 (lit_weak over-demotion) in_progress.
+
+---
+
+## Prior Session: h980 — h771 literature-coverage re-run post-h963 (2026-04-19)
 
 ### Hypothesis
 h963 revealed that `scripts/h771_literature_coverage_analysis.py:101` was
