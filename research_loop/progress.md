@@ -4215,3 +4215,48 @@ The h991 7.57% "aggregate hit rate" for f≤2 no-mech SM slots was a cross-TIER 
 
 ### Recommended next hypothesis
 **h994 (P2)** — in-window re-ranking (the only remaining P2 precision pivot that isn't closed by h953/h990/h991/h996). Or **h957/h965 follow-ups** if further biologic-tier work surfaces.
+
+
+## Current Session: h1000 — In-Window Biologic Re-Rank (INVALIDATED at ship gate) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1000 (INVALIDATED — magnitude too weak)
+
+### What was tested
+Implemented score-perturbation in-window re-rank: for each biologic in top-30 of each holdout disease, compute target_match_loo using k=3 kNN neighbor-aug bio_gt (inference-safe), then shift its sort key by (−1.5 if match else +1.5). Re-sort the 30-pred list, re-assign ranks 1..30, recompute tier via `_assign_confidence_tier` + replay of 9 tier-dependent inline mutations (target_overlap promotion, CS demotions, TransE MEDIUM→HIGH, literature strong/moderate/high promotions and weak demotion). Non-biologic ranks shift passively via swap with biologic neighbors.
+
+### Headline result
+| tier | baseline mean±std | shifted mean±std | Δ |
+|---|---|---|---|
+| GOLDEN | 82.58 ± 4.50 | 82.32 ± 4.67 | **−0.26pp** |
+| HIGH | 80.44 ± 3.99 | 80.11 ± 3.93 | **−0.33pp** |
+| MEDIUM | 39.89 ± 4.99 | 39.40 ± 4.90 | **−0.49pp** |
+| LOW | 9.96 ± 0.83 | 9.91 ± 0.84 | −0.04pp |
+| FILTER | 6.78 ± 0.81 | 6.76 ± 0.80 | −0.02pp |
+
+Ship gate (bio_r30 drop ≤0.5pp AND ≥1 tier lift ≥1pp AND no tier drop ≥1pp): **bio_r30 preserved (0.00pp drop by construction)** but **zero tier lifts ≥1pp** → **SHIP FAIL**.
+
+### Mechanistic diagnosis
+Only 60 of 3,570 biologic slots (1.7%) crossed a tier boundary across 5 seeds. Rank-based tier rules sit at thresholds {5, 10, 15, 20}; a ±1 rank shift only crosses a boundary when the biologic's baseline rank is at r∈{5, 6, 10, 11, 15, 16, 20, 21}. Most biologics don't sit in those 8 positions.
+
+Also: 78% of biologics are target_match_loo_neighbor=False (neighbor bio_gt too narrow universe, per h1002 — autoimmune structural floor generalizes). So the majority of biologics are demoted +1 rank, but this rarely moves the tier.
+
+**Biologic tier moves (5 seeds pooled):**
+- FILTER→GOLDEN: 1 (1/1 hit, 100%)
+- FILTER→LOW: 6 (0 hits)
+- FILTER→MEDIUM: 1 (1/1 hit, 100%)
+- LOW→FILTER: 44 (2 hits, 4.5%) ← dominant move
+- LOW→HIGH: 1 (1/1 hit)
+- LOW→MEDIUM: 4 (1 hit, 25%)
+- MEDIUM→FILTER: 3 (1 hit, 33%)
+
+### Why h1000 is worth closing at −0.5pp rather than "inconclusive"
+Per h1002/h995b structural-floor analysis, the neighbor target-match signal is too sparse on the majority of biologic slots. Even if we scaled ±1 to ±5, the demotion side (78% of bio) would move the wrong direction on target-unique first-in-family biologic hits. Score-perturbation mechanism is safe (bio_r30 preserved exactly) but magnitude is physically limited — the tier rule system samples rank at discrete thresholds, not continuously.
+
+### New hypotheses (4 added)
+- **h1005 (P3):** Larger rank-shift magnitude (±3, ±5) — tests whether more boundary crossings deliver a lift, accepting more non-bio disruption.
+- **h1006 (P3):** Boundary-targeted rank shift — only move biologics within ±2 of rank 5/10/15/20 (surgical shift with 100% on-boundary rate).
+- **h1007 (P3):** Audit the 44 biologic LOW→FILTER demotes — legitimate low-value or GT gaps? Decides whether the demote surface has annotation value.
+- **h1008 (P3):** Per-category adaptive magnitude — ±1 for autoimmune (unique-target structural floor per h1002), ±3 for cancer/cv/hematological (10-24x LOO ratios per h995b).
+
+### Recommended next hypothesis
+**h1005** (P3) — cheapest follow-up, same script with `RANK_SHIFT_MAGNITUDE=3.0`. If it still doesn't lift, close the ±N score-perturbation family entirely and escalate to boundary-targeted (h1006) or annotation-only (h1003/h1007) surfaces. If it DOES lift, run h1006 to see if a surgical version preserves the lift at half the collateral damage.

@@ -1835,7 +1835,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Compute per-prediction target_match_LOO flag at inference time using bio_gt of the disease's k=3 kNN neighbors (not disease's own bio_gt \u2014 that leaks at inference). h995b used own-disease bio_gt; that's only valid for audit, not for prediction.",
         "Implement in-window rank shift: biologic with target_match_LOO=True in top-30 gets rank shift -1, False gets +1. Tiers are then recomputed.",
@@ -1846,7 +1846,11 @@
         "h995",
         "h994"
       ],
-      "started": "2026-04-19"
+      "started": "2026-04-19",
+      "completed": "2026-04-19",
+      "findings": "In-window \u00b11 rank shift on biologics (bump match=True, demote match=False) is too weak to move tier precision. All five tier deltas negative: GOLDEN -0.26pp, HIGH -0.33pp, MEDIUM -0.49pp, LOW -0.04pp, FILTER -0.02pp on 5-seed h393 holdout. Only 60 of 3,570 biologic slots changed tier across seeds (1.7%) \u2014 rank thresholds at 5/10/15/20 mean \u00b11 shift rarely crosses a boundary. Biologic tier distribution hardly moved: GOLDEN 41/53\u219242/54, HIGH 19/32\u219220/33, MEDIUM 8/81\u21929/83, LOW -43n, FILTER +39n. bio_r30 unchanged (29.20%, top-30 membership invariant by construction). Also: 2,786/3,570 (78%) biologics have target_match_LOO_neighbor=False \u2014 neighbor bio_gt is too narrow a universe per h1002. Among the 60 tier moves, high-precision promotions exist (FILTER\u2192GOLDEN 1/1, LOW\u2192HIGH 1/1) but numerically too sparse to lift any tier. The dominant move is LOW\u2192FILTER (44 preds, 4.5% hit rate \u2014 legitimate demotes but no tier lift). Filter-form biologic precision family remains closed (h953, h957, h990, h995, h1000, h1002).",
+      "result_metric": "5-seed h393: all tier deltas <0, max |\u0394|=0.49pp (MEDIUM), ship FAIL. bio_r30 unchanged 29.20%\u00b137.67%.",
+      "raw_data": "data/analysis/h1000_in_window_bio_rerank.json + data/analysis/h1000_run.txt"
     },
     {
       "id": "h1001",
@@ -1970,6 +1974,83 @@
       ],
       "findings": "",
       "result_metric": ""
+    },
+    {
+      "id": "h1005",
+      "title": "Larger rank-shift magnitude (\u00b13 or \u00b15) for biologic in-window re-rank",
+      "category": "precision",
+      "rationale": "h1000 failed because \u00b11 rank shift only crossed tier-rule boundaries (at ranks 5/10/15/20) for 1.7% of biologic preds. Test whether \u00b13 or \u00b15 shifts produce enough tier boundary crossings to lift a tier by \u22651pp. Trade-off: larger shifts also disrupt non-biologic rankings by swapping through them. Ship gate: at least one tier +\u22651pp AND bio_r30 drop \u22640.5pp (still true by construction since membership preserved) AND no tier drop \u22651pp.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Reuse scripts/h1000_in_window_biologic_rerank.py with RANK_SHIFT_MAGNITUDE \u2208 {3.0, 5.0}.",
+        "Measure tier precision at each magnitude.",
+        "Cross-tab where biologics land: does \u00b13 concentrate the signal? Does \u00b15 over-disrupt non-bio tiers?",
+        "Ship only if one magnitude lifts a tier \u22651pp without collateral damage."
+      ],
+      "depends_on": [
+        "h1000"
+      ]
+    },
+    {
+      "id": "h1006",
+      "title": "Boundary-targeted rank shift: only re-rank biologics near rank 5/10 thresholds",
+      "category": "precision",
+      "rationale": "h1000's diffuse \u00b11 shift had 98.3% no-op rate because biologics at ranks 1-4, 12-14, 16-19, 21-30 don't cross any tier boundary. Concentrate effect: for match=True biologic at rank r\u2208{6,7,8,9,10,11,12,13,14,15}, force new_rank=min(5, r) (respecting tier rules); for match=False biologic at rank r\u226410, force new_rank=max(11, r+1). This is a surgical variant of h1000 that only touches slots that WILL cross a boundary. Ship gate same as h1000.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Implement targeted shift: only move biologics where current rank is within \u00b12 of {5, 10, 15, 20}.",
+        "Compute tier re-assignments using _assign_confidence_tier + replay inline mutations.",
+        "Measure tier precision deltas on 5-seed h393.",
+        "Report per-threshold breakdown (which threshold produces the most tier-boundary crossings?)."
+      ],
+      "depends_on": [
+        "h1000"
+      ]
+    },
+    {
+      "id": "h1007",
+      "title": "Audit biologic LOW\u2192FILTER demotions from h1000 \u2014 are the 44 dropped hits genuine low-quality?",
+      "category": "diagnostic",
+      "rationale": "h1000's dominant tier move was biologic LOW\u2192FILTER (44 preds, 4.5% hit rate). These are legitimate demotes (hit rate below LOW 9.96% avg), but the mechanism is indirect: kNN rank +1 shifts a biologic from rank 20 to rank 21, triggering the rank>20 FILTER rule. Question: are these 44 preds genuinely low-value (should stay FILTER), or are they GT gaps being incorrectly demoted? If genuinely low, they become a safe annotation column 'biologic_no_match_rank20_margin'. If GT gaps, h1000's demote rule would hurt coverage.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Extract the 44 biologic LOW\u2192FILTER moves from h1000 tier_moves output.",
+        "For each pred, look up literature evidence level and any h731+ mining result.",
+        "Classify: FP (expected no evidence), GT_GAP (moderate/strong evidence), INCONCLUSIVE.",
+        "Report fraction of each category; decide whether an annotation column is worthwhile."
+      ],
+      "depends_on": [
+        "h1000"
+      ]
+    },
+    {
+      "id": "h1008",
+      "title": "Per-disease-category rank-shift magnitude (autoimmune soft, cancer/CV aggressive)",
+      "category": "precision",
+      "rationale": "h995b showed target_match_loo ratios vary by category: cancer 10.91x, cv 11.57x, hematological 24.22x (strong signal), vs autoimmune 4.22x (moderate). h1002 showed autoimmune has a structural floor \u2014 50% of hits target-unique. Apply adaptive shift: \u00b11 for autoimmune (avoid demoting unique-target hits too far), \u00b13 for cancer/cv/heme (where signal is strong and hits are not target-unique). This exploits per-category signal strength.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Per-category rank-shift dictionary: {'autoimmune':1, 'cancer':3, 'cardiovascular':3, 'hematological':3, default:1}.",
+        "Apply in h1000 re-rank script.",
+        "Measure per-category bio tier precision changes.",
+        "Ship gate: autoimmune bio_r30 unchanged AND cancer/cv/heme tier precision +\u22651pp in any tier."
+      ],
+      "depends_on": [
+        "h1000",
+        "h1005"
+      ]
     }
   ],
   "completed": [
@@ -4676,6 +4757,12 @@
       "hypothesis_id": "h1002",
       "learning": "Neighbor-augmented bio_gt rescues only 6.2% of autoimmune unique-target biologic hits (1/16). Proves that 50% of autoimmune biologic HITS are target-unique at the disease-neighborhood level \u2014 structural cap on filter-form biologic precision improvements at -50pp bio_r30.",
       "implication": "Close filter-form biologic precision pivots as a family. Closed: h953/h957/h990/h995/h1002. Focus on in-window re-rank (h994/h1000) and deliverable annotation (h1001/h1003)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1000",
+      "learning": "In-window \u00b11 biologic rank shift is too diffuse to move tier precision. Only 1.7% of biologic preds cross tier-rule boundaries (which sit at ranks 5/10/15/20). The filter-form biologic precision family (h953, h957, h990, h995, h1000, h1002) remains closed. Score-perturbation in-window without in/out exchange DOES preserve bio_r30 exactly (by construction) \u2014 so the approach is safe \u2014 but the tier rules aren't granular enough at \u00b11 rank to register a lift.",
+      "implication": "Future precision pivots on biologics must either: (a) use larger rank shifts (h1005) or boundary-targeted shifts (h1006) to increase boundary crossings per shift; (b) exploit per-category signal asymmetry (h1008); or (c) abandon tier-rule surface in favor of deliverable annotation columns (h1003, h1007). The 'in-window re-rank via score perturbation' mechanism is sound \u2014 failure was in magnitude, not principle."
     }
   ],
   "collaborations": [
