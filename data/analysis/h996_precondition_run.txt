@@ -1,0 +1,31 @@
+Evaluable diseases: 1011
+Biologic pool: 266
+
+--- Seed 42 ---
+  202 diseases evaluated
+--- Seed 123 ---
+  200 diseases evaluated
+--- Seed 456 ---
+  200 diseases evaluated
+--- Seed 789 ---
+  200 diseases evaluated
+--- Seed 2024 ---
+  200 diseases evaluated
+
+==============================================================================
+TIER DISTRIBUTION: SM AND f<=2 AND no_mech  (pooled 5 seeds)
+==============================================================================
+tier       target_n  target_hits  target_hr    other_n   other_hr      all_n     all_hr
+GOLDEN            0            0     0.00%        643    82.43%        643    82.43%
+HIGH             35           33    94.29%       1059    79.89%       1094    80.35%
+MEDIUM            0            0     0.00%       1445    40.14%       1445    40.14%
+LOW              86            3     3.49%      12555    10.12%      12641    10.07%
+FILTER         4619          278     6.02%       9477     7.31%      14096     6.89%
+
+Total SM f<=2 no-mech slots: 4740
+  Already at LOW or FILTER: 4705 (99.3%)
+  At MEDIUM/HIGH/GOLDEN (rule would touch): 35 (0.7%)
+
+PRECONDITION VERDICT: LIKELY NO-OP — few slots would be demoted
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h996_precondition_tier_distribution.json

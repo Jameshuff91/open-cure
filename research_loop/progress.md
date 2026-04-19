@@ -4086,3 +4086,37 @@ The decision rule `sm_p30|sm ≤ bio_p30|bio - 5pp` yielded zero qualifying cate
 
 ### Recommended next hypothesis
 **h996 (P2)** — small, self-contained tier-rule change with clean ship gate (MEDIUM +0.5pp, LOW drop ≤1pp). The freq×mech gradient is the strongest slot-level precision signal surfaced in the h953/h990/h991 trilogy.
+
+
+## Current Session (continued): h996 — SM Low-Freq Tier Demote (INVALIDATED at precondition) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h996 (INVALIDATED — existing tier system already handles the signal)
+
+### Precondition check
+Before implementing the proposed `SM AND f≤2 AND NOT mech → cap LOW` rule, measured current tier distribution of target slots (5-seed h393, top-30, include_filtered).
+
+| tier | target n | target hits | target hit_rate |
+|---|---|---|---|
+| GOLDEN | 0 | 0 | n/a |
+| HIGH | 35 | 33 | **94.29%** |
+| MEDIUM | 0 | 0 | n/a |
+| LOW | 86 | 3 | 3.49% |
+| FILTER | 4,619 | 278 | 6.02% |
+| **total** | **4,740** | **314** | 6.62% |
+
+**99.3% of SM f≤2 no-mech slots are already at LOW or FILTER.** The proposed rule would:
+- Destroy 33 legitimate HIGH hits (94% precision survivors — explicit promotion rules override the default)
+- Demote 0 MEDIUM slots (zero MEDIUM lift possible)
+- Provide no signal to FILTER/LOW (already there)
+
+### Key insight
+The h991 7.57% "aggregate hit rate" for f≤2 no-mech SM slots was a cross-TIER average, dominated by the 4,619 FILTER slots (6.02%). Within HIGH tier, surface features (freq, mech) do NOT predict quality because explicit promotion rules (hierarchy, comp_to_base, cancer_same_type, TransE high promotion, etc.) beat the default heuristic — correctly — surfacing genuine 94% precision preds.
+
+**Methodology lesson:** before adding a tier-rule based on a slot-level signal, always measure the tier distribution of target slots. If most already sit at the target tier (LOW/FILTER here), the rule is a no-op or worse.
+
+### New hypotheses (2 added)
+- **h998 (P3):** Identify which sub_reason paths promote the 35 HIGH survivors at 94.3% precision — if a single path dominates, it validates a pre-existing rule; if multiple weak paths composite, may indicate a new promotion target.
+- **h999 (P3):** LOW tier SM f≤2 no-mech sub-population at 3.49% (vs LOW avg 10%) — small-volume LOW→FILTER demote candidate; test only if h998 yields clean paths.
+
+### Recommended next hypothesis
+**h994 (P2)** — in-window re-ranking (the only remaining P2 precision pivot that isn't closed by h953/h990/h991/h996). Or **h957/h965 follow-ups** if further biologic-tier work surfaces.

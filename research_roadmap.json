@@ -1751,7 +1751,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "In a copy of _assign_confidence_tier, add rule before tier assignment: if drug is SM AND train_frequency\u22642 AND NOT mechanism_support, cap final tier at LOW.",
         "Run h393 evaluator 5 seeds; compare pre/post tier precisions.",
@@ -1761,7 +1761,9 @@
       "depends_on": [
         "h991",
         "h994"
-      ]
+      ],
+      "findings": "INVALIDATED at precondition \u2014 existing tier system already handles the signal. 5-seed h393 pooled tier distribution of SM f\u22642 no-mech slots (n=4,740 total): GOLDEN 0, HIGH 35 (94.29% hit rate, 33/35 \u2014 genuine high-precision), MEDIUM 0, LOW 86 (3.49%), FILTER 4,619 (6.02%). **99.3% of target slots are already at LOW or FILTER.** The proposed rule would destroy 33 legitimate HIGH hits (94% precision!) for zero MEDIUM lift (0 MEDIUM slots to demote). The h991 7.57% pooled hit rate was an across-tier AVERAGE; the tier system already correctly segregates the low-quality bulk (FILTER 6.02%) from the rare high-precision overrides (HIGH 94.29%). The 35 HIGH slots presumably survive via explicit promotion rules (hierarchy, mech\u00d7rank\u22645, cancer_same_type, etc.) that beat the f\u22642-no-mech default; these rules correctly recognize legitimate HIGH-confidence preds even when surface features look weak. **Lesson:** whenever a slot-level precision signal looks exploitable for tier rules, first measure the tier distribution of target slots \u2014 cheap rule-out check that saves implementation effort. Raw: data/analysis/h996_precondition_tier_distribution.json + data/analysis/h996_precondition_run.txt.",
+      "result_metric": "99.3% of target slots already at LOW/FILTER; 35 HIGH survivors hit at 94.29% (would be destroyed by rule); 0 MEDIUM slots to demote \u2014 ship gate unreachable"
     },
     {
       "id": "h997",
@@ -1781,6 +1783,44 @@
       "depends_on": [
         "h991",
         "h951"
+      ]
+    },
+    {
+      "id": "h998",
+      "title": "What overrides keep the 35 HIGH SM f\u22642 no-mech slots at 94.3% precision?",
+      "category": "precision",
+      "rationale": "h996 precondition revealed 35 HIGH-tier SM predictions with train_frequency\u22642 AND NOT mechanism_support across 5 seeds, hitting at 94.29% (33/35). These shouldn't look high-confidence by default heuristics but are promoted by an explicit rule (hierarchy, comp_to_base, cancer_same_type, transe_high_promotion, etc.). Identify WHICH sub_reason paths promote these to HIGH; the over-representation of 94% precision suggests the overriding signal is very strong and potentially transferable. If a single path (e.g. hierarchy_cv_anticoag) dominates, it validates a pre-existing rule and we can annotate. If multiple weaker paths contribute, we may discover a composite signal worth adding as an explicit promotion rule elsewhere.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Extend h996 precondition script to capture (sub_reason, rule_name) per target slot at HIGH.",
+        "Tabulate: which sub_reasons surface these 35 HIGH survivors?",
+        "For the top sub_reasons, check whether the same sub_reason is under-promoted elsewhere (f\u22653, has-mech) \u2014 possible new promotion target."
+      ],
+      "depends_on": [
+        "h996",
+        "h991"
+      ]
+    },
+    {
+      "id": "h999",
+      "title": "LOW\u2192FILTER demote for SM f\u22642 no-mech sub-population (3.49% pooled)",
+      "category": "precision",
+      "rationale": "h996 precondition: the 86 LOW-tier SM f\u22642 no-mech slots hit at 3.49% vs LOW-tier overall 10.07% \u2014 a 2.9x deficit. Confidence interval is wide (3/86, 95% CI ~[0.7%, 9.9%]) but center is well below LOW. If these preds are identifiable by a clean rule, they could be demoted to FILTER. Small expected tier lift (~86 preds/5-seed on ~12,000 LOW preds = 0.7% of LOW volume), but the precondition data is already collected so marginal effort is near-zero. Ship gate: LOW precision +\u22650.2pp AND FILTER precision \u2264 current (don't contaminate FILTER).",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Use h996 precondition JSON to count exact LOW tier slots with (SM, f\u22642, no mech).",
+        "Verify 95% CI of 3.49% hit rate excludes 10% (LOW tier average).",
+        "Add tier-override: LOW AND SM AND f\u22642 AND no mech \u2192 FILTER. Measure on 5-seed h393."
+      ],
+      "depends_on": [
+        "h996",
+        "h991"
       ]
     }
   ],
