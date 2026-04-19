@@ -1691,7 +1691,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Reuse h953/h990 plumbing. For each holdout disease, fetch top_n=200, record per-rank hit indicator vs expanded GT.",
         "Aggregate p(hit | rank) across all holdout pairs over 5 seeds.",
@@ -1835,7 +1835,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Compute per-prediction target_match_LOO flag at inference time using bio_gt of the disease's k=3 kNN neighbors (not disease's own bio_gt \u2014 that leaks at inference). h995b used own-disease bio_gt; that's only valid for audit, not for prediction.",
         "Implement in-window rank shift: biologic with target_match_LOO=True in top-30 gets rank shift -1, False gets +1. Tiers are then recomputed.",
@@ -1845,7 +1845,8 @@
       "depends_on": [
         "h995",
         "h994"
-      ]
+      ],
+      "started": "2026-04-19"
     },
     {
       "id": "h1001",
@@ -1930,6 +1931,46 @@
         "h1002",
         "h1001"
       ]
+    },
+    {
+      "id": "h1100",
+      "title": "FILTER-tier rule audit \u2014 rules demoting rank<=30 predictions for FDA-approved indications",
+      "category": "calibration",
+      "rationale": "Positive-control suite (scripts/positive_controls.py, commit ec5de69) found FILTER tier firing on well-established FDA-approved indications at top kNN ranks: Metformin -> T2D (rank 5 FILTER), Tetrabenazine -> Huntington (rank 1 FILTER), Trastuzumab -> breast cancer (rank 20 FILTER), Sildenafil -> PAH (rank 100 FILTER), Dantrolene -> VT (rank 28 FILTER \u2014 separate investigation at h1101). Aggregate FILTER precision (9.2%) is fine; specific rule mis-fires on famous cases damage clinical credibility. Goal: systematically identify every (drug, disease) pair at rank <= 30 in FILTER where the drug is FDA-approved for that indication, and audit the offending rules.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "For each of the 20 positive-control cases landing in FILTER (see data/analysis/positive_controls_baseline.json), identify the specific sub_reason / tier_rule that fired",
+        "Expand the scan: for all predictions with rank <= 30 AND tier = FILTER AND is_known_indication = True in the current deliverable, cluster by tier_rule",
+        "Report top offending rules by (n cases they wrongly FILTER, n cases they correctly FILTER)",
+        "For each rule with high false-positive rate, propose a carve-out (add exclusion condition) or blanket demotion (FILTER -> LOW)",
+        "Validate changes against h393 5-seed holdout \u2014 FILTER aggregate precision must not move more than 1pp",
+        "Re-run positive controls (scripts/positive_controls.py --label post_h1100) to verify famous cases no longer land in FILTER at top ranks",
+        "Commit changes with before/after positive-control snapshots"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1101",
+      "title": "Dantrolene -> VT signal investigation + paper crown-jewel relabeling",
+      "category": "paper-revision",
+      "rationale": "Paper Section 3.5 lists 'Dantrolene | Heart failure | RCT P=0.034, 66% VT reduction' as a retrospectively corroborated prediction. Positive control reveals: (1) the model never predicts Dantrolene for heart failure (D006333) \u2014 not in top 500. (2) The model DOES predict Dantrolene for ventricular tachycardia (D017180, rank 34, tier FILTER), ventricular fibrillation (rank 36, FILTER), tachycardia (rank 28, FILTER), and arrhythmia (rank 67, FILTER). The RCT's actual indication is VT reduction in HF patients \u2014 the paper conflated the outcome (VT reduction) with the disease label (heart failure). Both are resolvable: the signal IS there for VT, just FILTER-demoted. Investigate the rule demoting Dantrolene, propose a fix if the rule is over-broad, and document the corrected paper label.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Determine the specific sub_reason / tier_rule demoting Dantrolene in each of {VT, VF, tachycardia, arrhythmia}",
+        "Check Dantrolene's drug-class assignment (could be classified as 'cancer_only' or 'non_therapeutic' incorrectly; verify ATC codes)",
+        "If the rule is over-broad, fix it and verify via positive controls",
+        "Regardless of fix outcome, write docs/claude/paper_v2_errata.md with the corrected Section 3.5 row: 'Dantrolene | Ventricular tachycardia (in heart failure patients) | Drug->Drug->Disease | RCT P=0.034, 66% VT reduction'",
+        "Update project_open_cure_preprint_v2_todo memory with this errata item alongside tier-table and figure updates"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
