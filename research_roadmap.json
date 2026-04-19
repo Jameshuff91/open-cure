@@ -2632,7 +2632,7 @@
     {
       "id": "h1229",
       "title": "Investigate endocrine regression \u2014 why does fusion HURT the strongest category?",
-      "status": "pending",
+      "status": "inconclusive",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -2645,7 +2645,9 @@
         "If low-n_gt_train drives the regression, add a 'n_gt_train>=X' filter to h1228.",
         "If not, document the open question and move on."
       ],
-      "success_criteria": "Identify whether endocrine regression is n_gt_train-driven (<5 train drugs)."
+      "success_criteria": "Identify whether endocrine regression is n_gt_train-driven (<5 train drugs).",
+      "findings": "Bucketed h1218 endocrine rows by n_gt_train_drugs as preregistered. **Critical finding: only 3 unique endocrine diseases appear in h1218's 1,011-disease sample** \u2014 pituitary gigantism (n_gt=1, 2 seeds, \u0394=0), pituitary hypothalamic injury (n_gt=14, 1 seed, \u0394=-14.29pp), hypogonadotropic hypogonadism (n_gt=28, 3 seeds, \u0394=-5.95pp). The 'endocrine -5.36pp' (h1218) and '-10.71pp non-trivial' (h1230) figures are driven by 4 (seed,disease) rows from 2 rare pituitary diseases \u2014 NOT a category-level signal. **The endocrine regression headline should be qualified as 'apparent regression in 2 specific pituitary diseases' rather than a category-level fusion failure.** h1229's preregistered question (is endocrine regression n_gt-driven?) is not the right question; the correct framing is 'is the endocrine label semantically meaningful at this sample size?' \u2014 answer: no. Recommend: when reporting per-category fusion deltas in h1218/h1230, add a `n_unique_diseases >= 5` gate to suppress spurious signals from sparse categories. Outputs (in-line via h1230 + this analysis): no new files.",
+      "result_metric": "Endocrine has only 3 unique diseases in h1218 sample (n_gt 1, 14, 28). Apparent -10.71pp non-trivial \u0394 is driven by 4 seed-rows from 2 rare pituitary diseases \u2014 not a category-level effect. Categories with <5 unique diseases should be filtered from h1218/h1230 reports."
     },
     {
       "id": "h1230",
@@ -2898,6 +2900,23 @@
         "Save data/analysis/h1249_entropy_routed_benchmark.{json,md}."
       ],
       "success_criteria": "Entropy-routed fusion beats global concat_l2 by \u2265+0.3pp R@30 across 5 seeds, with hits@30 lift \u2265+0.1 drugs/disease at p<0.1. If yes, this becomes the new DRKG-only ceiling and ships to the deliverable."
+    },
+    {
+      "id": "h1250",
+      "title": "Sparse-category guardrail \u2014 flag categories with <5 unique diseases in h1218/h1230 outputs",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "lever": "infrastructure",
+      "rationale": "h1229 found that the 'endocrine -10.71pp' fusion regression in h1218/h1230 is driven by 2 rare pituitary diseases \u2014 only 3 endocrine diseases appear in the 1,011-disease sample. The category-level \u0394 is not a category-level effect. Going forward, per-category fusion-delta reports should suppress (or asterisk) categories with <5 unique diseases to prevent spurious signals from contaminating the h1218 / h1230 / h1247 / h1228 narratives.",
+      "steps": [
+        "Add a `min_unique_diseases` parameter to per-category aggregation in scripts/h1218_fusion_gain_decomposition.py and scripts/h1230_neutral_row_characterization.py.",
+        "Default to min=5; categories below the threshold are reported as 'INSUFFICIENT_SAMPLE' in the markdown outputs.",
+        "Re-emit h1218 and h1230 markdown reports with the gate applied.",
+        "Update CLAUDE.md headline paragraphs for h1218/h1230 to qualify the endocrine claim."
+      ],
+      "success_criteria": "All per-category fusion-delta tables now display either a confidence-eligible value or 'INSUFFICIENT_SAMPLE'. Endocrine, immunological, reproductive, and any other <5-disease categories are correctly flagged."
     }
   ],
   "completed": [
@@ -5712,6 +5731,12 @@
       "hypothesis_id": "h1248",
       "learning": "Restricting fusion to (n_gt\u226551, low ATC entropy) recovers p<0.01 hits@30 lift from a non-significant full-stratum result. Combined h1247+h1248 give a publishable two-axis routing rule: low-entropy diseases (in EITHER moderate or high density) gain from fusion; mid-entropy high-density diseases are negatively impacted; high-entropy diseases are indifferent.",
       "implication": "Ship gt_atc_l3_gini as a deliverable annotation column and route inference by (n_gt_train_drugs, gt_atc_l3_gini) at production time. The recall headline becomes: 'fusion is robustly beneficial for ATC-coherent diseases regardless of density'."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1229",
+      "learning": "Per-category fusion deltas in h1218/h1230 must be qualified by n_unique_diseases. The 'endocrine -10.71pp non-trivial regression' is based on 2 rare pituitary diseases \u2014 not a category-level effect. Sparse categories produce spurious tier-precision signals at small sample sizes.",
+      "implication": "Add a `min_unique_diseases=5` gate when reporting per-category \u0394 in any future fusion analysis. Update h1218/h1230 markdown outputs to flag sparse categories explicitly."
     }
   ],
   "collaborations": [
