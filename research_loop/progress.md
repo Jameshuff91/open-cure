@@ -4012,3 +4012,32 @@ For each holdout disease, compute biologic_prior[category] = fraction of train d
 ### Recommended next hypothesis
 **h990 (P2)** — quick to implement (reuse h953 plumbing, swap category prior for neighbor-derived prior). Most likely to produce a different result, since neighbor-derived priors directly diagnose whether biologics in top-30 are mechanism-supported.
 
+
+## Current Session (continued): h990 — Per-Disease Neighbor Bio Prior (INVALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h990 (INVALIDATED — closes the biologic in/out-shuffle family)
+
+### What was tested
+Replace h953's per-CATEGORY biologic prior with a per-DISEASE prior derived from the actual kNN signal: `prior(D) = (#{top-20 train kNN neighbors of D with ≥1 biologic in expanded GT}) / 20`. Sweep thresholds {0.00, 0.05, 0.10, 0.20}; demote biologics in top-30 for diseases below threshold; refill from rank 31+.
+
+### Headline result
+| metric | baseline | thr=0.00 (strict) | thr=0.10 | thr=0.20 | gate |
+|---|---|---|---|---|---|
+| p30 | 14.32% ± 0.94% | +0.00pp (avg 19 demoted) | -0.00pp (avg 43 demoted) | +0.01pp (avg 99 demoted) | +1.0pp |
+| bio_r30 | 30.31% ± 3.57% | **+0.00pp** | -1.37pp | -6.94pp | ≥-3pp |
+
+**DO NOT SHIP — no threshold meets the +1pp p30 / ≤3pp bio_r30 gate.**
+
+### Crucial structural finding
+**Strict prior=0.00 demotes 19 diseases per seed but bio_r30 doesn't move at all.** This proves the kNN structural invariant: `drug_scores` only sums over neighbor GT, so if ZERO top-20 neighbors have any biologic in GT, ZERO biologics can appear in top-N from kNN. The strict filter is a safe no-op.
+
+### Joint h953 + h990 closure
+Removing top-30 biologics and refilling from rank 31+ is FUNDAMENTALLY precision-neutral because the kNN rank 31-200 tail is uniform-quality. The "biologic in/out shuffle" precision-pivot family (h953, h990, conceptually h957's safety-filter variant too) is closed.
+
+### New hypotheses (2 added)
+- **h993 (P3):** Per-rank hit-rate audit — formalize the tail-uniformity claim by computing p(hit | rank=r) for r ∈ [1, 200].
+- **h994 (P2):** In-window re-ranking via auxiliary features (target overlap, literature, ATC) — lift hits to higher ranks within top-30 for tier-precision gains. Most promising remaining biologic-precision direction.
+
+### Recommended next hypothesis
+**h994 (P2)** — operates inside top-30 (the only rank window where signal differentiation appears to exist), targets tier precision (the metric h964 actually cares about), and complements the h979/h986 tier work.
+

@@ -1626,7 +1626,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "For each holdout disease, find its top-20 kNN neighbors in train (same as production predict()).",
         "prior(d) = (#neighbors with \u22651 biologic in expanded GT) / 20.",
@@ -1637,7 +1637,9 @@
       "depends_on": [
         "h953",
         "h958"
-      ]
+      ],
+      "findings": "INVALIDATED. 5-seed h393 holdout, top_n=200, k=20, thresholds {0.00,0.05,0.10,0.20}. Baseline p30=14.32%\u00b10.94%, r30=19.79%\u00b11.59%, bio_r30=30.31%\u00b13.57%. Best p30 lift = +0.01pp (thr=0.20) \u2014 far below the +1pp ship gate. **Strict thr=0.00 (zero top-20 neighbors with any biologic in expanded GT): 19 dx demoted/seed but bio_r30 \u0394=+0.00pp** \u2014 proving that for these 19 diseases per seed, ZERO biologics were in baseline top-30. This is the kNN structural invariant: drug_scores only sums over neighbor GT, so zero biologic neighbors -> zero biologics in any top-N. At thr=0.10 (43 demoted/seed), bio_r30 -1.37pp with no p30 movement. At thr=0.20 (99 demoted/seed), bio_r30 -6.94pp with p30 +0.01pp. **Deeper insight than h953:** even with the FINEST-grained per-disease prior we can construct, the conclusion holds \u2014 removing in-top-30 biologics costs bio_r30, replacements from rank 31+ hit at the same background rate, p30 stays flat. The rank 31-200 tail is a uniform-quality bucket with no exploitable signal differentiation. Filed h993 (per-rank hit-rate audit to formalize the tail-uniformity claim) and h994 (precision pivot must operate INSIDE rank 1-30 via re-ranking, not in-out shuffle). Raw: data/analysis/h990_neighbor_bio_prior.json, data/analysis/h990_run.txt.",
+      "result_metric": "p30 \u0394=+0.01pp (max), bio_r30 \u0394=-6.94pp (worst); strict thr=0.00 confirmed kNN structural invariant (zero biologic neighbors -> zero biologics in top-30)"
     },
     {
       "id": "h991",
@@ -1675,6 +1677,47 @@
         "Document 'p30 is bounded above by GT density' as a metric-hygiene note in CLAUDE.md (similar to h954/h967 micro-vs-macro note)."
       ],
       "depends_on": [
+        "h953"
+      ]
+    },
+    {
+      "id": "h993",
+      "title": "Per-rank hit-rate audit \u2014 formalize the rank 31-200 tail-uniformity claim",
+      "category": "meta",
+      "rationale": "h990 surfaces an unproven structural claim: the rank 31-200 tail of kNN predictions hits at a uniform background rate, which is why h953/h990 demote-and-refill is precision-neutral. Verify directly: for each rank r in 1..200, compute p(hit | rank=r) across all holdout disease-prediction pairs over 5 seeds. If the curve is flat (e.g. p(hit) \u2248 0.10-0.15) for r \u2208 [31, 200], the claim holds and ALL future precision pivots must operate inside rank 1-30. If the curve drops sharply (e.g. p(hit, r=200) \u226a p(hit, r=31)), there IS quality differentiation in the tail and a smarter selection (not simple swap) might work.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Reuse h953/h990 plumbing. For each holdout disease, fetch top_n=200, record per-rank hit indicator vs expanded GT.",
+        "Aggregate p(hit | rank) across all holdout pairs over 5 seeds.",
+        "Plot/report the rank-curve in 10-rank bins. Compute slope of p(hit) vs rank for ranks 31-200.",
+        "Decision: if |slope| < 0.05pp/rank, claim h990's tail-uniformity is structural and add to CLAUDE.md as a metric-hygiene note. If steeper, file h995 to re-explore tail-aware demotion."
+      ],
+      "depends_on": [
+        "h990",
+        "h953"
+      ]
+    },
+    {
+      "id": "h994",
+      "title": "In-window re-ranking: precision lift via signal-aware reorder of top-30, no in/out exchange",
+      "category": "precision",
+      "rationale": "h953 + h990 jointly close the 'demote and refill from rank 31+' family: the kNN tail provides no differentiation for the swap. The remaining precision lever is RE-ORDERING within top-30 \u2014 keep the same 30 drugs, but lift hits to higher ranks using auxiliary features (target overlap, literature evidence level, ATC coherence). For per-disease p30 this changes nothing (top-30 membership is invariant), but for tier-precision (GOLDEN/HIGH/MEDIUM rules that cap at rank 5/10/20), in-window re-ranking can move hits into higher tiers and raise tier precision.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "For each holdout disease, fetch top-30 from baseline production predict() \u2014 record (drug_id, rank, score, hit).",
+        "Score each prediction with auxiliary features: target_overlap_count, literature_evidence_score, ATC L1 match w/ disease, drug_train_freq.",
+        "Train a logistic re-ranker on train-disease (drug, hit?) pairs using these features + original kNN score. 5-fold CV.",
+        "Apply re-ranker to holdout: compute new rank order, re-derive tier assignments via the existing tier rules.",
+        "Measure tier precision change vs baseline. Ship if any tier improves \u2265+1pp without other tiers dropping \u22651pp."
+      ],
+      "depends_on": [
+        "h990",
         "h953"
       ]
     }
@@ -4365,6 +4408,12 @@
       "hypothesis_id": "h953",
       "learning": "Per-category biologic prior is too coarse to drive precision-aware demotion. kNN already concentrates biologics in immunology/cancer/endocrine; remaining biologics in low-prior categories are mostly real hits when present. Category-level demotion is precision-neutral or negative, never +2pp.",
       "implication": "Per-disease (not per-category) biologic priors derived from kNN neighbors are needed. h990 will test that. Also: precision pivots for biologics likely need to operate on the SMALL-MOLECULE side, not biologics \u2014 bio_r30=30% > overall_r30=20%, biologics OVERPERFORM."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h990",
+      "learning": "Even the finest-grained per-disease neighbor-derived biologic prior cannot drive a precision lift via top-30 demotion+refill. The kNN rank 31-200 tail is uniform-quality \u2014 replacing in-top-30 biologics with rank-31+ non-biologics is precision-NEUTRAL because the replacements hit at the same background rate. h990 + h953 jointly close the \"biologic in/out shuffle\" precision-pivot family.",
+      "implication": "Precision lifts must operate INSIDE the rank 1-30 window via score differentiation (re-ranking), not via in-out exchange. h993/h994 will test that direction. The strict prior=0 filter is a safe a-priori invariant that could be used as a documentation/annotation column without harm."
     }
   ],
   "collaborations": [

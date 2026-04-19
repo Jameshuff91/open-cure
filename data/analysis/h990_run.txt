@@ -1,0 +1,66 @@
+==============================================================================
+h990: Per-disease kNN-neighbor biologic prior demotion
+==============================================================================
+Loading predictor ...
+Expanded GT: 3589 dx, 57805 pairs
+Biologic pool: 266
+Evaluable: 1011
+Thresholds: [0.0, 0.05, 0.1, 0.2], k=20, top_n_fetch=200
+
+--- Seed 42 ---
+  evaluated=202  with_bio_gt=56  skip_no_gt=1  skip_no_emb=0  skip_err=0
+  baseline   p30=13.37%  r30=18.92%  bio_r30=31.96%
+  thr=0.00   p30=13.37% (Δ+0.00pp)  r30=18.92%  bio_r30=31.96% (Δ+0.00pp)  demoted=27/202
+  thr=0.05   p30=13.37% (Δ+0.00pp)  r30=18.92%  bio_r30=31.96% (Δ+0.00pp)  demoted=27/202
+  thr=0.10   p30=13.37% (Δ+0.00pp)  r30=18.91%  bio_r30=30.17% (Δ-1.79pp)  demoted=53/202
+  thr=0.20   p30=13.33% (Δ-0.03pp)  r30=18.71%  bio_r30=24.81% (Δ-7.14pp)  demoted=102/202
+  prior   min=0.000  q25=0.050  med=0.150  q75=0.300  max=0.850  zero_count=27
+
+--- Seed 123 ---
+  evaluated=200  with_bio_gt=59  skip_no_gt=3  skip_no_emb=0  skip_err=0
+  baseline   p30=15.00%  r30=22.22%  bio_r30=31.09%
+  thr=0.00   p30=15.00% (Δ+0.00pp)  r30=22.22%  bio_r30=31.09% (Δ+0.00pp)  demoted=11/200
+  thr=0.05   p30=15.00% (Δ+0.00pp)  r30=22.22%  bio_r30=31.09% (Δ+0.00pp)  demoted=11/200
+  thr=0.10   p30=14.97% (Δ-0.03pp)  r30=21.51%  bio_r30=26.01% (Δ-5.08pp)  demoted=41/200
+  thr=0.20   p30=15.07% (Δ+0.07pp)  r30=21.59%  bio_r30=20.08% (Δ-11.02pp)  demoted=97/200
+  prior   min=0.000  q25=0.100  med=0.200  q75=0.300  max=0.650  zero_count=11
+
+--- Seed 456 ---
+  evaluated=200  with_bio_gt=44  skip_no_gt=3  skip_no_emb=0  skip_err=0
+  baseline   p30=13.67%  r30=17.94%  bio_r30=24.13%
+  thr=0.00   p30=13.67% (Δ+0.00pp)  r30=17.94%  bio_r30=24.13% (Δ+0.00pp)  demoted=21/200
+  thr=0.05   p30=13.67% (Δ+0.00pp)  r30=17.94%  bio_r30=24.13% (Δ+0.00pp)  demoted=21/200
+  thr=0.10   p30=13.67% (Δ+0.00pp)  r30=17.94%  bio_r30=24.13% (Δ+0.00pp)  demoted=45/200
+  thr=0.20   p30=13.67% (Δ+0.00pp)  r30=17.95%  bio_r30=21.86% (Δ-2.27pp)  demoted=99/200
+  prior   min=0.000  q25=0.100  med=0.200  q75=0.300  max=0.800  zero_count=21
+
+--- Seed 789 ---
+  evaluated=200  with_bio_gt=49  skip_no_gt=3  skip_no_emb=0  skip_err=0
+  baseline   p30=13.75%  r30=21.07%  bio_r30=34.93%
+  thr=0.00   p30=13.75% (Δ+0.00pp)  r30=21.07%  bio_r30=34.93% (Δ+0.00pp)  demoted=19/200
+  thr=0.05   p30=13.75% (Δ+0.00pp)  r30=21.07%  bio_r30=34.93% (Δ+0.00pp)  demoted=19/200
+  thr=0.10   p30=13.75% (Δ+0.00pp)  r30=21.07%  bio_r30=34.93% (Δ+0.00pp)  demoted=42/200
+  thr=0.20   p30=13.77% (Δ+0.02pp)  r30=21.19%  bio_r30=26.08% (Δ-8.84pp)  demoted=103/200
+  prior   min=0.000  q25=0.100  med=0.150  q75=0.300  max=0.700  zero_count=19
+
+--- Seed 2024 ---
+  evaluated=200  with_bio_gt=71  skip_no_gt=3  skip_no_emb=0  skip_err=0
+  baseline   p30=15.83%  r30=18.80%  bio_r30=29.46%
+  thr=0.00   p30=15.83% (Δ+0.00pp)  r30=18.80%  bio_r30=29.46% (Δ+0.00pp)  demoted=17/200
+  thr=0.05   p30=15.83% (Δ+0.00pp)  r30=18.80%  bio_r30=29.46% (Δ+0.00pp)  demoted=17/200
+  thr=0.10   p30=15.85% (Δ+0.02pp)  r30=18.81%  bio_r30=29.46% (Δ+0.00pp)  demoted=34/200
+  thr=0.20   p30=15.82% (Δ-0.02pp)  r30=18.60%  bio_r30=24.06% (Δ-5.40pp)  demoted=96/200
+  prior   min=0.000  q25=0.100  med=0.200  q75=0.300  max=0.700  zero_count=17
+
+==============================================================================
+CROSS-SEED MEAN ± STD (5 seeds)
+==============================================================================
+  baseline   p30=14.32% ± 0.94%  r30=19.79% ± 1.59%  bio_r30=30.31% ± 3.57%
+  thr=0.00    p30=14.32% ± 0.94% (Δ+0.00pp)  r30=19.79% (Δ+0.00pp)  bio_r30=30.31% ± 3.57% (Δ+0.00pp)  avg_demoted=19.0
+  thr=0.05    p30=14.32% ± 0.94% (Δ+0.00pp)  r30=19.79% (Δ+0.00pp)  bio_r30=30.31% ± 3.57% (Δ+0.00pp)  avg_demoted=19.0
+  thr=0.10    p30=14.32% ± 0.94% (Δ-0.00pp)  r30=19.65% (Δ-0.14pp)  bio_r30=28.94% ± 3.72% (Δ-1.37pp)  avg_demoted=43.0
+  thr=0.20    p30=14.33% ± 0.95% (Δ+0.01pp)  r30=19.61% (Δ-0.18pp)  bio_r30=23.38% ± 2.15% (Δ-6.94pp)  avg_demoted=99.4
+
+DECISION: DO NOT SHIP — no threshold meets gate
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h990_neighbor_bio_prior.json
