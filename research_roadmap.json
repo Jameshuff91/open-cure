@@ -2065,7 +2065,7 @@
       "expected_impact": "infrastructure",
       "effort": "low-medium",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Write scripts/clean_r30_benchmark.py -> rename to scripts/clean_embedding_benchmark.py to reflect extended scope. Load embeddings via OPEN_CURE_EMBEDDINGS_PREFIX. Compute kNN predictions per disease WITHOUT tier/rule processing.",
         "Compute and report FIVE metrics on the same 5-seed disease-level splits on expanded GT:",
@@ -2081,8 +2081,8 @@
         "Documented result tables (markdown) saved to data/analysis/clean_benchmark_<prefix>.md \u2014 one per embedding",
         "Cross-reference: update data/analysis/positive_controls_*.json and h922_v2_vs_node2vec.json to cite this benchmark as the authoritative comparison framework"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Shipped scripts/clean_embedding_benchmark.py \u2014 tier-free multi-metric kNN benchmark on 5-seed disease-level splits (80/20). Uses production convention: internal indicationList GT for kNN aggregation, expanded_gt for evaluation. Reports R@30 per-drug (macro), Hits@K per-drug and per-triple, MRR per-triple, AUPRC, AUROC, plus per-category breakdown.\n\nNode2Vec baseline (default prefix): R@30=19.55%\u00b11.18%, MRR=0.0284\u00b10.0027, AUPRC=0.0569\u00b10.0023, AUROC=0.5766\u00b10.0067 on 1011 eligible diseases. The 19.55% R@30 matches h958's reported overall_r30=19.49%\u00b11.42% \u2014 the two independent eval pipelines agree.\n\nGraphSAGE (h922-v2 embedding) sanity run: R@30=8.17%\u00b10.53%, MRR=0.0126, AUPRC=0.0322, AUROC=0.5529 on 850 eligible diseases. Node2Vec dominates on ALL FIVE metrics \u2014 confirms h922-v2 invalidation was a real ranking regression, not a tier-system artifact. GraphSAGE's smaller disease universe (850 vs 1011) also signals coverage problems independent of ranking quality.\n\nPer-category Node2Vec R@30 spread: endocrine 41%, ophthalmic 38%, reproductive 33%, infectious 30%, autoimmune 27%, dermatological 26% \u2014 all above baseline. cancer 14%, neurological 11%, psychiatric 10%, hematological 10% lag. Useful for targeted experiments.\n\nOutputs: data/analysis/clean_benchmark_node2vec_256.{json,md}, data/analysis/clean_benchmark_graphsage_256.{json,md}. CLI: OPEN_CURE_EMBEDDINGS_PREFIX=<prefix> python scripts/clean_embedding_benchmark.py.",
+      "result_metric": "Node2Vec 5-seed: R@30=19.55%\u00b11.18%, MRR=0.0284, AUPRC=0.0569, AUROC=0.5766. GraphSAGE: R@30=8.17%, MRR=0.0126, AUPRC=0.0322, AUROC=0.5529."
     },
     {
       "id": "h1200",
@@ -2344,6 +2344,81 @@
         "Write to data/deliverables/h1111_biologic_autoimmune_rankdrop.csv with columns suitable for Ryland's review template",
         "Tag in findings with [RYLAND]"
       ]
+    },
+    {
+      "id": "h1210",
+      "title": "Extend h1199 benchmark to negative-sample-aware AUROC \u2014 avoid inflated numbers from all-zero-score tail",
+      "category": "infrastructure",
+      "rationale": "The h1199 AUROC of 0.577 for Node2Vec is likely deflated by the huge zero-score tail (drugs never reached by kNN). Most AUROC reports in KG-completion literature use stratified negative sampling (e.g., 1:10 or all-vs-500 negatives) rather than flat all-vs-all. Re-running h1199 with (a) filtered negatives (exclude training triples), (b) fixed neg:pos ratios, and (c) MaxSim score (kNN similarity itself, not the summed aggregation) will give a more publishable AUROC number and let us compare apples-to-apples with TxGNN's 0.913 AUPRC.",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Extend scripts/clean_embedding_benchmark.py with a --neg-mode flag: all|filtered|ratio_10",
+        "Filtered: exclude (test_disease, training_drug_of_that_disease) pairs from the negative pool",
+        "Ratio: for each test triple, sample N random non-GT drugs as negatives",
+        "Rerun Node2Vec + GraphSAGE + (future) supervised GNN under all three modes",
+        "Report whether the 0.577 AUROC holds up or compresses toward 0.5 under filtered negatives"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1211",
+      "title": "Per-category R@30 explanation \u2014 why does endocrine hit 41% but cancer only 14%?",
+      "category": "error_analysis",
+      "rationale": "h1199 revealed a 3x per-category R@30 spread (endocrine 41%, ophthalmic 38%, reproductive 33%, autoimmune 27% vs cancer 14%, psychiatric 10%, hematological 10%). The spread correlates with category size (n_diseases) AND with drug-sharing structure (how many other diseases in the category share the same drugs). We need a diagnostic that decomposes per-category recall into: (a) category density (average drugs shared per disease pair within category), (b) category isolation (inter-category neighbour count), (c) GT completeness (fraction of FDA indications actually in expanded_gt per category). This explains the spread mechanistically and flags where h1200 loss-weighting should invest effort.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "For each category, compute mean drug-Jaccard between pairs of GT diseases in that category",
+        "For each category, compute kNN isolation = mean fraction of top-20 neighbours that share the category",
+        "Compare to per-category R@30 and correlate",
+        "If category density explains >50% of spread, confirm Nature-scale claim: 'GNN training should weight categories with low density higher'",
+        "Save data/analysis/h1211_category_recall_explainer.json + .md"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1212",
+      "title": "Pre-h1200 ceiling probe: can any embedding exceed 30% R@30 using ONLY DRKG edges?",
+      "category": "infrastructure",
+      "rationale": "Before spending compute on h1200's supervised GNN, probe the DRKG ceiling by running h1199 across every available embedding: node2vec_256 (baseline 19.5%), graphsage_256 (8.2%), fastrp_256 (untested), and node2vec_256_no_treatment (26.06% per CLAUDE.md \u2014 but never multi-metric evaluated). A fairRP or TransE-style embedding sometimes beats Node2Vec on Hits@1 and MRR even when losing on R@30. This tells us what the DRKG-only ceiling really is, which in turn sets the h1200 success criterion.",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Convert fastrp_256.parquet to NPY (if needed) and run h1199 on it",
+        "Build node2vec_256_no_treatment NPY files and re-run h1199 (honesty baseline)",
+        "Retrain TransE (if embeddings available) and run h1199",
+        "Compile a comparison table: rows=embeddings, cols=5 metrics+eligible_diseases",
+        "Declare the DRKG-only ceiling on each metric as the h1200 minimum-bar"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1213",
+      "title": "Hits@1 sanity spot-check \u2014 is Node2Vec 2.88% Hits@1 per-drug a reasonable 'best guess' rate?",
+      "category": "error_analysis",
+      "rationale": "h1199 showed Hits@1 per-drug=2.88% (macro-avg across test diseases) and Hits@1 per-triple=0.98% (micro). For comparison, a random baseline over the ~1,345 candidate drugs would give 1/1345\u22480.074% Hits@1. So Node2Vec is 13x-39x better than random at rank 1. But these numbers are also far below a deployable system: a human reviewer looking at only the top prediction would be wrong 97% of the time. We should spot-check the top-1 predictions manually: what fraction are (a) the actual GT drug, (b) in the same ATC class as a GT drug, (c) biologically plausible, (d) a known inverse indication? This tells us whether 'improve Hits@1' is a realistic target or whether Hits@10/30 is the production metric.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Export top-1 predictions from the 5-seed Node2Vec benchmark for all test diseases",
+        "For a 50-disease stratified sample (10 per size bucket), manually classify top-1: exact_gt / atc_class_gt / plausible / inverse / implausible",
+        "Report Hits@1 under each relaxed definition",
+        "Save data/analysis/h1213_hits1_audit.{json,md}"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
@@ -5086,6 +5161,12 @@
       "hypothesis_id": "h1103",
       "learning": "74% of the 543 rank>20 known-indication misfires have mech=False \u2014 sparse DRKG edge history, not a rule bug. 62% are at ranks 21-25 (just outside the threshold). Top clusters: other_sm x infectious (66), other_sm x autoimmune (41), biologic_mab x autoimmune (28). The SGLT2 family (Empagliflozin, ~7 cases) matches h1107's observation.",
       "implication": "h1200 supervised GNN should upweight these 543 pairs during training (h1110 proposed). Biologic_mab x autoimmune (28 cases) is a natural Ryland review packet (h1111)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1199",
+      "learning": "Clean multi-metric benchmark confirms Node2Vec beats GraphSAGE on all 5 standard metrics (R@30 +11.4pp, MRR +0.016, AUPRC +0.025, AUROC +0.024). Per-drug R@30=19.55% (matches h958 overall_r30=19.49%). Per-category recall varies 10%-41% \u2014 cancer/psychiatric/hematological/neurological lag, endocrine/ophthalmic/reproductive/infectious lead.",
+      "implication": "h1200/h1201 experiments now have a fixed 5-metric comparison target. Any future embedding or GNN claim must beat Node2Vec on *all* metrics (or at least on R@30 + AUPRC with no other regression) to qualify as improvement. The per-category spread is also a targeting signal for category-specific experiments."
     }
   ],
   "collaborations": [

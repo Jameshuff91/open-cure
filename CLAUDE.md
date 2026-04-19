@@ -102,6 +102,8 @@ vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
 
 **h1103 VALIDATED (2026-04-19):** 543 rank>20 known-indication misfires clustered. 74% mech=False (canonical h1200 target — newly-approved drugs with narrow DRKG edges). 62% at ranks 21-25 (small ranker lift recovers most). Top cluster: biologic_mab × autoimmune (n=28, natural Ryland packet).
 
+**h1199 VALIDATED (2026-04-19, infrastructure):** Shipped `scripts/clean_embedding_benchmark.py` — tier-free 5-seed benchmark reporting all five metrics. Node2Vec baseline: **R@30=19.55%±1.18%, MRR=0.0284, AUPRC=0.0569, AUROC=0.5766** on 1,011 eligible diseases; matches h958 overall_r30=19.49% (independent pipeline → convention correct). GraphSAGE loses on all five metrics (R@30=8.17%, -11.4pp). Every h1200/h1201 run drops into the same table via `OPEN_CURE_EMBEDDINGS_PREFIX`. Per-category spread: endocrine 41% / ophthalmic 38% (high) → psychiatric 10% / hematological 10% (low).
+
 **Remaining viable surfaces:** boundary-targeted re-rank (h1006), per-category adaptive (h1008), deliverable annotation columns (h1001, h1003, h1007, h1102), inverse positive controls (h1104), h1200 loss-weighting on h1103 residuals (h1110), expert-label calibration (h1203).
 
 **See `docs/claude/confidence_system_history.md` for full h900+ experiment detail.**

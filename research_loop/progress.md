@@ -1,5 +1,74 @@
 # Research Loop Progress
 
+## Current Session: h1199 — Clean multi-metric embedding benchmark (VALIDATED, 2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1199 (VALIDATED, infrastructure)
+
+### What was built
+`scripts/clean_embedding_benchmark.py` — tier-free kNN evaluation producing
+all five standard metrics on 5-seed disease-level 80/20 splits:
+
+1. R@30 per-drug (macro-avg across test diseases)
+2. Hits@K for K ∈ {1, 5, 10, 30, 100}, both per-drug and per-test-triple
+3. MRR per-test-triple — KG-completion standard
+4. AUPRC per-test-triple — TxGNN headline metric
+5. AUROC per-test-triple
+
+Uses production convention: internal indicationList GT (5,629 pairs, 1,078
+diseases) for kNN neighbour aggregation, expanded_ground_truth.json
+(57,805 pairs) for evaluation hits. Driven by `OPEN_CURE_EMBEDDINGS_PREFIX`
+env var so any future embedding drops in without code edits.
+
+### Headline results
+
+| Embedding | n_dis | R@30 | Hits@10/drug | MRR | AUPRC | AUROC |
+|---|---|---|---|---|---|---|
+| **node2vec_256** | 1,011 | **19.55%±1.18%** | 12.82% | **0.0284** | **0.0569** | **0.5766** |
+| graphsage_256 | 850 | 8.17%±0.53% | 4.70% | 0.0126 | 0.0322 | 0.5529 |
+
+Node2Vec dominates GraphSAGE on ALL FIVE metrics (Δ R@30 +11.4pp, Δ MRR
++0.016, Δ AUPRC +0.025, Δ AUROC +0.024). Confirms h922-v2 invalidation was
+a real ranking regression, not a tier-system coupling artifact.
+
+### Sanity-check anchors
+- Per-drug R@30 = 19.55% matches h958 overall_r30 = 19.49%±1.42% (independent
+  pipeline) → benchmark convention is correct.
+- Random Hits@1 baseline over 1,345-drug pool ≈ 0.074%. Node2Vec Hits@1
+  per-drug = 2.88% → 39x better than random at rank 1.
+
+### Per-category Node2Vec R@30 spread
+endocrine 41%, ophthalmic 38%, reproductive 33%, infectious 30%, autoimmune
+27%, dermatological 26% (high). cancer 14%, gastrointestinal 14%,
+metabolic 14%, immunological 14%, cardiovascular 13%, neurological 11%,
+psychiatric 10%, hematological 10% (low). 3x spread is a targeting signal
+for h1200 loss-weighting.
+
+### Outputs
+- scripts/clean_embedding_benchmark.py
+- data/analysis/clean_benchmark_node2vec_256.{json,md}
+- data/analysis/clean_benchmark_graphsage_256.{json,md}
+
+### New hypotheses (4 added)
+- **h1210 (P2):** Negative-sample-aware AUROC — the 0.577 flat AUROC is
+  likely deflated by all-vs-all negatives; filtered / 1:10 ratio negatives
+  will give a publishable number comparable to TxGNN's 0.913 AUPRC.
+- **h1211 (P2):** Per-category R@30 explanation — decompose the 3x
+  category spread into density, isolation, GT completeness. Flags where
+  h1200 should invest loss weight.
+- **h1212 (P2):** Pre-h1200 ceiling probe — run h1199 on fastrp_256,
+  node2vec_256_no_treatment, and TransE; declare per-metric DRKG-only
+  ceilings as the h1200 minimum-bar.
+- **h1213 (P3):** Hits@1 sanity audit — manual review of top-1 predictions
+  under relaxed definitions.
+
+### Recommended next hypothesis
+**h1212 (P2)** — finish the embedding ceiling sweep before committing
+compute to h1200. Alternatively, **h1200 (P1)** — the benchmark is now
+live, so h1200's success criterion is fixed: beat Node2Vec on R@30 AND
+AUPRC with no regression on the other three metrics.
+
+---
+
 ## Current Session: h1002 — neighbor-augmented rescue test (2026-04-19)
 
 ### Status: INVALIDATED — closes filter-form biologic precision family
