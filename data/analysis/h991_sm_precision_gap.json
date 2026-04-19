@@ -1,0 +1,366 @@
+{
+  "hypothesis": "h991",
+  "title": "SM vs bio precision gap \u2014 diagnostic",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "top_n_report": 30,
+  "biologic_pool_size": 266,
+  "evaluable_diseases": 1011,
+  "per_seed": [
+    {
+      "seed": 42,
+      "n_diseases": 202,
+      "p30_mean": 0.13366336633663367,
+      "sm_p30_amongsm_mean": 0.14055767746723533,
+      "bio_p30_amongbio_mean": 0.07218024812364435,
+      "n_with_sm_top30": 202,
+      "n_with_bio_top30": 159,
+      "avg_n_bio_in_top30": 2.871287128712871
+    },
+    {
+      "seed": 123,
+      "n_diseases": 200,
+      "p30_mean": 0.1501666666666667,
+      "sm_p30_amongsm_mean": 0.16438277118502398,
+      "bio_p30_amongbio_mean": 0.07095808383233533,
+      "n_with_sm_top30": 200,
+      "n_with_bio_top30": 167,
+      "avg_n_bio_in_top30": 3.65
+    },
+    {
+      "seed": 456,
+      "n_diseases": 200,
+      "p30_mean": 0.1366666666666667,
+      "sm_p30_amongsm_mean": 0.1500716533167876,
+      "bio_p30_amongbio_mean": 0.02092335442335442,
+      "n_with_sm_top30": 200,
+      "n_with_bio_top30": 150,
+      "avg_n_bio_in_top30": 3.225
+    },
+    {
+      "seed": 789,
+      "n_diseases": 200,
+      "p30_mean": 0.138,
+      "sm_p30_amongsm_mean": 0.147489636443426,
+      "bio_p30_amongbio_mean": 0.047810363733930605,
+      "n_with_sm_top30": 200,
+      "n_with_bio_top30": 157,
+      "avg_n_bio_in_top30": 3.33
+    },
+    {
+      "seed": 2024,
+      "n_diseases": 200,
+      "p30_mean": 0.15883333333333335,
+      "sm_p30_amongsm_mean": 0.17164488546657877,
+      "bio_p30_amongbio_mean": 0.07001525197727729,
+      "n_with_sm_top30": 200,
+      "n_with_bio_top30": 158,
+      "avg_n_bio_in_top30": 3.67
+    }
+  ],
+  "cross_seed": {
+    "p30_mean": 0.14346600660066008,
+    "sm_p30_amongsm_mean": 0.15482932477581032,
+    "bio_p30_amongbio_mean": 0.056377460418108406,
+    "gap_pp_bio_minus_sm": -9.845186435770191,
+    "avg_bio_slots_in_top30": 3.3492574257425742
+  },
+  "per_category": {
+    "other": {
+      "n_diseases": 320,
+      "n_with_sm": 320,
+      "n_with_bio": 253,
+      "p30_mean": 0.0734375,
+      "sm_p30_amongsm_mean": 0.08017392880158578,
+      "bio_p30_amongbio_mean": 0.028576035295402886,
+      "sm_p30_abs_mean": 0.0709375,
+      "bio_p30_abs_mean": 0.0025,
+      "avg_n_bio_in_top30": 3.21875,
+      "avg_n_sm_in_top30": 26.78125
+    },
+    "respiratory": {
+      "n_diseases": 21,
+      "n_with_sm": 21,
+      "n_with_bio": 21,
+      "p30_mean": 0.1492063492063492,
+      "sm_p30_amongsm_mean": 0.16242333859525265,
+      "bio_p30_amongbio_mean": 0.06349206349206349,
+      "sm_p30_abs_mean": 0.14285714285714285,
+      "bio_p30_abs_mean": 0.006349206349206349,
+      "avg_n_bio_in_top30": 3.9047619047619047,
+      "avg_n_sm_in_top30": 26.095238095238095
+    },
+    "cardiovascular": {
+      "n_diseases": 63,
+      "n_with_sm": 63,
+      "n_with_bio": 55,
+      "p30_mean": 0.22433862433862434,
+      "sm_p30_amongsm_mean": 0.23404588125394393,
+      "bio_p30_amongbio_mean": 0.08510822510822512,
+      "sm_p30_abs_mean": 0.21111111111111108,
+      "bio_p30_abs_mean": 0.013227513227513229,
+      "avg_n_bio_in_top30": 3.492063492063492,
+      "avg_n_sm_in_top30": 26.50793650793651
+    },
+    "dermatological": {
+      "n_diseases": 48,
+      "n_with_sm": 48,
+      "n_with_bio": 35,
+      "p30_mean": 0.21666666666666667,
+      "sm_p30_amongsm_mean": 0.2489735099837677,
+      "bio_p30_amongbio_mean": 0.03741496598639456,
+      "sm_p30_abs_mean": 0.21458333333333335,
+      "bio_p30_abs_mean": 0.0020833333333333333,
+      "avg_n_bio_in_top30": 3.9166666666666665,
+      "avg_n_sm_in_top30": 26.083333333333332
+    },
+    "autoimmune": {
+      "n_diseases": 31,
+      "n_with_sm": 31,
+      "n_with_bio": 29,
+      "p30_mean": 0.30645161290322587,
+      "sm_p30_amongsm_mean": 0.391450177874739,
+      "bio_p30_amongbio_mean": 0.13907089079502874,
+      "sm_p30_abs_mean": 0.2720430107526882,
+      "bio_p30_abs_mean": 0.03440860215053764,
+      "avg_n_bio_in_top30": 8.483870967741936,
+      "avg_n_sm_in_top30": 21.516129032258064
+    },
+    "infectious": {
+      "n_diseases": 149,
+      "n_with_sm": 149,
+      "n_with_bio": 55,
+      "p30_mean": 0.20246085011185683,
+      "sm_p30_amongsm_mean": 0.20543942650369304,
+      "bio_p30_amongbio_mean": 0.0036363636363636364,
+      "sm_p30_abs_mean": 0.20223713646532437,
+      "bio_p30_abs_mean": 0.00022371364653243848,
+      "avg_n_bio_in_top30": 0.9328859060402684,
+      "avg_n_sm_in_top30": 29.06711409395973
+    },
+    "cancer": {
+      "n_diseases": 116,
+      "n_with_sm": 116,
+      "n_with_bio": 115,
+      "p30_mean": 0.15201149425287355,
+      "sm_p30_amongsm_mean": 0.16703965352765954,
+      "bio_p30_amongbio_mean": 0.07312284334023465,
+      "sm_p30_abs_mean": 0.139367816091954,
+      "bio_p30_abs_mean": 0.012643678160919542,
+      "avg_n_bio_in_top30": 4.801724137931035,
+      "avg_n_sm_in_top30": 25.198275862068964
+    },
+    "gastrointestinal": {
+      "n_diseases": 38,
+      "n_with_sm": 38,
+      "n_with_bio": 35,
+      "p30_mean": 0.1280701754385965,
+      "sm_p30_amongsm_mean": 0.12867520998192503,
+      "bio_p30_amongbio_mean": 0.062197802197802195,
+      "sm_p30_abs_mean": 0.11929824561403506,
+      "bio_p30_abs_mean": 0.008771929824561403,
+      "avg_n_bio_in_top30": 3.789473684210526,
+      "avg_n_sm_in_top30": 26.210526315789473
+    },
+    "neurological": {
+      "n_diseases": 50,
+      "n_with_sm": 50,
+      "n_with_bio": 43,
+      "p30_mean": 0.10200000000000004,
+      "sm_p30_amongsm_mean": 0.1042710622710623,
+      "bio_p30_amongbio_mean": 0.05813953488372093,
+      "sm_p30_abs_mean": 0.10000000000000002,
+      "bio_p30_abs_mean": 0.002,
+      "avg_n_bio_in_top30": 1.68,
+      "avg_n_sm_in_top30": 28.32
+    },
+    "hematological": {
+      "n_diseases": 17,
+      "n_with_sm": 17,
+      "n_with_bio": 17,
+      "p30_mean": 0.09411764705882353,
+      "sm_p30_amongsm_mean": 0.09938615187975802,
+      "bio_p30_amongbio_mean": 0.06442577030812326,
+      "sm_p30_abs_mean": 0.0803921568627451,
+      "bio_p30_abs_mean": 0.013725490196078431,
+      "avg_n_bio_in_top30": 6.0,
+      "avg_n_sm_in_top30": 24.0
+    },
+    "renal": {
+      "n_diseases": 23,
+      "n_with_sm": 23,
+      "n_with_bio": 20,
+      "p30_mean": 0.21304347826086953,
+      "sm_p30_amongsm_mean": 0.22545028462569694,
+      "bio_p30_amongbio_mean": 0.18916666666666665,
+      "sm_p30_abs_mean": 0.20434782608695654,
+      "bio_p30_abs_mean": 0.008695652173913044,
+      "avg_n_bio_in_top30": 2.4782608695652173,
+      "avg_n_sm_in_top30": 27.52173913043478
+    },
+    "endocrine": {
+      "n_diseases": 6,
+      "n_with_sm": 6,
+      "n_with_bio": 6,
+      "p30_mean": 0.20555555555555557,
+      "sm_p30_amongsm_mean": 0.19195728855149144,
+      "bio_p30_amongbio_mean": 0.29365079365079366,
+      "sm_p30_abs_mean": 0.1722222222222222,
+      "bio_p30_abs_mean": 0.03333333333333333,
+      "avg_n_bio_in_top30": 3.8333333333333335,
+      "avg_n_sm_in_top30": 26.166666666666668
+    },
+    "metabolic": {
+      "n_diseases": 54,
+      "n_with_sm": 54,
+      "n_with_bio": 54,
+      "p30_mean": 0.0876543209876543,
+      "sm_p30_amongsm_mean": 0.08996906116651798,
+      "bio_p30_amongbio_mean": 0.0716490299823633,
+      "sm_p30_abs_mean": 0.07839506172839507,
+      "bio_p30_abs_mean": 0.009259259259259259,
+      "avg_n_bio_in_top30": 3.6666666666666665,
+      "avg_n_sm_in_top30": 26.333333333333332
+    },
+    "ophthalmic": {
+      "n_diseases": 22,
+      "n_with_sm": 22,
+      "n_with_bio": 20,
+      "p30_mean": 0.1803030303030303,
+      "sm_p30_amongsm_mean": 0.2179070349385192,
+      "bio_p30_amongbio_mean": 0.05460497835497835,
+      "sm_p30_abs_mean": 0.1696969696969697,
+      "bio_p30_abs_mean": 0.010606060606060607,
+      "avg_n_bio_in_top30": 6.181818181818182,
+      "avg_n_sm_in_top30": 23.818181818181817
+    },
+    "psychiatric": {
+      "n_diseases": 18,
+      "n_with_sm": 18,
+      "n_with_bio": 8,
+      "p30_mean": 0.3296296296296296,
+      "sm_p30_amongsm_mean": 0.3341436851781679,
+      "bio_p30_amongbio_mean": 0.0,
+      "sm_p30_abs_mean": 0.3296296296296296,
+      "bio_p30_abs_mean": 0.0,
+      "avg_n_bio_in_top30": 0.9444444444444444,
+      "avg_n_sm_in_top30": 29.055555555555557
+    },
+    "musculoskeletal": {
+      "n_diseases": 18,
+      "n_with_sm": 18,
+      "n_with_bio": 17,
+      "p30_mean": 0.12407407407407407,
+      "sm_p30_amongsm_mean": 0.14951728408050685,
+      "bio_p30_amongbio_mean": 0.07212885154061624,
+      "sm_p30_abs_mean": 0.11296296296296296,
+      "bio_p30_abs_mean": 0.011111111111111112,
+      "avg_n_bio_in_top30": 5.166666666666667,
+      "avg_n_sm_in_top30": 24.833333333333332
+    },
+    "immunological": {
+      "n_diseases": 7,
+      "n_with_sm": 7,
+      "n_with_bio": 7,
+      "p30_mean": 0.09523809523809523,
+      "sm_p30_amongsm_mean": 0.10052910052910054,
+      "bio_p30_amongbio_mean": 0.047619047619047616,
+      "sm_p30_abs_mean": 0.09047619047619047,
+      "bio_p30_abs_mean": 0.0047619047619047615,
+      "avg_n_bio_in_top30": 3.0,
+      "avg_n_sm_in_top30": 27.0
+    },
+    "reproductive": {
+      "n_diseases": 1,
+      "n_with_sm": 1,
+      "n_with_bio": 1,
+      "p30_mean": 0.03333333333333333,
+      "sm_p30_amongsm_mean": 0.034482758620689655,
+      "bio_p30_amongbio_mean": 0.0,
+      "sm_p30_abs_mean": 0.03333333333333333,
+      "bio_p30_abs_mean": 0.0,
+      "avg_n_bio_in_top30": 1.0,
+      "avg_n_sm_in_top30": 29.0
+    }
+  },
+  "categories_flagged": [],
+  "sm_miss_profile": {
+    "n_hit": 4118,
+    "n_miss": 22446,
+    "hit_rate": 0.15502183406113537,
+    "freq_hit_mean": 18.079164643030598,
+    "freq_miss_mean": 11.49572306869821,
+    "freq_hit_median": 9.0,
+    "freq_miss_median": 5.0,
+    "mech_hit_rate": 0.37348227294803304,
+    "mech_miss_rate": 0.12634767887374143
+  },
+  "bio_miss_profile": {
+    "n_hit": 194,
+    "n_miss": 3161,
+    "hit_rate": 0.05782414307004471,
+    "freq_hit_mean": 7.61340206185567,
+    "freq_miss_mean": 6.204998418222082,
+    "freq_hit_median": 5.0,
+    "freq_miss_median": 5.0,
+    "mech_hit_rate": 0.4587628865979381,
+    "mech_miss_rate": 0.134134767478646
+  },
+  "sm_freq_mech_crosstab": {
+    "f=5-9|mech=False": {
+      "n": 5208,
+      "hits": 501,
+      "hit_rate": 0.09619815668202765
+    },
+    "f>=10|mech=False": {
+      "n": 8110,
+      "hits": 1375,
+      "hit_rate": 0.16954377311960542
+    },
+    "f=1|mech=False": {
+      "n": 2138,
+      "hits": 168,
+      "hit_rate": 0.07857811038353602
+    },
+    "f=3-4|mech=False": {
+      "n": 4089,
+      "hits": 342,
+      "hit_rate": 0.08363903154805576
+    },
+    "f=3-4|mech=True": {
+      "n": 972,
+      "hits": 280,
+      "hit_rate": 0.2880658436213992
+    },
+    "f>=10|mech=True": {
+      "n": 1359,
+      "hits": 626,
+      "hit_rate": 0.4606328182487123
+    },
+    "f=5-9|mech=True": {
+      "n": 1110,
+      "hits": 397,
+      "hit_rate": 0.35765765765765767
+    },
+    "f=2|mech=False": {
+      "n": 2645,
+      "hits": 194,
+      "hit_rate": 0.07334593572778828
+    },
+    "f=1|mech=True": {
+      "n": 333,
+      "hits": 82,
+      "hit_rate": 0.24624624624624625
+    },
+    "f=2|mech=True": {
+      "n": 600,
+      "hits": 153,
+      "hit_rate": 0.255
+    }
+  }
+}

@@ -4041,3 +4041,48 @@ Removing top-30 biologics and refilling from rank 31+ is FUNDAMENTALLY precision
 ### Recommended next hypothesis
 **h994 (P2)** — operates inside top-30 (the only rank window where signal differentiation appears to exist), targets tier precision (the metric h964 actually cares about), and complements the h979/h986 tier work.
 
+
+
+## Current Session (continued): h991 — SM Precision Gap (INVALIDATED but diagnostic) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h991 (INVALIDATED — framing backwards)
+
+### What was tested
+Stratified the h953 baseline p30=14.32% by drug-type within top-30. Computed `sm_p30|sm = sm_hits / n_sm_in_top30` and `bio_p30|bio = bio_hits / n_bio_in_top30` per disease, pooled across 5 seeds (h393 holdout, n≈200 holdout diseases/seed). Flagged any category with `sm_p30|sm ≤ bio_p30|bio - 5pp` for targeted SM demotion (per h991 spec).
+
+### Headline result — direction INVERTED
+| metric | value |
+|---|---|
+| sm_p30\|sm | **15.48%** |
+| bio_p30\|bio | **5.64%** |
+| gap (bio - sm) | **−9.85pp** (SM OUTPERFORMS bio slot-for-slot) |
+| categories with sm < bio (n≥50, bio_n≥10) | **0** |
+| categories with bio < sm | **17 of 18** (only endocrine n=6 inverts) |
+
+The h991 framing assumed biologics outperform SM slot-for-slot; actually the opposite is true. The h953 "bio_r30 > overall_r30 by +10pp" signal was a MACRO-averaging artifact: small bio_gt per disease (often 1–2 drugs) means each bio hit contributes disproportionately to the per-disease r30 mean.
+
+### Crucial side finding (diagnostic payoff)
+SM top-30 slot hit rate by `(train_frequency, mechanism_support)` cross-tab (pooled 26,564 SM slots):
+
+| freq bucket | mech | n slots | hit_rate |
+|---|---|---|---|
+| f=1 | False | 2138 | 7.86% |
+| f=2 | False | 2645 | 7.33% |
+| f=3-4 | False | 4089 | 8.36% |
+| f=5-9 | False | 5208 | 9.62% |
+| f≥10 | False | 8110 | 16.95% |
+| f=1 | True  | 333 | 24.62% |
+| f≥10 | True | 1359 | **46.06%** |
+
+**6× precision range within SM top-30.** The ~4,783 SM slots with `f≤2 AND no mech` (18% of SM top-30 volume) hit at 7.57% — below current LOW tier (10.0%) and comparable to FILTER (6.8%). This is the actionable signal surfaced by h991 even though the framing failed: an explicit tier rule that demotes these slots should lift MEDIUM precision without regression elsewhere.
+
+### Why the h991 step-4 ship test was not run
+The decision rule `sm_p30|sm ≤ bio_p30|bio - 5pp` yielded zero qualifying categories, so the proposed SM demote rule had nothing to demote. Step 4 (ship gate measurement) was skipped because step 2 (qualifying categories) returned empty.
+
+### New hypotheses (3 added)
+- **h995 (P2):** Autoimmune biologic-mis-selection audit — in autoimmune (n=29), sm_p30|sm=39.15% but bio_p30|bio=13.91% (−25.2pp). Autoimmune is THE biologic-treatment category (anti-TNF, anti-IL6/17/23, anti-CD20); 13.9% means kNN is surfacing wrong biologic families. If confirmed, USAN-family-match filter could lift bio_p30 without global bio_r30 hit.
+- **h996 (P2):** SM low-freq no-mech tier demote — explicit `SM AND f≤2 AND no mech → cap at LOW` rule. Pooled hit rate 7.57% on ~4,783 slots; expect MEDIUM +0.5–1.5pp.
+- **h997 (P3):** Micro vs macro r30 — the h951/h953 bio_r30 headline is macro-inflated. Recompute micro-averaged r30 from h991 raw records; predict the +10pp bio>overall gap largely collapses.
+
+### Recommended next hypothesis
+**h996 (P2)** — small, self-contained tier-rule change with clean ship gate (MEDIUM +0.5pp, LOW drop ≤1pp). The freq×mech gradient is the strongest slot-level precision signal surfaced in the h953/h990/h991 trilogy.

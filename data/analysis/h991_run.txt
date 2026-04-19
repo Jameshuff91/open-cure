@@ -1,0 +1,78 @@
+==============================================================================
+h991: SM vs bio precision gap — diagnostic
+==============================================================================
+Expanded GT: 3589 diseases
+Biologic pool: 266 of 11656 drugs with targets
+Evaluable diseases: 1011
+
+--- Seed 42 ---
+  n=202 p30=13.37%  sm_p30|sm=14.06%  bio_p30|bio=7.22%  avg_bio_slots=2.87  n_dx_w/bio_slot=159
+--- Seed 123 ---
+  n=200 p30=15.02%  sm_p30|sm=16.44%  bio_p30|bio=7.10%  avg_bio_slots=3.65  n_dx_w/bio_slot=167
+--- Seed 456 ---
+  n=200 p30=13.67%  sm_p30|sm=15.01%  bio_p30|bio=2.09%  avg_bio_slots=3.23  n_dx_w/bio_slot=150
+--- Seed 789 ---
+  n=200 p30=13.80%  sm_p30|sm=14.75%  bio_p30|bio=4.78%  avg_bio_slots=3.33  n_dx_w/bio_slot=157
+--- Seed 2024 ---
+  n=200 p30=15.88%  sm_p30|sm=17.16%  bio_p30|bio=7.00%  avg_bio_slots=3.67  n_dx_w/bio_slot=158
+
+==============================================================================
+CROSS-SEED MEAN (5 seeds)
+==============================================================================
+  p30         = 14.35%
+  sm_p30|sm   = 15.48%
+  bio_p30|bio = 5.64%
+  gap (bio-sm)= -9.85pp
+  avg bio slots in top-30 = 3.35
+
+==============================================================================
+PER CATEGORY (pooled 5 seeds)
+==============================================================================
+category              n  n_sm n_bio     p30   sm|sm  bio|bio     gap  sm_abs  bio_abs  avg_bio
+other               320   320   253   7.34%   8.02%    2.86% -5.16pp   7.09%    0.25%     3.22
+infectious          149   149    55  20.25%  20.54%    0.36% -20.18pp  20.22%    0.02%     0.93
+cancer              116   116   115  15.20%  16.70%    7.31% -9.39pp  13.94%    1.26%     4.80
+cardiovascular       63    63    55  22.43%  23.40%    8.51% -14.89pp  21.11%    1.32%     3.49
+metabolic            54    54    54   8.77%   9.00%    7.16% -1.83pp   7.84%    0.93%     3.67
+neurological         50    50    43  10.20%  10.43%    5.81% -4.61pp  10.00%    0.20%     1.68
+dermatological       48    48    35  21.67%  24.90%    3.74% -21.16pp  21.46%    0.21%     3.92
+gastrointestinal     38    38    35  12.81%  12.87%    6.22% -6.65pp  11.93%    0.88%     3.79
+autoimmune           31    31    29  30.65%  39.15%   13.91% -25.24pp  27.20%    3.44%     8.48
+renal                23    23    20  21.30%  22.55%   18.92% -3.63pp  20.43%    0.87%     2.48
+ophthalmic           22    22    20  18.03%  21.79%    5.46% -16.33pp  16.97%    1.06%     6.18
+respiratory          21    21    21  14.92%  16.24%    6.35% -9.89pp  14.29%    0.63%     3.90
+psychiatric          18    18     8  32.96%  33.41%    0.00% -33.41pp  32.96%    0.00%     0.94
+musculoskeletal      18    18    17  12.41%  14.95%    7.21% -7.74pp  11.30%    1.11%     5.17
+hematological        17    17    17   9.41%   9.94%    6.44% -3.50pp   8.04%    1.37%     6.00
+immunological         7     7     7   9.52%  10.05%    4.76% -5.29pp   9.05%    0.48%     3.00
+endocrine             6     6     6  20.56%  19.20%   29.37% +10.17pp  17.22%    3.33%     3.83
+reproductive          1     1     1   3.33%   3.45%    0.00% -3.45pp   3.33%    0.00%     1.00
+
+FLAGGED (n>=50 pooled, gap>=5pp, n_with_bio>=10): []
+
+==============================================================================
+SM MISS-PROFILE (top-30 SM slots pooled across seeds)
+==============================================================================
+  sm: n_hit=4118 n_miss=22446 hit_rate=15.50%
+    freq: hit_mean=18.08 miss_mean=11.50  hit_median=9.0 miss_median=5.0
+    mech: hit_rate=37.35%  miss_rate=12.63%
+  bio: n_hit=194 n_miss=3161 hit_rate=5.78%
+    freq: hit_mean=7.61 miss_mean=6.20  hit_median=5.0 miss_median=5.0
+    mech: hit_rate=45.88%  miss_rate=13.41%
+
+==============================================================================
+SM TOP-30 SLOTS: hit_rate by (freq_bucket, mech_support)
+==============================================================================
+freq     mech    n_slots   hits  hit_rate
+f=1      False      2138    168     7.86%
+f=1      True        333     82    24.62%
+f=2      False      2645    194     7.33%
+f=2      True        600    153    25.50%
+f=3-4    False      4089    342     8.36%
+f=3-4    True        972    280    28.81%
+f=5-9    False      5208    501     9.62%
+f=5-9    True       1110    397    35.77%
+f>=10    False      8110   1375    16.95%
+f>=10    True       1359    626    46.06%
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h991_sm_precision_gap.json

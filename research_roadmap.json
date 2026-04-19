@@ -1649,7 +1649,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Reuse h953 per-disease records (data/analysis/h953_biologic_precision_pivot.json lacks SM split; rerun with explicit sm_p30 collection).",
         "For each category, compute mean sm_p30, mean bio_p30. Identify categories where sm_p30 is \u22655pp below bio_p30.",
@@ -1659,7 +1659,9 @@
       "depends_on": [
         "h953",
         "h951"
-      ]
+      ],
+      "findings": "INVALIDATED \u2014 hypothesis framing was backwards. 5-seed h393 holdout pooled: sm_p30|sm = 15.48%, bio_p30|bio = 5.64%. Gap is \u22129.85pp meaning SM OUTPERFORMS bio slot-for-slot, not the reverse. bio_r30 > overall_r30 (h953 baseline) is a MACRO-averaging artifact: small bio_gt_size per disease (often 1\u20132 biologics) means each bio hit contributes disproportionately to the per-disease r30 mean. Slot-for-slot (p30|type), biologics are LOWER precision in 17 of 18 categories; only endocrine (n=6, too small) inverts. h991's step-2 decision rule (\u2018categories where sm_p30 \u2264 bio_p30 \u2212 5pp\u2019) yields ZERO qualifying categories (n\u226550, bio_n\u226510). Precision can\u2019t be lifted by demoting SM slots as h991 proposed. **Valuable side finding (diagnostic):** within SM top-30, train_frequency \u00d7 mechanism_support is a dominant precision gradient \u2014 f=1\u20132 no-mech slots hit at 7.5% vs f\u226510+mech slots at 46.06% (6\u00d7 range, pooled n=4783 vs 1359). This freq+mech gradient is the actionable precision signal surfaced by h991 and motivates h996 (tier-rule demote for low-freq no-mech SM) and strengthens h994 (in-window re-ranking). Also confirms h957\u2019s global bio demote was directionally right on precision but failed ship gate because biologic GT is too recall-critical per disease. Raw: data/analysis/h991_sm_precision_gap.json + data/analysis/h991_run.txt.",
+      "result_metric": "sm_p30|sm = 15.48%, bio_p30|bio = 5.64% (gap \u22129.85pp); 0/18 categories show SM < bio at n\u226550; SM freq+mech crosstab 7.5% \u2192 46.06% hit rate gradient"
     },
     {
       "id": "h992",
@@ -1719,6 +1721,66 @@
       "depends_on": [
         "h990",
         "h953"
+      ]
+    },
+    {
+      "id": "h995",
+      "title": "Autoimmune biologic-mis-selection audit \u2014 bio_p30|bio only 13.9% vs sm 39.1%",
+      "category": "precision",
+      "rationale": "h991 diagnostic (pooled 5 seeds, n=29 autoimmune diseases) shows a striking gap: sm_p30|sm=39.1% but bio_p30|bio=13.9% (\u221225.2pp). Autoimmune is a category where biologics ARE the gold-standard therapy class (anti-TNF, anti-IL6, anti-IL17, anti-IL23, CD20-depletion, JAK-inhibitors). A 13.9% hit rate on biologic slots means the kNN is surfacing the WRONG biologics \u2014 e.g. recommending anti-CD20 for a disease where anti-TNF is indicated, or oncology biologics instead of immunology biologics. Hypothesis: if we inspect which biologic *families* (by USAN stem: -mab vs -cept vs cytokine) are in top-30 vs the bio_gt for the same disease, we'll find systematic family misalignment. If confirmed, a \u2018biologic-family-match\u2019 filter (only keep top-30 biologics whose family matches any biologic in GT of the k=3 nearest neighbor diseases) should lift autoimmune bio_p30 without crashing bio_r30. Low effort diagnostic first.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "For each autoimmune holdout disease, list top-30 biologic picks and the bio_gt drugs; extract USAN-suffix family for each (mab, cept, kinra, ferax, etc.).",
+        "Compute family-match rate: fraction of top-30 biologics whose family appears in the disease's bio_gt. Also compute same for hits vs misses.",
+        "If family-match hit_rate > family-mismatch hit_rate by \u22653x, propose a biologic-family-match filter and measure on 5-seed holdout.",
+        "Ship gate: bio_p30|bio lift \u22655pp on autoimmune AND global bio_r30 drop \u22642pp."
+      ],
+      "depends_on": [
+        "h991",
+        "h939"
+      ]
+    },
+    {
+      "id": "h996",
+      "title": "SM low-freq no-mech tier demote \u2014 6x precision gradient within SM top-30",
+      "category": "precision",
+      "rationale": "h991 diagnostic cross-tab (SM top-30 slots, pooled 5 seeds, n=26,564): hit rate ranges from 7.86% (f=1 no-mech) to 46.06% (f\u226510 + mech) \u2014 a 6\u00d7 gradient. Currently the tier system uses train_frequency and mechanism_support indirectly (via sub_reason paths) but does not have an explicit TIER-level rule that demotes SM predictions where f\u22642 AND no mechanism_support to LOW or FILTER. Pooled 4,783 SM slots (~18% of all SM slots in top-30) fall in this bucket at 7.57% precision \u2014 below current LOW tier 10.0% and comparable to FILTER 6.8%. Test: add a tier-override rule 'SM AND train_frequency\u22642 AND NOT mechanism_support \u2192 cap at LOW (force demotion from MEDIUM/HIGH)'. Measure on 5-seed h393: expect MEDIUM precision +0.5 to +1.5pp and LOW precision approximately flat (since demoted slots were already low-quality).",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "In a copy of _assign_confidence_tier, add rule before tier assignment: if drug is SM AND train_frequency\u22642 AND NOT mechanism_support, cap final tier at LOW.",
+        "Run h393 evaluator 5 seeds; compare pre/post tier precisions.",
+        "Ship gate: MEDIUM precision +\u22650.5pp AND LOW precision drop \u22641pp AND no tier-ordering inversions.",
+        "Audit: count tier demotions per tier to confirm rule targets MEDIUM slots (not already-LOW)."
+      ],
+      "depends_on": [
+        "h991",
+        "h994"
+      ]
+    },
+    {
+      "id": "h997",
+      "title": "Macro-averaged r30 amplifies small-|GT| noise \u2014 replace bio_r30 headline with |GT|-weighted version",
+      "category": "meta",
+      "rationale": "h991 exposed that bio_r30=30.31% > overall_r30=19.79% (h953 headline) was driven by macro-averaging over diseases with tiny bio_gt (often 1\u20132 biologics). When bio_gt=1, a single bio hit contributes 100% to that disease's bio_r30; when bio_gt=20, the same single hit contributes 5%. Macro-mean makes the tiny-|GT| cases dominate the headline. This drove three false narratives: h951 'biologic failure dissolved' (actually: biologics are fine on recall but lower on slot-level precision), h953 hypothesis framing ('precision pivot should be on SM'), and implicitly h906/h921/h924 motivations. Fix: compute MICRO-averaged bio_r30 = (total bio hits across diseases) / (total bio_gt across diseases) alongside macro. Report both in research_spec and CLAUDE.md. Predict: micro bio_r30 \u226a macro bio_r30 because large-|GT| diseases (where biologics ARE treatment class, like autoimmune) have the lowest hit rates.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Compute micro-averaged bio_r30, sm_r30, overall_r30 from h991 raw records.",
+        "Compare to the macro numbers; quantify how much of the +10pp bio_r30 > overall_r30 gap collapses.",
+        "Update CLAUDE.md 'Key Metrics' section with both macro and micro bio_r30.",
+        "Update research_spec baseline table to flag the metric-mix pitfall (cf h967)."
+      ],
+      "depends_on": [
+        "h991",
+        "h951"
       ]
     }
   ],
