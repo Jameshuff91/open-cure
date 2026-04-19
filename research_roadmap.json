@@ -982,7 +982,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Reconstruct DRKG as a PyG HeteroData object (nodes: drug, disease, gene, pathway; edges: treats, associates, etc.)",
         "Train GraphSAGE on DRKG with neighborhood sampling on 1x RTX 4090 or A100",
@@ -993,7 +993,9 @@
         "Destroy instance; if <20/71 become evaluable, mark invalidated with clear reason"
       ],
       "findings": "",
-      "result_metric": ""
+      "result_metric": "",
+      "assigned_to": "interactive-claude",
+      "claimed_at": "2026-04-19T10:20:17"
     },
     {
       "id": "h924",
