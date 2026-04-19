@@ -46,6 +46,8 @@ SLACK_WEBHOOK_ENV_VAR = "SLACK_WEBHOOK_URL"
 MAX_CONSECUTIVE_ERRORS = 5  # Stop after this many consecutive errors
 RETRY_BACKOFF_BASE = 5  # Base seconds for exponential backoff on errors
 SESSION_TIMEOUT_SECONDS = 1800  # 30 min max per session to prevent hangs
+SILENT_RATE_LIMIT_COOLDOWN_SECONDS = 3600  # Default wait when short-response-exit-1 looks like silent rate limit
+MAX_SILENT_RATE_LIMIT_STRIKES = 4  # Bail if this many 60-min cooldowns do not resolve it (hard-stuck CLI)
 
 
 def setup_session_logger(project_dir: Path, session_num: int) -> logging.Logger:
@@ -367,6 +369,11 @@ def run_claude_session(
 
     process: subprocess.Popen[str] | None = None
     try:
+        env = os.environ.copy()
+        env["MAX_THINKING_TOKENS"] = env.get("MAX_THINKING_TOKENS", "31999")
+        if logger:
+            logger.info("MAX_THINKING_TOKENS=%s", env["MAX_THINKING_TOKENS"])
+
         process = subprocess.Popen(
             cmd,
             stdin=subprocess.PIPE,
@@ -374,6 +381,7 @@ def run_claude_session(
             stderr=subprocess.PIPE,
             text=True,
             cwd=str(cwd),
+            env=env,
         )
 
         assert process.stdin is not None
@@ -501,7 +509,20 @@ def run_claude_session(
                 if logger:
                     logger.error(msg)
                 print(f"WARNING: {msg}")
-                return "error", msg
+                # Distinguish between short-response causes:
+                #   - "Prompt is too long" — the input prompt exceeded CLI/model
+                #     limits. Sleeping does not fix this; surface as a hard
+                #     fatal error so the human can trim the prompt or data.
+                #   - Any other short response with exit code 1 — most often a
+                #     silent Max-plan usage-window exhaustion that did not emit
+                #     a parseable "resets in X" string. Treat as cooldown so the
+                #     loop sleeps instead of counting toward MAX_CONSECUTIVE_ERRORS.
+                lower = (response_text + "\n" + stderr_text).lower()
+                if "prompt is too long" in lower or "prompt too long" in lower or "input too long" in lower:
+                    if logger:
+                        logger.error("Prompt-too-long error — bailing, not rate limit")
+                    return "fatal", f"Prompt too long: {msg}"
+                return "silent_rate_limit", msg
 
             return "error", error_msg
 
@@ -565,6 +586,7 @@ def run_research_agent(
     # Main loop
     iteration = starting_iteration
     consecutive_errors = 0
+    silent_rate_limit_strikes = 0
 
     while True:
         iteration += 1
@@ -597,6 +619,7 @@ def run_research_agent(
 
         if status == "continue":
             consecutive_errors = 0  # Reset error counter on success
+            silent_rate_limit_strikes = 0
             print(f"\nAgent will auto-continue in {AUTO_CONTINUE_DELAY_SECONDS}s...")
             print_progress_summary(project_dir)
             time.sleep(AUTO_CONTINUE_DELAY_SECONDS)
@@ -609,6 +632,20 @@ def run_research_agent(
             session_logger.info("Agent requested pause")
             break
 
+        elif status == "fatal":
+            print("\n" + "=" * 70)
+            print("  FATAL — HUMAN INTERVENTION REQUIRED")
+            print("=" * 70)
+            print(f"\n{response}")
+            print(
+                "\nThis error is not recoverable by sleeping. Most likely the "
+                "prompt + context is over the CLI limit. Trim "
+                "research_loop/prompts/research_prompt.md, CLAUDE.md, or "
+                "auto-loaded project files, then restart."
+            )
+            session_logger.error("Fatal error: %s", response)
+            break
+
         elif status == "cooldown":
             try:
                 cooldown_seconds = int(response)
@@ -617,6 +654,31 @@ def run_research_agent(
             cooldown_seconds += 300
             session_logger.info("Cooldown: %d seconds", cooldown_seconds)
             wait_for_cooldown(cooldown_seconds, project_dir)
+
+        elif status == "silent_rate_limit":
+            silent_rate_limit_strikes += 1
+            session_logger.warning(
+                "Silent rate limit strike %d/%d: %s",
+                silent_rate_limit_strikes, MAX_SILENT_RATE_LIMIT_STRIKES, response,
+            )
+            print(
+                f"\n  Probable silent rate limit "
+                f"({silent_rate_limit_strikes}/{MAX_SILENT_RATE_LIMIT_STRIKES}): {response}"
+            )
+            if silent_rate_limit_strikes >= MAX_SILENT_RATE_LIMIT_STRIKES:
+                print("\n" + "=" * 70)
+                print("  TOO MANY SILENT-RATE-LIMIT STRIKES - STOPPING")
+                print("=" * 70)
+                print("\nCooldowns did not resolve the short-response state.")
+                print("The Claude CLI may be genuinely broken; investigate manually.")
+                print(f"\nCheck logs: {project_dir / LOG_DIR_NAME}/")
+                session_logger.error("Max silent-rate-limit strikes reached, stopping")
+                break
+            session_logger.info(
+                "Cooldown (silent rate limit): %d seconds",
+                SILENT_RATE_LIMIT_COOLDOWN_SECONDS,
+            )
+            wait_for_cooldown(SILENT_RATE_LIMIT_COOLDOWN_SECONDS, project_dir)
 
         elif status == "error":
             consecutive_errors += 1

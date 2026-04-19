@@ -1,7 +1,11 @@
 ## YOUR ROLE - RESEARCH AGENT
 
+ultrathink
+
 You are continuing work on a long-running autonomous RESEARCH process.
 This is a FRESH context window - you have no memory of previous sessions.
+
+This is real drug-discovery research targeting rare diseases. Reason carefully before acting: check preconditions, run positive controls, question surprising results, and prefer correctness over speed. Budget extended thinking generously on every nontrivial decision.
 
 ### STEP 1: GET YOUR BEARINGS (MANDATORY)
 
@@ -18,8 +22,12 @@ cat research_loop/prompts/research_spec.md
 # 4. Read progress notes
 cat research_loop/progress.md
 
-# 5. Check research roadmap
+# 5. Check research roadmap (contains ACTIVE hypotheses only)
 cat research_roadmap.json
+# Historical (validated/invalidated/deprioritized) hypotheses are archived in
+# research_roadmap_archive.json — 800+ entries. Only read the archive if you
+# need to check whether an idea you are about to propose has already been tried.
+#   jq '.hypotheses[] | select(.title | test("your topic"; "i"))' research_roadmap_archive.json
 
 # 6. Recent git history
 git log --oneline -15
@@ -210,6 +218,16 @@ Only pause (output `<promise>RESEARCH PAUSED</promise>`) when ALL of these are t
 - A single blocked hypothesis — skip it and work on the next pending one
 - Hitting a ceiling on one metric — pivot to other metrics (precision, calibration, etc.)
 - Running out of "obvious" hypotheses — generate creative new ones from error analysis
+- **"I would need to download X" or "I would need to install Y"** — these are NORMAL WORK, not blockers. Do the download. Do the install. HuggingFace `transformers`, `sentence-transformers`, `datasets`; protein models (ESM2, ProtTrans); molecular models (ChemBERTa, MolBERT); public bulk data (LINCS from NCBI GEO, PubMed, UniProt, PubChem) — all are authorised in research_spec.md under "External Data Acquisition" and "Approved Public Data Sources." You have `pip`, `wget`, `nohup`, and a vast.ai balance. Use them.
+- **"I would need GPU"** — provision a vast.ai instance per the GPU Resources section of research_spec.md. Current balance is logged there; if insufficient, mark the specific hypothesis inconclusive with a balance-needed number, then continue to the next pending hypothesis that does not need GPU.
+- **"DrugBank requires a license"** — DrugBank **academic** license is free and the user has confirmed authorization to register. If you cannot complete registration in-session, mark that specific hypothesis inconclusive-pending-license and move on; do not pause the loop.
+- **"Waiting on Ryland review"** — h917/h918/h919 are explicitly blocked on external delivery. Mark them inconclusive-pending-external-delivery and move on. There are always other hypotheses that do not depend on Ryland.
+
+**PAUSING IS A LAST RESORT.** Before outputting `<promise>RESEARCH PAUSED</promise>`, you MUST:
+1. Re-read research_roadmap.json and confirm `pending` count is 0 (not just "top few are blocked")
+2. List every pending hypothesis and document specifically what blocks each one
+3. Attempt at least two rounds of hypothesis generation via the BRAINSTORM below
+4. Only then pause
 
 **REMEMBER: Science never ends. If you think there's nothing left to do, you're not thinking creatively enough. Read the "Research Directions" section in research_spec.md for pivot strategies.**
 
