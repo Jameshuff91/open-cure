@@ -63,9 +63,67 @@ for h1200 loss-weighting.
 
 ### Recommended next hypothesis
 **h1212 (P2)** — finish the embedding ceiling sweep before committing
-compute to h1200. Alternatively, **h1200 (P1)** — the benchmark is now
-live, so h1200's success criterion is fixed: beat Node2Vec on R@30 AND
-AUPRC with no regression on the other three metrics.
+compute to h1200.
+
+---
+
+## Current Session (continued): h1212 — Embedding ceiling sweep (VALIDATED, with recalibration, 2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1212 (VALIDATED + surfaces recalibration need)
+
+### What was tested
+Extended h1199 benchmark to 4 embeddings. Added `--restrict-to-embedding`
+flag to `clean_embedding_benchmark.py` for apples-to-apples comparisons
+when embeddings have different disease-vocabulary coverage.
+
+### Headline table (restricted comparisons on same disease universe)
+
+| Embedding | n_dis | R@30 | MRR | AUPRC | AUROC |
+|---|---|---|---|---|---|
+| node2vec_256 (full) | 1011 | **19.55%±1.18%** | **0.0284** | 0.0569 | 0.5766 |
+| fastrp_256 (full) | 1011 | 18.79%±0.92% | 0.0267 | **0.0584** | **0.5790** |
+| node2vec_256 (restricted to no_treatment dis) | 838 | 17.09%±0.75% | 0.0246 | 0.0531 | 0.5686 |
+| node2vec_256_no_treatment | 850 | 8.46%±0.94% | 0.0153 | 0.0300 | 0.5555 |
+| graphsage_256 | 850 | 8.17%±0.53% | 0.0126 | 0.0322 | 0.5529 |
+
+### Three findings
+1. **FastRP nearly matches Node2Vec** (R@30 18.79% vs 19.55%, within 1σ)
+   and slightly BEATS it on AUPRC and AUROC. A simple random projection
+   captures most of Node2Vec's repurposing signal. → h1215 (FastRP fusion).
+2. **Treatment-edge leakage is ~50%, not ~29%.** Apples-to-apples on 850
+   diseases: full Node2Vec 17.09% → no_treatment 8.46%. CLAUDE.md claims
+   36.59% → 26.06% = 71.2% retained. On this benchmark, only 49.5% is
+   retained. Material recalibration of the "honest transductive" claim.
+   → h1214 (reconcile discrepancy before external citation).
+3. **GraphSAGE's disease universe is narrower.** GraphSAGE and no_treatment
+   share a 94,247-entity preprocessing (vs 49,616 for node2vec/fastrp) and
+   miss 161 GT diseases that the smaller preprocessing retains. The h922-v2
+   GraphSAGE regression is partly coverage, not purely ranking quality.
+
+### DRKG-only ceilings per metric (full 1011-disease universe)
+R@30 ≤ 19.55%, MRR ≤ 0.0284, AUPRC ≤ 0.0584 (FastRP), AUROC ≤ 0.5790 (FastRP).
+**h1200 must exceed all four to qualify as improvement.**
+
+### Outputs
+- data/analysis/clean_benchmark_fastrp_256.{json,md}
+- data/analysis/clean_benchmark_node2vec_256_no_treatment.{json,md}
+- data/analysis/clean_benchmark_node2vec_256_restricted_to_no_treatment.{json,md}
+- scripts/clean_embedding_benchmark.py (+ `--restrict-to-embedding` flag)
+
+### New hypotheses (2 added)
+- **h1214 (P2):** Reconcile the 71.2% vs 49.5% retention discrepancy —
+  either find the original no_treatment build, fix CLAUDE.md, or
+  retrain on matching vocabulary. Blocks external citation of the
+  leakage-retention number.
+- **h1215 (P2):** FastRP fusion — if a random projection is within 1σ of
+  Node2Vec on R@30 and beats it on AUPRC/AUROC, score-fusion may give
+  additive gains. Also a candidate h1200 warm-start initializer.
+
+### Recommended next hypothesis
+**h1200 (P1)** — benchmark infrastructure is now complete with per-metric
+DRKG ceilings declared. The supervised GNN has a clear success bar.
+Alternatively, **h1214 (P2, low effort)** — resolve the CLAUDE.md
+discrepancy before it shows up in the paper.
 
 ---
 

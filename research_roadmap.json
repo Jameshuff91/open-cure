@@ -2391,7 +2391,7 @@
       "expected_impact": "infrastructure",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Convert fastrp_256.parquet to NPY (if needed) and run h1199 on it",
         "Build node2vec_256_no_treatment NPY files and re-run h1199 (honesty baseline)",
@@ -2399,8 +2399,8 @@
         "Compile a comparison table: rows=embeddings, cols=5 metrics+eligible_diseases",
         "Declare the DRKG-only ceiling on each metric as the h1200 minimum-bar"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Extended h1199 benchmark to 4 embeddings, then added --restrict-to-embedding for apples-to-apples comparisons. Results on same disease universe (850 diseases, matched to no_treatment's vocabulary):\n\n| Embedding | n_dis | R@30 | MRR | AUPRC | AUROC |\n|---|---|---|---|---|---|\n| node2vec_256 (full) | 1011 | 19.55% | 0.0284 | 0.0569 | 0.5766 |\n| fastrp_256 (full) | 1011 | 18.79% | 0.0267 | 0.0584 | 0.5790 |\n| node2vec_256 (restricted to no_treatment diseases) | 838 | 17.09% | 0.0246 | 0.0531 | 0.5686 |\n| node2vec_256_no_treatment | 850 | 8.46% | 0.0153 | 0.0300 | 0.5555 |\n| graphsage_256 | 850 | 8.17% | 0.0126 | 0.0322 | 0.5529 |\n\nThree findings:\n1. FastRP nearly matches Node2Vec (R@30 18.79% vs 19.55%) and slightly beats it on AUPRC (0.0584) and AUROC (0.5790). A simple random projection on DRKG edges captures most of Node2Vec's repurposing signal. This weakens the case for Node2Vec-specific tuning and favours switching to a learnable GNN (h1200).\n\n2. No-treatment Node2Vec R@30 = 8.46% on the 850-disease universe vs 17.09% for full Node2Vec on the SAME universe \u2192 **treatment-edge leakage accounts for 50% of performance, not the 29% previously claimed in CLAUDE.md (71.2% retained)**. On this benchmark methodology, only 49.5% of recall is retained from indirect paths. This is a material recalibration of the 'honest baseline' and should be cross-referenced against whatever no_treatment build was used in the original measurement.\n\n3. GraphSAGE and no_treatment Node2Vec perform nearly identically (R@30 8.17% vs 8.46%). Both miss the same 161 GT diseases from their vocabulary \u2014 they share a preprocessing pipeline (94,247 entities, different from the 49,616-entity DRKG used by node2vec_256 and fastrp_256). The low GraphSAGE score from h922-v2 is partly a coverage issue, not pure representation quality. This revises the h922-v2 post-mortem: GraphSAGE didn't just learn a worse ranking \u2014 it learned a ranking over a narrower universe.\n\nOutputs:\n- data/analysis/clean_benchmark_fastrp_256.{json,md}\n- data/analysis/clean_benchmark_node2vec_256_no_treatment.{json,md}\n- data/analysis/clean_benchmark_node2vec_256_restricted_to_no_treatment.{json,md}\n- scripts/clean_embedding_benchmark.py gains --restrict-to-embedding flag\n\nDRKG-only ceilings per metric (from best-performing embedding on full 1011-disease universe): R@30 \u2264 19.55%, MRR \u2264 0.0284, AUPRC \u2264 0.0584, AUROC \u2264 0.5790. h1200 must beat these.",
+      "result_metric": "Node2Vec beats FastRP on R@30 (19.55% vs 18.79%); FastRP beats Node2Vec on AUPRC (0.0584 vs 0.0569). No_treatment retains 49.5% of R@30, not 71.2%."
     },
     {
       "id": "h1213",
@@ -2416,6 +2416,44 @@
         "For a 50-disease stratified sample (10 per size bucket), manually classify top-1: exact_gt / atc_class_gt / plausible / inverse / implausible",
         "Report Hits@1 under each relaxed definition",
         "Save data/analysis/h1213_hits1_audit.{json,md}"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1214",
+      "title": "Reconcile the 71.2%\u219249.5% leakage-retention discrepancy \u2014 find the original no_treatment build",
+      "category": "infrastructure",
+      "rationale": "h1212 found no_treatment Node2Vec retains only 49.5% of full Node2Vec R@30 (17.09%\u21928.46%), contradicting CLAUDE.md's 71.2% (36.59%\u219226.06%). Before shipping h1212 findings externally, we need to know whether: (a) the no_treatment embedding file on disk is a different build than what CLAUDE.md measured, (b) the original eval methodology was different (e.g., micro-averaged instead of macro), or (c) the 71.2% claim was wrong. Git-blame the CSV, git-log the scripts, and rerun the original eval script to determine which is the case.",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "git log -- data/embeddings/node2vec_256_no_treatment.csv",
+        "find scripts/ -name '*no_treatment*' and re-run whichever script computed 26.06%",
+        "Compare the eval methodology (micro vs macro, k, candidate pool, split)",
+        "If methodology matches, retrain no_treatment Node2Vec on 49,616-entity DRKG (matching node2vec_256's vocab)",
+        "Decide: ship h1212 as-is with caveat, correct CLAUDE.md, or correct the embedding"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1215",
+      "title": "FastRP deserves a second look \u2014 it's within 0.8pp of Node2Vec on R@30 and beats it on AUPRC/AUROC",
+      "category": "recall_lever",
+      "rationale": "h1212 showed FastRP achieves R@30=18.79%\u00b10.92% vs Node2Vec's 19.55%\u00b11.18% (within 1\u03c3) while SLIGHTLY beating it on AUPRC (0.0584 vs 0.0569) and AUROC (0.5790 vs 0.5766). FastRP is a cheap random-projection algorithm that trains in seconds compared to Node2Vec's random-walk hours. If FastRP is actually competitive, we can: (a) use it as the production embedding (much cheaper to retrain on growing DRKG), (b) stack FastRP + Node2Vec via score fusion for potentially additive gains, (c) use FastRP as the initialization for h1200 supervised GNN (faster warm-start than Node2Vec).",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Score fusion: rank-mean of Node2Vec and FastRP scores; rerun h1199 benchmark",
+        "Score fusion: score-mean (z-normalized); rerun h1199",
+        "Run kNN with Node2Vec||FastRP concat (512-dim); rerun h1199",
+        "Declare whether any fusion beats Node2Vec alone on all 5 metrics",
+        "If yes, add to production; if no, document as negative control"
       ],
       "findings": "",
       "result_metric": ""
@@ -5167,6 +5205,12 @@
       "hypothesis_id": "h1199",
       "learning": "Clean multi-metric benchmark confirms Node2Vec beats GraphSAGE on all 5 standard metrics (R@30 +11.4pp, MRR +0.016, AUPRC +0.025, AUROC +0.024). Per-drug R@30=19.55% (matches h958 overall_r30=19.49%). Per-category recall varies 10%-41% \u2014 cancer/psychiatric/hematological/neurological lag, endocrine/ophthalmic/reproductive/infectious lead.",
       "implication": "h1200/h1201 experiments now have a fixed 5-metric comparison target. Any future embedding or GNN claim must beat Node2Vec on *all* metrics (or at least on R@30 + AUPRC with no other regression) to qualify as improvement. The per-category spread is also a targeting signal for category-specific experiments."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1212",
+      "learning": "On h1199's clean benchmark methodology, the 'no-treatment' Node2Vec embedding retains only 49.5% of full Node2Vec's R@30, versus the 71.2% claimed in CLAUDE.md. Apples-to-apples 838-850 disease universe: full Node2Vec 17.09% \u2192 no_treatment 8.46%. Treatment-edge leakage is ~2x larger than documented.",
+      "implication": "The paper's 'honest transductive' claim at 26.06% R@30 may have been computed on a different no_treatment embedding build or methodology. Before citing the 71.2% retention number externally, reconcile with h1212's 49.5% finding. Either: (a) identify which embedding build CLAUDE.md measured, (b) add an errata to the methodology docs, or (c) retrain no_treatment Node2Vec on the 49,616-entity DRKG to match the Node2Vec/FastRP vocabulary (currently it shares graphsage's 94K)."
     }
   ],
   "collaborations": [

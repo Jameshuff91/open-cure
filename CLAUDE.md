@@ -104,6 +104,8 @@ vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
 
 **h1199 VALIDATED (2026-04-19, infrastructure):** Shipped `scripts/clean_embedding_benchmark.py` — tier-free 5-seed benchmark reporting all five metrics. Node2Vec baseline: **R@30=19.55%±1.18%, MRR=0.0284, AUPRC=0.0569, AUROC=0.5766** on 1,011 eligible diseases; matches h958 overall_r30=19.49% (independent pipeline → convention correct). GraphSAGE loses on all five metrics (R@30=8.17%, -11.4pp). Every h1200/h1201 run drops into the same table via `OPEN_CURE_EMBEDDINGS_PREFIX`. Per-category spread: endocrine 41% / ophthalmic 38% (high) → psychiatric 10% / hematological 10% (low).
 
+**h1212 VALIDATED (2026-04-19, infrastructure + recalibration):** Extended h1199 to 4 embeddings + `--restrict-to-embedding` flag. DRKG-only ceilings: R@30 ≤ 19.55% (node2vec), MRR ≤ 0.0284 (node2vec), AUPRC ≤ 0.0584 (fastrp), AUROC ≤ 0.5790 (fastrp). **FastRP nearly matches Node2Vec** (R@30 18.79% vs 19.55%, slightly beats on AUPRC/AUROC) → h1215 FastRP fusion candidate. **Treatment-edge leakage is ~50%, not ~29%** (apples-to-apples 850 diseases: full Node2Vec 17.09% → no_treatment 8.46% = 49.5% retained vs CLAUDE.md's 71.2% claim) → h1214 reconcile before external citation.
+
 **Remaining viable surfaces:** boundary-targeted re-rank (h1006), per-category adaptive (h1008), deliverable annotation columns (h1001, h1003, h1007, h1102), inverse positive controls (h1104), h1200 loss-weighting on h1103 residuals (h1110), expert-label calibration (h1203).
 
 **See `docs/claude/confidence_system_history.md` for full h900+ experiment detail.**

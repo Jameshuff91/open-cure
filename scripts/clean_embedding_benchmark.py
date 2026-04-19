@@ -312,6 +312,16 @@ def main():
         default=None,
         help="output file prefix (default: data/analysis/clean_benchmark_<prefix>)",
     )
+    ap.add_argument(
+        "--restrict-to-embedding",
+        type=str,
+        default=None,
+        help=(
+            "If set, restrict the disease universe to diseases covered by this "
+            "other embedding prefix. Lets us do apples-to-apples comparisons "
+            "against an embedding with narrower disease coverage."
+        ),
+    )
     args = ap.parse_args()
 
     prefix = args.prefix or os.environ.get("OPEN_CURE_EMBEDDINGS_PREFIX", "node2vec_256")
@@ -356,6 +366,15 @@ def main():
     # neighbours and as test targets).
     all_diseases = [d for d in knn_gt if d in lookup]
     print(f"Disease universe (knn_gt ∩ embeddings): {len(all_diseases):,}")
+
+    if args.restrict_to_embedding:
+        other_lookup, _, _ = load_embeddings(args.restrict_to_embedding)
+        before = len(all_diseases)
+        all_diseases = [d for d in all_diseases if d in other_lookup]
+        print(
+            f"Restricted to intersection with {args.restrict_to_embedding}: "
+            f"{before} → {len(all_diseases)}"
+        )
 
     per_seed_results: List[Dict] = []
 
