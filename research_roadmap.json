@@ -2191,7 +2191,7 @@
       "id": "h1103",
       "title": "Rank>20 known-indication audit \u2014 which drug categories dominate the 543 residuals",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "category": "error_analysis",
       "rationale": "h1100 closed the tier-rule misfire family but left 543 known-indication FILTER cases at rank>20 that are structural kNN mis-rankings. If these cluster into specific drug classes (biologics? targeted oncology? orphan drugs?), they become a targeted h1200 training signal: weight these pairs up during supervised GNN training to fix the kNN rank directly. Also identifies paper-visible mis-rankings most worth highlighting.",
       "expected_impact": "medium",
@@ -2203,7 +2203,9 @@
         "Identify top 5 drug-class x disease-category buckets by residual count",
         "Write to data/analysis/h1103_rank_over_20_audit.json + markdown table",
         "Propose concrete weighting scheme for h1200 GNN loss if clusters are clean"
-      ]
+      ],
+      "findings": "VALIDATED. Scanned all 543 rank_over_20 known-indication FILTER cases. Summary: Rank: 334 at ranks 21-25, 209 at ranks 26-30 (most just outside the cutoff). Mechanism: 401 mech=False (74%), 142 mech=True (26%) -- DRKG mechanism paths ARE present for 26% but kNN still ranks them low. Freq: 200 f<=2, 240 f=3-9, 103 f>=10 -- long tail plus a meaningful high-freq subset. Drug-class x disease-category top buckets: other_sm x infectious (66), other_sm x autoimmune (41), other_sm x cardiovascular (30), other_sm x dermatological (30), biologic_mab x autoimmune (28), macrolide_or_other_abx x infectious (20), kinase_inhibitor x autoimmune (10), sglt2 x renal/cv/metabolic (~7 total -- the Empagliflozin family from h1107). Disease categories dominate by volume: infectious (111), autoimmune (82), cardiovascular (52), dermatological (37). Implications for h1200 supervised GNN: (1) train with treatment-edge labels so the 401 mech=False cases can learn mechanism via embedding proximity rather than explicit path; (2) upweight biologic_mab x autoimmune (28), kinase_inhibitor x autoimmune (10), and the SGLT2 family as targeted recall levers -- each is a well-characterized newly-approved drug class with narrow DRKG history; (3) rank>20 cases concentrate in ranks 21-25 (62%) -- even a modest lift of 5 positions in the ranker recovers the majority. Output: data/analysis/h1103_rank_over_20_audit.json with all 543 cases + full clustering.",
+      "result_metric": "543 known-indication rank>20 FILTER cases clustered. 74% mech=False (canonical h1200 GNN target). Top bucket: biologic_mab x autoimmune (n=28). 62% of cases are at ranks 21-25 -- small ranker lift recovers most."
     },
     {
       "id": "h1104",
@@ -2306,6 +2308,41 @@
         "Add 'paper_section_3_5' category tag to the 5 Section-3.5 controls in scripts/positive_controls.py",
         "Add scripts/ci_check_section_3_5.py that runs just that subset and fails hard if corroboration count drops below current baseline (1 of 5)",
         "Ship as a pre-merge guard for any preprint-touching PR"
+      ]
+    },
+    {
+      "id": "h1110",
+      "title": "h1200 loss-weighting schema: upsample the 543 rank>20 known-indication pairs",
+      "priority": 2,
+      "status": "pending",
+      "category": "recall_lever",
+      "rationale": "h1103 identified 543 known-indication pairs where the kNN ranks them at 21-30 (filter threshold). These are the EXACT failure mode the supervised GNN should fix. Use this set as an upweighted training signal: weight >=3x on each (drug, disease) treatment edge from this set when computing the treatment-edge prediction loss. Evaluation: after h1200 trains, re-audit the same 543 pairs and measure how many moved to rank<=20. Gate: >=100 pairs (~20%) cross the rank-20 threshold.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "steps": [
+        "Gate: h1200 (supervised GNN) scaffolding must exist first",
+        "Load data/analysis/h1103_rank_over_20_audit.json into the GNN training pipeline",
+        "Apply sample weight 3x on the 543 (drug, disease) pairs in treatment-edge loss",
+        "Train h1200 with and without the upweighting; compare on h1199 5-metric benchmark",
+        "Re-run h1100 scan + h1103 audit on the new model; target >=100 pairs crossing rank 20",
+        "Document in paper as a principled recall-lever technique"
+      ]
+    },
+    {
+      "id": "h1111",
+      "title": "biologic_mab x autoimmune audit \u2014 the 28 rank>20 FDA-approved cases",
+      "priority": 3,
+      "status": "pending",
+      "category": "error_analysis",
+      "rationale": "h1103 isolated 28 known-indication FILTER cases where the drug is a monoclonal antibody and the disease is autoimmune. This is the biggest biologic cluster and aligns with Ryland's autoimmune / inflammation expertise. Spot-check all 28: are they (a) legitimate FDA-approved indications the ranker fails (good h1200 training signal), (b) off-label uses that shouldn't be in GT (GT cleanup), or (c) kNN structural mismatches that need target/pathway-feature fusion? Gives Ryland a concrete 28-pair list for blinded review at the Feb 10 meeting.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Extract 28 biologic_mab x autoimmune cases from data/analysis/h1103_rank_over_20_audit.json",
+        "For each case: current rank, FDA approval status (DrugBank), in-GT source",
+        "Cluster by drug (e.g., all 4 adalimumab cases together)",
+        "Write to data/deliverables/h1111_biologic_autoimmune_rankdrop.csv with columns suitable for Ryland's review template",
+        "Tag in findings with [RYLAND]"
       ]
     }
   ],
@@ -5043,6 +5080,12 @@
       "hypothesis_id": "h1107",
       "learning": "Paper Section 3.5 'retrospectively corroborated' claim holds for only 1 of 5 rows (Rituximab->MS). Dantrolene, Lovastatin, Pitavastatin, Empagliflozin are ABSENT from their claimed disease's top predictions. For Empagliflozin the model surfaces 3 correct FDA indications (T2D/HF/CKD) but all at rank 21-52 -> FILTER via rank_over_20. Paper credibility issue at crown-jewel level.",
       "implication": "Recommend Paper v2 Option A revision: collapse Section 3.5 to one row (Rituximab->MS) and move others to supplementary 'prior art' table. The Empagliflozin case is the cleanest h1103 (rank>20 audit) candidate and the strongest argument for the h1200 supervised-GNN pivot."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1103",
+      "learning": "74% of the 543 rank>20 known-indication misfires have mech=False \u2014 sparse DRKG edge history, not a rule bug. 62% are at ranks 21-25 (just outside the threshold). Top clusters: other_sm x infectious (66), other_sm x autoimmune (41), biologic_mab x autoimmune (28). The SGLT2 family (Empagliflozin, ~7 cases) matches h1107's observation.",
+      "implication": "h1200 supervised GNN should upweight these 543 pairs during training (h1110 proposed). Biologic_mab x autoimmune (28 cases) is a natural Ryland review packet (h1111)."
     }
   ],
   "collaborations": [

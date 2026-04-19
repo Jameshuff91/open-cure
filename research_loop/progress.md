@@ -4433,3 +4433,45 @@ Framing "five predictions that are retrospectively corroborated" is not supporte
 **h1199 (P1, infrastructure)** — with Section 3.5 credibility surfaced, the infrastructure work to support a multi-metric comparison with TxGNN / HGTDR becomes even more urgent. A defensible paper v2 needs R@30 + Hits@K + MRR + AUPRC + AUROC all reported on the same 5-seed splits.
 
 Alternatively, **h1103 (P2)** — now that Empagliflozin is known to be the canonical rank>20 known-indication residual, the 543-row audit should build on that. Clusters by drug-class (SGLT2 inhibitors, biologics, newly-approved narrow-edge drugs) will directly inform h1200's loss weighting.
+
+
+## Current Session (continued): h1103 — Rank>20 Known-Indication Audit (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1103 (VALIDATED — clean h1200 training target)
+
+### What was tested
+Scanned all 543 known-indication FILTER cases at rank<=30 whose sub_reason is `rank_over_20` (identified by h1100). Clustered by drug class, disease category, mechanism support, train frequency, and rank bucket. Saved all 543 cases with metadata to `data/analysis/h1103_rank_over_20_audit.json`.
+
+### Key distributions
+| axis | top 3 |
+|---|---|
+| disease_category | infectious (111), autoimmune (82), cardiovascular (52) |
+| drug_class | other_sm (343, undifferentiated SM), macrolide_or_other_abx (25), corticosteroid (19) |
+| rank_bucket | 21-25 (334, 62%), 26-30 (209, 38%) |
+| mechanism | mech=False (401, 74%), mech=True (142, 26%) |
+| train_freq | f=3-9 (240), f<=2 (200), f>=10 (103) |
+
+### Top (drug_class x disease_category) clusters
+| drug_class | disease_category | n |
+|---|---|---|
+| other_sm | infectious | 66 |
+| other_sm | autoimmune | 41 |
+| other_sm | cardiovascular | 30 |
+| other_sm | dermatological | 30 |
+| **biologic_mab** | **autoimmune** | **28** |
+| macrolide_or_other_abx | infectious | 20 |
+| kinase_inhibitor | autoimmune | 10 |
+| quinolone_abx | infectious | 9 |
+| sglt2 | various | 7 |
+
+### Structural insight
+**74% of cases have mech=False** — the model has NO mechanism path for these drug-disease pairs in DRKG, yet the drugs are FDA-approved. This is the canonical "newly-approved drug with narrow DRKG edge history" pattern identified in h1107 (Empagliflozin → T2D/HF/CKD). A supervised GNN (h1200) that trains directly on treatment edges should learn these via embedding proximity rather than explicit mechanism paths.
+
+**62% of cases are at ranks 21-25**, only slightly outside the tier threshold. A modest ranker lift (5 positions) recovers the majority.
+
+### New hypotheses (2 added)
+- **h1110 (P2, recall lever):** Apply 3x sample weight on these 543 pairs during h1200 supervised GNN training. Gate: >=100 pairs cross rank-20 threshold post-training.
+- **h1111 (P3) [RYLAND]:** Deep-dive on the 28 biologic_mab x autoimmune cases. Packet for Feb 10 Ryland meeting.
+
+### Recommended next hypothesis
+**h1199 (P1, infrastructure)** — this and the three preceding hypotheses (h1100, h1101, h1107, h1103) have now established clear diagnostic + corrective targets for the h1200 supervised GNN. The infrastructure benchmark is the last gating step before the big GNN training run.
