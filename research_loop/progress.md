@@ -1,6 +1,38 @@
 # Research Loop Progress
 
-## Current Session: h995 — autoimmune biologic family-mis-selection audit (2026-04-19)
+## Current Session: h1002 — neighbor-augmented rescue test (2026-04-19)
+
+### Status: INVALIDATED — closes filter-form biologic precision family
+
+### Key Finding
+Only 1/16 (6.2%) of h995b unique-target autoimmune hits are rescued by k=3 kNN
+neighbor-bio_gt target-union augmentation. The other 15 (Tocilizumab→temporal
+arteritis, Anakinra/Canakinumab→FMF, Abatacept→SLE, Rituximab→microscopic
+polyangiitis/scleroderma, Adalimumab→non-behcets uveitis, etc.) are target-unique
+across their entire DRKG disease neighborhood. **Structural floor:** ≥50% of
+autoimmune biologic HITS are neighborhood-unique. Any filter on autoimmune
+biologics is CAPPED at halving bio_r30 (-50pp). This closes the filter-form
+biologic precision family: h953/h957/h990/h995/h1002 all fail at the same
+structural wall.
+
+### Shipped
+- `scripts/h1002_neighbor_augmented_rescue.py`
+- `data/analysis/h1002_neighbor_augmented_rescue.json`
+- `data/analysis/h1002_run.txt`
+
+### Rejected
+- Filter-form biologic precision pivots (entire family now closed)
+
+### New Hypotheses (1)
+- **h1003** (P3, low): Surface the 15 unrescued unique-target hits as a
+  `biologic_novel_target_family` deliverable annotation column. These are
+  the highest-value triage signals for expert (Ryland) review — biologics
+  that appear in bio_gt with no target-family peer in their neighborhood
+  are either first-in-class discoveries or GT-gap candidates.
+
+---
+
+## Prior Session (same day): h995 — autoimmune biologic family-mis-selection audit (2026-04-19)
 
 ### Status: INVALIDATED at ship gate (filter form fails -50% bio_r30)
 

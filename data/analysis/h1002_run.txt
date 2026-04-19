@@ -1,0 +1,43 @@
+==============================================================================
+h1002: Neighbor-augmented target_match rescue of unique-target hits
+==============================================================================
+Loaded 3521 slot records from h995
+Biologic pool: 455
+Seeds in records: [42, 123, 456, 789, 2024]
+Cached neighbors for 799 (seed, disease) pairs
+
+==============================================================================
+AUTOIMMUNE — LOO=False slots rescued by neighbor-augmentation
+==============================================================================
+HIT  bucket (LOO=False AND hit=True): n=16
+  rescued (flip False→True under neighbor aug): 1 (6.2%)
+  stays False: 15
+MISS bucket (LOO=False AND hit=False): n=199
+  rescued (flip False→True under neighbor aug): 39 (19.6%)
+  stays False: 160
+
+Hit rescue rate : 6.2%  (gate: ≥75%)
+Miss rescue rate: 19.6%  (gate: ≤40%)
+Ship gate for h1003: FAIL
+
+==============================================================================
+PER-HIT DETAIL (LOO=False hits)
+==============================================================================
+  [STILL_FALSE] Anakinra                  -> familial mediterranean fever (seed=42)
+  [STILL_FALSE] Canakinumab               -> familial mediterranean fever (seed=42)
+  [STILL_FALSE] Rituximab                 -> polyarticularcourse juvenile idiopathic arthritis (seed=42)
+  [STILL_FALSE] Rituximab                 -> microscopic polyangiitis (seed=42)
+  [STILL_FALSE] Abatacept                 -> systemic lupus erythematosus (seed=123)
+  [STILL_FALSE] Denosumab                 -> rheumatoid arthritis (seed=123)
+  [RESCUED] Corticotropin             -> lupus nephritis (seed=123)
+  [STILL_FALSE] Rituximab                 -> lupus nephritis (seed=123)
+  [STILL_FALSE] Tocilizumab               -> temporal arteritis (seed=456)
+  [STILL_FALSE] Adalimumab                -> temporal arteritis (seed=456)
+  [STILL_FALSE] Abatacept                 -> systemic lupus erythematosus (seed=456)
+  [STILL_FALSE] Adalimumab                -> nonbehcets noninfectious uveitis (seed=456)
+  [STILL_FALSE] Rituximab                 -> microscopic polyangiitis (seed=789)
+  [STILL_FALSE] Rituximab                 -> scleroderma (seed=2024)
+  [STILL_FALSE] Tocilizumab               -> temporal arteritis (seed=2024)
+  [STILL_FALSE] Abatacept                 -> systemic lupus erythematosus (seed=2024)
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h1002_neighbor_augmented_rescue.json
