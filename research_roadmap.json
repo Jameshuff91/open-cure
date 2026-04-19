@@ -17015,7 +17015,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "inconclusive",
+      "status": "in_progress",
       "steps": [
         "Provision 1x A100 or RTX 4090 on vast.ai; log instance/cost",
         "Install transformers, sentence-transformers; download microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
@@ -17028,7 +17028,10 @@
         "Destroy vast.ai instance immediately after"
       ],
       "findings": "MOTIVATION DISSOLVED by h951 in its biologic-specific framing. Reframe to overall-precision pivot is plausible but unvalidated; deprioritized P2->P3 pending a small-scale precision-impact estimate (h956) before paying GPU cost.",
-      "result_metric": "INCONCLUSIVE-no-longer-motivated; deprioritized to P3"
+      "result_metric": "INCONCLUSIVE-no-longer-motivated; deprioritized to P3",
+      "assigned_to": "interactive-claude",
+      "claimed_at": "2026-04-19T09:31:53",
+      "reopened_reason": "h956 smoke test showed 2.6x-over-random signal on names-only CPU; upgrading to full pool + MeSH scope notes to quantify precision contribution. This is precision-framed, not coverage-framed (h909's constraint), targeting fusion-layer integration."
     },
     {
       "id": "h921",
@@ -17059,7 +17062,7 @@
       "rationale": "Current TransE embeddings are transductive: no embedding exists for diseases not in DRKG at train time. h909 identified 71 diseases with neither GT nor embedding \u2014 they are unreachable. GraphSAGE generates embeddings for unseen nodes by aggregating neighbor features, which can be applied via parent-term chains in MONDO/MeSH. If GraphSAGE produces usable embeddings for even half of the 71, that is the first actual coverage expansion on truly-absent diseases.",
       "expected_impact": "medium",
       "effort": "high",
-      "priority": 3,
+      "priority": 2,
       "status": "pending",
       "steps": [
         "Reconstruct DRKG as a PyG HeteroData object (nodes: drug, disease, gene, pathway; edges: treats, associates, etc.)",
