@@ -1,0 +1,102 @@
+Drugs: 3533, Diseases: 1216
+Scope notes: 0 cached, 1216 to fetch
+  50/1216 fetched, 50 with notes
+  100/1216 fetched, 100 with notes
+  150/1216 fetched, 150 with notes
+  200/1216 fetched, 200 with notes
+  250/1216 fetched, 250 with notes
+  300/1216 fetched, 300 with notes
+  350/1216 fetched, 350 with notes
+  400/1216 fetched, 400 with notes
+  450/1216 fetched, 450 with notes
+  500/1216 fetched, 500 with notes
+  550/1216 fetched, 550 with notes
+  600/1216 fetched, 600 with notes
+  650/1216 fetched, 650 with notes
+  700/1216 fetched, 700 with notes
+  750/1216 fetched, 750 with notes
+  800/1216 fetched, 800 with notes
+  850/1216 fetched, 850 with notes
+  900/1216 fetched, 900 with notes
+  950/1216 fetched, 950 with notes
+  1000/1216 fetched, 1000 with notes
+  1050/1216 fetched, 1050 with notes
+  1100/1216 fetched, 1100 with notes
+  1150/1216 fetched, 1150 with notes
+  1200/1216 fetched, 1200 with notes
+  Done: 1216/1216 missing IDs had scope notes
+Disease inputs: 1216/1216 have scope notes
+
+Embedding drugs ...
+Loading microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext ...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 70346.94it/s]
+[1mBertModel LOAD REPORT[0m from: microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
+Key                                        | Status     |  | 
+-------------------------------------------+------------+--+-
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED |  | 
+cls.predictions.transform.dense.weight     | UNEXPECTED |  | 
+cls.seq_relationship.bias                  | UNEXPECTED |  | 
+cls.predictions.decoder.bias               | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED |  | 
+cls.seq_relationship.weight                | UNEXPECTED |  | 
+cls.predictions.transform.dense.bias       | UNEXPECTED |  | 
+cls.predictions.decoder.weight             | UNEXPECTED |  | 
+cls.predictions.bias                       | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+  embedded 16/3533
+  embedded 336/3533
+  embedded 656/3533
+  embedded 976/3533
+  embedded 1296/3533
+  embedded 1616/3533
+  embedded 1936/3533
+  embedded 2256/3533
+  embedded 2576/3533
+  embedded 2896/3533
+  embedded 3216/3533
+  embedded 3533/3533
+  shape=(3533, 768)
+
+Embedding diseases ...
+Loading microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext ...
+Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 48679.95it/s]
+[1mBertModel LOAD REPORT[0m from: microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext
+Key                                        | Status     |  | 
+-------------------------------------------+------------+--+-
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED |  | 
+cls.predictions.transform.dense.weight     | UNEXPECTED |  | 
+cls.seq_relationship.bias                  | UNEXPECTED |  | 
+cls.predictions.decoder.bias               | UNEXPECTED |  | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED |  | 
+cls.seq_relationship.weight                | UNEXPECTED |  | 
+cls.predictions.transform.dense.bias       | UNEXPECTED |  | 
+cls.predictions.decoder.weight             | UNEXPECTED |  | 
+cls.predictions.bias                       | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+  embedded 16/1216
+  embedded 336/1216
+  embedded 656/1216
+  embedded 976/1216
+  shape=(1216, 768)
+
+============================================================
+  h920 PubMedBERT (CPU) full-pool results
+============================================================
+  Diseases:         1190
+  Drug pool:        3533
+  PubMedBERT R@30:  0.0421 ± 0.1323
+  Random R@30:      0.0121 ± 0.0487
+  Lift:             +0.0301  (3.49x)
+  R@30 with scope note:  0.0421 (n=1190)
+  R@30 name-only:        0.0000 (n=0)
+  h956 reference (names, smaller pool): 0.2278 ± 0.1847
+  Wall time: 641s
+
+  Decision: DEQUEUE
+
+Saved to data/analysis/h920_pubmedbert_full.json

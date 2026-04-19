@@ -17015,7 +17015,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 3,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Provision 1x A100 or RTX 4090 on vast.ai; log instance/cost",
         "Install transformers, sentence-transformers; download microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract-fulltext",
@@ -17027,11 +17027,10 @@
         "Success: biologic R@30 +>=5pp, overall no regression; persist embeddings to data/external/pubmedbert/",
         "Destroy vast.ai instance immediately after"
       ],
-      "findings": "MOTIVATION DISSOLVED by h951 in its biologic-specific framing. Reframe to overall-precision pivot is plausible but unvalidated; deprioritized P2->P3 pending a small-scale precision-impact estimate (h956) before paying GPU cost.",
-      "result_metric": "INCONCLUSIVE-no-longer-motivated; deprioritized to P3",
-      "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T09:31:53",
-      "reopened_reason": "h956 smoke test showed 2.6x-over-random signal on names-only CPU; upgrading to full pool + MeSH scope notes to quantify precision contribution. This is precision-framed, not coverage-framed (h909's constraint), targeting fusion-layer integration."
+      "findings": "PubMedBERT standalone ranking dequeued. Full-pool CPU run: 3,533 drugs x 1,216 diseases, PubMedBERT on drug names + disease (name + MeSH scope note), wall time 641s. PubMedBERT R@30 = 4.21% +/- 13.2%, Random R@30 = 1.21%. Lift 3.49x over random (passes 3x threshold) but absolute R@30 too low to be useful standalone. Production kNN on similar pool ~30% R@30 \u2014 PubMedBERT is 7-10x weaker. MeSH scope notes available for 100% of diseases (1216/1216 via id.nlm.nih.gov API), cached to data/reference/mesh_scope_notes.json. KEY METHODOLOGICAL LESSON: h956 small-pool smoke test was optimistic. At 500 drugs (pre-filtered to GT-used), PubMedBERT hit 22.78% R@30; at full 3533-drug pool it hits 4.21%. Ratio-based decision rule (3x random) is weaker than absolute-R@30 decision rule at realistic pool sizes. Future text-embedding experiments should use the full pool, not pre-filtered subsets. FUSION VALUE UNTESTED: intersection with kNN top-30 not measured here. If non-zero orthogonal signal exists, PubMedBERT could still be a weak fusion feature, but absolute R@30 of 4% suggests it's not worth the complexity. DEQUEUE.",
+      "result_metric": "PubMedBERT R@30 4.21% vs random 1.21% (3.49x) at full 3533-drug pool; ~7-10x weaker than production kNN; dequeue standalone",
+      "reopened_reason": "h956 smoke test showed 2.6x-over-random signal on names-only CPU; upgrading to full pool + MeSH scope notes to quantify precision contribution. This is precision-framed, not coverage-framed (h909's constraint), targeting fusion-layer integration.",
+      "resolved_at": "2026-04-19T09:44:34"
     },
     {
       "id": "h921",
