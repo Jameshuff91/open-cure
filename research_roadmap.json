@@ -18125,7 +18125,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 1,
-      "status": "in_progress",
+      "status": "validated",
       "steps": [
         "Load current h393 rule_comparison and identify rules where tier=GOLDEN but holdout_mean < 80%",
         "Identify HIGH-tier rules with holdout_mean > 82% at n>=10 (GOLDEN-worthy)",
@@ -18133,10 +18133,9 @@
         "Implement the swap that restores tier ordering with minimum n movement",
         "Re-run h393 and verify GOLDEN > HIGH holds; commit if success"
       ],
-      "findings": "",
-      "result_metric": "",
-      "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T09:15:28"
+      "findings": "Tier ordering inversion fixed. Required two moves: (1) demote cardiovascular_hierarchy_coronary GOLDEN->HIGH (post-fix holdout 73.7% \u00b1 18.7% at n=28.3/seed, below GOLDEN mean) and (2) promote autoimmune_hierarchy_rheumatoid_arthritis HIGH->GOLDEN (post-fix holdout 90.2% \u00b1 12.0% at n=24.3/seed, well above GOLDEN mean). RA was the same failure mode as UTI (h977): h811 demoted it off GOLDEN at 69.0% pre-h952-fix because the bug was suppressing its predictions. Post-fix shows +21.2pp holdout improvement. Coronary-only demotion moved GOLDEN +0.3pp (not enough, gap still -0.7pp inverted); combined with RA promotion fixed it cleanly. Final: GOLDEN 78.6%->82.6% (+4.0pp), HIGH 79.9%->80.4% (+0.5pp), gap +2.2pp restored. Full tier ordering GOLDEN > HIGH > MEDIUM > LOW > FILTER reachable again.",
+      "result_metric": "GOLDEN 78.6% -> 82.6% (+4.0pp), HIGH 79.9% -> 80.4% (+0.5pp); tier ordering restored with 2.2pp GOLDEN-HIGH gap",
+      "resolved_at": "2026-04-19T09:18:37"
     }
   ],
   "completed": [

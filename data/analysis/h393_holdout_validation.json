@@ -1,42 +1,42 @@
 {
   "tier_comparison": {
     "GOLDEN": {
-      "full_precision": 86.9,
-      "holdout_mean": 78.6,
-      "holdout_std": 6.2,
-      "delta": -8.3,
+      "full_precision": 89.4,
+      "holdout_mean": 82.6,
+      "holdout_std": 4.0,
+      "delta": -6.8,
       "seed_values": [
-        71.4,
-        78.8,
-        85.1,
-        71.9,
-        85.7
+        79.0,
+        84.1,
+        86.7,
+        76.7,
+        86.3
       ]
     },
     "HIGH": {
-      "full_precision": 81.6,
-      "holdout_mean": 79.9,
-      "holdout_std": 3.4,
-      "delta": -1.7,
+      "full_precision": 78.9,
+      "holdout_mean": 80.4,
+      "holdout_std": 3.6,
+      "delta": 1.5,
       "seed_values": [
-        78.0,
-        86.2,
-        76.5,
-        80.1,
-        78.6
+        77.1,
+        87.0,
+        78.4,
+        78.4,
+        81.3
       ]
     },
     "MEDIUM": {
-      "full_precision": 41.7,
-      "holdout_mean": 39.5,
-      "holdout_std": 5.0,
-      "delta": -2.2,
+      "full_precision": 43.1,
+      "holdout_mean": 39.9,
+      "holdout_std": 4.5,
+      "delta": -3.2,
       "seed_values": [
-        31.6,
+        32.6,
+        38.8,
+        44.6,
         38.7,
-        44.3,
-        37.6,
-        45.5
+        44.6
       ]
     },
     "LOW": {
@@ -45,7 +45,7 @@
       "holdout_std": 0.7,
       "delta": -5.1,
       "seed_values": [
-        9.2,
+        9.1,
         11.3,
         9.8,
         9.5,
@@ -199,12 +199,12 @@
     },
     "literature_strong_promotion": {
       "tier": "GOLDEN",
-      "full_precision": 89.0,
-      "full_n": 572,
-      "holdout_mean": 81.0,
+      "full_precision": 90.5,
+      "full_n": 749,
+      "holdout_mean": 83.3,
       "holdout_std": 3.7,
-      "delta": -8.0,
-      "mean_n": 68.6,
+      "delta": -7.2,
+      "mean_n": 88.6,
       "status": "degraded"
     },
     "gastrointestinal": {
@@ -237,16 +237,6 @@
       "mean_n": 11.0,
       "status": "GENUINE"
     },
-    "cardiovascular_hierarchy_coronary": {
-      "tier": "GOLDEN",
-      "full_precision": 69.2,
-      "full_n": 78,
-      "holdout_mean": 73.7,
-      "holdout_std": 18.7,
-      "delta": 4.5,
-      "mean_n": 28.3,
-      "status": "GENUINE"
-    },
     "metabolic_hierarchy_obesity": {
       "tier": "GOLDEN",
       "full_precision": 100.0,
@@ -256,6 +246,16 @@
       "delta": -100.0,
       "mean_n": 0,
       "status": "small-n"
+    },
+    "autoimmune_hierarchy_rheumatoid_arthritis": {
+      "tier": "GOLDEN",
+      "full_precision": 89.7,
+      "full_n": 126,
+      "holdout_mean": 90.2,
+      "holdout_std": 12.0,
+      "delta": 0.5,
+      "mean_n": 24.3,
+      "status": "GENUINE"
     },
     "metabolic_hierarchy_lipid": {
       "tier": "GOLDEN",
@@ -327,24 +327,14 @@
       "mean_n": 6.0,
       "status": "OVERFITTED?"
     },
-    "cancer_same_type_mech_rank10": {
-      "tier": "HIGH",
-      "full_precision": 88.2,
-      "full_n": 263,
-      "holdout_mean": 72.5,
-      "holdout_std": 8.4,
-      "delta": -15.7,
-      "mean_n": 41.6,
-      "status": "OVERFITTED?"
-    },
     "transe_medium_promotion": {
       "tier": "HIGH",
-      "full_precision": 64.8,
-      "full_n": 54,
-      "holdout_mean": 73.5,
-      "holdout_std": 13.1,
-      "delta": 8.7,
-      "mean_n": 10.0,
+      "full_precision": 74.0,
+      "full_n": 73,
+      "holdout_mean": 79.0,
+      "holdout_std": 6.2,
+      "delta": 5.0,
+      "mean_n": 14.4,
       "status": "GENUINE"
     },
     "default_freq10_nomech_r1_5": {
@@ -367,14 +357,14 @@
       "mean_n": 0,
       "status": "OVERFITTED?"
     },
-    "autoimmune_hierarchy_rheumatoid_arthritis": {
+    "cardiovascular_hierarchy_coronary": {
       "tier": "HIGH",
-      "full_precision": 90.3,
-      "full_n": 124,
-      "holdout_mean": 90.2,
-      "holdout_std": 12.0,
-      "delta": -0.1,
-      "mean_n": 24.0,
+      "full_precision": 70.1,
+      "full_n": 77,
+      "holdout_mean": 74.1,
+      "holdout_std": 18.3,
+      "delta": 4.0,
+      "mean_n": 28.0,
       "status": "GENUINE"
     },
     "metabolic_hierarchy_thyroid": {
@@ -489,11 +479,11 @@
     },
     "literature_weak_demotion": {
       "tier": "LOW",
-      "full_precision": 21.4,
+      "full_precision": 21.0,
       "full_n": 290,
-      "holdout_mean": 13.2,
-      "holdout_std": 3.4,
-      "delta": -8.2,
+      "holdout_mean": 12.6,
+      "holdout_std": 4.1,
+      "delta": -8.4,
       "mean_n": 43.0,
       "status": "degraded"
     },
@@ -519,12 +509,12 @@
     },
     "broad_class_isolated": {
       "tier": "LOW",
-      "full_precision": 36.4,
-      "full_n": 44,
-      "holdout_mean": 30.3,
-      "holdout_std": 20.2,
-      "delta": -6.1,
-      "mean_n": 10.6,
+      "full_precision": 38.1,
+      "full_n": 42,
+      "holdout_mean": 29.2,
+      "holdout_std": 18.6,
+      "delta": -8.9,
+      "mean_n": 10.4,
       "status": "degraded"
     },
     "cancer_same_type_no_mechanism": {
@@ -739,12 +729,12 @@
     },
     "literature_high_demotion": {
       "tier": "MEDIUM",
-      "full_precision": 50.8,
-      "full_n": 185,
-      "holdout_mean": 47.1,
-      "holdout_std": 13.9,
-      "delta": -3.7,
-      "mean_n": 35.2,
+      "full_precision": 50.3,
+      "full_n": 175,
+      "holdout_mean": 47.6,
+      "holdout_std": 14.0,
+      "delta": -2.7,
+      "mean_n": 33.4,
       "status": "GENUINE"
     },
     "cardiovascular": {
@@ -827,6 +817,16 @@
       "mean_n": 3.6,
       "status": "OVERFITTED?"
     },
+    "cancer_same_type_mech_rank10": {
+      "tier": "MEDIUM",
+      "full_precision": 64.1,
+      "full_n": 78,
+      "holdout_mean": 46.4,
+      "holdout_std": 9.9,
+      "delta": -17.7,
+      "mean_n": 19.2,
+      "status": "OVERFITTED?"
+    },
     "cancer_same_type": {
       "tier": "MEDIUM",
       "full_precision": 38.9,
@@ -885,7 +885,6 @@
     "metabolic_hierarchy_lipid",
     "autoimmune_hierarchy_colitis",
     "cardiovascular_hierarchy_hypertension",
-    "cancer_same_type_mech_rank10",
     "infectious_hierarchy_sepsis",
     "cv_pathway_comprehensive",
     "neurological_hierarchy_parkinsons",
@@ -893,12 +892,13 @@
     "neurological_hierarchy_epilepsy",
     "autoimmune_hierarchy_multiple_sclerosis",
     "respiratory_hierarchy_asthma",
-    "hematological"
+    "hematological",
+    "cancer_same_type_mech_rank10"
   ],
   "summary": {
-    "golden_holdout_precision": 78.6,
+    "golden_holdout_precision": 82.6,
     "golden_pass": true,
-    "tier_ordering_correct": false,
+    "tier_ordering_correct": true,
     "n_rules_tested": 81,
     "n_genuine": 33,
     "n_overfitted": 15,

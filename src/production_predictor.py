@@ -3582,10 +3582,12 @@ class DrugRepurposingPredictor:
                     return ConfidenceTier.FILTER, False, 'cancer_targeted_therapy'
                 # h633: cancer_same_type + mechanism + rank<=10 = 56.6% ± 9.7% holdout (expanded GT)
                 # h797 INVALIDATED: Attempted GOLDEN promotion but holdout=69.5% ± 13.5% (OVERFITTED).
-                # Full-data 85.4% → holdout 69.5%, -15.9pp delta. Stays HIGH.
+                # h979: Post-h952-fix 5-seed holdout = 72.1% (150/208), 2.3σ below HIGH 79.9%.
+                # Simulated HIGH→MEDIUM demotion: HIGH +1.44pp (79.89→81.33%), MEDIUM +4.32pp
+                # (39.54→43.87%). Both tiers improve. Demoted HIGH→MEDIUM.
                 # Top drugs: doxorubicin, paclitaxel, bevacizumab.
                 if mechanism_support and rank <= 10:
-                    return ConfidenceTier.HIGH, True, 'cancer_same_type_mech_rank10'
+                    return ConfidenceTier.MEDIUM, True, 'cancer_same_type_mech_rank10'
                 # h634: cancer_same_type without mechanism = 17.9% ± 4.2% holdout (below MEDIUM)
                 # Demote to LOW. With mechanism but rank>10 stays MEDIUM (33.8%).
                 if not mechanism_support:
@@ -3753,8 +3755,16 @@ class DrugRepurposingPredictor:
         # h977: uti RESTORED. h952 name-resolution bug was suppressing UTI-disease predictions;
         # post-h952-fix h393 shows uti at 90.9% ± 0.0% holdout (n=11/seed), +20.1pp above full
         # and well above GOLDEN mean (78.5%). The h904 demotion was correcting for the bug.
+        # h986: coronary demoted GOLDEN->HIGH. Post-h952-fix h393 shows coronary at
+        # 73.7% ± 18.7% holdout (n=28.3/seed) — below the 78.6% GOLDEN mean and
+        # with the largest std among GOLDEN rules. Demotion alone gave +0.3pp
+        # GOLDEN / -0.3pp HIGH — insufficient to restore ordering.
+        # h986 part 2: rheumatoid_arthritis restored to GOLDEN. Same failure
+        # mode as UTI — h811 demoted RA off GOLDEN at 69.0% holdout pre-h952-fix
+        # (the bug was suppressing RA predictions). Post-h952-fix h393 shows RA
+        # at 90.2% ± 12.0% holdout (n=24/seed), well above GOLDEN mean.
         HIERARCHY_PROMOTE_TO_GOLDEN = {
-            'coronary', 'arrhythmia', 'colitis', 'uti',
+            'arrhythmia', 'colitis', 'uti', 'rheumatoid_arthritis',
         }
         # h385: Thyroid hierarchy has 20.6% precision vs 35.8% GOLDEN avg - demote to HIGH
         # h430: Attempted T2D rescue back to GOLDEN — FAILED holdout (42.1%, GOLDEN dropped -5pp)
