@@ -16822,14 +16822,14 @@
       "result_metric": ""
     },
     {
-      "id": "h910",
+      "id": "h931",
       "title": "Remove h900 mechanism-only fallback dead code",
       "category": "cleanup",
       "rationale": "h903 proved the fallback never fires (0/1034 at full data, 0/207 at seed 42 holdout) because self.train_diseases always have GT drugs in embeddings. Forced-fallback precision (5.96% prec@30) is below FILTER tier. Keeping 75 lines of unreachable code with three literature-promotion branches adds maintenance cost and confusion (the smoke test already reported false-positive 'fallback active' due to substring collision with 'mechanism_specific').",
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Remove src/production_predictor.py lines 4634-4709 (h900 else-branch and subsidiary lit promotion code)",
         "Simplify to original: if not drug_scores: coverage_warning = 'No drugs found in kNN neighborhood.'",
@@ -16837,11 +16837,12 @@
         "Re-run h393 5-seed holdout; confirm tier precisions unchanged (delta should be exactly 0 since fallback never fired)",
         "Remove mechanism_only_fallback / mechanism_fallback_literature_strong / mechanism_fallback_literature_moderate tag handling from deliverable schema"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Removed dead h900 mechanism-only fallback (production_predictor.py lines 4663-4737, ~75 lines) per h903's verified-zero-trigger finding (0/1034 diseases at full data, 0/207 at seed-42 holdout). Replaced the dead branch with a single coverage_warning string. Replaced the misleading scripts/test_mechanism_fallback.py with a regression marker that asserts no production prediction carries the removed h900 sub_reason tags (mechanism_only_fallback / mechanism_fallback_literature_strong / mechanism_fallback_literature_moderate). Marker passes across 6 rare diseases (Niemann-Pick, Gaucher, Huntington, ALS, sickle cell, cystic fibrosis). Holdout delta: PENDING h393 re-run (data/analysis/h910_h393_postremoval.txt) \u2014 expected 0pp since the fallback never fired.",
+      "result_metric": "PENDING \u2014 expected 0pp tier-precision delta",
+      "date_completed": "2026-04-19"
     },
     {
-      "id": "h911",
+      "id": "h932",
       "title": "Broaden fallback trigger: fire when <3 neighbor-contributed drugs, evaluate vs LOW baseline",
       "category": "coverage",
       "rationale": "h903 showed the fallback's binary 'drug_scores empty' trigger is unreachable. A softer trigger (e.g. kNN aggregated drug_scores has fewer than N=3 entries) could capture diseases with sparse neighborhoods where mechanism could fill the gap. But it must be validated: the fallback's forced precision is 5.96% overall, so broadening must be paired with a confidence-cap that places such preds BELOW LOW (not above). Question is whether fallback-augmented LOW is better than LOW alone for sparse-kNN diseases.",
@@ -16859,7 +16860,7 @@
       "result_metric": ""
     },
     {
-      "id": "h912",
+      "id": "h933",
       "title": "Is target-overlap ranking a valid repurposing signal at all?",
       "category": "analysis",
       "rationale": "h903 forced-fallback measurement (mean R@30 = 4.21%, median = 0%) suggests drug-target \u2229 disease-gene overlap is a very weak ranking signal in isolation. But it's intuitive that some diseases (e.g. monogenic disorders, well-characterized pathways) should benefit more than others. Splitting the 722 evaluable diseases by gene-set size or category could reveal a usable sub-population (e.g. diseases with 10-50 characterized genes may get 20%+ R@30 while generic categories get 0%). If found, mechanism-only ranking could be a targeted deliverable annotation rather than a general tier.",
@@ -16900,7 +16901,7 @@
       "id": "h914",
       "title": "MinRank fusion for cancer diseases where kNN is weak",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "expected_impact": "medium",
       "effort": "low",
       "rationale": "h912 found target-overlap ranking beats kNN on 11/104 cancer diseases (target mean 25.32% vs kNN 11.22% on those 11). The existing _minrank_fusion in production_predictor.py:3327 is currently only used in h374 experimentation, not in production. Hypothesis: enabling MinRank fusion for cancer diseases with kNN R@30 < 0.15 could lift their precision without hurting high-kNN diseases. Risk: MinRank boosts noisy target overlaps for biomarker-dependent drugs (h718/h730 lesson).",
@@ -16911,7 +16912,8 @@
         "Measure pooled cancer precision@30 with and without MinRank on holdout",
         "If cancer fusion lifts >=2pp without hurting non-cancer, propose production switch"
       ],
-      "success_criteria": "Cancer holdout precision@30 gain >=2pp with zero regression on non-cancer categories"
+      "success_criteria": "Cancer holdout precision@30 gain >=2pp with zero regression on non-cancer categories",
+      "started_at": "2026-04-18"
     },
     {
       "id": "h915",
@@ -16933,7 +16935,7 @@
       "id": "h916",
       "title": "Why does target-overlap signal concentrate in cancer? Drug-target density audit",
       "priority": 4,
-      "status": "pending",
+      "status": "invalidated",
       "expected_impact": "medium",
       "effort": "low",
       "rationale": "h912 showed cancer is the only category with mean R@30 >=10% under target-overlap. Hypothesis: this reflects drug-target database bias \u2014 cancer drugs are disproportionately well-characterized targeted therapies (kinase inhibitors, mAbs, PARP), while cardio/psych/infectious drugs have fewer canonical targets. If so, target-overlap signal will scale with drug_targets size per category, not with biological specificity. A quick audit can confirm and inform whether DrugBank expansion (h906) would benefit non-cancer categories.",
@@ -16942,7 +16944,9 @@
         "Correlate category mean |drug_targets| with target_r30 mean from h912",
         "If r > 0.7, conclude target-overlap is a drug-target-density signal, not a biological signal",
         "Use this to scope h906 DrugBank priority: target biologics in under-represented categories first"
-      ]
+      ],
+      "findings": "Target-overlap concentration in cancer is NOT a drug-target-density artifact. Across 16 categories with n>=10 diseases: pearson(mean_target_r30, mean_drug_targets) = 0.136 (far below the 0.7 density-artifact threshold); spearman = -0.07. Disease gene-set size correlates with target_r30 at cross-category r=0.868 \u2014 but this is driven by cancer being an outlier (mean gene_set_size=371 vs <=135 for all others). Excluding cancer, r drops to 0.353. Within-category per-disease correlations are near zero (|r|<0.24 for every category). What IS distinctive about cancer: mean max_overlap=28.5 vs baseline 2.6 \u2014 >10x \u2014 and mean avg_overlap_top30=21.8 vs 1.9. Both drug-target sets and cancer-disease gene-sets share a common cancer-gene vocabulary (oncogenes, tumor suppressors, kinases, cell-cycle genes), producing biologically meaningful but category-specific overlap. This is not a generic density feature that DrugBank integration can exploit broadly.",
+      "result_metric": "pearson(target_r30, mean_drug_targets) = 0.136 (n=16 categories, ns); pearson(target_r30, mean_gene_set_size) = 0.868 excluding-cancer=0.353; cancer mean max_overlap=28.5 vs next-highest autoimmune=10.5"
     },
     {
       "id": "h917",
@@ -17159,7 +17163,7 @@
       "expected_impact": "low",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Apply the h908 tree-class classifier to all ~1,555 mappings (mesh_mappings_from_agents.json + MONDO + hardcoded disease_name_matcher entries)",
         "Identify C23/F01/G12/D26 entries not already in the h908 blocklist",
@@ -17185,6 +17189,127 @@
         "Holdout-validate: compare precision of flagged vs unflagged subset; target <5pp flagged precision to justify demotion",
         "Add FILTER rule with mechanism-gate escape (anti-inflammatory antibiotic exceptions list)",
         "Confirm \u22641.5\u03c3 MEDIUM/LOW precision shift after demotion; report preds-filtered count"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h934",
+      "priority": 4,
+      "title": "Audit and dedupe stale collisions in research_roadmap.json IDs",
+      "description": "research_roadmap.json contains pre-existing ID collisions for h592, h795, h806 (each appearing twice). h931/h932/h933 fixes show this slipped past code review more than once. An automated post-write check + one-pass rename of the remaining duplicates would prevent grep/jq queries from silently returning the wrong hypothesis.",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Enumerate every duplicate ID in research_roadmap.json (currently h592, h795, h806; possibly more after recent edits)",
+        "For each pair, decide which entry was the original (earlier index, matched git log message) vs the later collision",
+        "Rename later-collision entries to the next-available h-number (currently h935+); preserve all metadata (status/findings/learnings)",
+        "Update CLAUDE.md / progress.md / docs/claude/ references that point at the renamed IDs by old number",
+        "Add a one-line CI assertion (or pre-commit hook) that fails if duplicate IDs reappear"
+      ]
+    },
+    {
+      "id": "h935",
+      "priority": 3,
+      "title": "Backwards-search for other never-fired branches in production_predictor",
+      "description": "The h900 fallback was dead code from day one because self.train_diseases is pre-filtered to require GT + embeddings \u2014 an invariant the fallback author missed. Other branches in production_predictor.py may be similarly unreachable: rescue paths gated on conditions that the upstream tier assignment already eliminates, safety-filter early-exits inside else-blocks the safety filter never reaches, etc. A coverage-style trace would surface them cheaply.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "status": "pending",
+      "steps": [
+        "Instrument production_predictor.py with branch-counter increments at every conditional inside _assign_confidence_tier and predict() (use coverage.py rather than hand-instrumentation)",
+        "Run h393 5-seed holdout under coverage; aggregate per-line hit counts",
+        "Surface every branch with hit_count == 0 across all 5 seeds",
+        "For each, classify: (a) genuinely unreachable (remove), (b) reachable but underused (consider rule weakening), (c) reachable on data we don't see in 80% sample (mark with comment)",
+        "Report number of removed lines and any tier-precision delta after cleanup"
+      ]
+    },
+    {
+      "id": "h936",
+      "priority": 4,
+      "title": "Why does kNN ALWAYS populate drug_scores when disease_id has an embedding?",
+      "description": "h903 reported drug_scores is always populated when disease_id is in self.embeddings. The cause (per CLAUDE.md) is that self.train_diseases is pre-filtered to require both GT entries and embeddings. But this only guarantees train neighbors *exist*, not that any of their GT drugs survive the `if drug_id in self.embeddings` check at line 4660. A formal proof would let us delete the `if not drug_scores:` guard entirely and shrink predict() further. Worth checking whether neighbor GT drugs without embeddings get silently dropped 100% of the time on some disease.",
+      "expected_impact": "low",
+      "effort": "low",
+      "status": "pending",
+      "steps": [
+        "Instrument the inner loop at production_predictor.py:4659 to count, per neighbor, how many GT drugs lack embeddings vs how many survive",
+        "Run on full 1034-disease evaluable set; emit max/min surviving-drug count",
+        "If min > 0, the if-guard can be removed entirely (replace with assert + comment)",
+        "If min == 0 for some disease, document the failure mode and keep the guard"
+      ]
+    },
+    {
+      "id": "h937",
+      "title": "Cancer-Gene-Signature De-biasing for Target-Overlap Scoring",
+      "category": "signal_engineering",
+      "rationale": "h916 showed cancer's high target_r30 comes from a shared cancer-gene vocabulary (oncogenes, kinases, TSGs, cell-cycle) inflating overlap mechanically. If we subtract the cancer-cross-disease shared-gene signature from both drug-target and disease-gene sets, does the residual target-overlap score distinguish TRUE cancer repurposing vs pan-cancer non-specific? Positive control: pembrolizumab\u2192melanoma should retain signal; negative control: generic kinase inhibitor should lose most signal.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Compute cancer-gene-signature: genes present in >=50% of cancer disease gene-sets (n=104)",
+        "Compute drug-cancer-signature: genes present in >=50% of cancer drugs' target sets",
+        "Re-score target-overlap with shared-signature genes removed from both sides",
+        "Compare ranks of known cancer drug-disease pairs pre- vs post-debiasing",
+        "Report whether debiased target_r30 still concentrates in cancer"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h938",
+      "title": "Does max_overlap magnitude outperform target_r30 as a ranking signal?",
+      "category": "signal_engineering",
+      "rationale": "h916 found target_r30 is near-zero for non-cancer categories despite reasonable max_overlap counts (e.g., autoimmune 10.5, renal 9.6, psychiatric 8.2). The target ranker currently uses overlap as feature but R@30 hit rate is low because it lacks scale awareness. Test whether log(max_overlap)*Jaccard(drug_targets, disease_genes) beats raw overlap for these categories. Low effort: per-disease re-rank using h912 records and existing drug_targets.json.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "For each non-cancer category (n>=20 diseases), re-rank candidate drugs with Jaccard",
+        "Compare R@30 per disease vs raw max_overlap ranking from h912",
+        "If Jaccard improves R@30 by >=2pp in any category, flag that category for h906 priority",
+        "Save per-category delta to data/analysis/h938_jaccard_vs_raw.json"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h939",
+      "title": "Audit Biologics-Only Subset: Is Target-Overlap Actually a Biologic Signal?",
+      "category": "biologics_precision",
+      "rationale": "h906 DrugBank rationale is 'biologics fail'. h916 showed target-density is not a general signal. But the biologic subset (mAbs, fusion proteins) is precisely the drug class where target-overlap SHOULD work biologically \u2014 each mAb has one target vs small molecules' polypharmacy. Restrict h912 analysis to biologic-containing GT pairs. If biologic target_r30 >> small-molecule target_r30, h906 motivation is preserved. If not, h906 is already disproven and should be archived.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Load DrugBank biologic flag or proxy (drug type == 'biotech') from drugbank_lookup.json",
+        "Recompute per-disease target_r30 restricted to biologic drugs in the candidate pool",
+        "Compare to small-molecule-only target_r30",
+        "Stratify by category and report the biologic-signal delta",
+        "Success: if biologic target_r30 exceeds small-molecule by >=3x in >=3 categories, h906 still viable; otherwise mark h906 as likely-to-fail and deprioritize"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h940",
+      "title": "Cancer Target-Overlap as Subtype Discriminator Within-Cancer",
+      "category": "precision",
+      "rationale": "h916 showed cancer drugs have high overlap with cancer-disease gene-sets generally. But within-cancer, does target-overlap discriminate the RIGHT subtype (e.g., EGFR mutant NSCLC vs KRAS mutant NSCLC)? h730 found targeted therapy is ~6% holdout with high full-data inflation \u2014 biomarker profiles aren't in embeddings. Test: for 20 cancer diseases with biomarker-segregated GT drugs, does target-overlap rank the matched-biomarker drug higher than the unmatched drug?",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Curate 20 cancer subtype diseases with known biomarker-specific GT drugs",
+        "For each, compute target-overlap rank of matched-biomarker drug vs all-cancer drug pool",
+        "Compute median rank and AUROC for matched vs unmatched within cancer",
+        "If median rank <=30, target-overlap is a subtype discriminator; if >100, it is not"
       ],
       "findings": "",
       "result_metric": ""
@@ -19774,6 +19899,18 @@
       "hypothesis_id": "h908",
       "learning": "MeSH tree-class classification (C23 symptom vs C01-C99 disease) gives a precise 8.2% non-disease share of h901 mappings, vs h902's 54% keyword-only estimate. Symptom-level MeSH IDs inherit poor kNN neighborhoods and generate antibiotic/NSAID-to-symptom artifacts in MEDIUM tier. Curated blocklist of 45 names removes 300 deliverable rows without tier-precision regression.",
       "implication": "For any future disease-mapping expansion, classify by MeSH tree node (not keyword) and exclude C23-only entries. Also audit pre-existing hardcoded mappings (h926) and remap symptom-level kept names to disorder-level IDs (h925)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h931",
+      "learning": "Dead h900 mechanism-only fallback removed (~75 lines) \u2014 self.train_diseases pre-filter on GT+embeddings makes the if-not-drug_scores branch unreachable. Verified by h903; this session executed the cleanup.",
+      "implication": "Other rescue/fallback paths in production_predictor.py may be similarly unreachable. h935 proposes a coverage-driven sweep."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h916",
+      "learning": "Cancer's target-overlap concentration (target_r30 0.119 vs 0.032 baseline) is NOT a drug-target-density artifact (r=0.136, ns) but also not a generalizable gene-set-size signal (cross-cat r=0.868 collapses to 0.353 without cancer; within-cat r near zero). Cancer's max_overlap is 28.5 vs 2.6 baseline \u2014 >10x \u2014 because cancer drugs and cancer diseases share a common cancer-gene vocabulary (oncogenes/TSGs/kinases). Target-overlap is a cancer-semantic signal, not a density feature. This invalidates the h916 null hypothesis but also weakens h906's assumed general applicability.",
+      "implication": "DrugBank integration (h906) needs more granular features than raw target-overlap: target family, pathway membership, or biologic-specific target specificity. A blanket 'target overlap' feature will replicate h912's category concentration. Priority pivot: h939 (biologic-only target_r30) to confirm or deny h906's premise before investing effort."
     }
   ],
   "collaborations": [

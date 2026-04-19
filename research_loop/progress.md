@@ -1,6 +1,104 @@
 # Research Loop Progress
 
-## Current Session: h908 — MeSH C23 Symptom Blocklist Validation (2026-04-18)
+## Current Session: h916 — Target-Overlap Density Audit (2026-04-19)
+
+### Hypothesis
+h912 found target-overlap ranking concentrates in cancer (mean target_r30=0.119 vs
+0.032 baseline) but is not actionable as a standalone signal. h916 asks whether the
+cancer concentration is a drug-target-density artifact (cancer drugs simply have more
+targets) or a biological signal. Test: pearson(mean_target_r30, mean_drug_targets)
+across 16 categories (n>=10 diseases). Threshold: r>0.7 → density artifact.
+
+### Status: INVALIDATED — cancer signal is NOT a density artifact
+
+### Key findings
+- pearson(target_r30, mean_drug_targets) = **0.136** (spearman = -0.07). Drug-target
+  count per drug does not explain target_r30 variation across categories.
+- pearson(target_r30, mean_gene_set_size) = **0.868** cross-category — but entirely
+  driven by cancer being an outlier (gene_set_size=371 vs next <=135). Excluding
+  cancer, r drops to **0.353**. Within-category per-disease correlations are all near
+  zero (|r|<0.24).
+- Cancer's **max_overlap=28.5** vs baseline 2.6 — >10x — and avg_overlap_top30=21.8
+  vs 1.9. Both drug targets and cancer disease-gene sets share a common cancer-gene
+  vocabulary (oncogenes, TSGs, kinases, cell-cycle). Overlap is biologically
+  meaningful but category-specific and does not generalize.
+
+### Implication for h906 (DrugBank)
+Raw target-overlap is a cancer-semantic signal, not a general density feature. h906's
+premise (target features fix biologic failures across categories) is weakened. New
+P2 hypothesis **h939** (biologic-only target_r30 stratification) will confirm or
+refute h906 before investing medium-effort DrugBank work.
+
+### New hypotheses
+- **h937** (P3): cancer-gene-signature de-biasing for target-overlap
+- **h938** (P3): Jaccard vs raw-count overlap for non-cancer categories
+- **h939** (P2): biologics-only subset audit — is target-overlap a biologic signal?
+- **h940** (P3): cancer target-overlap as within-cancer subtype discriminator
+
+### Files
+- scripts/h916_target_density_audit.py
+- data/analysis/h916_target_density_audit.json
+
+### Recommended next step
+**h939** — same-day priority-2, low-effort. Stratify target_r30 by biologic vs
+small-molecule to decide whether h906 DrugBank work is justified or should be
+archived.
+
+---
+
+## Previous Session: h931 — Remove h900 Mechanism Fallback Dead Code (2026-04-19)
+
+### Hypothesis
+h903 verified the h900 mechanism-only fallback at production_predictor.py:4634 never
+fires (0/1034 diseases at full data, 0/207 in seed-42 holdout) because
+self.train_diseases is pre-filtered to require GT + embeddings, so the kNN aggregation
+always populates drug_scores. h931 (formerly the second-occurrence h910) executes the
+removal: ~75 lines of dead code (4663-4737), the misleading smoke test, and stale
+sub-reason tag handling. Expected delta: 0pp tier precision since the branch never
+fired.
+
+### Status: VALIDATED — code removed, regression marker passes, h393 5-seed re-run
+confirms 0pp delta (see data/analysis/h910_h393_postremoval.txt).
+
+### Key findings
+- production_predictor.py: replaced 75-line `if not drug_scores:` block (h900 fallback,
+  including sub-tier override + literature promotion) with a single coverage_warning
+  line. The `else:` branch (kNN/MinRank fusion) is unchanged.
+- scripts/test_mechanism_fallback.py: rewritten as a regression marker that asserts no
+  production prediction carries the removed sub_reason tags. Passes for 6 rare diseases
+  (Niemann-Pick, Gaucher, Huntington, ALS, sickle cell, cystic fibrosis).
+- mechanism_only_fallback / mechanism_fallback_literature_strong /
+  mechanism_fallback_literature_moderate sub_reason tags are no longer written. No
+  deliverable schema enforcement existed for these tags, so no downstream cleanup was
+  needed beyond production_predictor.py.
+- Discovered + fixed three duplicate hypothesis IDs in research_roadmap.json
+  (h910/h911/h912 each appeared twice). Renamed the later occurrences to
+  h931/h932/h933. h592, h795, h806 also have unfixed duplicates — flagged as h934.
+
+### Files
+- src/production_predictor.py:4663-4669 — replaces lines 4663-4737 (~75 lines deleted)
+- scripts/test_mechanism_fallback.py — regression marker
+- data/analysis/h910_h393_postremoval.txt — 5-seed holdout output
+- research_roadmap.json — h931/h932/h933 renamed; h934/h935/h936 added
+
+### New hypotheses generated (3)
+- h934 (P4, low/low): Audit and dedupe stale collisions in research_roadmap.json IDs
+- h935 (P3, medium/medium): Backwards-search for other never-fired branches in
+  production_predictor (coverage-driven dead-code sweep)
+- h936 (P4, low/low): Why does kNN ALWAYS populate drug_scores when disease_id has an
+  embedding? — formal-proof of the invariant that made h900 fallback dead
+
+### Recommended next steps
+1. **h920 (P2, high/medium)**: PubMedBERT dense embeddings for biologic precision —
+   highest-impact pivot still pending; needs vast.ai GPU
+2. **h928 (P3, low/low)**: Remap kept-but-symptom-level MeSH names to disorder-level
+   IDs — quick follow-up to h908
+3. **h935 (P3, medium/medium)**: Coverage-driven dead-code sweep generated from this
+   session's finding
+
+---
+
+## Previous Session: h908 — MeSH C23 Symptom Blocklist Validation (2026-04-18)
 
 ### Hypothesis
 The h901 MeSH expansion (+638 mappings) introduced C23 symptom-level IDs that generate
