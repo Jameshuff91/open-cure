@@ -3977,3 +3977,38 @@ The 25pp gap is not a regression — it's a methodology mismatch.
 1. **h957** (P1): h949 zero-overlap biologic safety filter — only remaining P1
 2. **h964** (P2): Re-run h904/h908 post-fix to validate quoted tier precisions
 3. **h960** (P2): Neurological supplement + SELECTIVE_BOOST interaction diagnosis
+
+---
+
+## Current Session: h953 — Biologic Precision Pivot (INVALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h953 (INVALIDATED)
+
+### What was tested
+For each holdout disease, compute biologic_prior[category] = fraction of train diseases in that category with ≥1 biologic in expanded GT. If a holdout disease's category prior < threshold, drop biologics from its prediction list and refill top-30 from non-biologic ranks. Sweep thresholds {0.05, 0.10, 0.15, 0.20, 0.30}; 5-seed h393 holdout; top_n=200 fetched, top-30 evaluated.
+
+### Headline result
+| metric | baseline | best (any thr) | gate |
+|---|---|---|---|
+| p30 | 14.32% ± 0.94% | +0.05pp (thr=0.30) | +2.0pp required |
+| r30 | 19.79% ± 1.59% | -0.13pp (thr=0.15) | – |
+| bio_r30 | 30.31% ± 3.57% | -0.18pp (thr=0.10), -8.16pp (thr=0.30) | ≥ -5pp required |
+
+**DO NOT SHIP — no threshold meets the +2pp p30 / ≤5pp bio_r30 gate.**
+
+### Why it failed (3 reasons)
+1. kNN already concentrates biologics in immunology/cancer/endocrine — few biologics are misplaced into low-prior categories to demote.
+2. Rank-31+ non-biologic replacements hit at the same background rate as the demoted biologic, so the swap is precision-neutral.
+3. Category-level prior is too coarse: dermatological (prior=0.183) has bio_r30=72.2%, so any demotion there destroys real biologic hits.
+
+### Side finding
+**Baseline bio_r30 (30.31%) > overall_r30 (19.79%) by +10.5pp** — biologics OVERPERFORM. The h906/h920/h921/h924 "biologic failure" narrative was already dissolved in h951; h953 reconfirms with explicit p30/r30 split. Precision lift for the deliverable must come from SMALL-MOLECULE slots, not biologic slots. Filed h991 to test that direction directly.
+
+### New hypotheses (3 added)
+- **h990 (P2):** Per-disease kNN-neighbor biologic prior (replace category-level prior with neighbor-derived prior — finer-grained signal that matches kNN's actual scoring mechanism).
+- **h991 (P2):** Inverse pivot — small-molecule precision gap. Stratify p30 by sm vs bio rank-position per category; identify SM-precision-deficit categories for targeted SM demotion.
+- **h992 (P3):** p30 ceiling = min(|GT|, 30) / 30 — reframe baseline 14.32% as fraction-of-achievable. Likely shows current p30 is closer to ceiling than it appears, bounding precision-pivot ambition.
+
+### Recommended next hypothesis
+**h990 (P2)** — quick to implement (reuse h953 plumbing, swap category prior for neighbor-derived prior). Most likely to produce a different result, since neighbor-derived priors directly diagnose whether biologics in top-30 are mechanism-supported.
+

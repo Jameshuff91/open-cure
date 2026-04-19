@@ -1318,7 +1318,7 @@
       "expected_impact": "medium",
       "effort": "medium",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Compute per-disease biologic-prior: P(disease has >=1 biologic GT) from train-only categorical features (category, has_immunology_keywords, has_targeted_therapy_keywords).",
         "On holdout, simulate demoting biologic predictions to FILTER for diseases with biologic_prior < 0.1.",
@@ -1327,7 +1327,9 @@
       ],
       "depends_on": [
         "h951"
-      ]
+      ],
+      "findings": "INVALIDATED. 5-seed h393 holdout, top_n=200, thresholds {0.05,0.10,0.15,0.20,0.30}. Baseline p30=14.32%\u00b10.94%, r30=19.79%\u00b11.59%, bio_r30=30.31%\u00b13.57% (avg 3.4 biologics in top-30). Best p30 lift = +0.05pp (thr=0.30) \u2014 far below the +2pp ship gate. At thr=0.10 only infectious (prior=0.088) qualifies for demotion (~24 dx/seed) and is precision-neutral (per-category p30 \u0394=0.00pp everywhere; bio_r30 -0.18pp). At thr=0.15+ demotion expands to other, psychiatric, dermatological \u2014 costs bio_r30 -5.6 to -8.2pp without moving p30. Mechanism (3 reasons): (1) baseline kNN already concentrates biologics in immunology/cancer-class diseases \u2014 few are misplaced; (2) the rank-31+ non-biologic replacement hits at the same background rate as the demoted biologic, so the swap is precision-neutral; (3) category-level prior is too coarse \u2014 dermatological has prior=0.183 but bio_r30=72.2% (real biologic hits would be lost). The hypothesis premise that low-prior-category biologics are a precision drag is FALSE. Filed h990 (kNN-neighbor-derived per-disease prior, finer-grained) and h991 (category-prior-aware promotion for high-prior categories with target-overlap, inverse direction).",
+      "result_metric": "p30 \u0394=+0.05pp (max), bio_r30 \u0394=-8.16pp (worst); ship gate (+2pp p30, \u22645pp bio_r30 drop) NOT met at any threshold"
     },
     {
       "id": "h966",
@@ -1614,6 +1616,66 @@
         "Extract the 260 ids from data/reference/h961_disease_name_aliases_unresolved_samples.json or recompute.",
         "Cross-reference against h901 deliverables to classify provenance.",
         "Report breakdown: D-numbered vs C-numbered; provenance by source."
+      ]
+    },
+    {
+      "id": "h990",
+      "title": "Per-disease kNN-neighbor biologic prior (finer-grained than h953)",
+      "category": "precision",
+      "rationale": "h953 invalidated per-CATEGORY prior demotion because categories are too coarse (dermatological prior=0.18 but bio_r30=72%). Test the same idea with a PER-DISEASE prior computed as the fraction of that disease's top-k kNN neighbors (in train) that have \u22651 biologic in their expanded GT. This aligns the prior with the actual mechanism kNN uses to score biologics, and should isolate diseases where zero neighbors support biologics (strong demotion candidates) from diseases where biologics ARE in the neighbor set but happen to be in a low-prior category.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "For each holdout disease, find its top-20 kNN neighbors in train (same as production predict()).",
+        "prior(d) = (#neighbors with \u22651 biologic in expanded GT) / 20.",
+        "Sweep thresholds in {0.0 (strict: zero neighbors), 0.05, 0.10, 0.20}. Demote biologics to FILTER for diseases with prior below threshold; refill top-30 from next non-biologics.",
+        "Measure overall p30/r30/bio_r30 across 5 seeds vs h958 baseline.",
+        "Decision: ship if p30 \u2265 +2pp and bio_r30 drop \u2264 3pp; otherwise document as bounded-ceiling for biologic precision via kNN-derived signals."
+      ],
+      "depends_on": [
+        "h953",
+        "h958"
+      ]
+    },
+    {
+      "id": "h991",
+      "title": "Inverse of h953 \u2014 small-molecule precision gap is the real pivot (bio_r30=30% > overall_r30=20%)",
+      "category": "precision",
+      "rationale": "h953 baseline measurement confirms bio_r30=30.31% > overall_r30=19.79% \u2014 a +10.5pp gap in the OPPOSITE direction of the h906/h920/h921/h924 'biologic failure' narrative (already dissolved in h951). This means precision lift must come from SMALL-MOLECULE slots, not biologic slots. Test: stratify the 14.32% baseline p30 by small-molecule vs biologic rank-position. Compute sm_p30 (precision among small-molecule top-30 entries). Compare sm_p30 to bio_p30 per disease category. Any category where sm_p30 < bio_p30 is a candidate for a small-molecule demote.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Reuse h953 per-disease records (data/analysis/h953_biologic_precision_pivot.json lacks SM split; rerun with explicit sm_p30 collection).",
+        "For each category, compute mean sm_p30, mean bio_p30. Identify categories where sm_p30 is \u22655pp below bio_p30.",
+        "For those categories, propose a targeted SM demote rule (e.g. drop SM predictions whose rank is low AND whose train_frequency < 3, filling with next best).",
+        "Measure on 5-seed holdout: if overall p30 improves \u22651pp without r30 dropping \u22652pp, ship."
+      ],
+      "depends_on": [
+        "h953",
+        "h951"
+      ]
+    },
+    {
+      "id": "h992",
+      "title": "Per-disease GT-size calibrated p30 \u2014 is the p30 ceiling structural?",
+      "category": "meta",
+      "rationale": "h953 shows p30=14.32% is extremely stable across all demotion regimes (\u00b10.05pp). With expanded GT averaging ~57 drugs per disease, a perfect top-30 could hit p30 \u2248 min(30,|GT|)/30 \u2014 so the p30 ceiling per disease depends on |GT|. Hypothesis: for diseases with |GT|<30, the absolute p30 ceiling is |GT|/30 (not 100%). Compute the p30 ceiling per disease and express baseline p30 as 'fraction of the achievable p30 ceiling'. If the ceiling is ~40%, then 14.32% \u2192 ~36% of ceiling \u2014 a more honest precision number. This reframes all precision-focused hypotheses.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "For each holdout disease, compute p30_ceiling = min(|GT|, 30) / 30.",
+        "Compute p30_fraction = (baseline top30 \u2229 GT) / min(|GT|, 30).",
+        "Aggregate per-category and overall. Report p30, p30_ceiling, p30_fraction as the new triptych.",
+        "Document 'p30 is bounded above by GT density' as a metric-hygiene note in CLAUDE.md (similar to h954/h967 micro-vs-macro note)."
+      ],
+      "depends_on": [
+        "h953"
       ]
     }
   ],
@@ -4297,6 +4359,12 @@
       "hypothesis_id": "h979",
       "learning": "Post-hoc tier-remap simulations miss promotion-cascade effects. Demoting HIGH\u2192MEDIUM exposes predictions to MEDIUM+STRONG_EVIDENCE\u2192GOLDEN promotion at line 4959, which can dominate the net tier impact. Simulation predicted +1.44pp HIGH but real was +0.5pp HIGH and +4.0pp GOLDEN because STRONG-lit cancer_same_type_mech_rank10 preds cascaded to GOLDEN.",
       "implication": "Future HIGH\u2192MEDIUM or MEDIUM\u2192X demotion audits must model the full post-processing pipeline (transe_medium_promotion, literature_strong_promotion, literature_weak_demotion) \u2014 or run actual predictor code on the modified rule \u2014 not just a post-hoc label remap on cached counters."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h953",
+      "learning": "Per-category biologic prior is too coarse to drive precision-aware demotion. kNN already concentrates biologics in immunology/cancer/endocrine; remaining biologics in low-prior categories are mostly real hits when present. Category-level demotion is precision-neutral or negative, never +2pp.",
+      "implication": "Per-disease (not per-category) biologic priors derived from kNN neighbors are needed. h990 will test that. Also: precision pivots for biologics likely need to operate on the SMALL-MOLECULE side, not biologics \u2014 bio_r30=30% > overall_r30=20%, biologics OVERPERFORM."
     }
   ],
   "collaborations": [
