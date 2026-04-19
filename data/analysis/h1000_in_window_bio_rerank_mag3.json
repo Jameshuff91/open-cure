@@ -1,0 +1,153 @@
+{
+  "hypothesis": "h1000",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "K_NEIGHBORS": 3,
+  "RANK_SHIFT_MAGNITUDE": 3.5,
+  "baseline_tier_mean": {
+    "GOLDEN": 82.58288109125581,
+    "HIGH": 80.43939302383922,
+    "MEDIUM": 39.890248551401285,
+    "LOW": 9.955772153618415,
+    "FILTER": 6.778558581058753
+  },
+  "shifted_tier_mean": {
+    "GOLDEN": 82.41046729815238,
+    "HIGH": 80.06940119522525,
+    "MEDIUM": 39.39951101677756,
+    "LOW": 9.896600823413232,
+    "FILTER": 6.760226823503895
+  },
+  "baseline_tier_std": {
+    "GOLDEN": 4.50290642559153,
+    "HIGH": 3.9935282649119075,
+    "MEDIUM": 4.9933189407290985,
+    "LOW": 0.8303372690154699,
+    "FILTER": 0.8097157713753476
+  },
+  "shifted_tier_std": {
+    "GOLDEN": 4.790628266269122,
+    "HIGH": 3.8996398461744186,
+    "MEDIUM": 4.800237995280322,
+    "LOW": 0.8512432187420657,
+    "FILTER": 0.7850759569832344
+  },
+  "tier_deltas": {
+    "GOLDEN": -0.17241379310343063,
+    "HIGH": -0.36999182861396207,
+    "MEDIUM": -0.49073753462372594,
+    "LOW": -0.05917133020518328,
+    "FILTER": -0.01833175755485872
+  },
+  "bio_r30_mean_pct": 29.196318993138775,
+  "bio_r30_std_pct": 37.665839927379615,
+  "bio_r30_n_disease_seeds": 283,
+  "bio_tier_baseline": {
+    "GOLDEN": {
+      "n": 53,
+      "hits": 41
+    },
+    "HIGH": {
+      "n": 32,
+      "hits": 19
+    },
+    "MEDIUM": {
+      "n": 81,
+      "hits": 8
+    },
+    "LOW": {
+      "n": 1497,
+      "hits": 58
+    },
+    "FILTER": {
+      "n": 1907,
+      "hits": 70
+    }
+  },
+  "bio_tier_shifted": {
+    "GOLDEN": {
+      "n": 54,
+      "hits": 43
+    },
+    "HIGH": {
+      "n": 34,
+      "hits": 21
+    },
+    "MEDIUM": {
+      "n": 81,
+      "hits": 9
+    },
+    "LOW": {
+      "n": 1363,
+      "hits": 49
+    },
+    "FILTER": {
+      "n": 2038,
+      "hits": 74
+    }
+  },
+  "bio_tier_moves": [
+    {
+      "from": "FILTER",
+      "to": "GOLDEN",
+      "count": 3,
+      "hits": 3
+    },
+    {
+      "from": "FILTER",
+      "to": "HIGH",
+      "count": 1,
+      "hits": 1
+    },
+    {
+      "from": "FILTER",
+      "to": "LOW",
+      "count": 23,
+      "hits": 0
+    },
+    {
+      "from": "FILTER",
+      "to": "MEDIUM",
+      "count": 2,
+      "hits": 1
+    },
+    {
+      "from": "GOLDEN",
+      "to": "FILTER",
+      "count": 2,
+      "hits": 1
+    },
+    {
+      "from": "LOW",
+      "to": "FILTER",
+      "count": 153,
+      "hits": 7
+    },
+    {
+      "from": "LOW",
+      "to": "HIGH",
+      "count": 1,
+      "hits": 1
+    },
+    {
+      "from": "LOW",
+      "to": "MEDIUM",
+      "count": 3,
+      "hits": 1
+    },
+    {
+      "from": "MEDIUM",
+      "to": "FILTER",
+      "count": 5,
+      "hits": 1
+    }
+  ],
+  "ship_pass": false,
+  "ship_gate_lifts": {},
+  "ship_gate_drops": {}
+}

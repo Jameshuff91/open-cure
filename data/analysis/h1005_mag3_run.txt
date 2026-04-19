@@ -1,0 +1,78 @@
+==============================================================================
+h1000: In-window biologic family-match re-rank
+==============================================================================
+Biologic pool: 455
+Diseases with GT + embeddings: 1011
+
+--- Seed 42 ---
+  baseline tier precision: {'LOW': {'precision': 9.11, 'hits': 234, 'total': 2569}, 'FILTER': {'precision': 6.73, 'hits': 192, 'total': 2852}, 'MEDIUM': {'precision': 32.64, 'hits': 94, 'total': 288}, 'HIGH': {'precision': 77.11, 'hits': 155, 'total': 201}, 'GOLDEN': {'precision': 78.98, 'hits': 124, 'total': 157}}
+  shifted tier precision:  {'LOW': {'precision': 9.05, 'hits': 232, 'total': 2563}, 'FILTER': {'precision': 6.7, 'hits': 191, 'total': 2850}, 'MEDIUM': {'precision': 32.77, 'hits': 97, 'total': 296}, 'HIGH': {'precision': 77.11, 'hits': 155, 'total': 201}, 'GOLDEN': {'precision': 78.98, 'hits': 124, 'total': 157}}
+  n_bio_slots: 630, n_bio_hits: 42
+  bio match=True: 145, match=False: 485
+
+--- Seed 123 ---
+  baseline tier precision: {'FILTER': {'precision': 7.15, 'hits': 205, 'total': 2869}, 'LOW': {'precision': 11.3, 'hits': 293, 'total': 2593}, 'MEDIUM': {'precision': 38.84, 'hits': 94, 'total': 242}, 'HIGH': {'precision': 87.02, 'hits': 181, 'total': 208}, 'GOLDEN': {'precision': 84.13, 'hits': 106, 'total': 126}}
+  shifted tier precision:  {'FILTER': {'precision': 7.17, 'hits': 206, 'total': 2874}, 'LOW': {'precision': 11.25, 'hits': 290, 'total': 2578}, 'MEDIUM': {'precision': 37.75, 'hits': 94, 'total': 249}, 'HIGH': {'precision': 86.73, 'hits': 183, 'total': 211}, 'GOLDEN': {'precision': 84.13, 'hits': 106, 'total': 126}}
+  n_bio_slots: 780, n_bio_hits: 48
+  bio match=True: 175, match=False: 605
+
+--- Seed 456 ---
+  baseline tier precision: {'FILTER': {'precision': 6.88, 'hits': 199, 'total': 2894}, 'LOW': {'precision': 9.77, 'hits': 254, 'total': 2600}, 'HIGH': {'precision': 78.37, 'hits': 163, 'total': 208}, 'GOLDEN': {'precision': 86.75, 'hits': 72, 'total': 83}, 'MEDIUM': {'precision': 44.6, 'hits': 128, 'total': 287}}
+  shifted tier precision:  {'FILTER': {'precision': 6.91, 'hits': 200, 'total': 2895}, 'LOW': {'precision': 9.59, 'hits': 248, 'total': 2587}, 'HIGH': {'precision': 78.2, 'hits': 165, 'total': 211}, 'MEDIUM': {'precision': 44.26, 'hits': 131, 'total': 296}, 'GOLDEN': {'precision': 86.75, 'hits': 72, 'total': 83}}
+  n_bio_slots: 684, n_bio_hits: 22
+  bio match=True: 144, match=False: 540
+
+--- Seed 789 ---
+  baseline tier precision: {'HIGH': {'precision': 78.36, 'hits': 210, 'total': 268}, 'MEDIUM': {'precision': 38.73, 'hits': 110, 'total': 284}, 'LOW': {'precision': 9.53, 'hits': 239, 'total': 2509}, 'FILTER': {'precision': 5.48, 'hits': 158, 'total': 2885}, 'GOLDEN': {'precision': 76.72, 'hits': 89, 'total': 116}}
+  shifted tier precision:  {'HIGH': {'precision': 78.02, 'hits': 213, 'total': 273}, 'MEDIUM': {'precision': 38.28, 'hits': 111, 'total': 290}, 'LOW': {'precision': 9.45, 'hits': 236, 'total': 2497}, 'FILTER': {'precision': 5.47, 'hits': 158, 'total': 2886}, 'GOLDEN': {'precision': 75.86, 'hits': 88, 'total': 116}}
+  n_bio_slots: 695, n_bio_hits: 38
+  bio match=True: 136, match=False: 559
+
+--- Seed 2024 ---
+  baseline tier precision: {'LOW': {'precision': 10.08, 'hits': 253, 'total': 2511}, 'MEDIUM': {'precision': 44.64, 'hits': 154, 'total': 345}, 'FILTER': {'precision': 7.66, 'hits': 217, 'total': 2832}, 'HIGH': {'precision': 81.34, 'hits': 170, 'total': 209}, 'GOLDEN': {'precision': 86.34, 'hits': 139, 'total': 161}}
+  shifted tier precision:  {'LOW': {'precision': 10.14, 'hits': 253, 'total': 2494}, 'MEDIUM': {'precision': 43.94, 'hits': 156, 'total': 355}, 'FILTER': {'precision': 7.55, 'hits': 214, 'total': 2835}, 'HIGH': {'precision': 80.28, 'hits': 171, 'total': 213}, 'GOLDEN': {'precision': 86.34, 'hits': 139, 'total': 161}}
+  n_bio_slots: 781, n_bio_hits: 46
+  bio match=True: 184, match=False: 597
+
+==============================================================================
+AGGREGATE TIER PRECISION (5 seeds)
+==============================================================================
+tier     base mean±std      shift mean±std     delta     
+GOLDEN    82.58± 4.50       82.41± 4.79       -0.17pp
+HIGH      80.44± 3.99       80.07± 3.90       -0.37pp
+MEDIUM    39.89± 4.99       39.40± 4.80       -0.49pp
+LOW        9.96± 0.83        9.90± 0.85       -0.06pp
+FILTER     6.78± 0.81        6.76± 0.79       -0.02pp
+
+BIOLOGIC TIER DISTRIBUTION (5 seeds pooled)
+tier     base         shift        Δ       
+GOLDEN     41/  53 ( 77.4%)    43/  54 ( 79.6%)  Δn=   +1
+HIGH       19/  32 ( 59.4%)    21/  34 ( 61.8%)  Δn=   +2
+MEDIUM      8/  81 (  9.9%)     9/  81 ( 11.1%)  Δn=   +0
+LOW        58/1497 (  3.9%)    49/1363 (  3.6%)  Δn= -134
+FILTER     70/1907 (  3.7%)    74/2038 (  3.6%)  Δn= +131
+
+bio_r30 (macro): 29.20% ± 37.67% on n=283 disease-seeds
+  (baseline == shifted since top-30 membership unchanged)
+
+BIOLOGIC TIER MOVES (5 seeds pooled)
+from_tier  to_tier    count    hits     prec    
+FILTER     GOLDEN     3        3        100.0%
+FILTER     HIGH       1        1        100.0%
+FILTER     LOW        23       0          0.0%
+FILTER     MEDIUM     2        1         50.0%
+GOLDEN     FILTER     2        1         50.0%
+LOW        FILTER     153      7          4.6%
+LOW        HIGH       1        1        100.0%
+LOW        MEDIUM     3        1         33.3%
+MEDIUM     FILTER     5        1         20.0%
+
+==============================================================================
+SHIP GATE
+==============================================================================
+bio_r30 drop: 0.00pp  (gate ≤0.5pp)  [PASS]
+tier lifts ≥1pp: NONE
+tier drops ≥1pp: NONE
+SHIP: FAIL
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h1000_in_window_bio_rerank_mag3.json

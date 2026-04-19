@@ -4260,3 +4260,41 @@ Per h1002/h995b structural-floor analysis, the neighbor target-match signal is t
 
 ### Recommended next hypothesis
 **h1005** (P3) — cheapest follow-up, same script with `RANK_SHIFT_MAGNITUDE=3.0`. If it still doesn't lift, close the ±N score-perturbation family entirely and escalate to boundary-targeted (h1006) or annotation-only (h1003/h1007) surfaces. If it DOES lift, run h1006 to see if a surgical version preserves the lift at half the collateral damage.
+
+
+## Current Session (continued): h1005 — ±3.5 Rank-Shift Magnitude (INVALIDATED — closes family) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1005 (INVALIDATED)
+
+### What was tested
+Re-ran h1000 script with `RANK_SHIFT_MAGNITUDE=3.5` to test if larger shifts move the needle (h1000 used 1.5, i.e. ±1 integer rank).
+
+### Result
+| tier | baseline | shifted (±3.5) | Δ |
+|---|---|---|---|
+| GOLDEN | 82.58 | 82.41 | **−0.17pp** |
+| HIGH | 80.44 | 80.07 | **−0.37pp** |
+| MEDIUM | 39.89 | 39.40 | **−0.49pp** |
+| LOW | 9.96 | 9.90 | −0.06pp |
+| FILTER | 6.78 | 6.76 | −0.02pp |
+
+Same SHIP FAIL pattern as h1000. Biologic movement amplified:
+- LOW→FILTER: 44→153 demotes (3.5x at magnitude 2.3x)
+- FILTER→GOLDEN+HIGH: 1→4 promotions (all 100% hit rate individually)
+
+### Mechanism: magnitude is not the bottleneck — signal density is
+- 22% of biologics are target_match_loo_neighbor=True (bump candidates)
+- 78% are False (demote candidates, most already at LOW/FILTER heading to FILTER)
+- High-precision match=True promotions are numerically tiny (4-6 hits across 5 seeds) — cannot lift a 53-slot GOLDEN or 213-slot HIGH
+- Match=False demotions work as designed (LOW→FILTER legitimately tracks rank>20 rule at 4.6% hit rate) but cannot LIFT any tier
+
+### Score-perturbation family CLOSED
+Both magnitudes invalidated. Score-perturbation re-rank mechanism is mechanically safe (bio_r30 preserved exactly by top-30 membership invariant) but cannot lift tier precision because the bump side signal is too sparse.
+
+Remaining viable surfaces:
+- **h1006** (boundary-targeted): only shift biologics within ±2 of rank thresholds (5/10/15/20) → 100% boundary-crossing rate.
+- **h1008** (per-category adaptive): exploit 10-24x LOO ratios in cancer/cv/hematological per h995b.
+- **h1003/h1007** (annotation-only): surface match_loo as deliverable column, don't touch tier.
+
+### Recommended next hypothesis
+**h1006** (P3) — surgical version of h1000 that concentrates the shift effect at tier boundaries. If it fails too, the entire in-window re-rank family is closed and the biologic precision problem is STRUCTURALLY unsolvable via rank manipulation.

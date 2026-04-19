@@ -1983,7 +1983,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Reuse scripts/h1000_in_window_biologic_rerank.py with RANK_SHIFT_MAGNITUDE \u2208 {3.0, 5.0}.",
         "Measure tier precision at each magnitude.",
@@ -1992,7 +1992,12 @@
       ],
       "depends_on": [
         "h1000"
-      ]
+      ],
+      "started": "2026-04-19",
+      "completed": "2026-04-19",
+      "findings": "Larger rank-shift magnitude (\u00b13.5) does NOT rescue h1000. 5-seed h393: tier deltas GOLDEN -0.17pp, HIGH -0.37pp, MEDIUM -0.49pp, LOW -0.06pp, FILTER -0.02pp \u2014 same SHIP FAIL pattern as \u00b11.5. Biologic movement amplified: LOW\u2192FILTER grew from 44\u2192153 demotes (3.5x) and FILTER\u2192GOLDEN/HIGH grew from 1\u21924 promotions, but aggregate tier precision essentially unchanged. High-precision promotions are tiny in absolute count (4 FILTER\u2192HIGH+GOLDEN at 100% hit rate); they can't move a 53-slot GOLDEN tier. LOW\u2192FILTER demotes still align with rank>20 rule (4.6% hit rate on dropped preds, below LOW avg 9.96%) \u2014 legitimate but no lift. **Closes score-perturbation family:** scaling the magnitude does not unlock the mechanism; the bottleneck is signal density (22% match=True, 78% match=False) combined with rank-threshold discretization. Only remaining in-window surfaces: boundary-targeted (h1006) and per-category adaptive (h1008). Annotation-only surface (h1003/h1007) remains viable.",
+      "result_metric": "5-seed h393, mag=3.5: all tier deltas <0; GOLDEN -0.17pp, MEDIUM -0.49pp, SHIP FAIL.",
+      "raw_data": "data/analysis/h1000_in_window_bio_rerank_mag3.json + data/analysis/h1005_mag3_run.txt"
     },
     {
       "id": "h1006",
@@ -4763,6 +4768,12 @@
       "hypothesis_id": "h1000",
       "learning": "In-window \u00b11 biologic rank shift is too diffuse to move tier precision. Only 1.7% of biologic preds cross tier-rule boundaries (which sit at ranks 5/10/15/20). The filter-form biologic precision family (h953, h957, h990, h995, h1000, h1002) remains closed. Score-perturbation in-window without in/out exchange DOES preserve bio_r30 exactly (by construction) \u2014 so the approach is safe \u2014 but the tier rules aren't granular enough at \u00b11 rank to register a lift.",
       "implication": "Future precision pivots on biologics must either: (a) use larger rank shifts (h1005) or boundary-targeted shifts (h1006) to increase boundary crossings per shift; (b) exploit per-category signal asymmetry (h1008); or (c) abandon tier-rule surface in favor of deliverable annotation columns (h1003, h1007). The 'in-window re-rank via score perturbation' mechanism is sound \u2014 failure was in magnitude, not principle."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1005",
+      "learning": "In-window biologic score-perturbation re-rank fails at BOTH \u00b11.5 and \u00b13.5. Magnitude is not the bottleneck \u2014 signal density is. Only 22% of biologics have target_match_loo_neighbor=True (bump candidates); 78% are False (demote candidates, most already at LOW/FILTER going to FILTER). High-precision promotions from biologic match=True are rare (4-6 hits across 5 seeds at 100% precision) \u2014 numerically too small to lift 53-slot GOLDEN or 213-slot HIGH tiers. Demotion side works as intended (legitimate LOW\u2192FILTER per rank>20 rule) but cannot LIFT any tier.",
+      "implication": "Abandon score-perturbation re-rank as a tier-precision surface. Move to: (1) boundary-targeted shift (h1006) that only activates near rank 5/10/15/20 thresholds to maximize boundary-crossing rate; (2) deliverable annotation column (h1003, h1007) that doesn't touch tier assignment. Score-perturbation is mechanically safe (bio_r30 preserved) but cannot lift tiers because the match=True bump signal is too concentrated in few biologics."
     }
   ],
   "collaborations": [

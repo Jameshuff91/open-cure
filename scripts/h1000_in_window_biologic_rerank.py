@@ -59,7 +59,9 @@ from h995_autoimmune_biologic_family_audit import load_expanded_gt  # noqa: E402
 
 K_NEIGHBORS = 3
 SEEDS = [42, 123, 456, 789, 2024]
-RANK_SHIFT_MAGNITUDE = 1.5   # cross one integer rank boundary
+import os as _os
+RANK_SHIFT_MAGNITUDE = float(_os.environ.get("H1000_RANK_SHIFT", "1.5"))   # default: cross one integer rank boundary
+_OUT_SUFFIX = _os.environ.get("H1000_OUT_SUFFIX", "")
 
 
 def compute_neighbors(
@@ -590,7 +592,7 @@ def main():
         "ship_gate_lifts": tier_lifts,
         "ship_gate_drops": tier_drops,
     }
-    out = ROOT / "data/analysis/h1000_in_window_bio_rerank.json"
+    out = ROOT / f"data/analysis/h1000_in_window_bio_rerank{_OUT_SUFFIX}.json"
     with open(out, "w") as f:
         json.dump(payload, f, indent=2, default=str)
     print(f"\nSaved -> {out}")
