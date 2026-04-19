@@ -2,9 +2,30 @@
 
 ## Research Goal
 
-**Target: 60% per-drug Recall@30 on DRKG (honest Oracle ceiling).** Current kNN baseline is ~37%. The 23pp gap is closable with better architecture (full GNN retrain, two-tower contrastive, better negatives), not with external data. Everything beyond 60% requires signals DRKG structurally can't carry.
+**Build a hybrid drug-repurposing system that meets or exceeds published SOTA on standard metrics, with calibrated confidence tiers validated by expert review.**
 
-Every hypothesis should be evaluated against this goal: does it push us toward 60% on DRKG, or is it complementary (calibration, coverage, external signal)? Both are valuable, but label them explicitly.
+Current state (2026-04-19):
+- kNN on Node2Vec embeddings: ~26% per-drug R@30 honest, ~37% with treatment-edge leakage
+- Published SOTA (TxGNN Nature Med 2024): AUPRC 0.913 standard eval, +49.2% on zero-shot indications
+- Goal: match and beat SOTA on Hits@K, MRR, AUPRC, AUROC, and R@30 simultaneously
+
+Target architecture (pivot committed 2026-04-19):
+1. **Supervised GNN on DRKG** (h1200) — replace unsupervised Node2Vec with GNN trained on treatment edges as explicit labels. Expected: 40-50% R@30, matches published GNN SOTA.
+2. **LINCS L1000 reverse-connectivity** (h1201) — orthogonal transcriptomic signal for diseases where graph is weak. Expected: +5-10pp in fusion.
+3. **Expert-calibrated confidence tiers** (h1203) — replace 30-rule heuristics with a classifier trained on Ryland Mortlock's blinded review labels. Decouples calibration from embedding choice (fixes the h922-v2 failure mode).
+4. **Hybrid fusion** (h1202) — primary Nature-paper claim.
+
+Evaluation standard: **every experiment reports all five metrics** — R@30 per-drug (clinical framing), Hits@K (SOTA comparability), MRR, AUPRC, AUROC. h1199 is the prerequisite multi-metric benchmark.
+
+Every hypothesis should be labeled against this goal:
+- **Recall lever** (pushes R@30 / Hits@K / AUPRC up) — Paths A, B
+- **Calibration lever** (tightens tier precision / ECE / Brier) — Path C (expert labels)
+- **Infrastructure** (enables the above) — h1199 benchmark, h907 Ryland ingestion
+- **Complementary** (coverage, docs, deliverable quality) — lower priority
+
+**Honest probability:** Path A + Path B fused, ~55% chance of reaching 40% R@30, ~25% of 50%, ~8% of 55%+. 60% R@30 on DRKG alone is improbable given no published model has gotten close; the hybrid with LINCS is the realistic path to exceed it. 60% was a theoretical Oracle we defined, not a published benchmark we're racing someone to.
+
+**See also:** `research_loop/prompts/research_spec.md` (authoritative for the background loop), `~/.claude/projects/-Users-jimhuff/memory/project_open_cure_pivot_37_60.md` (probability estimates, paper reframe).
 
 ## Memory Management
 

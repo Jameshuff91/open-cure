@@ -6,7 +6,7 @@
 
 After today's positive-control and h922-v2 findings, the research path is explicit:
 
-1. **h1199 (infrastructure, p1):** embedding-agnostic R@30 benchmark. Prerequisite for every subsequent experiment. Measures raw kNN R@30 without the tier system in the loop so embedding changes can be compared honestly. ~1 day of work, CPU only. Must land before h1200/h1201 are trusted.
+1. **h1199 (infrastructure, p1):** multi-metric embedding-agnostic benchmark. Prerequisite for every subsequent experiment. Measures **five metrics on the same 5-seed splits without the tier system in the loop**: R@30 per-drug (our clinical framing), Hits@K for K∈{1,5,10,30,100} (TxGNN/DRKG comparability), MRR (standard KG-completion), AUPRC (TxGNN headline), AUROC. Every downstream experiment reports all five. ~2 days of work, CPU only. Must land before h1200/h1201 are trusted.
 
 2. **h1200 (Path A, p1):** supervised GNN (GraphSAGE / HGT / R-GCN) trained on treatment edges as explicit labels. Different objective than h922-v2's unsupervised link prediction, which failed. Target: ≥35% R@30, stretch 45%. 2–3 weeks, ~$10 GPU.
 
@@ -47,7 +47,14 @@ Three new directions are authorised beyond DRKG:
 Tier-calibration hypotheses below priority 3 are deprioritised unless they are needed to unlock a priority-1/2 result.
 
 ## Project Goal
-Improve drug repurposing predictions using the DRKG knowledge graph and machine learning models.
+
+**Build a hybrid drug-repurposing system that meets or exceeds published SOTA on standard metrics, with calibrated confidence tiers validated by expert review.**
+
+Target architecture: supervised GNN on DRKG (h1200) + LINCS L1000 reverse-connectivity (h1201) + expert-calibrated tiers from Ryland's labels (h1203), fused (h1202). Every experiment reports **R@30 per-drug, Hits@K, MRR, AUPRC, and AUROC** on the same 5-seed splits — see h1199. The five metrics let us compare head-to-head with TxGNN (AUPRC 0.913), TransE/DistMult/RotatE DRKG baselines (Hits@10 30-50%, MRR 0.15-0.30), and HGTDR.
+
+Realistic target: 45-50% R@30 honest + beat published AUPRC / Hits@10 / MRR SOTA. 60% R@30 on DRKG alone is improbable; the hybrid with LINCS is the realistic path above that.
+
+Every hypothesis should be labeled as one of: **recall lever** (pushes the five metrics up), **calibration lever** (tightens tier precision / ECE / Brier), **infrastructure** (enables either), or **complementary** (lower priority).
 
 ## Current Baselines (post-h954 reconciliation)
 
