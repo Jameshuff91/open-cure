@@ -1,6 +1,86 @@
 # Research Loop Progress
 
-## Current Session: h1218 — Fusion gain decomposition (VALIDATED, falsifies disagreement-hypothesis) (2026-04-19)
+## Current Session: h1230 — Neutral-row characterisation re-frames h1215 headline (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1230 (VALIDATED, diagnostic / re-frames headline)
+
+### What was built
+`scripts/h1230_neutral_row_characterization.py` — secondary analysis of
+`data/analysis/h1218_fusion_gain_decomposition.json`. For each of the 1,002
+(seed, disease) rows, classifies as neutral (|Δ R@30|<1e-9) vs gainer/loser,
+buckets by recall denominator `n_gt_train_drugs`, computes per-category
+Δ at three population restrictions (all / non-trivial / non-trivial &
+n_gt≥5), and reports hits@30 alongside R@30 for the n_gt≥51 stratum
+where R@30 is denominator-bound.
+
+### Headline
+- **524 of 1,002 rows are neutral (52.3%)** — concentrated at low denominators:
+  93.1% neutral at n_gt=1, 86.0% at n_gt=2, dropping to 18.5% at n_gt≥51.
+- **Mean Δ R@30 (all rows): +1.327pp** (cross-validates h1215 exactly).
+- **Mean Δ R@30 (non-trivial 478 rows): +2.782pp — more than 2× the headline.**
+- **Disease-level non-trivial Δ: +2.409pp** (averaged across seeds first, then
+  across 360 of 669 unique non-trivial diseases).
+- Pearson(Δ R@30, log10 n_gt) = −0.066 — small monotonic trend.
+
+### n_gt buckets
+| Bucket | n | %neut | Δ_all | Δ_nontrivial |
+|---|---:|---:|---:|---:|
+| 1 | 58 | 93% | +6.90pp | +100.00pp* |
+| 2 | 43 | 86% | -1.16pp | -8.33pp |
+| 3-5 | 150 | 75% | +0.96pp | +3.87pp |
+| 6-10 | 177 | 58% | +2.03pp | +4.85pp |
+| 11-20 | 210 | 52% | +1.07pp | +2.23pp |
+| 21-50 | 186 | 40% | +1.33pp | +2.22pp |
+| 51+ | 178 | 19% | +0.03pp | +0.04pp |
+
+*n_gt=1 is binary by construction (one hit → 100%).
+
+### Per-category robustness (Δ at n_gt≥5 vs Δ_nontrivial)
+- **Survives at n_gt≥5**: musculoskeletal +11.16pp, cancer +4.94pp,
+  hematological +4.68pp, GI +3.78pp (collapsed from +11.18pp — was binary-driven),
+  psychiatric +2.58pp, metabolic +2.64pp.
+- **Robust regressors at n_gt≥5**: endocrine -10.71pp (answers h1229 — NOT n_gt-driven),
+  cardiovascular -2.60pp, immunological -3.98pp, respiratory -1.89pp.
+
+### Why does n_gt≥51 show ~zero R@30 lift? (mechanism)
+- Mean n_gt: 140.9; mean R@30 ceiling (=30/n_gt): 0.313 (denominator-bound).
+- Mean R@30: n2v=0.100 → concat=0.101 (Δ=+0.18pp, below noise).
+- **Mean hits@30: n2v=10.71 → concat=10.97 (Δ=+0.258 drugs/disease — fusion DOES recover more drugs).**
+- Conclusion: R@30 is the wrong metric on high-density diseases; hits@30 is denominator-invariant
+  and uncovers the lift R@30 hides.
+
+### Top-line implications
+1. h1215's +1.32pp R@30 is averaged across a population that is 52% structurally inert.
+   The actionable lift is +2.78pp on the 478 (seed, disease) rows where fusion can actually move R@30.
+2. Hits@30 should join R@30 as a standard panel metric — h1199 already supports it via Hits@K.
+3. Endocrine and cardiovascular regressions are real (NOT n_gt artifacts); warrant separate audits.
+4. Musculoskeletal +11pp and cancer +5pp non-trivial gains are the highest-ROI targets for
+   category-restricted fusion.
+
+### Shipped
+- `scripts/h1230_neutral_row_characterization.py`
+- `data/analysis/h1230_neutral_row_characterization.json`
+- `data/analysis/h1230_neutral_row_characterization.md`
+- CLAUDE.md headline updated with h1230 paragraph (re-frames h1215 lift)
+- 3 new pending hypotheses added to research_roadmap.json (h1243, h1244, h1245)
+
+### New hypotheses (3 added)
+- **h1243 (P2, infrastructure, low effort):** Add hits@K reporting + 'non-trivial Δ' standard
+  to scripts/clean_embedding_benchmark.py. Make every fusion comparison report both metrics.
+- **h1244 (P2, recall, low effort):** n_gt-stratified paired-t test on h1218 data — does the
+  +2.78pp non-trivial lift reach p<0.05 in any stratum? Required to defend the re-framed headline.
+- **h1245 (P3, recall, medium effort):** Combined `fuse_if (n_gt≥N) AND (category in GAINERS)`
+  gate. Builds on h1228's invalidated category-only gate by adding the n_gt axis from h1230.
+  Targets the +0.5pp R@30 win h1228 narrowly missed.
+
+### Recommended next hypothesis
+**h1244 (P2, low effort)** — the formal stratified paired-t completes the statistical case
+for the +2.78pp non-trivial lift before we update CLAUDE.md ceilings or commit to h1243's
+benchmark refactor. All inputs already on disk in `data/analysis/h1218_fusion_gain_decomposition.json`.
+
+---
+
+## Previous Session: h1218 — Fusion gain decomposition (VALIDATED, falsifies disagreement-hypothesis) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1218 (VALIDATED — but falsified the a-priori mechanism)
 

@@ -1,0 +1,471 @@
+{
+  "hypothesis": "h1230",
+  "title": "Neutral-row characterisation of h1218 fusion decomposition",
+  "source_file": "data/analysis/h1218_fusion_gain_decomposition.json",
+  "n_rows": 1002,
+  "neutrality_definition": "|\u0394 R@30| < 1e-09",
+  "headline": {
+    "n_neutral": 524,
+    "pct_neutral": 52.29540918163673,
+    "n_gainers": 293,
+    "n_losers": 185,
+    "mean_delta_all_pp": 1.3271717031110293,
+    "mean_delta_nontrivial_pp": 2.782062858822702,
+    "mean_delta_gainers_pp": 11.195603352141752,
+    "mean_delta_losers_pp": -10.543166138704226
+  },
+  "n_gt_distribution": {
+    "all": {
+      "n": 1002,
+      "mean": 36.27345309381238,
+      "median": 14.0
+    },
+    "neutral": {
+      "n": 524,
+      "mean": 18.08206106870229,
+      "median": 8.0
+    },
+    "nontrivial": {
+      "n": 478,
+      "mean": 56.21548117154812,
+      "median": 25.0
+    }
+  },
+  "n_gt_buckets": [
+    {
+      "bucket": "1-1",
+      "lo": 1,
+      "hi": 1,
+      "n_rows": 58,
+      "n_neutral": 54,
+      "n_gainers": 4,
+      "n_losers": 0,
+      "pct_neutral": 93.10344827586206,
+      "mean_delta_all_pp": 6.896551724137931,
+      "mean_delta_nontrivial_pp": 100.0
+    },
+    {
+      "bucket": "2-2",
+      "lo": 2,
+      "hi": 2,
+      "n_rows": 43,
+      "n_neutral": 37,
+      "n_gainers": 2,
+      "n_losers": 4,
+      "pct_neutral": 86.04651162790698,
+      "mean_delta_all_pp": -1.1627906976744187,
+      "mean_delta_nontrivial_pp": -8.333333333333332
+    },
+    {
+      "bucket": "3-5",
+      "lo": 3,
+      "hi": 5,
+      "n_rows": 150,
+      "n_neutral": 113,
+      "n_gainers": 21,
+      "n_losers": 16,
+      "pct_neutral": 75.33333333333333,
+      "mean_delta_all_pp": 0.9555555555555557,
+      "mean_delta_nontrivial_pp": 3.873873873873874
+    },
+    {
+      "bucket": "6-10",
+      "lo": 6,
+      "hi": 10,
+      "n_rows": 177,
+      "n_neutral": 103,
+      "n_gainers": 52,
+      "n_losers": 22,
+      "pct_neutral": 58.19209039548023,
+      "mean_delta_all_pp": 2.0285176217379606,
+      "mean_delta_nontrivial_pp": 4.851994851994852
+    },
+    {
+      "bucket": "11-20",
+      "lo": 11,
+      "hi": 20,
+      "n_rows": 210,
+      "n_neutral": 109,
+      "n_gainers": 62,
+      "n_losers": 39,
+      "pct_neutral": 51.904761904761905,
+      "mean_delta_all_pp": 1.0726444321645558,
+      "mean_delta_nontrivial_pp": 2.230250799550067
+    },
+    {
+      "bucket": "21-50",
+      "lo": 21,
+      "hi": 50,
+      "n_rows": 186,
+      "n_neutral": 75,
+      "n_gainers": 71,
+      "n_losers": 40,
+      "pct_neutral": 40.32258064516129,
+      "mean_delta_all_pp": 1.3276669705677546,
+      "mean_delta_nontrivial_pp": 2.2247392479784
+    },
+    {
+      "bucket": "51+",
+      "lo": 51,
+      "hi": null,
+      "n_rows": 178,
+      "n_neutral": 33,
+      "n_gainers": 81,
+      "n_losers": 64,
+      "pct_neutral": 18.53932584269663,
+      "mean_delta_all_pp": 0.029459027281685285,
+      "mean_delta_nontrivial_pp": 0.036163495559586076
+    }
+  ],
+  "per_category": [
+    {
+      "category": "autoimmune",
+      "n_rows": 31,
+      "pct_neutral": 35.483870967741936,
+      "mean_delta_all_pp": -0.33445458838737646,
+      "mean_delta_nontrivial_pp": -0.5184046120004335,
+      "mean_delta_nontrivial_ngt5plus_pp": -0.5184046120004335,
+      "median_delta_nontrivial_pp": -0.6602309213464032
+    },
+    {
+      "category": "cancer",
+      "n_rows": 116,
+      "pct_neutral": 30.17241379310345,
+      "mean_delta_all_pp": 4.000321088207639,
+      "mean_delta_nontrivial_pp": 5.728854891754149,
+      "mean_delta_nontrivial_ngt5plus_pp": 4.944206661022762,
+      "median_delta_nontrivial_pp": 3.8461538461538463
+    },
+    {
+      "category": "cardiovascular",
+      "n_rows": 63,
+      "pct_neutral": 33.333333333333336,
+      "mean_delta_all_pp": -1.9672322218748435,
+      "mean_delta_nontrivial_pp": -2.9508483328122654,
+      "mean_delta_nontrivial_ngt5plus_pp": -2.603569209950398,
+      "median_delta_nontrivial_pp": -1.574803149606299
+    },
+    {
+      "category": "dermatological",
+      "n_rows": 48,
+      "pct_neutral": 54.166666666666664,
+      "mean_delta_all_pp": -0.45210229105397154,
+      "mean_delta_nontrivial_pp": -0.9864049986632107,
+      "mean_delta_nontrivial_ngt5plus_pp": -0.9864049986632107,
+      "median_delta_nontrivial_pp": -1.4084507042253516
+    },
+    {
+      "category": "endocrine",
+      "n_rows": 6,
+      "pct_neutral": 50.0,
+      "mean_delta_all_pp": -5.357142857142858,
+      "mean_delta_nontrivial_pp": -10.714285714285715,
+      "mean_delta_nontrivial_ngt5plus_pp": -10.714285714285715,
+      "median_delta_nontrivial_pp": -10.714285714285715
+    },
+    {
+      "category": "gastrointestinal",
+      "n_rows": 38,
+      "pct_neutral": 65.78947368421052,
+      "mean_delta_all_pp": 3.8244200820134635,
+      "mean_delta_nontrivial_pp": 11.179074085885508,
+      "mean_delta_nontrivial_ngt5plus_pp": 3.777330259709301,
+      "median_delta_nontrivial_pp": 3.401360544217688
+    },
+    {
+      "category": "hematological",
+      "n_rows": 17,
+      "pct_neutral": 47.05882352941177,
+      "mean_delta_all_pp": 2.475573056068412,
+      "mean_delta_nontrivial_pp": 4.676082439240334,
+      "mean_delta_nontrivial_ngt5plus_pp": 4.676082439240334,
+      "median_delta_nontrivial_pp": 4.545454545454546
+    },
+    {
+      "category": "immunological",
+      "n_rows": 7,
+      "pct_neutral": 85.71428571428571,
+      "mean_delta_all_pp": -0.5681818181818182,
+      "mean_delta_nontrivial_pp": -3.977272727272727,
+      "mean_delta_nontrivial_ngt5plus_pp": -3.977272727272727,
+      "median_delta_nontrivial_pp": -3.977272727272727
+    },
+    {
+      "category": "infectious",
+      "n_rows": 149,
+      "pct_neutral": 51.67785234899329,
+      "mean_delta_all_pp": 2.0899531733194183,
+      "mean_delta_nontrivial_pp": 4.325041983674907,
+      "mean_delta_nontrivial_ngt5plus_pp": 0.7920849177800007,
+      "median_delta_nontrivial_pp": 3.2795698924731163
+    },
+    {
+      "category": "metabolic",
+      "n_rows": 54,
+      "pct_neutral": 68.51851851851852,
+      "mean_delta_all_pp": -1.1171848362226127,
+      "mean_delta_nontrivial_pp": -3.548704773883593,
+      "mean_delta_nontrivial_ngt5plus_pp": 2.644801256265261,
+      "median_delta_nontrivial_pp": 2.4999999999999996
+    },
+    {
+      "category": "musculoskeletal",
+      "n_rows": 18,
+      "pct_neutral": 44.44444444444444,
+      "mean_delta_all_pp": 6.200636961016373,
+      "mean_delta_nontrivial_pp": 11.161146529829473,
+      "mean_delta_nontrivial_ngt5plus_pp": 11.161146529829473,
+      "median_delta_nontrivial_pp": 8.333333333333337
+    },
+    {
+      "category": "neurological",
+      "n_rows": 50,
+      "pct_neutral": 54.0,
+      "mean_delta_all_pp": 0.3438476735420991,
+      "mean_delta_nontrivial_pp": 0.7474949424828241,
+      "mean_delta_nontrivial_ngt5plus_pp": 1.6929525171885813,
+      "median_delta_nontrivial_pp": 2.5641025641025648
+    },
+    {
+      "category": "ophthalmic",
+      "n_rows": 22,
+      "pct_neutral": 50.0,
+      "mean_delta_all_pp": 0.8146684233640746,
+      "mean_delta_nontrivial_pp": 1.6293368467281493,
+      "mean_delta_nontrivial_ngt5plus_pp": 1.6293368467281493,
+      "median_delta_nontrivial_pp": -4.347826086956519
+    },
+    {
+      "category": "other",
+      "n_rows": 320,
+      "pct_neutral": 65.0,
+      "mean_delta_all_pp": 1.4187171068407878,
+      "mean_delta_nontrivial_pp": 4.053477448116537,
+      "mean_delta_nontrivial_ngt5plus_pp": 2.3226962195338814,
+      "median_delta_nontrivial_pp": 3.973684210526316
+    },
+    {
+      "category": "psychiatric",
+      "n_rows": 18,
+      "pct_neutral": 16.666666666666668,
+      "mean_delta_all_pp": 2.1489710191445766,
+      "mean_delta_nontrivial_pp": 2.578765222973492,
+      "mean_delta_nontrivial_ngt5plus_pp": 2.578765222973492,
+      "median_delta_nontrivial_pp": 1.5384615384615385
+    },
+    {
+      "category": "renal",
+      "n_rows": 23,
+      "pct_neutral": 30.434782608695652,
+      "mean_delta_all_pp": 0.03375315901064938,
+      "mean_delta_nontrivial_pp": 0.04852016607780848,
+      "mean_delta_nontrivial_ngt5plus_pp": 0.04852016607780848,
+      "median_delta_nontrivial_pp": 0.15098383011883898
+    },
+    {
+      "category": "reproductive",
+      "n_rows": 1,
+      "pct_neutral": 100.0,
+      "mean_delta_all_pp": 0.0,
+      "mean_delta_nontrivial_pp": 0.0,
+      "mean_delta_nontrivial_ngt5plus_pp": 0.0,
+      "median_delta_nontrivial_pp": 0.0
+    },
+    {
+      "category": "respiratory",
+      "n_rows": 21,
+      "pct_neutral": 47.61904761904762,
+      "mean_delta_all_pp": -0.9880006606926611,
+      "mean_delta_nontrivial_pp": -1.8861830795041712,
+      "mean_delta_nontrivial_ngt5plus_pp": -1.8861830795041712,
+      "median_delta_nontrivial_pp": -2.127659574468088
+    }
+  ],
+  "high_density_view_n_gt_ge_51": {
+    "n_rows": 178,
+    "mean_n_gt": 140.8876404494382,
+    "mean_r30_ceiling": 0.3130215661384932,
+    "mean_r30_n2v": 0.10043666161581927,
+    "mean_r30_concat": 0.10073125188863612,
+    "mean_hits30_n2v": 10.713483146067416,
+    "mean_hits30_concat": 10.97191011235955,
+    "delta_hits30_per_disease": 0.25842696629213435,
+    "mean_r30_n2v_ceiling_normalised": 0.3571161048689139,
+    "mean_r30_concat_ceiling_normalised": 0.3657303370786517
+  },
+  "disease_level": {
+    "n_diseases": 669,
+    "n_diseases_nontrivial": 360,
+    "pct_nontrivial": 53.81165919282511,
+    "mean_delta_disease_level_pp": 1.2960910638208873,
+    "mean_delta_disease_nontrivial_pp": 2.4085692269338157
+  },
+  "correlations": {
+    "pearson_delta_vs_log10_n_gt": -0.06576561136735361,
+    "pearson_delta_vs_recall_ceiling": 0.045835127477816553
+  },
+  "top_losers_n_gt_ge_5_seeds_ge_2": [
+    {
+      "disease_id": "drkg:Disease::MESH:D016921",
+      "name": "fungal meningitis",
+      "category": "infectious",
+      "n_gt_train_drugs": 5,
+      "n_seeds": 3,
+      "mean_delta_pp": -33.33333333333333
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013174",
+      "name": "sporotrichosis",
+      "category": "infectious",
+      "n_gt_train_drugs": 10,
+      "n_seeds": 2,
+      "mean_delta_pp": -20.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013771",
+      "name": "tetralogy of fallot",
+      "category": "cardiovascular",
+      "n_gt_train_drugs": 6,
+      "n_seeds": 2,
+      "mean_delta_pp": -16.666666666666664
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004461",
+      "name": "eclampsia",
+      "category": "other",
+      "n_gt_train_drugs": 11,
+      "n_seeds": 3,
+      "mean_delta_pp": -15.151515151515152
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011711",
+      "name": "pyoderma",
+      "category": "dermatological",
+      "n_gt_train_drugs": 18,
+      "n_seeds": 3,
+      "mean_delta_pp": -11.111111111111112
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007637",
+      "name": "keratoconjunctivitis",
+      "category": "ophthalmic",
+      "n_gt_train_drugs": 12,
+      "n_seeds": 3,
+      "mean_delta_pp": -8.333333333333337
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003922",
+      "name": "type 1 diabetes mellitus",
+      "category": "metabolic",
+      "n_gt_train_drugs": 95,
+      "n_seeds": 2,
+      "mean_delta_pp": -7.894736842105263
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004403",
+      "name": "dysenteries",
+      "category": "other",
+      "n_gt_train_drugs": 13,
+      "n_seeds": 2,
+      "mean_delta_pp": -7.6923076923076925
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008583",
+      "name": "h influenzae meningitis",
+      "category": "infectious",
+      "n_gt_train_drugs": 7,
+      "n_seeds": 2,
+      "mean_delta_pp": -7.142857142857142
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007006",
+      "name": "hypogonadotropic hypogonadism",
+      "category": "endocrine",
+      "n_gt_train_drugs": 28,
+      "n_seeds": 3,
+      "mean_delta_pp": -5.952380952380953
+    }
+  ],
+  "top_gainers_n_gt_ge_5_seeds_ge_2": [
+    {
+      "disease_id": "drkg:Disease::MESH:D014247",
+      "name": "trichomoniasis",
+      "category": "infectious",
+      "n_gt_train_drugs": 6,
+      "n_seeds": 2,
+      "mean_delta_pp": 25.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001752",
+      "name": "blast crisis of chronic leukemia",
+      "category": "cancer",
+      "n_gt_train_drugs": 9,
+      "n_seeds": 2,
+      "mean_delta_pp": 22.22222222222222
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004941",
+      "name": "reflux esophagitis",
+      "category": "gastrointestinal",
+      "n_gt_train_drugs": 36,
+      "n_seeds": 2,
+      "mean_delta_pp": 20.833333333333336
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010014",
+      "name": "osteolytic bone metastases",
+      "category": "musculoskeletal",
+      "n_gt_train_drugs": 5,
+      "n_seeds": 2,
+      "mean_delta_pp": 20.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002825",
+      "name": "chorioretinitis",
+      "category": "ophthalmic",
+      "n_gt_train_drugs": 10,
+      "n_seeds": 2,
+      "mean_delta_pp": 19.999999999999996
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010031",
+      "name": "infections of the ear",
+      "category": "infectious",
+      "n_gt_train_drugs": 14,
+      "n_seeds": 2,
+      "mean_delta_pp": 17.85714285714286
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014946",
+      "name": "postoperative wound infections",
+      "category": "infectious",
+      "n_gt_train_drugs": 12,
+      "n_seeds": 2,
+      "mean_delta_pp": 16.666666666666668
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002340",
+      "name": "extracranial carotid arteries",
+      "category": "other",
+      "n_gt_train_drugs": 9,
+      "n_seeds": 3,
+      "mean_delta_pp": 14.814814814814813
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004414",
+      "name": "dyspareunia",
+      "category": "other",
+      "n_gt_train_drugs": 7,
+      "n_seeds": 2,
+      "mean_delta_pp": 14.285714285714285
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013684",
+      "name": "spider veins",
+      "category": "other",
+      "n_gt_train_drugs": 7,
+      "n_seeds": 3,
+      "mean_delta_pp": 14.285714285714285
+    }
+  ]
+}

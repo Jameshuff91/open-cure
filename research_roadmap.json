@@ -2092,7 +2092,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 1,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Gated on h1199 (clean benchmark) being in place",
         "Build a supervised-positive/negative edge sampler: positives = treatment edges, negatives = degree-weighted random non-treatment pairs (ratio 1:3, following PinSAGE conventions)",
@@ -2650,7 +2650,7 @@
     {
       "id": "h1230",
       "title": "The 52% neutral \u2014 are these GT-sparse diseases where fusion is structurally inert?",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -2662,7 +2662,9 @@
         "If neutral is dominantly n_gt<=1, the real fusion lift on non-trivial diseases is much larger than 1.3pp.",
         "Report the restricted mean \u0394 (non-neutral rows) as a 'non-trivial fusion lift' metric."
       ],
-      "success_criteria": "Characterise the neutral-row population; report non-trivial lift."
+      "success_criteria": "Characterise the neutral-row population; report non-trivial lift.",
+      "findings": "Per-disease decomposition of h1218's 1,002 (seed,disease) rows by recall denominator (`n_gt_train_drugs`, the per-disease GT pool size in the candidate universe). **Headline: 524/1,002 (52.3%) rows are neutral (\u0394 R@30 = 0); these are concentrated at low denominators (93% neutral at n_gt=1, 86% at n_gt=2, dropping to 19% at n_gt\u226551). The non-trivial mean \u0394 R@30 \u2014 restricted to the 478 rows where fusion actually moves the metric \u2014 is +2.78pp (row-level) or +2.41pp (disease-level), more than 2\u00d7 the +1.32pp h1215 headline.** Pearson(\u0394 R@30, log10 n_gt)=-0.066 (small monotonic trend). **Per-category restricted \u0394 at n_gt\u22655 sharpens h1218's category table: musculoskeletal +11.16pp and cancer +4.94pp survive; GI's +11.18pp non-trivial collapses to +3.78pp \u2014 the headline was binary-flip-driven; endocrine -10.71pp and cardiovascular -2.60pp regressions are robust at n_gt\u22655 (NOT n_gt-driven artifacts), answering h1229's preregistered question for endocrine.** **High-density (n_gt\u226551) zero-R@30-lift mechanism identified**: mean R@30 ceiling there is 0.313 (denominator-bound, max=30/n_gt). Mean hits@30 actually rises from 10.71 (n2v) to 10.97 (concat) \u2014 fusion recovers +0.258 drugs/disease, but the +0.18pp R@30 it produces is below the noise floor. **R@30 systematically hides fusion benefit on high-density diseases; hits@30 should join the canonical 5-metric panel.** Outputs: data/analysis/h1230_neutral_row_characterization.{json,md}; script: scripts/h1230_neutral_row_characterization.py.",
+      "result_metric": "Non-trivial \u0394 R@30 = +2.78pp (row) / +2.41pp (disease) vs +1.33pp headline; 93% of n_gt=1 rows neutral; endocrine -10.71pp regression robust at n_gt\u22655; hits@30 uncovers +0.26 drugs/disease lift on n_gt\u226551 hidden by R@30."
     },
     {
       "id": "h1231",
@@ -2766,6 +2768,58 @@
         "Gate for promotion: no regression on AUPRC (<0.3pp); and uplift on small-GT categories (endocrine, ophthalmic, reproductive) >=2pp R@30.",
         "If successful, add to docs/claude/patterns.md as canonical GNN training recipe and reuse in h1202 fusion."
       ]
+    },
+    {
+      "id": "h1243",
+      "title": "Add hits@K reporting + 'non-trivial \u0394' standard to clean_embedding_benchmark.py",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "lever": "infrastructure",
+      "rationale": "h1230 demonstrated that R@30 hides ~+0.26 drugs/disease of fusion lift on n_gt\u226551 diseases behind the 30/n_gt recall ceiling, and that 52% of (seed,disease) rows are structurally inert (\u0394 R@30 = 0 when n_gt is small). Going forward, every fusion/embedding comparison should report (a) hits@K alongside R@K (denominator-invariant), and (b) the 'non-trivial \u0394' restricted to rows where the metric can actually move. Without this, future experiments will continue to underreport fusion benefit on the most clinically important high-density diseases.",
+      "steps": [
+        "Add a `hits_at_k` column to scripts/clean_embedding_benchmark.py output (per-disease and per-seed mean).",
+        "When --baseline is provided, compute \u0394 R@K and \u0394 hits@K vs baseline per row, then report both global mean and 'non-trivial mean' (excluding rows with \u0394=0).",
+        "Document in docs/claude/patterns.md: 'when n_gt is large, R@30 is ceiling-bounded; report hits@30 as the fairer fusion-lift metric.'",
+        "Re-emit h1199 + h1212 + h1215 outputs with hits@K columns so all canonical comparisons line up."
+      ],
+      "success_criteria": "Benchmark outputs include hits@K and non-trivial-\u0394; h1215's fusion gain in hits@30 is \u2265+0.2 drugs/disease on the n_gt\u226551 stratum; existing R@K results unchanged."
+    },
+    {
+      "id": "h1244",
+      "title": "n_gt-stratified fusion benchmark \u2014 does the +2.78pp non-trivial lift hold up at p<0.05?",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "lever": "recall",
+      "rationale": "h1230 reported a +2.78pp row-level / +2.41pp disease-level non-trivial \u0394 R@30, but did not compute a paired-t statistic per stratum (sample sizes within n_gt buckets vary; 58 rows at n_gt=1 have a +6.90pp mean only because R@30 jumps 0\u2192100% on a single hit). A formal n_gt-stratified paired-seed test will tell us which strata genuinely benefit from fusion (and where it neutral or hurts), informing per-disease fusion routing. This decouples the headline lift from structural denominator effects.",
+      "steps": [
+        "Re-load data/analysis/h1218_fusion_gain_decomposition.json. For each n_gt stratum {1, 2, 3-5, 6-10, 11-20, 21-50, 51+}, compute paired-seed \u0394 R@30 (paired on disease_id), one-sided paired-t, and bootstrap 95% CI.",
+        "Repeat for hits@30 (\u0394_hits = \u0394_R@30 \u00d7 n_gt) and ceiling-normalised R@30.",
+        "Save data/analysis/h1244_ngt_stratified_fusion.{json,md}.",
+        "If hits@30 lift is significant for n_gt\u226551 (p<0.05), update CLAUDE.md DRKG-only ceiling table with hits@30 ceilings alongside R@30."
+      ],
+      "success_criteria": "Identify \u22651 n_gt stratum where \u0394 R@30 OR \u0394 hits@30 reaches p<0.05; update ceilings if so. Negative result is also publishable (would mean fusion lift is uniformly distributed and h1230's non-trivial lift is just shifted by \u0394=0 rows)."
+    },
+    {
+      "id": "h1245",
+      "title": "Per-disease adaptive fusion gate \u2014 fuse only where fusion is structurally able to help",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "lever": "recall",
+      "rationale": "h1228 showed that category-gated fusion failed (+0.19pp R@30, p\u22480.11) because of score-scale mismatch. h1230 revealed an alternative gating axis: fuse only on disease-rows where \u0394 R@30 \u2260 0 is structurally possible \u2014 i.e., n_gt is large enough that fractional changes register. A simple 'fuse_if(n_gt\u22653)' router is leak-free (uses only the recall denominator), avoids the binary-flip noise at n_gt\u22642, and concentrates fusion on the 478 actionable rows. Combined with the h1218 category direction (gainers vs regressors), this could deliver the +0.5pp R@30 win the h1228 gate failed to reach.",
+      "steps": [
+        "Fork scripts/h1228_category_gated_fusion.py. Add gate `fuse_if (n_gt>=N) AND (category in GAINERS)` with N\u2208{3,5,10}.",
+        "Use h1228's leak-free protocol (gate determined on training-side per-category deltas).",
+        "Run 5-seed evaluation; paired-t vs concat_l2 on R@30 / hits@30 / MRR / AUPRC / AUROC.",
+        "Compare against h1228's category-only gate as well as global concat_l2.",
+        "Save data/analysis/h1245_ngt_gated_fusion.{json,md}."
+      ],
+      "success_criteria": "Combined gate beats global concat_l2 by \u2265+0.3pp R@30 at p<0.1, OR clearly demonstrates the n_gt axis cannot be exploited (would close the per-disease gating direction)."
     }
   ],
   "completed": [
@@ -5556,6 +5610,12 @@
       "hypothesis_id": "h1240",
       "learning": "Raw R@K under-credits retrievals on large-GT diseases because R@K cannot exceed min(K,|GT|)/|GT|. Ceiling-adjusted R@K (hits / min(K,|GT|)) is a cleaner measure of retrieval quality. Re-applied to Node2Vec: raw 19.55% \u2192 24.53%, and at K=1 the shift is even larger (2.88% \u2192 35.13%).",
       "implication": "Every h1200/h1202/h1215 run now produces both raw and ceiling-adjusted metrics. Promotion gate tightened: new embedding must beat Node2Vec on BOTH metrics. Prevents a lazy optimization that merely drops large-GT diseases from the eval pool."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1230",
+      "learning": "h1215's +1.32pp R@30 fusion headline is averaged across a population that is 52% structurally inert (n_gt small, fusion can't move R@30 fractionally). The actionable non-trivial lift on the remaining 478 (seed,disease) rows is +2.78pp. Endocrine and CV regressions at n_gt\u22655 are real, not artifacts. R@30 hides fusion lift on n_gt\u226551 diseases (denominator cap).",
+      "implication": "Add hits@30 + ceiling-normalised R@30 as standard panel metrics; report 'non-trivial \u0394' alongside global \u0394 for fusion comparisons; treat endocrine and CV regressions as separate investigation tracks, not n_gt artifacts."
     }
   ],
   "collaborations": [
