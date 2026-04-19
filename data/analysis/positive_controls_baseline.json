@@ -1,0 +1,293 @@
+{
+  "label": "baseline",
+  "embedding_prefix": "node2vec_256",
+  "summary": {
+    "total": 20,
+    "tier_counts": {
+      "NOT_FOUND": 10,
+      "HIGH": 1,
+      "FILTER": 4,
+      "GOLDEN": 3,
+      "MEDIUM": 1,
+      "LOW": 1
+    },
+    "status_counts": {
+      "not_in_top_100": 6,
+      "found": 10,
+      "no_predictions": 4
+    },
+    "in_top_30": 8,
+    "in_top_100": 10,
+    "by_category": {
+      "rct_validated": {
+        "n": 5,
+        "in_top_30": 0,
+        "in_top_100": 1,
+        "golden_or_high": 1,
+        "not_found": 4
+      },
+      "well_established": {
+        "n": 5,
+        "in_top_30": 2,
+        "in_top_100": 3,
+        "golden_or_high": 1,
+        "not_found": 2
+      },
+      "classic_repurpose": {
+        "n": 4,
+        "in_top_30": 2,
+        "in_top_100": 2,
+        "golden_or_high": 1,
+        "not_found": 2
+      },
+      "biologic": {
+        "n": 4,
+        "in_top_30": 2,
+        "in_top_100": 2,
+        "golden_or_high": 1,
+        "not_found": 2
+      },
+      "rare_disease": {
+        "n": 2,
+        "in_top_30": 2,
+        "in_top_100": 2,
+        "golden_or_high": 0,
+        "not_found": 0
+      }
+    }
+  },
+  "results": [
+    {
+      "drug": "dantrolene",
+      "disease": "heart failure",
+      "source": "RCT P=0.034, 66% VT reduction",
+      "category": "rct_validated",
+      "disease_resolved_to": "drkg:Disease::MESH:D006333",
+      "disease_category": "cardiovascular",
+      "status": "not_in_top_100"
+    },
+    {
+      "drug": "lovastatin",
+      "disease": "multiple myeloma",
+      "source": "RCT improved OS/PFS",
+      "category": "rct_validated",
+      "disease_resolved_to": "drkg:Disease::MESH:D009101",
+      "disease_category": "cancer",
+      "status": "not_in_top_100"
+    },
+    {
+      "drug": "rituximab",
+      "disease": "multiple sclerosis",
+      "source": "WHO Essential Medicines 2023",
+      "category": "rct_validated",
+      "disease_resolved_to": "drkg:Disease::MESH:D009103",
+      "disease_category": "autoimmune",
+      "status": "found",
+      "rank": 55,
+      "tier": "HIGH",
+      "knn_score": 0.7767,
+      "normalized_score": 0.305,
+      "is_known_indication": false,
+      "in_top_30": false
+    },
+    {
+      "drug": "pitavastatin",
+      "disease": "rheumatoid arthritis",
+      "source": "Clinical: superior to MTX alone",
+      "category": "rct_validated",
+      "disease_resolved_to": "drkg:Disease::MESH:D001172",
+      "disease_category": "autoimmune",
+      "status": "not_in_top_100"
+    },
+    {
+      "drug": "empagliflozin",
+      "disease": "parkinson disease",
+      "source": "Cohort HR 0.80 (0.68-0.92)",
+      "category": "rct_validated",
+      "disease_resolved_to": "drkg:Disease::MESH:D010300",
+      "disease_category": "neurological",
+      "status": "not_in_top_100"
+    },
+    {
+      "drug": "metformin",
+      "disease": "diabetes mellitus, type 2",
+      "source": "First-line T2D treatment",
+      "category": "well_established",
+      "disease_resolved_to": "drkg:Disease::MESH:D003922",
+      "disease_category": "metabolic",
+      "status": "found",
+      "rank": 5,
+      "tier": "FILTER",
+      "knn_score": 2.0966,
+      "normalized_score": 0.8143,
+      "is_known_indication": false,
+      "in_top_30": true
+    },
+    {
+      "drug": "aspirin",
+      "disease": "myocardial infarction",
+      "source": "ACS/MI secondary prevention standard",
+      "category": "well_established",
+      "disease_resolved_to": "drkg:Disease::MESH:D009203",
+      "disease_category": "cardiovascular",
+      "status": "not_in_top_100"
+    },
+    {
+      "drug": "sildenafil",
+      "disease": "hypertension, pulmonary",
+      "source": "FDA-approved PAH",
+      "category": "well_established",
+      "disease_resolved_to": "drkg:Disease::MESH:D006973",
+      "disease_category": "cardiovascular",
+      "status": "found",
+      "rank": 100,
+      "tier": "FILTER",
+      "knn_score": 0.3321,
+      "normalized_score": 0.1608,
+      "is_known_indication": false,
+      "in_top_30": false
+    },
+    {
+      "drug": "thalidomide",
+      "disease": "multiple myeloma",
+      "source": "FDA-approved MM",
+      "category": "well_established",
+      "disease_resolved_to": "drkg:Disease::MESH:D009101",
+      "disease_category": "cancer",
+      "status": "found",
+      "rank": 27,
+      "tier": "GOLDEN",
+      "knn_score": 1.0,
+      "normalized_score": 0.4611,
+      "is_known_indication": false,
+      "in_top_30": true
+    },
+    {
+      "drug": "baricitinib",
+      "disease": "covid-19",
+      "source": "FDA EUA severe COVID-19",
+      "category": "well_established",
+      "status": "no_predictions"
+    },
+    {
+      "drug": "minoxidil",
+      "disease": "alopecia",
+      "source": "Rogaine; antihypertensive repurposed for hair loss",
+      "category": "classic_repurpose",
+      "status": "no_predictions"
+    },
+    {
+      "drug": "bupropion",
+      "disease": "tobacco use disorder",
+      "source": "Zyban; antidepressant repurposed for smoking cessation",
+      "category": "classic_repurpose",
+      "disease_resolved_to": "drkg:Disease::MESH:D014029",
+      "disease_category": "other",
+      "status": "found",
+      "rank": 1,
+      "tier": "MEDIUM",
+      "knn_score": 1.0,
+      "normalized_score": 1.0,
+      "is_known_indication": false,
+      "in_top_30": true
+    },
+    {
+      "drug": "finasteride",
+      "disease": "alopecia",
+      "source": "Propecia; BPH drug repurposed for hair loss",
+      "category": "classic_repurpose",
+      "status": "no_predictions"
+    },
+    {
+      "drug": "raloxifene",
+      "disease": "osteoporosis",
+      "source": "SERM repurposed from breast cancer prevention",
+      "category": "classic_repurpose",
+      "disease_resolved_to": "drkg:Disease::MESH:D010024",
+      "disease_category": "musculoskeletal",
+      "status": "found",
+      "rank": 11,
+      "tier": "GOLDEN",
+      "knn_score": 1.0,
+      "normalized_score": 0.4004,
+      "is_known_indication": false,
+      "in_top_30": true
+    },
+    {
+      "drug": "adalimumab",
+      "disease": "rheumatoid arthritis",
+      "source": "FDA-approved RA",
+      "category": "biologic",
+      "disease_resolved_to": "drkg:Disease::MESH:D001172",
+      "disease_category": "autoimmune",
+      "status": "found",
+      "rank": 16,
+      "tier": "GOLDEN",
+      "knn_score": 1.8095,
+      "normalized_score": 0.6075,
+      "is_known_indication": false,
+      "in_top_30": true
+    },
+    {
+      "drug": "trastuzumab",
+      "disease": "breast neoplasms",
+      "source": "FDA-approved HER2+ breast cancer",
+      "category": "biologic",
+      "disease_resolved_to": "drkg:Disease::MESH:D001943",
+      "disease_category": "cancer",
+      "status": "found",
+      "rank": 20,
+      "tier": "FILTER",
+      "knn_score": 1.0,
+      "normalized_score": 0.3912,
+      "is_known_indication": false,
+      "in_top_30": true
+    },
+    {
+      "drug": "bevacizumab",
+      "disease": "colorectal neoplasms",
+      "source": "FDA-approved metastatic CRC",
+      "category": "biologic",
+      "status": "no_predictions"
+    },
+    {
+      "drug": "infliximab",
+      "disease": "crohn disease",
+      "source": "FDA-approved Crohn's",
+      "category": "biologic",
+      "disease_resolved_to": "drkg:Disease::MESH:D003424",
+      "disease_category": "autoimmune",
+      "status": "not_in_top_100"
+    },
+    {
+      "drug": "riluzole",
+      "disease": "amyotrophic lateral sclerosis",
+      "source": "FDA-approved ALS",
+      "category": "rare_disease",
+      "disease_resolved_to": "drkg:Disease::MESH:D000690",
+      "disease_category": "neurological",
+      "status": "found",
+      "rank": 1,
+      "tier": "LOW",
+      "knn_score": 1.5,
+      "normalized_score": 1.0,
+      "is_known_indication": false,
+      "in_top_30": true
+    },
+    {
+      "drug": "tetrabenazine",
+      "disease": "huntington disease",
+      "source": "FDA-approved HD chorea",
+      "category": "rare_disease",
+      "disease_resolved_to": "drkg:Disease::MESH:D006816",
+      "disease_category": "neurological",
+      "status": "found",
+      "rank": 1,
+      "tier": "FILTER",
+      "knn_score": 2.2064,
+      "normalized_score": 1.0,
+      "is_known_indication": false,
+      "in_top_30": true
+    }
+  ]
+}
