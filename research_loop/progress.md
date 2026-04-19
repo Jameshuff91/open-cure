@@ -1,5 +1,86 @@
 # Research Loop Progress
 
+## Current Session: h1218 — Fusion gain decomposition (VALIDATED, falsifies disagreement-hypothesis) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1218 (VALIDATED — but falsified the a-priori mechanism)
+
+### What was built
+`scripts/h1218_fusion_gain_decomposition.py` — per-disease (seed × holdout)
+decomposition of concat_l2 vs node2vec R@30 across 5 seeds. For every
+holdout disease, records R@30 under three modes, Δ = concat_l2 − n2v,
+Jaccard of top-20 train neighbours between the two embeddings, and
+Spearman ρ of the full train-disease similarity rankings.
+
+### Headline
+- **1,002 (seed, disease) rows.**
+- **Net Δ R@30 = +1.327pp** — cross-validates h1215's +1.32pp exactly (independent pipeline).
+- **Pearson(Δ R@30, 1 − Jaccard) = −0.077, p=0.014, n=1002** — opposite sign to the a-priori hypothesis. Fusion gain is *negatively* correlated with embedding disagreement. Spearman-based correlation is essentially zero (+0.022, p=0.48).
+
+### Jaccard-quartile fusion gain
+| Quartile | Jaccard range | n | mean Δ R@30 |
+|---|---|---|---|
+| Q1_low (most disagreement) | lowest | 330 | +0.88pp |
+| Q2 | low-mid | 190 | +0.60pp |
+| Q3 | mid-high | 279 | +1.41pp |
+| Q4_high (most agreement) | highest | 203 | **+2.63pp** |
+
+Fusion gain is 3× larger in the high-agreement quartile than the
+low-agreement quartile. **Fusion acts as score-smoothing / variance
+reduction, not disagreement-exploitation.** This is a clean falsification
+of the intuitive model we had going into the experiment.
+
+### Per-category (sorted by Δ R@30)
+| Gainers | Δ | | Regressors | Δ |
+|---|---|---|---|---|
+| musculoskeletal | +6.20pp | | endocrine | −5.36pp |
+| cancer | +4.00pp | | cardiovascular | −1.97pp |
+| gastrointestinal | +3.82pp | | metabolic | −1.12pp |
+| hematological | +2.48pp | | respiratory | −0.99pp |
+| psychiatric | +2.15pp | | immunological | −0.57pp |
+| infectious | +2.09pp | | dermatological | −0.45pp |
+
+Endocrine is the biggest surprise — h1199 reported endocrine with the
+HIGHEST per-category R@30 (41%), yet fusion destabilises its rankings.
+
+### Gain concentration
+- Rows gaining: 293 (29.2%)
+- Rows losing: 185 (18.5%)
+- Rows neutral (Δ=0): 524 (**52.3%**)
+
+The headline +1.3pp is driven by a minority. The 52% neutral rows are
+almost certainly n_gt_train ≤ 1 diseases where per-drug R@30 is
+binary (h1230 proposes a direct audit).
+
+### Actionable follow-up
+Category-gated fusion is the obvious win: route gainer categories
+(musculoskeletal, cancer, GI, hematological, psychiatric, infectious)
+through concat_l2 and regressor categories through node2vec alone.
+Back-of-envelope lift: +1–2pp R@30 on top of h1215's +1.32pp.
+
+### Shipped
+- `scripts/h1218_fusion_gain_decomposition.py`
+- `data/analysis/h1218_fusion_gain_decomposition.json` (1,002 per-row records)
+- `data/analysis/h1218_fusion_gain_decomposition.md`
+- `data/analysis/h1218_run.log`
+
+### New hypotheses (3 added)
+- **h1228 (P2, recall lever):** Category-gated concat_l2 — use concat_l2 on gainer
+  categories, node2vec on regressor categories. Preregistered gate:
+  +0.5pp R@30 vs global concat_l2, p<0.1.
+- **h1229 (P3, diagnostic):** Why does endocrine regress? Re-analyse h1218 json
+  with n_gt_train_drugs bucketing; hypothesis: endocrine has many N-of-1 rare
+  disorders where FastRP noise dilutes Node2Vec's sharp signal.
+- **h1230 (P3, diagnostic):** The 52% neutral rows — characterise the
+  n_gt_train_drugs distribution; report 'non-trivial fusion lift' restricted
+  to the 478 rows where fusion actually moves R@30.
+
+### Recommended next hypothesis
+**h1228 (P2, low effort)** — direct, preregistered category-gate test. All
+inputs already live; one additional parameterised run of
+`scripts/h1215_fusion_benchmark.py` with a `cat_gated` mode. Highest
+expected R@30 lift of any pending hypothesis that doesn't require new data.
+
+
 ## Current Session: h1216 — Weighted fusion sweep (INVALIDATED as recipe-improver; confirms w=0.5 is Pareto-optimal) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1216 (INVALIDATED, recall lever)

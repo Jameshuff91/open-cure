@@ -2505,7 +2505,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extend benchmark to write per-disease R@30 for each mode into the JSON report.",
         "Compute per-disease \u2206R@30 = concat_l2 \u2212 node2vec across 5 seeds.",
@@ -2513,8 +2513,9 @@
         "Bucket diseases into Q1-Q4 by neighbour-agreement; compare fusion gain across buckets.",
         "Also break down by disease category; flag any category where fusion REGRESSES (so we can gate)."
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Per-disease decomposition across 5 seeds \u00d7 200 holdouts = 1,002 rows. Net \u0394 R@30 = +1.327pp (cross-validates h1215's +1.32pp exactly). KEY FINDING (falsifies the a-priori intuition): fusion gain is NOT driven by disagreement between the two embeddings. Pearson(\u0394 R@30, 1\u2212Jaccard of top-20 train neighbours) = -0.077 (p=0.014) \u2014 gain is slightly POSITIVELY correlated with agreement. Jaccard quartiles: Q1_low +0.88pp, Q2 +0.60pp, Q3 +1.41pp, Q4_high +2.63pp \u2014 3\u00d7 more gain in the high-agreement quartile. Fusion acts as score-smoothing/variance-reduction, not disagreement-exploitation. Per-category: musculoskeletal (+6.2pp), cancer (+4.0pp), gastrointestinal (+3.8pp), hematological (+2.5pp), psychiatric (+2.1pp), infectious (+2.1pp) are the winners. REGRESSIONS: endocrine (-5.4pp!), cardiovascular (-2.0pp), metabolic (-1.1pp), respiratory (-1.0pp), immunological (-0.6pp). Endocrine regression is surprising since h1199 showed endocrine at the highest per-category R@30 (41%) \u2014 it's a case where both embeddings are already strong and fusion destabilises rankings. Gain concentration: only 29.2% of rows gain (positive \u0394), 18.5% lose, 52.3% are neutral (\u0394=0). The headline +1.32pp is driven by a minority of diseases.",
+      "result_metric": "Net +1.327pp matches h1215 exactly. Jaccard correlation r=-0.077 p=0.014 (opposite sign to hypothesis). 5 categories regress; category-gated fusion is the clear next experiment.",
+      "artifact": "scripts/h1218_fusion_gain_decomposition.py; data/analysis/h1218_fusion_gain_decomposition.json (1,002 rows); data/analysis/h1218_fusion_gain_decomposition.md; data/analysis/h1218_run.log"
     },
     {
       "id": "h1219",
@@ -2606,6 +2607,59 @@
         "Document whether gains are additive, saturating, or negative (anti-correlated signal)."
       ],
       "success_criteria": "Three-way concat beats two-way concat_l2 on \u22653 metrics at p<0.1."
+    },
+    {
+      "id": "h1228",
+      "title": "Category-gated fusion \u2014 concat_l2 only for gaining categories, Node2Vec for regressors",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "lever": "recall",
+      "rationale": "h1218 revealed 5 categories where concat_l2 regresses vs Node2Vec (endocrine -5.4pp, cardiovascular -2.0pp, metabolic -1.1pp, respiratory -1.0pp, immunological -0.6pp) and 6 categories where it gains \u22652pp (musculoskeletal, cancer, gastrointestinal, hematological, psychiatric, infectious). A simple categorical gate \u2014 use concat_l2 on gainer categories, Node2Vec on regressor categories \u2014 should add ~+1pp on top of h1215's headline. The gate is interpretable (disease-category routing) and uses only labels already available in `categorize()`. This is the tightest, most actionable follow-up to h1218 and directly improves the fusion primitive locked in by h1215/h1216.",
+      "steps": [
+        "Reuse scripts/h1215_fusion_benchmark.py. Extend `compute_metrics_for_seed` with a gate: if mode=='cat_gated', pick concat_l2 for gainer categories and node2vec for regressor categories.",
+        "Determine the gate on train-side per-category deltas (leak-free: learn categories on train, apply on holdout).",
+        "Run 5-seed evaluation under (a) global concat_l2, (b) global node2vec, (c) cat_gated.",
+        "Paired-t vs concat_l2 on all 5 metrics.",
+        "If cat_gated wins on \u22653 metrics, ship as the canonical production recipe (update CLAUDE.md + docs/claude/patterns.md)."
+      ],
+      "success_criteria": "Cat-gated fusion beats global concat_l2 on R@30 by \u22650.5pp mean across 5 seeds at p<0.1."
+    },
+    {
+      "id": "h1229",
+      "title": "Investigate endocrine regression \u2014 why does fusion HURT the strongest category?",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "lever": "recall",
+      "rationale": "h1218 showed endocrine loses -5.4pp under fusion even though h1199 flagged endocrine as the TOP per-category R@30 (41%). A simple hypothesis: endocrine has many N-of-1 diseases (rare endocrine disorders) where a single drug in the training set drives all signal; FastRP's random-projection noise dilutes this. If correct, the fix is to gate by n_gt_train_drugs (single-drug diseases \u2192 pure Node2Vec). Testable from the h1218 json directly \u2014 no new compute needed.",
+      "steps": [
+        "Re-analyse data/analysis/h1218_fusion_gain_decomposition.json.",
+        "For endocrine rows, bucket by n_gt_train_drugs (1 / 2-5 / 6+).",
+        "Compute mean \u0394 R@30 per bucket.",
+        "If low-n_gt_train drives the regression, add a 'n_gt_train>=X' filter to h1228.",
+        "If not, document the open question and move on."
+      ],
+      "success_criteria": "Identify whether endocrine regression is n_gt_train-driven (<5 train drugs)."
+    },
+    {
+      "id": "h1230",
+      "title": "The 52% neutral \u2014 are these GT-sparse diseases where fusion is structurally inert?",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "lever": "diagnostic",
+      "rationale": "h1218 showed 524/1002 (52.3%) rows have exactly \u0394=0 under fusion. This is suspicious \u2014 it suggests a large population where per-drug R@30 is identical between node2vec and concat_l2. Most likely explanation: diseases with n_gt_drugs=1 (single-drug GT) where either both modes rank the only drug \u226430 (both R@30=1.0) or both rank it >30 (both R@30=0). If so, the true effective fusion-benefit base is just the 478 non-neutral rows, and the per-disease paired-t should be recomputed on them alone. Directly reads the h1218 json \u2014 no new compute.",
+      "steps": [
+        "From data/analysis/h1218_fusion_gain_decomposition.json, filter to rows with \u0394=0.",
+        "Report the distribution of n_gt_train_drugs for neutral vs non-neutral rows.",
+        "If neutral is dominantly n_gt<=1, the real fusion lift on non-trivial diseases is much larger than 1.3pp.",
+        "Report the restricted mean \u0394 (non-neutral rows) as a 'non-trivial fusion lift' metric."
+      ],
+      "success_criteria": "Characterise the neutral-row population; report non-trivial lift."
     }
   ],
   "completed": [
@@ -5372,6 +5426,12 @@
       "hypothesis_id": "h1216",
       "learning": "Weighted concat_l2 fusion of Node2Vec + FastRP has a flat R@30/MRR plateau from w=0.3 to w=0.8 and a sharp AUPRC/AUROC peak at w=0.5. Equal-weight concat_l2 is Pareto-optimal (unique best on AUPRC and AUROC, tied-best on R@30/MRR) \u2014 no weighting beats it on the preregistered \u22653-metric gate.",
       "implication": "h1215's w=0.5 recipe is locked in as the production fusion primitive. Move weight-tuning effort OFF the linear-interpolation axis and ONTO rank-based combiners (RRF / Borda), per-disease adaptive fusion (h1218), or score-space blending with learned features."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1218",
+      "learning": "Fusion gain is concentrated, not uniform: only 29% of rows gain, 52% are neutral, 18% lose. Gain is positively correlated with top-20 neighbour AGREEMENT (Jaccard) \u2014 the a-priori intuition that disagreement drives fusion benefit is wrong. 5 categories (endocrine, cardiovascular, metabolic, respiratory, immunological) regress under fusion; 6 categories gain \u22652pp (musculoskeletal, cancer, GI, hematological, psychiatric, infectious).",
+      "implication": "Category-gated fusion \u2014 route endocrine/cardiovascular/metabolic/respiratory/immunological to pure Node2Vec and the rest to concat_l2 \u2014 should beat global concat_l2 on R@30. Estimate of lift: ~+1pp beyond h1215's +1.32pp. Adaptive-by-Jaccard gating (h1226 form) is UNLIKELY to work since the correlation is weak (|r|=0.077) and opposite sign."
     }
   ],
   "collaborations": [
