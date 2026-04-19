@@ -1964,7 +1964,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Determine the specific sub_reason / tier_rule demoting Dantrolene in each of {VT, VF, tachycardia, arrhythmia}",
         "Check Dantrolene's drug-class assignment (could be classified as 'cancer_only' or 'non_therapeutic' incorrectly; verify ATC codes)",
@@ -1972,8 +1972,8 @@
         "Regardless of fix outcome, write docs/claude/paper_v2_errata.md with the corrected Section 3.5 row: 'Dantrolene | Ventricular tachycardia (in heart failure patients) | Drug->Drug->Disease | RCT P=0.034, 66% VT reduction'",
         "Update project_open_cure_preprint_v2_todo memory with this errata item alongside tier-table and figure updates"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "VALIDATED \u2014 paper relabel, not a code fix. Model does NOT predict Dantrolene for heart failure (D006333, 117 total preds, Dantrolene absent). Model DOES predict Dantrolene for VT (rank 34), VF (rank 36), tachycardia (rank 28), arrhythmia (rank 67, mech=True). Tier FILTER in all cases, sub_reason 'rank_over_20' \u2014 the structural kNN floor, NOT a tier-rule misfire. Dantrolene's drug-class assignment is correct (not cancer_targeted_therapy, not corticosteroid, not inverse). Minor artifact: drug_cancer_types[DB01219]={'solid_tumor'} from a DRKG co-occurrence edge (does not affect VT-family predictions). Paper errata: relabel Section 3.5 row to 'Ventricular tachycardia (in HF patients)' with path 'Drug -> Target (RyR2) -> Disease' and annotate the model's rank/tier honestly. Errata document shipped: docs/claude/paper_v2_errata.md. No production_predictor.py changes \u2014 the rank_over_20 rule is correctly NOT carved out for known indications per h1100 design (it's a structural kNN signal, not a safety filter).",
+      "result_metric": "Paper Section 3.5 row corrected: Dantrolene -> VT (rank 34, FILTER), not Dantrolene -> HF (not predicted). No code change."
     },
     {
       "id": "h1005",
@@ -2237,6 +2237,41 @@
         "Regression defined as any control moving from LOW+ to FILTER, or any control's rank worsening by >=5 positions",
         "Wire into git pre-commit hook (optional, opt-in via env var)",
         "Document in CLAUDE.md + research_spec.md"
+      ]
+    },
+    {
+      "id": "h1106",
+      "title": "drug_cancer_types artifact audit \u2014 DRKG co-occurrence pulling non-cancer drugs into cancer paths",
+      "priority": 3,
+      "status": "pending",
+      "category": "error_analysis",
+      "rationale": "h1101 surfaced drug_cancer_types[Dantrolene]={'solid_tumor'} even though Dantrolene is a muscle relaxant / RyR modulator with no oncology role. Likely traces to a single DRKG edge (cancer-adjacent paper co-mentioning Dantrolene). If the drug_cancer_types mapping has similar artifacts for other non-cancer drugs, it might incorrectly route predictions through cancer-specific tier paths (cancer_same_type, cancer_targeted_therapy, cancer_no_gt). Audit: scan drug_cancer_types for drugs with train_frequency >= 5 whose GT diseases are 0% cancer-category \u2014 those are candidates for cleanup.",
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Load drug_cancer_types mapping from production_predictor",
+        "For each drug, compute: cancer_types_count, gt_diseases_count, cancer_gt_fraction (% of GT diseases that are cancer-category)",
+        "Flag drugs with cancer_types_count >= 1 AND cancer_gt_fraction == 0 AND train_freq >= 3 as likely artifacts",
+        "Spot-check 10 of the flagged drugs against FDA / DrugBank indication labels",
+        "If the artifact rate is >= 30%, propose a cleanup rule: require at least one cancer-category GT disease before assigning cancer_types",
+        "Before shipping: ensure no regression in cancer tier precision via h393 holdout"
+      ]
+    },
+    {
+      "id": "h1107",
+      "title": "Paper Section 3.5 audit \u2014 validate every retrospectively-corroborated prediction",
+      "priority": 2,
+      "status": "pending",
+      "category": "paper-revision",
+      "rationale": "h1101 showed that the Dantrolene row of Paper Section 3.5 conflated cohort (HF) with outcome (VT). There are N other rows in the same table that were never re-checked against model output. Audit every row: does the model actually predict the claimed (drug, disease) at any rank? If not, either the disease label needs the same kind of correction, or the row needs to move out of 'retrospectively corroborated'. Mirror the positive-control script methodology \u2014 exact drug name, exact disease string, rank/tier/sub_reason for each.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "steps": [
+        "Extract every row of Paper Section 3.5 into a machine-readable list (drug, disease_claim, rct_source) saved to data/analysis/h1107_section_3_5_claims.json",
+        "For each row, call p.predict(disease_claim, top_n=500, include_filtered=True) and check if the drug is present; record rank, tier, sub_reason, in_gt, mechanism_support",
+        "For rows where the drug is not predicted for the claimed disease, search for related diseases in the same category/family (e.g., for 'heart failure' also check 'ventricular tachycardia', 'arrhythmia') and report what WAS found",
+        "Update paper_v2_errata.md with every required relabel",
+        "If >= 3 rows need errata, escalate to Interactive for a preprint re-submission decision"
       ]
     }
   ],
@@ -4962,6 +4997,12 @@
       "hypothesis_id": "h1100",
       "learning": "Known-indication flag (drug_id in self.ground_truth.get(disease_id)) is a clean carve-out signal for FILTER-demoting rules. 3 rules correctly exempted; safety filters (inverse indication, rank>20, no targets) intentionally NOT exempted. 543/779 remaining known-indication FILTER cases are rank>20 \u2014 genuine kNN mis-ranking, not a rule fix.",
       "implication": "The rank>20 structural floor is the dominant remaining source of paper-visible FILTER misfires on FDA-approved indications. Not fixable by tier rules; only by improving the underlying ranker (h1200 supervised GNN). Also: every new tier-demoting rule should explicitly decide whether to exempt known indications before shipping."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1101",
+      "learning": "Paper Section 3.5 crown-jewel table conflates RCT cohort with RCT outcome in at least one row (Dantrolene: 'heart failure' cohort, 'VT reduction' outcome). The model correctly identifies the VT signal at rank 34 but is FILTER-tier because of the structural rank>20 kNN floor, not a rule misfire. No code change required; paper errata only.",
+      "implication": "h1107 queued to audit every row of Section 3.5 \u2014 other rows may have the same conflation. Also h1106 queued to clean up drug_cancer_types artifacts (Dantrolene incorrectly has 'solid_tumor' despite no cancer role)."
     }
   ],
   "collaborations": [

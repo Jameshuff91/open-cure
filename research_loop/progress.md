@@ -4354,3 +4354,42 @@ Before adding any FILTER-demoting rule, decide explicitly whether to carve out `
 **h1102 (P2)** — low-effort, high-value annotation. The is_known_indication plumbing is already in the predictor; just surface it in the deliverable. Fully decouples from GNN work.
 
 Or alternatively **h1103 (P2)** — diagnostic for h1200 (supervised GNN). Identifies which mis-rankings matter most for the upcoming training, so h1200 loss weighting has a principled prior.
+
+
+## Current Session (continued): h1101 — Dantrolene Crown-Jewel Relabel (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1101 (VALIDATED — paper relabel, no code change)
+
+### What was tested
+Traced Dantrolene's predictions and tier assignments to validate Paper Section 3.5's "Dantrolene | Heart failure" row. Checked: (a) does the model predict Dantrolene for heart failure? (b) which rule demotes Dantrolene in the VT/VF/tachycardia/arrhythmia family? (c) is the rule over-broad? (d) is Dantrolene's drug-class assignment correct?
+
+### Findings
+**The model does NOT predict Dantrolene for heart failure** (D006333: 117 total preds, Dantrolene absent — no kNN neighbors surface it).
+
+**The model DOES predict Dantrolene for the arrhythmia family:**
+| Disease | Rank | Tier | sub_reason | freq | mech | in_gt |
+|---|---|---|---|---|---|---|
+| Ventricular tachycardia | 34 | FILTER | rank_over_20 | 5 | False | False |
+| Ventricular fibrillation | 36 | FILTER | rank_over_20 | 5 | False | False |
+| Tachycardia | 28 | FILTER | rank_over_20 | 5 | False | False |
+| Arrhythmia | 67 | FILTER | rank_over_20 | 5 | **True** | True |
+
+Tier is set by the **structural `rank_over_20` rule** — not a rule misfire. Per h1100 design principle, `rank_over_20` is NOT carved out for known indications because it is a structural kNN-floor signal (543/779 of all known-indication FILTER misfires hit it; demoting these would explode FILTER precision).
+
+**Drug-class assignment is correct** — Dantrolene is not in CANCER_TARGETED_THERAPY, CORTICOSTEROID_DRUGS, or INVERSE_INDICATION_PAIRS. Targets: RyR1/2/3 (6261-6263) + CYP3A4 (1576), consistent with its MOA.
+
+**Paper conflation root-cause:** Zamiri et al. 2014 *Circulation* randomized heart failure patients but the primary outcome was VT reduction (P=0.034, 66%). The paper conflated cohort (HF) with outcome (VT).
+
+### Shipped
+- **docs/claude/paper_v2_errata.md** created. First entry E1 corrects Section 3.5 row to: "Dantrolene | Ventricular tachycardia (in HF patients) | Drug -> Target (RyR2) -> Disease | RCT P=0.034, 66% VT reduction | model rank 34, FILTER (rank_over_20)".
+- No code change to production_predictor.py — rank_over_20 is the correct rule.
+
+### Latent artifact noted (not blocking)
+`drug_cancer_types[Dantrolene] = {'solid_tumor'}` despite Dantrolene having no oncology role. Likely a DRKG co-occurrence edge. Queued as h1106 for broader audit.
+
+### New hypotheses (2 added)
+- **h1106 (P3):** Scan drug_cancer_types for similar artifacts in other non-cancer drugs (train_freq >= 3, 0% cancer GT, non-empty cancer_types).
+- **h1107 (P2):** Audit every row of Paper Section 3.5 — same cohort/outcome conflation may apply to others. Run positive-control methodology on every claimed prediction.
+
+### Recommended next hypothesis
+**h1107 (P2)** — protects preprint credibility at low cost. Same positive-control methodology as h1100; 1-2h work. Alternatively **h1199 (P1, infrastructure)** unblocks h1200/h1201 on the 37->60 pivot.
