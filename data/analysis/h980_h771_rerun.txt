@@ -1,0 +1,40 @@
+Literature cache entries: 3814
+Total diseases: 1078
+  Seed 42 done
+  Seed 123 done
+  Seed 456 done
+  Seed 789 done
+  Seed 1337 done
+
+======================================================================
+TIER PRECISION (5-seed holdout)
+======================================================================
+  GOLDEN: 90.3% ± 3.1% (n=140/seed)
+  HIGH: 81.9% ± 2.9% (n=272/seed)
+  MEDIUM: 43.0% ± 4.5% (n=201/seed)
+  LOW: 14.8% ± 0.9% (n=2447/seed)
+  FILTER: 12.6% ± 1.0% (n=2991/seed)
+
+======================================================================
+LITERATURE-MODIFIED CATEGORIES (5-seed holdout)
+======================================================================
+  MEDIUM (lit=MODERATE_EVIDENCE): 36.7% ± 5.5% (n=65/seed)
+  MEDIUM (lit=NOT_ASSESSED): 46.2% ± 7.6% (n=99/seed)
+  MEDIUM (lit=NO_EVIDENCE): 44.9% ± 11.6% (n=21/seed)
+  MEDIUM (lit=WEAK_EVIDENCE): 57.5% ± 12.3% (n=16/seed)
+  MEDIUM→LOW (lit_weak): 19.1% ± 5.5% (n=53/seed)
+
+======================================================================
+MEDIUM COVERAGE BY LITERATURE EVIDENCE (seed 42 snapshot)
+======================================================================
+  STRONG_EVIDENCE: 83 (25.9%)
+  MODERATE_EVIDENCE: 75 (23.4%)
+  WEAK_EVIDENCE: 39 (12.2%)
+  NO_EVIDENCE: 41 (12.8%)
+  NOT_ASSESSED: 82 (25.6%)
+
+  TOTAL would-be-MEDIUM: 320
+  Promoted to HIGH: 83
+  Demoted to LOW: 80
+  Remaining MEDIUM: 157
+  NOT_ASSESSED (no literature data): 82

@@ -1,6 +1,75 @@
 # Research Loop Progress
 
-## Current Session: h963 — predict(disease_id) fast-path (2026-04-19)
+## Current Session: h980 — h771 literature-coverage re-run post-h963 (2026-04-19)
+
+### Hypothesis
+h963 revealed that `scripts/h771_literature_coverage_analysis.py:101` was
+silently broken pre-h963 (passing `disease_id` through `find_disease_id`
+returned None for every call). h980 re-runs h771 to measure what was
+masked and check whether CLAUDE.md's h731/h768 memory entries need caveats.
+
+### Status: VALIDATED — h771 was indeed broken; post-fix numbers reveal two calibration signals
+
+### Evidence of prior breakage
+- `data/analysis/h771_coverage_analysis.log` is 0 bytes — script never
+  produced stdout to capture.
+- Live verification in h963: `find_disease_id("drkg:Disease::MESH:D014141")`
+  → `None`, confirming `predict(disease_id)` returned zero predictions for
+  100% of holdout diseases pre-change.
+- `h771_medium_origin_predictions.json` exists but is produced by a
+  *different* script (`h771_mine_remaining_medium.py`) that keys off
+  h768 data, not `predict()` — unaffected.
+- CLAUDE.md h731/h768 entries cite `literature_mining_cache.json` numbers
+  that are cache-level (GT-independent) — not affected.
+
+### h771 post-h963 results (1078 diseases, seeds [42,123,456,789,1337])
+
+| Tier   | Precision (h771 pool) | Note |
+|--------|------------------------|------|
+| GOLDEN | 90.3% ± 3.1% (n=140)   | h771 pool is broader than h393 (1078 vs 1011) |
+| HIGH   | 81.9% ± 2.9% (n=272)   | |
+| MEDIUM | 43.0% ± 4.5% (n=201)   | |
+| LOW    | 14.8% ± 0.9% (n=2447)  | |
+| FILTER | 12.6% ± 1.0% (n=2991)  | |
+
+Gap vs h964 (1011-disease pool, seed 2024 instead of 1337) is expected —
+h771's pool drops the `∩ embeddings` filter so it includes ~67 more
+diseases whose predictions pass through the pipeline differently.
+
+### Two calibration signals surfaced
+
+1. **`MEDIUM(lit=NOT_ASSESSED)` at 46.2% ABOVE the MEDIUM baseline 43.0%.**
+   Literature cache absence is not a negative signal — it's a coverage
+   gap. Filed **h985** to verify by batch-mining the NOT_ASSESSED bucket.
+
+2. **`MEDIUM→LOW(lit_weak)` at 19.1% sits 4.3pp above LOW average (14.8%).**
+   The demotion pushes these preds out of MEDIUM (43.0%) but they land
+   closer to the LOW/MEDIUM boundary than squarely in LOW. Over-aggressive
+   demotion? Filed **h984**.
+
+### Minor script bug filed as h983
+`h771_literature_coverage_analysis.py:73` declares `new_disease_groups`
+but never populates it in the per-seed training loop; line 153 restores
+`orig_disease_groups` — so `drug_disease_groups` stayed at full-data
+during holdout, inflating any rule keyed on disease_groups.
+
+### New Hypotheses Generated (3)
+- **h983** (P3, low): patch h771 disease_groups leak, re-measure tier precision
+- **h984** (P2, low): MEDIUM→LOW(lit_weak) over-demotion audit
+- **h985** (P3, low): NOT_ASSESSED bucket literature re-mining
+
+### Recommended Next Steps
+1. **h984** (P2, low): single highest-value follow-up — if the demotion
+   rule is over-aggressive, relaxing it could rescue MEDIUM recall.
+2. **h962** (P2, medium): deliverable regen — still independent of h963.
+3. **h981** (P3, low): repo-wide `.predict(` call-site audit (from h963 set).
+
+### Artifacts
+- `data/analysis/h980_h771_rerun.txt` (h771 stdout post-h963)
+
+---
+
+## Previous Session: h963 — predict(disease_id) fast-path (2026-04-19)
 
 ### Hypothesis
 h952/h959 established that `find_disease_id(disease_name)` is a fragile

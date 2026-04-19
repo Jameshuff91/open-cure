@@ -17955,7 +17955,7 @@
     {
       "id": "h980",
       "title": "Audit h771 literature-coverage results post-h963 \u2014 was the silently-broken disease_id input masking real evidence patterns?",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -17967,7 +17967,11 @@
         "Report impact on h731/h768 memory entries."
       ],
       "created_date": "2026-04-19",
-      "motivated_by": "h963"
+      "motivated_by": "h963",
+      "started_date": "2026-04-19",
+      "completed_date": "2026-04-19",
+      "findings": "CONFIRMED: h771 was silently broken pre-h963. The pre-existing data/analysis/h771_coverage_analysis.log was 0 bytes (no completion). Post-h963 rerun produces well-formed output. Tier precisions measured on h771's eval pool (1078 diseases, seeds [42,123,456,789,1337]): GOLDEN 90.3%\u00b13.1% (n=140/seed), HIGH 81.9%\u00b12.9% (272), MEDIUM 43.0%\u00b14.5% (201), LOW 14.8%\u00b10.9% (2447), FILTER 12.6%\u00b11.0% (2991). These DIFFER from h964's 1011-disease pool (h964 GOLDEN 78.5, HIGH 80.0, MEDIUM 39.9, LOW 10.0, FILTER 6.8) \u2014 h771 uses a broader pool (ground_truth without embeddings filter) and different seed 1337 (vs h964's 2024). Literature-modified MEDIUM splits: MODERATE 36.7%\u00b15.5% (n=65), NOT_ASSESSED 46.2%\u00b17.6% (n=99), NO_EVIDENCE 44.9%\u00b111.6% (n=21), WEAK 57.5%\u00b112.3% (n=16), MEDIUM\u2192LOW(lit_weak) 19.1%\u00b15.5% (n=53). Two calibration signals: (a) MEDIUM(lit=NOT_ASSESSED) at 46.2% sits ABOVE MEDIUM baseline 43.0% \u2014 no-literature predictions are not below average; (b) MEDIUM\u2192LOW (lit_weak) at 19.1% is only 4.3pp above LOW (14.8%) \u2014 the demotion may be over-aggressive, demoted preds sit in intermediate quality range. Third incidental finding: h771 script at line 73/153 never populates new_disease_groups during holdout recomputation (restored at end), so drug_disease_groups stays at full-data during holdout \u2014 minor leak. CLAUDE.md h731/h768 entries reference cached literature_mining_cache.json, not h771's broken predict() path, so they remain trustworthy. Raw: data/analysis/h980_h771_rerun.txt.",
+      "result_metric": "h771 post-h963 measurable; MEDIUM(lit=NOT_ASSESSED) 46.2% exceeds MEDIUM avg 43.0% (-0pp lit value); MEDIUM\u2192LOW(lit_weak) at 19.1% is 4.3pp above LOW avg (possibly over-demoted)."
     },
     {
       "id": "h981",
@@ -18001,6 +18005,57 @@
       ],
       "created_date": "2026-04-19",
       "motivated_by": "h963"
+    },
+    {
+      "id": "h983",
+      "title": "h771 drug_disease_groups leak \u2014 script restores at end but never recomputes during holdout",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "hypothesis": "",
+      "steps": [
+        "scripts/h771_literature_coverage_analysis.py:73 creates new_disease_groups but never populates it during the per-seed training-disease loop.",
+        "Line 153 restores orig_disease_groups \u2014 during the holdout run drug_disease_groups stayed at full-data value, inflating any rules that key on disease_groups.",
+        "Patch: rebuild drug_disease_groups inside the per-seed loop using train_diseases only.",
+        "Re-run and compare tier precisions to the leaky version to quantify inflation."
+      ],
+      "created_date": "2026-04-19",
+      "motivated_by": "h980"
+    },
+    {
+      "id": "h984",
+      "title": "Over-demotion audit: MEDIUM\u2192LOW (lit_weak) at 19.1% sits 4.3pp above LOW average",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "hypothesis": "If the weak-literature demotion is too aggressive, the demoted subset would score closer to MEDIUM than LOW. h771 post-h963 shows 19.1% \u2014 partially calibrated. Inspect whether the 53 demoted preds/seed include any that should have stayed MEDIUM.",
+      "steps": [
+        "Extract the 53/seed MEDIUM\u2192LOW lit_weak predictions and sort by kNN score / rank.",
+        "Compare hit rate for the top-quartile of demoted preds vs bottom-quartile.",
+        "If top quartile scores near MEDIUM (40%+), adjust the rule to require STRICT weak criteria (zero PubMed hits + no trials) rather than mere ABSENCE of strong evidence.",
+        "Rerun h771 and h393 to measure tier impact."
+      ],
+      "created_date": "2026-04-19",
+      "motivated_by": "h980"
+    },
+    {
+      "id": "h985",
+      "title": "MEDIUM(lit=NOT_ASSESSED) at 46.2% exceeds MEDIUM avg \u2014 literature cache has coverage gap, not a signal",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "hypothesis": "NOT_ASSESSED means the literature miner didn't look at this drug-disease pair. Their above-average 46.2% precision means NOT_ASSESSED is not a quality signal \u2014 it's just a coverage gap. Verify by running literature mining on the NOT_ASSESSED bucket and checking whether scoring changes.",
+      "steps": [
+        "Identify the 82 seed-42 MEDIUM NOT_ASSESSED predictions.",
+        "Batch-mine literature for this bucket (single-pass PubMed + ClinicalTrials via scripts/run_literature_mining.py).",
+        "Re-evaluate with newly-scored predictions and measure MEDIUM(lit=*) breakdown.",
+        "If distribution post-mining matches the rest of MEDIUM, confirm NOT_ASSESSED was pure coverage noise."
+      ],
+      "created_date": "2026-04-19",
+      "motivated_by": "h980"
     }
   ],
   "completed": [
