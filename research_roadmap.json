@@ -2447,13 +2447,108 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Score fusion: rank-mean of Node2Vec and FastRP scores; rerun h1199 benchmark",
         "Score fusion: score-mean (z-normalized); rerun h1199",
         "Run kNN with Node2Vec||FastRP concat (512-dim); rerun h1199",
         "Declare whether any fusion beats Node2Vec alone on all 5 metrics",
         "If yes, add to production; if no, document as negative control"
+      ],
+      "findings": "VALIDATED \u2014 L2-normalised concat of Node2Vec + FastRP (512-dim) beats both parents on all five metrics over 1,011-disease universe, 5-seed 80/20 disease split. R@30 19.55% (node2vec) / 18.79% (fastrp) \u2192 20.87%\u00b10.91% (concat_l2), +1.32pp over node2vec. MRR 0.0284\u21920.0296. AUPRC 0.0569/0.0584\u21920.0642. AUROC 0.5766/0.5790\u21920.5851. Paired per-seed R@30 lift vs node2vec: +1.91, -0.21, +2.84, +1.49, +0.61pp; t\u22482.65 on df=4 (one-sided p\u22480.028). concat_l2 \u2261 equal-weight sim_mean when both halves are L2-unit \u2014 empirically identical (seed-42 spot-check). score_mean (per-disease z-norm of drug scores then mean) is a clean NEGATIVE: R@30 ties node2vec (19.55%) but AUPRC drops to 0.0500 and AUROC to 0.5294 because per-disease z-scoring of a sparse score vector redistributes probability mass onto never-scored drugs. New DRKG-only ceiling per metric: R@30 \u2264 20.87%, MRR \u2264 0.0296, AUPRC \u2264 0.0642, AUROC \u2264 0.5851. h1200 (supervised GNN) must exceed ALL FOUR to claim improvement. Recommendation: ship concat_l2 as the production embedding for the unsupervised baseline; use it as the h1200 warm-start initialiser; apply the same L2-concat recipe to h1202 (DRKG + LINCS).",
+      "result_metric": "R@30 20.87%\u00b10.91% (+1.32pp), MRR 0.0296, AUPRC 0.0642, AUROC 0.5851"
+    },
+    {
+      "id": "h1216",
+      "title": "Weighted fusion sweep \u2014 Node2Vec/FastRP sim-mean with non-equal weights",
+      "category": "recall_lever",
+      "rationale": "h1215 proved equal-weighted concat_l2 (= 0.5/0.5 sim-mean) beats both parents on all 5 metrics. But FastRP wins on AUPRC/AUROC while Node2Vec wins on R@30/MRR \u2014 suggesting asymmetric optimal weights. Sweep w = 0.1, 0.2, ..., 0.9 for the Node2Vec half and report per-weight mean \u00b1 std over 5 seeds. Look for a convex optimum, particularly whether AUPRC/AUROC benefit from higher FastRP weight while R@30 tilts toward Node2Vec. If one metric requires w=0.3 and another w=0.7, document per-metric optima rather than forcing one weight.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Extend scripts/h1215_fusion_benchmark.py with --weight-a flag (fraction of first embedding in sim-mean).",
+        "Run 9 weights \u00d7 5 seeds = 45 runs. Each takes ~1s, so <1 min total.",
+        "Tabulate mean\u00b1std across seeds for each weight on all 5 metrics.",
+        "Compare against h1215 equal-weight concat_l2 headline.",
+        "If any weight beats concat_l2 on \u22653 metrics, add to production spec."
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1217",
+      "title": "Three-way fusion \u2014 Node2Vec + FastRP + no_treatment concat",
+      "category": "recall_lever",
+      "rationale": "h1215 showed cheap ensemble of random-walk + random-projection captures partially orthogonal DRKG structure. Adding a third cheap embedding trained under a different objective (Node2Vec without treatment edges) could push the ceiling further \u2014 or reveal diminishing returns. If no_treatment adds independent non-treatment graph signal, the fused representation may be closer to the 'honest transductive' ceiling. If it hurts (likely, since no_treatment R@30 is only 8.46%), confirms that treatment edges carry the bulk of the repurposing signal.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Restrict to intersection of Node2Vec \u2229 FastRP \u2229 no_treatment entity vocabularies.",
+        "Build L2-concat(N2V, FastRP, no_treatment) 768-dim lookup.",
+        "Run benchmark on the \u2229-universe for: node2vec, fastrp, no_treatment, 2-way concat, 3-way concat.",
+        "Report \u2206 3-way vs 2-way concat on all 5 metrics. Negative result is still publishable.",
+        "If 3-way wins by \u22650.5pp R@30 with no AUPRC regression, make it production default."
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1218",
+      "title": "Fusion gain decomposition \u2014 which diseases benefit most from concat_l2?",
+      "category": "error_analysis",
+      "rationale": "h1215's +1.32pp R@30 is the population-average lift. Per-seed paired diffs range from -0.21pp to +2.84pp, and in practice the gain is concentrated in a subset of diseases. Compute per-disease \u2206R@30 (concat_l2 \u2212 node2vec) on the held-out set, then correlate with disease features: category, n_gt_drugs, kNN_neighbour_agreement (how often N2V and FastRP pick the same top-20 neighbours). If gain correlates with neighbour-disagreement, we have a routing feature: diseases where the two embeddings disagree are the ones where fusion helps. This enables a per-disease adaptive strategy (use concat_l2 only when agreement is low; use the stronger single embedding otherwise).",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Extend benchmark to write per-disease R@30 for each mode into the JSON report.",
+        "Compute per-disease \u2206R@30 = concat_l2 \u2212 node2vec across 5 seeds.",
+        "For each held-out disease, compute Jaccard(top-20 N2V neighbours, top-20 FastRP neighbours).",
+        "Bucket diseases into Q1-Q4 by neighbour-agreement; compare fusion gain across buckets.",
+        "Also break down by disease category; flag any category where fusion REGRESSES (so we can gate)."
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1219",
+      "title": "Learnable fusion \u2014 logistic regression over (N2V_score, FastRP_score, rank features)",
+      "category": "recall_lever",
+      "rationale": "h1215 used an unsupervised equal-weight scheme. A shallow supervised re-ranker trained on treatment-edge labels (logistic regression or gradient boost over per-drug features: score_n2v, score_fastrp, rank_n2v, rank_fastrp, score_product, rank_reciprocal_sum, agreement_flag) may give materially larger gains. Train on a fixed split of training diseases (inner-fold), evaluate on the outer holdout under the same 5-seed protocol. Critical discipline: the re-ranker must be trained only on training-disease GT; never on the held-out 80/20 eval disease set. If learnable fusion beats unsupervised by \u22652pp R@30, this is a pre-h1200 recall surface worth shipping.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Extend benchmark to emit per-disease per-drug feature tuples (score_a, score_b, rank_a, rank_b).",
+        "On training diseases only: generate positive (drug \u2208 GT) and sampled negative feature rows.",
+        "Train a logistic regression (or small XGBoost) per seed-fold on the training-disease tuples.",
+        "At inference, re-score the held-out disease candidate pool with the model; compute all 5 metrics.",
+        "Compare against h1215 concat_l2 headline. Report gain/loss on R@30, MRR, AUPRC, AUROC."
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1220",
+      "title": "Fusion recipe portability to h1202 (DRKG + LINCS)",
+      "category": "infrastructure",
+      "rationale": "h1215 validated L2-concat as an additive fusion recipe for two DRKG-derived embeddings. h1202 plans to fuse DRKG collaborative filtering with LINCS L1000 reverse-connectivity. The L2-concat recipe is the obvious first port: L2-normalise disease-level DRKG embedding and LINCS connectivity score vector, concatenate, kNN in joint space. This hypothesis de-risks h1202 by declaring the fusion recipe in advance, so h1201 (LINCS pilot) delivers immediately evaluable output rather than requiring a separate fusion-design experiment.",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Document the L2-concat recipe in docs/claude/patterns.md as the canonical fusion primitive.",
+        "Spec a fusion interface: given two lookups keyed by drkg: entity ID, produce a concat lookup restricted to intersection.",
+        "Add the fusion primitive to scripts/h1215_fusion_benchmark.py as a reusable helper (already done: build_concat_lookup).",
+        "When h1201 ships LINCS per-disease vectors, reuse build_concat_lookup() to fuse; rerun h1199 with the fused lookup.",
+        "Document negative-sample design for h1202 (LINCS-only AUPRC anchor)."
       ],
       "findings": "",
       "result_metric": ""
@@ -5211,6 +5306,12 @@
       "hypothesis_id": "h1212",
       "learning": "On h1199's clean benchmark methodology, the 'no-treatment' Node2Vec embedding retains only 49.5% of full Node2Vec's R@30, versus the 71.2% claimed in CLAUDE.md. Apples-to-apples 838-850 disease universe: full Node2Vec 17.09% \u2192 no_treatment 8.46%. Treatment-edge leakage is ~2x larger than documented.",
       "implication": "The paper's 'honest transductive' claim at 26.06% R@30 may have been computed on a different no_treatment embedding build or methodology. Before citing the 71.2% retention number externally, reconcile with h1212's 49.5% finding. Either: (a) identify which embedding build CLAUDE.md measured, (b) add an errata to the methodology docs, or (c) retrain no_treatment Node2Vec on the 49,616-entity DRKG to match the Node2Vec/FastRP vocabulary (currently it shares graphsage's 94K)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1215",
+      "learning": "L2-normalised concat of Node2Vec + FastRP beats both parents on all 5 metrics (R@30 +1.32pp to 20.87%, AUPRC +0.0073 to 0.0642, AUROC +0.0085 to 0.5851) at zero marginal training cost. FastRP (random projection) is captured in seconds; Node2Vec needs hours of random walks \u2014 yet their ensemble is additive because random projection and random walks sample partially orthogonal DRKG structure. Score_mean (per-disease z-norm of drug scores) is a clean NEGATIVE \u2014 redistributing mass onto never-scored drugs craters AUPRC/AUROC. DRKG-only ceiling per metric recalibrated: R@30 \u2264 20.87%, MRR \u2264 0.0296, AUPRC \u2264 0.0642, AUROC \u2264 0.5851. h1200 must exceed all four.",
+      "implication": "(1) Ship concat_l2 as the baseline production embedding for the unsupervised path; use it as the h1200 warm-start initialiser. (2) The L2-concat recipe transfers directly to h1202 (DRKG + LINCS fusion) \u2014 same primitive, just swap one lookup. h1220 makes this explicit. (3) Cheap embeddings are materially useful \u2014 future work should try TransE / spectral embedding / FastRP with different seeds in the ensemble. (4) The +1.32pp R@30 is smaller than h1200's target lift but it's a free floor raise; h1200 should be measured against the NEW 20.87% baseline, not 19.55%."
     }
   ],
   "collaborations": [

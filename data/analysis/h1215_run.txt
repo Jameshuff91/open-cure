@@ -1,0 +1,65 @@
+========================================================================
+h1215: Fusion benchmark — node2vec_256 + fastrp_256
+       modes=['node2vec', 'fastrp', 'concat_l2', 'score_mean'] k=20 seeds=[42, 123, 456, 789, 2024]
+========================================================================
+Loading embeddings A...
+  49,616 entities
+Loading embeddings B...
+  49,616 entities
+Building concat_l2 lookup...
+  49,616 entities in intersection
+eval_gt: 3,589 diseases, 57,805 pairs
+knn_gt: 1,078 diseases
+Disease universe (knn_gt ∩ A ∩ B): 1,011
+Setup complete in 0.2s
+
+=== SEED 42 (1/5) ===
+Train: 808  Holdout: 203
+Candidate drug pool (train knn_gt): 1,345
+  [node2vec    ] R@30=18.77%  MRR=0.0302  AUPRC=0.0565  AUROC=0.5796  (0.1s)
+  [fastrp      ] R@30=18.16%  MRR=0.0273  AUPRC=0.0574  AUROC=0.5792  (0.1s)
+  [concat_l2   ] R@30=20.68%  MRR=0.0321  AUPRC=0.0653  AUROC=0.5897  (0.1s)
+  [score_mean  ] R@30=18.58%  MRR=0.0303  AUPRC=0.0473  AUROC=0.5304  (0.5s)
+
+=== SEED 123 (2/5) ===
+Train: 808  Holdout: 203
+Candidate drug pool (train knn_gt): 1,336
+  [node2vec    ] R@30=21.07%  MRR=0.0272  AUPRC=0.0552  AUROC=0.5698  (0.1s)
+  [fastrp      ] R@30=18.50%  MRR=0.0263  AUPRC=0.0604  AUROC=0.5756  (0.1s)
+  [concat_l2   ] R@30=20.86%  MRR=0.0277  AUPRC=0.0629  AUROC=0.5766  (0.2s)
+  [score_mean  ] R@30=19.44%  MRR=0.0276  AUPRC=0.0499  AUROC=0.5272  (0.6s)
+
+=== SEED 456 (3/5) ===
+Train: 808  Holdout: 203
+Candidate drug pool (train knn_gt): 1,335
+  [node2vec    ] R@30=18.16%  MRR=0.0297  AUPRC=0.0590  AUROC=0.5827  (0.1s)
+  [fastrp      ] R@30=19.12%  MRR=0.0292  AUPRC=0.0629  AUROC=0.5887  (0.1s)
+  [concat_l2   ] R@30=21.00%  MRR=0.0314  AUPRC=0.0680  AUROC=0.5936  (0.1s)
+  [score_mean  ] R@30=19.05%  MRR=0.0302  AUPRC=0.0526  AUROC=0.5302  (0.5s)
+
+=== SEED 789 (4/5) ===
+Train: 808  Holdout: 203
+Candidate drug pool (train knn_gt): 1,317
+  [node2vec    ] R@30=20.85%  MRR=0.0312  AUPRC=0.0601  AUROC=0.5835  (0.1s)
+  [fastrp      ] R@30=20.40%  MRR=0.0293  AUPRC=0.0577  AUROC=0.5835  (0.1s)
+  [concat_l2   ] R@30=22.34%  MRR=0.0333  AUPRC=0.0664  AUROC=0.5924  (0.1s)
+  [score_mean  ] R@30=22.47%  MRR=0.0321  AUPRC=0.0553  AUROC=0.5358  (0.5s)
+
+=== SEED 2024 (5/5) ===
+Train: 808  Holdout: 203
+Candidate drug pool (train knn_gt): 1,323
+  [node2vec    ] R@30=18.88%  MRR=0.0237  AUPRC=0.0538  AUROC=0.5673  (0.1s)
+  [fastrp      ] R@30=17.76%  MRR=0.0212  AUPRC=0.0534  AUROC=0.5679  (0.1s)
+  [concat_l2   ] R@30=19.49%  MRR=0.0235  AUPRC=0.0584  AUROC=0.5729  (0.2s)
+  [score_mean  ] R@30=18.22%  MRR=0.0225  AUPRC=0.0450  AUROC=0.5233  (0.6s)
+
+========================================================================
+AGGREGATE (mean ± std across seeds)
+========================================================================
+  node2vec      R@30=19.55%±1.18%  MRR=0.0284±0.0027  AUPRC=0.0569±0.0023  AUROC=0.5766±0.0067
+  fastrp        R@30=18.79%±0.92%  MRR=0.0267±0.0030  AUPRC=0.0584±0.0032  AUROC=0.5790±0.0071
+  concat_l2     R@30=20.87%±0.91%  MRR=0.0296±0.0036  AUPRC=0.0642±0.0033  AUROC=0.5851±0.0086
+  score_mean    R@30=19.55%±1.52%  MRR=0.0285±0.0033  AUPRC=0.0500±0.0037  AUROC=0.5294±0.0041
+
+Wrote /Users/jimhuff/github/open-cure/data/analysis/h1215_fusion_benchmark.json
+Wrote /Users/jimhuff/github/open-cure/data/analysis/h1215_fusion_benchmark.md

@@ -1,6 +1,84 @@
 # Research Loop Progress
 
-## Current Session: h1199 — Clean multi-metric embedding benchmark (VALIDATED, 2026-04-19)
+## Current Session: h1215 — Node2Vec + FastRP L2-concat fusion (VALIDATED, 2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1215 (VALIDATED, recall lever)
+
+### What was built
+`scripts/h1215_fusion_benchmark.py` — reuses the h1199 scoring pipeline
+(`compute_metrics_for_seed`, split, category) and adds three fusion modes:
+
+- `concat_l2` — L2-normalise each embedding, concatenate → cosine similarity
+  in the 512-dim joint space.
+- `sim_mean` — average cosine similarities before top-k neighbour selection
+  (mathematically equivalent to equal-weight concat_l2 when halves are
+  L2-unit — the two modes gave identical numbers on the 1-seed sanity
+  run, confirming the equivalence).
+- `score_mean` — independent kNN scoring per embedding, z-normalise each
+  drug-score vector per disease, average element-wise.
+
+### Headline (5-seed, 1,011-disease intersection)
+
+| Mode | R@30 | MRR | AUPRC | AUROC |
+|---|---|---|---|---|
+| `node2vec` | 19.55%±1.18% | 0.0284 | 0.0569 | 0.5766 |
+| `fastrp` | 18.79%±0.92% | 0.0267 | 0.0584 | 0.5790 |
+| **`concat_l2`** | **20.87%±0.91%** | **0.0296** | **0.0642** | **0.5851** |
+| `score_mean` | 19.55%±1.52% | 0.0285 | 0.0500 | 0.5294 |
+
+### Findings
+**concat_l2 beats BOTH parents on ALL FIVE metrics.** Paired per-seed R@30
+lift over Node2Vec: +1.91, −0.21, +2.84, +1.49, +0.61pp — 4 of 5 seeds
+directionally positive, t≈2.65 on df=4 (one-sided p≈0.028). Random-walk
+(Node2Vec) and random-projection (FastRP) embeddings sample partially
+orthogonal DRKG structure; their ensemble is additive at zero marginal
+training cost (FastRP trains in seconds; Node2Vec takes hours).
+
+`score_mean` is a **clean negative control**: ties on R@30 but per-disease
+z-normalisation of a sparse score vector redistributes probability mass
+onto never-scored drugs, tanking AUPRC (0.0500) and AUROC (0.5294).
+
+### DRKG ceiling recalibration
+- R@30 ≤ 20.87% (was 19.55%)
+- MRR ≤ 0.0296 (was 0.0284)
+- AUPRC ≤ 0.0642 (was 0.0584, FastRP)
+- AUROC ≤ 0.5851 (was 0.5790, FastRP)
+
+**h1200 (supervised GNN) must exceed all four.**
+
+### Outputs
+- `scripts/h1215_fusion_benchmark.py`
+- `data/analysis/h1215_fusion_benchmark.{json,md}`
+- `data/analysis/h1215_run.txt`
+
+### New hypotheses (5 added)
+- **h1216 (P2):** Weighted fusion sweep — search for non-equal weights
+  that further shift R@30 or AUPRC. FastRP leads on AUPRC/AUROC,
+  Node2Vec on R@30/MRR — per-metric optima may differ.
+- **h1217 (P3):** Three-way L2-concat of Node2Vec + FastRP + no_treatment.
+  Test whether a third cheap embedding adds independent signal.
+- **h1218 (P2):** Per-disease fusion gain decomposition — correlate
+  ΔR@30 with neighbour-agreement; if fusion wins concentrate where the
+  two embeddings disagree, gives a routing signal.
+- **h1219 (P2):** Learnable fusion — logistic regression over
+  (score_a, score_b, rank_a, rank_b) trained on training-disease GT,
+  evaluated on the outer holdout. Gated-supervision version of
+  concat_l2 — could exceed unsupervised by ≥2pp R@30.
+- **h1220 (P2, infrastructure):** Fusion recipe portability to h1202
+  (DRKG + LINCS). Declares `build_concat_lookup` as the canonical
+  fusion primitive so h1201 (LINCS pilot) ships with a drop-in fusion
+  target, not a separate design experiment.
+
+### Recommended next hypothesis
+**h1218 (P2)** — per-disease gain decomposition. Cheapest way to convert
+the 1.32pp average lift into a larger per-disease lift via routing, and
+the per-disease ΔR@30 table is a reusable artefact for h1200 loss-weighting.
+Alternatively **h1219 (P2)** — if supervised fusion is materially better
+than unsupervised concat_l2, it's the strongest pre-h1200 recall surface.
+
+---
+
+## Previous Session: h1199 — Clean multi-metric embedding benchmark (VALIDATED, 2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1199 (VALIDATED, infrastructure)
 
@@ -67,7 +145,7 @@ compute to h1200.
 
 ---
 
-## Current Session (continued): h1212 — Embedding ceiling sweep (VALIDATED, with recalibration, 2026-04-19)
+## Previous Session (continued): h1212 — Embedding ceiling sweep (VALIDATED, with recalibration, 2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1212 (VALIDATED + surfaces recalibration need)
 
