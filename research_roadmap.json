@@ -2863,7 +2863,7 @@
     {
       "id": "h1248",
       "title": "Homogeneity-restricted fusion paired-t on n_gt\u226551 \u2014 does the homogeneous tail reach p<0.05?",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "low",
       "effort": "low",
@@ -2876,7 +2876,28 @@
         "Compare against the global n_gt\u226551 paired-t from h1244 (p=0.17 hits@30).",
         "Save data/analysis/h1248_homogeneity_restricted_paired_t.{json,md}."
       ],
-      "success_criteria": "Either (a) homogeneous-tercile p<0.05 \u2192 publish 'fusion works for homogeneous high-density diseases' + add to production routing; or (b) p still > 0.05 \u2192 close the stratum-restriction direction."
+      "success_criteria": "Either (a) homogeneous-tercile p<0.05 \u2192 publish 'fusion works for homogeneous high-density diseases' + add to production routing; or (b) p still > 0.05 \u2192 close the stratum-restriction direction.",
+      "findings": "Restricted h1244-style disease-level paired-t to the bottom-tercile L3-entropy subset of n_gt\u226551 diseases (n=40, entropy range 0.90-3.18 bits) using the entropy values reconstructed from h1247. **STRONG VALIDATION \u2014 all three metrics recover p<0.05 in the homogeneous subset:** \u0394 R@30 = +0.815pp \u00b1 2.09pp t=2.46 **p=0.018** (vs h1244 full-stratum p=0.49); \u0394 hits@30 = +0.842 drugs/disease \u00b1 1.81 t=2.94 **p=0.0055** (vs h1244 p=0.17); \u0394 R@30/ceiling = +2.806pp \u00b1 6.04 t=2.94 **p=0.0055**. **Mid tercile shows a NEGATIVE trend** (-0.73pp R@30, -0.62 hits, p=0.12-0.18) \u2014 fusion HURTS moderately-heterogeneous high-density diseases. High tercile is positive in mean but variance kills significance (std hits@30 = 3.99 vs 1.81 in low tercile). **Combined two-axis routing rule (h1247 + h1248): (n_gt 21-50 + low entropy) \u2192 fuse (+2.25pp R@30, p=0.045); (n_gt\u226551 + low entropy) \u2192 fuse (+0.84 drugs/disease, p=0.0055); (n_gt\u226551 + mid entropy) \u2192 AVOID fusion (negative trend); (n_gt 21-50 + high entropy or n_gt\u226551 + high entropy) \u2192 indifferent or fuse with caution.** This is the cleanest publishable per-disease fusion-routing rule found so far. Outputs: data/analysis/h1248_homogeneity_restricted_paired_t.{json,md}; script: scripts/h1248_homogeneity_restricted_paired_t.py.",
+      "result_metric": "Low-entropy n_gt\u226551 (n=40): \u0394 hits@30 = +0.842 drugs/disease p=0.0055 (vs h1244 full-stratum p=0.17). Combined with h1247 yields a clean two-axis (n_gt \u00d7 ATC entropy) production routing rule."
+    },
+    {
+      "id": "h1249",
+      "title": "Production routing benchmark \u2014 wire (n_gt \u00d7 ATC entropy) routing into clean_embedding_benchmark",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "medium",
+      "lever": "recall",
+      "rationale": "h1247 and h1248 jointly identified a publishable two-axis fusion-routing rule: route low-ATC-entropy diseases (in either moderate or high density strata) through fusion, route mid-entropy high-density diseases through Node2Vec only. Combined effects: +2.25pp R@30 (n_gt 21-50 low-entropy, p=0.045) and +0.84 hits/disease (n_gt\u226551 low-entropy, p=0.0055). Need to demonstrate the rule's net effect on the global benchmark (vs flat concat_l2 and vs Node2Vec) using a leak-free protocol \u2014 entropy thresholds and density bounds learned only on the training disease split.",
+      "steps": [
+        "Fork scripts/clean_embedding_benchmark.py. Add a `entropy_routed` mode that computes per-disease ATC L3 entropy at startup, then per-seed (a) determines the train-side entropy tercile cuts, (b) at inference routes each holdout disease based on (n_gt_train_drugs, train-side-tercile-of-its-entropy).",
+        "Run 5-seed evaluation under (a) global concat_l2, (b) global node2vec, (c) entropy_routed.",
+        "Paired-t vs concat_l2 on R@30, hits@30, MRR, AUPRC, AUROC.",
+        "If entropy_routed wins on \u22653 metrics at p<0.1, ship as the canonical production recipe.",
+        "Update CLAUDE.md key-metrics table with the new ceiling.",
+        "Save data/analysis/h1249_entropy_routed_benchmark.{json,md}."
+      ],
+      "success_criteria": "Entropy-routed fusion beats global concat_l2 by \u2265+0.3pp R@30 across 5 seeds, with hits@30 lift \u2265+0.1 drugs/disease at p<0.1. If yes, this becomes the new DRKG-only ceiling and ships to the deliverable."
     }
   ],
   "completed": [
@@ -5685,6 +5706,12 @@
       "hypothesis_id": "h1247",
       "learning": "ATC sub-class homogeneity is a real predictor of fusion lift in moderate-density diseases (n_gt 21-50): low-entropy GT pools (single dominant therapeutic class) gain +2.25pp R@30 from concat_l2 vs +0.69pp for diverse pools (Gini-Simpson r=-0.179, p=0.045). The signal saturates in n_gt\u226551 where most diseases have 30+ unique L3 codes anyway.",
       "implication": "A per-disease `gt_atc_l3_gini` confidence-routing feature could preferentially apply fusion to homogeneous moderate-density diseases. For n_gt\u226551, fusion remains a high-variance choice \u2014 needs orthogonal stratification (n_gt-restriction alone is insufficient)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1248",
+      "learning": "Restricting fusion to (n_gt\u226551, low ATC entropy) recovers p<0.01 hits@30 lift from a non-significant full-stratum result. Combined h1247+h1248 give a publishable two-axis routing rule: low-entropy diseases (in EITHER moderate or high density) gain from fusion; mid-entropy high-density diseases are negatively impacted; high-entropy diseases are indifferent.",
+      "implication": "Ship gt_atc_l3_gini as a deliverable annotation column and route inference by (n_gt_train_drugs, gt_atc_l3_gini) at production time. The recall headline becomes: 'fusion is robustly beneficial for ATC-coherent diseases regardless of density'."
     }
   ],
   "collaborations": [

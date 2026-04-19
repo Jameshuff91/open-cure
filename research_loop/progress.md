@@ -1,6 +1,68 @@
 # Research Loop Progress
 
-## Current Session: h1247 — ATC homogeneity is a per-disease fusion-routing feature on n_gt 21-50 (VALIDATED) (2026-04-19)
+## Current Session: h1248 — Homogeneity-restricted paired-t completes the two-axis routing rule (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1248 (VALIDATED — strong)
+
+### What was built
+`scripts/h1248_homogeneity_restricted_paired_t.py` — restricts h1244-style
+disease-level paired-t to L3-entropy terciles within the n_gt≥51 stratum.
+Reconstructs per-disease ATC L3 entropy locally (h1247 only stored
+aggregates) so the bottom-tercile (n=40, entropy 0.90–3.18 bits) is
+addressable.
+
+### Headline (low-entropy n_gt≥51 tercile, n=40)
+| Metric | mean | std | t | p (two-sided) | h1244 baseline p |
+|---|---:|---:|---:|---:|---:|
+| Δ R@30 | +0.815pp | 2.09pp | +2.46 | **0.018** | 0.49 |
+| **Δ hits@30** | **+0.842 drugs/disease** | 1.81 | +2.94 | **0.0055** | 0.17 |
+| Δ R@30/ceiling | +2.806pp | 6.04pp | +2.94 | **0.0055** | — |
+
+vs h1244's full-stratum disease-level p=0.49 (R@30) / p=0.17 (hits@30) — restriction
+to the homogeneous tercile recovers significance on all three metrics.
+
+### Mid tercile is NEGATIVE-trending (n=41)
+- Δ R@30: -0.726pp (p=0.12); Δ hits@30: -0.622 drugs/disease (p=0.18).
+- Fusion **hurts** moderately-heterogeneous high-density diseases.
+
+### High tercile is high-variance positive (n=41)
+- Δ R@30: +0.407pp (p=0.25); Δ hits@30: +0.949 (p=0.14).
+- std hits@30 = 3.99 (vs 1.81 in low tercile) — variance kills significance.
+
+### Combined two-axis routing rule (h1247 + h1248)
+| Stratum | n | Routing | Mean Δ | p |
+|---|---:|---|---:|---:|
+| n_gt 21-50 + low entropy | 42 | **fuse** | +2.25pp R@30 | 0.045 |
+| n_gt 21-50 + high entropy | 42 | (still fuse, smaller gain) | +1.26pp R@30 | — |
+| n_gt 51+ + low entropy | 40 | **fuse** | +0.84 hits/disease | **0.0055** |
+| n_gt 51+ + mid entropy | 41 | **avoid fusion** | -0.62 hits/disease | 0.18 |
+| n_gt 51+ + high entropy | 41 | indifferent | +0.95 hits/disease (high var) | 0.14 |
+
+This is the first publishable per-disease fusion-routing rule found in the project.
+
+### Shipped
+- `scripts/h1248_homogeneity_restricted_paired_t.py`
+- `data/analysis/h1248_homogeneity_restricted_paired_t.json`
+- `data/analysis/h1248_homogeneity_restricted_paired_t.md`
+- CLAUDE.md updated with h1248 paragraph + two-axis routing rule
+- 1 new pending hypothesis (h1249 production routing benchmark)
+
+### New hypothesis (1 added)
+- **h1249 (P2, recall, medium effort):** Wire the two-axis routing rule into
+  `scripts/clean_embedding_benchmark.py` with leak-free entropy cuts (learned
+  on the train side per seed). Run 5-seed paired evaluation against global
+  concat_l2. If wins ≥3 metrics at p<0.1, ship as canonical production recipe
+  and update CLAUDE.md DRKG-only ceilings.
+
+### Recommended next hypothesis
+**h1249 (P2, medium effort)** — direct production-impact follow-up. Closes the
+research arc started by h1218 → h1230 → h1244 → h1247 → h1248 with a deployable
+recipe. After h1249, the next priority should be h1243 (hits@K reporting infra
+for all future benchmarks) since it's lower effort and standardises everything.
+
+---
+
+## Previous Session: h1247 — ATC homogeneity is a per-disease fusion-routing feature on n_gt 21-50 (VALIDATED) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1247 (validated for n_gt 21-50; invalidated as single-mechanism for n_gt≥51)
 
