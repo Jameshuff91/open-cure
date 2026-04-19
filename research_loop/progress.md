@@ -1,6 +1,52 @@
 # Research Loop Progress
 
-## Current Session: h960 — Neurological Supplement Ablation (2026-04-19)
+## Current Session: h964 — Post-h952-fix tier precision re-run (2026-04-19)
+
+### Hypothesis
+h959 flagged that h904/h908 tier precisions (GOLDEN 83.7%, HIGH 78.5%, MEDIUM 42.1%, LOW 11.2%, FILTER 8.2%) were measured pre-h952-fix. h964 re-runs the 5-seed h393 evaluator on current main to quantify magnitude drift and check whether any h-number decision flips.
+
+### Status: VALIDATED — all five tiers drifted |Δ|>1pp; no h-number decisions flip.
+
+### Findings (5-seed h393 holdout, post-h952-fix)
+
+| Tier   | Pre-fix (CLAUDE.md) | Post-fix (h964)    | Δ mean | Δ std | Preds/seed |
+|--------|---------------------|--------------------|--------|-------|------------|
+| GOLDEN | 83.7% ± 1.3%        | 78.5% ± 6.0%       | -5.2pp | +4.7  | 94 → 101   |
+| HIGH   | 78.5% ± 2.4%        | 80.0% ± 3.3%       | +1.5pp | +0.9  | 230 → 263  |
+| MEDIUM | 42.1% ± 3.0%        | 39.9% ± 5.1%       | -2.2pp | +2.1  | 200 → 265  |
+| LOW    | 11.2% ± 1.1%        | 10.0% ± 0.7%       | -1.2pp | -0.4  | 2062 → 2564|
+| FILTER | 8.2% ± 0.6%         | 6.8% ± 0.7%        | -1.4pp | +0.1  | 2196 → 2866|
+
+### Why
+
+h952 added a reverse-index fallback to `find_disease_id` that recovered ~40 holdout diseases/seed from silent-zero prediction. These newly-resolving diseases add ~32 preds/disease (top-30 + filtered), explaining the per-seed total increases across all tiers. Their hit/miss mix differs from the always-resolved subset, which is why every tier drifted. The most striking effect is on GOLDEN: std widened 4.6x (1.3 → 6.0) because seeds 42 and 789 dropped to 71–72% GOLDEN precision vs seeds 123/456/2024 at 78–85% — a split-dependent signal worth investigating (filed as h974).
+
+### Tier ordering
+
+GOLDEN (78.5) < HIGH (80.0) at mean, but CIs overlap (GOLDEN 72.5–84.5 vs HIGH 76.7–83.3). Tier inversion is within noise. Filed h976 (10-seed h393 re-run) to resolve.
+
+### No h-number decisions flip
+
+h904 (10 overfitted-rule demotions) and h908 (45-name MeSH C23 blocklist) measured *relative* Δ within the same (buggy) framework, so their deltas survive the bug-fix shift. The absolute tier numbers quoted in CLAUDE.md needed correction but the per-rule ordering and the validated demotion decisions still hold.
+
+### New Hypotheses Generated (3)
+
+- h974 (P3): GOLDEN std 4.6x widening — decompose seed-42 / seed-789 dip
+- h975 (P3): Post-fix per-rule overfit audit — any rule flipping GENUINE↔OVERFITTED?
+- h976 (P3): 10-seed h393 GOLDEN/HIGH boundary reality check
+
+### Recommended Next Steps
+1. **h975** (P3, low effort): Diff per-rule status between pre-fix and post-fix h393 — quick win for tier-rule health.
+2. **h976** (P3, low effort): 10-seed run resolves GOLDEN/HIGH inversion question with no code changes.
+3. **h962** (P2, medium effort): Regenerate 13,416-row deliverable on post-fix predictor (separate from h964's scope but motivated by the bug-fix sweep).
+
+### Artifacts
+- `data/analysis/h393_holdout_validation.json` (5-seed tier + per-rule breakdown)
+- `data/analysis/h964_h393_postfix_run.txt` (full stdout)
+
+---
+
+## Previous Session: h960 — Neurological Supplement Ablation (2026-04-19)
 
 ### Hypothesis
 h952 found a -2.85pp production-vs-plain-kNN regression on n=13 neurological
