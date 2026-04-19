@@ -1,0 +1,132 @@
+========================================================================
+h1216: Weighted fusion sweep — node2vec_256 (w) + fastrp_256 (1-w)
+       weights=[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]  seeds=[42, 123, 456, 789, 2024]  k=20
+========================================================================
+Loading embeddings A...
+  49,616 entities
+Loading embeddings B...
+  49,616 entities
+Disease universe (knn_gt ∩ A ∩ B): 1,011
+Setup complete in 0.0s
+
+=== WEIGHT_A = 0.0 (1/11) ===
+  joint lookup built: 49,616 entities  (0.2s)
+  seed=   42  R@30=18.16%  MRR=0.0273  AUPRC=0.0574  AUROC=0.5792  (0.9s)
+  seed=  123  R@30=18.50%  MRR=0.0263  AUPRC=0.0604  AUROC=0.5756  (0.9s)
+  seed=  456  R@30=19.12%  MRR=0.0292  AUPRC=0.0629  AUROC=0.5887  (0.9s)
+  seed=  789  R@30=20.40%  MRR=0.0293  AUPRC=0.0577  AUROC=0.5835  (0.9s)
+  seed= 2024  R@30=17.76%  MRR=0.0212  AUPRC=0.0534  AUROC=0.5679  (0.9s)
+
+=== WEIGHT_A = 0.1 (2/11) ===
+  joint lookup built: 49,616 entities  (0.3s)
+  seed=   42  R@30=19.74%  MRR=0.0284  AUPRC=0.0593  AUROC=0.5830  (0.8s)
+  seed=  123  R@30=19.28%  MRR=0.0272  AUPRC=0.0623  AUROC=0.5762  (0.9s)
+  seed=  456  R@30=19.33%  MRR=0.0301  AUPRC=0.0638  AUROC=0.5905  (0.8s)
+  seed=  789  R@30=21.13%  MRR=0.0301  AUPRC=0.0598  AUROC=0.5871  (0.8s)
+  seed= 2024  R@30=18.08%  MRR=0.0215  AUPRC=0.0541  AUROC=0.5683  (0.9s)
+
+=== WEIGHT_A = 0.2 (3/11) ===
+  joint lookup built: 49,616 entities  (0.2s)
+  seed=   42  R@30=20.32%  MRR=0.0295  AUPRC=0.0613  AUROC=0.5855  (0.8s)
+  seed=  123  R@30=19.25%  MRR=0.0273  AUPRC=0.0629  AUROC=0.5768  (0.9s)
+  seed=  456  R@30=19.89%  MRR=0.0307  AUPRC=0.0667  AUROC=0.5929  (0.8s)
+  seed=  789  R@30=21.67%  MRR=0.0310  AUPRC=0.0607  AUROC=0.5877  (0.8s)
+  seed= 2024  R@30=18.48%  MRR=0.0219  AUPRC=0.0551  AUROC=0.5694  (0.9s)
+
+=== WEIGHT_A = 0.3 (4/11) ===
+  joint lookup built: 49,616 entities  (0.2s)
+  seed=   42  R@30=20.18%  MRR=0.0306  AUPRC=0.0643  AUROC=0.5884  (0.8s)
+  seed=  123  R@30=20.43%  MRR=0.0272  AUPRC=0.0638  AUROC=0.5772  (0.8s)
+  seed=  456  R@30=20.33%  MRR=0.0307  AUPRC=0.0673  AUROC=0.5934  (0.8s)
+  seed=  789  R@30=22.50%  MRR=0.0321  AUPRC=0.0640  AUROC=0.5899  (0.8s)
+  seed= 2024  R@30=19.21%  MRR=0.0226  AUPRC=0.0558  AUROC=0.5704  (0.9s)
+
+=== WEIGHT_A = 0.4 (5/11) ===
+  joint lookup built: 49,616 entities  (0.3s)
+  seed=   42  R@30=20.54%  MRR=0.0311  AUPRC=0.0655  AUROC=0.5893  (0.8s)
+  seed=  123  R@30=20.98%  MRR=0.0276  AUPRC=0.0639  AUROC=0.5776  (0.9s)
+  seed=  456  R@30=20.85%  MRR=0.0313  AUPRC=0.0677  AUROC=0.5947  (0.8s)
+  seed=  789  R@30=22.56%  MRR=0.0328  AUPRC=0.0655  AUROC=0.5901  (0.8s)
+  seed= 2024  R@30=19.57%  MRR=0.0235  AUPRC=0.0573  AUROC=0.5724  (0.9s)
+
+=== WEIGHT_A = 0.5 (6/11) ===
+  joint lookup built: 49,616 entities  (0.2s)
+  seed=   42  R@30=20.68%  MRR=0.0321  AUPRC=0.0653  AUROC=0.5897  (0.8s)
+  seed=  123  R@30=20.86%  MRR=0.0277  AUPRC=0.0629  AUROC=0.5766  (0.9s)
+  seed=  456  R@30=21.00%  MRR=0.0314  AUPRC=0.0680  AUROC=0.5936  (0.8s)
+  seed=  789  R@30=22.34%  MRR=0.0333  AUPRC=0.0664  AUROC=0.5924  (0.9s)
+  seed= 2024  R@30=19.49%  MRR=0.0235  AUPRC=0.0584  AUROC=0.5729  (0.9s)
+
+=== WEIGHT_A = 0.6 (7/11) ===
+  joint lookup built: 49,616 entities  (0.3s)
+  seed=   42  R@30=20.59%  MRR=0.0325  AUPRC=0.0656  AUROC=0.5889  (0.8s)
+  seed=  123  R@30=20.86%  MRR=0.0283  AUPRC=0.0617  AUROC=0.5753  (0.9s)
+  seed=  456  R@30=20.96%  MRR=0.0310  AUPRC=0.0660  AUROC=0.5909  (0.8s)
+  seed=  789  R@30=22.75%  MRR=0.0331  AUPRC=0.0657  AUROC=0.5920  (0.8s)
+  seed= 2024  R@30=19.35%  MRR=0.0237  AUPRC=0.0582  AUROC=0.5725  (0.9s)
+
+=== WEIGHT_A = 0.7 (8/11) ===
+  joint lookup built: 49,616 entities  (0.3s)
+  seed=   42  R@30=20.69%  MRR=0.0319  AUPRC=0.0643  AUROC=0.5882  (0.8s)
+  seed=  123  R@30=20.95%  MRR=0.0283  AUPRC=0.0619  AUROC=0.5752  (0.9s)
+  seed=  456  R@30=20.15%  MRR=0.0309  AUPRC=0.0644  AUROC=0.5868  (0.8s)
+  seed=  789  R@30=23.12%  MRR=0.0329  AUPRC=0.0656  AUROC=0.5910  (0.9s)
+  seed= 2024  R@30=19.64%  MRR=0.0240  AUPRC=0.0589  AUROC=0.5728  (0.9s)
+
+=== WEIGHT_A = 0.8 (9/11) ===
+  joint lookup built: 49,616 entities  (0.2s)
+  seed=   42  R@30=21.15%  MRR=0.0323  AUPRC=0.0639  AUROC=0.5872  (0.9s)
+  seed=  123  R@30=21.70%  MRR=0.0287  AUPRC=0.0602  AUROC=0.5730  (0.9s)
+  seed=  456  R@30=19.35%  MRR=0.0308  AUPRC=0.0645  AUROC=0.5879  (0.9s)
+  seed=  789  R@30=22.49%  MRR=0.0330  AUPRC=0.0656  AUROC=0.5910  (0.8s)
+  seed= 2024  R@30=19.50%  MRR=0.0237  AUPRC=0.0577  AUROC=0.5723  (0.9s)
+
+=== WEIGHT_A = 0.9 (10/11) ===
+  joint lookup built: 49,616 entities  (0.2s)
+  seed=   42  R@30=19.18%  MRR=0.0313  AUPRC=0.0609  AUROC=0.5846  (0.8s)
+  seed=  123  R@30=21.74%  MRR=0.0281  AUPRC=0.0573  AUROC=0.5715  (0.9s)
+  seed=  456  R@30=19.18%  MRR=0.0305  AUPRC=0.0634  AUROC=0.5860  (0.8s)
+  seed=  789  R@30=21.85%  MRR=0.0326  AUPRC=0.0648  AUROC=0.5889  (0.8s)
+  seed= 2024  R@30=19.34%  MRR=0.0238  AUPRC=0.0555  AUROC=0.5690  (0.9s)
+
+=== WEIGHT_A = 1.0 (11/11) ===
+  joint lookup built: 49,616 entities  (0.2s)
+  seed=   42  R@30=18.77%  MRR=0.0302  AUPRC=0.0565  AUROC=0.5796  (0.8s)
+  seed=  123  R@30=21.07%  MRR=0.0272  AUPRC=0.0552  AUROC=0.5698  (0.9s)
+  seed=  456  R@30=18.16%  MRR=0.0297  AUPRC=0.0590  AUROC=0.5827  (0.9s)
+  seed=  789  R@30=20.85%  MRR=0.0312  AUPRC=0.0601  AUROC=0.5835  (0.9s)
+  seed= 2024  R@30=18.88%  MRR=0.0237  AUPRC=0.0538  AUROC=0.5673  (0.9s)
+
+========================================================================
+AGGREGATE (mean ± std across seeds, per weight)
+========================================================================
+  w_a=0.00  R@30=18.79%±0.92%  MRR=0.0267±0.0030  AUPRC=0.0584±0.0032  AUROC=0.5790±0.0071
+  w_a=0.10  R@30=19.51%±0.98%  MRR=0.0274±0.0032  AUPRC=0.0599±0.0033  AUROC=0.5810±0.0079
+  w_a=0.20  R@30=19.92%±1.07%  MRR=0.0281±0.0033  AUPRC=0.0614±0.0037  AUROC=0.5825±0.0083
+  w_a=0.30  R@30=20.53%±1.08%  MRR=0.0286±0.0034  AUPRC=0.0630±0.0038  AUROC=0.5839±0.0087
+  w_a=0.40  R@30=20.90%±0.96%  MRR=0.0292±0.0033  AUPRC=0.0640±0.0035  AUROC=0.5848±0.0084
+  w_a=0.50  R@30=20.87%±0.91%  MRR=0.0296±0.0036  AUPRC=0.0642±0.0033  AUROC=0.5851±0.0086
+  w_a=0.60  R@30=20.90%±1.09%  MRR=0.0297±0.0034  AUPRC=0.0634±0.0031  AUROC=0.5839±0.0083
+  w_a=0.70  R@30=20.91%±1.19%  MRR=0.0296±0.0032  AUPRC=0.0630±0.0024  AUROC=0.5828±0.0074
+  w_a=0.80  R@30=20.84%±1.23%  MRR=0.0297±0.0033  AUPRC=0.0624±0.0030  AUROC=0.5823±0.0080
+  w_a=0.90  R@30=20.26%±1.26%  MRR=0.0293±0.0031  AUPRC=0.0604±0.0035  AUROC=0.5800±0.0081
+  w_a=1.00  R@30=19.55%±1.18%  MRR=0.0284±0.0027  AUPRC=0.0569±0.0023  AUROC=0.5766±0.0067
+
+========================================================================
+PER-METRIC OPTIMA
+========================================================================
+  best r30             @ w_a=0.70  = 20.91%±1.19%
+  best mrr             @ w_a=0.60  = 0.0297±0.0034
+  best auprc           @ w_a=0.50  = 0.0642±0.0033
+  best auroc           @ w_a=0.50  = 0.5851±0.0086
+  best hits10_drug     @ w_a=0.50  = 13.33%±0.94%
+  best hits30_drug     @ w_a=0.70  = 20.91%±1.19%
+
+Delta vs equal-weight w=0.5 anchor:
+  r30             best w=0.70 − w=0.5  = +0.034 (raw +0.0003)
+  mrr             best w=0.60 − w=0.5  = +0.013 (raw +0.0001)
+  auprc           best w=0.50 − w=0.5  = +0.000 (raw +0.0000)
+  auroc           best w=0.50 − w=0.5  = +0.000 (raw +0.0000)
+
+Wrote /Users/jimhuff/github/open-cure/data/analysis/h1216_weighted_fusion_sweep.json
+Wrote /Users/jimhuff/github/open-cure/data/analysis/h1216_weighted_fusion_sweep.md

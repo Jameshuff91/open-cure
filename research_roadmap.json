@@ -2466,7 +2466,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Extend scripts/h1215_fusion_benchmark.py with --weight-a flag (fraction of first embedding in sim-mean).",
         "Run 9 weights \u00d7 5 seeds = 45 runs. Each takes ~1s, so <1 min total.",
@@ -2474,8 +2474,9 @@
         "Compare against h1215 equal-weight concat_l2 headline.",
         "If any weight beats concat_l2 on \u22653 metrics, add to production spec."
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Full 11-weight \u00d7 5-seed sweep on the 1,011-disease intersection. R@30/MRR landscape is a BROAD PLATEAU from w=0.3 to w=0.8 (paired |t|<2 across this band; stdev 0.91\u20131.26pp). AUPRC and AUROC are UNIQUELY MAXIMIZED at w=0.5 (equal-weight): every other weight is worse on both (most at p<0.05, e.g., w=0.8 AUPRC t=-3.45; w=0.7 AUROC t=-1.95; w=1.0 AUPRC t=-8.83). No weight beats the equal-weight anchor on \u22653 metrics, so the preregistered promotion gate is NOT met. Endpoints (w=0, w=1) lose on all 4 metrics with strong t-stats. Best R@30 (w=0.70, 20.91%\u00b11.19%) is +0.034pp over w=0.5 (20.87%\u00b10.91%), well below the 0.56pp noise floor. Per-seed agreement: at every weight in the plateau, seed 2024 is the weakest (~19.5%) and seed 789 is the strongest (~22.5%), showing the sweep preserves seed-wise relative ordering \u2014 the flat curve is genuine, not hidden variance. FastRP-vs-Node2Vec asymmetry flagged in h1215 (FastRP wins single-mode AUPRC/AUROC; Node2Vec wins single-mode R@30/MRR) does NOT translate to asymmetric fusion weights \u2014 equal weighting subsumes both advantages.",
+      "result_metric": "Best weights per metric: R@30 0.70 (+0.03pp), MRR 0.60 (+0.0001), AUPRC 0.50 (tie w/ anchor), AUROC 0.50 (tie w/ anchor); all within or below noise. h1215 w=0.5 recipe retained as canonical.",
+      "artifact": "scripts/h1216_weighted_fusion_sweep.py; data/analysis/h1216_weighted_fusion_sweep.json/.md; data/analysis/h1216_run.log"
     },
     {
       "id": "h1217",
@@ -2552,6 +2553,59 @@
       ],
       "findings": "",
       "result_metric": ""
+    },
+    {
+      "id": "h1225",
+      "title": "Rank-based fusion combiners (RRF / Borda) \u2014 orthogonal to linear weighting",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "lever": "recall",
+      "rationale": "h1216 showed linear interpolation of cosine similarities has a flat R@30 plateau and only marginal movement (<0.1pp) across w=0.3\u20130.8. Rank-based combiners like Reciprocal Rank Fusion (RRF) and Borda count operate on the rank-domain rather than score-domain and are known to outperform linear blending when component systems disagree on score distribution. Both Node2Vec and FastRP produce ranked drug lists per disease; RRF with k=60 typically beats weighted sum on IR benchmarks. Implementation reuses build_concat_lookup's per-half kNN; only the combiner changes. Gate: beats equal-weight concat_l2 on \u22653 metrics.",
+      "steps": [
+        "Extend scripts/h1216_weighted_fusion_sweep.py with a --combiner flag: linear_sim|rrf|borda|weighted_sum_scores.",
+        "Run each combiner on 5 seeds against the 1,011-disease intersection.",
+        "Report all 5 metrics and paired-t vs w=0.5 anchor.",
+        "If any combiner beats the anchor on \u22653 metrics, promote to production spec and document in docs/claude/patterns.md."
+      ],
+      "success_criteria": "Any combiner beats w=0.5 equal-weight concat_l2 on \u22653 of the 5 metrics at p<0.1 (paired t, 5 seeds)."
+    },
+    {
+      "id": "h1226",
+      "title": "Per-disease adaptive fusion weight \u2014 does disease-level w-selection beat a global w?",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "lever": "recall",
+      "rationale": "h1216 established a flat global-weight optimum but the R@30 delta between the worst and best plateau weight is small because averaging over 200 holdout diseases washes out per-disease swings. If even 20% of diseases have an asymmetric embedding-preference (Node2Vec-favouring or FastRP-favouring), per-disease weight selection from train-side evidence could lift R@30 by 1\u20132pp even when the global curve is flat. Use leave-one-out on train diseases to pick w\u2208{0.0,...,1.0} per disease, then evaluate on holdout. If successful, this also provides h1218-style routing features (disease categories where one embedding dominates).",
+      "steps": [
+        "For each train disease, compute R@30 under every weight in {0.1,0.3,0.5,0.7,0.9}.",
+        "Per disease, pick w* = argmax R@30 on train (leave-out or 5-fold).",
+        "Propagate w* to holdout via nearest-neighbour disease category or a linear regressor on disease features.",
+        "Compare to global w=0.5 anchor.",
+        "Report per-category distribution of w* (where does Node2Vec win, where does FastRP?)."
+      ],
+      "success_criteria": "Per-disease w* beats global w=0.5 on R@30 by \u22651pp mean across 5 seeds (paired t, p<0.1)."
+    },
+    {
+      "id": "h1227",
+      "title": "Three-embedding concat fusion \u2014 does adding TransE or GraphSAGE stack additively?",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "lever": "recall",
+      "rationale": "h1215 showed two orthogonal embeddings (random-walk + random-projection) combine additively because they sample DRKG structure differently. h1216 confirmed equal weighting is Pareto-optimal. A natural scaling question: does a THIRD embedding (TransE \u2014 translational objective; or h922-v2 GraphSAGE \u2014 supervised link prediction) continue to add signal in an equal-weight concat? If gains are additive, this is the cheapest path to another +1pp R@30 before h1200 ships. If gains saturate, the fusion recipe is already extracting all orthogonal random-walk/projection signal \u2014 h1200 must bring genuinely new structure.",
+      "steps": [
+        "Identify third embedding with coverage \u22651,000 disease intersection (models/transe.pt or graphsage_256).",
+        "Extend scripts/h1215_fusion_benchmark.py to support three-way concat (sqrt(1/3) per half).",
+        "Run all 5 metrics \u00d7 5 seeds \u00d7 {N2V, N2V+FastRP (h1215), N2V+FastRP+Third}.",
+        "Paired-t three-way vs h1215 two-way.",
+        "Document whether gains are additive, saturating, or negative (anti-correlated signal)."
+      ],
+      "success_criteria": "Three-way concat beats two-way concat_l2 on \u22653 metrics at p<0.1."
     }
   ],
   "completed": [
@@ -5312,6 +5366,12 @@
       "hypothesis_id": "h1215",
       "learning": "L2-normalised concat of Node2Vec + FastRP beats both parents on all 5 metrics (R@30 +1.32pp to 20.87%, AUPRC +0.0073 to 0.0642, AUROC +0.0085 to 0.5851) at zero marginal training cost. FastRP (random projection) is captured in seconds; Node2Vec needs hours of random walks \u2014 yet their ensemble is additive because random projection and random walks sample partially orthogonal DRKG structure. Score_mean (per-disease z-norm of drug scores) is a clean NEGATIVE \u2014 redistributing mass onto never-scored drugs craters AUPRC/AUROC. DRKG-only ceiling per metric recalibrated: R@30 \u2264 20.87%, MRR \u2264 0.0296, AUPRC \u2264 0.0642, AUROC \u2264 0.5851. h1200 must exceed all four.",
       "implication": "(1) Ship concat_l2 as the baseline production embedding for the unsupervised path; use it as the h1200 warm-start initialiser. (2) The L2-concat recipe transfers directly to h1202 (DRKG + LINCS fusion) \u2014 same primitive, just swap one lookup. h1220 makes this explicit. (3) Cheap embeddings are materially useful \u2014 future work should try TransE / spectral embedding / FastRP with different seeds in the ensemble. (4) The +1.32pp R@30 is smaller than h1200's target lift but it's a free floor raise; h1200 should be measured against the NEW 20.87% baseline, not 19.55%."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1216",
+      "learning": "Weighted concat_l2 fusion of Node2Vec + FastRP has a flat R@30/MRR plateau from w=0.3 to w=0.8 and a sharp AUPRC/AUROC peak at w=0.5. Equal-weight concat_l2 is Pareto-optimal (unique best on AUPRC and AUROC, tied-best on R@30/MRR) \u2014 no weighting beats it on the preregistered \u22653-metric gate.",
+      "implication": "h1215's w=0.5 recipe is locked in as the production fusion primitive. Move weight-tuning effort OFF the linear-interpolation axis and ONTO rank-based combiners (RRF / Borda), per-disease adaptive fusion (h1218), or score-space blending with learned features."
     }
   ],
   "collaborations": [

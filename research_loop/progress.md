@@ -1,5 +1,73 @@
 # Research Loop Progress
 
+## Current Session: h1216 — Weighted fusion sweep (INVALIDATED as recipe-improver; confirms w=0.5 is Pareto-optimal) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1216 (INVALIDATED, recall lever)
+
+### What was built
+`scripts/h1216_weighted_fusion_sweep.py` — parameter sweep over 11 weights
+w ∈ {0.0, 0.1, …, 1.0} × 5 seeds on the h1215 intersection (1,011
+diseases). Uses the mathematical identity that weighted L2-concat with
+scales (√w, √(1−w)) on pre-L2-normalised halves has cosine similarity
+equal to w·cos_a + (1−w)·cos_b — i.e. weighted concat ≡ weighted sim_mean.
+This lets one kNN call per weight reuse the h1215 `score_disease_single`
+primitive. Setup verified: w=0.5 seed=42 reproduces h1215's anchor
+exactly (R@30 20.68%, MRR 0.0321, AUPRC 0.0653, AUROC 0.5897).
+
+### Headline
+**No weight beats the equal-weight anchor on ≥3 metrics — preregistered promotion gate NOT met.**
+
+| weight_a | R@30 | MRR | AUPRC | AUROC |
+|---|---|---|---|---|
+| 0.00 (pure FastRP)  | 18.79% ±0.92% | 0.0267 | 0.0584 | 0.5790 |
+| 0.30 | 20.53% ±1.08% | 0.0286 | 0.0630 | 0.5839 |
+| 0.40 | 20.90% ±0.96% | 0.0292 | 0.0640 | 0.5848 |
+| **0.50 (h1215 anchor)** | **20.87% ±0.91%** | **0.0296** | **0.0642** | **0.5851** |
+| 0.60 | 20.90% ±1.09% | 0.0297 | 0.0634 | 0.5839 |
+| 0.70 | 20.91% ±1.19% | 0.0296 | 0.0630 | 0.5828 |
+| 0.80 | 20.84% ±1.23% | 0.0297 | 0.0624 | 0.5823 |
+| 1.00 (pure Node2Vec) | 19.55% ±1.18% | 0.0284 | 0.0569 | 0.5766 |
+
+### Paired t-tests vs w=0.5 (df=4)
+- **R@30 / MRR plateau:** weights 0.4–0.8 all indistinguishable from w=0.5 (|t|<2; differences <0.1pp).
+- **AUPRC:** uniquely maximized at w=0.5; w=0.7 (-0.00121, t=-1.82), w=0.8 (-0.00186, t=-3.45), w=1.0 (-0.00728, t=-8.83).
+- **AUROC:** same pattern; w=0.5 uniquely best; w=0.6 t=-2.63, w=0.8 t=-3.06.
+- **Endpoints:** w=0 and w=1 lose on all 4 metrics with strong t-stats (>2.5).
+- **Best-R@30 weight 0.70 is +0.034pp over anchor — noise floor ~0.56pp.**
+
+### Scientific takeaway
+The R@30/MRR landscape over fusion weight is **flat and symmetric from w=0.3 to w=0.8**
+(both embeddings carry near-equal rank-relevant signal). AUPRC/AUROC
+(probabilistic discrimination) has a **sharp peak at w=0.5** — the
+probabilistic separability metric prefers exact-equal weighting even when
+the rank-based metric is insensitive. This is a generalisable pattern for
+two-embedding concat: linear interpolation does not discriminate on rank,
+it discriminates on probability calibration.
+
+h1215's w=0.5 concat_l2 recipe is **locked in** as the canonical fusion
+primitive. h1216 closes the linear-weight axis of exploration. Any further
+fusion gain will have to come from non-linear combiners (RRF, learned),
+per-disease adaptive weighting, or adding a third orthogonal embedding.
+
+### Shipped
+- `scripts/h1216_weighted_fusion_sweep.py` (267 lines; reuses h1199/h1215 primitives)
+- `data/analysis/h1216_weighted_fusion_sweep.json` (full per-seed metrics)
+- `data/analysis/h1216_weighted_fusion_sweep.md` (markdown aggregate + per-metric optima)
+- `data/analysis/h1216_run.log` (full sweep stdout)
+
+### New hypotheses (3 added)
+- **h1225 (P3, recall lever):** Rank-based fusion combiners (RRF, Borda) — orthogonal to linear weighting axis h1216 just closed.
+- **h1226 (P3, recall lever):** Per-disease adaptive fusion weight — does disease-level w-selection beat global w=0.5? Picks up the signal averaging washes out.
+- **h1227 (P3, recall lever):** Three-embedding concat (Node2Vec + FastRP + TransE/GraphSAGE) — tests whether additive-fusion thesis scales to 3 embeddings or saturates.
+
+### Recommended next hypothesis
+**h1218 (P2, low effort)** — fusion gain decomposition. h1216 established
+that weight doesn't matter in aggregate; h1218 asks WHERE (which diseases)
+the fusion gains land. If gains correlate with Node2Vec-FastRP neighbour
+disagreement, we have a disease-level routing feature that connects
+directly to h1226. Natural next step.
+
+
 ## Current Session: h1215 — Node2Vec + FastRP L2-concat fusion (VALIDATED, 2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1215 (VALIDATED, recall lever)
