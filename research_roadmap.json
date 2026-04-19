@@ -17651,7 +17651,9 @@
         "Compare neurological overall_r30 with vs without supplement; success if +1pp without.",
         "If confirmed, propose demoting class_injected to LOW (annotation-only) or disabling the re-sort."
       ],
-      "status": "pending"
+      "status": "invalidated",
+      "findings": "5-seed h393 holdout (n=50 neuro diseases summed). Pass A = current production. Pass B = monkey-patched _supplement_neurological_predictions to no-op. Result: neuro_overall_r30 EXACTLY +0.00pp delta on every seed; non-neuro control: +0.00pp (no leakage); 0/50 neuro diseases helped or hurt by the ablation. The supplement is benign for R@30. Mechanism: the supplement function early-returns at `if not missing_drugs:` (line ~4346) without re-sorting when no class-matched drug is missing from kNN top-N. On the holdout neuro pool, kNN already covers all class-matched drugs in the top-30, so missing_drugs is empty, supplement is a no-op, and the h952 -2.85pp boost+supp regression CANNOT be attributed to the supplement. Filed h972 (SELECTIVE_BOOST ablation on neuro) and h973 (per-disease predict() vs plain-kNN top-30 set diff localization on the n=13 boost+supp stratum) as the next pivots \u2014 likely culprit is boost itself behaving differently on neuro than on metabolic/renal/hematological/respiratory.",
+      "result_metric": "neuro_overall_r30 \u0394 = +0.00pp on every seed (n=50 neuro diseases). Supplement does not modify R@30 set; h952 -2.85pp regression has another cause."
     },
     {
       "id": "h961",
@@ -17801,6 +17803,45 @@
       ],
       "depends_on": [
         "h965"
+      ]
+    },
+    {
+      "id": "h972",
+      "title": "SELECTIVE_BOOST ablation on neurological \u2014 find the real h952 regression source",
+      "category": "diagnosis",
+      "rationale": "h960 ruled out the h173 supplement as the cause of the h952 -2.85pp boost+supp neurological regression. h952 boost_only stratum showed +1.41pp (boost helps on metabolic/renal/hematological/respiratory/immunological). The combined boost+supp neurological -2.85pp must therefore come from SELECTIVE_BOOST behaving differently on neurological than on the other SELECTIVE_BOOST_CATEGORIES. Test: ablate boost for neurological category specifically (i.e., remove 'neurological' from SELECTIVE_BOOST_CATEGORIES), re-run 5-seed holdout, measure neuro overall_r30 delta vs current production.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Monkey-patch SELECTIVE_BOOST_CATEGORIES to exclude 'neurological'.",
+        "Run 5-seed h393 holdout. Measure neuro_overall_r30 baseline vs ablated.",
+        "Non-neuro control should be 0pp.",
+        "Decision: if neuro_overall_r30 lifts >=+1.5pp without hurting non-neuro, propose removing 'neurological' from SELECTIVE_BOOST_CATEGORIES."
+      ],
+      "depends_on": [
+        "h952",
+        "h960"
+      ]
+    },
+    {
+      "id": "h973",
+      "title": "Per-disease predict() vs plain-kNN top-30 set-diff localization on neurological holdout",
+      "category": "diagnosis",
+      "rationale": "h960 + h972 narrow the search but do not pinpoint *which* drugs are being swapped in/out of the top-30 by SELECTIVE_BOOST on neuro diseases. For each holdout neuro disease (n\u224813/seed in the boost+supp stratum), produce a side-by-side table: top-30 plain-kNN drugs, top-30 predict() drugs, the set difference (added/removed), and which side intersects the GT. This directly explains the -2.85pp by drug name. Likely pattern: boost amplifies neighbor diseases that share neuro-irrelevant drugs (e.g., common anti-epileptics for an unrelated movement disorder), displacing the neighbor-disease drugs that ARE GT-correct.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "For each holdout neuro disease at seed 42, dump plain-kNN top-30 vs predict() top-30, expanded GT, and highlight added/removed drugs.",
+        "Categorize the swaps by drug class (anti-epileptic, dopaminergic, anti-inflammatory, etc.) to identify systematic boost-induced false positives.",
+        "Output one CSV per disease (n\u224813) for manual review."
+      ],
+      "depends_on": [
+        "h960",
+        "h972"
       ]
     }
   ],
@@ -20454,6 +20495,12 @@
       "hypothesis_id": "h965",
       "learning": "Cancer-restricted zero-overlap biologic filter: cancer-cohort signal +2.54pp p30 / -2.24pp r30 reproduces h957's cancer slice exactly, but cancer is only ~12% of evaluable diseases so the global tier-rule impact dilutes to +0.28pp p30 / -0.46pp r30 \u2014 below shipping threshold. Non-cancer cohort \u0394=0.00pp everywhere confirms clean filter isolation.",
       "implication": "The biologic-overlap signal is too narrow at the disease-category level to ship as a single tier rule. Right surface area is per-prediction annotation (h968) or subclass-level rule on canonical anti-target biologics (h969)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h960",
+      "learning": "h173 neurological supplement is benign for R@30: the early-return at `if not missing_drugs` fires for all holdout neuro diseases because kNN top-30 already contains the class-matched drugs the supplement would inject. h952's -2.85pp boost+supp neuro regression therefore CANNOT be blamed on the supplement; the search shifts to SELECTIVE_BOOST itself (h972).",
+      "implication": "When investigating production-vs-baseline regressions on a stratum, ablate each pipeline component independently \u2014 don't assume the named feature is the cause without measuring. The supplement's name suggested it was active but its early-return short-circuit makes it inert on the very stratum that motivated it (h171's coverage gap was on FULL data, not on holdout)."
     }
   ],
   "collaborations": [

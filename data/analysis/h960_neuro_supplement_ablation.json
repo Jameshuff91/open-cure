@@ -1,0 +1,943 @@
+{
+  "hypothesis": "h960",
+  "title": "Neurological supplement (h173) ablation",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "evaluable_diseases": 1011,
+  "per_seed": [
+    {
+      "seed": 42,
+      "agg_baseline_neuro": {
+        "label": "baseline_neuro",
+        "n": 16,
+        "overall_r30": 0.13137908047834518,
+        "overall_r30_std": 0.14679983562051052,
+        "n_bio_gt": 2,
+        "bio_r30": 0.5,
+        "bio_r30_std": 0.5,
+        "n_sm_gt": 16,
+        "sm_r30": 0.1291775967143614,
+        "sm_r30_std": 0.1472822567549213
+      },
+      "agg_ablated_neuro": {
+        "label": "ablated_neuro",
+        "n": 16,
+        "overall_r30": 0.13137908047834518,
+        "overall_r30_std": 0.14679983562051052,
+        "n_bio_gt": 2,
+        "bio_r30": 0.5,
+        "bio_r30_std": 0.5,
+        "n_sm_gt": 16,
+        "sm_r30": 0.1291775967143614,
+        "sm_r30_std": 0.1472822567549213
+      },
+      "agg_baseline_nonneuro": {
+        "label": "baseline_nonneuro",
+        "n": 186,
+        "overall_r30": 0.192052475978369,
+        "overall_r30_std": 0.21221956751182477,
+        "n_bio_gt": 54,
+        "bio_r30": 0.3128928170594837,
+        "bio_r30_std": 0.37189658634542405,
+        "n_sm_gt": 184,
+        "sm_r30": 0.18240157039974125,
+        "sm_r30_std": 0.2112866205022579
+      },
+      "agg_ablated_nonneuro": {
+        "label": "ablated_nonneuro",
+        "n": 186,
+        "overall_r30": 0.192052475978369,
+        "overall_r30_std": 0.21221956751182477,
+        "n_bio_gt": 54,
+        "bio_r30": 0.3128928170594837,
+        "bio_r30_std": 0.37189658634542405,
+        "n_sm_gt": 184,
+        "sm_r30": 0.18240157039974125,
+        "sm_r30_std": 0.2112866205022579
+      },
+      "agg_baseline_all": {
+        "label": "baseline_all",
+        "n": 202,
+        "overall_r30": 0.18724666247341662,
+        "overall_r30_std": 0.20843531681175445,
+        "n_bio_gt": 56,
+        "bio_r30": 0.31957521645021647,
+        "bio_r30_std": 0.37881628077463214,
+        "n_sm_gt": 200,
+        "sm_r30": 0.17814365250491085,
+        "sm_r30_std": 0.20739944942207436
+      },
+      "agg_ablated_all": {
+        "label": "ablated_all",
+        "n": 202,
+        "overall_r30": 0.18724666247341662,
+        "overall_r30_std": 0.20843531681175445,
+        "n_bio_gt": 56,
+        "bio_r30": 0.31957521645021647,
+        "bio_r30_std": 0.37881628077463214,
+        "n_sm_gt": 200,
+        "sm_r30": 0.17814365250491085,
+        "sm_r30_std": 0.20739944942207436
+      },
+      "n_neuro_helpers": 0,
+      "n_neuro_hurt": 0,
+      "n_neuro_unchanged": 16,
+      "neuro_delta_records": [
+        {
+          "disease_id": "drkg:Disease::MESH:D002547",
+          "disease_name": "cerebral palsy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 26,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.11538461538461539,
+          "ablated_overall_r30": 0.11538461538461539
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D004829",
+          "disease_name": "secondarily generalized seizure",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 10,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.1,
+          "ablated_overall_r30": 0.1
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D010523",
+          "disease_name": "neuropathy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 50,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.06,
+          "ablated_overall_r30": 0.06
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D002545",
+          "disease_name": "cerebral ischemic symptoms",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 112,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.017857142857142856,
+          "ablated_overall_r30": 0.017857142857142856
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D014927",
+          "disease_name": "wolffparkinsonwhite syndrome",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 18,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020820",
+          "disease_name": "tardive dyskinesia",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 4,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.5,
+          "ablated_overall_r30": 0.5
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D018207",
+          "disease_name": "renal angiomyolipoma and tuberous sclerosis complex tsc",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 4,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.25,
+          "ablated_overall_r30": 0.25
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020514",
+          "disease_name": "hypokalemic familial periodic paralysis",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 2,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D009134",
+          "disease_name": "infantile spinal muscular atrophy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 4,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D010302",
+          "disease_name": "parkinsonism that may follow manganese intoxication",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 54,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.16666666666666666,
+          "ablated_overall_r30": 0.16666666666666666
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020191",
+          "disease_name": "severe myoclonic epilepsy in infancy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 3,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D013118",
+          "disease_name": "spinal cord diseases",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 17,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.058823529411764705,
+          "ablated_overall_r30": 0.058823529411764705
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D014402",
+          "disease_name": "tuberous sclerosis complex",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 6,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.3333333333333333,
+          "ablated_overall_r30": 0.3333333333333333
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D017253",
+          "disease_name": "neurofibromatosis type 1",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 1,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020190",
+          "disease_name": "juvenile myoclonic epilepsy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 6,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.16666666666666666,
+          "ablated_overall_r30": 0.16666666666666666
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D019578",
+          "disease_name": "multiple system atrophy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 15,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.3333333333333333,
+          "ablated_overall_r30": 0.3333333333333333
+        }
+      ]
+    },
+    {
+      "seed": 123,
+      "agg_baseline_neuro": {
+        "label": "baseline_neuro",
+        "n": 12,
+        "overall_r30": 0.14891199948774866,
+        "overall_r30_std": 0.15060153073898588,
+        "n_bio_gt": 1,
+        "bio_r30": 1.0,
+        "bio_r30_std": 0.0,
+        "n_sm_gt": 12,
+        "sm_r30": 0.1459632815390307,
+        "sm_r30_std": 0.15157239515305765
+      },
+      "agg_ablated_neuro": {
+        "label": "ablated_neuro",
+        "n": 12,
+        "overall_r30": 0.14891199948774866,
+        "overall_r30_std": 0.15060153073898588,
+        "n_bio_gt": 1,
+        "bio_r30": 1.0,
+        "bio_r30_std": 0.0,
+        "n_sm_gt": 12,
+        "sm_r30": 0.1459632815390307,
+        "sm_r30_std": 0.15157239515305765
+      },
+      "agg_baseline_nonneuro": {
+        "label": "baseline_nonneuro",
+        "n": 188,
+        "overall_r30": 0.22003292425042448,
+        "overall_r30_std": 0.21731893343031194,
+        "n_bio_gt": 58,
+        "bio_r30": 0.29906329302881024,
+        "bio_r30_std": 0.3773687218624446,
+        "n_sm_gt": 186,
+        "sm_r30": 0.2127757983756311,
+        "sm_r30_std": 0.21456484909705437
+      },
+      "agg_ablated_nonneuro": {
+        "label": "ablated_nonneuro",
+        "n": 188,
+        "overall_r30": 0.22003292425042448,
+        "overall_r30_std": 0.21731893343031194,
+        "n_bio_gt": 58,
+        "bio_r30": 0.29906329302881024,
+        "bio_r30_std": 0.3773687218624446,
+        "n_sm_gt": 186,
+        "sm_r30": 0.2127757983756311,
+        "sm_r30_std": 0.21456484909705437
+      },
+      "agg_baseline_all": {
+        "label": "baseline_all",
+        "n": 200,
+        "overall_r30": 0.21576566876466394,
+        "overall_r30_std": 0.214569332963198,
+        "n_bio_gt": 59,
+        "bio_r30": 0.31094357619781343,
+        "bio_r30_std": 0.38494110864889886,
+        "n_sm_gt": 198,
+        "sm_r30": 0.20872655493098863,
+        "sm_r30_std": 0.21188300337790789
+      },
+      "agg_ablated_all": {
+        "label": "ablated_all",
+        "n": 200,
+        "overall_r30": 0.21576566876466394,
+        "overall_r30_std": 0.214569332963198,
+        "n_bio_gt": 59,
+        "bio_r30": 0.31094357619781343,
+        "bio_r30_std": 0.38494110864889886,
+        "n_sm_gt": 198,
+        "sm_r30": 0.20872655493098863,
+        "sm_r30_std": 0.21188300337790789
+      },
+      "n_neuro_helpers": 0,
+      "n_neuro_hurt": 0,
+      "n_neuro_unchanged": 12,
+      "neuro_delta_records": [
+        {
+          "disease_id": "drkg:Disease::MESH:D002547",
+          "disease_name": "cerebral palsy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 26,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.11538461538461539,
+          "ablated_overall_r30": 0.11538461538461539
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D004830",
+          "disease_name": "primary generalised tonicclonic seizures",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 4,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D006816",
+          "disease_name": "chorea associated with huntingtons disease",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 53,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.03773584905660377,
+          "ablated_overall_r30": 0.03773584905660377
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020435",
+          "disease_name": "glossopharyngeal neuralgia",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 2,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.5,
+          "ablated_overall_r30": 0.5
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D004828",
+          "disease_name": "focal onset seizures",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 24,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.20833333333333334,
+          "ablated_overall_r30": 0.20833333333333334
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020514",
+          "disease_name": "hypokalemic familial periodic paralysis",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 2,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020191",
+          "disease_name": "severe myoclonic epilepsy in infancy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 3,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D010301",
+          "disease_name": "parkinsons disease",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 20,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.2,
+          "ablated_overall_r30": 0.2
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D004832",
+          "disease_name": "typical absence seizures",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 15,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.26666666666666666,
+          "ablated_overall_r30": 0.26666666666666666
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D013118",
+          "disease_name": "spinal cord diseases",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 17,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.058823529411764705,
+          "ablated_overall_r30": 0.058823529411764705
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D014402",
+          "disease_name": "tuberous sclerosis complex",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 6,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.3333333333333333,
+          "ablated_overall_r30": 0.3333333333333333
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D019578",
+          "disease_name": "multiple system atrophy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 15,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.06666666666666667,
+          "ablated_overall_r30": 0.06666666666666667
+        }
+      ]
+    },
+    {
+      "seed": 456,
+      "agg_baseline_neuro": {
+        "label": "baseline_neuro",
+        "n": 6,
+        "overall_r30": 0.04877698554169143,
+        "overall_r30_std": 0.05258755268545109,
+        "n_bio_gt": 3,
+        "bio_r30": 0.0,
+        "bio_r30_std": 0.0,
+        "n_sm_gt": 6,
+        "sm_r30": 0.05109180035650624,
+        "sm_r30_std": 0.055505193002571965
+      },
+      "agg_ablated_neuro": {
+        "label": "ablated_neuro",
+        "n": 6,
+        "overall_r30": 0.04877698554169143,
+        "overall_r30_std": 0.05258755268545109,
+        "n_bio_gt": 3,
+        "bio_r30": 0.0,
+        "bio_r30_std": 0.0,
+        "n_sm_gt": 6,
+        "sm_r30": 0.05109180035650624,
+        "sm_r30_std": 0.055505193002571965
+      },
+      "agg_baseline_nonneuro": {
+        "label": "baseline_nonneuro",
+        "n": 194,
+        "overall_r30": 0.1823669237650188,
+        "overall_r30_std": 0.19985052207204512,
+        "n_bio_gt": 41,
+        "bio_r30": 0.2589430894308943,
+        "bio_r30_std": 0.38052341574720316,
+        "n_sm_gt": 192,
+        "sm_r30": 0.18085117486589208,
+        "sm_r30_std": 0.19813300701879205
+      },
+      "agg_ablated_nonneuro": {
+        "label": "ablated_nonneuro",
+        "n": 194,
+        "overall_r30": 0.1823669237650188,
+        "overall_r30_std": 0.19985052207204512,
+        "n_bio_gt": 41,
+        "bio_r30": 0.2589430894308943,
+        "bio_r30_std": 0.38052341574720316,
+        "n_sm_gt": 192,
+        "sm_r30": 0.18085117486589208,
+        "sm_r30_std": 0.19813300701879205
+      },
+      "agg_baseline_all": {
+        "label": "baseline_all",
+        "n": 200,
+        "overall_r30": 0.17835922561831896,
+        "overall_r30_std": 0.19835401246664655,
+        "n_bio_gt": 44,
+        "bio_r30": 0.2412878787878788,
+        "bio_r30_std": 0.373075679427578,
+        "n_sm_gt": 198,
+        "sm_r30": 0.17691907260803186,
+        "sm_r30_std": 0.19660929766569357
+      },
+      "agg_ablated_all": {
+        "label": "ablated_all",
+        "n": 200,
+        "overall_r30": 0.17835922561831896,
+        "overall_r30_std": 0.19835401246664655,
+        "n_bio_gt": 44,
+        "bio_r30": 0.2412878787878788,
+        "bio_r30_std": 0.373075679427578,
+        "n_sm_gt": 198,
+        "sm_r30": 0.17691907260803186,
+        "sm_r30_std": 0.19660929766569357
+      },
+      "n_neuro_helpers": 0,
+      "n_neuro_hurt": 0,
+      "n_neuro_unchanged": 6,
+      "neuro_delta_records": [
+        {
+          "disease_id": "drkg:Disease::MESH:D009471",
+          "disease_name": "neuromyelitis optica spectrum disorder",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 18,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D004827",
+          "disease_name": "epilepsy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 220,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.12272727272727273,
+          "ablated_overall_r30": 0.12272727272727273
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D009041",
+          "disease_name": "motion sickness",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 17,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.058823529411764705,
+          "ablated_overall_r30": 0.058823529411764705
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020191",
+          "disease_name": "severe myoclonic epilepsy in infancy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 3,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D001764",
+          "disease_name": "blepharospasm associated with dystonia",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 7,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D001342",
+          "disease_name": "nondiabetic autonomic neuropathy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 9,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.1111111111111111,
+          "ablated_overall_r30": 0.1111111111111111
+        }
+      ]
+    },
+    {
+      "seed": 789,
+      "agg_baseline_neuro": {
+        "label": "baseline_neuro",
+        "n": 7,
+        "overall_r30": 0.05154594509433219,
+        "overall_r30_std": 0.0891409900547659,
+        "n_bio_gt": 1,
+        "bio_r30": 0.0,
+        "bio_r30_std": 0.0,
+        "n_sm_gt": 7,
+        "sm_r30": 0.05154594509433219,
+        "sm_r30_std": 0.0891409900547659
+      },
+      "agg_ablated_neuro": {
+        "label": "ablated_neuro",
+        "n": 7,
+        "overall_r30": 0.05154594509433219,
+        "overall_r30_std": 0.0891409900547659,
+        "n_bio_gt": 1,
+        "bio_r30": 0.0,
+        "bio_r30_std": 0.0,
+        "n_sm_gt": 7,
+        "sm_r30": 0.05154594509433219,
+        "sm_r30_std": 0.0891409900547659
+      },
+      "agg_baseline_nonneuro": {
+        "label": "baseline_nonneuro",
+        "n": 193,
+        "overall_r30": 0.2131734598977561,
+        "overall_r30_std": 0.22550063261833256,
+        "n_bio_gt": 48,
+        "bio_r30": 0.3565310846560847,
+        "bio_r30_std": 0.4029115046199576,
+        "n_sm_gt": 190,
+        "sm_r30": 0.208848691946095,
+        "sm_r30_std": 0.22824903196100213
+      },
+      "agg_ablated_nonneuro": {
+        "label": "ablated_nonneuro",
+        "n": 193,
+        "overall_r30": 0.2131734598977561,
+        "overall_r30_std": 0.22550063261833256,
+        "n_bio_gt": 48,
+        "bio_r30": 0.3565310846560847,
+        "bio_r30_std": 0.4029115046199576,
+        "n_sm_gt": 190,
+        "sm_r30": 0.208848691946095,
+        "sm_r30_std": 0.22824903196100213
+      },
+      "agg_baseline_all": {
+        "label": "baseline_all",
+        "n": 200,
+        "overall_r30": 0.20751649687963622,
+        "overall_r30_std": 0.2241231810467562,
+        "n_bio_gt": 49,
+        "bio_r30": 0.3492549400712666,
+        "bio_r30_std": 0.40195260430448604,
+        "n_sm_gt": 197,
+        "sm_r30": 0.20325925424070243,
+        "sm_r30_std": 0.2266644601542228
+      },
+      "agg_ablated_all": {
+        "label": "ablated_all",
+        "n": 200,
+        "overall_r30": 0.20751649687963622,
+        "overall_r30_std": 0.2241231810467562,
+        "n_bio_gt": 49,
+        "bio_r30": 0.3492549400712666,
+        "bio_r30_std": 0.40195260430448604,
+        "n_sm_gt": 197,
+        "sm_r30": 0.20325925424070243,
+        "sm_r30_std": 0.2266644601542228
+      },
+      "n_neuro_helpers": 0,
+      "n_neuro_hurt": 0,
+      "n_neuro_unchanged": 7,
+      "neuro_delta_records": [
+        {
+          "disease_id": "drkg:Disease::MESH:D009468",
+          "disease_name": "neuromuscular disease",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 15,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D003704",
+          "disease_name": "dementia with lewy bodies",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 93,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.021505376344086023,
+          "ablated_overall_r30": 0.021505376344086023
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020208",
+          "disease_name": "spasticity of cerebral origin",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 7,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D009422",
+          "disease_name": "chronic neurological disorders",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 117,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.03418803418803419,
+          "ablated_overall_r30": 0.03418803418803419
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D004832",
+          "disease_name": "typical absence seizures",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 15,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.26666666666666666,
+          "ablated_overall_r30": 0.26666666666666666
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D009290",
+          "disease_name": "narcolepsy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 26,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.038461538461538464,
+          "ablated_overall_r30": 0.038461538461538464
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D001922",
+          "disease_name": "brain abscess",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 11,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        }
+      ]
+    },
+    {
+      "seed": 2024,
+      "agg_baseline_neuro": {
+        "label": "baseline_neuro",
+        "n": 9,
+        "overall_r30": 0.1565235805860806,
+        "overall_r30_std": 0.19085575978884317,
+        "n_bio_gt": 4,
+        "bio_r30": 0.08333333333333333,
+        "bio_r30_std": 0.14433756729740643,
+        "n_sm_gt": 9,
+        "sm_r30": 0.155370398411737,
+        "sm_r30_std": 0.19066891235077094
+      },
+      "agg_ablated_neuro": {
+        "label": "ablated_neuro",
+        "n": 9,
+        "overall_r30": 0.1565235805860806,
+        "overall_r30_std": 0.19085575978884317,
+        "n_bio_gt": 4,
+        "bio_r30": 0.08333333333333333,
+        "bio_r30_std": 0.14433756729740643,
+        "n_sm_gt": 9,
+        "sm_r30": 0.155370398411737,
+        "sm_r30_std": 0.19066891235077094
+      },
+      "agg_baseline_nonneuro": {
+        "label": "baseline_nonneuro",
+        "n": 191,
+        "overall_r30": 0.18718476639806966,
+        "overall_r30_std": 0.2065606420239691,
+        "n_bio_gt": 67,
+        "bio_r30": 0.3072381598501001,
+        "bio_r30_std": 0.3728822814106809,
+        "n_sm_gt": 189,
+        "sm_r30": 0.18374153566789272,
+        "sm_r30_std": 0.2096077246029941
+      },
+      "agg_ablated_nonneuro": {
+        "label": "ablated_nonneuro",
+        "n": 191,
+        "overall_r30": 0.18718476639806966,
+        "overall_r30_std": 0.2065606420239691,
+        "n_bio_gt": 67,
+        "bio_r30": 0.3072381598501001,
+        "bio_r30_std": 0.3728822814106809,
+        "n_sm_gt": 189,
+        "sm_r30": 0.18374153566789272,
+        "sm_r30_std": 0.2096077246029941
+      },
+      "agg_baseline_all": {
+        "label": "baseline_all",
+        "n": 200,
+        "overall_r30": 0.18580501303653016,
+        "overall_r30_std": 0.20597776090567038,
+        "n_bio_gt": 71,
+        "bio_r30": 0.2946238034266203,
+        "bio_r30_std": 0.36748726672333965,
+        "n_sm_gt": 198,
+        "sm_r30": 0.18245193851988564,
+        "sm_r30_std": 0.20886776272285068
+      },
+      "agg_ablated_all": {
+        "label": "ablated_all",
+        "n": 200,
+        "overall_r30": 0.18580501303653016,
+        "overall_r30_std": 0.20597776090567038,
+        "n_bio_gt": 71,
+        "bio_r30": 0.2946238034266203,
+        "bio_r30_std": 0.36748726672333965,
+        "n_sm_gt": 198,
+        "sm_r30": 0.18245193851988564,
+        "sm_r30_std": 0.20886776272285068
+      },
+      "n_neuro_helpers": 0,
+      "n_neuro_hurt": 0,
+      "n_neuro_unchanged": 9,
+      "neuro_delta_records": [
+        {
+          "disease_id": "drkg:Disease::MESH:D002547",
+          "disease_name": "cerebral palsy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 26,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.11538461538461539,
+          "ablated_overall_r30": 0.11538461538461539
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D009468",
+          "disease_name": "neuromuscular disease",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 15,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D010523",
+          "disease_name": "neuropathy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 50,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.06,
+          "ablated_overall_r30": 0.06
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020435",
+          "disease_name": "glossopharyngeal neuralgia",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 2,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.5,
+          "ablated_overall_r30": 0.5
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D020208",
+          "disease_name": "spasticity of cerebral origin",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 7,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0,
+          "ablated_overall_r30": 0.0
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D003027",
+          "disease_name": "episodic cluster headache",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 35,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.17142857142857143,
+          "ablated_overall_r30": 0.17142857142857143
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D013119",
+          "disease_name": "neuropathic pain associated with spinal cord injury",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 128,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.0234375,
+          "ablated_overall_r30": 0.0234375
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D009290",
+          "disease_name": "narcolepsy",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 26,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.038461538461538464,
+          "ablated_overall_r30": 0.038461538461538464
+        },
+        {
+          "disease_id": "drkg:Disease::MESH:D014402",
+          "disease_name": "tuberous sclerosis complex",
+          "category": "neurological",
+          "is_neuro": true,
+          "gt_size": 6,
+          "delta_overall_r30": 0.0,
+          "baseline_overall_r30": 0.5,
+          "ablated_overall_r30": 0.5
+        }
+      ]
+    }
+  ],
+  "five_seed": {
+    "neuro": {
+      "baseline_mean": 0.1074275182376396,
+      "baseline_std": 0.047471461024435196,
+      "ablated_mean": 0.1074275182376396,
+      "ablated_std": 0.047471461024435196,
+      "delta_pp": 0.0
+    },
+    "nonneuro": {
+      "baseline_mean": 0.1989621100579276,
+      "baseline_std": 0.014884829524699722,
+      "ablated_mean": 0.1989621100579276,
+      "ablated_std": 0.014884829524699722,
+      "delta_pp": 0.0
+    },
+    "all": {
+      "baseline_mean": 0.19493861335451318,
+      "baseline_std": 0.014208689255958697,
+      "ablated_mean": 0.19493861335451318,
+      "ablated_std": 0.014208689255958697,
+      "delta_pp": 0.0
+    }
+  },
+  "per_disease_summed": {
+    "ablation_helps_supplement_hurts": 0,
+    "ablation_hurts_supplement_helps": 0,
+    "unchanged": 50
+  },
+  "verdict": "INCONCLUSIVE \u2014 neuro \u0394=+0.00pp within \u00b11pp noise band; supplement is benign at the cohort level."
+}

@@ -1,6 +1,52 @@
 # Research Loop Progress
 
-## Current Session: h965 — Cancer-Restricted Variant of h957 (2026-04-19)
+## Current Session: h960 — Neurological Supplement Ablation (2026-04-19)
+
+### Hypothesis
+h952 found a -2.85pp production-vs-plain-kNN regression on n=13 neurological
+holdout diseases (the "boost+supp" stratum). h960 hypothesized the h173
+neurological supplement (`_supplement_neurological_predictions`) was the cause:
+class-injected drugs displace correct kNN predictions when boost is also
+active.
+
+### Status: INVALIDATED — supplement is benign for R@30
+
+### Findings (5-seed aggregate)
+| scope             | baseline       | ablated        | Δ        |
+|-------------------|----------------|----------------|----------|
+| Neurological      | 10.74% ± 4.75% | 10.74% ± 4.75% | +0.00pp  |
+| Non-neurological  | 19.90% ± 1.49% | 19.90% ± 1.49% | +0.00pp  |
+| All holdout       | 19.49% ± 1.42% | 19.49% ± 1.42% | +0.00pp  |
+
+EXACT 0pp delta on every seed × every metric. 0/50 neuro diseases helped or
+hurt. Non-neuro control passes cleanly (no monkey-patch leakage).
+
+### Why
+The supplement function early-returns at `if not missing_drugs:`
+(production_predictor.py:4346) without re-sorting when no class-matched drug
+is missing from the kNN top-N. On the holdout neuro pool, kNN top-30 already
+contains all class-matched drugs (anticonvulsants for epilepsy, dopaminergics
+for Parkinson's, etc.), so missing_drugs is empty and the supplement is a
+no-op. The h171 motivating coverage gap (60.4% class vs 18% kNN) was measured
+on FULL data, not holdout.
+
+### Implication
+- h960 hypothesis ruled out — supplement is not the regression source.
+- h972 (next): ablate SELECTIVE_BOOST for neurological category specifically.
+  Boost helps on metabolic/renal/hematological/respiratory/immunological
+  (boost_only stratum +1.41pp) — must be behaving differently on neuro to
+  produce the -2.85pp on the boost+supp stratum.
+- h973: per-disease set-diff localization on the n=13 boost+supp neuro
+  diseases — name the specific drugs being swapped in/out by boost.
+
+### Methodology lesson
+Ablate pipeline components independently before naming a culprit. The
+supplement's name suggested it was active but its short-circuit logic makes
+it inert on the holdout — measurement, not assumption, identifies the cause.
+
+---
+
+## Previous Session: h965 — Cancer-Restricted Variant of h957 (2026-04-19)
 
 ### Hypothesis
 Apply the h957 zero-overlap biologic filter ONLY to cancer-category diseases,

@@ -1,0 +1,79 @@
+==============================================================================
+h960: Neurological supplement (h173) ablation — 5-seed h393 holdout
+==============================================================================
+Loading predictor ...
+Evaluable diseases: 1011
+Biologic pool: 266
+
+--- Seed 42 ---
+  evaluated_baseline=202  evaluated_ablated=202  neuro_n_baseline=16  neuro_n_ablated=16
+  NEURO   base_overall=13.14%  abla_overall=13.14%  Δ=+0.00pp
+  NON-N   base_overall=19.21%  abla_overall=19.21%  Δ=+0.00pp (control: ≈0)
+  ALL     base_overall=18.72%  abla_overall=18.72%  Δ=+0.00pp
+  skip_baseline={'no_gt': 1}  skip_ablated={'no_gt': 1}
+  Neuro per-disease deltas (top 5 helpers, top 5 hurt):
+
+--- Seed 123 ---
+  evaluated_baseline=200  evaluated_ablated=200  neuro_n_baseline=12  neuro_n_ablated=12
+  NEURO   base_overall=14.89%  abla_overall=14.89%  Δ=+0.00pp
+  NON-N   base_overall=22.00%  abla_overall=22.00%  Δ=+0.00pp (control: ≈0)
+  ALL     base_overall=21.58%  abla_overall=21.58%  Δ=+0.00pp
+  skip_baseline={'no_gt': 3}  skip_ablated={'no_gt': 3}
+  Neuro per-disease deltas (top 5 helpers, top 5 hurt):
+
+--- Seed 456 ---
+  evaluated_baseline=200  evaluated_ablated=200  neuro_n_baseline=6  neuro_n_ablated=6
+  NEURO   base_overall= 4.88%  abla_overall= 4.88%  Δ=+0.00pp
+  NON-N   base_overall=18.24%  abla_overall=18.24%  Δ=+0.00pp (control: ≈0)
+  ALL     base_overall=17.84%  abla_overall=17.84%  Δ=+0.00pp
+  skip_baseline={'no_gt': 3}  skip_ablated={'no_gt': 3}
+  Neuro per-disease deltas (top 5 helpers, top 5 hurt):
+
+--- Seed 789 ---
+  evaluated_baseline=200  evaluated_ablated=200  neuro_n_baseline=7  neuro_n_ablated=7
+  NEURO   base_overall= 5.15%  abla_overall= 5.15%  Δ=+0.00pp
+  NON-N   base_overall=21.32%  abla_overall=21.32%  Δ=+0.00pp (control: ≈0)
+  ALL     base_overall=20.75%  abla_overall=20.75%  Δ=+0.00pp
+  skip_baseline={'no_gt': 3}  skip_ablated={'no_gt': 3}
+  Neuro per-disease deltas (top 5 helpers, top 5 hurt):
+
+--- Seed 2024 ---
+  evaluated_baseline=200  evaluated_ablated=200  neuro_n_baseline=9  neuro_n_ablated=9
+  NEURO   base_overall=15.65%  abla_overall=15.65%  Δ=+0.00pp
+  NON-N   base_overall=18.72%  abla_overall=18.72%  Δ=+0.00pp (control: ≈0)
+  ALL     base_overall=18.58%  abla_overall=18.58%  Δ=+0.00pp
+  skip_baseline={'no_gt': 3}  skip_ablated={'no_gt': 3}
+  Neuro per-disease deltas (top 5 helpers, top 5 hurt):
+
+==============================================================================
+5-SEED AGGREGATE (mean ± std)
+==============================================================================
+
+[NEUROLOGICAL]
+  base = 10.74% ±  4.75
+  abla = 10.74% ±  4.75
+  Δ    = +0.00pp
+
+[NON-NEUROLOGICAL] (control)
+  base = 19.90% ±  1.49
+  abla = 19.90% ±  1.49
+  Δ    = +0.00pp  (must be ≈ 0)
+
+[ALL]
+  base = 19.49% ±  1.42
+  abla = 19.49% ±  1.42
+  Δ    = +0.00pp
+
+[Per-neuro-disease impact summed over 5 seeds]
+  ablation helps (supplement hurts): 0
+  ablation hurts (supplement helps): 0
+  unchanged:                          50
+
+==============================================================================
+DECISION (h960)
+==============================================================================
+  neuro Δ overall_r30  = +0.00pp
+  non-neuro Δ overall  = +0.00pp (control)
+  VERDICT: INCONCLUSIVE — neuro Δ=+0.00pp within ±1pp noise band; supplement is benign at the cohort level.
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h960_neuro_supplement_ablation.json
