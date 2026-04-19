@@ -94,9 +94,15 @@ vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
 - Score-perturbation in-window re-rank (h1000, h1005) — bottleneck is signal density (22% match=True), not shift magnitude.
 - SM low-freq no-mech tier demote (h996) — 99.3% already at LOW/FILTER; would destroy 94% precision HIGH survivors.
 
-**h1100 VALIDATED (2026-04-19):** Known-indication carve-out on 3 FILTER-demoting rules. `is_known_indication = drug_id in ground_truth.get(disease_id)` exempts paper-crown-jewel indications (metformin→T2D FILTER→LOW, tetrabenazine→HD FILTER→LOW, trastuzumab→breast FILTER→MEDIUM). Known-indication FILTER@rank≤30 misfires: 1,366→779 (-43%). FILTER precision 6.8→6.1% (within 1pp gate). Residual 543 rank>20 cases are structural kNN mis-rankings, not tier-rule bugs — targeted signal for h1200.
+**h1100 VALIDATED (2026-04-19):** Known-indication carve-out on 3 FILTER-demoting rules. `is_known_indication = drug_id in ground_truth.get(disease_id)` exempts paper-crown-jewel indications (metformin→T2D FILTER→LOW, tetrabenazine→HD FILTER→LOW, trastuzumab→breast FILTER→MEDIUM). Known-indication FILTER@rank≤30 misfires: 1,366→779 (-43%). FILTER precision 6.8→6.1% (within 1pp gate).
 
-**Remaining viable surfaces:** boundary-targeted re-rank (h1006), per-category adaptive (h1008), deliverable annotation columns (h1001, h1003, h1007, h1102), rank>20 known-indication audit (h1103), inverse positive controls (h1104), expert-label calibration (h1203).
+**h1101 VALIDATED (2026-04-19):** Dantrolene paper crown-jewel is a cohort/outcome conflation — model predicts VT rank 34 FILTER (rank_over_20), NOT heart failure. Section 3.5 row E1 errata shipped. No code change needed.
+
+**h1107 VALIDATED (2026-04-19, paper credibility):** Full Section 3.5 audit — only 1 of 5 claims (Rituximab→MS) corroborated by current model. Dantrolene, Lovastatin, Pitavastatin, Empagliflozin all ABSENT from their claimed disease's top predictions. E2 errata shipped with recommended Option A revision (collapse table to 1 row + supplementary "prior art").
+
+**h1103 VALIDATED (2026-04-19):** 543 rank>20 known-indication misfires clustered. 74% mech=False (canonical h1200 target — newly-approved drugs with narrow DRKG edges). 62% at ranks 21-25 (small ranker lift recovers most). Top cluster: biologic_mab × autoimmune (n=28, natural Ryland packet).
+
+**Remaining viable surfaces:** boundary-targeted re-rank (h1006), per-category adaptive (h1008), deliverable annotation columns (h1001, h1003, h1007, h1102), inverse positive controls (h1104), h1200 loss-weighting on h1103 residuals (h1110), expert-label calibration (h1203).
 
 **See `docs/claude/confidence_system_history.md` for full h900+ experiment detail.**
 
