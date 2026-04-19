@@ -2136,9 +2136,14 @@ class DrugRepurposingPredictor:
 
     def _load_data(self) -> None:
         """Load all required data files."""
-        # Load Node2Vec embeddings (h179: use NPY for 110x speedup)
-        entities_path = self.embeddings_dir / "node2vec_256_entities.npy"
-        embeddings_path = self.embeddings_dir / "node2vec_256_embeddings.npy"
+        # Load Node2Vec embeddings (h179: use NPY for 110x speedup).
+        # h922-v2: OPEN_CURE_EMBEDDINGS_PREFIX env var lets us swap to
+        # GraphSAGE-trained embeddings without editing code. Prefix points
+        # at the filename root (e.g. "graphsage_256" -> graphsage_256_{entities,embeddings}.npy).
+        import os
+        prefix = os.environ.get("OPEN_CURE_EMBEDDINGS_PREFIX", "node2vec_256")
+        entities_path = self.embeddings_dir / f"{prefix}_entities.npy"
+        embeddings_path = self.embeddings_dir / f"{prefix}_embeddings.npy"
 
         if entities_path.exists() and embeddings_path.exists():
             # Fast path: load from NPY
@@ -3582,10 +3587,12 @@ class DrugRepurposingPredictor:
                     return ConfidenceTier.FILTER, False, 'cancer_targeted_therapy'
                 # h633: cancer_same_type + mechanism + rank<=10 = 56.6% ± 9.7% holdout (expanded GT)
                 # h797 INVALIDATED: Attempted GOLDEN promotion but holdout=69.5% ± 13.5% (OVERFITTED).
-                # h979: Post-h952-fix 5-seed holdout = 72.1% (150/208), 2.3σ below HIGH 79.9%.
-                # Simulated HIGH→MEDIUM demotion: HIGH +1.44pp (79.89→81.33%), MEDIUM +4.32pp
-                # (39.54→43.87%). Both tiers improve. Demoted HIGH→MEDIUM.
-                # Top drugs: doxorubicin, paclitaxel, bevacizumab.
+                # h979 (VALIDATED, isolated against h986 baseline): Rule holdout = 72.5% post-h952-fix,
+                # 2.2σ below HIGH mean 79.9%. HIGH→MEDIUM demotion isolated effect:
+                #   GOLDEN 80.8→82.6% (+1.8pp — STRONG-lit preds cascade MEDIUM→GOLDEN at line 4959)
+                #   HIGH   78.8→80.4% (+1.6pp — removes sub-HIGH preds from HIGH denominator)
+                #   MEDIUM 39.5→39.9% (+0.4pp — residual non-cascading preds land here)
+                # Tier ordering preserved. Top drugs: doxorubicin, paclitaxel, bevacizumab.
                 if mechanism_support and rank <= 10:
                     return ConfidenceTier.MEDIUM, True, 'cancer_same_type_mech_rank10'
                 # h634: cancer_same_type without mechanism = 17.9% ± 4.2% holdout (below MEDIUM)

@@ -1874,7 +1874,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "Extract the 16 autoimmune hits with target_match=True BUT target_match_loo=False from h995_slot_records.json.",
         "For each, look up the drug's target set + disease's top-3 kNN neighbors' bio_gt union of targets.",
@@ -1883,7 +1883,10 @@
       ],
       "depends_on": [
         "h995"
-      ]
+      ],
+      "result_metric": "1/16 hits rescued (6.2%); gate \u226575% fails by 12x. Miss rescue 19.6% (gate \u226440% passes, but irrelevant when hit rescue collapses).",
+      "findings": "h1002 neighbor-augmented (k=3 kNN) bio_gt union tested as rescue for the 16 autoimmune unique-target hits (target_match_loo=False, hit=True) surfaced by h995b. Only 1/16 (6.2%) flipped True under neighbor augmentation: Corticotropin \u2192 lupus nephritis (seed 123). The other 15 are genuinely target-unique ACROSS the disease's full DRKG neighborhood \u2014 e.g. Adalimumab\u2192non-behcets uveitis, Tocilizumab\u2192temporal arteritis, Rituximab\u2192microscopic polyangiitis, Anakinra+Canakinumab\u2192familial mediterranean fever, Abatacept\u2192SLE. Their kNN neighbors have no anti-TNF/anti-IL6R/anti-IL1/anti-CD20/CTLA4-Ig in expanded GT. Structural conclusion: at least 50% of autoimmune biologic HITS (16/32) are target-unique at the disease-neighborhood level. No filter-side augmentation can rescue them. Filter-form biologic precision improvements on autoimmune are STRUCTURALLY capped at halving bio_r30 (-50pp). This closes filter-style biologic precision pivots as a family (h953 biologic prior, h990 neighbor prior, h957 zero-overlap, h995 family-match, h1002 neighbor-augmented all fail). Remaining viable surfaces: in-window re-rank (h994, h1000) and deliverable annotation (h1001).",
+      "completed_date": "2026-04-19"
     },
     {
       "id": "h922-v2",
@@ -1906,6 +1909,27 @@
       ],
       "findings": "",
       "result_metric": ""
+    },
+    {
+      "id": "h1003",
+      "title": "Surface unique-target biologic hits as FIRST_IN_FAMILY annotations (novel-discovery column)",
+      "category": "annotation",
+      "rationale": "h995/h1002 proved that ~50% of autoimmune biologic HITS are target-unique at the disease-neighborhood level \u2014 no filter sees them, but they ARE real GT entries, representing novel/unique therapeutic mechanisms. These are the most SCIENTIFICALLY VALUABLE predictions to highlight for Ryland/expert review: a biologic that appears in bio_gt with no target-family peer in its neighborhood is either (a) a first-in-class discovery or (b) a GT-gap candidate whose family peers are missing from GT. Either is high-value to surface. Cheap deliverable annotation column: `biologic_novel_target_family` = True iff biologic_pool AND bio_gt AND no target-match peer in k=3 neighbors' bio_gt. Zero ranking impact; triage value. Would have surfaced Corticotropin\u2192lupus nephritis, Tocilizumab\u2192temporal arteritis, Anakinra/Canakinumab\u2192FMF as flagged novel picks.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "For every biologic pred in the 13,416-row deliverable, compute (a) target-set, (b) k=3 kNN neighbor bio_gt target union, (c) is_target_unique bool.",
+        "Add column `biologic_novel_target_family` and `biologic_neighbor_target_overlap_size` to the XLSX.",
+        "Validate: known first-in-class autoimmune biologics (tocilizumab-for-TA, anakinra-for-FMF) should flag True; established anti-TNF (adalimumab-for-RA) should flag False.",
+        "Document in deliverable README as a novel-discovery triage signal."
+      ],
+      "depends_on": [
+        "h995",
+        "h1002",
+        "h1001"
+      ]
     }
   ],
   "completed": [
@@ -4606,6 +4630,12 @@
       "hypothesis_id": "h995",
       "learning": "Biologic target-family-match is a genuine cross-drug signal (4.22x LOO in autoimmune, 5.67-24.22x in cancer/cv/hematological) but cannot operate as an in/out filter: half the hits (16/32 autoimmune) are target-unique in bio_gt, so filtering would cost 50% of biologic recall. Same failure mode as h957. h1000 (in-window re-rank) and h1001 (annotation column) are the viable surfaces.",
       "implication": "Any filter that REMOVES biologic candidates based on bio_gt-referenced signals will fail the -2pp bio_r30 gate because the set of biologic hits is half target-unique. Future biologic precision work must use re-rank (keep all 30 slots) or deliverable annotation (no ranking change)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1002",
+      "learning": "Neighbor-augmented bio_gt rescues only 6.2% of autoimmune unique-target biologic hits (1/16). Proves that 50% of autoimmune biologic HITS are target-unique at the disease-neighborhood level \u2014 structural cap on filter-form biologic precision improvements at -50pp bio_r30.",
+      "implication": "Close filter-form biologic precision pivots as a family. Closed: h953/h957/h990/h995/h1002. Focus on in-window re-rank (h994/h1000) and deliverable annotation (h1001/h1003)."
     }
   ],
   "collaborations": [
