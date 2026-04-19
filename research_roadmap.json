@@ -2261,7 +2261,7 @@
       "id": "h1107",
       "title": "Paper Section 3.5 audit \u2014 validate every retrospectively-corroborated prediction",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "category": "paper-revision",
       "rationale": "h1101 showed that the Dantrolene row of Paper Section 3.5 conflated cohort (HF) with outcome (VT). There are N other rows in the same table that were never re-checked against model output. Audit every row: does the model actually predict the claimed (drug, disease) at any rank? If not, either the disease label needs the same kind of correction, or the row needs to move out of 'retrospectively corroborated'. Mirror the positive-control script methodology \u2014 exact drug name, exact disease string, rank/tier/sub_reason for each.",
       "expected_impact": "medium",
@@ -2272,6 +2272,40 @@
         "For rows where the drug is not predicted for the claimed disease, search for related diseases in the same category/family (e.g., for 'heart failure' also check 'ventricular tachycardia', 'arrhythmia') and report what WAS found",
         "Update paper_v2_errata.md with every required relabel",
         "If >= 3 rows need errata, escalate to Interactive for a preprint re-submission decision"
+      ],
+      "findings": "VALIDATED at high-impact scale. Audited all 5 rows of Paper Section 3.5 against current production predictor. Only 1 of 5 (20%) is corroborated: Rituximab->MS at rank 55 HIGH. The other 4 rows have the drug entirely absent from the claimed disease's top-predictions: Dantrolene->HF (abs in top 117 preds \u2014 actual signal is VT rank 34 FILTER), Lovastatin->MM (abs in top 86), Pitavastatin->RA (abs in top 125), Empagliflozin->Parkinson's (abs in top 77/59 across 2 MESH IDs). For Empagliflozin, the model DOES surface it for its FDA indications (T2D rank 29, HF rank 52, CKD rank 23) \u2014 all FILTER via rank_over_20. This is a clean h1103 diagnostic case: 3 in-GT FDA-approved pairs at rank 21-52, prime targets for h1200 supervised-GNN weight emphasis. Shipped: docs/claude/paper_v2_errata.md E2 entry with per-row detail and recommended revision (Option A: keep only Rituximab->MS and move others to supplementary 'prior art' table).",
+      "result_metric": "1/5 paper Section 3.5 rows corroborated by current model (20% hit rate). Recommends removing 4 of 5 rows from main table; proposed Option A revision."
+    },
+    {
+      "id": "h1108",
+      "title": "Section 3.5 alternative-disease probe \u2014 for uncorroborated claims, is there ANY related disease the model surfaces?",
+      "priority": 3,
+      "status": "pending",
+      "category": "paper-revision",
+      "rationale": "h1107 found 4 of 5 paper Section 3.5 rows uncorroborated. For each, systematically probe all related diseases (subtypes, parent categories, comorbidities) to see if the model surfaces the drug for any. h1107 already showed the pattern with Dantrolene (HF->VT rank 34) and Empagliflozin (Parkinson's->T2D/HF/CKD all in-GT FILTER). Do Lovastatin and Pitavastatin have similar alternative-disease signals? Probe: Lovastatin\u2192myeloma+plasmacytoma+multiple-myeloma subtypes; Pitavastatin\u2192arthritis variants+osteoarthritis+inflammation. If a probe surfaces a drug for ANY related disease, document it in paper_v2_errata.md as the honest alternative claim.",
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "For each of the 4 uncorroborated rows, enumerate related MESH diseases (parent, sibling, subtype)",
+        "Run p.predict for each related disease, top_n=500, include_filtered=True",
+        "Record where each of {lovastatin, pitavastatin, empagliflozin} appears",
+        "Update paper_v2_errata.md E2 with 'alternative claim' rows if any hit",
+        "If none hit, document explicitly that these rows have no model support and must be removed entirely"
+      ]
+    },
+    {
+      "id": "h1109",
+      "title": "Systematic positive-control expansion \u2014 match every Section 3.5 claim to a positive control row",
+      "priority": 3,
+      "status": "pending",
+      "category": "meta",
+      "rationale": "The paper's narrative depends on 5 specific claims. h1107 shows only 1 of 5 is true. The positive_controls.py benchmark has all 5 rows but they're mixed in with 15 other controls. Separate them into a dedicated 'paper_section_3_5_controls' category so any future paper-touching change runs this specific subset first, and so deltas are tracked per-row for the paper's publication story.",
+      "expected_impact": "low",
+      "effort": "low",
+      "steps": [
+        "Add 'paper_section_3_5' category tag to the 5 Section-3.5 controls in scripts/positive_controls.py",
+        "Add scripts/ci_check_section_3_5.py that runs just that subset and fails hard if corroboration count drops below current baseline (1 of 5)",
+        "Ship as a pre-merge guard for any preprint-touching PR"
       ]
     }
   ],
@@ -5003,6 +5037,12 @@
       "hypothesis_id": "h1101",
       "learning": "Paper Section 3.5 crown-jewel table conflates RCT cohort with RCT outcome in at least one row (Dantrolene: 'heart failure' cohort, 'VT reduction' outcome). The model correctly identifies the VT signal at rank 34 but is FILTER-tier because of the structural rank>20 kNN floor, not a rule misfire. No code change required; paper errata only.",
       "implication": "h1107 queued to audit every row of Section 3.5 \u2014 other rows may have the same conflation. Also h1106 queued to clean up drug_cancer_types artifacts (Dantrolene incorrectly has 'solid_tumor' despite no cancer role)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1107",
+      "learning": "Paper Section 3.5 'retrospectively corroborated' claim holds for only 1 of 5 rows (Rituximab->MS). Dantrolene, Lovastatin, Pitavastatin, Empagliflozin are ABSENT from their claimed disease's top predictions. For Empagliflozin the model surfaces 3 correct FDA indications (T2D/HF/CKD) but all at rank 21-52 -> FILTER via rank_over_20. Paper credibility issue at crown-jewel level.",
+      "implication": "Recommend Paper v2 Option A revision: collapse Section 3.5 to one row (Rituximab->MS) and move others to supplementary 'prior art' table. The Empagliflozin case is the cleanest h1103 (rank>20 audit) candidate and the strongest argument for the h1200 supervised-GNN pivot."
     }
   ],
   "collaborations": [

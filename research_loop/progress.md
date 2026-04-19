@@ -4393,3 +4393,43 @@ Tier is set by the **structural `rank_over_20` rule** — not a rule misfire. Pe
 
 ### Recommended next hypothesis
 **h1107 (P2)** — protects preprint credibility at low cost. Same positive-control methodology as h1100; 1-2h work. Alternatively **h1199 (P1, infrastructure)** unblocks h1200/h1201 on the 37->60 pivot.
+
+
+## Current Session (continued): h1107 — Section 3.5 Full Audit (VALIDATED, high-impact) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1107 (VALIDATED, paper credibility issue)
+
+### What was tested
+Mechanical audit of all 5 rows of Paper Section 3.5 ("retrospectively corroborated predictions"). For each row, query `p.predict(<disease>, top_n=500, include_filtered=True)` and check whether the claimed drug appears.
+
+### Headline result
+**Only 1 of 5 rows (20%) is corroborated by the current production predictor.**
+
+| # | Drug | Paper disease | Model output | Verdict |
+|---|------|---------------|-----------|---------|
+| 1 | Dantrolene | Heart failure | absent (top 117) | FALSE (E1: relabel to VT, rank 34 FILTER) |
+| 2 | Lovastatin | Multiple myeloma | absent (top 86) | FALSE (correct preds: hypercholesterolemia rank 1 GOLDEN) |
+| 3 | Rituximab | Multiple sclerosis | rank 55, HIGH | **TRUE** |
+| 4 | Pitavastatin | Rheumatoid arthritis | absent (top 125) | FALSE (correct preds: hypercholesterolemia rank 4 GOLDEN) |
+| 5 | Empagliflozin | Parkinson's disease | absent (top 77/59) | FALSE — but model correctly predicts T2D rank 29, HF rank 52, CKD rank 23 (all in-GT, all FILTER via rank_over_20) |
+
+### Empagliflozin is the cleanest h1103 case
+Empagliflozin's 3 known-indication FILTER cases at rank 21-52 are the canonical "newly-approved second-in-class drug with narrow DRKG edge history" pattern. All 3 are in_gt=True. All 3 land FILTER via the structural rank_over_20 rule. This is exactly the signal class that:
+- h1103 should quantify across the deliverable
+- h1200 supervised GNN should upweight during training
+
+### Shipped
+- **docs/claude/paper_v2_errata.md** extended with E2 entry — full table + row-by-row detail.
+- Recommended Option A revision: collapse Section 3.5 to Rituximab→MS only; move the other 4 rows to a supplementary "prior art / related repurposing literature" table with explicit note that the model does NOT surface these predictions.
+
+### Paper credibility implications
+Framing "five predictions that are retrospectively corroborated" is not supported. The honest framing is "one model prediction (Rituximab→MS) concurs with independent WHO Essential Medicines Listing; four additional clinical repurposing results are reported in the literature but are NOT surfaced by the current model — their inclusion here is as prior art, not model corroboration."
+
+### New hypotheses (2 added)
+- **h1108 (P3):** For the 4 uncorroborated rows, probe related/sibling/subtype diseases — find ANY related disease the model surfaces for each drug. Builds out the errata honestly.
+- **h1109 (P3):** Separate the 5 Section 3.5 controls into their own positive-control category; add scripts/ci_check_section_3_5.py as a pre-merge guard for preprint-touching PRs.
+
+### Recommended next hypothesis
+**h1199 (P1, infrastructure)** — with Section 3.5 credibility surfaced, the infrastructure work to support a multi-metric comparison with TxGNN / HGTDR becomes even more urgent. A defensible paper v2 needs R@30 + Hits@K + MRR + AUPRC + AUROC all reported on the same 5-seed splits.
+
+Alternatively, **h1103 (P2)** — now that Empagliflozin is known to be the canonical rank>20 known-indication residual, the 543-row audit should build on that. Clusters by drug-class (SGLT2 inhibitors, biologics, newly-approved narrow-edge drugs) will directly inform h1200's loss weighting.
