@@ -35,7 +35,7 @@ from progress import print_session_header, print_progress_summary, count_hypothe
 
 
 # Configuration
-DEFAULT_MODEL = "opus"  # Uses Opus 4.6 for best research quality
+DEFAULT_MODEL = "claude-opus-4-7[1m]"  # 1M-context Opus 4.7 — needed for Step 1 bearings load
 AUTO_CONTINUE_DELAY_SECONDS = 3
 DEFAULT_COOLDOWN_HOURS = 5  # Fallback if we can't parse the reset time
 STATE_FILE_NAME = ".research_agent_state.json"
