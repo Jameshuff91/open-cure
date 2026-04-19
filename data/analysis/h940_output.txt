@@ -1,0 +1,65 @@
+==============================================================================
+h940: Biologic target-overlap + kNN fusion — 5-seed holdout R@30
+==============================================================================
+Loading predictor ...
+Biologic pool size: 266 of 11656 drugs with targets
+
+--- Seed 42 ---
+  evaluated=200  bio_gt_present=53  sm_gt_present=200
+  baseline     bio_r30=29.98%  sm_r30=20.12%  overall_r30=20.98%
+  alpha_0.3    bio_r30=20.64%  sm_r30=19.39%  overall_r30=19.34%
+  alpha_0.5    bio_r30=20.77%  sm_r30=19.57%  overall_r30=19.52%
+  alpha_0.7    bio_r30=19.75%  sm_r30=19.96%  overall_r30=19.88%
+  alpha_0.9    bio_r30=27.43%  sm_r30=20.24%  overall_r30=20.54%
+
+--- Seed 123 ---
+  evaluated=200  bio_gt_present=63  sm_gt_present=200
+  baseline     bio_r30=27.80%  sm_r30=17.36%  overall_r30=17.85%
+  alpha_0.3    bio_r30=25.60%  sm_r30=16.63%  overall_r30=16.86%
+  alpha_0.5    bio_r30=25.85%  sm_r30=16.79%  overall_r30=17.05%
+  alpha_0.7    bio_r30=25.06%  sm_r30=17.17%  overall_r30=17.39%
+  alpha_0.9    bio_r30=23.97%  sm_r30=17.64%  overall_r30=17.82%
+
+--- Seed 456 ---
+  evaluated=200  bio_gt_present=41  sm_gt_present=199
+  baseline     bio_r30=31.92%  sm_r30=19.65%  overall_r30=19.83%
+  alpha_0.3    bio_r30=20.81%  sm_r30=19.48%  overall_r30=19.41%
+  alpha_0.5    bio_r30=27.11%  sm_r30=19.51%  overall_r30=19.56%
+  alpha_0.7    bio_r30=25.88%  sm_r30=19.64%  overall_r30=19.73%
+  alpha_0.9    bio_r30=26.69%  sm_r30=20.05%  overall_r30=20.12%
+
+--- Seed 789 ---
+  evaluated=200  bio_gt_present=51  sm_gt_present=199
+  baseline     bio_r30=32.93%  sm_r30=22.83%  overall_r30=23.02%
+  alpha_0.3    bio_r30=26.50%  sm_r30=22.41%  overall_r30=22.32%
+  alpha_0.5    bio_r30=28.00%  sm_r30=22.50%  overall_r30=22.46%
+  alpha_0.7    bio_r30=30.61%  sm_r30=22.77%  overall_r30=22.75%
+  alpha_0.9    bio_r30=28.98%  sm_r30=23.09%  overall_r30=23.11%
+
+--- Seed 2024 ---
+  evaluated=200  bio_gt_present=68  sm_gt_present=200
+  baseline     bio_r30=34.44%  sm_r30=18.94%  overall_r30=19.80%
+  alpha_0.3    bio_r30=19.36%  sm_r30=18.88%  overall_r30=18.90%
+  alpha_0.5    bio_r30=25.65%  sm_r30=18.93%  overall_r30=19.22%
+  alpha_0.7    bio_r30=26.25%  sm_r30=19.09%  overall_r30=19.37%
+  alpha_0.9    bio_r30=30.03%  sm_r30=19.46%  overall_r30=20.14%
+
+==============================================================================
+AGGREGATE (mean ± std across 5 seeds)
+==============================================================================
+scheme                 bio_r30            sm_r30       overall_r30           bio_p30
+  baseline      31.42% ± 2.32%    19.78% ± 1.79%    20.30% ± 1.69%    17.58% ± 1.83%
+  alpha_0.3     22.58% ± 2.89%    19.36% ± 1.84%    19.37% ± 1.75%     9.52% ± 2.25%
+  alpha_0.5     25.47% ± 2.50%    19.46% ± 1.83%    19.56% ± 1.72%    12.94% ± 2.21%
+  alpha_0.7     25.51% ± 3.47%    19.73% ± 1.80%    19.82% ± 1.71%    17.90% ± 3.37%
+  alpha_0.9     27.42% ± 2.08%    20.10% ± 1.76%    20.35% ± 1.68%    21.32% ± 2.62%
+
+==============================================================================
+DECISION
+==============================================================================
+  alpha_0.3: Δbio_r30=-8.83pp  Δoverall_r30=-0.93pp  [NO]
+  alpha_0.5: Δbio_r30=-5.94pp  Δoverall_r30=-0.73pp  [NO]
+  alpha_0.7: Δbio_r30=-5.91pp  Δoverall_r30=-0.47pp  [NO]
+  alpha_0.9: Δbio_r30=-4.00pp  Δoverall_r30=+0.05pp  [NO]
+
+Saved summary -> /Users/jimhuff/github/open-cure/data/analysis/h940_biologic_fusion_eval.json

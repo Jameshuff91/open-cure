@@ -1,6 +1,71 @@
 # Research Loop Progress
 
-## Current Session: h939 — Biologic Target-Overlap Audit (2026-04-19)
+## Current Session: h940 — Biologic Target-Overlap + kNN Fusion (2026-04-19)
+
+### Hypothesis
+h940 is the direct follow-up to h939 (VALIDATED — target-overlap is a biologic-
+specific signal, 3-11x stronger than for small molecules in several categories).
+Here we ask: if we fuse target-overlap with kNN for biologic candidates in a
+mixed pool, can we raise biologic R@30 by >=5pp without overall regression? If
+yes, it is a DrugBank-free delivery path for h906's motivation.
+
+### Status: INVALIDATED — fusion hurts biologic R@30 at every alpha
+
+### Experiment
+5-seed (42/123/456/789/2024) 80/20 disease holdout, plain kNN (k=20, no category
+boost, no MinRank) vs bio-fusion schemes. For each holdout disease:
+- kNN_norm[d] = kNN_score[d] / max(kNN_scores)
+- overlap_norm[d] = target_overlap[d] / max(overlap) (biologic pool only)
+- Fusion: biologic score = alpha*kNN_norm + (1-alpha)*overlap_norm; SM = kNN_norm
+- Unified top-30 ranking; bio_r30 = (top30 ∩ bio_GT)/|bio_GT|
+
+### Key findings (aggregate, 5 seeds)
+| Scheme      | bio_r30         | sm_r30          | overall_r30     | bio_p30         |
+|-------------|-----------------|-----------------|-----------------|-----------------|
+| baseline    | 31.42% ± 2.32%  | 19.78% ± 1.79%  | 20.30% ± 1.69%  | 17.58% ± 1.83%  |
+| alpha=0.3   | 22.58% ± 2.89%  | 19.36% ± 1.84%  | 19.37% ± 1.75%  |  9.52% ± 2.25%  |
+| alpha=0.5   | 25.47% ± 2.50%  | 19.46% ± 1.83%  | 19.56% ± 1.72%  | 12.94% ± 2.21%  |
+| alpha=0.7   | 25.51% ± 3.47%  | 19.73% ± 1.80%  | 19.82% ± 1.71%  | 17.90% ± 3.37%  |
+| alpha=0.9   | 27.42% ± 2.08%  | 20.10% ± 1.76%  | 20.35% ± 1.68%  | 21.32% ± 2.62%  |
+
+Every alpha REDUCED biologic R@30: deltas -4.00pp to -8.83pp. All fail the +5pp bar.
+
+### Why (with some confidence, not certainty)
+- h939's 3-11x biologic/SM ratio was measured RESTRICTED to the 266-drug biologic
+  pool. That within-pool signal does not transfer when biologics compete against
+  small molecules in a unified top-30: kNN-transfer already encodes that a biologic
+  is used in similar diseases, and target-overlap introduces noise for biologics
+  whose kNN evidence is strong.
+- Secondary finding: baseline biologic R@30 = 31.4% in this framework is ABOVE the
+  27.3% biologic-failure baseline quoted in h906/h921/h924 rationales. The "biologic
+  failure class" narrative may be narrower or outdated on expanded GT.
+- Precision silver lining: alpha=0.9 bio_p30 = 21.3% vs baseline 17.6% (+3.7pp).
+  Fusion concentrates biologic top-30 (higher hit-fraction among biologics returned)
+  but misses many rare biologic hits not covered by kNN.
+
+### Implication
+- Target-overlap is an ANNOTATION / AUDIT signal, not a re-ranker, for biologics.
+- h906 (DrugBank target features) motivation should be re-validated — the 27.3%
+  baseline may no longer bind. Filed as h951.
+- Follow-up directions (h948 coverage stratification, h949 zero-overlap filter,
+  h950 fusion-as-annotation) offer precision-side reframings.
+
+### New hypotheses generated
+- h948: Biologic coverage stratification — does kNN-only bio_r30 mask rare-biologic failures?
+- h949: Biologic zero-overlap safety filter (precision via demotion)
+- h950: Biologic fusion-as-annotation feature for confidence calibrator
+- h951: Reality-check the 27.3% biologic baseline motivating h906/h921/h924
+
+### Recommended next steps
+1. **h951** (P2, low effort): before spending GPU on h921 (ESM2) or license on
+   h906 (DrugBank), re-measure biologic R@30 on current production pipeline.
+2. **h948** (P3, low effort): biologic train_freq quartile R@30; cheap diagnostic.
+3. **h949** (P3, low effort): zero-overlap biologic demotion is a natural precision
+   play that inverts h940's re-ranking failure.
+
+---
+
+## Previous Session: h939 — Biologic Target-Overlap Audit (2026-04-19)
 
 ### Hypothesis
 h939 asks whether target-overlap ranking is actually a biologic signal (as h906

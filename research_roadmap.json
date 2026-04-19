@@ -12340,7 +12340,7 @@
       "result_metric": "Composite Q1 holdout 14.0% vs rank-only 11.5% (+2.6pp); Q1-Q4 gap 8.0pp vs 4.5pp"
     },
     {
-      "id": "h592",
+      "id": "h945",
       "title": "Experimental Validation Priority List: Rank Novel Predictions by Composite Quality",
       "description": "Generate a prioritized list of novel (non-known-indication) GOLDEN/HIGH/MEDIUM predictions ranked by a composite of all validated quality signals. This is NOT for tier changes (h443 showed kNN rank is optimal). Instead, this creates a practical output for experimental collaborators. Signals: kNN rank, norm_score, TransE consilience, gene overlap, mechanism support, disease holdout precision, non-self-referentiality, non-CS. Also characterize: how many predictions are corticosteroids (known)? How many have gene overlap (molecular support)? How many are TransE-validated? What's the distribution across disease categories?",
       "hypothesis": "A composite quality score combining kNN rank, TransE consilience, gene overlap, mechanism support, and disease-level holdout precision will identify a subset of predictions (top 50-100) with substantially higher expected precision than the tier average. These should be prioritized for experimental validation.",
@@ -16098,7 +16098,7 @@
       "date_completed": "2026-02-24"
     },
     {
-      "id": "h795",
+      "id": "h946",
       "title": "GOLDEN Evidence Gate: Require Literature Support for GOLDEN Tier",
       "description": "GOLDEN is 80.1% holdout but some rules like rheumatoid_arthritis (69.0%) and colitis (82.4%) vary widely. Literature evidence could serve as a gate: GOLDEN predictions without STRONG evidence \u2192 HIGH. This would tighten GOLDEN but might lose too many predictions (n=47/seed is already small).",
       "priority": 4,
@@ -16279,7 +16279,7 @@
       "result_metric": "No change \u2014 current behavior correct for all tiers"
     },
     {
-      "id": "h806",
+      "id": "h947",
       "title": "MODERATE_EVIDENCE Literature Level: Integrate 550 Unhandled Cache Entries",
       "description": "h805 discovered that MODERATE_EVIDENCE (550 entries in literature_mining_cache.json) is not handled by production_predictor.py. These predictions are treated as NOT_ASSESSED, meaning they bypass all literature-based tier modifications (h789 promotion, h791 demotion, h732 demotion, h795 promotion). Need to evaluate MODERATE_EVIDENCE holdout precision across tiers: (1) Should MODERATE + HIGH \u2192 stay HIGH or demote to MEDIUM? (2) Should MODERATE + MEDIUM \u2192 stay MEDIUM or promote/demote? (3) Should MODERATE + LOW/FILTER \u2192 promote to HIGH like STRONG?",
       "status": "inconclusive",
@@ -17305,7 +17305,7 @@
       ]
     },
     {
-      "id": "h940",
+      "id": "h944",
       "title": "Cancer Target-Overlap as Subtype Discriminator Within-Cancer",
       "category": "precision",
       "rationale": "h916 showed cancer drugs have high overlap with cancer-disease gene-sets generally. But within-cancer, does target-overlap discriminate the RIGHT subtype (e.g., EGFR mutant NSCLC vs KRAS mutant NSCLC)? h730 found targeted therapy is ~6% holdout with high full-data inflation \u2014 biomarker profiles aren't in embeddings. Test: for 20 cancer diseases with biomarker-segregated GT drugs, does target-overlap rank the matched-biomarker drug higher than the unmatched drug?",
@@ -17325,7 +17325,7 @@
     {
       "id": "h940",
       "title": "Biologic Target-Overlap Fusion Score: Fuse bio_target_r30 with kNN Score for Biologic-Candidate Predictions",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 2,
       "expected_impact": "high",
       "effort": "medium",
@@ -17340,7 +17340,9 @@
       ],
       "depends_on": [
         "h939"
-      ]
+      ],
+      "findings": "All fusion alphas REDUCED biologic R@30 versus pure kNN baseline. 5-seed holdout (n=200 holdout diseases/seed, ~51-68 with biologic GT): baseline bio_r30=31.42% \u00b1 2.32%; alpha=0.3 22.58% (-8.83pp); alpha=0.5 25.47% (-5.94pp); alpha=0.7 25.51% (-5.91pp); alpha=0.9 27.42% (-4.00pp). No alpha met the +5pp success bar. The failure mode: in a MIXED biologic+SM pool, kNN transfer already encodes which biologics are used in similar diseases (closest signal to treatment). Target-overlap (h912 shown to be 5.96% prec@30 overall) adds noise when mixed in, especially for biologics whose kNN signal reflects existing indication overlap. h939's strong biologic target-overlap was measured by RESTRICTING ranking to the 266-drug biologic pool; that benefit disappears when biologics compete against small molecules in the top-30. Secondary finding: baseline biologic R@30=31.4% is above the 27.3% 'biologic failure' baseline quoted in the rationale, suggesting the biologic failure class may be narrower than assumed on expanded GT. One precision-side silver lining: alpha=0.9 bio_p30=21.32% vs baseline 17.58% (+3.74pp) \u2014 fusion narrows the biologic candidate list but misses rare biologic hits not in the neighbor GT.",
+      "result_metric": "baseline bio_r30=31.42% \u00b1 2.32%; best fusion (alpha=0.9) bio_r30=27.42% \u00b1 2.08% (-4.00pp). All alpha HURT biologic R@30. Overall |\u0394|<1pp."
     },
     {
       "id": "h941",
@@ -17395,6 +17397,83 @@
       ],
       "depends_on": [
         "h939"
+      ]
+    },
+    {
+      "id": "h948",
+      "title": "Biologic Coverage Stratification: Does kNN-only bio_r30 mask rare-biologic failures?",
+      "category": "error_analysis",
+      "rationale": "h940 showed pure kNN gives biologic R@30=31.4% baseline \u2014 higher than the 27.3% quoted. Hypothesis: this average hides bimodal behavior. Common biologics (adalimumab, rituximab, bevacizumab, infliximab) appear in many neighbor GT and inflate the mean, while rare/orphan biologics (enzyme replacements, gene-therapy vectors, rare-disease mAbs) still fail silently. If the bottom 50% of biologics by train-frequency have R@30<<top 50%, the 'biologic failure' bucket reappears under a different name.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Reuse h940 holdout runs. For each holdout disease and biologic GT drug, record rank (or miss) in the baseline kNN top-N (N=100) and the biologic's train_freq.",
+        "Stratify bio_r30 by biologic train_freq quartile (Q1 = most common, Q4 = rarest).",
+        "Compute bio_r30 per quartile; bootstrap 95% CI.",
+        "If Q4 bio_r30 << 10%, rare biologics ARE the failure class \u2014 not all biologics.",
+        "Report how many Q4 biologics would be recovered if target-overlap alone were the tiebreaker for ties at rank 30."
+      ],
+      "depends_on": [
+        "h940"
+      ]
+    },
+    {
+      "id": "h949",
+      "title": "Biologic Zero-Overlap Safety Filter: demote biologic predictions with zero disease-gene overlap",
+      "category": "precision",
+      "rationale": "Inverting h940's failure: if fusion HURT recall, the overlap signal may still work as a NEGATIVE filter. A biologic predicted for a disease whose gene set shares ZERO targets with the drug is likely a kNN co-prescription artifact (procedural/adjunct, not mechanism-of-action). Unlike small molecules (polypharmacy, indirect mechanisms), biologic efficacy almost always requires target engagement. Test: for biologic preds in MEDIUM/LOW tier with zero target-overlap, is holdout precision materially lower than the tier average?",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "From production deliverable, partition MEDIUM and LOW biologic predictions into zero-overlap vs >=1-overlap.",
+        "Compute 5-seed holdout precision per subset.",
+        "If zero-overlap biologic precision is >1.5\u03c3 below cohort average, add biologic_zero_overlap FILTER tier rule.",
+        "Validate no golden/high biologic predictions are incidentally demoted."
+      ],
+      "depends_on": [
+        "h940"
+      ]
+    },
+    {
+      "id": "h950",
+      "title": "Biologic Fusion-as-Annotation: use fused score only as meta-confidence feature",
+      "category": "precision",
+      "rationale": "h940's alpha=0.9 fusion lifted bio_p30 from 17.58% to 21.32% (+3.74pp) \u2014 a precision win \u2014 while hurting recall. If the fusion ranking is used ONLY to annotate predictions (not to re-rank), the meta-confidence model can learn when agreement between kNN and target-overlap correlates with holdout hit. Non-destructive; doesn't change the main ranking; adds a feature.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "For each prediction in the deliverable that is a biologic, compute target_overlap_norm and kNN_norm.",
+        "Define biologic_fusion_agreement = min(target_overlap_norm, kNN_norm) \u2014 rewards both signals.",
+        "Train / re-fit confidence calibrator with this feature added.",
+        "Measure holdout precision uplift at biologic predictions only; check tier-shift regressions."
+      ],
+      "depends_on": [
+        "h940"
+      ]
+    },
+    {
+      "id": "h951",
+      "title": "Biologic failure-class reality check: audit the 27.3% baseline from which h906 was motivated",
+      "category": "meta",
+      "rationale": "h940 baseline biologic R@30 = 31.4% (mixed-pool, expanded GT) is above the 27.3% biologic R@30 that motivated h906/h921/h924 and was quoted across multiple hypothesis rationales. The 27.3% may be: (a) an older internal GT number, (b) a restricted-category measurement, (c) no longer the binding constraint. Before spending GPU on ESM2 (h921) or DrugBank licensing (h906), verify that 'biologics fail' is still a valid motivation on current GT and holdout framework.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Cite and verify source of 27.3% biologic R@30 (CLAUDE.md, research_spec.md, or old commit).",
+        "Re-measure biologic R@30 under the CURRENT production pipeline (with all tier rules, fusion, etc.) on expanded-GT holdout.",
+        "Compare vs overall R@30 and category-stratified R@30.",
+        "If gap has closed, move h906/h921/h924 to INCONCLUSIVE-no-longer-motivated; otherwise document the true current gap as motivation for further work."
+      ],
+      "depends_on": [
+        "h940"
       ]
     }
   ],
@@ -20000,6 +20079,12 @@
       "hypothesis_id": "h939",
       "learning": "Target-overlap is a biologic signal (3-11x SM ratio across 4 categories; 26.5% bio_r30 vs 5.5% SM). Polypharmacy dilutes SM overlap but mAbs/fusions have clean 1:1 target mapping. h906 motivation preserved but precision is similar - deploy as fusion feature, not replacement.",
       "implication": "Pursue h940 (biologic-only target+kNN fusion) ahead of full h906 DrugBank integration. h921 (ESM2 target embeddings) becomes more attractive because target-similarity > binary overlap for the 266-drug biologic pool. Deprioritize h906 until h940 quantifies achievable biologic R@30 gain."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h940",
+      "learning": "Biologic target-overlap is NOT additive to kNN when biologics compete against small molecules. h939's 3-11x biologic/SM ratio held only within the biologic-only 266-drug pool. In a mixed ranking, kNN transfer learning is strictly stronger for biologic R@30 (31.4% baseline vs 22-27% under any fusion alpha). Target-overlap should be used as an annotation/audit signal, not a re-ranker.",
+      "implication": "Reframe h906 motivation away from 'fix biologic recall via target features.' Remaining viable biologic-signal uses: (a) precision-side demotion rules for biologic predictions with zero disease-gene overlap; (b) h921 ESM2 protein embeddings as a DEEPER target signal; (c) fusion by annotation (feature in meta-confidence model) rather than re-ranking."
     }
   ],
   "collaborations": [
