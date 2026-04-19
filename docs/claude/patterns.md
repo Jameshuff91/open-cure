@@ -2,6 +2,20 @@
 
 Reference for key algorithmic patterns, filters, and signal integrations.
 
+## Ceiling-Adjusted R@K (h1240, builds on h1211)
+
+Always report **R@K / ceiling** alongside raw R@K in every embedding benchmark.
+
+- **Per-disease ceiling**: `min(K, |GT|) / |GT|` — the maximum achievable R@K under perfect ranking.
+- **Per-disease ceiling-adjusted Hits@K**: `hits@K / min(K, |GT|)` ∈ [0, 1] — "fraction of ceiling recovered".
+- **Why**: h1211 showed the 3x per-category R@30 spread (endocrine 41% vs hematological 10%) is ~25% driven by the recall-denominator artifact: categories with large GT drug sets (psychiatric median 64, CV 37, renal 42) have per-disease ceilings of 50-70%, not 100%. Raw R@30 under-credits those retrievals.
+- **Headline effect** (Node2Vec 256, h1199 splits):
+  - Raw R@30 = 19.55%, ceiling-adjusted R@30 = 24.53%.
+  - Raw R@1 = 2.88%, ceiling-adjusted R@1 = 35.13%. The top-1 kNN neighbour actually recovers ~35% of the achievable top-1 bucket.
+- **Per-category re-ordering**: psychiatric 10.1% → 33.0% of ceiling, CV 12.9% → 26.0%, autoimmune 26.7% → 38.9%.
+- **Implementation**: `scripts/clean_embedding_benchmark.py` now emits `hits_at_k_drug_ceiling` and `per_category_aggregate[*].r30_over_ceiling_mean` on every run.
+- **Gate for h1200 / h1202 promotion**: must beat Node2Vec on **both** raw R@30 **and** R@30/ceiling — catches "trick" improvements that shift the GT-size distribution rather than retrieval quality.
+
 ## TransE Consilience (h405/h439/h440)
 
 TransE agreement is a strong, holdout-validated signal:

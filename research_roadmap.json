@@ -2723,14 +2723,16 @@
       "expected_impact": "infrastructure",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Extend scripts/clean_embedding_benchmark.py to compute per-disease ceiling = min(K, |GT|)/|GT| for K in {1,5,10,30,100}.",
         "Add per-drug R@K / ceiling column to the per-category breakdown and headline table.",
         "Add a 'ceiling-adjusted' row to every existing clean_benchmark_*.md artifact (node2vec, fastrp, graphsage, no-treatment).",
         "Document the metric in docs/claude/patterns.md so every h1200/h1202 run reports it.",
         "Gate: no code change to production_predictor; this is eval-only infrastructure."
-      ]
+      ],
+      "findings": "VALIDATED \u2014 ceiling-adjusted R@K now shipped in scripts/clean_embedding_benchmark.py. Per-disease ceiling = min(K,|GT|)/|GT|; ceiling-adjusted Hits@K = hits_K / min(K,|GT|) \u2208 [0,1]. Four embedding benchmarks re-generated with new columns (node2vec_256, fastrp_256, graphsage_256, node2vec_256_no_treatment). Headline cross-embedding (ceiling-adjusted R@30): node2vec 24.53%, fastrp 23.28%, graphsage 11.43%, no_treatment 13.12%. Ordering matches raw R@30 but the 4-7pp lift reframes 'Node2Vec gets ~20% R@30' as 'Node2Vec recovers ~25% of the achievable ceiling'. Per-category ceiling-adjusted re-ordering (node2vec_256): psychiatric 10.14% \u2192 33.04%, CV 12.94% \u2192 26.03%, autoimmune 26.66% \u2192 38.93%, hematological 10.27% \u2192 12.16%. Documented in docs/claude/patterns.md as the gate for h1200/h1202 promotion (must beat Node2Vec on BOTH raw R@30 AND R@30/ceiling). Zero runtime cost; downstream fusion + h1200 benchmarks inherit automatically.",
+      "result_metric": "Node2Vec ceiling-adjusted R@30 = 24.53% \u00b1 1.03% (raw 19.55% \u00b1 1.18%); R@1 = 35.13% ceiling-adj (raw 2.88%)"
     },
     {
       "id": "h1241",
@@ -5548,6 +5550,12 @@
       "hypothesis_id": "h1211",
       "learning": "Per-category R@30 spread is half denominator-effect: categories with large GT (psychiatric median 64, CV 37) can't exceed ceiling 30/|GT|. Ceiling-adjusted R@30 re-orders categories substantially \u2014 psychiatric 10% \u2192 17% of ceiling, CV 13% \u2192 19%. Embedding isolation (fraction of top-20 kNN in same category) correlates r=-0.08 with R@30 \u2014 NOT a bottleneck. Drug-Jaccard density is the only positive mechanistic signal (r=+0.39 vs ceiling-adjusted R@30).",
       "implication": "Every benchmark must report R@K/ceiling alongside R@K. h1200 training should reweight per-category loss by 1/mean_GT to prevent large-GT categories dominating the loss. 'Psychiatric failure' framing is misleading \u2014 the real gap is (a) GT-size denominator and (b) within-category drug-class heterogeneity (h1241 probe)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1240",
+      "learning": "Raw R@K under-credits retrievals on large-GT diseases because R@K cannot exceed min(K,|GT|)/|GT|. Ceiling-adjusted R@K (hits / min(K,|GT|)) is a cleaner measure of retrieval quality. Re-applied to Node2Vec: raw 19.55% \u2192 24.53%, and at K=1 the shift is even larger (2.88% \u2192 35.13%).",
+      "implication": "Every h1200/h1202/h1215 run now produces both raw and ceiling-adjusted metrics. Promotion gate tightened: new embedding must beat Node2Vec on BOTH metrics. Prevents a lazy optimization that merely drops large-GT diseases from the eval pool."
     }
   ],
   "collaborations": [

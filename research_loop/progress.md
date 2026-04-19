@@ -4893,3 +4893,51 @@ OLS (density + isolation → R@30): R²=0.062 — isolation adds nothing; densit
 
 ### Recommended next hypothesis
 **h1240 (P2, infrastructure)** — low effort, immediately makes the next h1200 / h1202 / h1215 follow-up runs produce defensible, reviewer-proof per-category numbers. Alternatively **h1241 (P2)** if curious about whether psychiatric's 17% ceiling-adjusted R@30 has a clean ATC-subclass story.
+
+
+## Current Session (continued): h1240 — Ceiling-Adjusted R@K in Benchmark (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1240 (VALIDATED — infrastructure)
+
+### What was shipped
+Extended `scripts/clean_embedding_benchmark.py` to compute, per-disease, a ceiling = `min(K,|GT|)/|GT|` and a ceiling-adjusted Hits@K = `hits@K / min(K,|GT|)` ∈ [0,1]. Added columns to headline metrics, Hits@K-per-drug table, and per-category breakdown. Re-ran all four existing embedding benchmarks; markdown artifacts now include the new columns.
+
+### Cross-embedding headline (ceiling-adjusted)
+| Embedding | Raw R@30 | R@30 / Ceiling | MRR | AUPRC | AUROC |
+|---|---:|---:|---:|---:|---:|
+| node2vec_256 | 19.55% | **24.53%** | 0.0284 | 0.0569 | 0.5766 |
+| fastrp_256 | 18.79% | **23.28%** | 0.0267 | 0.0584 | 0.5790 |
+| graphsage_256 | 8.17% | 11.43% | 0.0126 | 0.0322 | 0.5529 |
+| node2vec_256_no_treatment | 8.46% | 13.12% | 0.0153 | 0.0300 | 0.5555 |
+
+Ordering preserved; the 4–7pp reframe makes the Node2Vec baseline read as "25% of achievable ceiling recovered" rather than "20% R@30".
+
+### Hits@K re-framing on Node2Vec
+| K | Raw | Ceiling-adj |
+|---:|---:|---:|
+| 1 | 2.88% | **35.13%** |
+| 5 | 8.65% | 29.78% |
+| 10 | 12.82% | 27.08% |
+| 30 | 19.55% | 24.53% |
+| 100 | 24.86% | 25.81% |
+
+The K=1 reframe is striking: raw Hits@1 = 2.88% looks anemic, but ceiling-adjusted = 35.13% says the top-1 kNN neighbour actually recovers ~35% of the achievable top-1 GT bucket. This is a more honest precision-at-1 signal for the paper.
+
+### Per-category re-ordering (node2vec_256)
+Biggest ceiling-driven shifts:
+- psychiatric 10.14% → **33.04%** (ceiling 49.55%)
+- cardiovascular 12.94% → **26.03%** (ceiling 64.62%)
+- autoimmune 26.66% → **38.93%** (ceiling 70.37%)
+- renal 16.48% → **27.22%** (ceiling 66.60%)
+- cancer 14.42% → **21.89%** (ceiling 76.71%)
+Smallest shifts (high-ceiling categories already at ceiling):
+- endocrine 41.07% → 41.07% (ceiling 100%)
+- ophthalmic 38.33% → 38.95% (ceiling 97.69%)
+- other 18.08% → 19.38% (ceiling 94.68%)
+
+### Documented in
+- `docs/claude/patterns.md` — new "Ceiling-Adjusted R@K" section with gate for h1200/h1202 promotion.
+- Markdown artifacts: `data/analysis/clean_benchmark_{node2vec_256,fastrp_256,graphsage_256,node2vec_256_no_treatment}.md`
+
+### Recommended next hypothesis
+**h1241 (P2, error analysis)** — ATC-subclass decomposition for psychiatric / CV / cancer. These three are the biggest ceiling re-orderers. If within-subclass retrieval lifts R@30/ceiling by >1.5x, that says the embedding respects drug-class not disease-category — a clean message for h1200 loss design. Alternatively **h1242** (h1200 training recipe) but that depends on h1200 infrastructure landing first.

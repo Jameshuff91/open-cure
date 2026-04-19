@@ -132,6 +132,11 @@ def compute_metrics_for_seed(
     # Per-disease aggregation buckets
     per_drug_r30: List[float] = []
     hits_drug: Dict[int, List[float]] = {K: [] for K in (1, 5, 10, 30, 100)}
+    # Ceiling-adjusted per-drug Hits@K: hits_K / min(K, |GT|) ∈ [0,1] (h1240).
+    # Captures "fraction of the achievable ceiling recovered" and controls for the
+    # recall-denominator artifact flagged by h1211 (large-GT categories can't
+    # exceed min(K, |GT|)/|GT| on raw R@K).
+    hits_drug_ceiling: Dict[int, List[float]] = {K: [] for K in (1, 5, 10, 30, 100)}
     hits_triple: Dict[int, int] = {K: 0 for K in (1, 5, 10, 30, 100)}
     reciprocal_ranks: List[float] = []
 
@@ -141,6 +146,8 @@ def compute_metrics_for_seed(
 
     # For per-category breakdown
     per_cat_r30: Dict[str, List[float]] = defaultdict(list)
+    per_cat_r30_ceiling: Dict[str, List[float]] = defaultdict(list)  # h1240
+    per_cat_ceiling: Dict[str, List[float]] = defaultdict(list)  # h1240
     per_cat_hits_triple_30: Dict[str, List[int]] = defaultdict(list)
     per_cat_hits_total: Dict[str, int] = defaultdict(int)
     per_cat_rr: Dict[str, List[float]] = defaultdict(list)
@@ -197,11 +204,17 @@ def compute_metrics_for_seed(
         # Per-drug metrics (over full held-out GT)
         gt_ranks = [rank_of_drug[d] for d in gt_drugs if d in rank_of_drug]
         hit_30 = sum(1 for r in gt_ranks if r <= 30)
-        per_drug_r30.append(hit_30 / len(gt_drugs))
-        per_cat_r30[cat].append(hit_30 / len(gt_drugs))
+        n_gt = len(gt_drugs)
+        per_drug_r30.append(hit_30 / n_gt)
+        per_cat_r30[cat].append(hit_30 / n_gt)
+        # Ceiling-adjusted R@30: hits / min(30, |GT|) ∈ [0,1] (h1240).
+        ceil_30 = min(30, n_gt) / n_gt
+        per_cat_ceiling[cat].append(ceil_30)
+        per_cat_r30_ceiling[cat].append(hit_30 / min(30, n_gt))
         for K in hits_drug:
             hit_k = sum(1 for r in gt_ranks if r <= K)
-            hits_drug[K].append(hit_k / len(gt_drugs))
+            hits_drug[K].append(hit_k / n_gt)
+            hits_drug_ceiling[K].append(hit_k / min(K, n_gt))
 
         # Per-triple metrics (every held-out GT drug is a test triple, even
         # those that were never scored by kNN).
@@ -246,6 +259,9 @@ def compute_metrics_for_seed(
         "n_test_triples": n_triples,
         "per_drug_r30": float(np.mean(per_drug_r30)) if per_drug_r30 else 0.0,
         "hits_at_k_drug": {K: float(np.mean(v)) if v else 0.0 for K, v in hits_drug.items()},
+        "hits_at_k_drug_ceiling": {
+            K: float(np.mean(v)) if v else 0.0 for K, v in hits_drug_ceiling.items()
+        },
         "hits_at_k_triple": {K: v / n_triples if n_triples else 0.0 for K, v in hits_triple.items()},
         "mrr_triple": float(np.mean(reciprocal_ranks)) if reciprocal_ranks else 0.0,
         "auprc": auprc,
@@ -254,6 +270,14 @@ def compute_metrics_for_seed(
             cat: {
                 "n_diseases": len(per_cat_r30[cat]),
                 "r30": float(np.mean(per_cat_r30[cat])) if per_cat_r30[cat] else 0.0,
+                "r30_ceiling_mean": (
+                    float(np.mean(per_cat_ceiling[cat]))
+                    if per_cat_ceiling[cat] else 0.0
+                ),
+                "r30_over_ceiling": (
+                    float(np.mean(per_cat_r30_ceiling[cat]))
+                    if per_cat_r30_ceiling[cat] else 0.0
+                ),
                 "hits30_triple": (
                     float(np.mean(per_cat_hits_triple_30[cat]))
                     if per_cat_hits_triple_30[cat]
@@ -430,6 +454,10 @@ def main():
         "hits_at_k_drug": {
             K: mean_std(collect(lambda m, K=K: m["hits_at_k_drug"][K])) for K in (1, 5, 10, 30, 100)
         },
+        "hits_at_k_drug_ceiling": {
+            K: mean_std(collect(lambda m, K=K: m["hits_at_k_drug_ceiling"][K]))
+            for K in (1, 5, 10, 30, 100)
+        },
         "hits_at_k_triple": {
             K: mean_std(collect(lambda m, K=K: m["hits_at_k_triple"][K])) for K in (1, 5, 10, 30, 100)
         },
@@ -445,9 +473,14 @@ def main():
         mrrs = [m["per_category"].get(cat, {}).get("mrr", 0.0) for m in per_seed_results if cat in m["per_category"]]
         h30s = [m["per_category"].get(cat, {}).get("hits30_triple", 0.0) for m in per_seed_results if cat in m["per_category"]]
         ns = [m["per_category"].get(cat, {}).get("n_diseases", 0) for m in per_seed_results if cat in m["per_category"]]
+        ceils = [m["per_category"].get(cat, {}).get("r30_ceiling_mean", 0.0) for m in per_seed_results if cat in m["per_category"]]
+        r30_oc = [m["per_category"].get(cat, {}).get("r30_over_ceiling", 0.0) for m in per_seed_results if cat in m["per_category"]]
         per_cat_agg[cat] = {
             "r30_mean": float(np.mean(r30s)) if r30s else 0.0,
             "r30_std": float(np.std(r30s)) if r30s else 0.0,
+            "r30_ceiling_mean": float(np.mean(ceils)) if ceils else 0.0,
+            "r30_over_ceiling_mean": float(np.mean(r30_oc)) if r30_oc else 0.0,
+            "r30_over_ceiling_std": float(np.std(r30_oc)) if r30_oc else 0.0,
             "hits30_triple_mean": float(np.mean(h30s)) if h30s else 0.0,
             "mrr_mean": float(np.mean(mrrs)) if mrrs else 0.0,
             "n_diseases_mean": float(np.mean(ns)) if ns else 0.0,
@@ -489,17 +522,20 @@ def main():
     lines.append("| Metric | Value |")
     lines.append("|---|---|")
     lines.append(f"| R@30 per-drug | {agg['per_drug_r30'][0]*100:.2f}% ± {agg['per_drug_r30'][1]*100:.2f}% |")
+    _r30c_mean, _r30c_std = agg["hits_at_k_drug_ceiling"][30]
+    lines.append(f"| R@30 per-drug / ceiling (h1240) | {_r30c_mean*100:.2f}% ± {_r30c_std*100:.2f}% |")
     lines.append(f"| MRR (per-triple) | {agg['mrr_triple'][0]:.4f} ± {agg['mrr_triple'][1]:.4f} |")
     lines.append(f"| AUPRC (per-triple) | {agg['auprc'][0]:.4f} ± {agg['auprc'][1]:.4f} |")
     lines.append(f"| AUROC (per-triple) | {agg['auroc'][0]:.4f} ± {agg['auroc'][1]:.4f} |")
     lines.append("")
     lines.append("## Hits@K — per-drug (fraction of GT drugs recovered in top-K, averaged over test diseases)")
     lines.append("")
-    lines.append("| K | mean | std |")
-    lines.append("|---|---|---|")
+    lines.append("| K | mean | std | ceiling-adjusted mean (hits/min(K,|GT|)) | ceiling-adj std |")
+    lines.append("|---|---|---|---|---|")
     for K in (1, 5, 10, 30, 100):
         m, s = agg["hits_at_k_drug"][K]
-        lines.append(f"| {K} | {m*100:.2f}% | {s*100:.2f}% |")
+        mc, sc = agg["hits_at_k_drug_ceiling"][K]
+        lines.append(f"| {K} | {m*100:.2f}% | {s*100:.2f}% | {mc*100:.2f}% | {sc*100:.2f}% |")
     lines.append("")
     lines.append("## Hits@K — per-test-triple (fraction of held-out (disease, drug) pairs ranked ≤ K)")
     lines.append("")
@@ -511,12 +547,14 @@ def main():
     lines.append("")
     lines.append("## Per-category breakdown (averaged over seeds)")
     lines.append("")
-    lines.append("| Category | n_dis | R@30 | Hits@30 triple | MRR |")
-    lines.append("|---|---|---|---|---|")
+    lines.append("| Category | n_dis | R@30 | Ceiling | R@30/Ceiling | Hits@30 triple | MRR |")
+    lines.append("|---|---|---|---|---|---|---|")
     for cat, m in sorted(per_cat_agg.items(), key=lambda x: -x[1]["n_diseases_mean"]):
         lines.append(
             f"| {cat} | {m['n_diseases_mean']:.0f} | "
             f"{m['r30_mean']*100:.2f}%±{m['r30_std']*100:.2f}% | "
+            f"{m.get('r30_ceiling_mean', 0.0)*100:.2f}% | "
+            f"{m.get('r30_over_ceiling_mean', 0.0)*100:.2f}%±{m.get('r30_over_ceiling_std', 0.0)*100:.2f}% | "
             f"{m['hits30_triple_mean']*100:.2f}% | "
             f"{m['mrr_mean']:.4f} |"
         )
