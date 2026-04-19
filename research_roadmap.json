@@ -982,7 +982,7 @@
       "expected_impact": "medium",
       "effort": "high",
       "priority": 2,
-      "status": "in_progress",
+      "status": "inconclusive",
       "steps": [
         "Reconstruct DRKG as a PyG HeteroData object (nodes: drug, disease, gene, pathway; edges: treats, associates, etc.)",
         "Train GraphSAGE on DRKG with neighborhood sampling on 1x RTX 4090 or A100",
@@ -992,10 +992,9 @@
         "Spot-validate top predictions against ClinicalTrials.gov for 5 pilot diseases (e.g., Niemann-Pick C, Rett)",
         "Destroy instance; if <20/71 become evaluable, mark invalidated with clear reason"
       ],
-      "findings": "",
-      "result_metric": "",
-      "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T10:20:17"
+      "findings": "PILOT RUN, decision: NEIGHBOUR_MEAN_INSUFFICIENT but target pool too small to justify full GraphSAGE training. Reconstructed h909's 2x2 (with h961 aliases + expanded GT): gt_yes_embed_no=22 (h909 was 24, close), embed_yes_gt_no=33 (h909 was 27), no_embed_no_gt=40 (h909 was 20). Of 22 primary targets, 16 had MeSH tree-sibling neighbours in DRKG; 0 got a top-30 hit via naive neighbour-mean embedding. Wall time 38s. STRATEGIC IMPLICATION: even if full GraphSAGE training substantially improves on naive mean (possible \u2014 it would learn weighted aggregation and use 2-3 hop info), the target pool is only 22 diseases. Even 50% unblock rate = 11 diseases helped. Cost: days of GPU training, PyTorch Geometric install, ongoing maintenance. Benefit: marginal. BETTER USE OF EFFORT: h917 (Ryland expert labels) targets precision across ALL diseases and is waiting on external delivery \u2014 ROI much higher. External data (proper DrugBank XML integration for the 27 embed_yes_gt_no) is similarly higher-leverage than GraphSAGE for the 22 gt_yes_embed_no. The 6 targets with no tree-sibling neighbours (dg_hereditary, etc.) are unreachable by any graph method. Scaffold: scripts/h922_graphsage_pilot.py. Full-train path preserved in pilot docstring \u2014 ready if the math changes.",
+      "result_metric": "22 primary targets, 16 with tree-sibling neighbours, 0 top-30 hits via naive neighbour-mean; full GraphSAGE ROI capped by small pool (max ~11 diseases unblocked)",
+      "resolved_at": "2026-04-19T10:24:55"
     },
     {
       "id": "h924",
@@ -1733,7 +1732,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "For each autoimmune holdout disease, list top-30 biologic picks and the bio_gt drugs; extract USAN-suffix family for each (mab, cept, kinra, ferax, etc.).",
         "Compute family-match rate: fraction of top-30 biologics whose family appears in the disease's bio_gt. Also compute same for hits vs misses.",

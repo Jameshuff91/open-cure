@@ -1,0 +1,30 @@
+Loading DRKG entities ...
+  4,871 entities
+Loading mesh mappings + expanded GT + tree cache ...
+  2,150 mappings; 3,589 GT diseases; 1,186 tree entries
+Loading Node2Vec embeddings ...
+  49,616 entities embedded
+
+h909 reconstruction:
+  gt_yes_embed_no (primary GraphSAGE targets): 22
+  embed_yes_gt_no (secondary):                 33
+  no_embed_no_gt (hardest):                    40
+  [5/22] systemic al amyloidosis n=20 R@30=0.000
+  [15/22] respiratory distress syndrome n=20 R@30=0.000
+  [20/22] pure autonomic failure n=20 R@30=0.000
+  [22/22] marginal zone lymphoma n=16 R@30=0.000
+
+============================================================
+  h922 neighbour-mean pilot — results
+============================================================
+  Primary targets:            22
+  With tree-sibling neighbours: 16
+  At least one top-30 hit:     0
+  Mean R@30:   0.000
+  Median R@30: 0.000
+  Max R@30:    0.000
+
+  Decision: NEIGHBOUR_MEAN_INSUFFICIENT
+  Reference: production kNN R@30 ~0.30 on reachable diseases
+
+  Saved to /Users/jimhuff/github/open-cure/data/analysis/h922_pilot.json
