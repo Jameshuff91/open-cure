@@ -1,0 +1,94 @@
+==============================================================================
+h995: Autoimmune biologic family-mis-selection audit
+==============================================================================
+Expanded GT: 3589 diseases
+Biologic pool: 455 of 10474 drugs
+Evaluable diseases (GT ∩ embeddings): 1011
+Seeds: [42, 123, 456, 789, 2024]
+
+--- Seed 42 ---
+  n_holdout=203 n_biologic_slots=624 autoimmune_biologic_slots=51 autoimmune_bio_hits=10
+--- Seed 123 ---
+  n_holdout=203 n_biologic_slots=774 autoimmune_biologic_slots=89 autoimmune_bio_hits=11
+--- Seed 456 ---
+  n_holdout=203 n_biologic_slots=669 autoimmune_biologic_slots=52 autoimmune_bio_hits=5
+--- Seed 789 ---
+  n_holdout=203 n_biologic_slots=690 autoimmune_biologic_slots=19 autoimmune_bio_hits=2
+--- Seed 2024 ---
+  n_holdout=203 n_biologic_slots=764 autoimmune_biologic_slots=55 autoimmune_bio_hits=4
+
+Autoimmune pooled biologic slots: 266 (5 seeds)
+Autoimmune slot hit rate: 12.03% (32 / 266)
+
+==============================================================================
+AUTOIMMUNE — hit rate by family-match rule
+==============================================================================
+  [suffix_match] match n=147 hits=32 (21.77%)  |  miss n=119 hits=0 (0.00%)  ratio=inf
+  [substem_match] match n=37 hits=19 (51.35%)  |  miss n=229 hits=13 (5.68%)  ratio=9.05x
+  [target_match] match n=67 hits=32 (47.76%)  |  miss n=199 hits=0 (0.00%)  ratio=inf
+
+==============================================================================
+DECISION (autoimmune)
+==============================================================================
+PROCEED: rules ['substem_match'] meet ≥3x ratio AND n≥30 each bucket.
+Next step: implement filter + 5-seed ship test (bio_p30|bio lift ≥5pp on autoimmune, bio_r30 drop ≤2pp).
+
+==============================================================================
+PER CATEGORY — target_match hit-rate match vs miss (pooled 5 seeds)
+==============================================================================
+category            slots  match_n  hr_match  miss_n  hr_miss   ratio
+other                1083       67   35.82%    1016   0.00%     inf
+cancer                560      122   36.07%     438   0.00%     inf
+autoimmune            266       67   47.76%     199   0.00%     inf
+cardiovascular        242       58   43.10%     184   0.00%     inf
+metabolic             198       28   53.57%     170   0.00%     inf
+dermatological        196        8   37.50%     188   0.00%     inf
+gastrointestinal      155       17   58.82%     138   0.00%     inf
+infectious            148        4   25.00%     144   0.00%     inf
+ophthalmic            136       32   21.88%     104   0.00%     inf
+neurological          119        4   75.00%     115   0.00%     inf
+hematological         118       10   70.00%     108   1.85%  37.80x
+musculoskeletal        98        7   85.71%      91   0.00%     inf
+respiratory            83        4  100.00%      79   0.00%     inf
+renal                  57       12   50.00%      45   0.00%     inf
+endocrine              23       11   54.55%      12   0.00%     inf
+immunological          21        1  100.00%      20   0.00%     inf
+psychiatric            17        0    0.00%      17   0.00%     inf
+reproductive            1        0    0.00%       1   0.00%     inf
+
+==============================================================================
+TOP-15 mispicked autoimmune biologics (hit=0 AND target_match=0)
+==============================================================================
+    20  Dupilumab                      suffix=mab
+    17  Interferon gamma-1b            suffix=interferon
+    16  Mepolizumab                    suffix=mab
+    15  Canakinumab                    suffix=mab
+    14  Tocilizumab                    suffix=mab
+    13  Rilonacept                     suffix=cept
+    12  Corticotropin                  suffix=tropin
+    12  Omalizumab                     suffix=mab
+    11  Anakinra                       suffix=kinra
+    11  Human immunoglobulin G         suffix=globulin
+     9  Rituximab                      suffix=mab
+     7  Adalimumab                     suffix=mab
+     6  Sarilumab                      suffix=mab
+     5  Benralizumab                   suffix=mab
+     4  Etanercept                     suffix=cept
+
+==============================================================================
+TOP-15 autoimmune biologic HITS by family-match type
+==============================================================================
+     8  Corticotropin                  target_match=True suffix_match=True
+     6  Adalimumab                     target_match=True suffix_match=True
+     5  Rituximab                      target_match=True suffix_match=True
+     3  Tocilizumab                    target_match=True suffix_match=True
+     3  Abatacept                      target_match=True suffix_match=True
+     2  Infliximab                     target_match=True suffix_match=True
+     1  Anakinra                       target_match=True suffix_match=True
+     1  Canakinumab                    target_match=True suffix_match=True
+     1  Etanercept                     target_match=True suffix_match=True
+     1  Golimumab                      target_match=True suffix_match=True
+     1  Denosumab                      target_match=True suffix_match=True
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h995_autoimmune_family_audit.json
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h995_slot_records.json

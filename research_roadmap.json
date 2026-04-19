@@ -1732,7 +1732,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 2,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "For each autoimmune holdout disease, list top-30 biologic picks and the bio_gt drugs; extract USAN-suffix family for each (mab, cept, kinra, ferax, etc.).",
         "Compute family-match rate: fraction of top-30 biologics whose family appears in the disease's bio_gt. Also compute same for hits vs misses.",
@@ -1742,7 +1742,10 @@
       "depends_on": [
         "h991",
         "h939"
-      ]
+      ],
+      "result_metric": "LOO target_match ratio 4.22x (\u22653x gate met) BUT in-out filter would drop 16/32 autoimmune hits = -50% bio_r30 (ship cap -2pp violated 25x)",
+      "findings": "h995 audit on 5-seed h393 autoimmune holdout (266 biologic top-30 slots, 32 hits pooled):\nNaive target_match showed ratio=inf (hr_miss=0%) across every category \u2014 a tautology signature (candidate drugs IN bio_gt trivially satisfy target_match since their targets are \u2282 gt_target_union).\nLeave-one-out (LOO) de-biased re-analysis (h995b) cleaned the signal:\n  - suffix_match LOO: 0.74x (signal REVERSED \u2014 -mab/-cept suffix is anti-predictive)\n  - substem_match LOO: 1.58x (below 3x gate)\n  - target_match LOO: 4.22x (31.37% match hit rate vs 7.44% miss; STILL above 3x gate)\nTautology load: 49.5% of original target_match=True hits (96/194) flip to False under LOO \u2014 half the naive signal was self-inclusion.\n\nShip gate FAILS on filter form: target_match_loo=True retains 16/32 autoimmune hits; target_match_loo=False retains 16/32. A filter that drops LOO=False biologics would halve bio_r30 on autoimmune (-50%, violating -2pp cap by 25x). Per-category LOO ratios (cancer 10.9x, cv 11.6x, hematological 24.2x, metabolic 7.8x) are similarly decorative \u2014 the filter would destroy recall everywhere.\n\nMechanism: half of autoimmune biologic HITS are target-unique (the candidate is the first mAb of its target family in bio_gt; e.g. first anti-IL4R\u03b1 in a derm/autoimmune disease) \u2014 exactly the kind of real hit an in-out filter cannot rescue. Same failure mode as h957 zero-overlap filter and the h953/h990 in/out-shuffle family.\n\nGenuine signal is real: the 31.37% vs 7.44% LOO ratio confirms target-family sharing IS a 4.2x precision signal for autoimmune biologic slots. But the operationalization must be in-window re-rank or annotation, not in/out filter.",
+      "completed_date": "2026-04-19"
     },
     {
       "id": "h996",
@@ -1823,6 +1826,86 @@
         "h996",
         "h991"
       ]
+    },
+    {
+      "id": "h1000",
+      "title": "In-window biologic family-match re-rank (no in/out exchange)",
+      "category": "precision",
+      "rationale": "h995/h995b showed biologic-family target-match (LOO) is a 4.22x autoimmune precision signal (31.37% match hit vs 7.44% miss) but filter form loses 50% of bio_r30 because half the hits are target-unique (first-in-family mAbs). In-window re-rank avoids that failure: within the top-30 biologic slots, BUMP target_match_LOO=True candidates up by +1 rank tier and DEMOTE target_match_LOO=False biologics down by 1 rank, KEEPING all 30 slots. This preserves bio_r30 (no hits dropped from top-30) while concentrating the match-family hits at lower ranks \u2192 higher tier precision. Ship gate: bio_r30 drop \u22640.5pp AND bio-tier distribution shifts \u22651 biologic/seed from MEDIUM\u2192HIGH (or FILTER\u2192LOW). Aligns with h994 in-window re-rank family.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Compute per-prediction target_match_LOO flag at inference time using bio_gt of the disease's k=3 kNN neighbors (not disease's own bio_gt \u2014 that leaks at inference). h995b used own-disease bio_gt; that's only valid for audit, not for prediction.",
+        "Implement in-window rank shift: biologic with target_match_LOO=True in top-30 gets rank shift -1, False gets +1. Tiers are then recomputed.",
+        "5-seed h393 holdout: measure bio_p30, bio_r30, global tier precisions (GOLDEN/HIGH/MEDIUM/LOW/FILTER) vs baseline.",
+        "Ship if bio_r30 drop \u22640.5pp AND at least one tier lifts by \u22651pp."
+      ],
+      "depends_on": [
+        "h995",
+        "h994"
+      ]
+    },
+    {
+      "id": "h1001",
+      "title": "Biologic family-match deliverable annotation column (audit signal, no tier change)",
+      "category": "precision",
+      "rationale": "Low-cost but high-value: attach `biologic_target_family_match` (bool) + `biologic_target_overlap_genes` (list) annotations to every biologic prediction in the 13,416-row XLSX deliverable. Ryland and collaborators can use it to triage predictions at review time without the filter costing us 50% of biologic recall. h995b showed 4.22x LOO signal on autoimmune and 5.67x-24.22x across cancer/cv/metabolic/hematological \u2014 these annotations will consistently correlate with expert agreement. Mirrors h968 annotation philosophy over filter philosophy.",
+      "expected_impact": "low",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "For each biologic in the deliverable, compute (a) target_match flag using the disease's bio_gt (leak-permitted for annotation \u2014 we're not using it to rank), (b) the list of shared target gene symbols.",
+        "Add columns `biologic_target_family_match`, `biologic_shared_targets` to the XLSX.",
+        "Spot-check 20 HIGH/GOLDEN biologic predictions: does the match bool correlate with Ryland-plausibility (if review is available)?",
+        "Document column semantics in the deliverable README."
+      ],
+      "depends_on": [
+        "h995"
+      ]
+    },
+    {
+      "id": "h1002",
+      "title": "First-in-family biologic GT gap audit \u2014 unique-target hits",
+      "category": "coverage",
+      "rationale": "h995b's LOO analysis revealed 16 autoimmune biologic HITS where the candidate was the ONLY biologic with its target set in bio_gt (target_match_loo=False). If these are novel first-in-family mAbs/biologics (anti-IL4R\u03b1, anti-IL5, anti-IL23), their uniqueness is exactly the signal the filter cannot see. Hypothesis: enumerate the 16 unique-target hits, characterize them (drug family, disease, literature support), and check whether they share kNN-neighbor reasoning (i.e. the disease's kNN-nearest neighbor diseases contain OTHER biologics with the same target). If yes, propose augmenting bio_gt at inference time with k=3 neighbor bio_gt before computing target_match \u2014 rescuing most of the 50% hit loss while keeping the filter form.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Extract the 16 autoimmune hits with target_match=True BUT target_match_loo=False from h995_slot_records.json.",
+        "For each, look up the drug's target set + disease's top-3 kNN neighbors' bio_gt union of targets.",
+        "Compute 'neighbor-augmented' target_match_loo \u2014 would this rescue the 16 hits?",
+        "If \u226512/16 rescued, propose h1003 implementing neighbor-augmented filter."
+      ],
+      "depends_on": [
+        "h995"
+      ]
+    },
+    {
+      "id": "h922-v2",
+      "title": "GraphSAGE Full Retrain \u2014 Replace Node2Vec Embeddings for All 1,463 Evaluable Diseases",
+      "category": "deep-learning",
+      "rationale": "h922 (original) tested GraphSAGE as inductive inference for 22 island diseases \u2014 pilot failed (0/22 top-30 hits via naive neighbour-mean) and the target pool is small anyway. That was the wrong experiment. The real value of a GNN on DRKG is LEARNING BETTER EMBEDDINGS FOR ALL 1,463 evaluable diseases \u2014 replacing the 256-d Node2Vec embeddings currently used by production kNN. Node2Vec captures random-walk structure but not message-passing semantics; a trained GraphSAGE (or HGT / RGCN) should learn multi-hop paths kNN misses, pushing per-drug R@30 toward the ~60% DRKG Oracle ceiling (currently ~37% for kNN). This is the single biggest lever on the 37->60 gap that is not blocked by external data or human review.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 1,
+      "status": "in_progress",
+      "assigned_to": "interactive-claude",
+      "claimed_at": "2026-04-19T10:28:39",
+      "steps": [
+        "Build PyG HeteroData from data/raw/drkg/drkg_no_treatment.tsv (no leakage)",
+        "Train 3-layer GraphSAGE with neighbour sampling, unsupervised link-prediction loss, ~50 epochs on 1x RTX 4090 (vast.ai, ~4-8 hrs)",
+        "Export final disease+compound embeddings to data/embeddings/graphsage_256_{entities,embeddings}.npy matching Node2Vec format",
+        "Swap embeddings in production_predictor (env var or tmp override) \u2014 run h393 5-seed holdout",
+        "Compare per-tier precision and per-drug R@30 vs Node2Vec baseline",
+        "If R@30 improves by >=3pp with no tier regression: productionize and update CLAUDE.md baseline; otherwise document failure mode"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
@@ -4517,6 +4600,12 @@
       "hypothesis_id": "h990",
       "learning": "Even the finest-grained per-disease neighbor-derived biologic prior cannot drive a precision lift via top-30 demotion+refill. The kNN rank 31-200 tail is uniform-quality \u2014 replacing in-top-30 biologics with rank-31+ non-biologics is precision-NEUTRAL because the replacements hit at the same background rate. h990 + h953 jointly close the \"biologic in/out shuffle\" precision-pivot family.",
       "implication": "Precision lifts must operate INSIDE the rank 1-30 window via score differentiation (re-ranking), not via in-out exchange. h993/h994 will test that direction. The strict prior=0 filter is a safe a-priori invariant that could be used as a documentation/annotation column without harm."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h995",
+      "learning": "Biologic target-family-match is a genuine cross-drug signal (4.22x LOO in autoimmune, 5.67-24.22x in cancer/cv/hematological) but cannot operate as an in/out filter: half the hits (16/32 autoimmune) are target-unique in bio_gt, so filtering would cost 50% of biologic recall. Same failure mode as h957. h1000 (in-window re-rank) and h1001 (annotation column) are the viable surfaces.",
+      "implication": "Any filter that REMOVES biologic candidates based on bio_gt-referenced signals will fail the -2pp bio_r30 gate because the set of biologic hits is half target-unique. Future biologic precision work must use re-rank (keep all 30 slots) or deliverable annotation (no ranking change)."
     }
   ],
   "collaborations": [

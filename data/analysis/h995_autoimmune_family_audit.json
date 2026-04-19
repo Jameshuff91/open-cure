@@ -1,0 +1,232 @@
+{
+  "hypothesis": "h995",
+  "title": "Autoimmune biologic family-mis-selection audit",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "top_n": 30,
+  "n_biologic_pool": 455,
+  "n_autoimmune_slots_pooled": 266,
+  "autoimmune_hit_rate": 0.12030075187969924,
+  "autoimmune_by_rule": {
+    "suffix_match": {
+      "rule": "suffix_match",
+      "n_match": 147,
+      "n_miss": 119,
+      "hits_match": 32,
+      "hits_miss": 0,
+      "hit_rate_match": 0.21768707482993196,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "substem_match": {
+      "rule": "substem_match",
+      "n_match": 37,
+      "n_miss": 229,
+      "hits_match": 19,
+      "hits_miss": 13,
+      "hit_rate_match": 0.5135135135135135,
+      "hit_rate_miss": 0.056768558951965066,
+      "ratio": 9.045738045738045
+    },
+    "target_match": {
+      "rule": "target_match",
+      "n_match": 67,
+      "n_miss": 199,
+      "hits_match": 32,
+      "hits_miss": 0,
+      "hit_rate_match": 0.47761194029850745,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    }
+  },
+  "decisive_rules_on_autoimmune": [
+    "substem_match"
+  ],
+  "per_category_target_match": {
+    "other": {
+      "rule": "target_match",
+      "n_match": 67,
+      "n_miss": 1016,
+      "hits_match": 24,
+      "hits_miss": 0,
+      "hit_rate_match": 0.3582089552238806,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "cancer": {
+      "rule": "target_match",
+      "n_match": 122,
+      "n_miss": 438,
+      "hits_match": 44,
+      "hits_miss": 0,
+      "hit_rate_match": 0.36065573770491804,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "autoimmune": {
+      "rule": "target_match",
+      "n_match": 67,
+      "n_miss": 199,
+      "hits_match": 32,
+      "hits_miss": 0,
+      "hit_rate_match": 0.47761194029850745,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "cardiovascular": {
+      "rule": "target_match",
+      "n_match": 58,
+      "n_miss": 184,
+      "hits_match": 25,
+      "hits_miss": 0,
+      "hit_rate_match": 0.43103448275862066,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "metabolic": {
+      "rule": "target_match",
+      "n_match": 28,
+      "n_miss": 170,
+      "hits_match": 15,
+      "hits_miss": 0,
+      "hit_rate_match": 0.5357142857142857,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "dermatological": {
+      "rule": "target_match",
+      "n_match": 8,
+      "n_miss": 188,
+      "hits_match": 3,
+      "hits_miss": 0,
+      "hit_rate_match": 0.375,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "gastrointestinal": {
+      "rule": "target_match",
+      "n_match": 17,
+      "n_miss": 138,
+      "hits_match": 10,
+      "hits_miss": 0,
+      "hit_rate_match": 0.5882352941176471,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "infectious": {
+      "rule": "target_match",
+      "n_match": 4,
+      "n_miss": 144,
+      "hits_match": 1,
+      "hits_miss": 0,
+      "hit_rate_match": 0.25,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "ophthalmic": {
+      "rule": "target_match",
+      "n_match": 32,
+      "n_miss": 104,
+      "hits_match": 7,
+      "hits_miss": 0,
+      "hit_rate_match": 0.21875,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "neurological": {
+      "rule": "target_match",
+      "n_match": 4,
+      "n_miss": 115,
+      "hits_match": 3,
+      "hits_miss": 0,
+      "hit_rate_match": 0.75,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "hematological": {
+      "rule": "target_match",
+      "n_match": 10,
+      "n_miss": 108,
+      "hits_match": 7,
+      "hits_miss": 2,
+      "hit_rate_match": 0.7,
+      "hit_rate_miss": 0.018518518518518517,
+      "ratio": 37.8
+    },
+    "musculoskeletal": {
+      "rule": "target_match",
+      "n_match": 7,
+      "n_miss": 91,
+      "hits_match": 6,
+      "hits_miss": 0,
+      "hit_rate_match": 0.8571428571428571,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "respiratory": {
+      "rule": "target_match",
+      "n_match": 4,
+      "n_miss": 79,
+      "hits_match": 4,
+      "hits_miss": 0,
+      "hit_rate_match": 1.0,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "renal": {
+      "rule": "target_match",
+      "n_match": 12,
+      "n_miss": 45,
+      "hits_match": 6,
+      "hits_miss": 0,
+      "hit_rate_match": 0.5,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "endocrine": {
+      "rule": "target_match",
+      "n_match": 11,
+      "n_miss": 12,
+      "hits_match": 6,
+      "hits_miss": 0,
+      "hit_rate_match": 0.5454545454545454,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "immunological": {
+      "rule": "target_match",
+      "n_match": 1,
+      "n_miss": 20,
+      "hits_match": 1,
+      "hits_miss": 0,
+      "hit_rate_match": 1.0,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "psychiatric": {
+      "rule": "target_match",
+      "n_match": 0,
+      "n_miss": 17,
+      "hits_match": 0,
+      "hits_miss": 0,
+      "hit_rate_match": 0.0,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    },
+    "reproductive": {
+      "rule": "target_match",
+      "n_match": 0,
+      "n_miss": 1,
+      "hits_match": 0,
+      "hits_miss": 0,
+      "hit_rate_match": 0.0,
+      "hit_rate_miss": 0.0,
+      "ratio": null
+    }
+  }
+}

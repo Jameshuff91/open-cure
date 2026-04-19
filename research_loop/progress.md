@@ -1,6 +1,69 @@
 # Research Loop Progress
 
-## Current Session: h961 — MeSH disease-name aliasing (2026-04-19)
+## Current Session: h995 — autoimmune biologic family-mis-selection audit (2026-04-19)
+
+### Status: INVALIDATED at ship gate (filter form fails -50% bio_r30)
+
+### Key Finding
+Biologic target-family-match IS a genuine cross-drug precision signal — after
+de-biasing the self-inclusion tautology via leave-one-out (LOO), the autoimmune
+match-vs-miss ratio is 4.22x (31.37% vs 7.44% hit rate), with cancer 10.91x,
+cv 11.57x, hematological 24.22x. But the proposed in/out filter form CANNOT
+ship: in autoimmune, target_match_loo=True retains only 16/32 pooled 5-seed
+hits, so applying the filter drops 50% of bio_r30 — violating the -2pp
+ship cap by 25x. Half the biologic HITS are target-unique in bio_gt (first-
+in-family mAbs like anti-IL4Rα or anti-IL5) and the filter cannot see them.
+Same failure mode as h957 zero-overlap filter + the closed h953/h990 in/out
+shuffle family. Methodological lesson: the naive diagnostic showed ratio=inf
+(hr_miss=0%) across every category — classic self-inclusion tautology —
+because any candidate IN bio_gt with annotated targets trivially satisfies
+target_match via set-inclusion. LOO exposed that 49.5% of that signal
+(96/194 naive hits) was tautological.
+
+### Shipped
+- `scripts/h995_autoimmune_biologic_family_audit.py` — 5-seed autoimmune
+  audit over top-30 biologic slots with USAN suffix, 2-letter substem, and
+  target-set family-match rules
+- `scripts/h995b_debias_target_match.py` — leave-one-out re-analysis
+  exposing the self-inclusion tautology
+- `data/analysis/h995_autoimmune_family_audit.json`
+- `data/analysis/h995_slot_records.json` (3,521 per-slot records, 5 seeds)
+- `data/analysis/h995b_debias_results.json`
+- `data/analysis/h995_run.txt`, `data/analysis/h995b_run.txt`
+
+### Rejected
+- In-out filter form for biologic family-match (fails -50% bio_r30)
+- USAN-suffix match as a family proxy (LOO ratio 0.74x — ANTI-predictive;
+  -mab/-cept suffix alone is too coarse)
+- USAN-substem match (LOO ratio 1.58x, below 3x gate)
+
+### New Hypotheses (3)
+- **h1000** (P2, medium): In-window biologic family-match re-rank (no in/out
+  exchange). Keep all 30 slots, bump target_match_LOO=True biologics up 1
+  rank, demote LOO=False biologics down 1. Aligns with h994 in-window
+  re-rank family. Uses k=3 kNN neighbor bio_gt (not own disease) to avoid
+  inference-time leak.
+- **h1001** (P3, low): Add `biologic_target_family_match` + shared-genes
+  list columns to the 13,416-row XLSX deliverable. Mirrors h968 annotation
+  philosophy. Low cost, high triage value for Ryland review.
+- **h1002** (P3, low): Audit the 16 autoimmune unique-target hits. If
+  their disease's k=3 kNN neighbors' bio_gt targets would cover them,
+  propose a neighbor-augmented filter (h1003) that could rescue most of
+  the 50% hit loss while keeping filter form.
+
+### Next
+Highest-ROI remaining pending:
+1. **h905** (P2, LINCS L1000 pilot) — still unclaimed, but high effort and
+   external-data dependent.
+2. **h994** (P2, medium) — in-window re-ranking for precision; h1000 is
+   the biologic-specialized cousin, so advancing h994 first may de-risk.
+3. **h1000** (P2, medium) — follow-up from this session.
+4. **h1002** (P3, low) — cheap diagnostic that can unlock h1003 filter
+   variant.
+
+---
+
+## Prior Session: h961 — MeSH disease-name aliasing (2026-04-19)
 
 ### Status: VALIDATED (but original mechanism repudiated)
 
