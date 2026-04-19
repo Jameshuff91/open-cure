@@ -1,6 +1,33 @@
 # Open-Cure Drug Repurposing Research Specification
 
-## Current Phase (2026-04-18): Post-Tier-Calibration Pivot
+## Current Phase (2026-04-19): 37→60 Hybrid Pivot
+
+**PRIMARY RESEARCH DIRECTION: close the R@30 gap from ~26% (honest Node2Vec kNN) to the 60% Oracle ceiling on DRKG — then hybridize with external signals to exceed 60%.**
+
+After today's positive-control and h922-v2 findings, the research path is explicit:
+
+1. **h1199 (infrastructure, p1):** embedding-agnostic R@30 benchmark. Prerequisite for every subsequent experiment. Measures raw kNN R@30 without the tier system in the loop so embedding changes can be compared honestly. ~1 day of work, CPU only. Must land before h1200/h1201 are trusted.
+
+2. **h1200 (Path A, p1):** supervised GNN (GraphSAGE / HGT / R-GCN) trained on treatment edges as explicit labels. Different objective than h922-v2's unsupervised link prediction, which failed. Target: ≥35% R@30, stretch 45%. 2–3 weeks, ~$10 GPU.
+
+3. **h1201 (Path B, p1):** LINCS L1000 reverse-connectivity. Orthogonal signal from transcriptomics. Targets diseases where kNN is weak. 1–2 weeks, CPU-only feasible.
+
+4. **h1202 (Hybrid fusion, p2):** gated on h1200 + h1201 showing independent signal. Combine via weighted fusion or kNN-coverage-gated ensemble. This is the primary Nature-paper claim.
+
+5. **h1203 (expert-label calibration, p2):** gated on Ryland returning his review (template at `data/deliverables/ryland_review_template.csv`). Train a calibrated classifier on expert labels to replace the 30-rule tier heuristics — decouples calibration from embedding choice (fixes the h922-v2 failure mode) and incorporates independent expert signal.
+
+**Paper v3 framing:** "Hybrid DRKG collaborative filtering + LINCS expression reversal + expert-calibrated confidence tiers." The bioRxiv preprint already argued DRKG-alone has a ceiling; this is the architecture that exceeds it.
+
+**Deprioritised for this phase:**
+- Further rule-level tier calibration (diminishing returns — h904/h977/h986 closed the easy wins)
+- Any embedding experiment that doesn't come with a tier recalibration plan (see h922-v2 INVALIDATED notes — swapping embeddings without recalibrating tiers is wasted work)
+- Text-embedding retrieval (h920 dequeued — 7-10x weaker than kNN at production scale)
+
+**Critical reminder:** h1199 is the prerequisite. **Do not claim any embedding improvement based on aggregate tier precision alone.** Run the clean R@30 benchmark + positive controls (scripts/positive_controls.py). h922-v2 looked like a tier regression but the actual failure was embedding-tier coupling; treat that as the canonical example of why embedding experiments need decoupled evaluation.
+
+---
+
+## Previous Phase (2026-04-18): Post-Tier-Calibration Pivot
 
 Tier-rule calibration on DRKG-only data has hit diminishing returns (h808–h821: ±2pp deltas, invalidations roughly equal to validations). The DRKG ceiling (~37% R@30) is structural, not fixable by more rule tweaking.
 

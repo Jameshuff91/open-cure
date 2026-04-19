@@ -2056,6 +2056,111 @@
         "h1000",
         "h1005"
       ]
+    },
+    {
+      "id": "h1199",
+      "title": "Embedding-agnostic R@30 benchmark \u2014 prerequisite for honest GNN evaluation",
+      "category": "infrastructure",
+      "rationale": "h922-v2 failed not because GraphSAGE was bad but because the 30-rule tier system is tightly coupled to Node2Vec's kNN neighbourhoods. Any embedding swap miscalibrates the tiers and hides the real signal. Before we run more expensive GNN experiments (h1200 supervised GNN, h1201 LINCS), we need a clean evaluation that measures per-drug R@30 on raw kNN predictions WITHOUT the tier system in the loop. This makes embedding comparisons honest and reproducible.",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Write scripts/clean_r30_benchmark.py: load embeddings via OPEN_CURE_EMBEDDINGS_PREFIX, compute kNN predictions per disease WITHOUT tier/rule processing, report per-drug R@30 mean/std across 5 seeds on expanded GT",
+        "Report alongside: per-disease R@30 histogram, per-category breakdown (cancer, autoimmune, metabolic, infectious, etc.)",
+        "Lock in Node2Vec baseline numbers as 'clean baseline' (expected ~26% honest, ~36% with-leakage)",
+        "Add to CI: any future embedding must be evaluated against this benchmark before it can claim R@30 improvements",
+        "Documented result tables (markdown) saved to data/analysis/clean_r30_benchmark_<prefix>.md"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1200",
+      "title": "Supervised GNN (Path A) \u2014 train with treatment edges as explicit labels, not link prediction",
+      "category": "deep-learning",
+      "rationale": "h922-v2 trained GraphSAGE unsupervised on generic link prediction across all DRKG edges. Good val_auc (0.9889) but no improvement downstream because the objective wasn't drug-disease alignment. Supervised training with treatment edges as positives (and degree-weighted random pairs as negatives) directly optimizes for the target task. Hypothesis: supervised supervised-trained GraphSAGE/HGT will push honest R@30 from 26% toward 40-50%. This is the primary Path A of the 37->60 Nature-paper pivot.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Gated on h1199 (clean benchmark) being in place",
+        "Build a supervised-positive/negative edge sampler: positives = treatment edges, negatives = degree-weighted random non-treatment pairs (ratio 1:3, following PinSAGE conventions)",
+        "Hold out 20% of treatment edges for evaluation. Train on 80%. Use 5-seed disease-level splits matching h393 for fair comparison.",
+        "Try three architectures: supervised GraphSAGE (baseline), HGT (heterogeneous graph transformer \u2014 preserves relation types GraphSAGE collapses), and R-GCN. 50 epochs, A100 on vast.ai, ~4-6 hrs each.",
+        "Score: cosine similarity between drug and disease embeddings => top-30 ranking => R@30 on held-out treatment edges",
+        "Evaluate each architecture via h1199 clean benchmark. Report per-drug R@30 mean \u00b1 std across 5 seeds.",
+        "Success: any architecture reaching >=35% R@30 (vs 26% Node2Vec honest). Stretch: >=45%.",
+        "If any architecture succeeds, proceed to h1202 (tier-system recalibration with new embeddings)"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1201",
+      "title": "LINCS L1000 reverse-connectivity (Path B) \u2014 orthogonal signal from transcriptomics",
+      "category": "external-data",
+      "rationale": "Path B of the 37->60 pivot. LINCS L1000 encodes 'what transcriptomic state does a drug induce' across ~20k compounds on ~70 cell lines. Combined with disease expression signatures from GEO/ARCHS4, drugs whose signatures REVERSE a disease's dysregulation are candidate treatments. This is orthogonal to graph structure \u2014 a drug can treat a disease via expression reversal even when kNN has no neighbours to inform from. Literature (CMap / L1000) shows 20-30% hit rates on known repurposing pairs using reversal alone. Expected contribution: +5-10pp on biologics and rare diseases where graph signal is weak. Critically complementary, not competitive, with kNN.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 1,
+      "status": "pending",
+      "steps": [
+        "Download LINCS L1000 Phase I (GSE92742) to data/external/lincs/ (gitignored ~3GB)",
+        "Process Level 5 signatures: keep top-dose 24h per (compound, cell-line), mean-aggregate across cell-lines",
+        "Map LINCS compound IDs to DrugBank via PubChem / InChIKey",
+        "Fetch disease signatures: ARCHS4 API for 50 pilot diseases with clear expression dysregulation",
+        "Compute reversal score: -cosine(drug_sig, disease_sig). Top-30 = most reversing.",
+        "Evaluate as a standalone ranker on h1199 benchmark. Expected ~15-25% R@30 on diseases with GEO signatures.",
+        "If standalone signal is present (>=15% R@30), proceed to h1202 fusion.",
+        "If signal is weak, keep LINCS as a secondary feature for h1203 expert-label calibration."
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1202",
+      "title": "Hybrid DRKG + LINCS fusion \u2014 primary Nature paper claim",
+      "category": "deep-learning",
+      "rationale": "Gated on h1200 and h1201 individually showing signal. If a supervised GNN beats Node2Vec on DRKG AND LINCS reversal contributes orthogonal signal, their fusion should exceed both individually. This is the hybrid architecture the bioRxiv preprint gestured toward and the Nature paper frames as the core contribution. Fusion options: weighted rank sum, learned gating network, or per-disease weighting by kNN coverage density (LINCS matters more when kNN is weak).",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Gated on h1200 and h1201 individually validated",
+        "Implement three fusion variants: (a) weighted rank sum (alpha tuned via grid search), (b) learned linear combination of rank scores trained on held-out treatment edges, (c) kNN-coverage-gated (use LINCS only when kNN neighbourhood density is below a threshold)",
+        "Evaluate each on h1199 benchmark; pick best",
+        "Success: >=5pp gain over best individual signal (h1200 or h1201)",
+        "Stretch: >=50% R@30 overall",
+        "Regenerate deliverable with best fusion; re-run positive controls"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1203",
+      "title": "Ryland-label-driven tier recalibration \u2014 expert labels replace 30-rule heuristics",
+      "category": "calibration",
+      "rationale": "The 30-rule tier system was developed via 800+ iterative holdout refinements and overfits to DRKG-derived GT. Ryland's blinded expert review (178 actionable derm predictions, CSV template ready at data/deliverables/ryland_review_template.csv) provides expert labels that are independent of DRKG and independent of the tier-development loop. Use these labels to train a calibrated classifier that REPLACES the 30 hand-crafted rules. The classifier outputs P(plausible | prediction, features) and tiers become probability cutoffs. Decouples the calibration from the embedding (fixes the h922-v2 failure mode) AND incorporates independent expert signal.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Gated on Ryland returning his review (expected imminent per 2026-04-19 preprint comments)",
+        "Ingest via scripts/import_ryland_review.py",
+        "Build feature matrix per (drug, disease, tier-rule) triple: embedding features (kNN rank, score), mechanism features (target overlap, ATC, pathway), literature features, plus the current rule-fire flags as features (not gates)",
+        "Train a gradient-boosted classifier on expert labels: plausible/known = positive; implausible/adverse = negative; unsure = excluded",
+        "Calibrate with Platt scaling or isotonic regression; output P(plausible)",
+        "Define tiers as probability cutoffs on a held-out dev set: GOLDEN >=0.85, HIGH >=0.70, MEDIUM >=0.40, LOW >=0.15, FILTER <0.15 (tunable)",
+        "Evaluate: does this tier system generalize to non-derm categories where Ryland has no labels? Cross-validate on DRKG-GT labels for those.",
+        "Compare to current 30-rule system on (a) tier precision overall, (b) positive controls, (c) decoupling from embedding choice (run with both Node2Vec and h1200's supervised GNN)"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [
