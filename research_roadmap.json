@@ -17867,7 +17867,7 @@
     {
       "id": "h975",
       "title": "Post-fix per-rule overfit audit \u2014 any rule flipping GENUINE\u2194OVERFITTED?",
-      "status": "pending",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -17878,7 +17878,10 @@
         "List rules that flipped GENUINE\u2192OVERFITTED? or OVERFITTED?\u2192GENUINE.",
         "For each flip, check if h904 already demoted the rule; if not, consider demotion."
       ],
-      "success_criteria": "Either 0 rules flip (h904 coverage was complete) OR 1+ actionable candidates for h904-style demotion."
+      "success_criteria": "Either 0 rules flip (h904 coverage was complete) OR 1+ actionable candidates for h904-style demotion.",
+      "started_at": "2026-04-19",
+      "result_metric": "30 rule status flips post-h952-fix (9 toward OVERFITTED?, 13 toward GENUINE, 8 softening). 3 high-impact actionable candidates identified.",
+      "findings": "Diffing pre-fix (data/analysis/h904_h393_with_demotions.json) vs post-fix (data/analysis/h393_holdout_validation.json) per-rule status: 30 of 80 rules changed classification. Key patterns: (a) 3 rules flipped GENUINE\u2192OVERFITTED? with n>=0: metabolic_hierarchy_lipid (100\u21920%, but n=0 post, untestable), infectious_hierarchy_sepsis (100\u21920%, n=0 post, untestable), neurological_hierarchy_parkinsons (34.3\u219210.7%, n=9, already LOW). (b) 6 rules flipped degraded\u2192OVERFITTED?, notable: neurological_hierarchy_epilepsy (50\u219229.8% at n=23, already LOW), immunological_medium_demotion (8.3\u21922.6% at n=23, already LOW, now BELOW LOW tier baseline 10.0%), cancer_same_type_mech_rank10 (76.1\u219272.5% at n=42 \u2014 1.8\u03c3 below HIGH tier mean 80.0%). (c) 3 rules flipped OVERFITTED?\u2192GENUINE (candidate promotions): infectious_hierarchy_uti [GOLDEN] 0\u219290.9% at n=11 \u2014 h904 demoted this off-GOLDEN but post-fix it is performing at GOLDEN level; base_to_complication 5.6\u219250% at n=3.5 (too small); corticosteroid_iatrogenic 5.6\u219233% at n=4.5 (too small). (d) 8 rules flipped degraded\u2192GENUINE (rehabilitated): transe_medium_promotion +16.4pp, literature_high_demotion +4.8pp, default_freq10_nomech_r1_5 +1.5pp \u2014 healthy tier signal. CAVEAT: Pre-fix file is h904_h393_with_demotions.json (2026-04-18); if any tier rule changed between h904 and now beyond the h952 find_disease_id fix, part of the delta is not pure bug-fix attribution. Three actionable follow-ups filed (h977/h978/h979). Raw: data/analysis/h975_rule_status_diff.json."
     },
     {
       "id": "h976",
@@ -17895,6 +17898,55 @@
         "If inversion disappears, close the thread \u2014 it was noise."
       ],
       "success_criteria": "Binary: inversion is real (GOLDEN < HIGH after tightening CIs) vs noise. Resolves the h964 tier-ordering ambiguity."
+    },
+    {
+      "id": "h977",
+      "title": "Re-validate infectious_hierarchy_uti GOLDEN rescue post-h952-fix",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h975 found infectious_hierarchy_uti flipped OVERFITTED?\u2192GENUINE post-h952-fix: pre-fix 0% at n=24, post-fix 90.9% at n=11/seed (55 across 5 seeds). h904 demoted this off-GOLDEN as overfitted; the h952 name-resolution bug was suppressing valid UTI-disease predictions. A targeted re-test with the demotion reverted would confirm whether h904 was partially wrong. Low-effort: toggle the demotion locally, run h393, measure GOLDEN precision and UTI rule precision.",
+      "steps": [
+        "Identify the h904 UTI off-GOLDEN demotion in production_predictor.py.",
+        "Revert for a local test run.",
+        "Run h393 5-seed; compare GOLDEN tier precision and infectious_hierarchy_uti per-rule precision.",
+        "If GOLDEN precision improves \u22650.5pp AND UTI rule holdout \u226575%, re-promote to GOLDEN (h904 correction).",
+        "Otherwise keep demotion and file as confirmed overfit on current pool."
+      ],
+      "success_criteria": "Either re-promote UTI to GOLDEN OR confirm h904 demotion stands."
+    },
+    {
+      "id": "h978",
+      "title": "Demote immunological_medium_demotion LOW\u2192FILTER on post-fix evidence",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h975 found immunological_medium_demotion holdout precision dropped from 8.3%\u21922.6% at n=23/seed (115 across 5 seeds), now 7.4pp below the LOW tier mean of 10.0%. The rule was demoted from MEDIUM to LOW by h462/h553 but post-fix data suggests it should drop one more tier. Simple tier reassignment.",
+      "steps": [
+        "Locate immunological_medium_demotion assignment in production_predictor.py tier-rule block.",
+        "Change LOW \u2192 FILTER.",
+        "Run h393 5-seed; confirm LOW tier precision does not drop and FILTER tier precision does not spike.",
+        "Net impact: +0.08pp LOW precision (remove 23 preds at 2.6% hit rate); net 0 on FILTER."
+      ],
+      "success_criteria": "LOW tier precision stable or slightly improved; no regressions."
+    },
+    {
+      "id": "h979",
+      "title": "Evaluate cancer_same_type_mech_rank10 HIGH\u2192MEDIUM demotion post-fix",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h975 found cancer_same_type_mech_rank10 holdout precision dropped from 76.1%\u219272.5% at n=42/seed (210 across 5 seeds), which is 1.8\u03c3 below the HIGH tier mean of 80.0% \u00b1 3.3%. This rule was promoted to HIGH by h633 (62.4% holdout at that time). Post-fix numbers are well above the MEDIUM tier mean (39.9%) but below HIGH. Demotion would reduce HIGH variance. Caveat: the h633 rationale may still hold structurally \u2014 this is an edge-case calibration call.",
+      "steps": [
+        "Check h633 rationale vs current numbers in docs/claude/confidence_system_history.md.",
+        "Simulate demoting to MEDIUM in h393 evaluator; measure HIGH and MEDIUM tier deltas.",
+        "Decision: if HIGH improves \u22651pp without MEDIUM dropping >1pp, ship the demotion.",
+        "Otherwise leave \u2014 the rule is still well above the MEDIUM floor and HIGH tier noise tolerates it."
+      ],
+      "success_criteria": "Decisive numeric call. Either demote for HIGH calibration OR document why the rule stays despite post-fix drop."
     }
   ],
   "completed": [
@@ -20559,6 +20611,12 @@
       "hypothesis_id": "h964",
       "learning": "Post-h952-fix tier precisions drifted >1pp across all 5 tiers; GOLDEN std widened 4.6x (1.3\u21926.0) due to newly-resolving diseases contributing seed-dependent hits.",
       "implication": "h904/h908 decisions are still valid (relative \u0394 within same framework) but CLAUDE.md absolute tier numbers needed correction. Tier ordering is preserved within noise; GOLDEN/HIGH overlap requires 10-seed resolution (filed as follow-up)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h975",
+      "learning": "h952 bug-fix changed per-rule status for 30 of 80 tier rules. 3 actionable candidates emerge: infectious_hierarchy_uti rescue (h904 may have over-demoted), immunological_medium_demotion LOW\u2192FILTER, cancer_same_type_mech_rank10 HIGH\u2192MEDIUM question.",
+      "implication": "Tier rule calibration is eval-framework-sensitive. Confirms h964 conclusion that h904/h908 directional decisions hold but absolute magnitudes shifted enough to warrant per-rule re-audit."
     }
   ],
   "collaborations": [
