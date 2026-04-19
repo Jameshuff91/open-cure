@@ -1,6 +1,53 @@
 # Research Loop Progress
 
-## Current Session: h916 — Target-Overlap Density Audit (2026-04-19)
+## Current Session: h939 — Biologic Target-Overlap Audit (2026-04-19)
+
+### Hypothesis
+h939 asks whether target-overlap ranking is actually a biologic signal (as h906
+motivates) even though h912/h916 showed it is not a general signal. Test: restrict
+the candidate pool to biologics (mAbs, fusion proteins, cytokines — 266 of 11,656
+drugs via USAN-suffix/keyword proxy) and compare per-category bio_r30 vs sm_r30.
+
+### Status: VALIDATED — h906 motivation preserved
+
+### Key findings
+- **bio_r30 = 26.5%** (mean, n=381 diseases with >=1 biologic GT), vs
+  **sm_r30 = 5.5%** overall. Median bio_r30 = 0% (signal is highly concentrated).
+- Diseases with >=5 biologic GT: mean **bio_r30 = 40.7%**, median **41.7%** — a
+  very clean signal in the dense-biologic-GT subset (n=35).
+- 4 categories exceed the pre-registered n>=10, ratio>=3x bar:
+  - cardiovascular **11.3x** (41.9% / 3.7%, n=32)
+  - hematological **6.3x** (41.7% / 6.7%, n=14)
+  - 'other' **4.6x** (23.2% / 5.0%, n=146)
+  - autoimmune **3.3x** (20.9% / 6.3%, n=24)
+- Cancer narrowly misses at **2.74x** (52.3% / 19.1%, n=56) — within-category SM
+  is lifted by shared cancer-gene vocabulary (per h916), but biologics still win.
+- **CAVEAT:** precision@30 is NOT higher for biologics (2.24% vs 2.63% SM).
+  The biologic pool is small, so top-30 within 266 drugs contains many FPs.
+  Recall (if you want biologics, target-overlap finds them) is strong; precision
+  (of those top-30 biologics) is not.
+
+### Implication for h906
+h906 motivation HOLDS but deployment should be via a *fusion* feature rather than
+a replacement ranker: use target-overlap to re-rank biologic-only candidates,
+keep kNN score as the primary signal. Follow-up h940 tests fused score on
+5-seed holdout with alpha sweep. h921 (ESM2 target embeddings) becomes more
+attractive than h906 binary-overlap as a principled successor.
+
+### Hypotheses generated (4)
+- **h940** (P2): Biologic-only target+kNN fusion score + alpha sweep
+- **h941** (P4): DrugBank biotech flag vs USAN-suffix robustness check
+- **h942** (P4): Polypharmacy dilution test for SM target-overlap
+- **h943** (P5): Inverse problem — biologic zero-overlap as FILTER signal
+
+### Recommended next step
+Run h940 — the only medium-effort, high-impact follow-up. It converts the h939
+signal into an actual holdout R@30 gain for biologics without needing DrugBank
+registration.
+
+---
+
+## Previous Session: h916 — Target-Overlap Density Audit (2026-04-19)
 
 ### Hypothesis
 h912 found target-overlap ranking concentrates in cancer (mean target_r30=0.119 vs

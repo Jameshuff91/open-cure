@@ -1,0 +1,80 @@
+======================================================================
+h939: Biologic vs small-molecule target-overlap audit
+======================================================================
+Biologic pool size: 266 of 11656 (2.3%)
+Candidate diseases (embed ∩ genes ∩ expanded GT): 2253
+  processed 500/2253
+  processed 1000/2253
+  processed 1500/2253
+  processed 2000/2253
+Collected 2253 per-disease records
+
+======================================================================
+OVERALL
+======================================================================
+Diseases with >=1 biologic GT: 381
+  mean bio_r30    = 26.51%
+  median bio_r30  = 0.00%
+  mean bio_p30    = 2.24%
+Diseases with >=5 biologic GT: 35
+  mean bio_r30    = 40.67%
+  median bio_r30  = 41.67%
+Diseases with >=1 SM GT: 2080
+  mean sm_r30     = 5.54%
+  median sm_r30   = 0.00%
+  mean sm_p30     = 2.63%
+
+======================================================================
+PER-CATEGORY (require >=10 diseases with >=1 biologic GT)
+======================================================================
+category            n_bio   n_sm   bio_r30   sm_r30  ratio   bio_p30   sm_p30
+  cancer               56    103   52.34%  19.10%  2.74x    5.24%  15.44%
+  cardiovascular       32     59   41.86%   3.69% 11.34x    3.33%   4.80%
+  hematological        14     25   41.67%   6.66%  6.26x    2.14%   4.13%
+  ophthalmic            3     13   33.33%   4.56%  7.31x    2.22%   3.08%
+  musculoskeletal       6     12   29.17%   8.45%  3.45x    2.22%   6.39%
+  other               146   1520   23.20%   5.00%  4.64x    1.28%   1.36%
+  dermatological        6     29   22.22%   2.96%  7.50x    1.11%   2.64%
+  autoimmune           24     31   20.92%   6.26%  3.34x    4.03%   6.67%
+  metabolic            26     57   17.09%   6.63%  2.58x    2.44%   2.92%
+  renal                11     20   11.36%   5.52%  2.06x    0.91%   7.50%
+  gastrointestinal     14     36    8.93%   3.82%  2.34x    1.19%   3.43%
+  endocrine             4      5    8.33%   1.00%  8.33x    0.83%   0.67%
+  neurological         15     44    7.78%   3.77%  2.06x    0.44%   3.41%
+  infectious            9     77    5.56%   1.06%  5.22x    0.37%   1.47%
+  immunological         4      8    5.00%   0.80%  6.27x    1.67%   3.33%
+  respiratory           7     24    4.76%   5.56%  0.86x    0.48%   5.00%
+  psychiatric           3     15    0.00%   6.54%  0.00x    0.00%  11.33%
+  reproductive          1      2    0.00%   2.13%  0.00x    0.00%   3.33%
+
+======================================================================
+DECISION
+======================================================================
+Categories with n_bio>=10 AND bio_r30 >= 3x sm_r30: 4
+  cardiovascular: n=32, bio_r30=41.86%, sm_r30=3.69%, ratio=11.34x
+  hematological: n=14, bio_r30=41.67%, sm_r30=6.66%, ratio=6.26x
+  other: n=146, bio_r30=23.20%, sm_r30=5.00%, ratio=4.64x
+  autoimmune: n=24, bio_r30=20.92%, sm_r30=6.26%, ratio=3.34x
+
+VERDICT: h906 motivation HOLDS: biologic target-overlap >> small-molecule in multiple categories.
+
+Top 15 diseases where biologic target-overlap hits (bio_r30 ranked):
+  disease                                    cat            bio_gt bio_hits  bio_r30  sm_r30
+  thrombosis                                 cardiovascular      3        3  100.0%   0.0%
+  unresectable pancreatic cancer             cancer              3        3  100.0%   5.7%
+  adenocarcinoma                             cancer              4        4  100.0%  27.5%
+  colorectal cancer                          cancer             10        8   80.0%   7.6%
+  polycystic ovary syndrome                  other               5        4   80.0%   4.3%
+  esophageal cancer                          cancer              5        4   80.0%  21.4%
+  rectal cancer                              cancer              5        4   80.0%  50.0%
+  ovarian cancer                             cancer              4        3   75.0%  13.6%
+  hepatic disease                            gastrointestinal      4        3   75.0%   3.0%
+  osteoporosis                               musculoskeletal      4        3   75.0%  10.2%
+  nonradiographic axial spondyloarthritis    autoimmune          8        6   75.0%   0.0%
+  gastric cancer                             cancer              7        5   71.4%  10.3%
+  pulmonary embolism                         cardiovascular      7        5   71.4%   3.8%
+  type 2 diabetes mellitus                   metabolic          13        9   69.2%   1.0%
+  metastasis                                 other               3        2   66.7%  11.8%
+
+Wrote: /Users/jimhuff/github/open-cure/data/analysis/h939_biologic_target_overlap_summary.json
+Wrote: /Users/jimhuff/github/open-cure/data/analysis/h939_biologic_target_overlap_records.json

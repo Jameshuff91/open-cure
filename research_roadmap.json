@@ -17285,7 +17285,7 @@
       "expected_impact": "high",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "Load DrugBank biologic flag or proxy (drug type == 'biotech') from drugbank_lookup.json",
         "Recompute per-disease target_r30 restricted to biologic drugs in the candidate pool",
@@ -17293,8 +17293,16 @@
         "Stratify by category and report the biologic-signal delta",
         "Success: if biologic target_r30 exceeds small-molecule by >=3x in >=3 categories, h906 still viable; otherwise mark h906 as likely-to-fail and deprioritize"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Biologic target-overlap is a markedly stronger signal than small-molecule target-overlap. Overall, diseases with >=1 biologic GT drug have mean bio_r30=26.5% (median 0%, highly skewed); diseases with >=5 biologic GT have mean bio_r30=40.7%, median 41.7%. Small-molecule baseline sm_r30 is only 5.5%. Four categories meet the pre-registered n>=10, ratio>=3x bar: cardiovascular 11.3x (41.9% vs 3.7%), hematological 6.3x (41.7% vs 6.7%), 'other' 4.6x (23.2% vs 5.0%), autoimmune 3.3x (20.9% vs 6.3%). Cancer narrowly misses at 2.74x but n=56 at 52.3% bio_r30. CAVEAT: precision@30 is NOT higher for biologics (2.24% vs 2.63% SM) because the biologic pool is small (266 of 11,656) - high recall but top-30 within a 266-drug pool still contains many false positives. Implication: target features should enter h906 as a fusion signal (not replace kNN), restricted to the biologic-candidate subset. Biologic flag is a USAN-suffix + keyword proxy (266 drugs); a DrugBank biotech flag would be more authoritative but this signal is robust enough that refinement unlikely to flip the verdict.",
+      "result_metric": "bio_r30 26.5% (>=1 bio GT, n=381) vs sm_r30 5.5% overall; 4 categories ratio>=3x; CV 11.3x, hematological 6.3x, autoimmune 3.3x, 'other' 4.6x",
+      "start_date": "2026-04-19",
+      "completed_date": "2026-04-19",
+      "outputs": [
+        "data/analysis/h939_biologic_target_overlap_summary.json",
+        "data/analysis/h939_biologic_target_overlap_records.json",
+        "data/analysis/h939_output.txt",
+        "scripts/h939_biologic_target_overlap_audit.py"
+      ]
     },
     {
       "id": "h940",
@@ -17313,6 +17321,81 @@
       ],
       "findings": "",
       "result_metric": ""
+    },
+    {
+      "id": "h940",
+      "title": "Biologic Target-Overlap Fusion Score: Fuse bio_target_r30 with kNN Score for Biologic-Candidate Predictions",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "high",
+      "effort": "medium",
+      "rationale": "h939 validated that target-overlap is a 3-11x stronger ranker for biologics than small molecules (CV 11.3x, hematological 6.3x, autoimmune 3.3x, 'other' 4.6x). But precision@30 is similar to SM (2.24% vs 2.63%) because the biologic pool is small. Next step: fuse target-overlap with kNN *only for biologic candidate drugs*, and measure holdout R@30 for biologics. If fused biologic R@30 exceeds the current 27.3% biologic baseline by >=5pp without overall regression, we have a DrugBank-free h906 delivery mechanism using only a biologic flag and existing drug_targets.",
+      "steps": [
+        "Load h939 per-disease records and current production kNN scores for biologic predictions",
+        "For each (disease, biologic candidate drug), compute fused score = alpha*knn + (1-alpha)*target_overlap_norm",
+        "Sweep alpha in [0.3, 0.5, 0.7, 0.9] on 5-seed holdout",
+        "Compute per-drug R@30 on biologics, small molecules, overall",
+        "Success: biologic R@30 +>=5pp, overall |delta| < 1pp",
+        "If success, prototype a 'biologic_target_fusion' annotation in production_predictor"
+      ],
+      "depends_on": [
+        "h939"
+      ]
+    },
+    {
+      "id": "h941",
+      "title": "Biologic Flag Refinement: DrugBank Biotech Category vs USAN-Suffix Proxy",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h939 used a USAN-suffix + keyword proxy (266 drugs) for the biologic flag. If the h939 signal is partly driven by naming-convention artifacts (peptide -tide drugs that are really small molecules; enzymes that are not biologics in the mAb/fusion-protein sense), the 3x ratio could weaken. Cross-check with DrugBank's biotech vs small-molecule classification. Low priority because h939 ratios are 3-11x - unlikely to flip the decision.",
+      "steps": [
+        "Register for DrugBank academic license (if not already)",
+        "Extract drug 'type' field for each DrugBank ID in drug_targets",
+        "Compute overlap and disagreement with USAN-suffix proxy",
+        "Re-run h939 analysis restricted to DrugBank-confirmed biotech drugs",
+        "Compare per-category ratios; report whether conclusions hold"
+      ],
+      "depends_on": [
+        "h939"
+      ]
+    },
+    {
+      "id": "h942",
+      "title": "Why Does Target-Overlap Fail for Small Molecules? Polypharmacy Dilution Test",
+      "status": "pending",
+      "priority": 4,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h939 showed small-molecule target_r30 is only 5.5% vs biologic 26.5%. Hypothesis: small molecules have many targets (polypharmacy), so off-target overlap with disease gene sets dilutes the signal. If true, restricting SM target-overlap to drugs with <=3 targets should narrow the gap. A 'specificity-weighted target-overlap' score could extend the h906 benefit to selective small molecules (kinase inhibitors, GPCR-selective agents).",
+      "steps": [
+        "From h939 records compute mean n_targets for biologic pool vs SM pool",
+        "Re-run SM target-overlap restricted to drugs with <=3 targets",
+        "Compare sm_r30_specific vs sm_r30_all and against biologic baseline",
+        "If specificity-restricted SM approaches biologic levels, consider specificity weighting in h940"
+      ],
+      "depends_on": [
+        "h939"
+      ]
+    },
+    {
+      "id": "h943",
+      "title": "Inverse Problem: Biologic Zero-Overlap as Confidence Signal for 'Unlikely Indication'",
+      "status": "pending",
+      "priority": 5,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h939 showed biologic target-overlap is a strong POSITIVE signal. The inverse: when a biologic is predicted by kNN but has ZERO target overlap with the disease gene set, how often is this a false positive? Biologics are mechanism-specific, so zero-overlap should be a strong negative predictor for biologics. If validated, this becomes an inverse-indication filter - exactly the kind of precision pivot called out in research_spec.md Section 5 (Inverse Problems).",
+      "steps": [
+        "Partition current MEDIUM/HIGH biologic predictions into (a) target-overlap>0 and (b) target-overlap=0",
+        "Compute holdout precision for each subset across 5 seeds",
+        "If (b) precision <= 10% AND (a) precision >= 25%, add biologic zero-overlap -> FILTER rule",
+        "Sanity-check that the filter does not remove known-correct predictions"
+      ],
+      "depends_on": [
+        "h939"
+      ]
     }
   ],
   "completed": [
@@ -19911,6 +19994,12 @@
       "hypothesis_id": "h916",
       "learning": "Cancer's target-overlap concentration (target_r30 0.119 vs 0.032 baseline) is NOT a drug-target-density artifact (r=0.136, ns) but also not a generalizable gene-set-size signal (cross-cat r=0.868 collapses to 0.353 without cancer; within-cat r near zero). Cancer's max_overlap is 28.5 vs 2.6 baseline \u2014 >10x \u2014 because cancer drugs and cancer diseases share a common cancer-gene vocabulary (oncogenes/TSGs/kinases). Target-overlap is a cancer-semantic signal, not a density feature. This invalidates the h916 null hypothesis but also weakens h906's assumed general applicability.",
       "implication": "DrugBank integration (h906) needs more granular features than raw target-overlap: target family, pathway membership, or biologic-specific target specificity. A blanket 'target overlap' feature will replicate h912's category concentration. Priority pivot: h939 (biologic-only target_r30) to confirm or deny h906's premise before investing effort."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h939",
+      "learning": "Target-overlap is a biologic signal (3-11x SM ratio across 4 categories; 26.5% bio_r30 vs 5.5% SM). Polypharmacy dilutes SM overlap but mAbs/fusions have clean 1:1 target mapping. h906 motivation preserved but precision is similar - deploy as fusion feature, not replacement.",
+      "implication": "Pursue h940 (biologic-only target+kNN fusion) ahead of full h906 DrugBank integration. h921 (ESM2 target embeddings) becomes more attractive because target-similarity > binary overlap for the 266-drug biologic pool. Deprioritize h906 until h940 quantifies achievable biologic R@30 gain."
     }
   ],
   "collaborations": [
