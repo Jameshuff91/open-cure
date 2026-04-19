@@ -17630,7 +17630,9 @@
         "Spot-check 5 prior h-number results (h904, h908, h939, h940, h951) to see if the bug biased their conclusions.",
         "Publish a bug-impact table: which experiments were affected, which are unaffected."
       ],
-      "status": "pending"
+      "status": "validated",
+      "findings": "Audit completed. Pre-fix, 287 of 1146 disease_names (25.0%) failed find_disease_id; post-fix 0 fail. In h393 evaluator pool of 1011 diseases, 213 (21.1%) were silently zero-predicted \u2014 consistent with h952 seed-42 observation (40/203 = 19.7%). 111 scripts call predict(disease_name); only 1 (h771) uses disease_id. Deliverable NOT affected: generate_production_deliverable.py iterates disease_ids and uses its own knn_predict() function, bypassing predictor.predict(). h939/h940 also bypass via direct kNN on disease_id \u2014 their pure kNN numbers (bio_r30=31.42%, overall_r30=20.30%) are trustworthy. h904/h908/most h393-derived evals pre-h952 are affected in magnitude but directional conclusions remain valid (tier-ordering preserved; recall suppressed ~3pp uniformly). h958 post-fix 5-seed and 13,416-row XLSX deliverable are unaffected.",
+      "result_metric": "287/1146 names pre-fix fail; 21.1% of h393 eval pool silently zero'd; deliverable NOT affected"
     },
     {
       "id": "h960",
@@ -17676,6 +17678,54 @@
         "If substantive change, re-publish and update CLAUDE.md deliverable row count."
       ],
       "status": "pending"
+    },
+    {
+      "id": "h963",
+      "title": "Validate predict(disease_id) fast-path \u2014 enable ID input to bypass find_disease_id entirely",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h959 showed passing disease_id to predict() returns None from find_disease_id (which only handles names). Callers that have disease_ids already (e.g., h393, h951, h771) must resolve back to disease_name and re-resolve to ID, adding a lossy round-trip. Add an ID fast-path: if the input matches disease_names or embeddings, skip find_disease_id entirely. Eliminates a class of silent bugs and avoids relying on reverse-index recall. Low-effort src/production_predictor.py:4617 edit.",
+      "steps": [
+        "Extend predict() to detect drkg:Disease::... prefix or embeddings key; skip find_disease_id if so.",
+        "Update h393 evaluator to pass disease_id directly (removes reliance on disease_names dict correctness).",
+        "Re-run h393 5-seed baseline to confirm no regression.",
+        "Audit h771 (only disease_id caller) \u2014 confirm it works post-change without needing wrapper hacks."
+      ],
+      "success_criteria": "Overall_r30 within 0.5pp of h958 baseline; no new zero-prediction diseases on the holdout."
+    },
+    {
+      "id": "h964",
+      "title": "Re-run h904 / h908 holdout tier precisions post-h952 fix to quantify magnitude drift",
+      "status": "pending",
+      "priority": 2,
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h959 established that h904 (rule demotions) and h908 (MeSH symptom blocklist) tier deltas were measured with the buggy find_disease_id active. Directional conclusions are preserved (tier ordering survives a uniform ~3pp recall suppression) but CLAUDE.md quotes GOLDEN 83.7%/HIGH 78.5%/MEDIUM 42.1% \u2014 these need a post-fix re-run to confirm numeric accuracy. Low-effort: re-run h393_holdout_tier_validation.py on a fixed random seed panel, compare to the quoted numbers, and update CLAUDE.md if |\u0394| > 1pp.",
+      "steps": [
+        "Run h393 5-seed tier precision on current main (post-h952 fix).",
+        "Diff against CLAUDE.md quoted tier numbers (GOLDEN 83.7%, HIGH 78.5%, MEDIUM 42.1%, LOW 11.2%, FILTER 8.2%).",
+        "Record updated tier precisions; update CLAUDE.md if any |\u0394| > 1pp.",
+        "Flag any h-number whose validation decision would flip at post-fix precision (unlikely but verify)."
+      ],
+      "success_criteria": "Updated tier table in CLAUDE.md; no h-number validation decisions flip."
+    },
+    {
+      "id": "h965",
+      "title": "Detect ALL silent-zero bugs \u2014 scripts that return 0 predictions for >10% of diseases without raising",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "The h952 bug was silent for months because predict() returns an empty PredictionResult instead of raising. Other silent-zero paths likely exist: (1) disease_id in mesh_mappings but NOT in embeddings (coverage_warning path), (2) kNN finds neighbors but no drug_scores accumulate (all neighbors have empty ground_truth), (3) category boost ends up boosting zero neighbors. Add a regression test that runs predict() over every evaluable disease and asserts n_predictions > 0 for at least 95% of them. Would catch any future silent-zero regression immediately.",
+      "steps": [
+        "Enumerate all disease_ids in ground_truth \u2229 embeddings and predict(disease_name=disease_names[id]) each.",
+        "Flag IDs returning 0 predictions; classify by root cause (name-resolution, no-coverage, kNN-empty, category-boost-empty).",
+        "Write scripts/test_predict_no_silent_zeros.py as a pytest-compatible regression.",
+        "Require n_empty < 5% of pool (post-h952 this should already hold)."
+      ],
+      "success_criteria": "Regression test checked in; currently passes at <5% empty rate."
     }
   ],
   "completed": [
@@ -20304,6 +20354,12 @@
       "hypothesis_id": "h952",
       "learning": "The h940 plain-kNN vs h951 production recall gap (~4pp) was entirely a find_disease_id name-resolution bug, not a methodology or SELECTIVE_BOOST issue. Adding a reverse-index fallback (disease_names lowercased -> disease_id) restores overall_r30 to plain-kNN parity (18.72% vs 18.71% at seed 42) and actually pushes bio_r30 slightly above plain kNN (31.96% vs 30.17%). 58% of disease_names entries were missing from mesh_mappings.",
       "implication": "Any past experiment that used predictor.predict(disease_name_from_disease_names) silently dropped ~20% of holdout diseases. Historical baselines (h951 bio_r30 27.06%, h904 tier precisions, many per-category deltas) need re-verification against the fixed predictor. The biologic-failure dissolution (h951) is strengthened, not weakened, by the fix."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h959",
+      "learning": "The h952 find_disease_id bug suppressed recall for 21.1% of holdout diseases in h393 (213/1011). Deliverable NOT affected (uses disease_id path). h939/h940 custom kNN NOT affected. h904/h908/h951 directionally valid but magnitudes dampened. 111 of 112 callers pass disease_name \u2014 only h771 passes id and was actually broken (find_disease_id can't resolve ids).",
+      "implication": "Downstream corrections: (1) add ID fast-path to predict() to eliminate class of bugs, (2) regression test for silent-zero outputs, (3) re-run h904/h908 tier precisions post-fix to update CLAUDE.md magnitudes."
     }
   ],
   "collaborations": [

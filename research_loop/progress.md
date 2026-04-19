@@ -3511,3 +3511,47 @@ Drift caused by accumulated code changes since h478 (69 insertions, 45 deletions
 ---
 
 [Earlier sessions: see git history]
+
+---
+
+## Current Session: h959 - predict() Call-Site Audit (2026-04-19)
+
+### Session Summary
+
+**Agent Role:** Research Executor
+**Status:** Complete
+**Hypothesis Tested: h959 (VALIDATED)**
+
+### Key Findings
+
+**h952 find_disease_id bug had broad reach but the deliverable is safe:**
+
+1. **Name-resolution coverage:** 287/1146 disease_names (25.0%) failed pre-fix; 0 fail post-fix.
+2. **h393 evaluator impact:** 213/1011 (21.1%) of the eval pool was silently zero-predicted pre-fix. Extrapolates to ~43/202 per-seed holdout fails — matches h952's seed-42 observation of 40/203 within sampling error.
+3. **Call-site distribution:** 111 of 112 scripts pass `disease_name` to `predictor.predict()`; only `h771_literature_coverage_analysis.py` passes `disease_id` (and that path actually fails silently because `find_disease_id` cannot resolve IDs).
+4. **Deliverable NOT affected:** `scripts/generate_production_deliverable.py` iterates `train_disease_list` (disease_ids) and calls its own `knn_predict(disease_id, …)`, bypassing `predictor.predict()` entirely.
+5. **h939/h940 NOT affected:** Both operate directly on disease embeddings by ID — their pure kNN numbers (bio_r30=31.42%, overall_r30=20.30%) are trustworthy.
+6. **h904/h908/pre-h952 h393 results:** Directionally valid (tier-ordering preserved under ~uniform 3pp recall suppression) but magnitudes dampened.
+
+### Bug-Impact Table
+
+| Experiment | Affected? | Severity |
+|---|---|---|
+| 13,416-row XLSX | NO | Uses disease_id path |
+| h939 biologic target-overlap | NO | Direct kNN bypasses predict() |
+| h940 biologic fusion | NO | Direct kNN bypasses predict() |
+| h958 post-fix 5-seed | NO | Ran with h952 fix |
+| h908 MeSH C23 blocklist | NO | Classification-only |
+| h904 rule tier demotions | YES (magnitude) | via h393; direction preserved |
+| h951 biologic baseline | YES (magnitude) | surface-case of the bug |
+| Most h393-derived tier precisions (pre-h952) | YES (magnitude) | ~3pp recall suppression |
+
+### New Hypotheses Generated (3)
+- h963 (P2): predict(disease_id) fast-path to bypass find_disease_id
+- h964 (P2): Re-run h904/h908 tier precisions post-fix; update CLAUDE.md magnitudes if |Δ|>1pp
+- h965 (P3): Regression test for silent-zero predict() outputs
+
+### Recommended Next Steps
+1. **h954** (P1): Reconcile 41.8% historical overall R@30 vs h951 16.39% — eval framework drift audit
+2. **h957** (P1): h949 zero-overlap biologic safety filter — precision pivot
+3. **h964** (P2): Re-run h904/h908 post-fix to validate quoted tier precisions

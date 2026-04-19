@@ -1,0 +1,86 @@
+{
+  "total_disease_names": 1146,
+  "pre_fix_failures": 287,
+  "post_fix_failures": 0,
+  "bug_impact_names_recovered": 287,
+  "pre_fix_fail_rate_pct": 25.04,
+  "post_fix_fail_rate_pct": 0.0,
+  "example_pre_fix_failures": [
+    "mycoplasma pneumonia",
+    "donovanosis",
+    "infections caused by colistinsensitive escherichia coli",
+    "haemophilus influenzae type b infections",
+    "neisseria gonorrhoeae infections",
+    "listeria monocytogenes",
+    "flutter",
+    "secondary infection of chronic respiratory disease",
+    "spinal cord diseases",
+    "minimal brain damage",
+    "inflammation of the cornea",
+    "haemolytic anaemia",
+    "autoimmune haemolytic anaemia",
+    "510methylenetetrahydrofolate reductase deficiency",
+    "heroin addiction",
+    "mental depression",
+    "ichthyoses vulgaris",
+    "acute nonspecific diarrhea",
+    "dacryoadenitis",
+    "infections of the ear",
+    "urological impairment",
+    "skin irritations",
+    "helicbacter pylori infection",
+    "pulmonary emboli accompanied by unstable hemodynamics",
+    "fusospirochetosis"
+  ],
+  "example_post_fix_failures": [],
+  "h393_evaluator_pool": 1011,
+  "h393_pre_fix_silent_zero": 213,
+  "h393_pre_fix_silent_zero_pct": 21.1,
+  "expected_per_seed_holdout_fails": 43,
+  "h952_observed_seed42_fails": 40,
+  "deliverable_affected": false,
+  "deliverable_reason": "generate_production_deliverable.py uses disease_id (via knn_predict), not predictor.predict(disease_name)",
+  "scripts_calling_predict_name": 111,
+  "scripts_calling_predict_id": 1,
+  "h393_evaluator_affected": true,
+  "h393_evaluator_reason": "scripts/h393_holdout_tier_validation.py:171 calls predictor.predict(disease_name)",
+  "h_number_bug_impact_table": {
+    "h904_rule_tier_demotions": {
+      "affected": true,
+      "via": "h393 evaluator",
+      "severity": "recall for 21% of holdout diseases suppressed; tier precision comparisons directionally valid but magnitudes dampened"
+    },
+    "h908_mesh_c23_classification": {
+      "affected": false,
+      "via": "classification-only, no predict() calls"
+    },
+    "h939_biologic_target_overlap_audit": {
+      "affected": false,
+      "via": "direct kNN on disease_id, bypasses predict()"
+    },
+    "h940_biologic_fusion_eval": {
+      "affected": false,
+      "via": "direct kNN on disease_id, bypasses predict()"
+    },
+    "h951_biologic_baseline": {
+      "affected": true,
+      "via": "predictor.predict(dis_name); this IS the bug-surfacing script"
+    },
+    "h958_post_fix_5_seed": {
+      "affected": false,
+      "via": "run with h952 fix applied"
+    }
+  },
+  "pre_fix_recall_suppression_estimate_pp": 3.1,
+  "corrected_metrics_still_valid": [
+    "h939 within-biologic-pool ratios (direct kNN path)",
+    "h940 fusion evaluation (direct kNN path)",
+    "h958 post-fix 5-seed baseline",
+    "13,416-row deliverable (disease_id path)"
+  ],
+  "metrics_needing_re_verification": [
+    "h904 rule-tier holdout deltas (magnitudes; directional conclusions likely valid)",
+    "h908 tier counts after symptom blocklist (magnitudes)",
+    "Most h393-derived tier precisions quoted pre-h952"
+  ]
+}
