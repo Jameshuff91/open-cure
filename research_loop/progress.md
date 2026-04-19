@@ -1,6 +1,79 @@
 # Research Loop Progress
 
-## Current Session: h951 — Biologic Failure-Class Reality Check (2026-04-19)
+## Current Session: h957 — Zero-Overlap Biologic Safety Filter (2026-04-19)
+
+### Hypothesis
+h957 implements h949: drop biologic predictions where the drug's targets share zero
+genes with the disease's gene set, on the premise that biologic efficacy almost
+always requires direct target engagement (mAbs, cytokines, fusion proteins).
+Filed by h955 as the precision pivot freed by closing h906/h920/h921/h924.
+
+### Status: INVALIDATED (global form) / pivots filed as h965, h966, h967
+
+### Experiment
+5-seed (42/123/456/789/2024) h393 80/20 disease holdout. For each holdout disease,
+`predictor.predict(disease_name, top_n=200, include_filtered=True)`. Apply filter
+to drop predictions where:
+  is_biologic(drug) AND drug_targets[d] non-empty AND disease_genes[D] non-empty
+  AND |drug_targets[d] ∩ disease_genes[D]| == 0
+Then take top-30 of survivors. Compare bio_p30, bio_r30, sm_r30, overall_r30
+baseline vs filtered.
+
+### Key findings (5-seed aggregate)
+| metric        | baseline       | filtered       | Δ        |
+|---------------|----------------|----------------|----------|
+| bio_p30       | 5.64% ± 1.99%  | 8.85% ± 2.63%  | +3.22pp  |
+| bio_r30       | 30.31% ± 3.57% | 14.78% ± 2.42% | -15.54pp |
+| sm_r30        | 19.29% ± 1.51% | 19.70% ± 1.65% |  +0.41pp |
+| overall_r30   | 19.79% ± 1.59% | 19.59% ± 1.57% |  -0.20pp |
+
+Ship criterion: bio_p30 +>=3pp AND bio_r30 drop <=2pp.
+Filter MEETS the precision target but VIOLATES the recall cap by ~7.8x.
+
+### Per-category split (sorted by Δp30 desc)
+| category         | n_p30 | n_r30 | Δ p30   | Δ r30   |
+|------------------|------:|------:|--------:|--------:|
+| musculoskeletal  |    17 |     6 | +26.1pp |  +0.0pp |
+| hematological    |    17 |     6 | +25.9pp | -25.0pp |
+| cardiovascular   |    55 |    37 | +13.2pp |  -8.1pp |
+| autoimmune       |    29 |    25 |  +9.3pp | -28.6pp |
+| metabolic        |    54 |    24 |  +9.1pp | -19.1pp |
+| **cancer**       |   115 |    54 | **+2.6pp** | **-2.1pp** |
+| ophthalmic       |    20 |     9 |  +1.2pp |  -5.6pp |
+| neurological     |    43 |    11 |  -5.8pp | -21.2pp |
+| respiratory      |    21 |     3 |  -6.4pp | -58.3pp |
+| immunological    |     7 |     1 |  -4.8pp | -100pp  |
+
+Cancer is the only category with sufficient n that essentially meets the ship
+cap. Musculoskeletal looks great but n=6 too small. Autoimmune/neuro/respiratory
+fail because disease_genes captures etiology genes (HLA, complement, structural)
+not the cytokine signaling targets that anti-TNF/anti-IL6/anti-IL17 biologics
+bind. Disease_genes is mechanism-aware in oncology (TCGA-dense), mechanism-blind
+in inflammatory disease.
+
+### Tier-shift impact
+Across 5 seeds, filter would demote 7 GOLDEN, 40 HIGH, 5 MEDIUM, 1087 LOW, 2797
+FILTER biologic predictions. The 47 GOLDEN/HIGH demotions are the highest-cost
+false positives; filed as h967 audit.
+
+### Why
+Target-overlap is a real biologic-correctness signal (precision lift confirmed)
+but disease_genes is too narrow a definition of "mechanism" to use as a global
+demoter. The per-category split is exactly what you'd predict from biology:
+cancer biologics target tumor-cell receptors directly; inflammatory biologics
+target soluble cytokines whose genes are absent from disease etiology gene sets.
+
+### Implication
+- Global filter REJECTED for deployment.
+- h965: cancer-restricted variant — easy ship test.
+- h966: pathway-aware overlap (KEGG-extended disease_genes) — fixes the
+  inflammatory false-positive class.
+- h967: GOLDEN/HIGH zero-overlap audit — characterizes whether high-tier
+  zero-overlap preds are GT gaps or genuine FPs.
+
+---
+
+## Previous Session: h951 — Biologic Failure-Class Reality Check (2026-04-19)
 
 ### Hypothesis
 h951 was filed by h940 as a sanity check before committing GPU/license effort

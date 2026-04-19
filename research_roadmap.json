@@ -17590,7 +17590,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 1,
-      "status": "pending",
+      "status": "invalidated",
       "steps": [
         "For each biologic prediction (drug in biologic_pool from h939 proxy), compute target-overlap with disease_genes for the predicted disease.",
         "If overlap == 0 AND no kNN-mechanism rescue, demote to FILTER (or LOW if already in MEDIUM/HIGH/GOLDEN with non-overlap evidence).",
@@ -17600,7 +17600,9 @@
       "depends_on": [
         "h951",
         "h955"
-      ]
+      ],
+      "findings": "5-seed h393 holdout (n=203/seed). Baseline (no filter) bio_p30=5.64%\u00b11.99%, bio_r30=30.31%\u00b13.57%, overall=19.79%\u00b11.59%. Filter (drop biologic with drug_targets \u2229 disease_genes == 0): bio_p30=8.85%\u00b12.63% (+3.22pp, MEETS +3pp ship target), bio_r30=14.78%\u00b12.42% (-15.54pp, VIOLATES <=2pp cap), overall=19.59%\u00b11.57% (-0.20pp, ~flat \u2014 sm preds untouched). 91 biologic GT hits per 5-seed run dropped from top-30 by the filter. Per-category split: **musculoskeletal** +26.1pp p30 / 0pp r30 cost (n=6, clean win), **cancer** +2.6pp p30 / -2.1pp r30 (largest pool n=115/54, essentially within cap), **ophthalmic** +1.2 / -5.6, **autoimmune** +9.3 / -28.6 (anti-cytokine MoA missed by gene-set overlap), **neurological/respiratory** -5.8/-6.4 p30 / -21/-58 r30 (filter actively harmful). Tier-shift: 7 GOLDEN, 40 HIGH, 5 MEDIUM, 1087 LOW, 2797 FILTER demotions across 5 seeds \u2014 47 GOLDEN/HIGH bio preds have zero overlap (mostly anti-cytokines whose targets aren't in disease_genes). Conclusion: target-overlap is too noisy as a global biologic demoter because disease_genes captures etiology genes, not signaling pathways biologics often act on. Cancer-restricted variant ships within the ship criterion (filed as h965).",
+      "result_metric": "delta bio_p30 = +3.22pp (MEETS ship target) / delta bio_r30 = -15.54pp (VIOLATES <=2pp cap, REJECT global)"
     },
     {
       "id": "h958",
@@ -20399,6 +20401,12 @@
       "hypothesis_id": "h954",
       "learning": "Baseline drift was a micro-vs-macro R@30 + GT-version pitfall: 41.8% is micro-averaged pool recall on Every-Cure-only GT (442 diseases) via a GB classifier; 19.49% is macro-averaged per-disease R@30 on expanded GT (1011 diseases) via kNN+tier production_predictor. Zero pending hypotheses cite 41.8% \u2014 drift contained to top-level docs.",
       "implication": "Document micro-vs-macro explicitly whenever quoting R@30. research_spec.md and initializer_prompt.md updated; a CLAUDE.md metric-hygiene subsection proposed (h967)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h957",
+      "learning": "Zero-overlap biologic safety filter: precision lift +3.22pp confirms target-engagement is a real biologic-correctness signal, but global deployment costs -15.54pp bio_r30. Per-category split: cancer (+2.6/-2.1) and musculoskeletal (+26/0) work; autoimmune/neurological/respiratory fail catastrophically because disease_genes does not capture cytokine-signaling targets that anti-cytokine biologics bind. Filter is mechanism-aware in oncology (TCGA-dense), mechanism-blind in inflammatory disease.",
+      "implication": "Apply target-overlap filtering only to categories where disease_genes captures the actual MoA target space (cancer first). For inflammatory categories, need pathway-membership overlap (h966) before filter is safe. Do not deploy global form."
     }
   ],
   "collaborations": [

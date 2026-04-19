@@ -1,0 +1,114 @@
+/opt/homebrew/lib/python3.14/site-packages/numpy/_core/fromnumeric.py:3824: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/opt/homebrew/lib/python3.14/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+==============================================================================
+h957: Zero-overlap biologic safety filter — 5-seed h393 holdout
+     candidate pool depth = 200, final top-N = 30
+==============================================================================
+Loading predictor ...
+Expanded GT: 3589 diseases, 57805 pairs
+Biologic pool size: 266 of 11656 drugs with targets
+Diseases with non-empty disease_genes: 6846 of 6846
+Evaluable diseases (GT ∩ embeddings): 1011
+
+--- Seed 42 ---
+Train: 808, Holdout: 203
+  evaluated=202  bio_gt_present=56  sm_gt_present=200
+  baseline:  overall=18.92%  bio_r30=31.96%  sm_r30=18.01%  bio_p30= 7.22%
+  filtered:  overall=18.38%  bio_r30=13.85%  sm_r30=18.21%  bio_p30= 9.61%
+  delta:     overall=-0.54pp  bio_r30=-18.11pp  bio_p30=+2.39pp
+  drops_total=754  in_top30=388  in_top30_were_bio_gt=23
+
+--- Seed 123 ---
+Train: 808, Holdout: 203
+  evaluated=200  bio_gt_present=59  sm_gt_present=198
+  baseline:  overall=22.22%  bio_r30=31.09%  sm_r30=21.52%  bio_p30= 7.10%
+  filtered:  overall=21.86%  bio_r30=12.49%  sm_r30=22.05%  bio_p30= 8.88%
+  delta:     overall=-0.36pp  bio_r30=-18.60pp  bio_p30=+1.79pp
+  drops_total=836  in_top30=514  in_top30_were_bio_gt=22
+
+--- Seed 456 ---
+Train: 808, Holdout: 203
+  evaluated=200  bio_gt_present=44  sm_gt_present=198
+  baseline:  overall=17.94%  bio_r30=24.13%  sm_r30=17.80%  bio_p30= 2.09%
+  filtered:  overall=17.82%  bio_r30=12.77%  sm_r30=18.04%  bio_p30= 4.18%
+  delta:     overall=-0.12pp  bio_r30=-11.36pp  bio_p30=+2.09pp
+  drops_total=742  in_top30=434  in_top30_were_bio_gt=11
+
+--- Seed 789 ---
+Train: 808, Holdout: 203
+  evaluated=200  bio_gt_present=49  sm_gt_present=197
+  baseline:  overall=21.07%  bio_r30=34.93%  sm_r30=20.65%  bio_p30= 4.78%
+  filtered:  overall=21.02%  bio_r30=19.04%  sm_r30=21.30%  bio_p30= 9.27%
+  delta:     overall=-0.05pp  bio_r30=-15.88pp  bio_p30=+4.48pp
+  drops_total=753  in_top30=460  in_top30_were_bio_gt=14
+
+--- Seed 2024 ---
+Train: 808, Holdout: 203
+  evaluated=200  bio_gt_present=71  sm_gt_present=198
+  baseline:  overall=18.80%  bio_r30=29.46%  sm_r30=18.47%  bio_p30= 7.00%
+  filtered:  overall=18.86%  bio_r30=15.73%  sm_r30=18.90%  bio_p30=12.33%
+  delta:     overall=+0.05pp  bio_r30=-13.73pp  bio_p30=+5.32pp
+  drops_total=851  in_top30=489  in_top30_were_bio_gt=21
+
+Skip reasons (summed across seeds):
+  no_gt                 13
+
+==============================================================================
+5-SEED AGGREGATE (mean ± std)
+==============================================================================
+  base_overall_r30_mean        =  19.79% ±  1.59%
+  filt_overall_r30_mean        =  19.59% ±  1.57%
+  base_bio_r30_mean            =  30.31% ±  3.57%
+  filt_bio_r30_mean            =  14.78% ±  2.42%
+  base_sm_r30_mean             =  19.29% ±  1.51%
+  filt_sm_r30_mean             =  19.70% ±  1.65%
+  base_bio_p30_mean            =   5.64% ±  1.99%
+  filt_bio_p30_mean            =   8.85% ±  2.63%
+
+  delta bio_p30   = +3.22pp  (target: >=+3pp)
+  delta bio_r30   = -15.54pp  (cap: drop <=2pp)
+  delta overall   = -0.20pp
+  delta sm_r30    = +0.41pp  (should be ~0)
+
+==============================================================================
+PER-CATEGORY (5-seed mean of bio_p30 baseline vs filtered)
+==============================================================================
+category              n_bio_top30   base_p30   filt_p30     Δp30   base_r30   filt_r30     Δr30
+  autoimmune                   29     13.91%     23.25%   +9.34     42.75%     14.16%  -28.59
+  cancer                      115      7.31%      9.94%   +2.63     24.49%     22.44%   -2.05
+  cardiovascular               55      8.51%     21.75%  +13.24     26.58%     18.47%   -8.11
+  dermatological               35      3.74%      6.25%   +2.51     58.33%      8.33%  -50.00
+  endocrine                     6     29.37%       nan%    +nan     43.75%      0.00%  -43.75
+  gastrointestinal             35      6.22%      5.28%   -0.94     58.33%     17.31%  -41.03
+  hematological                17      6.44%     32.38%  +25.94     52.78%     27.78%  -25.00
+  immunological                 7      4.76%      0.00%   -4.76    100.00%      0.00%  -100.00
+  infectious                   55      0.36%      0.00%   -0.36      5.56%      0.00%   -5.56
+  metabolic                    54      7.16%     16.23%   +9.07     21.88%      2.78%  -19.10
+  musculoskeletal              17      7.21%     33.33%  +26.12     50.00%     50.00%   +0.00
+  neurological                 43      5.81%      0.00%   -5.81     21.21%      0.00%  -21.21
+  ophthalmic                   20      5.46%      6.67%   +1.21     38.89%     33.33%   -5.56
+  other                       253      2.86%      3.08%   +0.22     27.49%     12.20%  -15.28
+  psychiatric                   8      0.00%      0.00%   +0.00      0.00%      0.00%   +0.00
+  renal                        20     18.92%     15.00%   -3.92     25.60%      7.14%  -18.45
+  reproductive                  1      0.00%      0.00%   +0.00      0.00%      0.00%   +0.00
+  respiratory                  21      6.35%      0.00%   -6.35     58.33%      0.00%  -58.33
+
+==============================================================================
+DROPPED BIOLOGIC PREDICTIONS BY TIER (5-seed sum)
+==============================================================================
+  FILTER      2797
+  LOW         1087
+  HIGH        40
+  GOLDEN      7
+  MEDIUM      5
+
+==============================================================================
+DECISION (h957)
+==============================================================================
+  delta bio_p30 = +3.22pp
+  delta bio_r30 = -15.54pp
+  VERDICT: BORDERLINE — bio_p30 gain offset by bio_r30 drop
+
+Saved -> /Users/jimhuff/github/open-cure/data/analysis/h957_zero_overlap_biologic_filter.json
