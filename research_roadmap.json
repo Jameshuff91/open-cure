@@ -17685,9 +17685,10 @@
         "Diff new vs old XLSX: added rows (previously dropped diseases), changed tier counts.",
         "If substantive change, re-publish and update CLAUDE.md deliverable row count."
       ],
-      "status": "in_progress",
-      "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T09:04:33"
+      "status": "validated",
+      "resolved_at": "2026-04-19T09:06:36",
+      "findings": "RE-PUBLICATION REQUIRED. Pre-h952-fix deliverable (Feb 7) was missing 459 diseases (41.2% of current coverage: 629 -> 1070). Shipped XLSX omitted 153 GOLDEN + 298 HIGH predictions for bug-suppressed rare diseases including ADA-SCID, infantile hemangioma, primary hyperoxaluria type 1, cryopyrin-associated periodic syndrome, cyclic neutropenia, malignant mesothelioma, actinomyces infection, homozygous familial sitosterolemia, head-and-neck SCC, and 450 others. Total rows 18717 -> 31926 (+13209, +70.6%). MEDIUM tier collapsed 2162 -> 945 (-56%), unrelated to h952 \u2014 driven by intermediate h904 overfit-rule demotions and h908 symptom blocklist. 18 diseases now absent from new deliverable (MeSH rename/removal, not bug-driven). New deliverable saved to data/deliverables/drug_repurposing_predictions_with_*. Diff artifact: data/analysis/h962_deliverable_diff.json.",
+      "result_metric": "629 -> 1070 diseases (+441); 18717 -> 31926 rows (+70.6%); 153 GOLDEN + 298 HIGH predictions recovered"
     },
     {
       "id": "h963",
