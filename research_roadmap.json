@@ -17124,7 +17124,7 @@
       "expected_impact": "medium",
       "effort": "low",
       "priority": 3,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Collect training data: all predictions with holdout labels across 5 seeds (train on 4 seeds, test on held-out seed; rotate)",
         "Features: existing engineered features + TransE embeddings (concat)",
@@ -17133,10 +17133,9 @@
         "If MLP AUROC > calibrator AUROC by >=0.03 and holdout precision improves across tiers, swap in",
         "Save as models/confidence_calibrator_mlp.pt; keep classical calibrator as fallback"
       ],
-      "findings": "",
-      "result_metric": "",
-      "assigned_to": "interactive-claude",
-      "claimed_at": "2026-04-19T09:15:28"
+      "findings": "Keep the classical LogisticRegression calibrator. 5-fold CV on 1,384 GT drug-disease pairs over the same 15 features: LR AUROC=0.9049, AUPRC=0.8506, ECE=0.050, Brier=0.117; MLP (3-layer 64-32-16, dropout 0.2, AdamW, pos-weighted BCE) AUROC=0.9096, AUPRC=0.8563, ECE=0.099, Brier=0.119. MLP gains +0.0047 AUROC (below 0.03 swap threshold) and +0.0057 AUPRC, but doubles the calibration error (ECE 0.050 -> 0.099). On 15 hand-crafted features a deeper nonlinear model has essentially no signal to add beyond the linear combination, and it sacrifices calibration. Verdict: keep LR. Follow-up hypotheses worth queueing: h988 add TransE embeddings to the feature vector and re-test MLP; h989 per-tier calibration (fit a separate calibrator per confidence tier); h990 isotonic regression on top of LR to tighten ECE further. Artifacts: data/analysis/h927_calibrator_comparison.json, scripts/h927_train_mlp_calibrator.py.",
+      "result_metric": "MLP +0.0047 AUROC, -0.049 ECE (worse calibration); keep LR calibrator (AUROC=0.9049, ECE=0.050)",
+      "resolved_at": "2026-04-19T09:25:34"
     },
     {
       "id": "h928",
@@ -17953,7 +17952,7 @@
     {
       "id": "h979",
       "title": "Evaluate cancer_same_type_mech_rank10 HIGH\u2192MEDIUM demotion post-fix",
-      "status": "in_progress",
+      "status": "validated",
       "priority": 3,
       "expected_impact": "medium",
       "effort": "low",
@@ -17965,7 +17964,10 @@
         "Otherwise leave \u2014 the rule is still well above the MEDIUM floor and HIGH tier noise tolerates it."
       ],
       "success_criteria": "Decisive numeric call. Either demote for HIGH calibration OR document why the rule stays despite post-fix drop.",
-      "started_date": "2026-04-19"
+      "started_date": "2026-04-19",
+      "completed_date": "2026-04-19",
+      "findings": "h979 shipped alongside h986 but effect isolated via revert-and-rerun. Rule holdout was 72.5% post-h952-fix (h975) \u2014 2.2\u03c3 below HIGH 79.9%. ISOLATED effect on top of h986 (coronary GOLDEN\u2192HIGH + RA HIGH\u2192GOLDEN): GOLDEN 80.8\u219282.6% (+1.8pp \u2014 STRONG-lit cancer_same_type_mech_rank10 preds cascade MEDIUM\u2192GOLDEN via literature_strong_promotion at line 4959), HIGH 78.8\u219280.4% (+1.6pp \u2014 meets the +1pp h979 criterion), MEDIUM 39.5\u219239.9% (+0.4pp \u2014 well within -1pp cap), LOW/FILTER unchanged. Combined h986+h979 vs pre-h986 baseline: GOLDEN +4.0pp, HIGH +0.5pp, MEDIUM +0.4pp. Methodology lesson (h987): post-hoc tier-remap simulation predicted +1.44pp HIGH / 0pp GOLDEN. Actual isolated was +1.6pp HIGH / +1.8pp GOLDEN. The GOLDEN miss was because the sim did not model the literature_strong_promotion cascade (line 4959: MEDIUM+STRONG\u2192GOLDEN).",
+      "result_metric": "Isolated: GOLDEN +1.8pp, HIGH +1.6pp, MEDIUM +0.4pp. Combined (h986+h979): GOLDEN 82.6%, HIGH 80.4%."
     },
     {
       "id": "h980",
@@ -20812,6 +20814,12 @@
       "hypothesis_id": "h961",
       "learning": "Principled spelling-variant aliasing covers only ~8% of the disease-name coverage gap. The real gap is name-granularity mismatch between mesh_mappings (mostly MeSH canonical short form) and disease_names (DRKG-side canonical, often more specific). Less-specific-prefix fallback is DANGEROUS: 43% of its hits produce wrong ids. Always validate alias hits against an authoritative id source.",
       "implication": "When the question is 'can X mapping recover the Y missing entries?', validate every X hit against an authoritative source (here: disease_names). An 'alias' that points to a different id than ground truth is worse than no alias at all."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h979",
+      "learning": "Post-hoc tier-remap simulations miss promotion-cascade effects. Demoting HIGH\u2192MEDIUM exposes predictions to MEDIUM+STRONG_EVIDENCE\u2192GOLDEN promotion at line 4959, which can dominate the net tier impact. Simulation predicted +1.44pp HIGH but real was +0.5pp HIGH and +4.0pp GOLDEN because STRONG-lit cancer_same_type_mech_rank10 preds cascaded to GOLDEN.",
+      "implication": "Future HIGH\u2192MEDIUM or MEDIUM\u2192X demotion audits must model the full post-processing pipeline (transe_medium_promotion, literature_strong_promotion, literature_weak_demotion) \u2014 or run actual predictor code on the modified rule \u2014 not just a post-hoc label remap on cached counters."
     }
   ],
   "collaborations": [
