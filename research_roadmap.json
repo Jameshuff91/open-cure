@@ -2789,7 +2789,7 @@
     {
       "id": "h1244",
       "title": "n_gt-stratified fusion benchmark \u2014 does the +2.78pp non-trivial lift hold up at p<0.05?",
-      "status": "pending",
+      "status": "validated",
       "priority": 2,
       "expected_impact": "medium",
       "effort": "low",
@@ -2801,7 +2801,9 @@
         "Save data/analysis/h1244_ngt_stratified_fusion.{json,md}.",
         "If hits@30 lift is significant for n_gt\u226551 (p<0.05), update CLAUDE.md DRKG-only ceiling table with hits@30 ceilings alongside R@30."
       ],
-      "success_criteria": "Identify \u22651 n_gt stratum where \u0394 R@30 OR \u0394 hits@30 reaches p<0.05; update ceilings if so. Negative result is also publishable (would mean fusion lift is uniformly distributed and h1230's non-trivial lift is just shifted by \u0394=0 rows)."
+      "success_criteria": "Identify \u22651 n_gt stratum where \u0394 R@30 OR \u0394 hits@30 reaches p<0.05; update ceilings if so. Negative result is also publishable (would mean fusion lift is uniformly distributed and h1230's non-trivial lift is just shifted by \u0394=0 rows).",
+      "findings": "Stratified paired-t on h1218's 1,002 (seed\u00d7disease) rows. **Disease-level (conservative; n=669) headline:** \u0394 R@30 = +1.30pp t=2.74 p=0.0063; \u0394 R@30 (non-trivial 360 diseases) = +2.41pp t=2.75 p=0.0062; **\u0394 hits@30 = +0.211 drugs/disease t=3.20 p=0.0014 (best p)**; \u0394 hits@30 (non-trivial) = +0.392 t=3.22 p=0.0014; \u0394 R@30/ceiling (non-trivial) = +2.85pp t=3.06 p=0.0024. Row-level p-values are an order of magnitude tighter (all \u22640.0007) but disease-level is the conservative reference because same-disease rows across 5 seeds are correlated. **Per-stratum disease-level \u0394 hits@30 (non-trivial): n_gt 21-50 is the ONLY stratum with p<0.05 on both R@30 (+2.10pp, p=0.0027) and hits@30 (+0.641 drugs/disease, p=0.0067). n_gt 51+ has the LARGEST absolute hits@30 mean (+0.436 drugs/disease) but fails p<0.05 (p=0.17)** \u2014 high-density diseases are heterogeneous (likely sub-class diversity). Bottom 3 strata (n_gt\u22645) are too sparse for fractional R@30 changes to register. **Conclusion: h1215 +1.32pp / h1230 +2.78pp non-trivial fusion lifts are statistically robust at p<0.01 disease-level. Hits@30 is the cleanest metric across both row and disease level. Fusion's value concentrates in moderate-density diseases (n_gt 21-50).** Outputs: data/analysis/h1244_ngt_stratified_paired_test.{json,md}; script: scripts/h1244_ngt_stratified_paired_test.py.",
+      "result_metric": "Disease-level: \u0394 R@30 +1.30pp p=0.0063, \u0394 hits@30 +0.211 drugs/disease p=0.0014; non-trivial \u0394 R@30 +2.41pp p=0.0062. n_gt 21-50 is the only stratum with disease-level p<0.05."
     },
     {
       "id": "h1245",
@@ -2820,6 +2822,41 @@
         "Save data/analysis/h1245_ngt_gated_fusion.{json,md}."
       ],
       "success_criteria": "Combined gate beats global concat_l2 by \u2265+0.3pp R@30 at p<0.1, OR clearly demonstrates the n_gt axis cannot be exploited (would close the per-disease gating direction)."
+    },
+    {
+      "id": "h1246",
+      "title": "Why does n_gt 21-50 dominate fusion gains? \u2014 Node2Vec score variance vs n_gt analysis",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "lever": "diagnostic",
+      "rationale": "h1244 found that fusion's disease-level statistical lift concentrates in n_gt=21-50 diseases (p=0.003 R@30, p=0.007 hits@30) while smaller and larger denominators fail the test. The mechanism is unknown. Two competing hypotheses: (a) Node2Vec scores have higher variance in this regime, so FastRP averaging helps; (b) candidate pool size relative to GT pool size is most favourable here. A simple per-stratum analysis of (mean Node2Vec top-30 score variance, candidate pool entropy) would distinguish. This informs whether to pursue per-disease adaptive fusion (h1245) or accept the global recipe.",
+      "steps": [
+        "For each h1218 row, compute per-disease Node2Vec top-30 score range (max-min) and standard deviation.",
+        "Group by n_gt stratum; correlate (\u0394 R@30, score_range) and (\u0394 R@30, score_std).",
+        "Test: does n_gt 21-50 have systematically higher Node2Vec score variance than other strata?",
+        "Save data/analysis/h1246_score_variance_vs_ngt.{json,md}."
+      ],
+      "success_criteria": "Identify whether Node2Vec score variance, candidate pool size, or GT-density distinguishes the n_gt 21-50 sweet spot. If positive, informs h1245's per-disease gating heuristic."
+    },
+    {
+      "id": "h1247",
+      "title": "n_gt\u226551 high variance \u2014 is it sub-class heterogeneity? ATC-diversity vs \u0394 R@30 audit",
+      "status": "pending",
+      "priority": 3,
+      "expected_impact": "low",
+      "effort": "low",
+      "lever": "diagnostic",
+      "rationale": "h1244 found that n_gt 51+ has the LARGEST absolute hits@30 fusion lift (+0.436 drugs/disease) but fails disease-level p<0.05 (p=0.17, t=1.38). Hypothesis: high-density diseases (e.g., cancer, infectious) have heterogeneous GT drug pools spanning multiple ATC sub-classes; fusion's score-smoothing helps for some sub-classes and hurts others, cancelling on average. Test: per-disease ATC sub-class diversity (= number of distinct ATC level-3 codes among GT drugs). If diversity correlates with |\u0394 R@30|, the heterogeneity hypothesis holds \u2014 and we should report fusion R@30 stratified by both n_gt AND ATC diversity.",
+      "steps": [
+        "For each disease in h1218, look up GT drug ATC codes via data/reference/drugbank_lookup.json.",
+        "Compute per-disease 'GT ATC level-3 diversity' = unique ATC[:3] count.",
+        "For n_gt\u226551 stratum: correlate diversity with |\u0394 R@30| and signed \u0394 R@30 / \u0394 hits@30.",
+        "Report per-(n_gt-stratum \u00d7 diversity-bucket) \u0394 table.",
+        "Save data/analysis/h1247_atc_diversity_vs_fusion_lift.{json,md}."
+      ],
+      "success_criteria": "Identify whether ATC sub-class diversity explains the high variance in n_gt\u226551 fusion lift. If yes, publish as 'fusion variance scales with GT heterogeneity' lesson and recommend within-ATC-subclass evaluation."
     }
   ],
   "completed": [
@@ -5616,6 +5653,12 @@
       "hypothesis_id": "h1230",
       "learning": "h1215's +1.32pp R@30 fusion headline is averaged across a population that is 52% structurally inert (n_gt small, fusion can't move R@30 fractionally). The actionable non-trivial lift on the remaining 478 (seed,disease) rows is +2.78pp. Endocrine and CV regressions at n_gt\u22655 are real, not artifacts. R@30 hides fusion lift on n_gt\u226551 diseases (denominator cap).",
       "implication": "Add hits@30 + ceiling-normalised R@30 as standard panel metrics; report 'non-trivial \u0394' alongside global \u0394 for fusion comparisons; treat endocrine and CV regressions as separate investigation tracks, not n_gt artifacts."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1244",
+      "learning": "h1215's fusion lift is statistically robust at disease-level paired-t (\u0394 R@30 p=0.006, \u0394 hits@30 p=0.001). The benefit concentrates in moderate-density diseases (n_gt 21-50): only this stratum reaches disease-level p<0.05. n_gt 51+ has the largest absolute hits lift but high variance kills significance \u2014 high-density diseases are likely sub-class heterogeneous.",
+      "implication": "Quote disease-level p-values (not row-level) as the canonical statistical claim. Hits@30 is the tightest metric across all strata. n_gt 21-50 is the cleanest evidence; investigate n_gt 51+ heterogeneity via ATC sub-class diversity."
     }
   ],
   "collaborations": [

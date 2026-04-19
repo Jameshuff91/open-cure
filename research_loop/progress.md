@@ -1,6 +1,76 @@
 # Research Loop Progress
 
-## Current Session: h1230 — Neutral-row characterisation re-frames h1215 headline (VALIDATED) (2026-04-19)
+## Current Session: h1244 — n_gt-stratified paired-t defends fusion lift at p<0.01 (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1244 (VALIDATED, statistical defense)
+
+### What was built
+`scripts/h1244_ngt_stratified_paired_test.py` — secondary analysis of h1218.
+For each of 1,002 (seed,disease) rows, computes Δ on three metrics
+(R@30, hits@30, ceiling-normalised R@30) and runs paired-t at row level
+(n=stratum size), disease level (after collapsing across seeds), and
+bootstrap 95% CI (10k samples). Includes a dep-free regularized
+incomplete beta implementation for Student-t p-values (no scipy import).
+
+### Headline (disease-level, n=669, conservative)
+| Metric | All Δ | t | p | Non-trivial Δ | t | p |
+|---|---:|---:|---:|---:|---:|---:|
+| R@30 | +1.30pp | +2.74 | 0.0063 | +2.41pp | +2.75 | 0.0062 |
+| hits@30 | +0.211 drugs | +3.20 | **0.0014** | +0.392 drugs | +3.22 | **0.0014** |
+| R@30/ceiling | +1.53pp | +3.04 | 0.0024 | +2.85pp | +3.06 | 0.0024 |
+
+Row-level p ≤ 0.0007 across all three metrics; disease-level is the
+conservative reference because same-disease rows across 5 seeds are correlated.
+
+### Per-stratum disease-level Δ hits@30 (non-trivial)
+| Stratum | n_nt | mean | t | p |
+|---|---:|---:|---:|---:|
+| 1 | 3 | +0.833 | +5.00 | 0.038 (binary, ignore) |
+| 2 | 4 | +0.250 | +0.33 | 0.76 |
+| 3-5 | 26 | +0.051 | +0.21 | 0.84 |
+| 6-10 | 59 | +0.244 | +1.35 | 0.18 |
+| 11-20 | 76 | +0.274 | +1.43 | 0.16 |
+| **21-50** | **84** | **+0.641** | **+2.78** | **0.0067** |
+| 51+ | 108 | +0.436 | +1.38 | 0.17 |
+
+### Key findings
+1. **The h1215 +1.32pp / h1230 +2.78pp fusion lifts are statistically robust** at
+   disease-level paired-t (p<0.01 across all three metrics).
+2. **n_gt 21-50 is the only stratum with disease-level p<0.05** on both R@30 and
+   hits@30. This is the regime where Node2Vec coverage is good, GT denominator
+   gives fractional gains room to register, and the sample is large enough to power
+   the paired-t.
+3. **n_gt 51+ has the largest absolute hits@30 mean** (+0.436 drugs/disease) but
+   fails p<0.05 due to high variance — likely sub-class heterogeneity within
+   high-density GT pools (cancer, infectious diseases).
+4. **Hits@30 is the cleanest metric** across both row and disease level — the only
+   metric to reach p<0.01 across all population restrictions.
+
+### Shipped
+- `scripts/h1244_ngt_stratified_paired_test.py` (with dep-free t-test implementation)
+- `data/analysis/h1244_ngt_stratified_paired_test.json` (full per-stratum × per-metric table)
+- `data/analysis/h1244_ngt_stratified_paired_test.md`
+- CLAUDE.md headline updated with h1244 paragraph
+- 2 new pending hypotheses (h1246 score-variance diagnostic, h1247 ATC-diversity audit)
+
+### New hypotheses (2 added)
+- **h1246 (P3, diagnostic, low effort):** Why does n_gt 21-50 dominate fusion gains?
+  Test Node2Vec score-variance and candidate-pool-entropy hypotheses.
+- **h1247 (P3, diagnostic, low effort):** Is n_gt≥51 high variance driven by ATC
+  sub-class heterogeneity? Per-disease ATC level-3 diversity vs |Δ R@30|.
+
+### Recommended next hypothesis
+**h1243 (P2, infrastructure, low effort)** — now that h1244 confirms hits@30 is the
+strongest metric for fusion comparisons, ship the Hits@K + non-trivial-Δ reporting
+into `scripts/clean_embedding_benchmark.py` so every future embedding experiment
+reports the right panel by default. Alternatively, **h1245 (P3, recall, medium)** —
+combine the n_gt 21-50 stratum gate with the category gainer-list from h1218 for a
+two-axis fusion router; this is the most promising recall-lever follow-up and was
+authorised by both h1230 and h1244's findings.
+
+---
+
+## Previous Session: h1230 — Neutral-row characterisation re-frames h1215 headline (VALIDATED) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1230 (VALIDATED, diagnostic / re-frames headline)
 
