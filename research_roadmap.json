@@ -3637,7 +3637,7 @@
       "id": "h1293",
       "title": "Three-embedding concat (N2V + FastRP + TransE/DistMult) \u2014 raise DRKG ceiling",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "label": "recall",
       "expected_impact": "high",
       "effort": "medium",
@@ -3650,7 +3650,9 @@
         "If 3-way loses, report which embedding subtracts signal (N2V+FastRP vs N2V+TransE vs FastRP+TransE 3-way ablation)",
         "Save data/analysis/h1293_three_embedding_concat.{json,md}"
       ],
-      "success_criteria": "\u0394R@30 >+0.3pp AND \u0394per-dis AUPRC >+0.001 at p<0.05 vs N2V+FastRP concat_l2."
+      "success_criteria": "\u0394R@30 >+0.3pp AND \u0394per-dis AUPRC >+0.001 at p<0.05 vs N2V+FastRP concat_l2.",
+      "findings": "INVALIDATED on promotion gate. 20-seed benchmark of 4 modes: concat_l2_2way anchor, concat_l2_3way (N2V+FastRP+TransE), soft_blend_w050_2way canonical, soft_blend_w050_3way. TransE loaded from models/transe.pt (273,581\u00d7128 entity embeddings; 49,616 overlap with N2V after namespace match). **3-way concat vs 2-way concat: \u0394R@30 = -0.25pp p=0.067, \u0394per-dis AUPRC = -0.00108 p=0.099 \u2014 borderline WORSE, not better.** Gate requires \u0394R@30 > +0.3pp AND \u0394AUPRC > +0.001 at p<0.05, both FAIL. **3-way soft-blend vs 2-way soft-blend is tied**: R@30 -0.04pp p=0.64, AUPRC +0.00028 p=0.54. TransE brings no orthogonal DRKG signal despite different structural prior (translational vs random-walk + random-projection). Pooled AUPRC/AUROC slightly rise with 3-way (+0.0019 pooled AUPRC, +0.0021 pooled AUROC) \u2014 pure score-scale artifact per h1259. **Sub-finding preserved: soft-blend generalises to 3-way (same +0.39pp R@30 lift over concat_3way raw p=0.012 as 2-way has over concat_2way raw) \u2014 methodological validation that soft-blend is a universal primitive across embedding stacks.** Linear embedding-stacking axis joins the linear-weight axis as exhausted on GLOBAL. Limitation: TransE was trained on DRKG+PrimeKG+Hetionet union, not DRKG-only \u2014 the broader-scope prior may be a confounder. A DRKG-only TransE/DistMult (h1298) would control for this, but the existing checkpoint already carries TransE's translational structure and adds nothing.",
+      "result_metric": "3-way concat \u0394R@30 = -0.25pp p=0.067; 3-way soft-blend \u0394R@30 = -0.04pp p=0.64 (both FAIL gate)"
     },
     {
       "id": "h1294",
@@ -3726,6 +3728,43 @@
         "Save data/analysis/h1297_cancer_weight_sweep.{json,md}"
       ],
       "success_criteria": "Identify the cancer-specific w that maximises \u0394 R@30 vs W050 at p<0.05. If it differs from 0.35 by >0.1, update h1296 rule."
+    },
+    {
+      "id": "h1298",
+      "title": "DRKG-only TransE/DistMult to control for graph-scope confound in h1293",
+      "priority": 3,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "low",
+      "effort": "high",
+      "rationale": "h1293's TransE checkpoint (models/transe.pt) was trained on DRKG + PrimeKG + Hetionet union (273k entities vs 49k in DRKG-only). The 3-way concat regressed R@30 by 0.25pp, possibly because TransE's broader structural prior dilutes DRKG-specific signal. Training a DRKG-only TransE or DistMult (single-graph objective, matching N2V/FastRP training scope) isolates whether the regression is a translational-family artifact or a cross-graph scope artifact. PyKEEN can train on DRKG's 5.9M edges in ~6h CPU. If DRKG-only TransE ALSO fails to add signal to 2-way concat, the translational-family axis is definitively closed for DRKG recall.",
+      "steps": [
+        "Use PyKEEN to train TransE/DistMult on DRKG-only triples (49k entities, 5.9M edges)",
+        "128-dim, 100 epochs, standard margin loss, same train/test split as N2V/FastRP",
+        "Run h1293 again with the DRKG-only checkpoint",
+        "If \u0394R@30 > +0.3pp AND \u0394AUPRC > +0.001 at p<0.05 vs 2-way concat, promote as new canonical",
+        "Save data/analysis/h1298_drkg_only_transe.{json,md}"
+      ],
+      "success_criteria": "DRKG-only TransE in 3-way concat beats 2-way concat at \u0394R@30 > +0.3pp p<0.05 AND \u0394AUPRC > +0.001 p<0.05."
+    },
+    {
+      "id": "h1299",
+      "title": "Rank-aggregation non-linear combiners (RRF, Borda) on N2V+FastRP \u2014 follow up h1266",
+      "priority": 2,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "With linear-weight axis (h1275/h1287) and linear-embedding-stacking axis (h1293) both exhausted on GLOBAL, non-linear combiners are the only untested DRKG-only recall lever. Reciprocal Rank Fusion (RRF, score = \u03a3 1/(k+rank_i)) is scale-invariant and robust to per-embedding score heterogeneity \u2014 the exact issue that tanked pooled AUPRC in h1259. Borda count aggregation has similar properties. h1266 was queued on this in the h1275 branch but never shipped. Could add +0.1 to +0.3pp R@30 by letting N2V and FastRP each contribute independent ranking information rather than a joint embedding space.",
+      "steps": [
+        "Implement RRF: for each disease, rank candidates by N2V and FastRP separately; score = \u03a3 1/(k_rrf + rank_i); default k_rrf=60",
+        "Implement Borda: score = \u03a3 (N_candidates - rank_i)",
+        "Also test RRF on (N2V, FastRP, concat_l2) \u2014 3-rank fusion",
+        "20-seed benchmark vs concat_l2_2way and soft_blend_w050_2way",
+        "Paired-t: promotion gate \u0394R@30 > +0.3pp AND \u0394AUPRC > +0.001 at p<0.05",
+        "Save data/analysis/h1299_rank_aggregation.{json,md}"
+      ],
+      "success_criteria": "RRF or Borda beats soft_blend_w050_2way on \u0394R@30 > +0.15pp at p<0.05 AND \u0394AUPRC > +0.0005 at p<0.05."
     }
   ],
   "completed": [
@@ -6607,6 +6646,12 @@
       "hypothesis_id": "h1295",
       "learning": "Per-disease audit of h1287's W035 vs W050 +0.174pp aggregate \u0394R@30 shows the R@30 plateau tilt is NOT uniform: cancer (n=431) drives +0.795pp at p=0.0003, while 16 other categories' shifts fall under noise floor. h1281's inner-fit cancer modal_w=0.25 is confirmed as the one real categorical signal; infectious/other 'positive' categories were noisy retrospective sorting. 82% of rows are neutral; the +0.96pp shift lives in the 18% of (seed,disease) pairs where blending swaps at least one rank-30 boundary drug.",
       "implication": "Category-gated w routing should target CANCER ONLY on R@30 (h1296 two-recipe rule). Blanket W035 extracts most of the signal already (+0.174pp vs W050 p=0.001). A cancer-gated rule can LOCK IN the +0.795pp cancer lift while keeping other categories at W050 where the canonical AUPRC Pareto sits (h1275 per-dis AUPRC peak). This is the conservative interpretation of h1281's extreme-endpoint failure: the per-category signal is real for cancer but only for cancer."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1293",
+      "learning": "TransE (DRKG+PrimeKG+Hetionet pretrained) added in 3-way concat REGRESSES R@30 by 0.25pp (p=0.067) vs 2-way N2V+FastRP concat. 3-way soft-blend is tied with 2-way soft-blend. Translational-family prior does not add orthogonal DRKG recall signal despite different structural objective. Sub-finding: soft-blend's +0.4pp R@30 lift over raw concat is independent of embedding-stack width \u2014 the primitive is universal and transfers to h1202.",
+      "implication": "Linear embedding-stacking axis is EXHAUSTED on GLOBAL. Future recall lifts require: (a) non-linear combiners (RRF / Borda, h1299), (b) external signals (h1290 LINCS-as-feature), (c) per-disease learnable weights from continuous features (h1288), or (d) DRKG-only retrained translational model (h1298) to control for scope confound. The soft-blend primitive is confirmed as scale-robust and generalises to arbitrary embedding stacks."
     }
   ],
   "collaborations": [

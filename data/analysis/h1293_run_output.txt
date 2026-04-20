@@ -1,0 +1,171 @@
+========================================================================
+h1293: Three-embedding concat_l2 — N2V + FastRP + TransE
+  seeds=20
+========================================================================
+Loading embeddings...
+  N2V=49,616  FastRP=49,616  TransE_raw=97,238  3-way intersection=49,616
+  concat_2way=49,616  concat_3way=49,616
+Universe: 1,011 diseases  | setup 0.7s
+
+  seed 42 (1.0s) n_eval=202
+    concat_l2_2way           R@30=20.68%  per-dis-AUPRC=0.1227  per-dis-AUROC=0.6237
+    concat_l2_3way           R@30=20.26%  per-dis-AUPRC=0.1203  per-dis-AUROC=0.6202
+    soft_blend_w050_2way     R@30=20.67%  per-dis-AUPRC=0.1298  per-dis-AUROC=0.6314
+    soft_blend_w050_3way     R@30=20.39%  per-dis-AUPRC=0.1285  per-dis-AUROC=0.6280
+
+  seed 123 (1.0s) n_eval=200
+    concat_l2_2way           R@30=20.86%  per-dis-AUPRC=0.1119  per-dis-AUROC=0.6178
+    concat_l2_3way           R@30=19.84%  per-dis-AUPRC=0.1115  per-dis-AUROC=0.6218
+    soft_blend_w050_2way     R@30=21.90%  per-dis-AUPRC=0.1233  per-dis-AUROC=0.6361
+    soft_blend_w050_3way     R@30=21.76%  per-dis-AUPRC=0.1208  per-dis-AUROC=0.6365
+
+  seed 456 (1.0s) n_eval=200
+    concat_l2_2way           R@30=21.00%  per-dis-AUPRC=0.1214  per-dis-AUROC=0.6197
+    concat_l2_3way           R@30=20.64%  per-dis-AUPRC=0.1149  per-dis-AUROC=0.6224
+    soft_blend_w050_2way     R@30=21.08%  per-dis-AUPRC=0.1198  per-dis-AUROC=0.6294
+    soft_blend_w050_3way     R@30=20.61%  per-dis-AUPRC=0.1185  per-dis-AUROC=0.6306
+
+  seed 789 (1.0s) n_eval=200
+    concat_l2_2way           R@30=22.34%  per-dis-AUPRC=0.1390  per-dis-AUROC=0.6284
+    concat_l2_3way           R@30=22.53%  per-dis-AUPRC=0.1358  per-dis-AUROC=0.6273
+    soft_blend_w050_2way     R@30=23.08%  per-dis-AUPRC=0.1401  per-dis-AUROC=0.6358
+    soft_blend_w050_3way     R@30=22.58%  per-dis-AUPRC=0.1404  per-dis-AUROC=0.6354
+
+  seed 2024 (1.1s) n_eval=200
+    concat_l2_2way           R@30=19.49%  per-dis-AUPRC=0.1199  per-dis-AUROC=0.6159
+    concat_l2_3way           R@30=19.57%  per-dis-AUPRC=0.1226  per-dis-AUROC=0.6152
+    soft_blend_w050_2way     R@30=19.77%  per-dis-AUPRC=0.1255  per-dis-AUROC=0.6269
+    soft_blend_w050_3way     R@30=19.66%  per-dis-AUPRC=0.1290  per-dis-AUROC=0.6264
+
+  seed 1 (1.0s) n_eval=199
+    concat_l2_2way           R@30=20.72%  per-dis-AUPRC=0.1298  per-dis-AUROC=0.6208
+    concat_l2_3way           R@30=20.62%  per-dis-AUPRC=0.1230  per-dis-AUROC=0.6219
+    soft_blend_w050_2way     R@30=21.14%  per-dis-AUPRC=0.1281  per-dis-AUROC=0.6293
+    soft_blend_w050_3way     R@30=20.48%  per-dis-AUPRC=0.1248  per-dis-AUROC=0.6327
+
+  seed 2 (1.0s) n_eval=200
+    concat_l2_2way           R@30=22.92%  per-dis-AUPRC=0.1206  per-dis-AUROC=0.6269
+    concat_l2_3way           R@30=22.24%  per-dis-AUPRC=0.1231  per-dis-AUROC=0.6250
+    soft_blend_w050_2way     R@30=22.97%  per-dis-AUPRC=0.1217  per-dis-AUROC=0.6391
+    soft_blend_w050_3way     R@30=22.83%  per-dis-AUPRC=0.1243  per-dis-AUROC=0.6395
+
+  seed 3 (1.0s) n_eval=200
+    concat_l2_2way           R@30=22.22%  per-dis-AUPRC=0.1369  per-dis-AUROC=0.6268
+    concat_l2_3way           R@30=22.20%  per-dis-AUPRC=0.1331  per-dis-AUROC=0.6275
+    soft_blend_w050_2way     R@30=22.09%  per-dis-AUPRC=0.1409  per-dis-AUROC=0.6347
+    soft_blend_w050_3way     R@30=22.16%  per-dis-AUPRC=0.1438  per-dis-AUROC=0.6360
+
+  seed 4 (1.0s) n_eval=201
+    concat_l2_2way           R@30=22.07%  per-dis-AUPRC=0.1264  per-dis-AUROC=0.6291
+    concat_l2_3way           R@30=20.66%  per-dis-AUPRC=0.1247  per-dis-AUROC=0.6291
+    soft_blend_w050_2way     R@30=21.46%  per-dis-AUPRC=0.1299  per-dis-AUROC=0.6395
+    soft_blend_w050_3way     R@30=22.02%  per-dis-AUPRC=0.1290  per-dis-AUROC=0.6400
+
+  seed 5 (1.0s) n_eval=201
+    concat_l2_2way           R@30=20.84%  per-dis-AUPRC=0.1309  per-dis-AUROC=0.6262
+    concat_l2_3way           R@30=20.57%  per-dis-AUPRC=0.1306  per-dis-AUROC=0.6269
+    soft_blend_w050_2way     R@30=21.28%  per-dis-AUPRC=0.1354  per-dis-AUROC=0.6329
+    soft_blend_w050_3way     R@30=20.81%  per-dis-AUPRC=0.1359  per-dis-AUROC=0.6331
+
+  seed 6 (1.0s) n_eval=199
+    concat_l2_2way           R@30=23.76%  per-dis-AUPRC=0.1369  per-dis-AUROC=0.6351
+    concat_l2_3way           R@30=22.69%  per-dis-AUPRC=0.1355  per-dis-AUROC=0.6307
+    soft_blend_w050_2way     R@30=23.76%  per-dis-AUPRC=0.1469  per-dis-AUROC=0.6424
+    soft_blend_w050_3way     R@30=23.26%  per-dis-AUPRC=0.1460  per-dis-AUROC=0.6416
+
+  seed 7 (1.0s) n_eval=200
+    concat_l2_2way           R@30=21.03%  per-dis-AUPRC=0.1134  per-dis-AUROC=0.6244
+    concat_l2_3way           R@30=20.71%  per-dis-AUPRC=0.1127  per-dis-AUROC=0.6298
+    soft_blend_w050_2way     R@30=20.56%  per-dis-AUPRC=0.1112  per-dis-AUROC=0.6350
+    soft_blend_w050_3way     R@30=21.12%  per-dis-AUPRC=0.1138  per-dis-AUROC=0.6388
+
+  seed 8 (1.0s) n_eval=202
+    concat_l2_2way           R@30=21.90%  per-dis-AUPRC=0.1285  per-dis-AUROC=0.6227
+    concat_l2_3way           R@30=22.75%  per-dis-AUPRC=0.1303  per-dis-AUROC=0.6254
+    soft_blend_w050_2way     R@30=22.57%  per-dis-AUPRC=0.1326  per-dis-AUROC=0.6337
+    soft_blend_w050_3way     R@30=22.98%  per-dis-AUPRC=0.1327  per-dis-AUROC=0.6342
+
+  seed 9 (1.0s) n_eval=197
+    concat_l2_2way           R@30=22.19%  per-dis-AUPRC=0.1163  per-dis-AUROC=0.6258
+    concat_l2_3way           R@30=22.14%  per-dis-AUPRC=0.1167  per-dis-AUROC=0.6298
+    soft_blend_w050_2way     R@30=21.74%  per-dis-AUPRC=0.1177  per-dis-AUROC=0.6359
+    soft_blend_w050_3way     R@30=21.89%  per-dis-AUPRC=0.1168  per-dis-AUROC=0.6403
+
+  seed 10 (1.0s) n_eval=198
+    concat_l2_2way           R@30=19.83%  per-dis-AUPRC=0.1086  per-dis-AUROC=0.6226
+    concat_l2_3way           R@30=19.08%  per-dis-AUPRC=0.1073  per-dis-AUROC=0.6204
+    soft_blend_w050_2way     R@30=20.25%  per-dis-AUPRC=0.1140  per-dis-AUROC=0.6400
+    soft_blend_w050_3way     R@30=20.34%  per-dis-AUPRC=0.1128  per-dis-AUROC=0.6400
+
+  seed 11 (1.0s) n_eval=202
+    concat_l2_2way           R@30=22.58%  per-dis-AUPRC=0.1378  per-dis-AUROC=0.6352
+    concat_l2_3way           R@30=22.87%  per-dis-AUPRC=0.1421  per-dis-AUROC=0.6369
+    soft_blend_w050_2way     R@30=23.11%  per-dis-AUPRC=0.1445  per-dis-AUROC=0.6459
+    soft_blend_w050_3way     R@30=23.87%  per-dis-AUPRC=0.1481  per-dis-AUROC=0.6467
+
+  seed 12 (1.0s) n_eval=198
+    concat_l2_2way           R@30=20.10%  per-dis-AUPRC=0.1174  per-dis-AUROC=0.6217
+    concat_l2_3way           R@30=20.65%  per-dis-AUPRC=0.1148  per-dis-AUROC=0.6203
+    soft_blend_w050_2way     R@30=20.94%  per-dis-AUPRC=0.1274  per-dis-AUROC=0.6325
+    soft_blend_w050_3way     R@30=20.87%  per-dis-AUPRC=0.1270  per-dis-AUROC=0.6316
+
+  seed 13 (1.1s) n_eval=198
+    concat_l2_2way           R@30=20.39%  per-dis-AUPRC=0.1095  per-dis-AUROC=0.6190
+    concat_l2_3way           R@30=19.95%  per-dis-AUPRC=0.1078  per-dis-AUROC=0.6152
+    soft_blend_w050_2way     R@30=20.56%  per-dis-AUPRC=0.1104  per-dis-AUROC=0.6285
+    soft_blend_w050_3way     R@30=20.33%  per-dis-AUPRC=0.1096  per-dis-AUROC=0.6266
+
+  seed 14 (1.0s) n_eval=199
+    concat_l2_2way           R@30=22.20%  per-dis-AUPRC=0.1321  per-dis-AUROC=0.6250
+    concat_l2_3way           R@30=22.69%  per-dis-AUPRC=0.1311  per-dis-AUROC=0.6236
+    soft_blend_w050_2way     R@30=22.04%  per-dis-AUPRC=0.1272  per-dis-AUROC=0.6321
+    soft_blend_w050_3way     R@30=21.78%  per-dis-AUPRC=0.1282  per-dis-AUROC=0.6321
+
+  seed 15 (1.0s) n_eval=198
+    concat_l2_2way           R@30=19.97%  per-dis-AUPRC=0.1218  per-dis-AUROC=0.6142
+    concat_l2_3way           R@30=19.40%  per-dis-AUPRC=0.1222  per-dis-AUROC=0.6167
+    soft_blend_w050_2way     R@30=19.80%  per-dis-AUPRC=0.1244  per-dis-AUROC=0.6283
+    soft_blend_w050_3way     R@30=20.19%  per-dis-AUPRC=0.1260  per-dis-AUROC=0.6303
+
+========================================================================
+AGGREGATE (mean ± std, 20 seeds)
+========================================================================
+  concat_l2_2way            R@30=21.35%±1.13%  per-dis-AUPRC=0.1241±0.0094  per-dis-AUROC=0.6240±0.0054
+  concat_l2_3way            R@30=21.10%±1.24%  per-dis-AUPRC=0.1230±0.0097  per-dis-AUROC=0.6243±0.0055
+  soft_blend_w050_2way      R@30=21.54%±1.12%  per-dis-AUPRC=0.1275±0.0102  per-dis-AUROC=0.6345±0.0049
+  soft_blend_w050_3way      R@30=21.50%±1.16%  per-dis-AUPRC=0.1278±0.0107  per-dis-AUROC=0.6350±0.0053
+
+========================================================================
+PAIRED-T COMPARISONS
+========================================================================
+
+  3-way concat vs 2-way anchor:
+    R@30           Δ=-0.2511pp  p=0.06709
+    per-dis-AUPRC  Δ=-0.00108  p=0.09899
+    per-dis-AUROC  Δ=+0.00026  p=0.6789
+
+  3-way soft-blend vs 2-way canonical:
+    R@30           Δ=-0.0433pp  p=0.6396
+    per-dis-AUPRC  Δ=+0.00028  p=0.5373
+    per-dis-AUROC  Δ=+0.00056  p=0.1902
+
+  3-way soft-blend vs 2-way anchor:
+    R@30           Δ=+0.1415pp  p=0.2353
+    per-dis-AUPRC  Δ=+0.00371  p=0.00181
+    per-dis-AUROC  Δ=+0.01097  p=9.956e-11
+
+  3-way soft-blend vs 3-way raw:
+    R@30           Δ=+0.3926pp  p=0.01255
+    per-dis-AUPRC  Δ=+0.00479  p=3.084e-05
+    per-dis-AUROC  Δ=+0.01071  p=2.536e-12
+
+========================================================================
+PROMOTION GATE: 3-way beats 2-way at ΔR@30 > +0.3pp AND Δper-dis AUPRC > +0.001 at p<0.05
+========================================================================
+  concat_l2_3way vs concat_l2_2way:
+    ΔR@30=-0.2511pp p=0.06709  R@30_gate=FAIL
+    ΔAUPRC=-0.00108 p=0.09899  AUPRC_gate=FAIL
+    → STAY with 2-way concat
+
+Wrote data/analysis/h1293_three_embedding_concat.json
+Wrote data/analysis/h1293_three_embedding_concat.md

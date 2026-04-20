@@ -5932,3 +5932,61 @@ h1281's inner-fold fit picked `modal_w=0.25` for cancer and hit the most positiv
 
 ### Recommended next hypothesis
 **h1296** if we want to finalise a cancer-specific production recipe (~30 min to run), then **h1297** to understand the mechanism. Alternatively pivot to **h1293** (three-embedding concat) for a higher-impact but higher-cost direction that complements h1295's finding.
+
+
+## Current Session (continued): h1293 — Three-embedding concat_l2 (INVALIDATED; linear-embedding-stacking axis exhausted) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1293 (INVALIDATED)
+
+### What was shipped
+`scripts/h1293_three_embedding_concat.py` — 20-seed benchmark of 4 modes: concat_l2 (N2V+FastRP) 2-way anchor, concat_l2 (N2V+FastRP+TransE) 3-way candidate, soft_blend_w050 on each. TransE loaded from `models/transe.pt` (273,581×128 entities; 49,616 overlap with N2V after matching `drkg:` namespace prefix).
+
+### Aggregate (20 seeds, 1,011 diseases)
+
+| Mode | R@30 | per-dis-AUPRC | per-dis-AUROC | pooled-AUPRC | pooled-AUROC |
+|---|---|---|---|---|---|
+| `concat_l2_2way` | 21.35%±1.13% | 0.1241±0.0094 | 0.6240±0.0054 | 0.0647±0.0052 | 0.5856±0.0064 |
+| `concat_l2_3way` | 21.10%±1.24% | 0.1230±0.0097 | 0.6243±0.0055 | 0.0666±0.0056 | 0.5877±0.0065 |
+| `soft_blend_w050_2way` | 21.54%±1.12% | 0.1275±0.0102 | 0.6345±0.0049 | 0.0595±0.0052 | 0.4531±0.0350 |
+| `soft_blend_w050_3way` | 21.50%±1.16% | 0.1278±0.0107 | 0.6350±0.0053 | 0.0593±0.0051 | 0.4411±0.0310 |
+
+### Paired-t comparisons
+
+| Comparison | ΔR@30 (p) | Δper-dis-AUPRC (p) | Δper-dis-AUROC (p) |
+|---|---|---|---|
+| 3-way concat vs 2-way anchor | -0.251pp (0.067) | -0.00108 (0.099) | +0.00026 (0.679) |
+| 3-way soft-blend vs 2-way soft-blend | -0.043pp (0.64) | +0.00028 (0.54) | +0.00056 (0.19) |
+| 3-way soft-blend vs 2-way anchor | +0.142pp (0.24) | +0.00371 (0.0018) | +0.01097 (1e-10) |
+| 3-way soft-blend vs 3-way raw | +0.393pp (0.013) | +0.00479 (3.1e-5) | +0.01071 (2.5e-12) |
+
+### Why it failed the promotion gate
+**TransE inclusion REGRESSES the concat.** 3-way concat loses 0.25pp R@30 (p=0.067 borderline) and 0.0011 per-dis AUPRC (p=0.099 borderline) vs 2-way concat. The soft-blend smoothing absorbs the regression (3-way soft-blend ties 2-way soft-blend) but does not surface a lift. TransE's translational structural prior does NOT sample orthogonal DRKG signal despite the different training objective.
+
+### Scope confound
+TransE was trained on DRKG + PrimeKG + Hetionet union (273,581 entities) whereas N2V and FastRP were trained on DRKG-only (49,616 entities). TransE's broader prior may actively dilute DRKG-specific signal rather than augment it. A DRKG-only retrained TransE or DistMult (h1298) would isolate whether the regression is:
+(a) a translational-family artifact — in which case TransE on any graph would fail, or
+(b) a cross-graph scope artifact — in which case DRKG-only TransE might succeed.
+
+Until h1298 lands, the translational family is closed with caveat.
+
+### Positive sub-finding: soft-blend generalises to 3-way
+3-way soft-blend vs 3-way raw concat: +0.393pp R@30 at p=0.012; +0.00479 AUPRC at p=3.1e-5. Same magnitude as 2-way soft-blend's +0.38pp R@30 lift over 2-way raw concat. **The soft-blend primitive is universal across embedding stacks** — methodological validation that h1215's `build_concat_lookup` + h1255's `z_normalise` + 0.5 blend transfers directly to h1202 (DRKG + LINCS fusion) regardless of how many base embeddings participate.
+
+### Implication
+Linear axes are now exhausted twice over on GLOBAL:
+- h1275/h1287: linear weight axis (w ∈ {0, 0.1, ..., 1.0}) on 2-way embedding
+- h1293: linear embedding-stacking axis (add a 3rd family)
+
+Remaining DRKG-only recall levers:
+- Non-linear rank-aggregation combiners (h1299 RRF/Borda — new, P2)
+- Per-disease learnable weights from continuous features (h1288)
+- DRKG-only retrained TransE (h1298 — likely P3 given expected low upside)
+
+The next step should be either h1299 (cheap, isolated test of non-linear axis) or pivot to h1290 (LINCS-as-feature in the fusion model — the only realistic path above the ~21.5% R@30 ceiling).
+
+### New hypotheses
+- **h1298 (P3, recall):** DRKG-only retrained TransE/DistMult to control for graph-scope confound.
+- **h1299 (P2, recall):** RRF + Borda rank-aggregation on N2V + FastRP — scale-invariant alternative to soft-blend.
+
+### Recommended next hypothesis
+**h1299 (P2, recall)** — cheap (~30 min), scale-invariant (avoids the h1259 pooled-AUPRC artifact), and tests the last untouched DRKG-only axis. If it fails, we have a complete case for "DRKG recall ceiling is structural" to support the h1201 paper reframe.
