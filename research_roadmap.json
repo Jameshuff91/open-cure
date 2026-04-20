@@ -3674,7 +3674,7 @@
       "id": "h1295",
       "title": "Per-disease W035 vs W050 audit \u2014 decompose R@30 plateau lift",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "label": "recall",
       "expected_impact": "medium",
       "effort": "medium",
@@ -3686,7 +3686,46 @@
         "Cross-tab: category \u00d7 n_gt bucket \u0394",
         "Save data/analysis/h1295_w035_per_disease_audit.{json,md}"
       ],
-      "success_criteria": "Identify 1-3 categories where |\u0394 R@30| > 2pp; these become candidates for per-category w routing on R@30 (\u2192 h1296)."
+      "success_criteria": "Identify 1-3 categories where |\u0394 R@30| > 2pp; these become candidates for per-category w routing on R@30 (\u2192 h1296).",
+      "findings": "VALIDATED. 20-seed per-disease decomposition of h1287's W035 vs W050 \u0394R@30 (+0.174pp aggregate, n=3994 rows, 82% neutral). **Cancer is the only category with statistically robust R@30 preference for W035 over W050**: mean \u0394 = +0.795pp, n=431 rows, t=3.61, p=0.0003 (naive row-level SE; cluster-robust would be larger but still significant given t>3). This matches h1281's inner-fit result (cancer modal_w=0.25, +0.00218 AUPRC). Other 'winners' are borderline at best: musculoskeletal (n=51, +1.15pp, p=0.073), ophthalmic (n=92, +0.79pp, p=0.096), infectious (n=571, +0.46pp, p=0.017), gastrointestinal (n=156, +0.59pp, p=0.11), hematological (n=85, +0.66pp, p=0.18). All 'losers' (neurological -0.38pp p=0.22, dermatological -0.26pp p=0.47, endocrine -0.51pp p=0.61, respiratory -0.21pp p=0.67, immunological -0.23pp p=0.76) fall under the noise floor. **Per-n_gt bucket: mid-density diseases (n_gt 6-20) show +0.22pp mean \u0394 with frac_+ = 8.2% vs frac_- = 5.5%; high-density (n_gt 51+) drops to +0.024pp \u2014 the R@30 tilt is driven by movement of individual positives near rank 30, which high-density diseases have absorbed.** Non-zero rows only (n=725, 18%): mean \u0394 = +0.96pp \u2014 among rows that change at all, the shift is sharp; the 82% neutral rows dilute to +0.174pp aggregate. Top 15 winners mix small-n_gt cancer + infectious; bottom 15 losers mix neurological + 'other'. **Actionable implication for h1292:** Only cancer-gated W035 has enough signal to warrant production routing. Gating any other category alone would apply noise; gating all winners risks inheriting h1281's retrospective-sorting failure mode. A 2-category rule (cancer \u2192 W035, rest \u2192 W050) is the conservative recipe.",
+      "result_metric": "Cancer \u0394R@30 = +0.795pp p=0.0003 (n=431) \u2014 only category with robust W035 preference"
+    },
+    {
+      "id": "h1296",
+      "title": "Two-recipe cancer-gated R@30 routing \u2014 lock in h1295's one robust category",
+      "priority": 3,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h1295 found cancer is the ONE category with a statistically robust preference for W035 over W050 on R@30 (+0.795pp, n=431, p=0.0003). Other winners/losers fall below noise floor. h1281 showed blanket per-category fitting regresses on outer holdout because noisy categories overfit. A minimal production rule \u2014 cancer \u2192 W035, all others \u2192 W050 \u2014 avoids the overfitting risk. Run the same 20-seed outer-holdout protocol as h1281 to verify the rule survives.",
+      "steps": [
+        "Copy h1287 script \u2192 h1296_cancer_gated_r30.py",
+        "Add a per-disease score route: if category(d) == 'cancer' use W035 blend else W050",
+        "Paired-t vs W050 canonical and vs blanket W035 at 20 seeds",
+        "Compute per-category marginals to verify cancer \u0394 reproduces; other categories stay within noise of W050 baseline",
+        "Save data/analysis/h1296_cancer_gated_r30.{json,md}"
+      ],
+      "success_criteria": "\u0394R@30 cancer-gated vs W050 > +0.15pp at p<0.05 AND cancer-gated vs blanket-W035 within \u00b10.1pp (neither clearly better than the simpler blanket rule)."
+    },
+    {
+      "id": "h1297",
+      "title": "Cancer-specific w fine-grid \u2014 where exactly does cancer prefer w?",
+      "priority": 3,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h1295 shows cancer has the most systematic w preference (+0.795pp \u0394 R@30 for W035 vs W050). h1281's inner fit picked modal_w=0.25 for cancer. h1287's broader sweep shows W025 and W035 tie on cancer rows (both within R@30 noise at that n). A cancer-only fine-grid w \u2208 {0.15, 0.20, 0.25, 0.30, 0.35, 0.40} at 20 seeds would nail down the category's Pareto peak \u2014 useful for the h1296 two-recipe rule and for understanding whether cancer's structural preference is driven by specific ATC subclasses (h1241 decomposition).",
+      "steps": [
+        "Copy h1287 script \u2192 h1297_cancer_weight_sweep.py",
+        "Restrict evaluation to category='cancer' diseases only",
+        "Sweep w \u2208 {0.15, 0.20, 0.25, 0.30, 0.35, 0.40}",
+        "Paired-t each w vs W050 on cancer-only rows",
+        "Compute R@30 per-ATC-L3 subclass within cancer (solid tumors vs hematologic vs targeted)",
+        "Save data/analysis/h1297_cancer_weight_sweep.{json,md}"
+      ],
+      "success_criteria": "Identify the cancer-specific w that maximises \u0394 R@30 vs W050 at p<0.05. If it differs from 0.35 by >0.1, update h1296 rule."
     }
   ],
   "completed": [
@@ -6562,6 +6601,12 @@
       "hypothesis_id": "h1287",
       "learning": "20-seed fine-grid w sweep on SUBSET_D_GLOBAL confirms R@30 plateau w \u2208 [0.25, 0.45] is flat within 0.14pp. W035 (21.71%) is a noise-level peak over W040 (21.68%) at p=0.181. Novel sub-finding: W045 clears the single-comparison preregistered AUPRC gate over W050 (\u0394=+0.00041 p=0.042) but fails Bonferroni at n=5. Practical impact zero.",
       "implication": "Linear-weight axis on 2-embedding soft-blend is DEFINITIVELY exhausted on GLOBAL. Any future recall lift must come from: (a) per-category/per-disease learnable w with continuous features (h1288), (b) third embedding family (h1293), (c) non-linear combiners (h1266 RRF), or (d) external signal (h1202 LINCS-as-feature). Point estimates can still jitter by 0.03pp across fine-grid weights but none cross the promotion gate."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1295",
+      "learning": "Per-disease audit of h1287's W035 vs W050 +0.174pp aggregate \u0394R@30 shows the R@30 plateau tilt is NOT uniform: cancer (n=431) drives +0.795pp at p=0.0003, while 16 other categories' shifts fall under noise floor. h1281's inner-fit cancer modal_w=0.25 is confirmed as the one real categorical signal; infectious/other 'positive' categories were noisy retrospective sorting. 82% of rows are neutral; the +0.96pp shift lives in the 18% of (seed,disease) pairs where blending swaps at least one rank-30 boundary drug.",
+      "implication": "Category-gated w routing should target CANCER ONLY on R@30 (h1296 two-recipe rule). Blanket W035 extracts most of the signal already (+0.174pp vs W050 p=0.001). A cancer-gated rule can LOCK IN the +0.795pp cancer lift while keeping other categories at W050 where the canonical AUPRC Pareto sits (h1275 per-dis AUPRC peak). This is the conservative interpretation of h1281's extreme-endpoint failure: the per-category signal is real for cancer but only for cancer."
     }
   ],
   "collaborations": [

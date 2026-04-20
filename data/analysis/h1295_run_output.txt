@@ -1,0 +1,115 @@
+========================================================================
+h1295: Per-disease W035 vs W050 ΔR@30 audit
+  prefix_a=node2vec_256  prefix_b=fastrp_256  seeds=20
+========================================================================
+Setup: 1,011 diseases (0.2s)
+  seed 42: 202 diseases (1.6s)
+  seed 123: 200 diseases (1.6s)
+  seed 456: 200 diseases (1.6s)
+  seed 789: 200 diseases (1.6s)
+  seed 2024: 200 diseases (1.6s)
+  seed 1: 199 diseases (1.6s)
+  seed 2: 200 diseases (1.6s)
+  seed 3: 200 diseases (1.6s)
+  seed 4: 201 diseases (1.6s)
+  seed 5: 201 diseases (1.6s)
+  seed 6: 199 diseases (1.6s)
+  seed 7: 200 diseases (1.6s)
+  seed 8: 202 diseases (1.6s)
+  seed 9: 197 diseases (1.6s)
+  seed 10: 198 diseases (1.6s)
+  seed 11: 202 diseases (1.6s)
+  seed 12: 198 diseases (1.6s)
+  seed 13: 198 diseases (1.6s)
+  seed 14: 199 diseases (1.6s)
+  seed 15: 198 diseases (1.6s)
+
+Total (seed, disease) rows: 3994
+Aggregate mean Δ R@30 = +0.1741pp  std = 4.5705pp
+  positive: 408 (10.2%)  negative: 317 (7.9%)  zero: 3269 (81.8%)
+Non-trivial rows only (Δ≠0, n=725): mean Δ R@30 = +0.9592pp
+
+--- Per-n_gt bucket Δ R@30 ---
+  n_gt=1     : n= 221  mean_Δ=+0.4525pp  nonzero=  1  nz_mean_Δ=+100.0000pp  frac_+=0.5%  frac_-=0.0%
+  n_gt=2-5   : n= 800  mean_Δ=+0.2188pp  nonzero= 42  nz_mean_Δ=+4.1667pp  frac_+=3.1%  frac_-=2.1%
+  n_gt=6-20  : n=1552  mean_Δ=+0.2177pp  nonzero=214  nz_mean_Δ=+1.5787pp  frac_+=8.2%  frac_-=5.5%
+  n_gt=21-50 : n= 730  mean_Δ=+0.0907pp  nonzero=204  nz_mean_Δ=+0.3244pp  frac_+=15.9%  frac_-=12.1%
+  n_gt=51+   : n= 691  mean_Δ=+0.0237pp  nonzero=264  nz_mean_Δ=+0.0621pp  frac_+=20.0%  frac_-=18.2%
+
+--- Per-category Δ R@30 ---
+  musculoskeletal   : n=  51  mean_Δ=+1.1483pp  nonzero=  9  nz_mean_Δ=+6.5072pp  frac_+=15.7%
+  cancer            : n= 431  mean_Δ=+0.7953pp  nonzero=155  nz_mean_Δ=+2.2115pp  frac_+=22.3%
+  ophthalmic        : n=  92  mean_Δ=+0.7944pp  nonzero= 18  nz_mean_Δ=+4.0601pp  frac_+=12.0%
+  hematological     : n=  85  mean_Δ=+0.6609pp  nonzero= 19  nz_mean_Δ=+2.9565pp  frac_+=15.3%
+  gastrointestinal  : n= 156  mean_Δ=+0.5903pp  nonzero= 39  nz_mean_Δ=+2.3614pp  frac_+=14.1%
+  infectious        : n= 571  mean_Δ=+0.4554pp  nonzero= 93  nz_mean_Δ=+2.7964pp  frac_+=10.0%
+  autoimmune        : n= 120  mean_Δ=+0.2316pp  nonzero= 34  nz_mean_Δ=+0.8174pp  frac_+=17.5%
+  cardiovascular    : n= 252  mean_Δ=+0.1939pp  nonzero= 74  nz_mean_Δ=+0.6603pp  frac_+=16.7%
+  psychiatric       : n=  60  mean_Δ=+0.1820pp  nonzero= 11  nz_mean_Δ=+0.9930pp  frac_+=11.7%
+  reproductive      : n=  10  mean_Δ=+0.1587pp  nonzero=  1  nz_mean_Δ=+1.5873pp  frac_+=10.0%
+  renal             : n=  84  mean_Δ=+0.0408pp  nonzero= 16  nz_mean_Δ=+0.2143pp  frac_+=9.5%
+  metabolic         : n= 225  mean_Δ=+0.0241pp  nonzero= 28  nz_mean_Δ=+0.1933pp  frac_+=8.0%
+  other             : n=1342  mean_Δ=-0.0932pp  nonzero=145  nz_mean_Δ=-0.8622pp  frac_+=5.1%
+  respiratory       : n=  80  mean_Δ=-0.2149pp  nonzero= 15  nz_mean_Δ=-1.1463pp  frac_+=7.5%
+  immunological     : n=  37  mean_Δ=-0.2286pp  nonzero=  5  nz_mean_Δ=-1.6917pp  frac_+=2.7%
+  dermatological    : n= 166  mean_Δ=-0.2585pp  nonzero= 31  nz_mean_Δ=-1.3841pp  frac_+=9.0%
+  neurological      : n= 211  mean_Δ=-0.3841pp  nonzero= 30  nz_mean_Δ=-2.7012pp  frac_+=6.2%
+  endocrine         : n=  21  mean_Δ=-0.5102pp  nonzero=  2  nz_mean_Δ=-5.3571pp  frac_+=0.0%
+
+--- Cross-tab (category × n_gt bucket) mean Δ R@30 (pp) ---
+  Category                   1       2-5      6-20     21-50       51+
+  musculoskeletal      +0.000   +2.000   +1.742   -0.265   +0.373
+  cancer               +0.000   +3.153   +0.199   +0.597   +0.187
+  ophthalmic               —     +0.000   +1.746   -1.235   +0.000
+  hematological        +0.000   +0.784   +0.874   +0.393   +0.509
+  gastrointestinal     +0.000   +2.031   +0.789   -0.524   -0.077
+  infectious           +0.000   +1.506   +0.366   +0.285   +0.038
+  autoimmune           +0.000   +0.000   +1.287   -0.725   +0.027
+  cardiovascular       +0.000   +0.000   +0.440   +0.722   -0.172
+  psychiatric              —         —     +0.619   +0.340   -0.044
+  reproductive             —     +0.000   +0.000       —     +0.794
+  renal                    —     +0.000   -0.505   +0.395   -0.065
+  metabolic            +0.000   +0.000   -0.083   +0.585   -0.249
+  other                +0.641   -0.461   -0.001   -0.277   +0.011
+  respiratory              —     +0.000   -0.290   -0.378   -0.018
+  immunological        +0.000   +0.000   -1.923       —     -0.077
+  dermatological       +0.000   +0.000   -0.437   +0.052   +0.057
+  neurological         +0.000   -2.000   +0.092   +0.247   +0.037
+  endocrine            +0.000       —     +0.000   -1.339       —  
+
+--- TOP 15 best diseases (largest mean Δ R@30) ---
+  +42.857pp  n_seeds=1  n_gt=  7.0  [infectious     ] eye infections
+  +37.500pp  n_seeds=2  n_gt=  8.0  [other          ] recurrent herpes labialis
+  +33.333pp  n_seeds=3  n_gt=  1.0  [other          ] beriberi
+  +25.000pp  n_seeds=2  n_gt=  4.0  [cancer         ] small intestine cancer
+  +19.048pp  n_seeds=3  n_gt=  7.0  [hematological  ] paroxysmal nocturnal hemoglobinuria pnh
+  +13.846pp  n_seeds=5  n_gt= 13.0  [cancer         ] relapsed or refractory diffuse large bcell lymphoma
+  +13.333pp  n_seeds=3  n_gt=  5.0  [gastrointestinal] hepatic venoocclusive disease
+  +12.500pp  n_seeds=4  n_gt=  4.0  [infectious     ] fusariosis
+  +12.500pp  n_seeds=4  n_gt=  4.0  [cancer         ] merkel cell carcinoma
+  +12.000pp  n_seeds=5  n_gt=  5.0  [cancer         ] lymphangioma
+  +11.111pp  n_seeds=3  n_gt=  6.0  [other          ] blind loop syndrome
+  +10.714pp  n_seeds=7  n_gt=  4.0  [infectious     ] secondary bacterial infections
+  +10.417pp  n_seeds=3  n_gt= 16.0  [infectious     ] tonsillitis
+  +10.000pp  n_seeds=1  n_gt= 10.0  [cardiovascular ] coronary spasm
+  +10.000pp  n_seeds=2  n_gt=  5.0  [musculoskeletal] osteolytic bone metastases
+
+--- BOTTOM 15 worst diseases (most negative mean Δ R@30) ---
+  -27.273pp  n_seeds=2  n_gt= 11.0  [other          ] primary dysbetalipoproteinemia fredrickson type iii
+  -20.000pp  n_seeds=5  n_gt=  3.0  [other          ] gastrinoma
+  -20.000pp  n_seeds=5  n_gt=  4.0  [neurological   ] renal angiomyolipoma and tuberous sclerosis complex tsc
+  -18.750pp  n_seeds=2  n_gt=  8.0  [hematological  ] pernicious anemia
+  -13.333pp  n_seeds=3  n_gt=  5.0  [other          ] relapsing polychrondritis
+  -12.500pp  n_seeds=3  n_gt=  8.0  [metabolic      ] hyperinsulinemic hypoglycemia
+  -12.500pp  n_seeds=2  n_gt=  4.0  [other          ] tropical sprue
+  -12.245pp  n_seeds=7  n_gt=  7.0  [other          ] dacryoadenitis
+  -11.429pp  n_seeds=5  n_gt=  7.0  [cancer         ] ta papillary tumors
+  -10.256pp  n_seeds=3  n_gt= 26.0  [other          ] flutter
+  -9.524pp  n_seeds=3  n_gt=  7.0  [other          ] heroin addiction
+  -8.333pp  n_seeds=6  n_gt= 12.0  [cancer         ] choriocarcinoma
+  -8.333pp  n_seeds=4  n_gt=  6.0  [other          ] plasmodium vivax
+  -8.333pp  n_seeds=6  n_gt=  6.0  [infectious     ] herpes simplex virus infection
+  -8.333pp  n_seeds=6  n_gt=  2.0  [other          ] spasmodic dysphonia
+
+Wrote data/analysis/h1295_w035_per_disease_audit.json
+Wrote data/analysis/h1295_w035_per_disease_audit.md

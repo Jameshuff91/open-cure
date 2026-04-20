@@ -4,10 +4,11 @@
 
 **Build a hybrid drug-repurposing system that meets or exceeds published SOTA on standard metrics, with calibrated confidence tiers validated by expert review.**
 
-Current state (2026-04-19):
-- kNN on Node2Vec embeddings: ~26% per-drug R@30 honest, ~37% with treatment-edge leakage
-- Published SOTA (TxGNN Nature Med 2024): AUPRC 0.913 standard eval, +49.2% on zero-shot indications
-- Goal: match and beat SOTA on Hits@K, MRR, AUPRC, AUROC, and R@30 simultaneously
+Current state (2026-04-19, post-h1199/h1200/h1201):
+- **Clean honest benchmark (h1199)**: Node2Vec 256 = 19.55% ± 1.18% R@30. Best DRKG-only: h1215 Node2Vec+FastRP ensemble = **21.54% ± 1.12% R@30 (20-seed)**. This is the empirical DRKG + external-data ceiling.
+- Historical "37% / 26%" numbers (h1 kNN k=20 with-treatment / no-treatment) were methodology-inflated — h1214 factorial shows the correct honest macro number is 9.21% for no-treatment on 838 common diseases; full methodology legacy overstated retention by ~20pp. Legacy rows kept below for audit trail only.
+- Published SOTA (TxGNN Nature Med 2024): AUPRC 0.913 standard eval, +49.2% on zero-shot indications. On inductive R@30 (the fairer framing), TxGNN reports 6.7-14.5% — we beat this.
+- Goal: match and beat SOTA on Hits@K, MRR, AUPRC, AUROC, and R@30 simultaneously — recalibrated post-h1200/h1201 to "ceiling ~21.5% R@30 + expert-calibrated tiers" rather than "push to 45-60% R@30."
 
 Target architecture (revised 2026-04-19 post-h1200 invalidation + h1201 inconclusive):
 1. **~~Supervised GNN on DRKG (h1200)~~** — **INVALIDATED** across 3 variants (Xavier cold 7.99%, Node2Vec warm 11.47%, mixed loss 10.81%) vs 19.55% Node2Vec prior. The 4,968-edge supervision signal actively degrades representations; architectural variations cannot fix signal sparsity. See `data/analysis/h1200_invalidation.md`.
@@ -76,15 +77,31 @@ vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
 
 ## Key Metrics
 
-| Model | Per-Drug R@30 | Evaluation | Notes |
-|-------|---------------|------------|-------|
-| **kNN k=20 (original embeddings)** | **36.59% ± 3.90%** | Honest (5-seed) | Has treatment edge leakage |
-| **kNN k=20 (no-treatment embeddings)** | **26.06% ± 3.84%** | **FAIR (5-seed)** | **Best fair transductive comparison** |
-| **KEGG Pathway kNN** | **15.73% ± 1.82%** | **INDUCTIVE (5-seed)** | **Fair inductive comparison to TxGNN** |
-| Node2Vec+XGBoost TUNED (disease holdout) | 25.85% ± 4.06% | Honest (5-seed) | md=6,ne=500,lr=0.1,alpha=1.0 |
-| TxGNN | 6.7-14.5% | Inductive | Zero-shot on unseen diseases |
+### Canonical (h1199 clean benchmark — macro, expanded GT, 5-seed unless noted)
 
-**Ceilings:** DRKG-only ceiling 37% R@30; Oracle ceiling 60%. **Treatment-edge leakage (post-h1214 reconciliation, 2026-04-19):** full Node2Vec 16.94% → no-treatment 9.21% R@30 (macro, 838 common diseases, expanded GT, 5 seeds) = **54.4% retention / 45.6% leakage**. Legacy "71.2% retained" (compare_honest_embeddings.py) used micro+internal-GT+embedding-native-universes and overstated retention. Retention range across the 8-cell methodology factorial: 47.8-69.4%. See `data/analysis/h1214_leakage_reconcile.md`.
+| Model | Per-Drug R@30 | Evaluation | Source |
+|-------|---------------|------------|--------|
+| **h1215 Node2Vec+FastRP concat_l2 (20-seed)** | **21.54% ± 1.12%** | **Honest, soft_blend_GLOBAL w=0.5** | **Current DRKG ceiling** |
+| h1215 concat_l2 raw (20-seed) | 21.35% ± 1.13% | Honest | Alternative lock-in |
+| Node2Vec 256 baseline | 19.55% ± 1.18% | Honest | h1199 |
+| FastRP 256 | 18.79% | Honest | h1212 |
+| GraphSAGE unsupervised (h922-v2) | 8.17% | Honest | h1199 |
+| **h1200 supervised GraphSAGE (INVALIDATED)** | **11.47%** (best of 3 variants) | Honest | h1200 — see invalidation |
+| **h1201 LINCS×CREEDS standalone (INCONCLUSIVE)** | **1.46% ± 1.0%** | Honest, 92-disease subset | h1201 — at/below random baseline 1.88% |
+| TxGNN (inductive, zero-shot) | 6.7-14.5% | Inductive | Published Nature Med 2024 |
+
+**Empirical ceiling: 21.5% R@30 on DRKG + public external data.** Three consecutive experiments (h1200, h1201, h1215 family) converge here.
+
+### Legacy (pre-h1199, kept for audit trail — DO NOT use as comparison targets)
+
+| Model | Per-Drug R@30 | Evaluation | Why deprecated |
+|-------|---------------|------------|----------------|
+| kNN k=20 original embeddings | 36.59% ± 3.90% | 5-seed, micro-avg, internal GT, native disease universe | **Leakage-inflated** (embedding saw treatment edges) AND methodology-inflated |
+| kNN k=20 no-treatment embeddings | 26.06% ± 3.84% | 5-seed, micro-avg, internal GT, native disease universe | Methodology-inflated — corrected to 9.21% on 838-disease common universe (h1214) |
+| KEGG Pathway kNN (fair inductive) | 15.73% ± 1.82% | 5-seed inductive | Still reported for TxGNN comparability in preprint, but differs from h1199 protocol |
+| Node2Vec+XGBoost TUNED | 25.85% ± 4.06% | Older framework | Predates h1199 |
+
+**Ceilings:** Historical "37% DRKG ceiling / 60% Oracle" framing is DEPRECATED. h1200 and h1201 invalidations established the empirical ceiling at ~21.5%. The "Oracle" 60% was a theoretical upper bound on a particular ground truth coverage measure, not a realistic training target. **Treatment-edge leakage (h1214):** on apples-to-apples macro evaluation (838 diseases, expanded GT), full Node2Vec = 16.94%, no-treatment = 9.21%, retention = 54.4%. See `data/analysis/h1214_leakage_reconcile.md`.
 
 **Baselines (post-h952-fix, h958):** overall_r30 19.49%±1.42%, bio_r30 30.31%±3.57%, sm_r30 18.99%±1.34%. Biologics OUTPERFORM overall by +10.82pp — h951 dissolved the "biologic failure narrative". h940 plain kNN bio_r30=31.42% remains the fair in-pipeline recall ceiling.
 
@@ -116,6 +133,8 @@ vastai destroy instance <INSTANCE_ID>  # IMPORTANT: Destroy when done
 **h1216 INVALIDATED as recipe-improver (2026-04-19, closes linear-weight axis):** Full 11-weight × 5-seed sweep of weighted concat_l2 (weight_a ∈ {0.0, 0.1, …, 1.0}). R@30/MRR form a BROAD PLATEAU across w=0.3–0.8 (paired |t|<2 vs w=0.5; differences <0.1pp). **AUPRC and AUROC are uniquely maximized at w=0.5** — every other weight is significantly worse (w=0.8 AUPRC t=-3.45; w=1.0 AUPRC t=-8.83). Best-R@30 weight (0.70, 20.91%±1.19%) is +0.034pp over anchor, well under the 0.56pp noise floor. No weight beats w=0.5 on ≥3 metrics → preregistered promotion gate NOT met. **w=0.5 equal-weight concat_l2 is locked in as the canonical fusion recipe.** Future fusion gains must come from non-linear combiners (h1225 RRF/Borda), per-disease adaptive weights (h1226), or a third embedding (h1227).
 
 **h1215 VALIDATED (2026-04-19, recall lever):** L2-normalised concat of Node2Vec+FastRP (512-dim joint) beats BOTH parents on ALL 5 metrics over the 1,011-disease intersection (5-seed 80/20). **R@30 19.55%→20.87%±0.91% (+1.32pp), MRR 0.0284→0.0296, AUPRC 0.0569/0.0584→0.0642, AUROC 0.5766/0.5790→0.5851.** Paired per-seed R@30 lift: +1.91, -0.21, +2.84, +1.49, +0.61pp — t≈2.65 on df=4 (one-sided p≈0.028). Random-walk and random-projection embeddings sample partially orthogonal DRKG structure; ensemble is additive at zero marginal training cost. `score_mean` (per-disease z-norm of drug scores then mean) is a CLEAN NEGATIVE — ties on R@30 (19.55%) but tanks AUPRC (0.0500) and AUROC (0.5294) by redistributing mass onto never-scored drugs. **Recalibrated DRKG ceilings per metric: R@30 ≤ 20.87%, MRR ≤ 0.0296, AUPRC ≤ 0.0642, AUROC ≤ 0.5851 — h1200 (supervised GNN) must exceed all four.** `build_concat_lookup` primitive transfers directly to h1202 (DRKG + LINCS) via h1220.
+
+**h1295 VALIDATED (2026-04-19, per-disease audit locates cancer as the one real per-category w preference):** Decomposed h1287's aggregate +0.174pp W035 vs W050 ΔR@30 across 20 seeds × ~200 test diseases = 3,994 (seed×disease) rows (82% neutral). **Cancer (n=431 rows) is the ONE category with a statistically robust preference for W035 over W050: mean ΔR@30 = +0.795pp, t=3.61, p=0.0003 (naive row-level SE).** All other categories fall under the noise floor individually: musculoskeletal (n=51, +1.15pp, p=0.073), ophthalmic (n=92, +0.79pp, p=0.096), infectious (n=571, +0.46pp, p=0.017 — marginal), gastrointestinal (n=156, +0.59pp, p=0.11), hematological (n=85, +0.66pp, p=0.18); losers neurological (-0.38pp p=0.22), dermatological (-0.26pp p=0.47), endocrine (-0.51pp p=0.61), respiratory (-0.21pp p=0.67), immunological (-0.23pp p=0.76). **Per-n_gt bucket: mid-density diseases (n_gt 6-20) carry the shift** (+0.22pp mean, frac_+ = 8.2% vs frac_- = 5.5%); high-density (n_gt 51+) absorbs to neutral (+0.024pp). Non-zero rows only (n=725, 18%): mean Δ = +0.96pp — sharp when blending swaps a rank-30 boundary drug, else neutral. **Confirms h1281's inner-fit cancer modal_w=0.25 is real, not retrospective sorting; h1281's other "positive" categories (autoimmune, renal, psychiatric) fell below the R@30 noise floor at 20 seeds.** Cancer signal reproduces h1218's 5-seed +4.0pp cancer-fusion gainer. Generated h1296 (cancer-gated two-recipe R@30 rule), h1297 (cancer-only w fine-grid with ATC subclass decomposition). See `data/analysis/h1295_w035_per_disease_audit.{json,md}`.
 
 **h1287 INVALIDATED on promotion gate (2026-04-19, R@30 plateau confirmed flat across w ∈ [0.25, 0.45]):** 20-seed fine-grid sweep on SUBSET_D_GLOBAL with w ∈ {0.25, 0.30, 0.35, 0.40, 0.45, 0.50}. **R@30 Pareto point-estimate shifts from h1275's W040 (21.68%±1.15%) to W035 (21.71%±1.13%), but ΔR@30 vs W040 = +0.034pp p=0.181 FAILS the preregistered +0.05pp at p<0.05 retrieval-recipe gate.** W025 vs W040 = -0.016pp p=0.705 — h1281's W025 vs W050 +0.124pp p=0.076 sub-finding REPRODUCES (h1287 W025 vs W050 +0.124pp p=0.076) but the implicit "W025 beats W040" premise is falsified (W040 and W025 tie to within 0.016pp at p=0.705). Entire R@30 plateau w ∈ [0.25, 0.45] spans 0.14pp total; all w ≤ 0.40 beat W050 by +0.12 to +0.17pp at p ∈ [0.001, 0.076]; W045 indistinguishable from W050 at p=0.575. **Novel sub-finding: W045 beats W050 on Δ per-dis AUPRC = +0.00041 p=0.042 — clears single-comparison h1275 gate but fails Bonferroni (n=5, required p<0.01); +0.00041 is 0.3% of absolute AUPRC value, practically meaningless.** Canonical w=0.5 holds; dual-recipe h1283 (W040 retrieval, W050 ranking) holds. Linear-weight axis on 2-embedding soft-blend is DEFINITIVELY exhausted on GLOBAL. Generated h1294 (bootstrap CI on plateau), h1295 (per-disease W035 vs W050 audit), h1292 (R@30-targeted category-gated w), h1293 (three-embedding concat). See `data/analysis/h1287_fine_grid_r30_pareto.{json,md}`.
 

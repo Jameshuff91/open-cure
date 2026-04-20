@@ -1,0 +1,701 @@
+{
+  "hypothesis": "h1295",
+  "w_target": 0.35,
+  "w_reference": 0.5,
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "n_rows": 3994,
+  "aggregate": {
+    "mean_delta_r30": 0.001741201135010489,
+    "std_delta_r30": 0.04570499324366941,
+    "min_delta_r30": -0.5454545454545454,
+    "max_delta_r30": 1.0,
+    "n_positive": 408,
+    "n_negative": 317,
+    "n_zero": 3269,
+    "nonzero_mean_delta_r30": 0.009592217011354338
+  },
+  "by_n_gt_bucket": {
+    "1": {
+      "n_rows": 221,
+      "mean_delta_r30": 0.004524886877828055,
+      "std_delta_r30": 0.06711491843525484,
+      "frac_nonzero": 0.004524886877828055,
+      "frac_positive": 0.004524886877828055,
+      "frac_negative": 0.0,
+      "nonzero_mean_delta": 1.0
+    },
+    "2-5": {
+      "n_rows": 800,
+      "mean_delta_r30": 0.0021875,
+      "std_delta_r30": 0.0616475723535269,
+      "frac_nonzero": 0.0525,
+      "frac_positive": 0.03125,
+      "frac_negative": 0.02125,
+      "nonzero_mean_delta": 0.041666666666666664
+    },
+    "6-20": {
+      "n_rows": 1552,
+      "mean_delta_r30": 0.002176881247305707,
+      "std_delta_r30": 0.049131612863874914,
+      "frac_nonzero": 0.13788659793814434,
+      "frac_positive": 0.08247422680412371,
+      "frac_negative": 0.055412371134020616,
+      "nonzero_mean_delta": 0.015787475214104937
+    },
+    "21-50": {
+      "n_rows": 730,
+      "mean_delta_r30": 0.0009065517182684602,
+      "std_delta_r30": 0.02608857291727518,
+      "frac_nonzero": 0.27945205479452057,
+      "frac_positive": 0.1589041095890411,
+      "frac_negative": 0.12054794520547946,
+      "nonzero_mean_delta": 0.0032440331094900797
+    },
+    "51+": {
+      "n_rows": 691,
+      "mean_delta_r30": 0.0002374166180571056,
+      "std_delta_r30": 0.009314885839359317,
+      "frac_nonzero": 0.38205499276411,
+      "frac_positive": 0.19971056439942114,
+      "frac_negative": 0.18234442836468887,
+      "nonzero_mean_delta": 0.0006214200116570454
+    }
+  },
+  "by_category": {
+    "musculoskeletal": {
+      "n_rows": 51,
+      "mean_delta_r30": 0.011483279882211529,
+      "std_delta_r30": 0.035983158176491614,
+      "frac_nonzero": 0.17647058823529413,
+      "frac_positive": 0.1568627450980392,
+      "frac_negative": 0.0196078431372549,
+      "nonzero_mean_delta": 0.06507191933253201
+    },
+    "cancer": {
+      "n_rows": 431,
+      "mean_delta_r30": 0.007953211263135826,
+      "std_delta_r30": 0.055729464052991645,
+      "frac_nonzero": 0.35962877030162416,
+      "frac_positive": 0.22273781902552203,
+      "frac_negative": 0.1368909512761021,
+      "nonzero_mean_delta": 0.022115058415558327
+    },
+    "ophthalmic": {
+      "n_rows": 92,
+      "mean_delta_r30": 0.007943709304767906,
+      "std_delta_r30": 0.031507649469500444,
+      "frac_nonzero": 0.1956521739130435,
+      "frac_positive": 0.11956521739130435,
+      "frac_negative": 0.07608695652173914,
+      "nonzero_mean_delta": 0.04060118089103596
+    },
+    "hematological": {
+      "n_rows": 85,
+      "mean_delta_r30": 0.006608757684858753,
+      "std_delta_r30": 0.07034255632143221,
+      "frac_nonzero": 0.2235294117647059,
+      "frac_positive": 0.15294117647058825,
+      "frac_negative": 0.07058823529411765,
+      "nonzero_mean_delta": 0.029565494905947058
+    },
+    "gastrointestinal": {
+      "n_rows": 156,
+      "mean_delta_r30": 0.005903441334737585,
+      "std_delta_r30": 0.04069525496190805,
+      "frac_nonzero": 0.25,
+      "frac_positive": 0.14102564102564102,
+      "frac_negative": 0.10897435897435898,
+      "nonzero_mean_delta": 0.02361376533895034
+    },
+    "infectious": {
+      "n_rows": 571,
+      "mean_delta_r30": 0.004554487843473332,
+      "std_delta_r30": 0.0431542995526852,
+      "frac_nonzero": 0.1628721541155867,
+      "frac_positive": 0.09982486865148861,
+      "frac_negative": 0.06304728546409807,
+      "nonzero_mean_delta": 0.02796357589917497
+    },
+    "autoimmune": {
+      "n_rows": 120,
+      "mean_delta_r30": 0.002315896976484885,
+      "std_delta_r30": 0.03440208018414053,
+      "frac_nonzero": 0.2833333333333333,
+      "frac_positive": 0.175,
+      "frac_negative": 0.10833333333333334,
+      "nonzero_mean_delta": 0.008173754034652538
+    },
+    "cardiovascular": {
+      "n_rows": 252,
+      "mean_delta_r30": 0.0019389567159281207,
+      "std_delta_r30": 0.04066920260515465,
+      "frac_nonzero": 0.29365079365079366,
+      "frac_positive": 0.16666666666666666,
+      "frac_negative": 0.12698412698412698,
+      "nonzero_mean_delta": 0.006602933681268735
+    },
+    "psychiatric": {
+      "n_rows": 60,
+      "mean_delta_r30": 0.0018204950779797248,
+      "std_delta_r30": 0.010821855462379418,
+      "frac_nonzero": 0.18333333333333332,
+      "frac_positive": 0.11666666666666667,
+      "frac_negative": 0.06666666666666667,
+      "nonzero_mean_delta": 0.009929973152616681
+    },
+    "reproductive": {
+      "n_rows": 10,
+      "mean_delta_r30": 0.0015873015873015873,
+      "std_delta_r30": 0.004761904761904762,
+      "frac_nonzero": 0.1,
+      "frac_positive": 0.1,
+      "frac_negative": 0.0,
+      "nonzero_mean_delta": 0.015873015873015872
+    },
+    "renal": {
+      "n_rows": 84,
+      "mean_delta_r30": 0.0004082391058335185,
+      "std_delta_r30": 0.01441662002926001,
+      "frac_nonzero": 0.19047619047619047,
+      "frac_positive": 0.09523809523809523,
+      "frac_negative": 0.09523809523809523,
+      "nonzero_mean_delta": 0.0021432553056259726
+    },
+    "metabolic": {
+      "n_rows": 225,
+      "mean_delta_r30": 0.00024055517581175412,
+      "std_delta_r30": 0.02031874471343134,
+      "frac_nonzero": 0.12444444444444444,
+      "frac_positive": 0.08,
+      "frac_negative": 0.044444444444444446,
+      "nonzero_mean_delta": 0.0019330326627730202
+    },
+    "other": {
+      "n_rows": 1342,
+      "mean_delta_r30": -0.00093159165279165,
+      "std_delta_r30": 0.053849747029274794,
+      "frac_nonzero": 0.10804769001490314,
+      "frac_positive": 0.05141579731743666,
+      "frac_negative": 0.05663189269746647,
+      "nonzero_mean_delta": -0.008622041365837205
+    },
+    "respiratory": {
+      "n_rows": 80,
+      "mean_delta_r30": -0.0021493335678609213,
+      "std_delta_r30": 0.01308843733184388,
+      "frac_nonzero": 0.1875,
+      "frac_positive": 0.075,
+      "frac_negative": 0.1125,
+      "nonzero_mean_delta": -0.011463112361924915
+    },
+    "immunological": {
+      "n_rows": 37,
+      "mean_delta_r30": -0.002286105734381597,
+      "std_delta_r30": 0.01253935756595952,
+      "frac_nonzero": 0.13513513513513514,
+      "frac_positive": 0.02702702702702703,
+      "frac_negative": 0.10810810810810811,
+      "nonzero_mean_delta": -0.016917182434423816
+    },
+    "dermatological": {
+      "n_rows": 166,
+      "mean_delta_r30": -0.0025846793192747233,
+      "std_delta_r30": 0.025362426672108238,
+      "frac_nonzero": 0.18674698795180722,
+      "frac_positive": 0.09036144578313253,
+      "frac_negative": 0.0963855421686747,
+      "nonzero_mean_delta": -0.01384054087095497
+    },
+    "neurological": {
+      "n_rows": 211,
+      "mean_delta_r30": -0.0038405464031663317,
+      "std_delta_r30": 0.04060494439726825,
+      "frac_nonzero": 0.14218009478672985,
+      "frac_positive": 0.061611374407582936,
+      "frac_negative": 0.08056872037914692,
+      "nonzero_mean_delta": -0.027011843035603198
+    },
+    "endocrine": {
+      "n_rows": 21,
+      "mean_delta_r30": -0.005102040816326531,
+      "std_delta_r30": 0.016663195529137267,
+      "frac_nonzero": 0.09523809523809523,
+      "frac_positive": 0.0,
+      "frac_negative": 0.09523809523809523,
+      "nonzero_mean_delta": -0.053571428571428575
+    }
+  },
+  "crosstab_cat_x_ngt_pp": {
+    "musculoskeletal": {
+      "1": 0.0,
+      "2-5": 2.0,
+      "6-20": 1.7424242424242427,
+      "21-50": -0.26455026455026454,
+      "51+": 0.3731923495568342
+    },
+    "cancer": {
+      "1": 0.0,
+      "2-5": 3.153153153153153,
+      "6-20": 0.19913231261915457,
+      "21-50": 0.5974833070477977,
+      "51+": 0.18672874504958958
+    },
+    "ophthalmic": {
+      "2-5": 0.0,
+      "6-20": 1.746031746031746,
+      "21-50": -1.2347826086956524,
+      "51+": 0.0
+    },
+    "hematological": {
+      "1": 0.0,
+      "2-5": 0.7843137254901963,
+      "6-20": 0.8742559523809522,
+      "21-50": 0.39284428078995137,
+      "51+": 0.5088605088605089
+    },
+    "gastrointestinal": {
+      "1": 0.0,
+      "2-5": 2.03125,
+      "6-20": 0.7889850262731618,
+      "21-50": -0.5240410340381365,
+      "51+": -0.07725277160541855
+    },
+    "infectious": {
+      "1": 0.0,
+      "2-5": 1.5060240963855422,
+      "6-20": 0.36636189389395946,
+      "21-50": 0.28489921844150445,
+      "51+": 0.0377906861011593
+    },
+    "autoimmune": {
+      "1": 0.0,
+      "2-5": 0.0,
+      "6-20": 1.2867647058823526,
+      "21-50": -0.7246376811594203,
+      "51+": 0.026519778993420874
+    },
+    "cardiovascular": {
+      "1": 0.0,
+      "2-5": 0.0,
+      "6-20": 0.44038415247157453,
+      "21-50": 0.7223204574145331,
+      "51+": -0.17155596228530895
+    },
+    "psychiatric": {
+      "6-20": 0.6191950464396284,
+      "21-50": 0.3401360544217686,
+      "51+": -0.044436801300701254
+    },
+    "reproductive": {
+      "2-5": 0.0,
+      "6-20": 0.0,
+      "51+": 0.7936507936507936
+    },
+    "renal": {
+      "2-5": 0.0,
+      "6-20": -0.5050505050505051,
+      "21-50": 0.39484126984127,
+      "51+": -0.06516031286057973
+    },
+    "metabolic": {
+      "1": 0.0,
+      "2-5": 0.0,
+      "6-20": -0.08347449651797477,
+      "21-50": 0.5853174603174602,
+      "51+": -0.24882057071725205
+    },
+    "other": {
+      "1": 0.641025641025641,
+      "2-5": -0.4610829103214889,
+      "6-20": -0.0007851553235077736,
+      "21-50": -0.2765852699336686,
+      "51+": 0.01065492734242003
+    },
+    "respiratory": {
+      "2-5": 0.0,
+      "6-20": -0.2898550724637682,
+      "21-50": -0.3784357362294698,
+      "51+": -0.018249235177942236
+    },
+    "immunological": {
+      "1": 0.0,
+      "2-5": 0.0,
+      "6-20": -1.9230769230769231,
+      "51+": -0.07662835249042146
+    },
+    "dermatological": {
+      "1": 0.0,
+      "2-5": 0.0,
+      "6-20": -0.437016687016687,
+      "21-50": 0.05154201038347383,
+      "51+": 0.05658562644211775
+    },
+    "neurological": {
+      "1": 0.0,
+      "2-5": -2.0,
+      "6-20": 0.09180760256800437,
+      "21-50": 0.24706328154604018,
+      "51+": 0.037332941120754165
+    },
+    "endocrine": {
+      "1": 0.0,
+      "6-20": 0.0,
+      "21-50": -1.3392857142857144
+    }
+  },
+  "top15_diseases": [
+    {
+      "disease_id": "drkg:Disease::MESH:D015818",
+      "name": "eye infections",
+      "category": "infectious",
+      "n_gt_eval_mean": 7.0,
+      "n_seeds_seen": 1,
+      "mean_delta_r30": 0.42857142857142855,
+      "std_delta_r30": 0.0,
+      "min_delta_r30": 0.42857142857142855,
+      "max_delta_r30": 0.42857142857142855
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006560",
+      "name": "recurrent herpes labialis",
+      "category": "other",
+      "n_gt_eval_mean": 8.0,
+      "n_seeds_seen": 2,
+      "mean_delta_r30": 0.375,
+      "std_delta_r30": 0.0,
+      "min_delta_r30": 0.375,
+      "max_delta_r30": 0.375
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001602",
+      "name": "beriberi",
+      "category": "other",
+      "n_gt_eval_mean": 1.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": 0.3333333333333333,
+      "std_delta_r30": 0.4714045207910317,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 1.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007414",
+      "name": "small intestine cancer",
+      "category": "cancer",
+      "n_gt_eval_mean": 4.0,
+      "n_seeds_seen": 2,
+      "mean_delta_r30": 0.25,
+      "std_delta_r30": 0.0,
+      "min_delta_r30": 0.25,
+      "max_delta_r30": 0.25
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006457",
+      "name": "paroxysmal nocturnal hemoglobinuria pnh",
+      "category": "hematological",
+      "n_gt_eval_mean": 7.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": 0.19047619047619047,
+      "std_delta_r30": 0.13468700594029476,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.2857142857142857
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016403",
+      "name": "relapsed or refractory diffuse large bcell lymphoma",
+      "category": "cancer",
+      "n_gt_eval_mean": 13.0,
+      "n_seeds_seen": 5,
+      "mean_delta_r30": 0.13846153846153844,
+      "std_delta_r30": 0.13234346564680963,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.3846153846153846
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006504",
+      "name": "hepatic venoocclusive disease",
+      "category": "gastrointestinal",
+      "n_gt_eval_mean": 5.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": 0.13333333333333333,
+      "std_delta_r30": 0.09428090415820634,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D060585",
+      "name": "fusariosis",
+      "category": "infectious",
+      "n_gt_eval_mean": 4.0,
+      "n_seeds_seen": 4,
+      "mean_delta_r30": 0.125,
+      "std_delta_r30": 0.125,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.25
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015266",
+      "name": "merkel cell carcinoma",
+      "category": "cancer",
+      "n_gt_eval_mean": 4.0,
+      "n_seeds_seen": 4,
+      "mean_delta_r30": 0.125,
+      "std_delta_r30": 0.125,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.25
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008202",
+      "name": "lymphangioma",
+      "category": "cancer",
+      "n_gt_eval_mean": 5.0,
+      "n_seeds_seen": 5,
+      "mean_delta_r30": 0.12000000000000002,
+      "std_delta_r30": 0.09797958971132713,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.2
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001765",
+      "name": "blind loop syndrome",
+      "category": "other",
+      "n_gt_eval_mean": 6.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": 0.11111111111111112,
+      "std_delta_r30": 0.15713484026367724,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.33333333333333337
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016908",
+      "name": "secondary bacterial infections",
+      "category": "infectious",
+      "n_gt_eval_mean": 4.0,
+      "n_seeds_seen": 7,
+      "mean_delta_r30": 0.10714285714285714,
+      "std_delta_r30": 0.12371791482634836,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.25
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014069",
+      "name": "tonsillitis",
+      "category": "infectious",
+      "n_gt_eval_mean": 16.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": 0.10416666666666667,
+      "std_delta_r30": 0.07795119555779044,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.1875
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003329",
+      "name": "coronary spasm",
+      "category": "cardiovascular",
+      "n_gt_eval_mean": 10.0,
+      "n_seeds_seen": 1,
+      "mean_delta_r30": 0.10000000000000003,
+      "std_delta_r30": 0.0,
+      "min_delta_r30": 0.10000000000000003,
+      "max_delta_r30": 0.10000000000000003
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010014",
+      "name": "osteolytic bone metastases",
+      "category": "musculoskeletal",
+      "n_gt_eval_mean": 5.0,
+      "n_seeds_seen": 2,
+      "mean_delta_r30": 0.1,
+      "std_delta_r30": 0.1,
+      "min_delta_r30": 0.0,
+      "max_delta_r30": 0.2
+    }
+  ],
+  "bottom15_diseases": [
+    {
+      "disease_id": "drkg:Disease::MESH:D006952",
+      "name": "primary dysbetalipoproteinemia fredrickson type iii",
+      "category": "other",
+      "n_gt_eval_mean": 11.0,
+      "n_seeds_seen": 2,
+      "mean_delta_r30": -0.2727272727272727,
+      "std_delta_r30": 0.2727272727272727,
+      "min_delta_r30": -0.5454545454545454,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D015408",
+      "name": "gastrinoma",
+      "category": "other",
+      "n_gt_eval_mean": 3.0,
+      "n_seeds_seen": 5,
+      "mean_delta_r30": -0.2,
+      "std_delta_r30": 0.1632993161855452,
+      "min_delta_r30": -0.3333333333333333,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018207",
+      "name": "renal angiomyolipoma and tuberous sclerosis complex tsc",
+      "category": "neurological",
+      "n_gt_eval_mean": 4.0,
+      "n_seeds_seen": 5,
+      "mean_delta_r30": -0.2,
+      "std_delta_r30": 0.1,
+      "min_delta_r30": -0.25,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000752",
+      "name": "pernicious anemia",
+      "category": "hematological",
+      "n_gt_eval_mean": 8.0,
+      "n_seeds_seen": 2,
+      "mean_delta_r30": -0.1875,
+      "std_delta_r30": 0.0625,
+      "min_delta_r30": -0.25,
+      "max_delta_r30": -0.125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D011081",
+      "name": "relapsing polychrondritis",
+      "category": "other",
+      "n_gt_eval_mean": 5.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": -0.1333333333333333,
+      "std_delta_r30": 0.09428090415820632,
+      "min_delta_r30": -0.19999999999999996,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D044903",
+      "name": "hyperinsulinemic hypoglycemia",
+      "category": "metabolic",
+      "n_gt_eval_mean": 8.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": -0.125,
+      "std_delta_r30": 0.0,
+      "min_delta_r30": -0.125,
+      "max_delta_r30": -0.125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013182",
+      "name": "tropical sprue",
+      "category": "other",
+      "n_gt_eval_mean": 4.0,
+      "n_seeds_seen": 2,
+      "mean_delta_r30": -0.125,
+      "std_delta_r30": 0.125,
+      "min_delta_r30": -0.25,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D003607",
+      "name": "dacryoadenitis",
+      "category": "other",
+      "n_gt_eval_mean": 7.0,
+      "n_seeds_seen": 7,
+      "mean_delta_r30": -0.12244897959183672,
+      "std_delta_r30": 0.049989586587411795,
+      "min_delta_r30": -0.14285714285714285,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002291",
+      "name": "ta papillary tumors",
+      "category": "cancer",
+      "n_gt_eval_mean": 7.0,
+      "n_seeds_seen": 5,
+      "mean_delta_r30": -0.11428571428571428,
+      "std_delta_r30": 0.10690449676496976,
+      "min_delta_r30": -0.2857142857142857,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001282",
+      "name": "flutter",
+      "category": "other",
+      "n_gt_eval_mean": 26.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": -0.10256410256410257,
+      "std_delta_r30": 0.09593993299420361,
+      "min_delta_r30": -0.23076923076923078,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006556",
+      "name": "heroin addiction",
+      "category": "other",
+      "n_gt_eval_mean": 7.0,
+      "n_seeds_seen": 3,
+      "mean_delta_r30": -0.09523809523809523,
+      "std_delta_r30": 0.06734350297014738,
+      "min_delta_r30": -0.14285714285714285,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002822",
+      "name": "choriocarcinoma",
+      "category": "cancer",
+      "n_gt_eval_mean": 12.0,
+      "n_seeds_seen": 6,
+      "mean_delta_r30": -0.08333333333333336,
+      "std_delta_r30": 0.09622504486493763,
+      "min_delta_r30": -0.16666666666666669,
+      "max_delta_r30": 0.08333333333333331
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016780",
+      "name": "plasmodium vivax",
+      "category": "other",
+      "n_gt_eval_mean": 6.0,
+      "n_seeds_seen": 4,
+      "mean_delta_r30": -0.08333333333333333,
+      "std_delta_r30": 0.08333333333333333,
+      "min_delta_r30": -0.16666666666666666,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006561",
+      "name": "herpes simplex virus infection",
+      "category": "infectious",
+      "n_gt_eval_mean": 6.0,
+      "n_seeds_seen": 6,
+      "mean_delta_r30": -0.08333333333333333,
+      "std_delta_r30": 0.1863389981249825,
+      "min_delta_r30": -0.5,
+      "max_delta_r30": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D055154",
+      "name": "spasmodic dysphonia",
+      "category": "other",
+      "n_gt_eval_mean": 2.0,
+      "n_seeds_seen": 6,
+      "mean_delta_r30": -0.08333333333333333,
+      "std_delta_r30": 0.1863389981249825,
+      "min_delta_r30": -0.5,
+      "max_delta_r30": 0.0
+    }
+  ]
+}

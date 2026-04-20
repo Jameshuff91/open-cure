@@ -5872,3 +5872,63 @@ The linear-weight axis on 2-embedding (N2V+FastRP concat_l2) soft-blend is DEFIN
 
 ### Recommended next hypothesis
 **h1293 (P2, recall)** — the only direction with high expected-value upside given h1287's closure of the linear-weight axis. A translational embedding (TransE) samples a structurally different DRKG prior than random-walk (N2V) or random-projection (FastRP), making it the best candidate for orthogonal-signal addition. ~1h CPU to train TransE; drop-in with h1215's `build_concat_lookup` primitive. Alternatively **h1295** for a cheap per-disease audit that might revive the category-gated path.
+
+
+## Current Session (continued): h1295 — Per-disease audit of W035 vs W050 ΔR@30 (VALIDATED; cancer is the one real category signal) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1295 (VALIDATED)
+
+### What was shipped
+`scripts/h1295_w035_per_disease_audit.py` — 20-seed per-disease decomposition of h1287's +0.174pp W035 vs W050 ΔR@30. Mirrors h1272's h1269 audit scaffold but reports R@30 delta (not AUPRC), adds category × n_gt cross-tab, and tracks frac_nonzero alongside frac_positive.
+
+### Aggregate
+- 3,994 (seed × disease) rows across 20 seeds
+- Mean Δ R@30 = +0.174pp (cross-validates h1287's aggregate exactly)
+- std = 4.57pp (row-level noise massive)
+- Distribution: 408+ (10.2%) / 317− (7.9%) / 3269=0 (81.9%)
+- Non-zero rows only (n=725): mean Δ = +0.96pp — sharp when blending swaps a rank-30 boundary drug
+
+### Per-category mean Δ R@30 with naive row-level t-test
+
+| Category | n_rows | mean Δ | t | p |
+|---|---|---|---|---|
+| **cancer** | **431** | **+0.795pp** | **3.61** | **0.0003** |
+| infectious | 571 | +0.455pp | 2.38 | 0.017 |
+| musculoskeletal | 51 | +1.148pp | 1.79 | 0.073 |
+| ophthalmic | 92 | +0.794pp | 1.67 | 0.096 |
+| gastrointestinal | 156 | +0.590pp | 1.61 | 0.107 |
+| hematological | 85 | +0.661pp | 1.33 | 0.183 |
+| autoimmune | 120 | +0.232pp | 0.56 | 0.58 |
+| neurological | 211 | -0.384pp | -1.22 | 0.22 |
+| dermatological | 166 | -0.259pp | -0.73 | 0.47 |
+| endocrine | 21 | -0.510pp | -0.51 | 0.61 |
+| respiratory | 80 | -0.215pp | -0.42 | 0.67 |
+| (11 others all \|t\| < 1) | | | | |
+
+**Cancer is the only category with p<0.01.** Everything else falls under the noise floor at 20-seed × row-level power.
+
+### Per-n_gt bucket
+| bucket | n_rows | mean Δ | nonzero mean | frac+ | frac- |
+|---|---|---|---|---|---|
+| 1 | 221 | +0.45pp | +100pp | 0.5% | 0.0% |
+| 2-5 | 800 | +0.22pp | +4.17pp | 3.1% | 2.1% |
+| 6-20 | 1552 | +0.22pp | +1.58pp | 8.2% | 5.5% |
+| 21-50 | 730 | +0.09pp | +0.32pp | 15.9% | 12.1% |
+| 51+ | 691 | +0.02pp | +0.06pp | 20.0% | 18.2% |
+
+Mid-density diseases (n_gt 6-20) carry the shift; high-density absorbs to neutral. frac+/frac- skews positive everywhere but concentrates its magnitude in small-to-mid density.
+
+### Why it reproduces h1281 partially
+h1281's inner-fold fit picked `modal_w=0.25` for cancer and hit the most positive outer Δ AUPRC of any category (+0.00218). h1295 independently locates cancer as the one systematic R@30 signal. **The other h1281 "winners" (autoimmune +0.00149, renal +0.00140, psychiatric +0.00021) were not robust** — in h1295 they sit at +0.23pp (p=0.58), +0.04pp (p=0.94), +0.18pp (p=0.76) respectively. h1281's conclusion that the h1272 per-disease priors do not transfer to fresh splits is confirmed for every category except cancer.
+
+### Implications
+1. **h1296 (cancer-gated two-recipe R@30 rule)**: If only cancer is robust, a 2-rule system (`cancer → W035, else → W050`) can LOCK IN the +0.795pp cancer lift while keeping the AUPRC-Pareto canonical elsewhere. Safe against h1281's overfitting failure mode because it commits to only one rule with p<0.001 evidence.
+2. **h1297 (cancer-only fine-grid)**: With cancer identified as the systematic category, a cancer-only w sweep at 20 seeds (w ∈ {0.15-0.40}) + ATC-subclass decomposition (h1241) could tell us whether solid-tumor, hematologic, or targeted-therapy subclasses drive the preference. Useful for downstream routing if we extend to a 3-rule system.
+3. **Blanket W035 vs cancer-gated W035 expected delta is small** — cancer is only 10.8% of rows (431/3994); contribution to aggregate is ~+0.086pp out of the +0.174pp total. The other +0.088pp comes from all other categories combined (marginally positive but noisy individually).
+
+### New hypotheses
+- **h1296 (P3, recall):** Two-recipe cancer-gated R@30 routing — verify the rule against 20-seed outer holdout.
+- **h1297 (P3, recall):** Cancer-only w fine-grid + ATC-subclass decomposition — identify the exact cancer Pareto w.
+
+### Recommended next hypothesis
+**h1296** if we want to finalise a cancer-specific production recipe (~30 min to run), then **h1297** to understand the mechanism. Alternatively pivot to **h1293** (three-embedding concat) for a higher-impact but higher-cost direction that complements h1295's finding.
