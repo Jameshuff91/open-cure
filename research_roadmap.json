@@ -9,7 +9,7 @@
     "ceiling": "60.4% (oracle)",
     "gap": "23 pp requires external data"
   },
-  "last_updated": "2026-04-18",
+  "last_updated": "2026-04-19",
   "hypotheses": [
     {
       "id": "h91",
@@ -2114,7 +2114,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 1,
-      "status": "pending",
+      "status": "in_progress",
       "steps": [
         "Download LINCS L1000 Phase I (GSE92742) to data/external/lincs/ (gitignored ~3GB)",
         "Process Level 5 signatures: keep top-dose 24h per (compound, cell-line), mean-aggregate across cell-lines",
@@ -3335,7 +3335,7 @@
       "id": "h1275",
       "title": "20-seed weight sweep on SUBSET_D_GLOBAL \u2014 find 20-seed Pareto w (replaces 5-seed h1268)",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "expected_impact": "medium",
       "effort": "low",
       "label": "recall",
@@ -3347,7 +3347,9 @@
         "If any w beats w=0.5 on \u0394 per-dis AUPRC at p<0.05 with \u0394>+0.0003, lock as new recipe.",
         "Save data/analysis/h1275_global_weight_sweep.{json,md}."
       ],
-      "success_criteria": "Identify Pareto-optimal w at 20-seed power. Supersedes h1268."
+      "success_criteria": "Identify Pareto-optimal w at 20-seed power. Supersedes h1268.",
+      "findings": "20-seed sweep on SUBSET_D_GLOBAL (w \u2208 {0.3,0.4,0.5,0.6,0.7}) fails preregistered gate: no w beats w=0.5 on \u0394 per-dis AUPRC at p<0.05 AND \u0394>+0.0003. Aggregate (20-seed): concat_l2_raw 21.35%\u00b11.13% R@30 | W030 21.66%\u00b11.11% | W040 21.68%\u00b11.15% | W050 21.54%\u00b11.12% | W060 21.33%\u00b11.09% | W070 21.15%\u00b11.06%. Per-dis AUPRC W050=0.1275, peak W040=0.1278 (\u0394+0.00025 p=0.24). Per-dis AUROC all-blend = 0.6345 (flat vs raw 0.6240, p<1e-11). Sub-finding: W040 beats W050 on R@30 (\u0394+0.14pp p=0.014) without losing AUPRC ground. Asymmetric: w<0.5 direction (more concat_l2 weight) beneficial; w>0.5 monotonically degrades all 3 metrics (W060 AUPRC -0.0008 p=0.0005; W070 AUPRC -0.0015 p=3e-5). Function is flat plateau on w \u2208 [0.3, 0.5] and collapses for w > 0.5.",
+      "result_metric": "W040 R@30 21.68%\u00b11.15% (best) | W050 per-dis AUPRC 0.1275 (tied best) | w=0.5 locked as canonical; no recipe shift"
     },
     {
       "id": "h1277",
@@ -3401,6 +3403,95 @@
         "Commit."
       ],
       "success_criteria": "Ceiling table reflects 20-seed power; future experiments gate against it."
+    },
+    {
+      "id": "h1280",
+      "title": "Fine-grained R@30-optimal w grid around Pareto peak (w in {0.35, 0.40, 0.45})",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "low",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1275 found W040 (w=0.4) is R@30 Pareto-optimal (21.68% vs W050 21.54%, Delta +0.14pp p=0.014). Function is flat on w in [0.3, 0.5]. Low-risk 3-point grid {0.35, 0.40, 0.45} at 20 seeds checks if the R@30 peak is actually at w=0.4 or elsewhere in that narrow band. Gate: R@30 improvement >= +0.05pp vs w=0.4 at p<0.05 AND Delta per-dis AUPRC >= 0 at p>0.1 (no regression). Likely noise-bound given sigma_R30 = 1.1pp per seed, but cheap to run.",
+      "steps": [
+        "Copy scripts/h1275_global_weight_sweep.py -> scripts/h1280_fine_grid_weight_sweep.py",
+        "Set WEIGHTS = (0.35, 0.40, 0.45) and REFERENCE_W = 0.40",
+        "Run 20-seed sweep, paired-t vs W040",
+        "If any w beats W040 on R@30 at p<0.05 AND non-regressive on per-dis AUPRC, consider R@30-priority recipe swap",
+        "Save data/analysis/h1280_fine_grid_weight_sweep.{json,md}"
+      ],
+      "success_criteria": "Identify whether R@30 Pareto is sharp or broad. Low upside but closes the 'maybe w=0.42?' axis."
+    },
+    {
+      "id": "h1281",
+      "title": "Per-category soft-blend weight - fit w per disease category on train, apply on holdout",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "medium",
+      "label": "recall",
+      "rationale": "h1275's flat plateau (R@30 21.66 vs 21.54 vs 21.15, per-dis-AUPRC 0.1272 vs 0.1275 vs 0.1260 across w in {0.3, 0.5, 0.7}) is an AGGREGATE average. h1272's per-disease audit found strong category heterogeneity: endocrine +0.0247, dermatological +0.0156, neurological +0.0132 vs cancer -0.0017, musculoskeletal -0.0005 per-row Delta per-dis AUPRC. If each category has a different optimal w, a per-category sweep could unlock gains the flat global sweep misses. Fit w_cat in {0.0, 0.25, 0.5, 0.75, 1.0} per category on train fold, apply fitted w on holdout. Preregistered gate: leave-one-seed-out gives Delta per-dis AUPRC >= +0.001 at p<0.05 vs w=0.5.",
+      "steps": [
+        "Build scripts/h1281_per_category_weight.py",
+        "For each seed/train-split, fit best w_cat for each of 13 categories by maximising train Delta per-dis AUPRC vs w=0.5 on TRAIN holdout",
+        "Apply per-category fitted weights on disjoint test holdout",
+        "Paired-t vs W050 global baseline across 20 seeds",
+        "If Delta per-dis AUPRC >= +0.001 at p<0.05 with no category regressing >-0.005, lock as new recipe",
+        "Save data/analysis/h1281_per_category_weight.{json,md}"
+      ],
+      "success_criteria": "Per-category weights unlock +0.001-0.003 per-dis AUPRC over global w=0.5. Addresses h1218 + h1272 category split."
+    },
+    {
+      "id": "h1282",
+      "title": "w x subset orthogonal sweep - check if SUBSET_D_GLOBAL's w=0.5 lock extends to other subsets",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "low",
+      "effort": "medium",
+      "label": "recall",
+      "rationale": "h1273 locked SUBSET_D_GLOBAL. h1275 locked w=0.5 within GLOBAL. But the GLOBAL x w=0.5 combination may not be jointly optimal - there could be e.g. SUBSET_B_HIGHDENS x w=0.4 that beats it. Cheap 4x5=20 cell sweep at 20 seeds (~20-min runtime). Validates the 'independently optimize' assumption in h1269+h1275. If any cell beats GLOBAL x 0.5 on per-dis AUPRC at Delta >+0.0005 p<0.05, the lock is false.",
+      "steps": [
+        "Build scripts/h1282_subset_x_weight.py on the h1275 scaffold",
+        "Run 4 subsets x 5 weights at 20 seeds",
+        "Find Pareto cell; compare to GLOBAL x w=0.5 baseline",
+        "Gate: Delta per-dis AUPRC > +0.0005 at p < 0.05 AND Delta R@30 > 0",
+        "Save data/analysis/h1282_subset_x_weight.{json,md}"
+      ],
+      "success_criteria": "Either confirm GLOBAL x 0.5 joint optimum or identify a better cell."
+    },
+    {
+      "id": "h1283",
+      "title": "R@30 vs per-dis AUPRC Pareto: dual-recipe production (w=0.4 for retrieval, w=0.5 for ranking)",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1275 found the 20-seed Pareto diverges: w=0.4 optimises R@30 (Delta +0.14pp vs w=0.5 at p=0.014), w=0.5 optimises per-dis AUPRC (0.1275 vs 0.1278 at p=0.24). Production could run w=0.4 to generate top-30 candidates for expert review and w=0.5 for ranking-based confidence calibration. Documentation-only hypothesis; no new code. Gate: design note confirming dual-recipe is operationally simpler than a single compromise weight.",
+      "steps": [
+        "Document dual-recipe decision in docs/claude/patterns.md",
+        "Add W040 and W050 columns to next h1199 benchmark snapshot",
+        "Flag in CLAUDE.md 'Current DRKG-only ceilings' that R@30 ceiling is w=0.4 (21.68%) not w=0.5 (21.54%)"
+      ],
+      "success_criteria": "Rest-of-pipeline consumes both weights; +0.14pp R@30 retained in deliverable."
+    },
+    {
+      "id": "h1284",
+      "title": "Per-disease w learnability - does h1272's frac+ gradient correlate with optimal w_disease?",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "label": "recall",
+      "rationale": "h1272 found frac_positive (fraction of blend-helped disease-rows) monotonically rises with n_gt (3.4% -> 66.9%) and with ATC L3 entropy (19.7% -> 66.5%). h1275 found that w=0.4 beats w=0.5 on R@30 but ties on per-dis AUPRC. Hypothesis: disease-level optimal w depends on (n_gt, entropy, category). High-density + high-entropy diseases benefit from more n2v weight (w->0.5+); low-density + low-entropy from more concat weight (w->0.3). Per-disease optimal w identification could inform h1260 (learnable fusion) by narrowing the feature search.",
+      "steps": [
+        "Compute per-disease per-w R@30 and per-dis AUPRC from a rerun with extra instrumentation",
+        "Build scripts/h1284_per_disease_optimal_w.py that stores per-disease scores across 20 seeds x 5 weights",
+        "Argmax per disease; regress w_optimal ~ n_gt + entropy + category",
+        "If R2 > 0.15 OR category effect p<0.01, inform h1260/h1281 feature design",
+        "Save data/analysis/h1284_per_disease_optimal_w.{json,md}"
+      ],
+      "success_criteria": "Identify 1-3 features that predict per-disease optimal w. Feeds h1260."
     }
   ],
   "completed": [

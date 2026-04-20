@@ -1,6 +1,64 @@
 # Research Loop Progress
 
-## Current Session: h1272 — Per-disease audit reverses h1247 mechanism for soft-blend (VALIDATED) (2026-04-19)
+## Current Session: h1275 — 20-seed soft-blend weight sweep on SUBSET_D_GLOBAL (INVALIDATED on promotion gate; flat-plateau sub-finding) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1275 (INVALIDATED on preregistered gate)
+
+### What was shipped
+`scripts/h1275_global_weight_sweep.py` — 5-weight × 20-seed sweep on the locked GLOBAL subset. Blend formula identical to h1255/h1264/h1269: `score = w · z(n2v) + (1-w) · z(concat_l2)` on every disease. Paired-t per seed vs `concat_l2_raw` anchor AND vs `W050` reference.
+
+### Aggregate 20-seed table
+
+| Mode | R@30 | per-dis-AUPRC | per-dis-AUROC |
+|---|---|---|---|
+| `concat_l2_raw` | 21.35% ± 1.13% | 0.1241 ± 0.0094 | 0.6240 ± 0.0054 |
+| `W030` (w=0.3) | 21.66% ± 1.11% | 0.1272 ± 0.0098 | 0.6345 ± 0.0049 |
+| `W040` (w=0.4) | **21.68% ± 1.15%** | 0.1278 ± 0.0100 | 0.6345 ± 0.0049 |
+| `W050` (w=0.5) | 21.54% ± 1.12% | **0.1275 ± 0.0102** | **0.6345 ± 0.0049** |
+| `W060` (w=0.6) | 21.33% ± 1.09% | 0.1267 ± 0.0101 | 0.6344 ± 0.0049 |
+| `W070` (w=0.7) | 21.15% ± 1.06% | 0.1260 ± 0.0101 | 0.6344 ± 0.0049 |
+
+### Paired-t vs W050 (promotion gate)
+
+| Mode | ΔR@30 (p) | Δper-dis-AUPRC (p) | Δper-dis-AUROC (p) |
+|---|---|---|---|
+| W030 | +0.124pp (0.063) | -0.00037 (0.39) | +0.00003 (0.005) |
+| W040 | +0.140pp (**0.014**) | +0.00025 (0.24) | +0.00002 (0.021) |
+| W060 | -0.205pp (0.024) | -0.00080 (**0.0005**) | -0.00003 (0.012) |
+| W070 | -0.387pp (0.0009) | -0.00148 (**3.4e-5**) | -0.00006 (4.1e-5) |
+
+### Promotion gate verdict
+**INVALIDATED.** No w ≠ 0.5 beats w=0.5 on Δ per-dis AUPRC at p<0.05 AND Δ>+0.0003. The preregistered gate targets per-disease AUPRC (h1259's rank-equivariant primary metric); w=0.5 stays canonical.
+
+### Key sub-findings
+
+1. **Flat plateau on w ∈ [0.3, 0.5] across all three metrics.** per-dis AUROC is flat to 4 decimal places. per-dis AUPRC differs by ≤0.0006 (within-fit noise). R@30 differs by ≤0.14pp (within 1-seed σ=1.1pp).
+
+2. **Monotonic degradation for w > 0.5** — every metric significantly worsens at w=0.6 and w=0.7 vs w=0.5. The blend is asymmetric: more concat_l2 weight (w<0.5) helps or ties; more n2v weight (w>0.5) hurts.
+
+3. **R@30 Pareto optimum is w=0.4** — W040 beats W050 on R@30 (Δ+0.14pp, p=0.014) without losing AUPRC/AUROC ground. If the preregistered gate had been R@30, W040 would PROMOTE. Sub-finding documented as h1283 (dual-recipe production design).
+
+4. **Ceiling refresh** (consistent with h1273): 20-seed concat_l2_raw = 21.35%±1.13%; GLOBAL w=0.5 = 21.54%±1.12%. Both slightly lower than 5-seed h1264/h1269 estimates (h1269 anchor 20.87%, GLOBAL 21.30%).
+
+5. **Linear weight axis is EXHAUSTED on GLOBAL subset.** Fine-grained sweeps (h1280) and cross-subset sweeps (h1282) are deferred as low-upside; per-category (h1281) and learnable per-disease (h1284/h1260) are the remaining open directions for fusion recipe improvement.
+
+### Why the n2v weight-direction is asymmetric
+The concat_l2 embedding is already a 50/50 concat of n2v and FastRP. When we soft-blend `w · z(n2v) + (1-w) · z(concat_l2)`, at w=0.5 the effective weight on n2v is (0.5 · 1 + 0.5 · 0.5) = 0.75 and on FastRP is (0.5 · 0.5) = 0.25. Moving w=0.5 → 0.4 shifts effective weights to (0.7, 0.3) — more balanced. Moving w=0.5 → 0.6 shifts to (0.8, 0.2) — increasingly n2v-dominated. h1215 already found concat_l2 beats n2v alone on all five metrics; so the monotonic degradation for w>0.5 is consistent with "n2v is the weaker parent."
+
+### New hypotheses
+- **h1280 (P3, recall, low):** Fine-grained {0.35, 0.40, 0.45} sweep around the R@30 Pareto peak. Low upside; closes the "maybe w=0.42?" axis.
+- **h1281 (P2, recall, medium):** Per-category soft-blend weight. The flat aggregate plateau may hide category heterogeneity (h1272: endocrine +0.0247 vs cancer -0.0017 per-row Δ). Fit w_cat on train, apply on holdout.
+- **h1282 (P3, recall, medium):** w × subset orthogonal sweep (4 × 5 = 20 cells at 20 seeds). Validates GLOBAL × w=0.5 is jointly Pareto.
+- **h1283 (P3, infrastructure, low):** Dual-recipe production: w=0.4 for retrieval (R@30), w=0.5 for ranking (AUPRC). Doc-only.
+- **h1284 (P3, recall, medium):** Per-disease optimal-w learnability — feeds h1260 learnable fusion.
+
+### Recommended next hypothesis
+**h1281 (P2, recall)** — strongest upside. Linear weight sweep is exhausted; the flat plateau means the aggregate signal has no more room. Per-category weighting directly attacks the h1272 gainer/loser heterogeneity (endocrine/dermatological/neurological +0.01-0.025 vs cancer/musculoskeletal ~0). Alternatively **h1277** (three-embedding concat) for a different recall-ceiling attack.
+
+Short cut rerun: `python3 scripts/h1275_global_weight_sweep.py` (~60 s).
+
+
+## Previous Session: h1272 — Per-disease audit reverses h1247 mechanism for soft-blend (VALIDATED) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1272 (VALIDATED — recipe-sharpening signal)
 
