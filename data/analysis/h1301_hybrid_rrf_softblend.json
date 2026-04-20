@@ -1,0 +1,823 @@
+{
+  "hypothesis": "h1301",
+  "k_rrf": 60,
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "n_diseases_universe": 1011,
+  "aggregate": {
+    "soft_blend_w050_2way": {
+      "r30": [
+        0.21539179616545204,
+        0.0111520000277622
+      ],
+      "per_disease_auprc": [
+        0.12752151436193387,
+        0.010164102254246056
+      ],
+      "per_disease_auroc": [
+        0.6344619688744171,
+        0.004927718520192598
+      ]
+    },
+    "rrf_k60_3ranker": {
+      "r30": [
+        0.2142427549464428,
+        0.012617207131631347
+      ],
+      "per_disease_auprc": [
+        0.13388131082895324,
+        0.010312774441025442
+      ],
+      "per_disease_auroc": [
+        0.6428714913429564,
+        0.005239577765807074
+      ]
+    },
+    "rrf_k60_4ranker": {
+      "r30": [
+        0.215710877021588,
+        0.012017174864639116
+      ],
+      "per_disease_auprc": [
+        0.13351013497923758,
+        0.010267934202082541
+      ],
+      "per_disease_auroc": [
+        0.6428937983357494,
+        0.005233688469730545
+      ]
+    },
+    "rrf_k60_softblend_only": {
+      "r30": [
+        0.21539179616545204,
+        0.0111520000277622
+      ],
+      "per_disease_auprc": [
+        0.12904008543960035,
+        0.010148664727001856
+      ],
+      "per_disease_auroc": [
+        0.6344775674400143,
+        0.0049275405301570105
+      ]
+    }
+  },
+  "paired_t": {
+    "rrf_k60_4ranker_vs_rrf_k60_3ranker": {
+      "R@30": {
+        "mean": 0.0014681220751451742,
+        "p": 0.0020120769237075083
+      },
+      "per_disease_AUPRC": {
+        "mean": -0.00037117584971571094,
+        "p": 0.1869879832318847
+      },
+      "per_disease_AUROC": {
+        "mean": 2.2306992792936463e-05,
+        "p": 0.007128378322946942
+      }
+    },
+    "rrf_k60_4ranker_vs_soft_blend_w050_2way": {
+      "R@30": {
+        "mean": 0.00031908085613591847,
+        "p": 0.6681427120090213
+      },
+      "per_disease_AUPRC": {
+        "mean": 0.005988620617303689,
+        "p": 1.0845980507236263e-07
+      },
+      "per_disease_AUROC": {
+        "mean": 0.00843182946133233,
+        "p": 1.4480069020943923e-12
+      }
+    },
+    "rrf_k60_softblend_only_vs_soft_blend_w050_2way": {
+      "R@30": {
+        "mean": 0.0,
+        "p": 0.0
+      },
+      "per_disease_AUPRC": {
+        "mean": 0.0015185710776664646,
+        "p": 6.021364380188401e-09
+      },
+      "per_disease_AUROC": {
+        "mean": 1.5598565597341185e-05,
+        "p": 6.27688184929355e-12
+      }
+    }
+  },
+  "gates": {
+    "gate_a_vs_rrf_3ranker": {
+      "r30_pass": true,
+      "auprc_no_regress": false,
+      "overall_pass": false
+    },
+    "gate_b_vs_soft_blend_canonical": {
+      "r30_pass": false,
+      "auprc_pass": true,
+      "dual_arm_pass": false
+    }
+  },
+  "per_seed_summaries": [
+    {
+      "seed": 42,
+      "n_eval": 202,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.2066921176472244,
+          "per_disease_auprc_mean": 0.12981180336758943,
+          "per_disease_auroc_mean": 0.6313652091355634,
+          "pooled_auprc": 0.059185315604535646,
+          "pooled_auroc": 0.5041803572846613
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.20142090851451408,
+          "per_disease_auprc_mean": 0.13462608605560655,
+          "per_disease_auroc_mean": 0.6384165686827548,
+          "pooled_auprc": 0.060327031889852896,
+          "pooled_auroc": 0.6010903846252196
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.2063170126948762,
+          "per_disease_auprc_mean": 0.1356351999397676,
+          "per_disease_auroc_mean": 0.6384632702094001,
+          "pooled_auprc": 0.0601639152274464,
+          "pooled_auroc": 0.6011352145787358
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.2066921176472244,
+          "per_disease_auprc_mean": 0.1301754838724477,
+          "per_disease_auroc_mean": 0.631374424964854,
+          "pooled_auprc": 0.0494082611629256,
+          "pooled_auroc": 0.5964241792078186
+        }
+      }
+    },
+    {
+      "seed": 123,
+      "n_eval": 200,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.2190194030936098,
+          "per_disease_auprc_mean": 0.12325756716663598,
+          "per_disease_auroc_mean": 0.6360526088851444,
+          "pooled_auprc": 0.055157569739055494,
+          "pooled_auroc": 0.4108929020539069
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.2119659202732953,
+          "per_disease_auprc_mean": 0.12238326838551807,
+          "per_disease_auroc_mean": 0.6429356521242306,
+          "pooled_auprc": 0.06006573586372584,
+          "pooled_auroc": 0.5896420311506714
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.21186049710114635,
+          "per_disease_auprc_mean": 0.12241556494417916,
+          "per_disease_auroc_mean": 0.6429629956238094,
+          "pooled_auprc": 0.05952055478503608,
+          "pooled_auroc": 0.5896422928284065
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.2190194030936098,
+          "per_disease_auprc_mean": 0.12396361778471351,
+          "per_disease_auroc_mean": 0.6360626437251997,
+          "pooled_auprc": 0.046942328287470594,
+          "pooled_auroc": 0.5842533095491554
+        }
+      }
+    },
+    {
+      "seed": 456,
+      "n_eval": 200,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.21080744257203896,
+          "per_disease_auprc_mean": 0.11975695763749972,
+          "per_disease_auroc_mean": 0.6294054505416424,
+          "pooled_auprc": 0.060594179083339895,
+          "pooled_auroc": 0.4404537245973925
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.20340938502009134,
+          "per_disease_auprc_mean": 0.12623755714864177,
+          "per_disease_auroc_mean": 0.6365797068985907,
+          "pooled_auprc": 0.06397056802841941,
+          "pooled_auroc": 0.6082733643022052
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.20391723242681992,
+          "per_disease_auprc_mean": 0.1253179811433418,
+          "per_disease_auroc_mean": 0.6366271388450725,
+          "pooled_auprc": 0.06340046180531643,
+          "pooled_auroc": 0.6082948536748694
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.21080744257203896,
+          "per_disease_auprc_mean": 0.12133163228407629,
+          "per_disease_auroc_mean": 0.6294215593363397,
+          "pooled_auprc": 0.051646533759792834,
+          "pooled_auroc": 0.6026910006789512
+        }
+      }
+    },
+    {
+      "seed": 789,
+      "n_eval": 200,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.23084208209179088,
+          "per_disease_auprc_mean": 0.14007593614499933,
+          "per_disease_auroc_mean": 0.6357955426174189,
+          "pooled_auprc": 0.06409501493464279,
+          "pooled_auroc": 0.4402209972256979
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.22713535039112542,
+          "per_disease_auprc_mean": 0.15161952701123887,
+          "per_disease_auroc_mean": 0.641692671266498,
+          "pooled_auprc": 0.0640873646095313,
+          "pooled_auroc": 0.6045485905582504
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.2288359079657095,
+          "per_disease_auprc_mean": 0.1492383917560793,
+          "per_disease_auroc_mean": 0.6417097927927629,
+          "pooled_auprc": 0.0636438974375804,
+          "pooled_auroc": 0.6045989542958663
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.23084208209179088,
+          "per_disease_auprc_mean": 0.14151533600561886,
+          "per_disease_auroc_mean": 0.6358169284420722,
+          "pooled_auprc": 0.05242833106808157,
+          "pooled_auroc": 0.5995868307754367
+        }
+      }
+    },
+    {
+      "seed": 2024,
+      "n_eval": 200,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.1977364299020558,
+          "per_disease_auprc_mean": 0.125478118475986,
+          "per_disease_auroc_mean": 0.6268660325428305,
+          "pooled_auprc": 0.05198327415397433,
+          "pooled_auroc": 0.38529271001702575
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.1965590861444496,
+          "per_disease_auprc_mean": 0.131907597198726,
+          "per_disease_auroc_mean": 0.6353102198138338,
+          "pooled_auprc": 0.0560324593108834,
+          "pooled_auroc": 0.5846090719585855
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.19820682396517333,
+          "per_disease_auprc_mean": 0.13403043611616203,
+          "per_disease_auroc_mean": 0.635358050859448,
+          "pooled_auprc": 0.055632267943313524,
+          "pooled_auroc": 0.584643713711293
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.1977364299020558,
+          "per_disease_auprc_mean": 0.12772542700904543,
+          "per_disease_auroc_mean": 0.6268867327187121,
+          "pooled_auprc": 0.045030042350466266,
+          "pooled_auroc": 0.5791615814561268
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "n_eval": 199,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.21142360125295553,
+          "per_disease_auprc_mean": 0.12805038281238695,
+          "per_disease_auroc_mean": 0.6292989853558931,
+          "pooled_auprc": 0.06620648674413912,
+          "pooled_auroc": 0.48774611620408465
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.2045617630506115,
+          "per_disease_auprc_mean": 0.13547753047472738,
+          "per_disease_auroc_mean": 0.6404088878387879,
+          "pooled_auprc": 0.06957722232690974,
+          "pooled_auroc": 0.6046742281546819
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.20981699544374285,
+          "per_disease_auprc_mean": 0.13471234922201286,
+          "per_disease_auroc_mean": 0.6404099607663415,
+          "pooled_auprc": 0.0691377582378048,
+          "pooled_auroc": 0.604714191151526
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.21142360125295553,
+          "per_disease_auprc_mean": 0.13006208827296725,
+          "per_disease_auroc_mean": 0.6293175855087352,
+          "pooled_auprc": 0.05362297104395569,
+          "pooled_auroc": 0.5975536306281448
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "n_eval": 200,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.22965336610499187,
+          "per_disease_auprc_mean": 0.12169090944217334,
+          "per_disease_auroc_mean": 0.6391421007473227,
+          "pooled_auprc": 0.058281646606467764,
+          "pooled_auroc": 0.49790284719511935
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.23100974192510929,
+          "per_disease_auprc_mean": 0.13166415773000037,
+          "per_disease_auroc_mean": 0.6497547979875199,
+          "pooled_auprc": 0.05741086834049808,
+          "pooled_auroc": 0.6030907217923039
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.23119914842923506,
+          "per_disease_auprc_mean": 0.1290931646354847,
+          "per_disease_auroc_mean": 0.6497183198329869,
+          "pooled_auprc": 0.056953778279037526,
+          "pooled_auroc": 0.6031088183445312
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.22965336610499187,
+          "per_disease_auprc_mean": 0.12244362179614775,
+          "per_disease_auroc_mean": 0.6391588653448763,
+          "pooled_auprc": 0.04579877711302716,
+          "pooled_auroc": 0.5955393544268809
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "n_eval": 200,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.22086006981928347,
+          "per_disease_auprc_mean": 0.1408572950421896,
+          "per_disease_auroc_mean": 0.6347140201117957,
+          "pooled_auprc": 0.06278690196377712,
+          "pooled_auroc": 0.4686406010595267
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.22090274127175544,
+          "per_disease_auprc_mean": 0.14951327538238135,
+          "per_disease_auroc_mean": 0.6439137833072184,
+          "pooled_auprc": 0.06464575430643033,
+          "pooled_auroc": 0.601016063054251
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.22262464566562243,
+          "per_disease_auprc_mean": 0.1492395624251993,
+          "per_disease_auroc_mean": 0.6439447300659213,
+          "pooled_auprc": 0.0644488139030987,
+          "pooled_auroc": 0.6010717878357177
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.22086006981928347,
+          "per_disease_auprc_mean": 0.14227815832731142,
+          "per_disease_auroc_mean": 0.6347356597484715,
+          "pooled_auprc": 0.053336016016583346,
+          "pooled_auroc": 0.5949327625689521
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "n_eval": 201,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.21464073097830796,
+          "per_disease_auprc_mean": 0.12986415715160682,
+          "per_disease_auroc_mean": 0.6394619029176118,
+          "pooled_auprc": 0.05773456555679832,
+          "pooled_auroc": 0.40639663431168616
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.2140444896082568,
+          "per_disease_auprc_mean": 0.13530517976679185,
+          "per_disease_auroc_mean": 0.645678219529986,
+          "pooled_auprc": 0.05961239190767064,
+          "pooled_auroc": 0.5984652056025508
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.21373188286532718,
+          "per_disease_auprc_mean": 0.13434322419819783,
+          "per_disease_auroc_mean": 0.645718398471803,
+          "pooled_auprc": 0.059201731009254965,
+          "pooled_auroc": 0.5984893680694474
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.21464073097830796,
+          "per_disease_auprc_mean": 0.13091179981304285,
+          "per_disease_auroc_mean": 0.6394767910415612,
+          "pooled_auprc": 0.04845514694919589,
+          "pooled_auroc": 0.5950389857703036
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "n_eval": 201,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.21275117501836613,
+          "per_disease_auprc_mean": 0.13541560925318533,
+          "per_disease_auroc_mean": 0.6329442371087528,
+          "pooled_auprc": 0.06007311870561809,
+          "pooled_auroc": 0.4535109063513363
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.21382484426235185,
+          "per_disease_auprc_mean": 0.1398280948514344,
+          "per_disease_auroc_mean": 0.6453168978856333,
+          "pooled_auprc": 0.0623089448161552,
+          "pooled_auroc": 0.6004484645504018
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.21511391950162476,
+          "per_disease_auprc_mean": 0.13912131931308125,
+          "per_disease_auroc_mean": 0.6453276218704252,
+          "pooled_auprc": 0.06203377585591068,
+          "pooled_auroc": 0.6004897723544573
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.21275117501836613,
+          "per_disease_auprc_mean": 0.13707530760669753,
+          "per_disease_auroc_mean": 0.6329558567431212,
+          "pooled_auprc": 0.050916262787097086,
+          "pooled_auroc": 0.5947537788551005
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "n_eval": 199,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.2376381337397199,
+          "per_disease_auprc_mean": 0.14687185951246565,
+          "per_disease_auroc_mean": 0.6424144884076728,
+          "pooled_auprc": 0.06840171603277331,
+          "pooled_auroc": 0.46740855832726524
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.24142033422075143,
+          "per_disease_auprc_mean": 0.1457221996441948,
+          "per_disease_auroc_mean": 0.6493475552817662,
+          "pooled_auprc": 0.06880122012914629,
+          "pooled_auroc": 0.6030834443381767
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.2430008481020319,
+          "per_disease_auprc_mean": 0.14735905638732397,
+          "per_disease_auroc_mean": 0.6493504148845305,
+          "pooled_auprc": 0.068487144120062,
+          "pooled_auroc": 0.6031181263295757
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.2376381337397199,
+          "per_disease_auprc_mean": 0.148114114871024,
+          "per_disease_auroc_mean": 0.6424269124567338,
+          "pooled_auprc": 0.0563719203267189,
+          "pooled_auroc": 0.5970257221056802
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "n_eval": 200,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.20559627461964688,
+          "per_disease_auprc_mean": 0.11116672669463473,
+          "per_disease_auroc_mean": 0.6350248586933457,
+          "pooled_auprc": 0.052784376849190975,
+          "pooled_auroc": 0.4413919583536149
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.2076449961608221,
+          "per_disease_auprc_mean": 0.11754889332074703,
+          "per_disease_auroc_mean": 0.6417567541167434,
+          "pooled_auprc": 0.0543082965948582,
+          "pooled_auroc": 0.5930840091264425
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.20631105658138188,
+          "per_disease_auprc_mean": 0.11706615830126701,
+          "per_disease_auroc_mean": 0.6417588196238665,
+          "pooled_auprc": 0.05381553318839042,
+          "pooled_auroc": 0.5931139416398188
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.20559627461964688,
+          "per_disease_auprc_mean": 0.11294354548043929,
+          "per_disease_auroc_mean": 0.6350320785893022,
+          "pooled_auprc": 0.043466425891280094,
+          "pooled_auroc": 0.5892819854842757
+        }
+      }
+    },
+    {
+      "seed": 8,
+      "n_eval": 202,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.22569042341474987,
+          "per_disease_auprc_mean": 0.1325501465285126,
+          "per_disease_auroc_mean": 0.6336887411627963,
+          "pooled_auprc": 0.05991613735975084,
+          "pooled_auroc": 0.4546429939072888
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.2229834160864576,
+          "per_disease_auprc_mean": 0.139191307907415,
+          "per_disease_auroc_mean": 0.6443641681582339,
+          "pooled_auprc": 0.06304518228694107,
+          "pooled_auroc": 0.5978189604857678
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.2257092941733462,
+          "per_disease_auprc_mean": 0.13861623531257458,
+          "per_disease_auroc_mean": 0.6443687497808399,
+          "pooled_auprc": 0.06282897815233618,
+          "pooled_auroc": 0.5978468695106323
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.22569042341474987,
+          "per_disease_auprc_mean": 0.1353619016607482,
+          "per_disease_auroc_mean": 0.6337058793364511,
+          "pooled_auprc": 0.04899645364990679,
+          "pooled_auroc": 0.5900792976004585
+        }
+      }
+    },
+    {
+      "seed": 9,
+      "n_eval": 197,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.21739743897639166,
+          "per_disease_auprc_mean": 0.11767687500969476,
+          "per_disease_auroc_mean": 0.6358570278591279,
+          "pooled_auprc": 0.05897263648263683,
+          "pooled_auroc": 0.45601555316132186
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.21988486316516243,
+          "per_disease_auprc_mean": 0.12410395147809264,
+          "per_disease_auroc_mean": 0.6467165573395526,
+          "pooled_auprc": 0.0600051091138739,
+          "pooled_auroc": 0.6053072456562558
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.21946307560836056,
+          "per_disease_auprc_mean": 0.12334076817891985,
+          "per_disease_auroc_mean": 0.6467207056661409,
+          "pooled_auprc": 0.059843749643193556,
+          "pooled_auroc": 0.6053515944028374
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.21739743897639166,
+          "per_disease_auprc_mean": 0.11921236733707731,
+          "per_disease_auroc_mean": 0.6358718081392158,
+          "pooled_auprc": 0.048071044768103255,
+          "pooled_auroc": 0.5976090312305086
+        }
+      }
+    },
+    {
+      "seed": 10,
+      "n_eval": 198,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.20252541349023934,
+          "per_disease_auprc_mean": 0.11399810390128523,
+          "per_disease_auroc_mean": 0.6400400465950347,
+          "pooled_auprc": 0.05880193295935311,
+          "pooled_auroc": 0.49664472443744256
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.1945655825747067,
+          "per_disease_auprc_mean": 0.11863920823706244,
+          "per_disease_auroc_mean": 0.6430166388474546,
+          "pooled_auprc": 0.058328901318067373,
+          "pooled_auroc": 0.5983380282710808
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.19934578739669348,
+          "per_disease_auprc_mean": 0.11929259125270336,
+          "per_disease_auroc_mean": 0.6431392081306742,
+          "pooled_auprc": 0.058191850299993075,
+          "pooled_auroc": 0.5983818609884585
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.20252541349023934,
+          "per_disease_auprc_mean": 0.11700678480621639,
+          "per_disease_auroc_mean": 0.6400498281348259,
+          "pooled_auprc": 0.048825105203535356,
+          "pooled_auroc": 0.5937473690906775
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "n_eval": 202,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.23108982295862923,
+          "per_disease_auprc_mean": 0.14453727941238861,
+          "per_disease_auroc_mean": 0.6459130840317311,
+          "pooled_auprc": 0.06883635633940785,
+          "pooled_auroc": 0.4589866662311041
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.23303778698777128,
+          "per_disease_auprc_mean": 0.14840888101039926,
+          "per_disease_auroc_mean": 0.6574440397470491,
+          "pooled_auprc": 0.06981053132351914,
+          "pooled_auroc": 0.6105650460667583
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.23309008505918094,
+          "per_disease_auprc_mean": 0.14924839837351497,
+          "per_disease_auroc_mean": 0.6574841893524654,
+          "pooled_auprc": 0.06983379689385921,
+          "pooled_auroc": 0.610630908239404
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.23108982295862923,
+          "per_disease_auprc_mean": 0.14613359499452777,
+          "per_disease_auroc_mean": 0.6459365912475813,
+          "pooled_auprc": 0.05930807345902574,
+          "pooled_auroc": 0.6029072507977621
+        }
+      }
+    },
+    {
+      "seed": 12,
+      "n_eval": 198,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.20943480255770414,
+          "per_disease_auprc_mean": 0.1273985386263191,
+          "per_disease_auroc_mean": 0.6324667798290525,
+          "pooled_auprc": 0.06107590003664157,
+          "pooled_auroc": 0.45208914589248383
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.21037057102530773,
+          "per_disease_auprc_mean": 0.13118960747884786,
+          "per_disease_auroc_mean": 0.6405323635194917,
+          "pooled_auprc": 0.06400717189194553,
+          "pooled_auroc": 0.6021961039916361
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.21088602217815516,
+          "per_disease_auprc_mean": 0.13102775063230587,
+          "per_disease_auroc_mean": 0.6405219280895479,
+          "pooled_auprc": 0.06379125961849474,
+          "pooled_auroc": 0.6022329770711966
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.20943480255770414,
+          "per_disease_auprc_mean": 0.1282585421369851,
+          "per_disease_auroc_mean": 0.6324875353877999,
+          "pooled_auprc": 0.052716732789996806,
+          "pooled_auroc": 0.5963798669299709
+        }
+      }
+    },
+    {
+      "seed": 13,
+      "n_eval": 198,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.20561091896436004,
+          "per_disease_auprc_mean": 0.11036835696921264,
+          "per_disease_auroc_mean": 0.6284665649434151,
+          "pooled_auprc": 0.04629531779850176,
+          "pooled_auroc": 0.3909244366626739
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.20823337863491037,
+          "per_disease_auprc_mean": 0.11863498102583153,
+          "per_disease_auroc_mean": 0.6382655679712477,
+          "pooled_auprc": 0.04964637217438245,
+          "pooled_auroc": 0.5793405505910524
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.2095040605844092,
+          "per_disease_auprc_mean": 0.11816384247283929,
+          "per_disease_auroc_mean": 0.6382566450391808,
+          "pooled_auprc": 0.04899968235488879,
+          "pooled_auroc": 0.5793644488055498
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.20561091896436004,
+          "per_disease_auprc_mean": 0.111089690186582,
+          "per_disease_auroc_mean": 0.6284821710426949,
+          "pooled_auprc": 0.03945525139124336,
+          "pooled_auroc": 0.576534582839061
+        }
+      }
+    },
+    {
+      "seed": 14,
+      "n_eval": 199,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.22039503644077219,
+          "per_disease_auprc_mean": 0.12722549956338,
+          "per_disease_auroc_mean": 0.6320694181720254,
+          "pooled_auprc": 0.060230755526565156,
+          "pooled_auroc": 0.5091857800869412
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.22308137388065508,
+          "per_disease_auprc_mean": 0.1442701346604192,
+          "per_disease_auroc_mean": 0.6407951694169969,
+          "pooled_auprc": 0.06255936142270804,
+          "pooled_auroc": 0.5969871059944956
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.22366636803442166,
+          "per_disease_auprc_mean": 0.14217040467165715,
+          "per_disease_auroc_mean": 0.6408070930069789,
+          "pooled_auprc": 0.06189465588337703,
+          "pooled_auroc": 0.597013017935132
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.22039503644077219,
+          "per_disease_auprc_mean": 0.12914229173410022,
+          "per_disease_auroc_mean": 0.6320815641999884,
+          "pooled_auprc": 0.04679601440462257,
+          "pooled_auroc": 0.5910246795844571
+        }
+      }
+    },
+    {
+      "seed": 15,
+      "n_eval": 198,
+      "modes": {
+        "soft_blend_w050_2way": {
+          "per_drug_r30": 0.198031239666203,
+          "per_disease_auprc_mean": 0.12437816452653161,
+          "per_disease_auroc_mean": 0.6282522778301636,
+          "pooled_auprc": 0.05818967832122817,
+          "pooled_auroc": 0.43868302816235116
+        },
+        "rrf_k60_3ranker": {
+          "per_drug_r30": 0.19879856573075055,
+          "per_disease_auprc_mean": 0.1313547778109891,
+          "per_disease_auroc_mean": 0.635183607125539,
+          "pooled_auprc": 0.06204402174947039,
+          "pooled_auroc": 0.5956913631038914
+        },
+        "rrf_k60_4ranker": {
+          "per_drug_r30": 0.20161687665450084,
+          "per_disease_auprc_mean": 0.13077030030813933,
+          "per_disease_auroc_mean": 0.6352279338027915,
+          "pooled_auprc": 0.0618965215327105,
+          "pooled_auroc": 0.5957454468935169
+        },
+        "rrf_k60_softblend_only": {
+          "per_drug_r30": 0.198031239666203,
+          "per_disease_auprc_mean": 0.12605640281223787,
+          "per_disease_auroc_mean": 0.6282699326917514,
+          "pooled_auprc": 0.050570072818168096,
+          "pooled_auroc": 0.5898443811055826
+        }
+      }
+    }
+  ]
+}

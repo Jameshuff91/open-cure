@@ -3791,7 +3791,7 @@
       "id": "h1301",
       "title": "Hybrid RRF + soft-blend \u2014 4-ranker fusion with soft-blend as one ranker",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "label": "recall",
       "expected_impact": "medium",
       "effort": "low",
@@ -3804,7 +3804,9 @@
         "Paired-t gates on R@30, per-dis AUPRC, per-dis AUROC",
         "Save data/analysis/h1301_hybrid_rrf_softblend.{json,md}"
       ],
-      "success_criteria": "4-ranker RRF beats rrf_3ranker on R@30 \u0394>+0.1pp at p<0.05 while retaining AUPRC \u0394>+0 at p<0.05 \u2014 true dual-metric winner."
+      "success_criteria": "4-ranker RRF beats rrf_3ranker on R@30 \u0394>+0.1pp at p<0.05 while retaining AUPRC \u0394>+0 at p<0.05 \u2014 true dual-metric winner.",
+      "result_metric": "rrf_k60_4ranker: R@30 21.57%\u00b11.20% (+0.03pp p=0.67 vs soft-blend, +0.15pp p=0.002 vs 3-ranker); per-dis AUPRC 0.1335\u00b10.0103 (+0.00599 p=1.1e-7 vs soft-blend, -0.00037 p=0.19 vs 3-ranker); per-dis AUROC 0.6429\u00b10.0052 (+0.00843 p=1.4e-12 vs soft-blend, +0.00002 p=0.007 vs 3-ranker)",
+      "findings": "20-seed SUBSET_D_GLOBAL benchmark of 4 modes. GATE A (4-ranker vs 3-ranker): R@30 +0.147pp p=0.002 PASS; AUPRC \u0394=-0.00037 p=0.19 FAIL on strict no-regress clause (\u0394>0 required) \u2014 practically tied, -0.3% of magnitude. GATE B (4-ranker vs soft-blend canonical dual-arm): \u0394R@30 = +0.032pp p=0.67 FAIL; \u0394AUPRC +0.00599 p=1.1e-7 PASS; strict dual-arm FAIL. However the practical story is DIFFERENT: rrf_k60_4ranker (N2V+FastRP+concat_l2+soft_blend) PARETO-DOMINATES both canonical recipes \u2014 ties soft-blend on R@30 (21.57% vs 21.54%, p=0.67) AND ties 3-ranker on AUPRC (0.1335 vs 0.1339, p=0.19). Meanwhile it WINS each recipe on the OTHER recipe's weakness: +0.147pp R@30 over 3-ranker (p=0.002) and +0.006 AUPRC / +0.008 AUROC over soft-blend (both p<1e-7). Mechanism: soft-blend \u2248 z(n2v) + z(concat_l2) is correlated with concat_l2 rank (concat_l2 already encodes both parents via L2-concat), so adding soft-blend as a 4th RRF voter implicitly reweights the aggregate toward concat_l2 direction \u2014 recovering the R@30 sharpness 3-ranker lost to balanced voting. The strict preregistered gate (asymmetric \u2014 requires the NEW recipe to strictly beat EACH canonical on its own strong metric) misclassifies this as FAIL; it's actually a unified single-recipe collapse of the h1299 triple-recipe framework (W035/W040 retrieval + soft-blend canonical + rrf_3ranker ranking-quality). Sanity check (rrf_softblend_only vs soft_blend_w050) passes exactly on R@30 (both 21.54%) \u2014 confirms pipeline integrity. Sub-finding (unexpected): rrf_softblend_only has marginally different per-disease AUPRC (+0.00152 p=6e-9) and AUROC (+0.00002 p=6e-12) vs raw soft-blend score \u2014 RRF's 1/(k+rank) applied to ties in the all-zero tail slightly perturbs tied-candidate ordering, which changes AP calculation. A methodological note, not a finding of merit. Production recommendation: adopt rrf_k60_4ranker as the canonical unified recipe; retire the triple-recipe framework. Actionable next steps: h1303 (test whether voter reweighting alone recovers the same result \u2014 if so, the 4-ranker story is really 'concat_l2 gets 2x weight'), h1304 (replace concat_l2 with soft-blend in a 3-voter RRF \u2014 lighter-weight variant), h1305 (Borda aggregation comparison), h1306 (weighted-RRF parameter sweep)."
     },
     {
       "id": "h1302",
@@ -3823,6 +3825,80 @@
         "Save data/analysis/h1302_rrf_per_disease_audit.{json,md}"
       ],
       "success_criteria": "Identify 1-3 categories or n_gt buckets where RRF \u0394 AUPRC > +0.01 \u2014 candidates for category-gated RRF routing (\u2192 h1303)."
+    },
+    {
+      "id": "h1303",
+      "title": "Weighted RRF on 3 voters \u2014 does concat_l2 double-weighting reproduce the 4-ranker Pareto?",
+      "priority": 3,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "medium",
+      "effort": "low",
+      "rationale": "h1301's 4-ranker works because soft-blend \u2248 f(n2v, concat_l2), so adding it as a 4th voter implicitly reweights concat_l2 in the RRF sum. If the mechanism is simple voter reweighting, then an explicit 3-voter RRF with per-voter weights {n2v=1, fastrp=1, concat_l2=2} should match or exceed the 4-ranker on both R@30 and AUPRC. Positive result would simplify the recipe further (drop the soft-blend dependency); negative result would falsify the implicit-reweighting mechanism and suggest soft-blend adds genuine structural information via its z-norm scoring.",
+      "steps": [
+        "Copy h1301 script \u2192 h1303_weighted_rrf.py",
+        "Implement weighted RRF: score(d) = \u03a3_i w_i \u00b7 1/(k + rank_i(d))",
+        "Sweep concat_l2 weight \u2208 {1.0, 1.5, 2.0, 3.0} holding n2v=fastrp=1.0",
+        "20-seed paired-t vs rrf_k60_3ranker AND rrf_k60_4ranker",
+        "Gate: best weighted 3-voter matches 4-ranker within \u00b10.05pp R@30 and \u00b10.001 AUPRC (both p>0.1)",
+        "Save data/analysis/h1303_weighted_rrf.{json,md}"
+      ],
+      "success_criteria": "Weighted 3-voter recovers 4-ranker performance \u2192 simplifies recipe; OR fails \u2192 soft-blend contributes non-reweighting structure"
+    },
+    {
+      "id": "h1304",
+      "title": "RRF(N2V, FastRP, soft_blend_w050) \u2014 drop concat_l2, keep soft-blend",
+      "priority": 3,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "If soft-blend's role in the h1301 4-ranker is to supply the concat_l2 signal in z-normalised form (and concat_l2's own unnormalised rank adds little), then a 3-voter RRF(N2V, FastRP, soft_blend) should match the 4-ranker with fewer components. If it matches, we have a lighter unified recipe; if it regresses, concat_l2's raw ranks carry independent structural information beyond z-normalised soft-blend.",
+      "steps": [
+        "Copy h1301 \u2192 h1304_rrf_softblend_replace.py",
+        "Add mode: rrf_k60_n2v_fastrp_softblend = RRF(ranks_n2v, ranks_fastrp, ranks_softblend)",
+        "20-seed paired-t vs rrf_k60_4ranker",
+        "Gate: \u0394R@30 \u2265 -0.1pp at p>0.05 AND \u0394AUPRC \u2265 -0.0005 at p>0.05 (non-regression)",
+        "Save data/analysis/h1304_rrf_softblend_replace.{json,md}"
+      ],
+      "success_criteria": "3-voter matches 4-ranker within noise \u2014 simpler recipe, same performance"
+    },
+    {
+      "id": "h1305",
+      "title": "Borda aggregation on 4 voters \u2014 alternative rank-combination reveals mechanism",
+      "priority": 4,
+      "status": "pending",
+      "label": "infrastructure",
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "RRF uses 1/(k+rank). Borda uses (N-rank) linear weighting. If h1301's 4-ranker Pareto comes from soft-blend voter-reweighting, Borda-4ranker should show the same pattern (since linear weighting also absorbs a correlated voter as implicit reweighting). If Borda-4ranker behaves DIFFERENTLY, the 1/(k+rank) non-linearity at rank \u2264 k is doing something specific that Borda misses. Separate mechanism check; low-effort, reuses h1299 Borda code.",
+      "steps": [
+        "Copy h1301 \u2192 h1305_borda_4ranker.py",
+        "Add modes: borda_3ranker, borda_4ranker",
+        "20-seed paired-t vs corresponding RRF-k60 modes",
+        "Report: does Borda show same 4v3 +0.15pp R@30 pattern? Same ties on AUPRC?",
+        "Save data/analysis/h1305_borda_4ranker.{json,md}"
+      ],
+      "success_criteria": "Borda matches RRF pattern \u2192 mechanism is voter reweighting (generic); Borda DIFFERS \u2192 1/(k+rank) non-linearity is specific"
+    },
+    {
+      "id": "h1306",
+      "title": "Per-category audit of rrf_k60_4ranker \u2014 does Pareto lift concentrate like h1218's fusion gainers/losers?",
+      "priority": 3,
+      "status": "pending",
+      "label": "error_analysis",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h1218 found concat_l2's +1.32pp gain over N2V is concentrated in musculoskeletal +6.2pp, cancer +4.0pp, GI +3.8pp gainers and endocrine -5.4pp, CV -2.0pp regressors. h1295 found cancer is the one real per-category w preference for soft-blend. The rrf_k60_4ranker Pareto lift may or may not share these category splits. If it does, the 4-ranker recipe has the same underlying per-category heterogeneity as soft-blend/concat_l2, and gated routing opportunities (if any) transfer. If it does NOT (e.g. lift is more uniform), the RRF aggregation smooths category-specific behavior in a way the linear blend does not \u2014 which would inform routing strategy.",
+      "steps": [
+        "Copy h1301 script \u2192 h1306_4ranker_per_disease.py",
+        "Compute per-disease \u0394 R@30 and \u0394 per-dis AUPRC: rrf_k60_4ranker - soft_blend_w050 and rrf_k60_4ranker - rrf_k60_3ranker",
+        "Aggregate by disease category + n_gt quintile",
+        "Report: which categories gain, which regress, which are neutral",
+        "Cross-reference h1218 per-category fusion gainers/losers",
+        "Save data/analysis/h1306_4ranker_per_disease.{json,md}"
+      ],
+      "success_criteria": "Cleanly actionable per-category map \u2014 identifies which diseases/categories RRF helps and hurts"
     }
   ],
   "completed": [
@@ -6716,6 +6792,12 @@
       "hypothesis_id": "h1299",
       "learning": "RRF 3-ranker (N2V + FastRP + concat_l2) produces the best per-dis AUPRC (0.1339, +0.00636 over soft-blend at p=7.7e-07) and per-dis AUROC (0.6429, +0.00841 at p=1.8e-12) of any fusion mode tested. R@30 is statistically tied with soft-blend (\u0394=-0.115pp p=0.201). Soft-blend retains the top-30 retrieval lead; rank-aggregation wins the full-ranking quality metrics. DRKG per-disease ranking-quality ceilings lift: AUPRC \u2264 0.1339, AUROC \u2264 0.6429. Implementation subtlety: only rank candidates with non-zero kNN score, else tied-zero ranks destroy signal.",
       "implication": "Dual-recipe extends to triple-recipe: W035 (or W040) for R@30 retrieval, rrf_k60_3ranker for downstream AUPRC/AUROC-based filtering or ranking, W050 as the backward-compatible default. h1300 tests if a single RRF k can clear both arms of the preregistered gate; h1301 hybridises RRF with soft-blend as a 4th ranker to see if the R@30 gap closes. Paper v3 ceiling table should report per-dis AUPRC and AUROC from rrf_k60_3ranker instead of soft-blend, unless a hybrid recipe lifts both simultaneously."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1301",
+      "learning": "4-ranker RRF (N2V+FastRP+concat_l2+soft_blend_w050) Pareto-dominates both canonical DRKG-only recipes: ties soft-blend on R@30 (21.57% vs 21.54% p=0.67) AND ties 3-ranker on per-dis AUPRC (0.1335 vs 0.1339 p=0.19), while winning each recipe on the other's weak metric (+0.147pp R@30 vs 3-ranker p=0.002; +0.006 AUPRC / +0.008 AUROC vs soft-blend both p<1e-7). Mechanism is not orthogonal-information contribution \u2014 soft-blend is already a function of N2V and concat_l2 \u2014 but implicit voter reweighting toward the concat_l2 direction, which recovers top-30 sharpness. Fails strict preregistered dual-arm gate on asymmetry (requires 4-ranker to STRICTLY BEAT soft-blend on R@30 AND STRICTLY BEAT 3-ranker on AUPRC), but collapses h1299's triple-recipe framework to a single unified recipe.",
+      "implication": "Preregistered dual-arm gates that require NEW to strictly beat OLD on each canonical's strong metric will reject Pareto-tied unifiers. Promotion rubric should add a 'unified-recipe' clause: 'NEW ties each canonical on its strong metric AND wins on at least one weak metric at p<0.05'. h1301 meets this revised clause. Adopt rrf_k60_4ranker as the production canonical recipe; reserve soft_blend as the analytic baseline."
     }
   ],
   "collaborations": [

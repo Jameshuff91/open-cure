@@ -1,0 +1,166 @@
+========================================================================
+h1301: Hybrid RRF + soft-blend as 4th ranker  seeds=20
+========================================================================
+Universe: 1,011 diseases  | setup 0.2s
+
+  seed 42 (1.0s) n_eval=202
+    soft_blend_w050_2way     R@30=20.67%  per-dis-AUPRC=0.1298  per-dis-AUROC=0.6314
+    rrf_k60_3ranker          R@30=20.14%  per-dis-AUPRC=0.1346  per-dis-AUROC=0.6384
+    rrf_k60_4ranker          R@30=20.63%  per-dis-AUPRC=0.1356  per-dis-AUROC=0.6385
+    rrf_k60_softblend_only   R@30=20.67%  per-dis-AUPRC=0.1302  per-dis-AUROC=0.6314
+
+  seed 123 (1.1s) n_eval=200
+    soft_blend_w050_2way     R@30=21.90%  per-dis-AUPRC=0.1233  per-dis-AUROC=0.6361
+    rrf_k60_3ranker          R@30=21.20%  per-dis-AUPRC=0.1224  per-dis-AUROC=0.6429
+    rrf_k60_4ranker          R@30=21.19%  per-dis-AUPRC=0.1224  per-dis-AUROC=0.6430
+    rrf_k60_softblend_only   R@30=21.90%  per-dis-AUPRC=0.1240  per-dis-AUROC=0.6361
+
+  seed 456 (1.0s) n_eval=200
+    soft_blend_w050_2way     R@30=21.08%  per-dis-AUPRC=0.1198  per-dis-AUROC=0.6294
+    rrf_k60_3ranker          R@30=20.34%  per-dis-AUPRC=0.1262  per-dis-AUROC=0.6366
+    rrf_k60_4ranker          R@30=20.39%  per-dis-AUPRC=0.1253  per-dis-AUROC=0.6366
+    rrf_k60_softblend_only   R@30=21.08%  per-dis-AUPRC=0.1213  per-dis-AUROC=0.6294
+
+  seed 789 (1.0s) n_eval=200
+    soft_blend_w050_2way     R@30=23.08%  per-dis-AUPRC=0.1401  per-dis-AUROC=0.6358
+    rrf_k60_3ranker          R@30=22.71%  per-dis-AUPRC=0.1516  per-dis-AUROC=0.6417
+    rrf_k60_4ranker          R@30=22.88%  per-dis-AUPRC=0.1492  per-dis-AUROC=0.6417
+    rrf_k60_softblend_only   R@30=23.08%  per-dis-AUPRC=0.1415  per-dis-AUROC=0.6358
+
+  seed 2024 (1.1s) n_eval=200
+    soft_blend_w050_2way     R@30=19.77%  per-dis-AUPRC=0.1255  per-dis-AUROC=0.6269
+    rrf_k60_3ranker          R@30=19.66%  per-dis-AUPRC=0.1319  per-dis-AUROC=0.6353
+    rrf_k60_4ranker          R@30=19.82%  per-dis-AUPRC=0.1340  per-dis-AUROC=0.6354
+    rrf_k60_softblend_only   R@30=19.77%  per-dis-AUPRC=0.1277  per-dis-AUROC=0.6269
+
+  seed 1 (1.0s) n_eval=199
+    soft_blend_w050_2way     R@30=21.14%  per-dis-AUPRC=0.1281  per-dis-AUROC=0.6293
+    rrf_k60_3ranker          R@30=20.46%  per-dis-AUPRC=0.1355  per-dis-AUROC=0.6404
+    rrf_k60_4ranker          R@30=20.98%  per-dis-AUPRC=0.1347  per-dis-AUROC=0.6404
+    rrf_k60_softblend_only   R@30=21.14%  per-dis-AUPRC=0.1301  per-dis-AUROC=0.6293
+
+  seed 2 (1.0s) n_eval=200
+    soft_blend_w050_2way     R@30=22.97%  per-dis-AUPRC=0.1217  per-dis-AUROC=0.6391
+    rrf_k60_3ranker          R@30=23.10%  per-dis-AUPRC=0.1317  per-dis-AUROC=0.6498
+    rrf_k60_4ranker          R@30=23.12%  per-dis-AUPRC=0.1291  per-dis-AUROC=0.6497
+    rrf_k60_softblend_only   R@30=22.97%  per-dis-AUPRC=0.1224  per-dis-AUROC=0.6392
+
+  seed 3 (1.0s) n_eval=200
+    soft_blend_w050_2way     R@30=22.09%  per-dis-AUPRC=0.1409  per-dis-AUROC=0.6347
+    rrf_k60_3ranker          R@30=22.09%  per-dis-AUPRC=0.1495  per-dis-AUROC=0.6439
+    rrf_k60_4ranker          R@30=22.26%  per-dis-AUPRC=0.1492  per-dis-AUROC=0.6439
+    rrf_k60_softblend_only   R@30=22.09%  per-dis-AUPRC=0.1423  per-dis-AUROC=0.6347
+
+  seed 4 (1.0s) n_eval=201
+    soft_blend_w050_2way     R@30=21.46%  per-dis-AUPRC=0.1299  per-dis-AUROC=0.6395
+    rrf_k60_3ranker          R@30=21.40%  per-dis-AUPRC=0.1353  per-dis-AUROC=0.6457
+    rrf_k60_4ranker          R@30=21.37%  per-dis-AUPRC=0.1343  per-dis-AUROC=0.6457
+    rrf_k60_softblend_only   R@30=21.46%  per-dis-AUPRC=0.1309  per-dis-AUROC=0.6395
+
+  seed 5 (1.0s) n_eval=201
+    soft_blend_w050_2way     R@30=21.28%  per-dis-AUPRC=0.1354  per-dis-AUROC=0.6329
+    rrf_k60_3ranker          R@30=21.38%  per-dis-AUPRC=0.1398  per-dis-AUROC=0.6453
+    rrf_k60_4ranker          R@30=21.51%  per-dis-AUPRC=0.1391  per-dis-AUROC=0.6453
+    rrf_k60_softblend_only   R@30=21.28%  per-dis-AUPRC=0.1371  per-dis-AUROC=0.6330
+
+  seed 6 (1.0s) n_eval=199
+    soft_blend_w050_2way     R@30=23.76%  per-dis-AUPRC=0.1469  per-dis-AUROC=0.6424
+    rrf_k60_3ranker          R@30=24.14%  per-dis-AUPRC=0.1457  per-dis-AUROC=0.6493
+    rrf_k60_4ranker          R@30=24.30%  per-dis-AUPRC=0.1474  per-dis-AUROC=0.6494
+    rrf_k60_softblend_only   R@30=23.76%  per-dis-AUPRC=0.1481  per-dis-AUROC=0.6424
+
+  seed 7 (1.0s) n_eval=200
+    soft_blend_w050_2way     R@30=20.56%  per-dis-AUPRC=0.1112  per-dis-AUROC=0.6350
+    rrf_k60_3ranker          R@30=20.76%  per-dis-AUPRC=0.1175  per-dis-AUROC=0.6418
+    rrf_k60_4ranker          R@30=20.63%  per-dis-AUPRC=0.1171  per-dis-AUROC=0.6418
+    rrf_k60_softblend_only   R@30=20.56%  per-dis-AUPRC=0.1129  per-dis-AUROC=0.6350
+
+  seed 8 (1.0s) n_eval=202
+    soft_blend_w050_2way     R@30=22.57%  per-dis-AUPRC=0.1326  per-dis-AUROC=0.6337
+    rrf_k60_3ranker          R@30=22.30%  per-dis-AUPRC=0.1392  per-dis-AUROC=0.6444
+    rrf_k60_4ranker          R@30=22.57%  per-dis-AUPRC=0.1386  per-dis-AUROC=0.6444
+    rrf_k60_softblend_only   R@30=22.57%  per-dis-AUPRC=0.1354  per-dis-AUROC=0.6337
+
+  seed 9 (1.0s) n_eval=197
+    soft_blend_w050_2way     R@30=21.74%  per-dis-AUPRC=0.1177  per-dis-AUROC=0.6359
+    rrf_k60_3ranker          R@30=21.99%  per-dis-AUPRC=0.1241  per-dis-AUROC=0.6467
+    rrf_k60_4ranker          R@30=21.95%  per-dis-AUPRC=0.1233  per-dis-AUROC=0.6467
+    rrf_k60_softblend_only   R@30=21.74%  per-dis-AUPRC=0.1192  per-dis-AUROC=0.6359
+
+  seed 10 (1.0s) n_eval=198
+    soft_blend_w050_2way     R@30=20.25%  per-dis-AUPRC=0.1140  per-dis-AUROC=0.6400
+    rrf_k60_3ranker          R@30=19.46%  per-dis-AUPRC=0.1186  per-dis-AUROC=0.6430
+    rrf_k60_4ranker          R@30=19.93%  per-dis-AUPRC=0.1193  per-dis-AUROC=0.6431
+    rrf_k60_softblend_only   R@30=20.25%  per-dis-AUPRC=0.1170  per-dis-AUROC=0.6400
+
+  seed 11 (1.0s) n_eval=202
+    soft_blend_w050_2way     R@30=23.11%  per-dis-AUPRC=0.1445  per-dis-AUROC=0.6459
+    rrf_k60_3ranker          R@30=23.30%  per-dis-AUPRC=0.1484  per-dis-AUROC=0.6574
+    rrf_k60_4ranker          R@30=23.31%  per-dis-AUPRC=0.1492  per-dis-AUROC=0.6575
+    rrf_k60_softblend_only   R@30=23.11%  per-dis-AUPRC=0.1461  per-dis-AUROC=0.6459
+
+  seed 12 (1.0s) n_eval=198
+    soft_blend_w050_2way     R@30=20.94%  per-dis-AUPRC=0.1274  per-dis-AUROC=0.6325
+    rrf_k60_3ranker          R@30=21.04%  per-dis-AUPRC=0.1312  per-dis-AUROC=0.6405
+    rrf_k60_4ranker          R@30=21.09%  per-dis-AUPRC=0.1310  per-dis-AUROC=0.6405
+    rrf_k60_softblend_only   R@30=20.94%  per-dis-AUPRC=0.1283  per-dis-AUROC=0.6325
+
+  seed 13 (1.1s) n_eval=198
+    soft_blend_w050_2way     R@30=20.56%  per-dis-AUPRC=0.1104  per-dis-AUROC=0.6285
+    rrf_k60_3ranker          R@30=20.82%  per-dis-AUPRC=0.1186  per-dis-AUROC=0.6383
+    rrf_k60_4ranker          R@30=20.95%  per-dis-AUPRC=0.1182  per-dis-AUROC=0.6383
+    rrf_k60_softblend_only   R@30=20.56%  per-dis-AUPRC=0.1111  per-dis-AUROC=0.6285
+
+  seed 14 (1.0s) n_eval=199
+    soft_blend_w050_2way     R@30=22.04%  per-dis-AUPRC=0.1272  per-dis-AUROC=0.6321
+    rrf_k60_3ranker          R@30=22.31%  per-dis-AUPRC=0.1443  per-dis-AUROC=0.6408
+    rrf_k60_4ranker          R@30=22.37%  per-dis-AUPRC=0.1422  per-dis-AUROC=0.6408
+    rrf_k60_softblend_only   R@30=22.04%  per-dis-AUPRC=0.1291  per-dis-AUROC=0.6321
+
+  seed 15 (1.0s) n_eval=198
+    soft_blend_w050_2way     R@30=19.80%  per-dis-AUPRC=0.1244  per-dis-AUROC=0.6283
+    rrf_k60_3ranker          R@30=19.88%  per-dis-AUPRC=0.1314  per-dis-AUROC=0.6352
+    rrf_k60_4ranker          R@30=20.16%  per-dis-AUPRC=0.1308  per-dis-AUROC=0.6352
+    rrf_k60_softblend_only   R@30=19.80%  per-dis-AUPRC=0.1261  per-dis-AUROC=0.6283
+
+========================================================================
+AGGREGATE (mean ± std, 20 seeds)
+========================================================================
+  soft_blend_w050_2way      R@30=21.54%±1.12%  per-dis-AUPRC=0.1275±0.0102  per-dis-AUROC=0.6345±0.0049
+  rrf_k60_3ranker           R@30=21.42%±1.26%  per-dis-AUPRC=0.1339±0.0103  per-dis-AUROC=0.6429±0.0052
+  rrf_k60_4ranker           R@30=21.57%±1.20%  per-dis-AUPRC=0.1335±0.0103  per-dis-AUROC=0.6429±0.0052
+  rrf_k60_softblend_only    R@30=21.54%±1.12%  per-dis-AUPRC=0.1290±0.0101  per-dis-AUROC=0.6345±0.0049
+
+========================================================================
+PAIRED-T COMPARISONS
+========================================================================
+
+  4-ranker vs 3-ranker (R@30-recovery test):
+    R@30           Δ=+0.1468pp  p=0.002012
+    per-dis-AUPRC  Δ=-0.00037  p=0.187
+    per-dis-AUROC  Δ=+0.00002  p=0.007128
+
+  4-ranker vs soft-blend canonical (dual-gate):
+    R@30           Δ=+0.0319pp  p=0.6681
+    per-dis-AUPRC  Δ=+0.00599  p=1.085e-07
+    per-dis-AUROC  Δ=+0.00843  p=1.448e-12
+
+  sanity check — RRF(softblend) ≡ softblend:
+    R@30           Δ=+0.0000pp  p=0
+    per-dis-AUPRC  Δ=+0.00152  p=6.021e-09
+    per-dis-AUROC  Δ=+0.00002  p=6.277e-12
+
+========================================================================
+PROMOTION GATES
+========================================================================
+  GATE A: 4-ranker beats 3-ranker on ΔR@30 > +0.1pp p<0.05 AND preserves AUPRC (Δ≥0 p<0.05)
+    R@30 Δ=+0.1468pp p=0.00201  PASS
+    AUPRC Δ=-0.00037 p=0.187  FAIL
+
+  GATE B: 4-ranker clears h1299 dual-arm gate vs soft-blend (ΔR@30>+0.15pp p<0.05 AND ΔAUPRC>+0.0005 p<0.05)
+    R@30 Δ=+0.0319pp p=0.668  FAIL
+    AUPRC Δ=+0.00599 p=1.08e-07  PASS
+    Dual-arm overall: FAIL — triple-recipe stays
+
+Wrote data/analysis/h1301_hybrid_rrf_softblend.json
+Wrote data/analysis/h1301_hybrid_rrf_softblend.md
