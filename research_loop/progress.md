@@ -1,6 +1,79 @@
 # Research Loop Progress
 
-## Current Session: h1248 — Homogeneity-restricted paired-t completes the two-axis routing rule (VALIDATED) (2026-04-19)
+## Current Session: h1263 — Re-evaluate hard-switch routing under per-disease AUPRC (INVALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1263 (INVALIDATED — definitively closes hard-switch routing)
+
+### Premise
+h1259 promoted per-disease AUPRC + per-disease AUROC as the canonical fusion-routing
+metrics on rank-equivariance grounds (pooled AUPRC is scale-confounded across
+embedding spaces). h1228 (category-gated fusion) and h1249 (entropy-routed
+fusion) were both INVALIDATED on pooled-AUPRC regression criteria. h1263 tests
+whether they REOPEN as net wins under the corrected metric — by the same
+mechanism that reopened soft_blend_w0.5 (h1259: Δ per-dis AUPRC = +0.00054 p=0.013).
+
+### Result — both stay flat on per-disease AUPRC
+| Mode | ΔR@30 (p) | Δper-dis-AUPRC (p) | Δper-dis-AUROC (p) | Δpooled-AUPRC (p) | Δpooled-AUROC (p) |
+|---|---|---|---|---|---|
+| `node2vec` | -1.326pp (0.065) | -0.00348 (0.148) | -0.00778 (0.033) | -0.00728 (0.0009) | -0.00850 (0.001) |
+| `cat_gated` | +0.186pp (0.227) | **+0.00031 (0.502)** | -0.00021 (0.820) | -0.00188 (0.019) | -0.00244 (0.007) |
+| `entropy_routed` | +0.049pp (0.095) | **+0.00008 (0.763)** | -0.00040 (0.112) | -0.00140 (0.054) | -0.00167 (0.069) |
+
+vs concat_l2_raw anchor over 5 seeds (n_eval ≈ 200/seed).
+
+### Promotion gate (per-disease AUPRC Δ ≥ 0 with p < 0.1 → REOPEN)
+- **cat_gated**: Δ +0.00031 p=0.50 → **STAY_INVALIDATED**
+- **entropy_routed**: Δ +0.00008 p=0.76 → **STAY_INVALIDATED**
+
+Both are directionally non-negative but indistinguishable from zero. The pooled
+AUPRC regression IS confirmed real (cat_gated -0.0019 p=0.019), but the
+per-disease ranking is flat too — the rule has no real ranking benefit.
+
+### Mechanism contrast that explains the negative
+| Fusion type | Action per disease | h1259 / h1263 result |
+|---|---|---|
+| **Soft-blend** (h1255/h1259) | Smooth z-norm scores: `w·z(n2v) + (1-w)·z(concat)` | **WINS** Δ per-dis AUPRC +0.00054 (p=0.013) |
+| **Hard-switch** (h1228/h1249) | Pick ONE embedding wholesale per disease/category | **FLAT** Δ per-dis AUPRC ≈ 0 (p>0.5) |
+
+Hard-switch needs the gate to reliably pick the better embedding per disease;
+the gate (per-category Δ from other 4 seeds; or per-disease n_gt × ATC entropy
+tercile) is too noisy at the prediction level to systematically improve
+per-disease ranking. Soft-blend doesn't need the gate to be right — it just
+averages scores and lets the smoothing carry the lift.
+
+### Closure
+**Hard-switch routing direction CLOSED.** Both h1228 and h1249 stay invalidated
+on the merits. Soft-blend (h1255/h1259), learnable fusion-weight (h1260), and
+rank-aggregation (new h1266 RRF) remain the only open fusion mechanisms.
+
+### Shipped
+- `scripts/h1263_routing_per_disease_reframe.py`
+- `data/analysis/h1263_routing_per_disease_reframe.{json,md}`
+- CLAUDE.md updated with h1263 paragraph
+- 3 new pending hypotheses (h1264, h1266, h1267)
+
+### New hypotheses (3 added)
+- **h1264 (P2, recall, low effort):** Broaden h1259's soft-blend w=0.5 from the
+  mid-entropy n_gt≥51 subset to {all n_gt≥51, all n_gt≥21, all diseases}.
+  Test whether the lift survives or is subset-specific.
+- **h1266 (P2, recall, medium effort):** Reciprocal Rank Fusion (RRF) — scale-
+  invariant rank-aggregation across {Node2Vec, concat_l2, FastRP}. Different
+  fusion mechanism, immune to score-scale artifacts.
+- **h1267 (P3, infrastructure, low effort):** Per-disease AUPRC confound audit
+  — quantify Pearson(per-dis AUPRC, n_gt) before standardising per-dis AUPRC
+  as the production metric. Make sure it isn't its own confounder with the
+  strata where soft-blend already wins on R@30.
+
+### Recommended next hypothesis
+**h1264 (P2, low effort)** — direct continuation of h1259's soft-blend win.
+Cheapest way to find out whether the +0.00054 per-dis AUPRC lift generalises
+beyond the 7-16 mid-entropy diseases per seed. After h1264, h1266 (RRF) is
+the highest-novelty open fusion direction and worth running before any GPU
+work on h1200 supervised GraphSAGE.
+
+---
+
+## Previous Session: h1248 — Homogeneity-restricted paired-t completes the two-axis routing rule (VALIDATED) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1248 (VALIDATED — strong)
 

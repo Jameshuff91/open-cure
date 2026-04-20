@@ -2092,7 +2092,7 @@
       "expected_impact": "high",
       "effort": "high",
       "priority": 1,
-      "status": "in_progress",
+      "status": "invalidated",
       "steps": [
         "Gated on h1199 (clean benchmark) being in place",
         "Build a supervised-positive/negative edge sampler: positives = treatment edges, negatives = degree-weighted random non-treatment pairs (ratio 1:3, following PinSAGE conventions)",
@@ -2103,8 +2103,8 @@
         "Success: any architecture reaching >=35% R@30 (vs 26% Node2Vec honest). Stretch: >=45%.",
         "If any architecture succeeds, proceed to h1202 (tier-system recalibration with new embeddings)"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "INVALIDATED across three architectural variants (seed=42, h1199 5-seed benchmark). Variant 1 (Xavier cold-start, 3-layer GraphSAGE, supervised treatment-edge loss): R@30=7.99%\u00b11.07%. Variant 2 (warm-start x_param from node2vec_256_no_treatment): R@30=11.47%\u00b10.90%. Variant 3 (warm-start + 50% unsupervised link-prediction loss on 5.8M mp edges): R@30=10.81%\u00b10.96%. All three are WORSE than the node2vec_256 prior (19.55%) they started from. Diagnosis: 4,968 treatment edges is too sparse a supervision signal to train a 94,528-node GraphSAGE from scratch (0.05 positives per node), and when applied on top of a strong prior the supervised gradient actively degrades the representation \u2014 the loss pulls embeddings into a narrow manifold that fits some positives but loses the broader graph structure encoded by node2vec. Mixed unsupervised+supervised loss still underperformed pure warm-start. Implication: the 37\u219260 pivot plan assumption \u2014 that supervised GNN training would push R@30 toward 40-50% \u2014 was wrong at DRKG scale. Pivot to h1201 (LINCS orthogonal signal) as the next recall lever; the h1215 ensemble pattern (+1.32pp at zero GPU cost) is the proven path. Raw benchmarks: data/analysis/clean_benchmark_graphsage_h1200_s42_256.{json,md}. Full write-up: data/analysis/h1200_invalidation.md.",
+      "result_metric": "R@30=10.81%\u00b10.96% (best of 3 variants; Node2Vec baseline=19.55%, h1215 ensemble ceiling=20.87%)"
     },
     {
       "id": "h1201",
@@ -3071,8 +3071,8 @@
         "Save data/analysis/h1259_per_disease_auprc.{json,md}."
       ],
       "success_criteria": "Per-disease AUPRC for h1255 soft_blend matches concat_l2 within \u00b10.001, confirming the pooled-AUPRC regression was a scale artifact. Convention updated and documented.",
-      "findings": "STRONG VALIDATION. Built scripts/h1259_per_disease_auprc.py extending h1255 with per-disease AUPRC + per-disease AUROC alongside the existing pooled metrics. 5-seed result (1,011 diseases): **(1) Pooled-AUPRC artifact CONFIRMED.** concat_l2_znorm vs concat_l2_raw: Δ per-disease AUPRC = +0.00000 (exact, t=inf); Δ per-disease AUROC = +0.00000 (exact); Δ pooled AUPRC = -0.0116 (p=0.0002); Δ pooled AUROC = -0.1470 (p=0.0006). Per-disease metrics are byte-identical between raw and z-normed scores (z-norm preserves per-disease rank exactly). Pooled metrics collapse. The h1255 'AUPRC regression' is 100% a cross-disease pooling artifact. **(2) Soft-blend fusion REOPENS as a clean win.** soft_blend_w0.50 vs concat_l2_raw: Δ R@30 = +0.0485pp (per-seed t=4.92, p=0.008), Δ per-disease AUPRC = +0.00054 (t=4.41, **p=0.013**), Δ per-disease AUROC = +0.00059 (t=8.07, **p=0.0013**). Wins on 3 rank-equivariant metrics simultaneously. Same R@30 mechanism as h1249 (+0.76pp p=0.042 on flipped subset). **(3) Re-evaluating h1228/h1249 under per-disease AUPRC would similarly REOPEN those as net wins.** Methodological correction: pooled AUPRC/AUROC over raw kNN scores reward absolute score scale; per-disease MAP is rank-equivariant and the correct cross-mode comparison metric. CLAUDE.md updated; h1259 instrumentation should be ported into clean_embedding_benchmark.py as the production benchmark default.",
-      "result_metric": "Soft-blend fusion under rank-equivariant metric: ΔR@30 +0.0485pp p=0.008, Δper-dis-AUPRC +0.00054 p=0.013, Δper-dis-AUROC +0.00059 p=0.0013. Pooled-AUPRC artifact mechanism quantified."
+      "findings": "STRONG VALIDATION. Built scripts/h1259_per_disease_auprc.py extending h1255 with per-disease AUPRC + per-disease AUROC alongside the existing pooled metrics. 5-seed result (1,011 diseases): **(1) Pooled-AUPRC artifact CONFIRMED.** concat_l2_znorm vs concat_l2_raw: \u0394 per-disease AUPRC = +0.00000 (exact, t=inf); \u0394 per-disease AUROC = +0.00000 (exact); \u0394 pooled AUPRC = -0.0116 (p=0.0002); \u0394 pooled AUROC = -0.1470 (p=0.0006). Per-disease metrics are byte-identical between raw and z-normed scores (z-norm preserves per-disease rank exactly). Pooled metrics collapse. The h1255 'AUPRC regression' is 100% a cross-disease pooling artifact. **(2) Soft-blend fusion REOPENS as a clean win.** soft_blend_w0.50 vs concat_l2_raw: \u0394 R@30 = +0.0485pp (per-seed t=4.92, p=0.008), \u0394 per-disease AUPRC = +0.00054 (t=4.41, **p=0.013**), \u0394 per-disease AUROC = +0.00059 (t=8.07, **p=0.0013**). Wins on 3 rank-equivariant metrics simultaneously. Same R@30 mechanism as h1249 (+0.76pp p=0.042 on flipped subset). **(3) Re-evaluating h1228/h1249 under per-disease AUPRC would similarly REOPEN those as net wins.** Methodological correction: pooled AUPRC/AUROC over raw kNN scores reward absolute score scale; per-disease MAP is rank-equivariant and the correct cross-mode comparison metric. CLAUDE.md updated; h1259 instrumentation should be ported into clean_embedding_benchmark.py as the production benchmark default.",
+      "result_metric": "Soft-blend fusion under rank-equivariant metric: \u0394R@30 +0.0485pp p=0.008, \u0394per-dis-AUPRC +0.00054 p=0.013, \u0394per-dis-AUROC +0.00059 p=0.0013. Pooled-AUPRC artifact mechanism quantified."
     },
     {
       "id": "h1260",
@@ -3132,7 +3132,7 @@
       "id": "h1263",
       "title": "Re-evaluate h1228 + h1249 under per-disease AUPRC \u2014 formally reopen as net-win routing strategies",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "expected_impact": "high",
       "effort": "low",
       "label": "recall",
@@ -3140,10 +3140,65 @@
       "steps": [
         "Re-run scripts/h1228_category_gated_fusion.py and scripts/h1249_entropy_routed_benchmark.py with per-disease AUPRC + AUROC instrumentation (use h1259's evaluate_seed pattern).",
         "5-seed paired-t per-disease AUPRC vs concat_l2_raw on each routed mode.",
-        "If per-disease AUPRC Δ \u2265 0 with p < 0.1 on either or both, update the original hypotheses status from invalidated to validated.",
+        "If per-disease AUPRC \u0394 \u2265 0 with p < 0.1 on either or both, update the original hypotheses status from invalidated to validated.",
         "Save data/analysis/h1263_routing_per_disease_reframe.{json,md}."
       ],
-      "success_criteria": "h1228 cat_gated and / or h1249 entropy_routed pass per-disease AUPRC test (Δ \u2265 0 at p < 0.1). One or both gets reopened as production routing rule."
+      "success_criteria": "h1228 cat_gated and / or h1249 entropy_routed pass per-disease AUPRC test (\u0394 \u2265 0 at p < 0.1). One or both gets reopened as production routing rule.",
+      "findings": "h1263 INVALIDATED: per-disease AUPRC reframe does NOT reopen h1228 or h1249. cat_gated \u0394=+0.00031 p=0.50; entropy_routed \u0394=+0.00008 p=0.76 \u2014 both indistinguishable from anchor. The pooled-AUPRC regression IS a real metric artifact (cat_gated pooled-AUPRC \u0394=-0.0019 p=0.019; entropy_routed pooled-AUPRC \u0394=-0.0014 p=0.054), but the underlying ranking is also flat \u2014 these specific HARD-SWITCH routing rules pick ONE embedding wholesale per disease/category, and the gates are too noisy to systematically pick the better embedding. Soft-blend fusion (h1259 w=0.5: \u0394=+0.00054 p=0.013 per-dis-AUPRC) remains the only validated fusion-routing direction. Hard-switch routing direction CLOSED. h1228 and h1249 STAY invalidated on the merits, not just on metric artifact.",
+      "result_metric": "\u0394 per-disease AUPRC: cat_gated +0.00031 (p=0.50), entropy_routed +0.00008 (p=0.76). 5 seeds, n=200 holdout/seed."
+    },
+    {
+      "id": "h1264",
+      "title": "Soft-blend \u00d7 entropy-routing combo \u2014 apply h1259's w=0.5 only on h1248's mid-entropy n_gt>=51 stratum",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1263 closed HARD-SWITCH routing (cat_gated + entropy_routed are flat on per-disease AUPRC), but h1259 validated SOFT-BLEND w=0.5 as a +0.00054 per-disease-AUPRC win (p=0.013) when applied to the n_gt>=51 mid-entropy subset (~7-16 diseases per seed). The h1259 blend was applied uniformly within that subset; an obvious next experiment is to vary the subset definition: blend on ALL high-density diseases (drop the entropy gate), or blend on ALL diseases (drop both gates). If the blend mechanism is truly score-smoothing and not subset-specific, broadening should preserve or amplify the win.",
+      "steps": [
+        "Build scripts/h1264_soft_blend_subset_sweep.py over 4 subsets: {mid-entropy n_gt>=51, all n_gt>=51, all n_gt>=21, all diseases}.",
+        "Apply soft_blend w=0.5 (per-disease z-norm of n2v + concat_l2) on each subset; concat_l2_raw elsewhere.",
+        "Report per-seed per-disease AUPRC, per-disease AUROC, R@30 vs concat_l2_raw.",
+        "Promotion gate: any subset with per-dis AUPRC \u0394 \u2265 +0.0005 at p < 0.05 is the new fusion default."
+      ],
+      "success_criteria": "Identify the broadest subset on which soft-blend retains per-disease AUPRC \u0394 \u2265 +0.0005 with p < 0.05. Update CLAUDE.md DRKG-only ceilings."
+    },
+    {
+      "id": "h1266",
+      "title": "Reciprocal Rank Fusion (RRF) \u2014 scale-invariant rank-aggregation across N2V + concat_l2 + FastRP",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "medium",
+      "label": "recall",
+      "rationale": "All fusion strategies tried so far operate on RAW scores (concat_l2 concatenates embeddings; soft-blend z-norms then linearly combines). RRF (Cormack et al. 2009) ignores absolute scale entirely: per-disease rank-1 in any contributor scores 1/(60+1), rank-2 scores 1/(60+2), etc., summed across contributors. RRF is provably immune to the scale-confounding that h1259 identified in pooled AUPRC, AND it exploits cross-embedding rank disagreement (which h1218 found to be a NEGATIVE predictor for soft-blend gain \u2014 RRF's mechanism is different and may invert this).",
+      "steps": [
+        "Build scripts/h1266_rrf_fusion.py implementing RRF(scores_n2v, scores_concat_l2, scores_fastrp; k=60) per disease.",
+        "5-seed evaluation reporting all 4 metrics (per-dis AUPRC + AUROC + pooled + R@30).",
+        "Compare against soft_blend_w0.5, concat_l2_raw, and Node2Vec on all 5 metrics paired-t.",
+        "If RRF beats concat_l2_raw on per-dis AUPRC at p<0.1, sweep RRF k \u2208 {10, 30, 60, 100} for sensitivity.",
+        "If RRF wins, factor it into clean_embedding_benchmark.py as a fusion mode option."
+      ],
+      "success_criteria": "RRF either wins (\u0394 per-dis AUPRC \u2265 +0.0005 p<0.1) \u2192 new production default; or loses \u2192 confirm soft-blend is the only fusion mechanism that beats concat_l2."
+    },
+    {
+      "id": "h1267",
+      "title": "Per-disease AUPRC confound audit \u2014 does it scale with n_gt the way pooled does with embedding score scale?",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1259 promoted per-disease AUPRC to the canonical fusion-routing metric on rank-equivariance grounds. Before standardising it across all benchmarks (h1262), audit whether per-disease AUPRC has its own confounders: it should be HIGHER for low n_gt diseases (the local candidate universe is more skewed) and possibly LOWER for high n_gt (more positives \u21d2 baseline rate higher \u21d2 AUPRC closer to 0.5). If per-disease AUPRC is dominated by low-n_gt diseases (where soft-blend had its biggest h1259 win), the metric may itself be confounded with the strata where fusion already wins on R@30.",
+      "steps": [
+        "Compute per-disease AUPRC for each (mode, disease, seed) triple from the h1263 / h1259 runs (already on disk).",
+        "Stratify per-disease AUPRC by n_gt bucket {1, 2-5, 6-20, 21-50, 51+}.",
+        "Compute Pearson(per-disease AUPRC, n_gt) and (per-disease AUPRC, log10 n_gt) per mode.",
+        "Compute Pearson(\u0394 per-dis AUPRC vs concat_l2, n_gt) for soft_blend_w0.5.",
+        "Decide whether per-disease AUPRC needs a stratum-aware aggregation (e.g., trimmed mean or n_gt-balanced average) before becoming production default."
+      ],
+      "success_criteria": "Quantified statement: 'per-disease AUPRC is r=X correlated with n_gt; soft-blend's per-disease AUPRC win is concentrated in n_gt=Y stratum.' Either confirm per-disease AUPRC is a clean primary metric or specify the stratum-aware aggregation needed."
     }
   ],
   "completed": [
@@ -5977,6 +6032,12 @@
       "hypothesis_id": "h1214",
       "learning": "Treatment-edge leakage retention is a methodology-dependent number, spanning 47.8-69.4% across the 8-cell factorial (emb \u00d7 aggregation \u00d7 GT \u00d7 universe). The old '71.2%' figure was the most lenient corner (micro + internal GT + embedding-native universes); the defensible single number is 54.4% (macro + expanded GT + common universe). Micro aggregation hides leakage because large-GT diseases (where treatment edges concentrate recall) dominate the sum. Always audit retention numbers along all three axes before citing externally.",
       "implication": "Any future 'performance retention after edge removal' claim (e.g. h1200 vs h1200-no-treatment-labels, or hybrid DRKG+LINCS retention after removing DRKG) must report the 8-cell factorial or at minimum (macro, expanded GT, common universe)."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1263",
+      "learning": "Hard-switch routing (cat_gated, entropy_routed) is dead even under the rank-equivariant per-disease AUPRC frame \u2014 both stay flat (p=0.50, p=0.76). Soft-blend (h1259 w=0.5) remains the ONLY fusion direction with per-disease AUPRC lift over concat_l2_raw. Mechanism difference: soft-blend smooths scores within a disease; hard-switch picks one embedding wholesale and the gate is too noisy at the per-disease level to systematically pick the better source.",
+      "implication": "Future fusion experiments must operate via score-smoothing (soft-blend, RRF, learnable weights) \u2014 wholesale per-disease embedding selection is closed."
     }
   ],
   "collaborations": [
