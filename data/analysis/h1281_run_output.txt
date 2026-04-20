@@ -1,0 +1,157 @@
+========================================================================
+h1281: Per-category soft-blend weight (inner-fold fit, outer-fold eval)
+  weights=(0.0, 0.25, 0.5, 0.75, 1.0)  reference=0.5  seeds=20
+  min_cat_rows=5
+========================================================================
+Loading embeddings...
+  A=49,616  B=49,616  concat=49,616
+Universe: 1,011 diseases  | setup 0.2s
+
+  seed 42 (4.3s) inner=160 outer=202
+    W050       R@30=20.67% AUPRC=0.1298 AUROC=0.6314
+    W_PER_CAT  R@30=20.28% AUPRC=0.1276 AUROC=0.6288
+    fitted_w histogram: {0.0: 4, 0.25: 1, 0.5: 8, 0.75: 3, 1.0: 1}
+
+  seed 123 (4.3s) inner=160 outer=200
+    W050       R@30=21.90% AUPRC=0.1233 AUROC=0.6361
+    W_PER_CAT  R@30=20.81% AUPRC=0.1176 AUROC=0.6266
+    fitted_w histogram: {0.0: 4, 0.25: 1, 0.5: 9, 1.0: 2}
+
+  seed 456 (4.3s) inner=159 outer=200
+    W050       R@30=21.08% AUPRC=0.1198 AUROC=0.6294
+    W_PER_CAT  R@30=21.47% AUPRC=0.1246 AUROC=0.6266
+    fitted_w histogram: {0.0: 2, 0.25: 2, 0.5: 8, 0.75: 3, 1.0: 2}
+
+  seed 789 (4.3s) inner=159 outer=200
+    W050       R@30=23.08% AUPRC=0.1401 AUROC=0.6358
+    W_PER_CAT  R@30=22.83% AUPRC=0.1412 AUROC=0.6349
+    fitted_w histogram: {0.25: 3, 0.5: 8, 0.75: 3, 1.0: 2}
+
+  seed 2024 (4.4s) inner=157 outer=200
+    W050       R@30=19.77% AUPRC=0.1255 AUROC=0.6269
+    W_PER_CAT  R@30=20.00% AUPRC=0.1246 AUROC=0.6269
+    fitted_w histogram: {0.25: 3, 0.5: 12, 0.75: 2}
+
+  seed 1 (4.4s) inner=161 outer=199
+    W050       R@30=21.14% AUPRC=0.1281 AUROC=0.6293
+    W_PER_CAT  R@30=20.84% AUPRC=0.1275 AUROC=0.6263
+    fitted_w histogram: {0.25: 6, 0.5: 8, 0.75: 1, 1.0: 2}
+
+  seed 2 (4.3s) inner=157 outer=200
+    W050       R@30=22.97% AUPRC=0.1217 AUROC=0.6391
+    W_PER_CAT  R@30=22.92% AUPRC=0.1217 AUROC=0.6366
+    fitted_w histogram: {0.0: 1, 0.25: 3, 0.5: 9, 0.75: 3, 1.0: 2}
+
+  seed 3 (4.4s) inner=160 outer=200
+    W050       R@30=22.09% AUPRC=0.1409 AUROC=0.6347
+    W_PER_CAT  R@30=21.78% AUPRC=0.1367 AUROC=0.6314
+    fitted_w histogram: {0.0: 2, 0.25: 3, 0.5: 8, 0.75: 2, 1.0: 1}
+
+  seed 4 (4.4s) inner=159 outer=201
+    W050       R@30=21.46% AUPRC=0.1299 AUROC=0.6395
+    W_PER_CAT  R@30=21.44% AUPRC=0.1283 AUROC=0.6375
+    fitted_w histogram: {0.0: 2, 0.25: 2, 0.5: 9, 0.75: 3}
+
+  seed 5 (4.4s) inner=157 outer=201
+    W050       R@30=21.28% AUPRC=0.1354 AUROC=0.6329
+    W_PER_CAT  R@30=20.84% AUPRC=0.1316 AUROC=0.6284
+    fitted_w histogram: {0.0: 2, 0.25: 5, 0.5: 8, 0.75: 2, 1.0: 1}
+
+  seed 6 (4.4s) inner=160 outer=199
+    W050       R@30=23.76% AUPRC=0.1469 AUROC=0.6424
+    W_PER_CAT  R@30=23.54% AUPRC=0.1426 AUROC=0.6372
+    fitted_w histogram: {0.0: 3, 0.25: 2, 0.5: 8, 0.75: 2, 1.0: 1}
+
+  seed 7 (4.4s) inner=161 outer=200
+    W050       R@30=20.56% AUPRC=0.1112 AUROC=0.6350
+    W_PER_CAT  R@30=20.70% AUPRC=0.1097 AUROC=0.6350
+    fitted_w histogram: {0.25: 5, 0.5: 8, 0.75: 3}
+
+  seed 8 (4.4s) inner=159 outer=202
+    W050       R@30=22.57% AUPRC=0.1326 AUROC=0.6337
+    W_PER_CAT  R@30=22.32% AUPRC=0.1317 AUROC=0.6274
+    fitted_w histogram: {0.0: 4, 0.25: 1, 0.5: 9, 0.75: 2}
+
+  seed 9 (4.4s) inner=158 outer=197
+    W050       R@30=21.74% AUPRC=0.1177 AUROC=0.6359
+    W_PER_CAT  R@30=21.98% AUPRC=0.1191 AUROC=0.6305
+    fitted_w histogram: {0.0: 2, 0.25: 5, 0.5: 8, 1.0: 2}
+
+  seed 10 (4.4s) inner=160 outer=198
+    W050       R@30=20.25% AUPRC=0.1140 AUROC=0.6400
+    W_PER_CAT  R@30=20.19% AUPRC=0.1157 AUROC=0.6295
+    fitted_w histogram: {0.0: 3, 0.5: 11, 0.75: 2, 1.0: 1}
+
+  seed 11 (4.4s) inner=158 outer=202
+    W050       R@30=23.11% AUPRC=0.1445 AUROC=0.6459
+    W_PER_CAT  R@30=22.88% AUPRC=0.1379 AUROC=0.6370
+    fitted_w histogram: {0.0: 5, 0.25: 1, 0.5: 8, 0.75: 2, 1.0: 1}
+
+  seed 12 (4.5s) inner=162 outer=198
+    W050       R@30=20.94% AUPRC=0.1274 AUROC=0.6325
+    W_PER_CAT  R@30=20.81% AUPRC=0.1266 AUROC=0.6319
+    fitted_w histogram: {0.25: 2, 0.5: 9, 0.75: 3, 1.0: 1}
+
+  seed 13 (4.5s) inner=158 outer=198
+    W050       R@30=20.56% AUPRC=0.1104 AUROC=0.6285
+    W_PER_CAT  R@30=20.21% AUPRC=0.1097 AUROC=0.6276
+    fitted_w histogram: {0.0: 1, 0.25: 4, 0.5: 6, 0.75: 6}
+
+  seed 14 (4.5s) inner=162 outer=199
+    W050       R@30=22.04% AUPRC=0.1272 AUROC=0.6321
+    W_PER_CAT  R@30=22.26% AUPRC=0.1331 AUROC=0.6320
+    fitted_w histogram: {0.0: 1, 0.25: 4, 0.5: 10, 0.75: 1, 1.0: 1}
+
+  seed 15 (4.5s) inner=162 outer=198
+    W050       R@30=19.80% AUPRC=0.1244 AUROC=0.6283
+    W_PER_CAT  R@30=20.07% AUPRC=0.1225 AUROC=0.6176
+    fitted_w histogram: {0.0: 5, 0.5: 9, 1.0: 2}
+
+========================================================================
+AGGREGATE (mean ± std across 20 seeds)
+========================================================================
+  W050        R@30=21.54%±1.12%  per-dis-AUPRC=0.1275±0.0102  per-dis-AUROC=0.6345±0.0049
+  W_PER_CAT   R@30=21.41%±1.07%  per-dis-AUPRC=0.1265±0.0091  per-dis-AUROC=0.6305±0.0049
+  W000        R@30=21.35%±1.13%  per-dis-AUPRC=0.1241±0.0094  per-dis-AUROC=0.6240±0.0054
+  W025        R@30=21.66%±1.12%  per-dis-AUPRC=0.1269±0.0097  per-dis-AUROC=0.6345±0.0049
+  W075        R@30=21.14%±1.05%  per-dis-AUPRC=0.1256±0.0101  per-dis-AUROC=0.6344±0.0049
+  W100        R@30=20.13%±1.17%  per-dis-AUPRC=0.1196±0.0104  per-dis-AUROC=0.6152±0.0049
+
+========================================================================
+PAIRED-T: W_PER_CAT vs W050 (n=20 seeds)
+========================================================================
+  R@30           Δ=-0.1306pp  p=0.09885
+  per-dis-AUPRC  Δ=-0.00102  p=0.1595
+  per-dis-AUROC  Δ=-0.00397  p=7.932e-05
+
+========================================================================
+PER-CATEGORY (outer-holdout) summary (sorted by mean Δ per-dis AUPRC)
+========================================================================
+  cancer           rows= 431  Δ-AUPRC=+0.00218±0.00776  Δ-R@30=+1.491pp  modal_w=0.25
+  autoimmune       rows= 120  Δ-AUPRC=+0.00149±0.00622  Δ-R@30=+0.000pp  modal_w=0.50
+  renal            rows=  84  Δ-AUPRC=+0.00140±0.00332  Δ-R@30=-0.071pp  modal_w=0.50
+  psychiatric      rows=  60  Δ-AUPRC=+0.00021±0.00090  Δ-R@30=+0.016pp  modal_w=0.50
+  endocrine        rows=  21  Δ-AUPRC=+0.00000±0.00000  Δ-R@30=+0.000pp  modal_w=0.50
+  immunological    rows=  37  Δ-AUPRC=+0.00000±0.00000  Δ-R@30=+0.000pp  modal_w=0.50
+  reproductive     rows=  10  Δ-AUPRC=+0.00000±0.00000  Δ-R@30=+0.000pp  modal_w=0.50
+  cardiovascular   rows= 252  Δ-AUPRC=-0.00003±0.00266  Δ-R@30=+0.006pp  modal_w=0.75
+  neurological     rows= 211  Δ-AUPRC=-0.00031±0.01201  Δ-R@30=-0.634pp  modal_w=0.50
+  metabolic        rows= 225  Δ-AUPRC=-0.00076±0.01003  Δ-R@30=-1.423pp  modal_w=1.00
+  other            rows=1342  Δ-AUPRC=-0.00129±0.00781  Δ-R@30=-0.268pp  modal_w=0.00
+  musculoskeletal  rows=  51  Δ-AUPRC=-0.00136±0.00560  Δ-R@30=-0.108pp  modal_w=0.50
+  respiratory      rows=  80  Δ-AUPRC=-0.00170±0.00430  Δ-R@30=-0.245pp  modal_w=0.50
+  gastrointestinal rows= 156  Δ-AUPRC=-0.00201±0.00602  Δ-R@30=+0.024pp  modal_w=0.25
+  ophthalmic       rows=  92  Δ-AUPRC=-0.00221±0.00521  Δ-R@30=+0.058pp  modal_w=0.50
+  dermatological   rows= 166  Δ-AUPRC=-0.00302±0.00510  Δ-R@30=-0.044pp  modal_w=0.50
+  infectious       rows= 571  Δ-AUPRC=-0.00350±0.00915  Δ-R@30=-0.315pp  modal_w=0.75
+  hematological    rows=  85  Δ-AUPRC=-0.00703±0.01248  Δ-R@30=-1.685pp  modal_w=0.50
+
+========================================================================
+PROMOTION GATE
+  Δ per-dis AUPRC ≥ +0.001 AND p<0.05 : FAIL (Δ=-0.00102, p=0.159)
+  no category regresses > -0.005 Δ    : FAIL (worst category Δ=-0.00703)
+  DECISION: STAY with global W050
+========================================================================
+
+Wrote data/analysis/h1281_per_category_weight.json
+Wrote data/analysis/h1281_per_category_weight.md

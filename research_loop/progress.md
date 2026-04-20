@@ -5769,3 +5769,55 @@ Excluding the n_gt 2-5 bucket loses the largest-mean contributor (h1272 found 2-
 
 ### Recommended next hypothesis
 **h1275 (P2, recall)** — fastest, uses the h1273 scaffold directly. If w≠0.5 is optimal at 20 seeds, it supersedes the current recipe with minimal risk. Alternatively **h1277** if you want to push the DRKG recall ceiling above 22%.
+
+
+## Current Session (continued): h1281 — Per-category soft-blend weight (INVALIDATED on promotion gate; closes hard-per-category direction) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1281 (INVALIDATED)
+
+### What was shipped
+`scripts/h1281_per_category_weight.py` — inner-80/20 fit + outer-20% eval. Fits `best_w[cat]` on the inner fold by argmax mean Δ per-dis AUPRC vs w=0.5 across w ∈ {0.0, 0.25, 0.5, 0.75, 1.0}. Applies fitted weights on outer holdout using full outer-train kNN basis. 20 seeds; MIN_CAT_ROWS=5 fallback to w=0.5.
+
+### Aggregate (20 seeds, outer holdout)
+
+| Mode | R@30 | per-dis-AUPRC | per-dis-AUROC |
+|---|---|---|---|
+| W050 (canonical) | 21.54% ± 1.12% | 0.1275 ± 0.0102 | 0.6345 ± 0.0049 |
+| W_PER_CAT | 21.41% ± 1.07% | 0.1265 ± 0.0091 | 0.6305 ± 0.0049 |
+| W000 | 21.35% ± 1.13% | 0.1241 ± 0.0094 | 0.6240 ± 0.0054 |
+| W025 | **21.66% ± 1.12%** | 0.1269 ± 0.0097 | 0.6345 ± 0.0049 |
+| W075 | 21.14% ± 1.05% | 0.1256 ± 0.0101 | 0.6344 ± 0.0049 |
+| W100 | 20.13% ± 1.17% | 0.1196 ± 0.0104 | 0.6152 ± 0.0049 |
+
+### Paired-t vs W050 (promotion gate)
+
+| Mode | ΔR@30 (p) | Δper-dis-AUPRC (p) | Δper-dis-AUROC (p) |
+|---|---|---|---|
+| W_PER_CAT | -0.131pp (0.099) | **-0.00102 (0.159) FAIL** | **-0.00397 (7.9e-5) REGRESS** |
+| W025 | **+0.124pp (0.076)** | -0.00063 (0.27) | +0.00002 (0.031) |
+| W075 | -0.397pp (7.3e-4) | -0.00189 (3.4e-5) | -0.00006 (1.3e-5) |
+
+### Per-category outer summary (top / bottom)
+| Cat | rows | Δ AUPRC | modal_w |
+|---|---|---|---|
+| cancer | 431 | +0.00218 | 0.25 |
+| autoimmune | 120 | +0.00149 | 0.50 |
+| renal | 84 | +0.00140 | 0.50 |
+| ... | | | |
+| infectious | 571 | -0.00350 | 0.75 |
+| hematological | 85 | **-0.00703** | 0.50 |
+
+### Why it failed
+Inner-fold fitting is noisy. 33% of rows are "other" (unassigned by keyword match), which overfits to w=0.0 and regresses -0.00129. Infectious (n=571 outer rows) fits to w=0.75 and regresses -0.00350. Small categories (endocrine n=21 outer, immunological n=37, reproductive n=10) always fall back to w=0.5 because inner n<5/seed. **The h1272 per-disease row-level category priors do NOT transfer to fresh 80/20 splits** — within-category variance dwarfs between-category means; retrospective category sorting on 1,002 rows amplified noise into an apparent gradient.
+
+### Novel sub-finding: W025 beats W050 on R@30 (matches h1275's W040 Pareto)
+W025 was never tested in h1275's sweep (w ∈ {0.3,...,0.7}). At 20 seeds it reaches R@30 = 21.66%±1.12% vs W050's 21.54% (Δ+0.124pp, p=0.076) and matches h1275's W040 R@30 Pareto optimum (21.68%). On AUPRC, W025 loses 0.00063 (p=0.27) vs W050 — consistent with h1275's per-dis AUPRC Pareto at w=0.5. **The broad plateau extends w ∈ [0.25, 0.5] on R@30 and peaks sharply at w=0.5 on AUPRC.** Generated h1287 (fine-grid on {0.25, 0.30, 0.35, 0.40, 0.45, 0.50}) to tighten the R@30 Pareto.
+
+### New hypotheses
+- **h1285 (P3, recall):** Narrow-grid per-category w ∈ {0.3, 0.4, 0.5, 0.6, 0.7}. Restricting to the safe plateau should stabilise the fit by removing the noisy extremes. Preregistered Δ AUPRC ≥ +0.0005 at p<0.05.
+- **h1286 (P2, recall):** Bayesian shrinkage per-category w — `w_cat = (k/(k+n_cat))·0.5 + (n_cat/(k+n_cat))·w_cat_inner_best`. Small categories shrink hard to 0.5; large signal-strong categories shift. Sweep k ∈ {5, 10, 20, 40}.
+- **h1287 (P3, recall):** W025 fine-grid confirm — extend h1280 to include w=0.25 and w=0.30. If w=0.25 beats W040 at p<0.05, update h1283 dual-recipe retrieval weight.
+- **h1288 (P3, recall):** Per-disease learnable fusion weight — logistic regression on [log n_gt_train, top-k Jaccard(N2V, FastRP), score CV, category dummies]. Closes hard-category routing and pivots to continuous per-disease features.
+
+### Recommended next hypothesis
+**h1286 (P2, recall)** — Bayesian shrinkage directly addresses the h1281 failure mode. The inner fit IS finding real signal for cancer (Δ+0.00218) and autoimmune (Δ+0.00149); shrinkage toward w=0.5 for low-confidence categories should preserve these without the extremes that kill aggregate. Alternatively **h1287** if you want a cheap R@30-retrieval recipe win.
