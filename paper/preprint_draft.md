@@ -169,7 +169,7 @@ Figure 3 and Table 1 summarize performance across evaluation paradigms.
 
 **What this demonstrates:** The transductive result (26.06%) establishes that collaborative filtering captures meaningful biological signal beyond direct treatment edges, but does not constitute a direct comparison to inductive methods that evaluate on entirely unseen diseases. The inductive result (15.73%) provides a fairer comparison to TxGNN (6.7–14.5%) but uses different features (pathway similarity vs. learned GNN embeddings), so the comparison remains approximate.
 
-The kNN collaborative filtering approach achieves 26.06% R@30 in honest transductive evaluation. In a fair inductive comparison (KEGG pathway kNN, 15.73%), our method compares favorably with TxGNN's upper range, though the evaluation paradigms differ. The 10.5 pp gap between original and honest embeddings quantifies the treatment edge leakage contribution, with 71.0% of performance retained through indirect biological paths.
+The kNN collaborative filtering approach achieves 26.06% R@30 in honest transductive evaluation. In a fair inductive comparison (KEGG pathway kNN, 15.73%), our method compares favorably with TxGNN's upper range, though the evaluation paradigms differ. The 10.5 pp gap between original and honest embeddings quantifies the treatment edge leakage contribution, with 71.0% of performance retained through indirect biological paths under the evaluation protocol used here (micro-averaged recall, EveryCure indication list as ground truth, each embedding scored on its native entity universe). A subsequent methodology audit (Supplementary Section S4) found that retention is sensitive to three orthogonal choices — aggregation (micro vs. macro), ground-truth source (internal vs. expanded), and disease universe (native vs. common intersection) — and spans 47.8 – 69.4 % across the 8-cell factorial. Under the most stringent stack (per-drug macro R@30 on the 838-disease common universe with expanded ground truth), retention is 54.4 % (45.6 % leakage). We report 71.0 % as the primary number for continuity with prior analyses and cite 54.4 % as the conservative external-comparison value.
 
 Notably, the kNN approach outperformed XGBoost with identical features (26.06% vs 25.85%), and adding ML models on top of kNN scores consistently failed to improve performance (tested across hypotheses h41–h45), suggesting the collaborative filtering signal is already well-captured by frequency-based ranking.
 
@@ -264,6 +264,8 @@ We identify several important limitations:
 
 **Transductive evaluation.** Our primary result (26.06% R@30) evaluates on diseases present in the graph with non-treatment edges. This is not directly comparable to TxGNN's inductive evaluation on entirely unseen diseases. Our inductive evaluation (15.73% via KEGG pathways) provides a fairer comparison but uses different features.
 
+**Methodology sensitivity of the leakage number.** The 71.0 % retention figure quoted in Section 3.1 is methodology-specific: aggregation (micro vs. macro), ground-truth source, and disease universe each shift retention by several percentage points in isolation, and the 8-cell factorial in Supplementary Section S4 ranges from 47.8 % to 69.4 %. The conservative external-comparison value is 54.4 % (macro R@30, expanded GT, 838-disease common universe). Reviewers comparing this work against inductive baselines should reference the supplementary factorial.
+
 **Selection bias.** MeSH identifier mapping excludes diseases whose MONDO terms lack a matching MeSH D-code (MeSH C-codes for supplementary concepts are not carried by DRKG). At submission this discarded 90.8% of the Every Cure pool (3,996 → 368); after the name-resolution bugfix and algorithmic alias layer described in Section 2.2, attrition drops to 68.0% (3,996 → 1,279). The residual attrition is structural — DRKG simply does not represent a large fraction of rare-disease concepts — and imposes a systematic bias toward well-characterized diseases with standardized terminology. Rare and emerging diseases remain disproportionately excluded, and the 40% of ground-truth treatments absent from DRKG entirely (Section 3.3) cannot be recovered by any graph-based method.
 
 **Bimodal coverage.** 15.3% of evaluable diseases have zero kNN coverage, receiving no predictions. This is an inherent limitation of collaborative filtering—diseases without informative neighbors cannot benefit from the approach.
@@ -285,6 +287,42 @@ The 37% R@30 ceiling with DRKG-only features and 60% oracle ceiling suggest thre
 3. **Inductive architecture.** Replacing Node2Vec transductive embeddings with purely biological features (pathway enrichment, structural similarity, gene expression profiles) would enable true zero-shot prediction for diseases entirely absent from DRKG, addressing the coverage gap for novel and rare diseases.
 
 4. **Prospective validation protocol.** We are preparing a blinded expert review of GOLDEN-tier predictions in dermatology (855 predictions) in collaboration with domain specialists. The planned protocol involves: (a) freezing the confidence rule set and prediction output prior to review, (b) blinded assessment by dermatologists who score each prediction for mechanistic plausibility and clinical actionability without knowledge of the assigned tier, and (c) comparison of expert plausibility ratings against computational confidence scores to assess calibration. A subset of top-ranked candidates (e.g., Montelukast for idiopathic pulmonary fibrosis) will be evaluated for suitability as wet-lab validation targets with predefined success criteria. This prospective evaluation would provide the independent validation that the current retrospective analysis cannot.
+
+## Supplementary Section S4: Treatment-Edge Leakage Audit
+
+Section 3.1 reports that the no-treatment embedding retains **71.0 %** of the with-treatment R@30 (26.06 / 36.59). That single-point number rests on three methodology choices — (i) aggregation, (ii) ground-truth source, (iii) disease universe — each of which materially moves retention. A subsequent reconciliation (open-cure hypothesis **h1214**, 2026-04-19) decomposed the number on the 838-disease common universe (the intersection of both embeddings' coverage ∩ the internal indication-list ground truth) using an 8-cell factorial:
+
+| Embedding | Ground truth | Aggregation | R@30 |
+|---|---|---|---:|
+| Full Node2Vec | Internal GT | Micro | 37.33 % ± 2.88 % |
+| Full Node2Vec | Internal GT | Macro | 36.10 % ± 3.11 % |
+| Full Node2Vec | Expanded GT | Micro | 10.24 % ± 1.30 % |
+| Full Node2Vec | Expanded GT | Macro | 16.94 % ± 0.70 % |
+| No-treatment Node2Vec | Internal GT | Micro | 23.65 % ± 1.53 % |
+| No-treatment Node2Vec | Internal GT | Macro | 18.69 % ± 0.74 % |
+| No-treatment Node2Vec | Expanded GT | Micro |  7.11 % ± 0.72 % |
+| No-treatment Node2Vec | Expanded GT | Macro |  9.21 % ± 0.68 % |
+
+**Retention (no-treatment / full) by methodology:**
+
+| Universe | Ground truth | Aggregation | Retention |
+|---|---|---|---:|
+| Common (838) | Internal | Micro | 63.4 % |
+| Common (838) | Internal | Macro | 51.8 % |
+| Common (838) | Expanded | Micro | 69.4 % |
+| Common (838) | Expanded | Macro | **54.4 %** |
+| Native (1011 / 850) | Internal | Micro | 58.9 % |
+| Native (1011 / 850) | Internal | Macro | 47.8 % |
+
+**Per-axis effect (ceteris paribus):**
+
+- Switching aggregation from micro to macro lowers retention by 11 – 15 pp. Macro aggregation surfaces leakage that micro averages away by up-weighting large-GT diseases where treatment edges concentrate recall.
+- Switching ground truth from internal to expanded raises retention by 3 – 6 pp. Expanded GT adds "easy" pairs that are recoverable via indirect paths in either embedding, so removing treatment edges costs proportionally less.
+- Restricting each embedding to its native disease universe (rather than the common 838-disease intersection) lowers macro retention by 2 – 4 pp because the no-treatment embedding performs worse on its native-only 12 additional diseases than on the common set.
+
+**Conservative external-comparison retention: 54.4 %** — macro R@30, expanded GT, 838-disease common universe. The primary 71.0 % figure (Section 3.1) corresponds to the micro-internal-native corner, which is the most lenient of the eight. Neither is wrong; they measure different quantities. For head-to-head comparisons against inductive methods, we recommend citing the 54.4 % stack.
+
+Full per-seed arrays and the reconciliation script are in `data/analysis/h1214_leakage_reconcile.{json,md}` and `scripts/h1214_leakage_reconcile.py` in the repository.
 
 ## Data and Code Availability
 

@@ -5279,3 +5279,24 @@ Smallest shifts (high-ceiling categories already at ceiling):
 
 ### Recommended next hypothesis
 **h1254 (P2, infrastructure)** — paper-credibility; make sure the preprint cites 54.4% with the full range before submission. Alternatively **h1201 (P1, recall lever)** if shifting back to the primary LINCS reverse-connectivity track.
+
+
+## Current Session (continued): h1254 — Ship h1214 factorial to preprint (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1254 (VALIDATED — infrastructure)
+
+### What was shipped
+Three surgical edits to `paper/preprint_draft.md`:
+
+1. **Section 3.1 (Primary Performance):** The "71.0% retained" line now explicitly notes the three methodology choices that pin it (micro aggregation, EveryCure internal list, embedding-native universe) and cites the 47.8-69.4% range from S4, with 54.4% as the conservative external-comparison number.
+2. **New Supplementary Section S4 (Treatment-Edge Leakage Audit):** Full 8-cell factorial table, retention table by methodology, per-axis effect paragraph, and pointer to `data/analysis/h1214_leakage_reconcile.{json,md}` and `scripts/h1214_leakage_reconcile.py`.
+3. **Section 4.3 (Limitations):** Added "Methodology sensitivity of the leakage number" sub-paragraph pointing to S4.
+
+### What was NOT changed
+- Section 3.1 headline numbers (26.06% / 36.59%) — preserved for continuity with earlier prints.
+- Primary narrative — paper still reads as the DRKG-only + tiers v1.
+
+A larger rewrite around the v3 hybrid framing (h1200 GNN + h1201 LINCS + h1203 expert tiers) belongs to a subsequent session with the user, not unilateral here.
+
+### Recommended next hypothesis
+**h1201 (P1, recall lever)** — LINCS L1000 reverse-connectivity is now the main recall lever on the critical path to the v3 paper. Alternatively **h1251** to retrain no-treatment FastRP and check whether concat_l2 fusion has better leakage retention than either parent (stays in the methodology-audit thread started here).
