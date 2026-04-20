@@ -5821,3 +5821,54 @@ W025 was never tested in h1275's sweep (w ∈ {0.3,...,0.7}). At 20 seeds it rea
 
 ### Recommended next hypothesis
 **h1286 (P2, recall)** — Bayesian shrinkage directly addresses the h1281 failure mode. The inner fit IS finding real signal for cancer (Δ+0.00218) and autoimmune (Δ+0.00149); shrinkage toward w=0.5 for low-confidence categories should preserve these without the extremes that kill aggregate. Alternatively **h1287** if you want a cheap R@30-retrieval recipe win.
+
+
+## Current Session (continued): h1287 — W025 fine-grid confirm on R@30 Pareto (INVALIDATED on promotion gate; plateau flat) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1287 (INVALIDATED as retrieval-recipe upgrade; novel AUPRC sub-finding preserved)
+
+### What was shipped
+`scripts/h1287_fine_grid_r30_pareto.py` — 20-seed soft-blend sweep on SUBSET_D_GLOBAL with w ∈ {0.25, 0.30, 0.35, 0.40, 0.45, 0.50}. Extends h1275's 5-point sweep by adding w=0.25, 0.35, 0.45. Three paired-t comparisons per weight: vs `concat_l2_raw` anchor, vs W050 canonical, vs W040 (h1275's R@30 Pareto best / h1283 retrieval recipe).
+
+### Headline table (20 seeds, SUBSET_D_GLOBAL)
+
+| Mode | R@30 | per-dis-AUPRC | per-dis-AUROC |
+|---|---|---|---|
+| `concat_l2_raw` | 21.35%±1.13% | 0.1241±0.0094 | 0.6240±0.0054 |
+| `W025` | 21.66%±1.12% | 0.1269±0.0097 | 0.6345±0.0049 |
+| `W030` | 21.66%±1.11% | 0.1272±0.0098 | 0.6345±0.0049 |
+| `W035` | **21.71%±1.13%** | 0.1277±0.0101 | 0.6345±0.0049 |
+| `W040` | 21.68%±1.15% | 0.1278±0.0100 | 0.6345±0.0049 |
+| `W045` | 21.57%±1.14% | **0.1279±0.0100** | 0.6345±0.0049 |
+| `W050` | 21.54%±1.12% | 0.1275±0.0102 | 0.6345±0.0049 |
+
+### Paired-t vs W040 (retrieval-recipe promotion gate)
+
+| Mode | ΔR@30 (p) | Δper-dis-AUPRC (p) |
+|---|---|---|
+| W025 (w=0.25) | -0.016pp (0.705) | -0.00088 (0.0359) |
+| W030 (w=0.30) | -0.016pp (0.683) | -0.00062 (0.0451) |
+| **W035 (w=0.35)** | **+0.034pp (0.181)** | -0.00004 (0.841) |
+| W045 (w=0.45) | -0.111pp (0.00128) | +0.00016 (0.136) |
+| W050 (w=0.50) | -0.140pp (0.0141) | -0.00025 (0.244) |
+
+### Why it failed the retrieval gate
+Preregistered: ΔR@30 > +0.05pp at p<0.05 over W040. W035 is the R@30 point-estimate winner but +0.034pp at p=0.181 clears neither threshold. All other weights are strictly worse than W040 on R@30 (W045 and W050 significantly so). **The R@30 plateau w ∈ [0.25, 0.45] spans only 0.14pp total** — a flat interior peak within 20-seed noise.
+
+### Novel sub-finding: W045 beats W050 on per-dis AUPRC at single-comparison preregistration
+W045 vs W050: Δ per-dis AUPRC = +0.00041, p=0.042. This clears the h1275 preregistered canonical-replacement gate (Δ>+0.0003 at p<0.05). **BUT**: n=5 comparisons → Bonferroni-adjusted threshold is p<0.01, which W045 fails. And Δ=+0.00041 is 0.3% of absolute AUPRC value — practically meaningless. W050 stays canonical.
+
+### W025 sub-finding reproduction
+h1281 reported W025 vs W050 ΔR@30 = +0.124pp p=0.076 on outer holdout. h1287's independent 20-seed GLOBAL benchmark reproduces W025 vs W050 ΔR@30 = +0.124pp p=0.076 — identical to 3 decimals. The R@30 lift is real; the question h1287 answered is whether it extends past W040, and the answer is no (-0.016pp p=0.705).
+
+### Methodological implication
+The linear-weight axis on 2-embedding (N2V+FastRP concat_l2) soft-blend is DEFINITIVELY exhausted on GLOBAL. All point-estimate "peaks" across 3 fine-grid sweeps (h1275 w∈{0.3-0.7}, h1281 w∈{0,0.25,0.5,0.75,1}, h1287 w∈{0.25-0.5}) fall within a 0.17pp R@30 band (21.54-21.71%) and 0.0004 AUPRC band (0.1275-0.1279). Future recall gains require non-linear combiners, per-disease learnable weights from continuous features, or a third embedding family.
+
+### New hypotheses
+- **h1294 (P3, recall):** Bootstrap (seed × disease) 95% CI on Δ(W035-W040), Δ(W035-W050), Δ(W040-W050). Tightens the plateau characterization from paired-t (n=20) to bootstrap (n≈4,000 rows).
+- **h1295 (P2, recall):** Per-disease W035 vs W050 ΔR@30 audit (category + n_gt + ATC entropy decomposition). If specific categories show |Δ|>2pp, feeds h1292 category-gated R@30 routing.
+- **h1292 (P3, recall):** Hard category-gated w on R@30 with inner-fold w grid {0.25, 0.35, 0.50} (shrinkage toward W035). Safer than h1281's extremes; gated on h1295 finding signal.
+- **h1293 (P2, recall):** Three-embedding concat_l2 (N2V + FastRP + TransE/DistMult). Closes the linear-weight axis definitively; opens the structural-prior axis.
+
+### Recommended next hypothesis
+**h1293 (P2, recall)** — the only direction with high expected-value upside given h1287's closure of the linear-weight axis. A translational embedding (TransE) samples a structurally different DRKG prior than random-walk (N2V) or random-projection (FastRP), making it the best candidate for orthogonal-signal addition. ~1h CPU to train TransE; drop-in with h1215's `build_concat_lookup` primitive. Alternatively **h1295** for a cheap per-disease audit that might revive the category-gated path.

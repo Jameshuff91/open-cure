@@ -3541,7 +3541,7 @@
       "id": "h1287",
       "title": "W025 fine-grid confirm - tighten h1275's W040 Pareto frontier with w in {0.25, 0.30, 0.35, 0.40, 0.45}",
       "priority": 3,
-      "status": "pending",
+      "status": "invalidated",
       "expected_impact": "low",
       "effort": "low",
       "label": "recall",
@@ -3553,7 +3553,9 @@
         "Paired-t vs W050 baseline AND vs W040 (h1275's R@30 Pareto best)",
         "Save data/analysis/h1287_fine_grid_r30_pareto.{json,md}"
       ],
-      "success_criteria": "Identify whether the R@30 Pareto optimum is w=0.25 or w=0.40. If w=0.25 beats W040 at p<0.05, supersede the h1283 dual-recipe retrieval weight."
+      "success_criteria": "Identify whether the R@30 Pareto optimum is w=0.25 or w=0.40. If w=0.25 beats W040 at p<0.05, supersede the h1283 dual-recipe retrieval weight.",
+      "findings": "INVALIDATED on retrieval-recipe promotion gate. 20-seed fine-grid sweep of w \u2208 {0.25, 0.30, 0.35, 0.40, 0.45, 0.50} on SUBSET_D_GLOBAL. R@30 Pareto point-estimate shifts from h1275's W040 (21.68%\u00b11.15%) to W035 (21.71%\u00b11.13%), but \u0394R@30 = +0.034pp at p=0.181 FAILS the preregistered +0.05pp, p<0.05 gate. W025 \u0394R@30 vs W040 = -0.016pp p=0.705 \u2014 h1281's +0.124pp vs W050 sub-finding REPRODUCES (W025 vs W050 = +0.124pp p=0.076), but the prior assumption that it would also beat W040 is falsified (W040 and W025 tie to within 0.016pp). R@30 PLATEAU w \u2208 [0.25, 0.45] is flat within 0.14pp total; all w \u2264 0.40 are +0.125 to +0.174pp over W050 at p \u2208 [0.001, 0.076]; W045 is indistinguishable from W050 at p=0.575. NOVEL SUB-FINDING: W045 beats W050 on \u0394 per-dis AUPRC = +0.00041 p=0.042 \u2014 single-comparison clears the h1275 preregistered canonical-replacement gate (\u0394>+0.0003 at p<0.05), but n=5 Bonferroni-adjusted threshold is p<0.01 and W045 does not clear that. Point estimate (+0.00041) is ~0.3% of absolute AUPRC value \u2014 not practically meaningful. Current canonical w=0.5 holds; dual-recipe h1283 (W040 retrieval, W050 ranking) holds. Linear-weight axis on GLOBAL remains EXHAUSTED.",
+      "result_metric": "W035 R@30=21.71%\u00b11.13% (best point estimate); \u0394R@30 vs W040 +0.034pp p=0.181 FAILS gate"
     },
     {
       "id": "h1288",
@@ -3611,6 +3613,80 @@
       ],
       "findings": "",
       "result_metric": ""
+    },
+    {
+      "id": "h1292",
+      "title": "Category-gated w routing on R@30 (revival of h1281 mechanism, R@30 target)",
+      "priority": 3,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h1281 closed hard per-category w fitting on AUPRC. But h1287 shows R@30 has a different plateau (peak at W035) than AUPRC (peak at W045). If h1291 finds category-specific R@30 lifts, a hard-per-category w could be revived specifically for retrieval \u2014 orthogonal to the ranking recipe that h1283 already fixes at W050. Uses inner-fold category means from h1291 (w \u2208 {0.25, 0.35, 0.50}) + shrinkage toward w=0.35 (R@30 Pareto). Safer than h1281's {0.0, 0.25, 0.5, 0.75, 1.0} because the extremes are excluded.",
+      "steps": [
+        "Copy h1281 script \u2192 h1292_cat_gated_w_r30.py",
+        "Restrict inner-fold w grid to {0.25, 0.35, 0.50}",
+        "Use h1291 category priors to initialize shrinkage target per category",
+        "Evaluate on outer 20% holdout with full outer-train kNN basis",
+        "Paired-t vs W040 retrieval canonical on \u0394R@30",
+        "Save data/analysis/h1292_cat_gated_w_r30.{json,md}"
+      ],
+      "success_criteria": "\u0394R@30 vs W040 > +0.05pp at p<0.05 on outer holdout \u2014 supersedes h1283 dual-recipe retrieval weight."
+    },
+    {
+      "id": "h1293",
+      "title": "Three-embedding concat (N2V + FastRP + TransE/DistMult) \u2014 raise DRKG ceiling",
+      "priority": 2,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "high",
+      "effort": "medium",
+      "rationale": "h1275/h1287 show the LINEAR-WEIGHT axis on 2-embedding soft-blend is exhausted (plateau w \u2208 [0.25, 0.45], R@30 stuck at ~21.7%, AUPRC at ~0.128). The CLAUDE.md 20-seed ceiling (R@30 21.54%, per-dis AUPRC 0.1275) reflects N2V+FastRP. Adding a third embedding family \u2014 translational (TransE or DistMult trained on DRKG) \u2014 samples a different structural prior and could add orthogonal signal. h1215's L2-concat primitive generalises trivially to 3-way: `z_concat_3(d) = L2(concat(z(n2v), z(fastrp), z(transe)))`. Redundant with h1277 but with a specific translational model vs 'generic third embedding'.",
+      "steps": [
+        "Check data/embeddings/ for existing TransE or DistMult \u2014 if absent, train with PyKEEN or similar on DRKG (~1h CPU on a 5M-edge graph)",
+        "Build z_concat_3 lookup; add to clean_embedding_benchmark.py as mode 'concat_l2_3way'",
+        "20-seed benchmark 3-way concat vs concat_l2 (N2V+FastRP) baseline",
+        "If 3-way beats 2-way at p<0.05 on per-dis AUPRC \u0394>+0.0003, lock as canonical",
+        "If 3-way loses, report which embedding subtracts signal (N2V+FastRP vs N2V+TransE vs FastRP+TransE 3-way ablation)",
+        "Save data/analysis/h1293_three_embedding_concat.{json,md}"
+      ],
+      "success_criteria": "\u0394R@30 >+0.3pp AND \u0394per-dis AUPRC >+0.001 at p<0.05 vs N2V+FastRP concat_l2."
+    },
+    {
+      "id": "h1294",
+      "title": "Bootstrap \u0394 CI on W035 vs W040 vs W050 \u2014 tighten R@30 Pareto",
+      "priority": 3,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "low",
+      "effort": "low",
+      "rationale": "h1287's paired-t on 20 seeds gave W035 \u0394R@30 vs W040 = +0.034pp p=0.181. The standard error on R@30 \u0394 is ~0.26pp at n=20 seeds; a bootstrap over (seed \u00d7 disease) rows (~4,000 rows) could tighten to ~0.05-0.08pp and settle whether W035 genuinely beats W040 or the two are identical. Resolves whether the R@30 plateau has a real interior peak or is statistically flat.",
+      "steps": [
+        "Extend h1287 script to capture per-(seed, disease) R@30 arrays for W035, W040, W050",
+        "Re-run 20-seed benchmark",
+        "1000-bootstrap resample of (seed \u00d7 disease) rows; compute 95% CI on \u0394(W035-W040), \u0394(W035-W050), \u0394(W040-W050)",
+        "Report whether each CI crosses zero",
+        "Save data/analysis/h1294_bootstrap_pareto_ci.{json,md}"
+      ],
+      "success_criteria": "If W035 vs W040 \u0394 CI excludes zero, confirms W035 as new Pareto. Otherwise confirms plateau is flat."
+    },
+    {
+      "id": "h1295",
+      "title": "Per-disease W035 vs W050 audit \u2014 decompose R@30 plateau lift",
+      "priority": 2,
+      "status": "pending",
+      "label": "recall",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "rationale": "h1272 decomposed the SUBSET_D_GLOBAL soft-blend lift over concat_l2_raw by per-disease category and n_gt. h1287 shows a symmetric pattern: moving from w=0.5 toward w=0.35 lifts R@30 by +0.174pp but is flat on AUPRC. Running the same per-disease decomposition on (W035 \u2212 W050) \u0394R@30 should identify which categories drive the plateau tilt and whether the lift comes from high-n_gt or low-n_gt diseases. Informs whether per-category routing is revivable on R@30 even though h1281 closed it on AUPRC.",
+      "steps": [
+        "Extend h1287 script to emit per-(seed, disease) R@30 deltas for W035 vs W050",
+        "Compute per-category mean \u0394 R@30 + fraction_positive",
+        "Compute per-n_gt-bucket mean \u0394 R@30 (buckets from h1230)",
+        "Cross-tab: category \u00d7 n_gt bucket \u0394",
+        "Save data/analysis/h1295_w035_per_disease_audit.{json,md}"
+      ],
+      "success_criteria": "Identify 1-3 categories where |\u0394 R@30| > 2pp; these become candidates for per-category w routing on R@30 (\u2192 h1296)."
     }
   ],
   "completed": [
@@ -6480,6 +6556,12 @@
       "hypothesis_id": "h1281",
       "learning": "Per-category fit overfits inner fold. Large heterogeneous 'other' category (33% of rows) drives aggregate loss by always picking an extreme w; small categories (endocrine, immunological n<5/seed) fall back to w=0.5 and contribute nothing; only a handful of medium-size categories (cancer, autoimmune, renal) show replicable category-specific preference. Hard-per-category fitting is dominated by inner-fold variance.",
       "implication": "Future learnable-w experiments should (a) restrict the grid to the safe plateau w in [0.3, 0.5] (h1285), (b) use Bayesian shrinkage toward the global prior w=0.5 with strength inversely proportional to inner n_rows (h1286), or (c) abandon categorical routing in favour of per-disease continuous features (h1288). h1281 closes hard-discrete-per-category routing."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1287",
+      "learning": "20-seed fine-grid w sweep on SUBSET_D_GLOBAL confirms R@30 plateau w \u2208 [0.25, 0.45] is flat within 0.14pp. W035 (21.71%) is a noise-level peak over W040 (21.68%) at p=0.181. Novel sub-finding: W045 clears the single-comparison preregistered AUPRC gate over W050 (\u0394=+0.00041 p=0.042) but fails Bonferroni at n=5. Practical impact zero.",
+      "implication": "Linear-weight axis on 2-embedding soft-blend is DEFINITIVELY exhausted on GLOBAL. Any future recall lift must come from: (a) per-category/per-disease learnable w with continuous features (h1288), (b) third embedding family (h1293), (c) non-linear combiners (h1266 RRF), or (d) external signal (h1202 LINCS-as-feature). Point estimates can still jitter by 0.03pp across fine-grid weights but none cross the promotion gate."
     }
   ],
   "collaborations": [

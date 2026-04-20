@@ -1,0 +1,305 @@
+========================================================================
+h1287: fine-grid weight sweep on SUBSET_D_GLOBAL
+  weights=(0.25, 0.3, 0.35, 0.4, 0.45, 0.5)  ref=W050  R@30_pareto=W040
+  seeds=20
+========================================================================
+Loading embeddings...
+  A=49,616  B=49,616  concat=49,616
+Universe: 1,011 diseases  | setup 0.2s
+
+  seed 42 (2.9s) n_eval=202
+    concat_l2_raw R@30=20.68%  per-dis-AUPRC=0.1227  per-dis-AUROC=0.6237
+    W025   R@30=20.61%  per-dis-AUPRC=0.1269  per-dis-AUROC=0.6315
+    W030   R@30=20.66%  per-dis-AUPRC=0.1271  per-dis-AUROC=0.6315
+    W035   R@30=20.76%  per-dis-AUPRC=0.1304  per-dis-AUROC=0.6315
+    W040   R@30=20.83%  per-dis-AUPRC=0.1296  per-dis-AUROC=0.6314
+    W045   R@30=20.72%  per-dis-AUPRC=0.1297  per-dis-AUROC=0.6314
+    W050   R@30=20.67%  per-dis-AUPRC=0.1298  per-dis-AUROC=0.6314
+
+  seed 123 (3.0s) n_eval=200
+    concat_l2_raw R@30=20.86%  per-dis-AUPRC=0.1119  per-dis-AUROC=0.6178
+    W025   R@30=21.47%  per-dis-AUPRC=0.1202  per-dis-AUROC=0.6360
+    W030   R@30=21.38%  per-dis-AUPRC=0.1202  per-dis-AUROC=0.6360
+    W035   R@30=21.92%  per-dis-AUPRC=0.1218  per-dis-AUROC=0.6360
+    W040   R@30=21.73%  per-dis-AUPRC=0.1223  per-dis-AUROC=0.6360
+    W045   R@30=21.78%  per-dis-AUPRC=0.1229  per-dis-AUROC=0.6360
+    W050   R@30=21.90%  per-dis-AUPRC=0.1233  per-dis-AUROC=0.6361
+
+  seed 456 (2.9s) n_eval=200
+    concat_l2_raw R@30=21.00%  per-dis-AUPRC=0.1214  per-dis-AUROC=0.6197
+    W025   R@30=21.18%  per-dis-AUPRC=0.1218  per-dis-AUROC=0.6295
+    W030   R@30=21.08%  per-dis-AUPRC=0.1220  per-dis-AUROC=0.6295
+    W035   R@30=21.20%  per-dis-AUPRC=0.1218  per-dis-AUROC=0.6295
+    W040   R@30=21.13%  per-dis-AUPRC=0.1210  per-dis-AUROC=0.6295
+    W045   R@30=21.02%  per-dis-AUPRC=0.1205  per-dis-AUROC=0.6295
+    W050   R@30=21.08%  per-dis-AUPRC=0.1198  per-dis-AUROC=0.6294
+
+  seed 789 (2.9s) n_eval=200
+    concat_l2_raw R@30=22.34%  per-dis-AUPRC=0.1390  per-dis-AUROC=0.6284
+    W025   R@30=22.85%  per-dis-AUPRC=0.1411  per-dis-AUROC=0.6358
+    W030   R@30=23.05%  per-dis-AUPRC=0.1407  per-dis-AUROC=0.6358
+    W035   R@30=23.05%  per-dis-AUPRC=0.1411  per-dis-AUROC=0.6358
+    W040   R@30=23.16%  per-dis-AUPRC=0.1407  per-dis-AUROC=0.6358
+    W045   R@30=22.91%  per-dis-AUPRC=0.1410  per-dis-AUROC=0.6358
+    W050   R@30=23.08%  per-dis-AUPRC=0.1401  per-dis-AUROC=0.6358
+
+  seed 2024 (3.1s) n_eval=200
+    concat_l2_raw R@30=19.49%  per-dis-AUPRC=0.1199  per-dis-AUROC=0.6159
+    W025   R@30=19.83%  per-dis-AUPRC=0.1235  per-dis-AUROC=0.6269
+    W030   R@30=19.88%  per-dis-AUPRC=0.1241  per-dis-AUROC=0.6269
+    W035   R@30=19.78%  per-dis-AUPRC=0.1239  per-dis-AUROC=0.6269
+    W040   R@30=19.59%  per-dis-AUPRC=0.1246  per-dis-AUROC=0.6269
+    W045   R@30=19.62%  per-dis-AUPRC=0.1255  per-dis-AUROC=0.6269
+    W050   R@30=19.77%  per-dis-AUPRC=0.1255  per-dis-AUROC=0.6269
+
+  seed 1 (2.9s) n_eval=199
+    concat_l2_raw R@30=20.72%  per-dis-AUPRC=0.1298  per-dis-AUROC=0.6208
+    W025   R@30=21.07%  per-dis-AUPRC=0.1291  per-dis-AUROC=0.6293
+    W030   R@30=20.98%  per-dis-AUPRC=0.1288  per-dis-AUROC=0.6293
+    W035   R@30=21.10%  per-dis-AUPRC=0.1285  per-dis-AUROC=0.6293
+    W040   R@30=21.20%  per-dis-AUPRC=0.1287  per-dis-AUROC=0.6293
+    W045   R@30=20.98%  per-dis-AUPRC=0.1287  per-dis-AUROC=0.6293
+    W050   R@30=21.14%  per-dis-AUPRC=0.1281  per-dis-AUROC=0.6293
+
+  seed 2 (3.0s) n_eval=200
+    concat_l2_raw R@30=22.92%  per-dis-AUPRC=0.1206  per-dis-AUROC=0.6269
+    W025   R@30=23.30%  per-dis-AUPRC=0.1216  per-dis-AUROC=0.6392
+    W030   R@30=23.37%  per-dis-AUPRC=0.1220  per-dis-AUROC=0.6392
+    W035   R@30=23.32%  per-dis-AUPRC=0.1227  per-dis-AUROC=0.6392
+    W040   R@30=23.41%  per-dis-AUPRC=0.1224  per-dis-AUROC=0.6392
+    W045   R@30=23.19%  per-dis-AUPRC=0.1219  per-dis-AUROC=0.6391
+    W050   R@30=22.97%  per-dis-AUPRC=0.1217  per-dis-AUROC=0.6391
+
+  seed 3 (2.9s) n_eval=200
+    concat_l2_raw R@30=22.22%  per-dis-AUPRC=0.1369  per-dis-AUROC=0.6268
+    W025   R@30=22.57%  per-dis-AUPRC=0.1403  per-dis-AUROC=0.6348
+    W030   R@30=22.33%  per-dis-AUPRC=0.1407  per-dis-AUROC=0.6348
+    W035   R@30=22.23%  per-dis-AUPRC=0.1407  per-dis-AUROC=0.6347
+    W040   R@30=22.23%  per-dis-AUPRC=0.1403  per-dis-AUROC=0.6347
+    W045   R@30=22.10%  per-dis-AUPRC=0.1407  per-dis-AUROC=0.6347
+    W050   R@30=22.09%  per-dis-AUPRC=0.1409  per-dis-AUROC=0.6347
+
+  seed 4 (3.0s) n_eval=201
+    concat_l2_raw R@30=22.07%  per-dis-AUPRC=0.1264  per-dis-AUROC=0.6291
+    W025   R@30=21.69%  per-dis-AUPRC=0.1287  per-dis-AUROC=0.6395
+    W030   R@30=21.67%  per-dis-AUPRC=0.1294  per-dis-AUROC=0.6395
+    W035   R@30=21.80%  per-dis-AUPRC=0.1299  per-dis-AUROC=0.6395
+    W040   R@30=21.55%  per-dis-AUPRC=0.1298  per-dis-AUROC=0.6395
+    W045   R@30=21.55%  per-dis-AUPRC=0.1299  per-dis-AUROC=0.6395
+    W050   R@30=21.46%  per-dis-AUPRC=0.1299  per-dis-AUROC=0.6395
+
+  seed 5 (3.0s) n_eval=201
+    concat_l2_raw R@30=20.84%  per-dis-AUPRC=0.1309  per-dis-AUROC=0.6262
+    W025   R@30=21.51%  per-dis-AUPRC=0.1335  per-dis-AUROC=0.6330
+    W030   R@30=21.46%  per-dis-AUPRC=0.1363  per-dis-AUROC=0.6330
+    W035   R@30=21.42%  per-dis-AUPRC=0.1366  per-dis-AUROC=0.6330
+    W040   R@30=21.45%  per-dis-AUPRC=0.1350  per-dis-AUROC=0.6330
+    W045   R@30=21.20%  per-dis-AUPRC=0.1355  per-dis-AUROC=0.6330
+    W050   R@30=21.28%  per-dis-AUPRC=0.1354  per-dis-AUROC=0.6329
+
+  seed 6 (2.9s) n_eval=199
+    concat_l2_raw R@30=23.76%  per-dis-AUPRC=0.1369  per-dis-AUROC=0.6351
+    W025   R@30=23.97%  per-dis-AUPRC=0.1415  per-dis-AUROC=0.6425
+    W030   R@30=23.98%  per-dis-AUPRC=0.1429  per-dis-AUROC=0.6425
+    W035   R@30=23.81%  per-dis-AUPRC=0.1459  per-dis-AUROC=0.6425
+    W040   R@30=23.84%  per-dis-AUPRC=0.1463  per-dis-AUROC=0.6425
+    W045   R@30=23.81%  per-dis-AUPRC=0.1465  per-dis-AUROC=0.6424
+    W050   R@30=23.76%  per-dis-AUPRC=0.1469  per-dis-AUROC=0.6424
+
+  seed 7 (3.0s) n_eval=200
+    concat_l2_raw R@30=21.03%  per-dis-AUPRC=0.1134  per-dis-AUROC=0.6244
+    W025   R@30=21.35%  per-dis-AUPRC=0.1121  per-dis-AUROC=0.6351
+    W030   R@30=21.24%  per-dis-AUPRC=0.1117  per-dis-AUROC=0.6351
+    W035   R@30=21.04%  per-dis-AUPRC=0.1122  per-dis-AUROC=0.6351
+    W040   R@30=21.13%  per-dis-AUPRC=0.1124  per-dis-AUROC=0.6351
+    W045   R@30=21.19%  per-dis-AUPRC=0.1126  per-dis-AUROC=0.6351
+    W050   R@30=20.56%  per-dis-AUPRC=0.1112  per-dis-AUROC=0.6350
+
+  seed 8 (2.9s) n_eval=202
+    concat_l2_raw R@30=21.90%  per-dis-AUPRC=0.1285  per-dis-AUROC=0.6227
+    W025   R@30=22.32%  per-dis-AUPRC=0.1315  per-dis-AUROC=0.6337
+    W030   R@30=22.28%  per-dis-AUPRC=0.1319  per-dis-AUROC=0.6337
+    W035   R@30=22.64%  per-dis-AUPRC=0.1322  per-dis-AUROC=0.6337
+    W040   R@30=22.52%  per-dis-AUPRC=0.1326  per-dis-AUROC=0.6337
+    W045   R@30=22.56%  per-dis-AUPRC=0.1326  per-dis-AUROC=0.6337
+    W050   R@30=22.57%  per-dis-AUPRC=0.1326  per-dis-AUROC=0.6337
+
+  seed 9 (2.9s) n_eval=197
+    concat_l2_raw R@30=22.19%  per-dis-AUPRC=0.1163  per-dis-AUROC=0.6258
+    W025   R@30=21.77%  per-dis-AUPRC=0.1166  per-dis-AUROC=0.6358
+    W030   R@30=21.86%  per-dis-AUPRC=0.1167  per-dis-AUROC=0.6358
+    W035   R@30=21.90%  per-dis-AUPRC=0.1169  per-dis-AUROC=0.6358
+    W040   R@30=21.74%  per-dis-AUPRC=0.1170  per-dis-AUROC=0.6358
+    W045   R@30=21.46%  per-dis-AUPRC=0.1171  per-dis-AUROC=0.6358
+    W050   R@30=21.74%  per-dis-AUPRC=0.1177  per-dis-AUROC=0.6359
+
+  seed 10 (3.0s) n_eval=198
+    concat_l2_raw R@30=19.83%  per-dis-AUPRC=0.1086  per-dis-AUROC=0.6226
+    W025   R@30=20.34%  per-dis-AUPRC=0.1132  per-dis-AUROC=0.6401
+    W030   R@30=20.41%  per-dis-AUPRC=0.1142  per-dis-AUROC=0.6401
+    W035   R@30=20.41%  per-dis-AUPRC=0.1141  per-dis-AUROC=0.6401
+    W040   R@30=20.42%  per-dis-AUPRC=0.1146  per-dis-AUROC=0.6401
+    W045   R@30=20.13%  per-dis-AUPRC=0.1157  per-dis-AUROC=0.6401
+    W050   R@30=20.25%  per-dis-AUPRC=0.1140  per-dis-AUROC=0.6400
+
+  seed 11 (3.0s) n_eval=202
+    concat_l2_raw R@30=22.58%  per-dis-AUPRC=0.1378  per-dis-AUROC=0.6352
+    W025   R@30=23.04%  per-dis-AUPRC=0.1440  per-dis-AUROC=0.6460
+    W030   R@30=23.05%  per-dis-AUPRC=0.1439  per-dis-AUROC=0.6460
+    W035   R@30=23.29%  per-dis-AUPRC=0.1444  per-dis-AUROC=0.6459
+    W040   R@30=23.29%  per-dis-AUPRC=0.1450  per-dis-AUROC=0.6459
+    W045   R@30=23.31%  per-dis-AUPRC=0.1446  per-dis-AUROC=0.6459
+    W050   R@30=23.11%  per-dis-AUPRC=0.1445  per-dis-AUROC=0.6459
+
+  seed 12 (3.0s) n_eval=198
+    concat_l2_raw R@30=20.10%  per-dis-AUPRC=0.1174  per-dis-AUROC=0.6217
+    W025   R@30=21.00%  per-dis-AUPRC=0.1231  per-dis-AUROC=0.6325
+    W030   R@30=21.00%  per-dis-AUPRC=0.1241  per-dis-AUROC=0.6325
+    W035   R@30=21.07%  per-dis-AUPRC=0.1246  per-dis-AUROC=0.6325
+    W040   R@30=20.90%  per-dis-AUPRC=0.1274  per-dis-AUROC=0.6325
+    W045   R@30=20.86%  per-dis-AUPRC=0.1280  per-dis-AUROC=0.6325
+    W050   R@30=20.94%  per-dis-AUPRC=0.1274  per-dis-AUROC=0.6325
+
+  seed 13 (3.1s) n_eval=198
+    concat_l2_raw R@30=20.39%  per-dis-AUPRC=0.1095  per-dis-AUROC=0.6190
+    W025   R@30=20.97%  per-dis-AUPRC=0.1110  per-dis-AUROC=0.6285
+    W030   R@30=21.02%  per-dis-AUPRC=0.1111  per-dis-AUROC=0.6285
+    W035   R@30=21.24%  per-dis-AUPRC=0.1109  per-dis-AUROC=0.6285
+    W040   R@30=21.17%  per-dis-AUPRC=0.1108  per-dis-AUROC=0.6285
+    W045   R@30=21.05%  per-dis-AUPRC=0.1107  per-dis-AUROC=0.6285
+    W050   R@30=20.56%  per-dis-AUPRC=0.1104  per-dis-AUROC=0.6285
+
+  seed 14 (2.9s) n_eval=199
+    concat_l2_raw R@30=22.20%  per-dis-AUPRC=0.1321  per-dis-AUROC=0.6250
+    W025   R@30=22.61%  per-dis-AUPRC=0.1334  per-dis-AUROC=0.6321
+    W030   R@30=22.61%  per-dis-AUPRC=0.1310  per-dis-AUROC=0.6321
+    W035   R@30=22.58%  per-dis-AUPRC=0.1312  per-dis-AUROC=0.6321
+    W040   R@30=22.56%  per-dis-AUPRC=0.1304  per-dis-AUROC=0.6321
+    W045   R@30=22.23%  per-dis-AUPRC=0.1302  per-dis-AUROC=0.6321
+    W050   R@30=22.04%  per-dis-AUPRC=0.1272  per-dis-AUROC=0.6321
+
+  seed 15 (3.0s) n_eval=198
+    concat_l2_raw R@30=19.97%  per-dis-AUPRC=0.1218  per-dis-AUROC=0.6142
+    W025   R@30=19.79%  per-dis-AUPRC=0.1247  per-dis-AUROC=0.6282
+    W030   R@30=19.93%  per-dis-AUPRC=0.1245  per-dis-AUROC=0.6282
+    W035   R@30=19.72%  per-dis-AUPRC=0.1248  per-dis-AUROC=0.6282
+    W040   R@30=19.71%  per-dis-AUPRC=0.1247  per-dis-AUROC=0.6282
+    W045   R@30=19.70%  per-dis-AUPRC=0.1244  per-dis-AUROC=0.6282
+    W050   R@30=19.80%  per-dis-AUPRC=0.1244  per-dis-AUROC=0.6283
+
+========================================================================
+AGGREGATE (mean ± std across 20 seeds)
+========================================================================
+  concat_l2_raw  R@30=21.35%±1.13%  per-dis-AUPRC=0.1241±0.0094  per-dis-AUROC=0.6240±0.0054
+  W025    R@30=21.66%±1.12%  per-dis-AUPRC=0.1269±0.0097  per-dis-AUROC=0.6345±0.0049
+  W030    R@30=21.66%±1.11%  per-dis-AUPRC=0.1272±0.0098  per-dis-AUROC=0.6345±0.0049
+  W035    R@30=21.71%±1.13%  per-dis-AUPRC=0.1277±0.0101  per-dis-AUROC=0.6345±0.0049
+  W040    R@30=21.68%±1.15%  per-dis-AUPRC=0.1278±0.0100  per-dis-AUROC=0.6345±0.0049
+  W045    R@30=21.57%±1.14%  per-dis-AUPRC=0.1279±0.0100  per-dis-AUROC=0.6345±0.0049
+  W050    R@30=21.54%±1.12%  per-dis-AUPRC=0.1275±0.0102  per-dis-AUROC=0.6345±0.0049
+
+========================================================================
+PAIRED-T vs concat_l2_raw  (n=20 seeds)
+========================================================================
+
+  W025 (w=0.25) vs concat_l2_raw:
+    R@30           Δ=+0.3086pp  p=0.0006687
+    per-dis-AUPRC  Δ=+0.00280  p=4.252e-05
+    per-dis-AUROC  Δ=+0.01044  p=6.67e-12
+
+  W030 (w=0.3) vs concat_l2_raw:
+    R@30           Δ=+0.3087pp  p=0.0005943
+    per-dis-AUPRC  Δ=+0.00306  p=0.0001062
+    per-dis-AUROC  Δ=+0.01044  p=6.709e-12
+
+  W035 (w=0.35) vs concat_l2_raw:
+    R@30           Δ=+0.3591pp  p=0.0009864
+    per-dis-AUPRC  Δ=+0.00364  p=0.0001028
+    per-dis-AUROC  Δ=+0.01045  p=6.896e-12
+
+  W040 (w=0.4) vs concat_l2_raw:
+    R@30           Δ=+0.3248pp  p=0.002815
+    per-dis-AUPRC  Δ=+0.00368  p=0.00027
+    per-dis-AUROC  Δ=+0.01043  p=7.201e-12
+
+  W045 (w=0.45) vs concat_l2_raw:
+    R@30           Δ=+0.2137pp  p=0.03903
+    per-dis-AUPRC  Δ=+0.00384  p=0.0003223
+    per-dis-AUROC  Δ=+0.01043  p=7.263e-12
+
+  W050 (w=0.5) vs concat_l2_raw:
+    R@30           Δ=+0.1848pp  p=0.08482
+    per-dis-AUPRC  Δ=+0.00343  p=0.002225
+    per-dis-AUROC  Δ=+0.01041  p=7.936e-12
+
+========================================================================
+PAIRED-T vs W050 (canonical w=0.5, n=20)
+========================================================================
+
+  W025 (w=0.25) vs W050:
+    R@30           Δ=+0.1237pp  p=0.07597
+    per-dis-AUPRC  Δ=-0.00063  p=0.2688
+    per-dis-AUROC  Δ=+0.00002  p=0.03082
+
+  W030 (w=0.3) vs W050:
+    R@30           Δ=+0.1239pp  p=0.06322
+    per-dis-AUPRC  Δ=-0.00037  p=0.3897
+    per-dis-AUROC  Δ=+0.00003  p=0.005439
+
+  W035 (w=0.35) vs W050:
+    R@30           Δ=+0.1743pp  p=0.001183
+    per-dis-AUPRC  Δ=+0.00021  p=0.5121
+    per-dis-AUROC  Δ=+0.00003  p=0.0005024
+
+  W040 (w=0.4) vs W050:
+    R@30           Δ=+0.1400pp  p=0.01407
+    per-dis-AUPRC  Δ=+0.00025  p=0.2441
+    per-dis-AUROC  Δ=+0.00002  p=0.02147
+
+  W045 (w=0.45) vs W050:
+    R@30           Δ=+0.0289pp  p=0.5748
+    per-dis-AUPRC  Δ=+0.00041  p=0.04199
+    per-dis-AUROC  Δ=+0.00002  p=0.02999
+
+========================================================================
+PAIRED-T vs W040 (h1275 R@30 Pareto w=0.4, n=20)
+========================================================================
+
+  W025 (w=0.25) vs W040:
+    R@30           Δ=-0.0162pp  p=0.7055
+    per-dis-AUPRC  Δ=-0.00088  p=0.03585
+
+  W030 (w=0.3) vs W040:
+    R@30           Δ=-0.0160pp  p=0.6825
+    per-dis-AUPRC  Δ=-0.00062  p=0.04507
+
+  W035 (w=0.35) vs W040:
+    R@30           Δ=+0.0343pp  p=0.1812
+    per-dis-AUPRC  Δ=-0.00004  p=0.8406
+
+  W045 (w=0.45) vs W040:
+    R@30           Δ=-0.1111pp  p=0.001277
+    per-dis-AUPRC  Δ=+0.00016  p=0.1361
+
+  W050 (w=0.5) vs W040:
+    R@30           Δ=-0.1400pp  p=0.01407
+    per-dis-AUPRC  Δ=-0.00025  p=0.2441
+
+========================================================================
+R@30 RETRIEVAL GATE: beat W040 (h1283 retrieval recipe) ΔR@30 > +0.05pp at p<0.05
+========================================================================
+  W025 (w=0.25): ΔR@30=-0.0162pp  p=0.7055  →  STAY with W040
+  W030 (w=0.3): ΔR@30=-0.0160pp  p=0.6825  →  STAY with W040
+  W035 (w=0.35): ΔR@30=+0.0343pp  p=0.1812  →  STAY with W040
+  W045 (w=0.45): ΔR@30=-0.1111pp  p=0.001277  →  STAY with W040
+  W050 (w=0.5): ΔR@30=-0.1400pp  p=0.01407  →  STAY with W040
+
+========================================================================
+BEST-W-PER-METRIC summary
+========================================================================
+  R@30            best w=0.35  mean=0.2171
+  per-dis-AUPRC   best w=0.45  mean=0.1279
+  per-dis-AUROC   best w=0.35  mean=0.6345
+
+Wrote data/analysis/h1287_fine_grid_r30_pareto.json
+Wrote data/analysis/h1287_fine_grid_r30_pareto.md
