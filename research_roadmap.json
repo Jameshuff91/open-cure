@@ -3244,7 +3244,7 @@
       "id": "h1270",
       "title": "Update CLAUDE.md DRKG-only ceiling: concat_l2_raw 20.87% \u2192 soft_blend HIGHDENS 20.95% (or GLOBAL 21.30%)",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "expected_impact": "infrastructure",
       "effort": "low",
       "label": "infrastructure",
@@ -3255,7 +3255,9 @@
         "Update DRKG-only ceiling line (currently 'R@30 \u2264 20.87% concat_l2').",
         "Cross-reference h1262 (per-dis AUPRC convention) and h1264 (subset gate)."
       ],
-      "success_criteria": "Public ceilings in CLAUDE.md reflect the post-h1264 recipe."
+      "success_criteria": "Public ceilings in CLAUDE.md reflect the post-h1264 recipe.",
+      "findings": "CLAUDE.md Target architecture line 14 updated with 20-seed ceilings from h1269/h1273/h1275: concat_l2_raw R@30 21.35%\u00b11.13%, soft_blend_GLOBAL R@30 21.54%\u00b11.12% / per-dis-AUPRC 0.1275 / per-dis-AUROC 0.6345. Canonical recipe locked as soft_blend(w=0.5) on SUBSET_D_GLOBAL. Honest-probability paragraph (line 23) updated with new 21.54% ceiling and dual-recipe 21.68% (w=0.4) option. Linear weight axis exhaustion called out.",
+      "result_metric": "CLAUDE.md ceilings current to 20-seed canonical (soft_blend_GLOBAL w=0.5 R@30 21.54%)"
     },
     {
       "id": "h1271",
@@ -3393,7 +3395,7 @@
       "id": "h1279",
       "title": "Refresh CLAUDE.md DRKG ceilings with 20-seed numbers",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "expected_impact": "infrastructure",
       "effort": "low",
       "label": "infrastructure",
@@ -3404,7 +3406,9 @@
         "Cross-reference h1269 methodology rule ('future fusion sweeps default to \u226510 seeds').",
         "Commit."
       ],
-      "success_criteria": "Ceiling table reflects 20-seed power; future experiments gate against it."
+      "success_criteria": "Ceiling table reflects 20-seed power; future experiments gate against it.",
+      "findings": "Rolled into the same CLAUDE.md edit as h1270 \u2014 20-seed numbers from h1269/h1273/h1275 now reflected in the Target architecture (line 14) and Honest-probability paragraph (line 23). No separate 5-seed-legacy-vs-20-seed-canonical double row added; the prose now cites only 20-seed numbers and points at the superseding hypothesis IDs for auditability.",
+      "result_metric": "CLAUDE.md lines 14 + 23 refreshed; 5-seed numbers retired"
     },
     {
       "id": "h1280",

@@ -11,7 +11,7 @@ Current state (2026-04-19):
 
 Target architecture (revised 2026-04-19 post-h1200 invalidation):
 1. **~~Supervised GNN on DRKG (h1200)~~** — **INVALIDATED** across 3 variants (Xavier cold 7.99%, Node2Vec warm 11.47%, mixed loss 10.81%) vs 19.55% Node2Vec prior. The 4,968-edge supervision signal actively degrades representations; architectural variations cannot fix signal sparsity. See `data/analysis/h1200_invalidation.md`.
-2. **DRKG embedding ensembles (h1215 family)** — **VALIDATED at +1.32pp** (Node2Vec+FastRP concat: R@30 19.55% → 20.87%). Now the proven DRKG recall lever. Follow-ups: h1225 RRF, h1226 per-disease weights, h1227 three-embedding concat.
+2. **DRKG embedding ensembles (h1215 family)** — **VALIDATED at +1.32pp on 5-seed; refined to +1.32pp raw concat / +1.94pp soft-blend GLOBAL at 20-seed**. Canonical recipe (post-h1269/h1275): `soft_blend(w=0.5)` on SUBSET_D_GLOBAL = `0.5·z(n2v) + 0.5·z(concat_l2)` every disease. 20-seed ceilings: concat_l2_raw R@30 21.35%±1.13%, soft_blend_GLOBAL R@30 21.54%±1.12% / per-dis-AUPRC 0.1275±0.0102 / per-dis-AUROC 0.6345±0.0049. Linear weight axis EXHAUSTED (h1275). Open follow-ups: h1281 per-category w, h1277 three-embedding concat, h1266 RRF.
 3. **LINCS L1000 reverse-connectivity** (h1201) — orthogonal transcriptomic signal. Unchanged; now the top recall-lever priority. Expected: +5-10pp in fusion.
 4. **Expert-calibrated confidence tiers** (h1203) — classifier trained on Ryland Mortlock's blinded review labels. Decouples calibration from embedding choice.
 5. **Hybrid fusion** (h1202) — primary Nature-paper claim. Gated on h1201 landing.
@@ -20,7 +20,7 @@ Evaluation standard: **every experiment reports all five metrics** — R@30 per-
 
 Hypothesis labels: **Recall lever** (h1215 ensembles + h1201 LINCS), **Calibration lever** (h1203 Ryland labels), **Infrastructure** (h1199, h907), **Complementary** (lower priority).
 
-**Honest probability (recalibrated post-h1200):** With Path A invalidated, the DRKG ceiling is roughly the h1215 ensemble (20.87%). Reaching 40% R@30 requires h1201 (LINCS) to deliver the promised +5-10pp AND fusion to be additive. Estimate ~30% chance of ≥35% R@30, ~10% of ≥45%. The h1200 failure was instructive but narrows the attainable outcome.
+**Honest probability (recalibrated post-h1275):** With Path A invalidated and the linear weight axis exhausted, the DRKG ceiling is soft_blend_GLOBAL w=0.5 at 21.54% R@30 (20-seed) — or 21.68% if using the R@30-Pareto w=0.4 dual recipe. Reaching 40% R@30 requires h1201 (LINCS) to deliver the promised +5-10pp AND fusion to be additive. Estimate ~30% chance of ≥35% R@30, ~10% of ≥45%. The h1200 failure was instructive but narrows the attainable outcome.
 
 **See also:** `research_loop/prompts/research_spec.md`, `~/.claude/projects/-Users-jimhuff/memory/project_open_cure_pivot_37_60.md`.
 
