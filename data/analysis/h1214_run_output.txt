@@ -1,0 +1,42 @@
+========================================================================
+h1214: Reconcile 71.2% vs 49.5% leakage retention
+========================================================================
+
+Loading embeddings...
+  node2vec_256:             49,616 entities
+  node2vec_256_no_treatment: 94,247 entities
+
+Loading ground truths...
+  internal GT:  1,078 diseases, 5,629 pairs
+  expanded GT:  3,589 diseases, 57,805 pairs
+
+Apples-to-apples disease universe (in both embeddings ∩ internal GT): 838
+  full-only eligible:       1,011
+  no_treatment-only:        850
+
+--- CELL: emb=full  eval_gt=internal_gt  universe=common ---
+  micro R@30: 37.33% ± 2.88%
+  macro R@30: 36.10% ± 3.11%
+
+--- CELL: emb=full  eval_gt=expanded_gt  universe=common ---
+  micro R@30: 10.24% ± 1.30%
+  macro R@30: 16.94% ± 0.70%
+
+--- CELL: emb=no_treatment  eval_gt=internal_gt  universe=common ---
+  micro R@30: 23.65% ± 1.53%
+  macro R@30: 18.69% ± 0.74%
+
+--- CELL: emb=no_treatment  eval_gt=expanded_gt  universe=common ---
+  micro R@30: 7.11% ± 0.72%
+  macro R@30: 9.21% ± 0.68%
+
+--- AUX: full embedding, full-only universe ---
+  micro R@30: 41.64% ± 1.53%
+  macro R@30: 40.61% ± 1.86%
+
+--- AUX: no_treatment embedding, no_treatment-only universe ---
+  micro R@30: 24.51% ± 2.36%
+  macro R@30: 19.42% ± 1.60%
+
+Wrote /Users/jimhuff/github/open-cure/data/analysis/h1214_leakage_reconcile.json
+Wrote /Users/jimhuff/github/open-cure/data/analysis/h1214_leakage_reconcile.md

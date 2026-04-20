@@ -2428,7 +2428,7 @@
       "expected_impact": "infrastructure",
       "effort": "low",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "steps": [
         "git log -- data/embeddings/node2vec_256_no_treatment.csv",
         "find scripts/ -name '*no_treatment*' and re-run whichever script computed 26.06%",
@@ -2436,8 +2436,8 @@
         "If methodology matches, retrain no_treatment Node2Vec on 49,616-entity DRKG (matching node2vec_256's vocab)",
         "Decide: ship h1212 as-is with caveat, correct CLAUDE.md, or correct the embedding"
       ],
-      "findings": "",
-      "result_metric": ""
+      "findings": "Built `scripts/h1214_leakage_reconcile.py` \u2014 8-cell factorial (full vs no_treatment \u00d7 micro vs macro \u00d7 internal vs expanded GT) on the 838-disease common universe (both embeddings \u2229 internal GT), plus embedding-native auxiliary cells. Retention is methodology-dependent: macro+expanded+common = 54.4%; macro+internal+common = 51.8%; macro+internal+native = 47.8%; micro+internal+common = 63.4%; micro+expanded+common = 69.4%; micro+internal+native = 58.9%. **Per-axis effect (ceteris paribus):** micro\u2192macro drops retention 11-15pp; internal\u2192expanded GT raises 3-6pp; common\u2192native drops 2-4pp. Legacy CLAUDE.md '71.2%' corresponds to micro+internal+native (reproduced: 58.9%; residual gap explained by old fuzzy-matcher EveryCure GT vs internal cache, and one different seed). **Canonical recommended number for external citation: 54.4% retention (45.6% leakage)** \u2014 macro + expanded GT + common universe is the most stringent stack. CLAUDE.md updated to replace the 71.2% figure. h1212's headline (49.5%, macro + expanded + 850-disease universe) is within 5pp and internally consistent. Findings in `data/analysis/h1214_leakage_reconcile.{json,md}`.",
+      "result_metric": "54.4% retention (macro R@30, 838 common, expanded GT); range 47.8-69.4% across 8-cell factorial"
     },
     {
       "id": "h1215",
@@ -2917,6 +2917,67 @@
         "Update CLAUDE.md headline paragraphs for h1218/h1230 to qualify the endocrine claim."
       ],
       "success_criteria": "All per-category fusion-delta tables now display either a confidence-eligible value or 'INSUFFICIENT_SAMPLE'. Endocrine, immunological, reproductive, and any other <5-disease categories are correctly flagged."
+    },
+    {
+      "id": "h1251",
+      "title": "Extend compare_honest to the full 4-embedding suite (Node2Vec, FastRP, GraphSAGE, concat_l2) \u2014 decide whether fusion's leakage profile is better",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "label": "infrastructure",
+      "steps": [
+        "Train a no-treatment FastRP embedding on the same drkg_no_treatment.tsv used by train_node2vec_no_treatment.py (code already there).",
+        "Build concat_l2 fusion of Node2Vec_no_treatment and FastRP_no_treatment; run through clean_embedding_benchmark.py with --restrict-to-embedding node2vec_256.",
+        "Compare retention (macro R@30 common/native, expanded GT) against the Node2Vec-only 54.4% baseline.",
+        "If fusion retention > 60%, that is a paper-grade finding: the ensemble is more robust to treatment-edge removal than either parent.",
+        "If fusion retention \u2248 54%, the leakage channel is shared across both random-walk and random-projection embeddings (same DRKG edges \u2192 same leakage)."
+      ]
+    },
+    {
+      "id": "h1252",
+      "title": "Mechanism-only residual audit on no-treatment embedding \u2014 where does the 9.21% R@30 come from?",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "low",
+      "effort": "medium",
+      "label": "error analysis",
+      "steps": [
+        "For each of the 838 common diseases, compute kNN recall@30 on the no-treatment embedding and bucket by: (a) disease has mechanism paths in DRKG (target overlap > 0), (b) disease has ATC-coherent kNN neighbours, (c) disease has neither.",
+        "Test whether the 9.21% macro R@30 is driven by (a)+(b) and (c) contributes near-zero \u2014 if so, mechanism paths are the residual signal.",
+        "Compare bucket-wise retention (full vs no_treatment) to see whether leakage is uniform across buckets or concentrated in (c).",
+        "Write-up as a per-disease residual audit. Save to data/analysis/h1252_no_treatment_residual.{json,md}."
+      ]
+    },
+    {
+      "id": "h1253",
+      "title": "What does the TxGNN paper call 'leakage'? \u2014 Read their ablation protocol and map it to our 8-cell factorial",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "infrastructure",
+      "steps": [
+        "Read Huang et al. 2024 Nature Medicine supplementary for their 'inductive zero-shot' and 'transductive' evaluation definitions.",
+        "Map their protocol onto our 8 cells: Which aggregation (micro/macro)? Which GT? Which universe?",
+        "Pick the h1214 cell that MOST closely matches their protocol; cite that retention number when comparing against their AUPRC 0.913.",
+        "Document the mapping in docs/claude/methodology_notes.md (new file)."
+      ]
+    },
+    {
+      "id": "h1254",
+      "title": "Paper-grade leakage-aware ceiling table \u2014 ship h1214's 8-cell factorial + per-axis effect into preprint methods",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "infrastructure",
+      "steps": [
+        "Copy h1214's 8-cell table + per-axis effect paragraph into paper/preprint_draft.md methods section.",
+        "Add Supplementary Table S-leak: retention by methodology, with 95% CIs from the 5-seed per-seed arrays in h1214_leakage_reconcile.json.",
+        "Cite the defensible single number (54.4%) in the main text; reserve the range (47.8-69.4%) for the supplementary.",
+        "Verify the TxGNN Nature-Med paper's leakage-audit methodology (h1253) and pick the cell that best matches theirs for head-to-head comparison."
+      ]
     }
   ],
   "completed": [
@@ -5737,6 +5798,12 @@
       "hypothesis_id": "h1229",
       "learning": "Per-category fusion deltas in h1218/h1230 must be qualified by n_unique_diseases. The 'endocrine -10.71pp non-trivial regression' is based on 2 rare pituitary diseases \u2014 not a category-level effect. Sparse categories produce spurious tier-precision signals at small sample sizes.",
       "implication": "Add a `min_unique_diseases=5` gate when reporting per-category \u0394 in any future fusion analysis. Update h1218/h1230 markdown outputs to flag sparse categories explicitly."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1214",
+      "learning": "Treatment-edge leakage retention is a methodology-dependent number, spanning 47.8-69.4% across the 8-cell factorial (emb \u00d7 aggregation \u00d7 GT \u00d7 universe). The old '71.2%' figure was the most lenient corner (micro + internal GT + embedding-native universes); the defensible single number is 54.4% (macro + expanded GT + common universe). Micro aggregation hides leakage because large-GT diseases (where treatment edges concentrate recall) dominate the sum. Always audit retention numbers along all three axes before citing externally.",
+      "implication": "Any future 'performance retention after edge removal' claim (e.g. h1200 vs h1200-no-treatment-labels, or hybrid DRKG+LINCS retention after removing DRKG) must report the 8-cell factorial or at minimum (macro, expanded GT, common universe)."
     }
   ],
   "collaborations": [

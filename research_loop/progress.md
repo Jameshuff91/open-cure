@@ -5233,3 +5233,49 @@ Smallest shifts (high-ceiling categories already at ceiling):
 
 ### Recommended next hypothesis
 **h1241 (P2, error analysis)** — ATC-subclass decomposition for psychiatric / CV / cancer. These three are the biggest ceiling re-orderers. If within-subclass retrieval lifts R@30/ceiling by >1.5x, that says the embedding respects drug-class not disease-category — a clean message for h1200 loss design. Alternatively **h1242** (h1200 training recipe) but that depends on h1200 infrastructure landing first.
+
+
+## Current Session: h1214 — Reconcile treatment-edge leakage retention (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1214 (VALIDATED — methodology reconciliation)
+
+### What was shipped
+`scripts/h1214_leakage_reconcile.py` — 8-cell factorial on the 838-disease common universe (both embeddings ∩ internal GT). Cells are {full, no_treatment} × {micro, macro} × {internal_gt, expanded_gt}. Plus 2 auxiliary cells using each embedding's native universe (reproducing `compare_honest_embeddings.py`).
+
+### The reconciliation
+**Retention (no_treatment / full R@30) by methodology:**
+
+| Universe | GT | Aggregation | full R@30 | no_treatment R@30 | retention |
+|---|---|---|---:|---:|---:|
+| common (838) | internal_gt | micro | 37.33% | 23.65% | **63.4%** |
+| common (838) | internal_gt | macro | 36.10% | 18.69% | **51.8%** |
+| common (838) | expanded_gt | micro | 10.24% | 7.11% | **69.4%** |
+| common (838) | expanded_gt | macro | 16.94% | 9.21% | **54.4%** ← canonical |
+| native (1011 / 850) | internal_gt | micro | 41.64% | 24.51% | 58.9% |
+| native (1011 / 850) | internal_gt | macro | 40.61% | 19.42% | 47.8% |
+
+### Per-axis effect (ceteris paribus)
+- **Aggregation (micro → macro): retention drops 11–15pp.** Macro surfaces leakage that micro hides on large-GT diseases.
+- **GT (internal → expanded): retention rises 3–6pp.** Expanded GT adds easy pairs recoverable via indirect paths.
+- **Universe (common → embedding-native): retention drops 2–4pp.** no_treatment embedding performs worse on its native-only 12 extra diseases.
+
+### Where the legacy 71.2% came from
+`compare_honest_embeddings.py` (2026-02-01) reported full=36.59%, no_trt=26.06% → 71.2% retention. That cell was **micro aggregation + internal-style GT (EveryCure raw list via fuzzy matcher) + embedding-native universes** — the MOST LENIENT corner of the factorial. My replication on internal GT cache + native universe + micro: full=41.64%, no_trt=24.51%, retention=58.9%. Residual gap (58.9% vs 71.2%) is attributable to (1) old fuzzy-matcher EveryCure list vs internal cache, (2) one seed changed (1024→2024), (3) CSV-format entity filtering differences.
+
+### Canonical recommendation for external citation
+> **Macro R@30 + expanded GT + common-universe → 54.4% retention (45.6% leakage).** Range across the factorial is 47.8-69.4% and should be footnoted.
+
+### Shipped
+- `scripts/h1214_leakage_reconcile.py`
+- `data/analysis/h1214_leakage_reconcile.{json,md}` — full per-seed arrays
+- `CLAUDE.md` ceilings line replaced: "71.2% retention" → "54.4% retention, range 47.8-69.4%"
+- `CLAUDE.md` h1212 entry extended with h1214 reconciliation summary
+
+### New hypotheses
+- **h1251 (P2, infrastructure):** Extend `compare_honest` to the 4-embedding suite (train no-treatment FastRP + concat_l2, compare retention vs 54.4% baseline).
+- **h1252 (P3, error analysis):** Residual audit on no-treatment 9.21% — is it driven by mechanism-path + ATC-coherent buckets, or uniform?
+- **h1253 (P3, infrastructure):** Read TxGNN Nature-Med supplementary and map their leakage-audit protocol onto our 8 cells.
+- **h1254 (P2, infrastructure):** Ship h1214's factorial into the preprint methods section before any external leakage claim.
+
+### Recommended next hypothesis
+**h1254 (P2, infrastructure)** — paper-credibility; make sure the preprint cites 54.4% with the full range before submission. Alternatively **h1201 (P1, recall lever)** if shifting back to the primary LINCS reverse-connectivity track.

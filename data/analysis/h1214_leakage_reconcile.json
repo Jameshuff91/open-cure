@@ -1,0 +1,209 @@
+{
+  "hypothesis": "h1214",
+  "description": "Reconcile 71.2% vs 49.5% treatment-edge leakage retention",
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "k": 20,
+  "top_n": 30,
+  "n_common_universe": 838,
+  "n_full_universe": 1011,
+  "n_no_treatment_universe": 850,
+  "cells_common_universe": [
+    {
+      "label": "full__internal_gt",
+      "embedding": "full",
+      "micro_r30_mean": 0.37331286869011,
+      "micro_r30_std": 0.028785732924403847,
+      "macro_r30_mean": 0.3610246780053681,
+      "macro_r30_std": 0.03112102244951205,
+      "per_seed_micro": [
+        0.3592814371257485,
+        0.4166666666666667,
+        0.34335260115606936,
+        0.39780658025922233,
+        0.34945705824284307
+      ],
+      "per_seed_macro": [
+        0.3720272404915653,
+        0.4020347153795367,
+        0.31976275391307635,
+        0.3809413917412431,
+        0.3303572885014187
+      ],
+      "n_eligible_diseases": 838
+    },
+    {
+      "label": "full__expanded_gt",
+      "embedding": "full",
+      "micro_r30_mean": 0.10238551326488428,
+      "micro_r30_std": 0.012986781135239968,
+      "macro_r30_mean": 0.16937790885090148,
+      "macro_r30_std": 0.006957799065343667,
+      "per_seed_micro": [
+        0.1128702757916241,
+        0.11862823592207099,
+        0.10585052417991207,
+        0.08821835771046874,
+        0.08636017272034544
+      ],
+      "per_seed_macro": [
+        0.17499417287861907,
+        0.17809547566553915,
+        0.16262349974767548,
+        0.17107320422965802,
+        0.16010319173301568
+      ],
+      "n_eligible_diseases": 838
+    },
+    {
+      "label": "no_treatment__internal_gt",
+      "embedding": "no_treatment",
+      "micro_r30_mean": 0.23649825398970478,
+      "micro_r30_std": 0.015310231984032304,
+      "macro_r30_mean": 0.18687450095792724,
+      "macro_r30_std": 0.007388352530336022,
+      "per_seed_micro": [
+        0.22497522299306244,
+        0.26640926640926643,
+        0.2295271049596309,
+        0.22686567164179106,
+        0.23471400394477318
+      ],
+      "per_seed_macro": [
+        0.18444023566400944,
+        0.19644687916073442,
+        0.181458759403768,
+        0.19451534902139786,
+        0.17751128153972642
+      ],
+      "n_eligible_diseases": 838
+    },
+    {
+      "label": "no_treatment__expanded_gt",
+      "embedding": "no_treatment",
+      "micro_r30_mean": 0.0711064584547253,
+      "micro_r30_std": 0.007158744618504627,
+      "macro_r30_mean": 0.09208308522426642,
+      "macro_r30_std": 0.006758339311495453,
+      "per_seed_micro": [
+        0.08089686098654708,
+        0.07710640684144118,
+        0.07099751508697195,
+        0.0641088502083844,
+        0.06242265915028186
+      ],
+      "per_seed_macro": [
+        0.10201354998773268,
+        0.08257726649708179,
+        0.09530602880651214,
+        0.08691554918644961,
+        0.09360303164355588
+      ],
+      "n_eligible_diseases": 838
+    }
+  ],
+  "cells_embedding_native_universe": [
+    {
+      "label": "full__internal_gt__full_universe",
+      "embedding": "full",
+      "micro_r30_mean": 0.4163906383809263,
+      "micro_r30_std": 0.015342393454434063,
+      "macro_r30_mean": 0.40614362431225315,
+      "macro_r30_std": 0.018568641442000135,
+      "per_seed_micro": [
+        0.42277992277992277,
+        0.4266304347826087,
+        0.390715667311412,
+        0.40804597701149425,
+        0.43378119001919385
+      ],
+      "per_seed_macro": [
+        0.4194186204615796,
+        0.4231178860107115,
+        0.3729843062474815,
+        0.41642607030200834,
+        0.39877123853948465
+      ],
+      "n_eligible_diseases": 1011
+    },
+    {
+      "label": "no_treatment__internal_gt__no_treatment_universe",
+      "embedding": "no_treatment",
+      "micro_r30_mean": 0.24508917122728854,
+      "micro_r30_std": 0.023552463501504747,
+      "macro_r30_mean": 0.19417247827478393,
+      "macro_r30_std": 0.015993596863443673,
+      "per_seed_micro": [
+        0.2456813819577735,
+        0.28642220019821607,
+        0.23875802997858672,
+        0.2133051742344245,
+        0.24127906976744187
+      ],
+      "per_seed_macro": [
+        0.2171200279441593,
+        0.20826931718196381,
+        0.1893031542723392,
+        0.17560129003999073,
+        0.1805686019354665
+      ],
+      "n_eligible_diseases": 850
+    }
+  ],
+  "retentions": [
+    {
+      "gt": "internal_gt",
+      "aggregation": "micro_r30",
+      "universe": "common",
+      "full_r30": 0.37331286869011,
+      "no_treatment_r30": 0.23649825398970478,
+      "retention_pct": 63.35121926536743
+    },
+    {
+      "gt": "internal_gt",
+      "aggregation": "macro_r30",
+      "universe": "common",
+      "full_r30": 0.3610246780053681,
+      "no_treatment_r30": 0.18687450095792724,
+      "retention_pct": 51.7622512650364
+    },
+    {
+      "gt": "expanded_gt",
+      "aggregation": "micro_r30",
+      "universe": "common",
+      "full_r30": 0.10238551326488428,
+      "no_treatment_r30": 0.0711064584547253,
+      "retention_pct": 69.44972602790385
+    },
+    {
+      "gt": "expanded_gt",
+      "aggregation": "macro_r30",
+      "universe": "common",
+      "full_r30": 0.16937790885090148,
+      "no_treatment_r30": 0.09208308522426642,
+      "retention_pct": 54.365463506415416
+    },
+    {
+      "gt": "internal_gt",
+      "aggregation": "micro_r30",
+      "universe": "embedding-native",
+      "full_r30": 0.4163906383809263,
+      "no_treatment_r30": 0.24508917122728854,
+      "retention_pct": 58.860394215461156
+    },
+    {
+      "gt": "internal_gt",
+      "aggregation": "macro_r30",
+      "universe": "embedding-native",
+      "full_r30": 0.40614362431225315,
+      "no_treatment_r30": 0.19417247827478393,
+      "retention_pct": 47.80882098139238
+    }
+  ],
+  "elapsed_s": 8.6
+}
