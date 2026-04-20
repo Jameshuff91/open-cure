@@ -3206,7 +3206,7 @@
       "id": "h1268",
       "title": "Soft-blend weight sweep on SUBSET_D_GLOBAL \u2014 find Pareto-optimal w under per-disease AUPRC",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "expected_impact": "high",
       "effort": "low",
       "label": "recall",
@@ -3217,7 +3217,9 @@
         "If any w produces \u0394 per-dis AUPRC \u2265 +0.001 at p < 0.05, lock as new production fusion recipe.",
         "Save data/analysis/h1268_soft_blend_global_weight_sweep.{json,md}."
       ],
-      "success_criteria": "Identify Pareto-optimal w on SUBSET_D_GLOBAL with paired significance."
+      "success_criteria": "Identify Pareto-optimal w on SUBSET_D_GLOBAL with paired significance.",
+      "findings": "Superseded by h1275 (20-seed weight sweep on same subset with stricter preregistered gate). h1275 result: no w in {0.3, 0.4, 0.5, 0.6, 0.7} beats w=0.5 on Delta per-dis AUPRC at p<0.05 AND Delta > +0.0003. W050 locked as canonical on the primary metric; W040 sub-finding opens dual-recipe direction (h1283). h1268 success criteria met by h1275.",
+      "result_metric": "W050 per-dis AUPRC 0.1275 (canonical); W040 R@30 21.68% (Pareto)"
     },
     {
       "id": "h1269",
