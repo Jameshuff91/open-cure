@@ -1,6 +1,49 @@
 # Research Loop Progress
 
-## Current Session: h1269 — 20-seed extension promotes SUBSET_D_GLOBAL (VALIDATED) (2026-04-19)
+## Current Session: h1272 — Per-disease audit reverses h1247 mechanism for soft-blend (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1272 (VALIDATED — recipe-sharpening signal)
+
+### Result — three actionable patterns
+1. **n_gt=1 singletons LOSE** — mean Δ=-0.00431, frac_+ = 3.4% (2/58 positive).
+   AUPRC denominator amplifies AP fluctuations on a single positive; fusion
+   adds noise.
+2. **frac_positive rises monotonically with n_gt:** 3.4% → 26.4% → 46.3% →
+   55.9% → 66.9% across {1, 2-5, 6-20, 21-50, 51+} buckets. n_gt≥51 most
+   reliable winners.
+3. **ATC L3 entropy quartile is INVERTED vs h1247:** Q1_low_ent frac_+ = 19.7%,
+   Q4_high_ent frac_+ = **66.5%**. h1247 found hard-switch helps HOMOGENEOUS
+   pools; h1272 finds soft-blend helps DIVERSE pools. Two recipes have
+   opposite optimal subsets.
+
+### Per-category gradient
+| Top | mean Δ AUPRC | Bottom | mean Δ AUPRC |
+|---|---|---|---|
+| endocrine | +0.0247 | cancer | -0.0017 |
+| dermatological | +0.0156 | musculoskeletal | -0.0005 |
+| neurological | +0.0132 | reproductive | -0.0079 |
+| autoimmune | +0.0126 | gastrointestinal | +0.0002 |
+| infectious | +0.0113 | other | +0.0001 |
+
+### Sharpening direction
+**h1273:** Apply soft-blend on n_gt≥2 only (drops the 58 singleton rows that
+drag aggregate by -0.0043 each). Expected new aggregate Δ ~ +0.00368 if
+singleton noise removed. h1274 tests entropy-gated variant.
+
+### Shipped
+- `scripts/h1272_global_per_disease_audit.py`
+- `data/analysis/h1272_global_per_disease_audit.{json,md}`
+- CLAUDE.md updated with h1272 paragraph
+- 2 new pending hypotheses (h1273, h1274)
+
+### Recommended next hypothesis
+**h1273** (n_gt≥2 refinement at 20 seeds) — direct ROI on the singleton
+finding. After h1273 lands, h1274 (entropy gate) and h1268 (BLEND_W sweep)
+are the next parameter sweeps before moving to h1266 (RRF) or h1201 (LINCS).
+
+---
+
+## Previous Session: h1269 — 20-seed extension promotes SUBSET_D_GLOBAL (VALIDATED) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1269 (VALIDATED — gates GLOBAL as canonical)
 

@@ -3276,7 +3276,7 @@
       "id": "h1272",
       "title": "Per-disease AUPRC trace audit \u2014 which diseases drive h1269 GLOBAL's +0.00343 lift?",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "expected_impact": "high",
       "effort": "low",
       "label": "recall",
@@ -3288,7 +3288,45 @@
         "Identify top 20 diseases (by mean \u0394) and bottom 20 (by mean \u0394). Audit GT for systematic pattern.",
         "If a clean 'fusion-helped' subset emerges, propose h12XX (subset-restricted GLOBAL recipe)."
       ],
-      "success_criteria": "Identify the disease subset(s) carrying the GLOBAL lift, OR confirm the lift is uniform across the 200 diseases."
+      "success_criteria": "Identify the disease subset(s) carrying the GLOBAL lift, OR confirm the lift is uniform across the 200 diseases.",
+      "findings": "h1272 VALIDATED: Per-disease decomposition of GLOBAL +0.00343 lift (5-seed mean \u0394 +0.00470 across 1002 (seed,disease) rows: 45.4% positive, 33.8% negative, 20.8% zero). Three actionable patterns: (1) n_gt=1 SINGLETONS LOSE \u2014 mean \u0394=-0.00431, frac_+=3.4% (2/58); fusion REDUCES per-disease AUPRC for singleton GT diseases because AUPRC denominator amplifies AP fluctuations on a single positive. (2) frac_positive monotonically rises with n_gt: 3.4% \u2192 26.4% \u2192 46.3% \u2192 55.9% \u2192 66.9% (n_gt\u226551 most reliable winners). (3) Per-category gradient \u2014 winners endocrine +0.0247 / dermatological +0.0156 / neurological +0.0132 / autoimmune +0.0126 / infectious +0.0113; losers cancer -0.0017 / musculoskeletal -0.0005. (4) ATC L3 entropy: Q1_low_ent frac_+ = 19.7%, Q4_high_ent frac_+ = **66.5%** \u2014 REVERSE of h1247's hard-switch finding (h1247: low-entropy benefits more from hard-switch on n_gt 21-50). Mechanism: soft-blend smooths noisy multi-class scoring, helping diverse GT pools; hard-switch lifts homogeneous clusters wholesale. **Refined subset rule for canonical recipe: apply soft-blend on n_gt\u22652 (exclude singletons) OR n_gt\u22656 (drop the 0.5% lift but eliminate the singleton noise). h1273 implements.**",
+      "result_metric": "n_gt=1 mean \u0394 -0.0043 frac+ 3.4%; n_gt\u226551 mean \u0394 +0.0053 frac+ 66.9%; Q4_high_entropy frac+ 66.5% vs Q1_low_entropy frac+ 19.7%."
+    },
+    {
+      "id": "h1273",
+      "title": "Refined GLOBAL recipe \u2014 exclude n_gt=1 singletons from soft-blend (capture lift, drop noise)",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1272 found singleton n_gt=1 diseases (n=58/1002 rows = 5.8%) have mean \u0394 per-dis AUPRC = -0.0043 with frac_positive only 3.4% \u2014 fusion HURTS them. They drag the GLOBAL aggregate down. Restricting soft-blend to n_gt\u22652 should improve aggregate \u0394 AND tighten p-value. Two variants worth testing: SUBSET_E (n_gt\u22652) and SUBSET_F (n_gt\u22656, where frac_positive crosses 46%).",
+      "steps": [
+        "Build scripts/h1273_refined_subset_sweep.py extending h1264 with two new subsets: SUBSET_E (n_gt\u22652) and SUBSET_F (n_gt\u22656).",
+        "20-seed paired-t vs concat_l2_raw (per h1269 methodology rule).",
+        "Compare against SUBSET_D_GLOBAL on per-disease AUPRC, AUROC, R@30.",
+        "If SUBSET_E or SUBSET_F beats GLOBAL on per-dis AUPRC at p<0.05, lock as new canonical.",
+        "Save data/analysis/h1273_refined_subset_sweep.{json,md}."
+      ],
+      "success_criteria": "Identify sharpest subset on per-disease AUPRC at 20 seeds. Update CLAUDE.md ceiling."
+    },
+    {
+      "id": "h1274",
+      "title": "ATC-entropy-gated soft-blend \u2014 apply blend only on Q3+Q4 high-entropy diseases",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1272 found ATC L3 entropy Q4_high_ent frac+ = 66.5% vs Q1_low_ent frac+ = 19.7% \u2014 high-entropy GT pools benefit more reliably from soft-blend (the inverse of h1247's hard-switch finding). A subset rule combining n_gt\u22652 with entropy \u2265 Q2-median should sharpen the lift further. Worth testing as a parallel candidate to h1273.",
+      "steps": [
+        "Build scripts/h1274_entropy_gated_blend.py \u2014 soft-blend only when ATC L3 entropy \u2265 train-side median.",
+        "Combine with h1273's n_gt\u22652 cut.",
+        "20-seed paired-t vs concat_l2_raw and SUBSET_D_GLOBAL.",
+        "If beats GLOBAL on \u0394 per-dis AUPRC at p<0.05, ship as recipe.",
+        "Save data/analysis/h1274_entropy_gated_blend.{json,md}."
+      ],
+      "success_criteria": "Either improvement over GLOBAL or formal demonstration that GLOBAL is Pareto-optimal subset."
     }
   ],
   "completed": [
@@ -6140,6 +6178,12 @@
       "hypothesis_id": "h1269",
       "learning": "5-seed paired-t systematically over-estimates effect sizes for fusion recipes. h1264 reported SUBSET_D_GLOBAL \u0394=+0.00469; 20-seed extension shows true \u0394=+0.00343 (down 27%). h1259 reported FLIPPED \u0394=+0.00054; 20-seed shows +0.00025 (down 54%, under 0.0005 promotion threshold). All canonical fusion recipes need >=10 seeds for stable effect estimates.",
       "implication": "Future fusion experiments should default to >=10 seeds. h1264-style 5-seed sweeps OK for hypothesis screening but final canonical recipe verification needs the 20-seed run. Add to clean_embedding_benchmark.py documentation."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1272",
+      "learning": "Soft-blend's mechanism is OPPOSITE to hard-switch's mechanism. h1247 found hard-switch helps homogeneous GT pools (low ATC entropy, n_gt 21-50). h1272 finds soft-blend helps DIVERSE GT pools (Q4 high-entropy frac+ 66.5%) and HURTS singleton diseases (n_gt=1 frac+ 3.4%). Mechanism: hard-switch lifts coherent embedding clusters wholesale; soft-blend smooths multi-class score noise. The two recipes are not interchangeable \u2014 opposite optimal subsets.",
+      "implication": "Per-disease soft-blend recipe should exclude n_gt=1 singletons. Future fusion recipe sweeps must include n_gt-stratified rows in primary diagnostics, not just aggregate."
     }
   ],
   "collaborations": [

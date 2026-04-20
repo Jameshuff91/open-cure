@@ -1,0 +1,593 @@
+{
+  "hypothesis": "h1272",
+  "blend_w": 0.5,
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024
+  ],
+  "n_rows": 1002,
+  "aggregate": {
+    "mean_delta": 0.004698279350583358,
+    "std_delta": 0.052951664280185676,
+    "min_delta": -0.962962962962963,
+    "max_delta": 0.75,
+    "n_positive": 455,
+    "n_negative": 339,
+    "n_zero": 208
+  },
+  "by_n_gt_bucket": {
+    "1": {
+      "n_rows": 58,
+      "mean_delta": -0.004306209147289956,
+      "std_delta": 0.1602532935341918,
+      "frac_positive": 0.034482758620689655
+    },
+    "2-5": {
+      "n_rows": 193,
+      "mean_delta": 0.008550799252070793,
+      "std_delta": 0.056741767469559924,
+      "frac_positive": 0.26424870466321243
+    },
+    "6-20": {
+      "n_rows": 387,
+      "mean_delta": 0.005779161712823522,
+      "std_delta": 0.03836239926599843,
+      "frac_positive": 0.4625322997416021
+    },
+    "21-50": {
+      "n_rows": 186,
+      "mean_delta": 0.0006677984322840569,
+      "std_delta": 0.02153652713339816,
+      "frac_positive": 0.5591397849462365
+    },
+    "51+": {
+      "n_rows": 178,
+      "mean_delta": 0.0053167735556749526,
+      "std_delta": 0.01333995542494649,
+      "frac_positive": 0.6685393258426966
+    }
+  },
+  "by_category": {
+    "endocrine": {
+      "n_rows": 6,
+      "mean_delta": 0.02470632778418029,
+      "std_delta": 0.03326547987563081,
+      "frac_positive": 0.6666666666666666
+    },
+    "dermatological": {
+      "n_rows": 48,
+      "mean_delta": 0.015624064527762401,
+      "std_delta": 0.03395427619251475,
+      "frac_positive": 0.6666666666666666
+    },
+    "neurological": {
+      "n_rows": 50,
+      "mean_delta": 0.013179757292825096,
+      "std_delta": 0.04334437910458435,
+      "frac_positive": 0.52
+    },
+    "autoimmune": {
+      "n_rows": 31,
+      "mean_delta": 0.012590158709615114,
+      "std_delta": 0.028049478298399138,
+      "frac_positive": 0.7419354838709677
+    },
+    "infectious": {
+      "n_rows": 149,
+      "mean_delta": 0.01134077694131118,
+      "std_delta": 0.08285085708469873,
+      "frac_positive": 0.4899328859060403
+    },
+    "respiratory": {
+      "n_rows": 21,
+      "mean_delta": 0.009732088455464782,
+      "std_delta": 0.01595532313196345,
+      "frac_positive": 0.5238095238095238
+    },
+    "ophthalmic": {
+      "n_rows": 22,
+      "mean_delta": 0.009400537099203484,
+      "std_delta": 0.022292035913539447,
+      "frac_positive": 0.5
+    },
+    "hematological": {
+      "n_rows": 17,
+      "mean_delta": 0.0072540655612006,
+      "std_delta": 0.04948176549792304,
+      "frac_positive": 0.35294117647058826
+    },
+    "cardiovascular": {
+      "n_rows": 63,
+      "mean_delta": 0.006711977201080616,
+      "std_delta": 0.016038568022475143,
+      "frac_positive": 0.6031746031746031
+    },
+    "metabolic": {
+      "n_rows": 54,
+      "mean_delta": 0.0040459217561018565,
+      "std_delta": 0.020371967834741652,
+      "frac_positive": 0.2962962962962963
+    },
+    "immunological": {
+      "n_rows": 7,
+      "mean_delta": 0.0034666278782219265,
+      "std_delta": 0.005671723495893762,
+      "frac_positive": 0.5714285714285714
+    },
+    "psychiatric": {
+      "n_rows": 18,
+      "mean_delta": 0.0011466739951981162,
+      "std_delta": 0.0041428858126143385,
+      "frac_positive": 0.5
+    },
+    "renal": {
+      "n_rows": 23,
+      "mean_delta": 0.0006786518955889399,
+      "std_delta": 0.01372334306921099,
+      "frac_positive": 0.5652173913043478
+    },
+    "gastrointestinal": {
+      "n_rows": 38,
+      "mean_delta": 0.000155352641932376,
+      "std_delta": 0.023052248852053352,
+      "frac_positive": 0.34210526315789475
+    },
+    "other": {
+      "n_rows": 320,
+      "mean_delta": 0.00013826351826005007,
+      "std_delta": 0.06560380783733609,
+      "frac_positive": 0.3625
+    },
+    "musculoskeletal": {
+      "n_rows": 18,
+      "mean_delta": -0.0004989113965333471,
+      "std_delta": 0.013194111688479298,
+      "frac_positive": 0.3333333333333333
+    },
+    "cancer": {
+      "n_rows": 116,
+      "mean_delta": -0.0017169065884075144,
+      "std_delta": 0.024450917273686677,
+      "frac_positive": 0.46551724137931033
+    },
+    "reproductive": {
+      "n_rows": 1,
+      "mean_delta": -0.007936507936507936,
+      "std_delta": 0.0,
+      "frac_positive": 0.0
+    }
+  },
+  "by_entropy_quartile": {
+    "Q1_low_ent": {
+      "n_rows": 249,
+      "mean_delta": 0.00034101866118997935,
+      "std_delta": 0.08506700277236573,
+      "frac_positive": 0.19678714859437751
+    },
+    "Q2": {
+      "n_rows": 241,
+      "mean_delta": 0.009124939860308582,
+      "std_delta": 0.056787988135906145,
+      "frac_positive": 0.43568464730290457
+    },
+    "Q3": {
+      "n_rows": 261,
+      "mean_delta": 0.004435745001794458,
+      "std_delta": 0.024972463321652726,
+      "frac_positive": 0.5134099616858238
+    },
+    "Q4_high_ent": {
+      "n_rows": 251,
+      "mean_delta": 0.0050435151826513855,
+      "std_delta": 0.015222843573096617,
+      "frac_positive": 0.6653386454183267
+    }
+  },
+  "top20_diseases": [
+    {
+      "disease_id": "drkg:Disease::MESH:D012554",
+      "name": "schistosoma japonicum infection",
+      "category": "infectious",
+      "n_gt_full": 1,
+      "atc_l3_entropy": -0.0,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.75,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007877",
+      "name": "legionella infection",
+      "category": "infectious",
+      "n_gt_full": 2,
+      "atc_l3_entropy": 1.0,
+      "n_seeds_seen": 3,
+      "mean_delta": 0.26988938029037246,
+      "std_delta": 0.19306772405622175
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000752",
+      "name": "pernicious anemia",
+      "category": "hematological",
+      "n_gt_full": 8,
+      "atc_l3_entropy": 0.6500224216483541,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.19844992405968015,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004714",
+      "name": "endometrial hyperplasia",
+      "category": "other",
+      "n_gt_full": 12,
+      "atc_l3_entropy": 0.5916727785823275,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.19717419792850827,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006952",
+      "name": "primary dysbetalipoproteinemia fredrickson type iii",
+      "category": "other",
+      "n_gt_full": 11,
+      "atc_l3_entropy": -0.0,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.17376292202617613,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014402",
+      "name": "tuberous sclerosis complex",
+      "category": "neurological",
+      "n_gt_full": 6,
+      "atc_l3_entropy": 1.5219280948873621,
+      "n_seeds_seen": 3,
+      "mean_delta": 0.16713732490664293,
+      "std_delta": 0.06327867588910852
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005348",
+      "name": "fibrocystic breast disease",
+      "category": "other",
+      "n_gt_full": 6,
+      "atc_l3_entropy": 1.5,
+      "n_seeds_seen": 3,
+      "mean_delta": 0.13481435797585686,
+      "std_delta": 0.01387959815544132
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000033",
+      "name": "septic abortion",
+      "category": "other",
+      "n_gt_full": 2,
+      "atc_l3_entropy": -0.0,
+      "n_seeds_seen": 2,
+      "mean_delta": 0.125,
+      "std_delta": 0.125
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014846",
+      "name": "vulvar cancer",
+      "category": "cancer",
+      "n_gt_full": 2,
+      "atc_l3_entropy": -0.0,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.125,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D001765",
+      "name": "blind loop syndrome",
+      "category": "other",
+      "n_gt_full": 6,
+      "atc_l3_entropy": 1.5,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.12040816326530612,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013167",
+      "name": "nonradiographic axial spondyloarthritis",
+      "category": "autoimmune",
+      "n_gt_full": 67,
+      "atc_l3_entropy": 3.3265535841814056,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.11737839171082837,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D005499",
+      "name": "folliculitis",
+      "category": "dermatological",
+      "n_gt_full": 7,
+      "atc_l3_entropy": 1.9182958340544896,
+      "n_seeds_seen": 3,
+      "mean_delta": 0.10752644279601915,
+      "std_delta": 0.028652066134558632
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D012859",
+      "name": "sjogrens syndrome",
+      "category": "other",
+      "n_gt_full": 5,
+      "atc_l3_entropy": 2.321928094887362,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.1,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000151",
+      "name": "infections caused by acinetobacter",
+      "category": "infectious",
+      "n_gt_full": 10,
+      "atc_l3_entropy": 1.4591479170272448,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.0902088714701385,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007642",
+      "name": "keratosis pilaris",
+      "category": "dermatological",
+      "n_gt_full": 6,
+      "atc_l3_entropy": 2.321928094887362,
+      "n_seeds_seen": 2,
+      "mean_delta": 0.08833357904565334,
+      "std_delta": 0.030714040001965693
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D000568",
+      "name": "amenorrhea",
+      "category": "other",
+      "n_gt_full": 16,
+      "atc_l3_entropy": 2.270942421748537,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.08392602491707697,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D018246",
+      "name": "aldosteroneproducing adrenal adenomas",
+      "category": "metabolic",
+      "n_gt_full": 2,
+      "atc_l3_entropy": 1.0,
+      "n_seeds_seen": 2,
+      "mean_delta": 0.08292875823363627,
+      "std_delta": 0.011768211463333456
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010900",
+      "name": "pituitary hypothalamic injury from trauma",
+      "category": "endocrine",
+      "n_gt_full": 14,
+      "atc_l3_entropy": 3.0271691184406184,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.08065257420945404,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D013174",
+      "name": "sporotrichosis",
+      "category": "infectious",
+      "n_gt_full": 10,
+      "atc_l3_entropy": 2.0588138903312014,
+      "n_seeds_seen": 2,
+      "mean_delta": 0.07677606215562421,
+      "std_delta": 0.0339189192984814
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008181",
+      "name": "lupus nephritis",
+      "category": "autoimmune",
+      "n_gt_full": 35,
+      "atc_l3_entropy": 3.0219280948873624,
+      "n_seeds_seen": 1,
+      "mean_delta": 0.06983013502177265,
+      "std_delta": 0.0
+    }
+  ],
+  "bottom20_diseases": [
+    {
+      "disease_id": "drkg:Disease::MESH:D001602",
+      "name": "beriberi",
+      "category": "other",
+      "n_gt_full": 1,
+      "atc_l3_entropy": -0.0,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.962962962962963,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:C535390",
+      "name": "aspergillus species infections",
+      "category": "infectious",
+      "n_gt_full": 3,
+      "atc_l3_entropy": 1.0,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.22222222222222227,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010373",
+      "name": "head lice infestations",
+      "category": "other",
+      "n_gt_full": 7,
+      "atc_l3_entropy": 1.3709505944546687,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.13061224489795917,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D014806",
+      "name": "vitamin b 12 deficiency",
+      "category": "other",
+      "n_gt_full": 4,
+      "atc_l3_entropy": -0.0,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.10714285714285718,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004775",
+      "name": "childhood enuresis",
+      "category": "other",
+      "n_gt_full": 6,
+      "atc_l3_entropy": 1.5,
+      "n_seeds_seen": 2,
+      "mean_delta": -0.10592942858823819,
+      "std_delta": 0.04046849372431825
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D053098",
+      "name": "xlinked hypophosphataemia",
+      "category": "other",
+      "n_gt_full": 5,
+      "atc_l3_entropy": 1.0,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.10527472527472528,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D058565",
+      "name": "ventriculitis",
+      "category": "other",
+      "n_gt_full": 8,
+      "atc_l3_entropy": 1.5,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.08376436781609195,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010612",
+      "name": "gonococcal pharyngitis",
+      "category": "infectious",
+      "n_gt_full": 35,
+      "atc_l3_entropy": 2.248529327128576,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.07751140437530454,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D045602",
+      "name": "idiopathic steatorrhea",
+      "category": "other",
+      "n_gt_full": 2,
+      "atc_l3_entropy": 0.0,
+      "n_seeds_seen": 2,
+      "mean_delta": -0.07499999999999998,
+      "std_delta": 0.07499999999999998
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D016403",
+      "name": "relapsed or refractory diffuse large bcell lymphoma",
+      "category": "cancer",
+      "n_gt_full": 13,
+      "atc_l3_entropy": 0.8658566174572235,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.0735655107262386,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D060585",
+      "name": "fusariosis",
+      "category": "infectious",
+      "n_gt_full": 4,
+      "atc_l3_entropy": 0.9182958340544896,
+      "n_seeds_seen": 2,
+      "mean_delta": -0.0668290043290043,
+      "std_delta": 0.02007575757575758
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006828",
+      "name": "gestational trophoblastic neoplasia",
+      "category": "cancer",
+      "n_gt_full": 2,
+      "atc_l3_entropy": 1.0,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.0625,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D004941",
+      "name": "reflux esophagitis",
+      "category": "gastrointestinal",
+      "n_gt_full": 36,
+      "atc_l3_entropy": 3.220175521464345,
+      "n_seeds_seen": 2,
+      "mean_delta": -0.05753929674256232,
+      "std_delta": 0.014656676549902228
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D007896",
+      "name": "visceral leishmaniasis caused by leishmania donovani",
+      "category": "infectious",
+      "n_gt_full": 19,
+      "atc_l3_entropy": 2.8464393446710154,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.05512316858912808,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D006457",
+      "name": "paroxysmal nocturnal hemoglobinuria pnh",
+      "category": "hematological",
+      "n_gt_full": 7,
+      "atc_l3_entropy": 1.3709505944546687,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.05102040816326531,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002583",
+      "name": "advanced or recurrent cervical cancer",
+      "category": "cancer",
+      "n_gt_full": 38,
+      "atc_l3_entropy": 0.8795064608120065,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.050758237165903386,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D009798",
+      "name": "ocular hypertension",
+      "category": "cardiovascular",
+      "n_gt_full": 33,
+      "atc_l3_entropy": 1.9972264631946566,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.049242424242424254,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D002177",
+      "name": "esophageal candidiasis",
+      "category": "infectious",
+      "n_gt_full": 31,
+      "atc_l3_entropy": 2.6550505394177746,
+      "n_seeds_seen": 2,
+      "mean_delta": -0.04897802825503689,
+      "std_delta": 0.012399080886615843
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D010493",
+      "name": "recurrent pericarditis",
+      "category": "other",
+      "n_gt_full": 11,
+      "atc_l3_entropy": 2.8464393446710154,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.04689279079522979,
+      "std_delta": 0.0
+    },
+    {
+      "disease_id": "drkg:Disease::MESH:D008101",
+      "name": "amebic liver abscess",
+      "category": "gastrointestinal",
+      "n_gt_full": 6,
+      "atc_l3_entropy": 1.2516291673878228,
+      "n_seeds_seen": 1,
+      "mean_delta": -0.046621127051454936,
+      "std_delta": 0.0
+    }
+  ]
+}
