@@ -3296,7 +3296,7 @@
       "id": "h1273",
       "title": "Refined GLOBAL recipe \u2014 exclude n_gt=1 singletons from soft-blend (capture lift, drop noise)",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "expected_impact": "high",
       "effort": "low",
       "label": "recall",
@@ -3308,7 +3308,10 @@
         "If SUBSET_E or SUBSET_F beats GLOBAL on per-dis AUPRC at p<0.05, lock as new canonical.",
         "Save data/analysis/h1273_refined_subset_sweep.{json,md}."
       ],
-      "success_criteria": "Identify sharpest subset on per-disease AUPRC at 20 seeds. Update CLAUDE.md ceiling."
+      "success_criteria": "Identify sharpest subset on per-disease AUPRC at 20 seeds. Update CLAUDE.md ceiling.",
+      "result_metric": "20-seed SUBSET_E_NOSINGLE vs SUBSET_D_GLOBAL: \u0394 per-dis AUPRC = +0.00002 (p=0.97); \u0394 R@30 = +0.025pp (p=0.33); \u0394 per-dis AUROC = -0.00013 (p=0.44). SUBSET_F_NGT6 worse on all three. Preregistered gate 'beat GLOBAL p<0.05' NOT met.",
+      "findings": "INVALIDATED as a GLOBAL refinement but with a useful methodological sub-finding. Dropping the 58 n_gt=1 singleton rows from blending neither shifts the point estimate nor tightens the CI enough to beat GLOBAL on \u0394 per-dis AUPRC (\u0394=+0.00002 p=0.97). SUBSET_F_NGT6 (n_gt\u22656) is strictly worse (\u22120.00070 p=0.29) because it also excludes the 2-5 n_gt bucket which has the largest mean \u0394=+0.0086 per row (h1272). \n\nSub-finding (variance reduction): SUBSET_E vs concat_l2_raw tightens p-values across R@30 (0.085\u21920.042) and AUPRC (0.0022\u21923.7e-5), preserving the same \u0394=+0.00343 per-dis AUPRC point estimate as GLOBAL. Not enough for promotion but confirms the singleton rows are a pure-noise contributor (high std 0.16, near-zero mean -0.0043). \n\n20-seed anchor R@30 = 21.35% \u00b1 1.13%, SUBSET_D_GLOBAL = 21.54% \u00b1 1.12% \u2014 \u0394R@30 = +0.18pp at 20 seeds (vs 5-seed +0.43pp from h1269 table which was upward-biased, consistent with h1269's methodology-rule finding). CLAUDE.md ceiling should be refreshed: R@30 \u2264 21.54% (soft_blend GLOBAL @ 20 seeds).",
+      "confidence": "HIGH (20 seeds, deterministic split, preregistered gate)"
     },
     {
       "id": "h1274",
@@ -3327,6 +3330,77 @@
         "Save data/analysis/h1274_entropy_gated_blend.{json,md}."
       ],
       "success_criteria": "Either improvement over GLOBAL or formal demonstration that GLOBAL is Pareto-optimal subset."
+    },
+    {
+      "id": "h1275",
+      "title": "20-seed weight sweep on SUBSET_D_GLOBAL \u2014 find 20-seed Pareto w (replaces 5-seed h1268)",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1268 preregistered a 5-seed weight sweep on GLOBAL but 5-seed over-estimates effect sizes by 27-54% (h1269). At 20 seeds, the optimal w may differ from 0.5. Simple 5-point sweep (w\u2208{0.3,0.4,0.5,0.6,0.7}) on the locked GLOBAL subset using the h1273 20-seed scaffold. If any w beats 0.5 on \u0394 per-dis AUPRC at p<0.05, lock as new canonical weight.",
+      "steps": [
+        "Copy scripts/h1273_refined_subset_sweep.py \u2192 scripts/h1275_global_weight_sweep.py",
+        "Replace SUBSETS with a 5-point w sweep (GLOBAL-only, BLEND_W \u2208 0.3..0.7).",
+        "20-seed paired-t vs concat_l2_raw AND vs SUBSET_D_GLOBAL (w=0.5 anchor).",
+        "If any w beats w=0.5 on \u0394 per-dis AUPRC at p<0.05 with \u0394>+0.0003, lock as new recipe.",
+        "Save data/analysis/h1275_global_weight_sweep.{json,md}."
+      ],
+      "success_criteria": "Identify Pareto-optimal w at 20-seed power. Supersedes h1268."
+    },
+    {
+      "id": "h1277",
+      "title": "Three-embedding concat (Node2Vec + FastRP + TransE/DistMult) \u2014 stack h1215 primitive",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "medium",
+      "label": "recall",
+      "rationale": "h1215 validated Node2Vec+FastRP concat_l2 beats either parent across all 5 metrics (+1.32pp R@30). If random-walk (Node2Vec) and random-projection (FastRP) embeddings sample partially orthogonal DRKG structure, a third embedding of a different family (translational: TransE or bilinear: DistMult) should add independent information. CLAUDE.md h1215 follow-up h1227 explicitly flagged this as untested. `build_concat_lookup` primitive supports arbitrary arity.",
+      "steps": [
+        "Verify or build transe_256 / distmult_256 embeddings on the same DRKG snapshot.",
+        "Extend build_concat_lookup to 3-way L2-normed concat (768-dim joint).",
+        "Benchmark against 2-way concat_l2 and Node2Vec-only using clean_embedding_benchmark + 20 seeds.",
+        "Report all 5 metrics + per-disease AUPRC/AUROC. Paired-t vs concat_l2 + vs SUBSET_D_GLOBAL blend.",
+        "If \u0394 per-dis AUPRC \u2265 +0.001 at p<0.05, lock as new joint space for soft-blend GLOBAL.",
+        "Save data/analysis/h1277_three_emb_concat.{json,md}."
+      ],
+      "success_criteria": "\u2265+0.001 per-dis AUPRC lift over 2-way concat at 20-seed p<0.05."
+    },
+    {
+      "id": "h1278",
+      "title": "Per-category gated blend \u2014 apply soft-blend only where h1272 showed positive mean \u0394",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1272 per-category audit found clean gainers (endocrine +0.0247, dermatological +0.0156, neurological +0.0132, autoimmune +0.0126, infectious +0.0113) and losers (cancer \u22120.0017, musculoskeletal \u22120.0005). Unlike h1228's hard-switch (invalidated), this GATES which diseases see the blend while keeping GLOBAL's soft-blend score-space homogeneity. Uses train-side category computed without leakage.",
+      "steps": [
+        "Extend h1273 scaffold with SUBSET_G_CAT_GAINERS = (category \u2208 {endocrine, dermatological, neurological, autoimmune, infectious} AND n_gt\u22652).",
+        "20-seed paired-t vs concat_l2_raw AND vs SUBSET_D_GLOBAL.",
+        "If beats GLOBAL on \u0394 per-dis AUPRC at p<0.05, lock as new recipe; otherwise record the category gain/loss heterogeneity for paper.",
+        "Save data/analysis/h1278_category_gated_blend.{json,md}."
+      ],
+      "success_criteria": "Beats GLOBAL on \u0394 per-dis AUPRC at 20-seed p<0.05."
+    },
+    {
+      "id": "h1279",
+      "title": "Refresh CLAUDE.md DRKG ceilings with 20-seed numbers",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1273 confirmed 5-seed over-estimates effect sizes by ~27-54% (h1269 methodology rule). Current CLAUDE.md ceilings cite h1215 5-seed numbers (R@30 \u2264 20.87%, AUPRC per-dis \u2264 0.1230). At 20 seeds, anchor concat_l2_raw R@30 = 21.35% \u00b1 1.13%, SUBSET_D_GLOBAL soft-blend R@30 = 21.54% \u00b1 1.12%. Refreshing the ceiling table improves comparability with future 20-seed runs and prevents mis-gating downstream experiments.",
+      "steps": [
+        "Compile 20-seed numbers from h1269, h1273 for (node2vec, concat_l2_raw, SUBSET_D_GLOBAL).",
+        "Update CLAUDE.md 'DRKG-only ceilings' block with a '5-seed legacy' vs '20-seed canonical' double row.",
+        "Cross-reference h1269 methodology rule ('future fusion sweeps default to \u226510 seeds').",
+        "Commit."
+      ],
+      "success_criteria": "Ceiling table reflects 20-seed power; future experiments gate against it."
     }
   ],
   "completed": [
@@ -6184,6 +6258,12 @@
       "hypothesis_id": "h1272",
       "learning": "Soft-blend's mechanism is OPPOSITE to hard-switch's mechanism. h1247 found hard-switch helps homogeneous GT pools (low ATC entropy, n_gt 21-50). h1272 finds soft-blend helps DIVERSE GT pools (Q4 high-entropy frac+ 66.5%) and HURTS singleton diseases (n_gt=1 frac+ 3.4%). Mechanism: hard-switch lifts coherent embedding clusters wholesale; soft-blend smooths multi-class score noise. The two recipes are not interchangeable \u2014 opposite optimal subsets.",
       "implication": "Per-disease soft-blend recipe should exclude n_gt=1 singletons. Future fusion recipe sweeps must include n_gt-stratified rows in primary diagnostics, not just aggregate."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1273",
+      "learning": "Singleton (n_gt=1) diseases contribute pure noise to SUBSET_D_GLOBAL soft-blend: mean \u0394 per-dis AUPRC = -0.0043 but std = 0.16 (10x higher than any other bucket). Dropping them tightens AUPRC p-value 55x (0.0022 \u2192 3.7e-5) without shifting point estimate. However the variance reduction does NOT translate to a significant lift over GLOBAL itself (\u0394=+0.00002 p=0.97), so SUBSET_E is a methodologically cleaner BUT operationally equivalent alternative.",
+      "implication": "GLOBAL stays canonical. The singleton-noise axis is closed as a recall-lever refinement. Variance-reduction via low-n_gt filtering is a general pattern \u2014 apply it whenever reporting \u0394 p-values on metrics that are fragile on tiny GT pools (AUPRC, AP, AUROC with few positives)."
     }
   ],
   "collaborations": [

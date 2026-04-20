@@ -5662,3 +5662,52 @@ Both were invalidated on pooled-AUPRC regression criteria. Under the per-disease
 
 ### Recommended next hypothesis
 **h1263 (P2, recall)** — fastest unblock; if both h1228 and h1249 reopen, the fusion-routing direction has 3+ valid production recipes (cat-gated, entropy-gated, soft-blend) that we can ensemble or pick the best of. Alternatively **h1262** for infrastructure.
+
+
+## Current Session (continued): h1273 — Refined GLOBAL recipe (INVALIDATED on promotion gate; sub-finding on variance) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1273 (INVALIDATED as refinement; methodological sub-finding preserved)
+
+### What was shipped
+`scripts/h1273_refined_subset_sweep.py` — 4-mode benchmark extending the h1264/h1269 scaffold with `SUBSET_E_NOSINGLE` (n_gt≥2) and `SUBSET_F_NGT6` (n_gt≥6). 20-seed paired-t vs both `concat_l2_raw` anchor and `SUBSET_D_GLOBAL` canonical. Same DRKG universe (1,011 diseases intersecting Node2Vec ∩ FastRP).
+
+### Headline table (mean ± std, 20 seeds)
+
+| Mode | R@30 | per-dis-AUPRC | per-dis-AUROC | in_subset_mean |
+|---|---|---|---|---|
+| `concat_l2_raw` | 21.35% ± 1.13% | 0.1241 ± 0.0094 | 0.6240 ± 0.0054 | 0 |
+| `SUBSET_D_GLOBAL` | 21.54% ± 1.12% | 0.1275 ± 0.0102 | 0.6345 ± 0.0049 | 199.7 |
+| `SUBSET_E_NOSINGLE` | 21.56% ± 1.10% | 0.1275 ± 0.0090 | 0.6343 ± 0.0049 | 188.7 |
+| `SUBSET_F_NGT6` | 21.42% ± 1.14% | 0.1268 ± 0.0091 | 0.6316 ± 0.0047 | 148.7 |
+
+### Paired-t vs SUBSET_D_GLOBAL (promotion gate)
+
+| Subset | ΔR@30 (p) | Δper-dis-AUPRC (p) | Δper-dis-AUROC (p) | Decision |
+|---|---|---|---|---|
+| `SUBSET_E_NOSINGLE` | +0.025pp (0.33) | **+0.00002 (0.97)** | -0.00013 (0.44) | STAY with GLOBAL |
+| `SUBSET_F_NGT6` | -0.119pp (0.23) | -0.00070 (0.29) | -0.00282 (1.2e-5) | STAY with GLOBAL |
+
+### Paired-t vs anchor (variance-reduction sub-finding)
+
+SUBSET_E_NOSINGLE vs concat_l2_raw: ΔR@30 +0.21pp **p=0.042**, Δper-dis AUPRC +0.00345 **p=3.7e-5**.
+SUBSET_D_GLOBAL vs concat_l2_raw: ΔR@30 +0.18pp p=0.085, Δper-dis AUPRC +0.00343 p=0.0022.
+
+Dropping the 58 n_gt=1 singletons **tightens AUPRC p-value 55x and flips R@30 from borderline to significant** while preserving the point estimate. Singletons are pure-noise contributors: mean Δ = -0.0043 per row (h1272) with std = 0.16 (10x any other bucket).
+
+### Why it failed the promotion gate
+The variance reduction does NOT accumulate into a significant lift over GLOBAL itself — SUBSET_E vs GLOBAL Δ per-dis AUPRC = +0.00002 p=0.97 (essentially identical). The singleton noise cancels around mean-zero across 20 seeds, so removing it only tightens CIs vs the raw anchor; against another mode that also blends those same singletons, the variance effect is paired-out.
+
+### SUBSET_F_NGT6 is strictly worse
+Excluding the n_gt 2-5 bucket loses the largest-mean contributor (h1272 found 2-5 mean Δ = +0.0086, highest of any bucket). ΔR@30 vs anchor drops from +0.21pp to +0.07pp (p=0.34). Decision: NEVER exclude low-density diseases below n_gt=6 — the mean-lift signal lives there.
+
+### Ceiling refresh
+20-seed anchor concat_l2_raw = 21.35% ± 1.13% (vs 5-seed 20.87%). 20-seed GLOBAL = 21.54% ± 1.12% (vs 5-seed 21.30%). The 5-seed ceilings in CLAUDE.md are upward-biased by ~0.25–0.5pp and should be refreshed (→ h1279).
+
+### New hypotheses
+- **h1275 (P2, recall):** 20-seed weight sweep on GLOBAL (supersedes the 5-seed h1268). 5-point w ∈ {0.3,0.4,0.5,0.6,0.7}. If any w beats 0.5 at p<0.05, lock as new canonical.
+- **h1277 (P2, recall):** Three-embedding concat (Node2Vec + FastRP + TransE/DistMult). CLAUDE.md h1215 follow-up never tested. Potential +1pp R@30 if translational family adds orthogonal signal.
+- **h1278 (P3, recall):** Per-category gated blend — apply soft-blend only on h1272's gainer categories (endocrine/dermatological/neurological/autoimmune/infectious). Unlike h1228 hard-switch, keeps score-space homogeneous.
+- **h1279 (P3, infrastructure):** Refresh CLAUDE.md ceilings to 20-seed numbers. Prevents downstream gating errors.
+
+### Recommended next hypothesis
+**h1275 (P2, recall)** — fastest, uses the h1273 scaffold directly. If w≠0.5 is optimal at 20 seeds, it supersedes the current recipe with minimal risk. Alternatively **h1277** if you want to push the DRKG recall ceiling above 22%.
