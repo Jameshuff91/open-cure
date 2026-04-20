@@ -9,18 +9,18 @@ Current state (2026-04-19):
 - Published SOTA (TxGNN Nature Med 2024): AUPRC 0.913 standard eval, +49.2% on zero-shot indications
 - Goal: match and beat SOTA on Hits@K, MRR, AUPRC, AUROC, and R@30 simultaneously
 
-Target architecture (revised 2026-04-19 post-h1200 invalidation):
+Target architecture (revised 2026-04-19 post-h1200 invalidation + h1201 inconclusive):
 1. **~~Supervised GNN on DRKG (h1200)~~** — **INVALIDATED** across 3 variants (Xavier cold 7.99%, Node2Vec warm 11.47%, mixed loss 10.81%) vs 19.55% Node2Vec prior. The 4,968-edge supervision signal actively degrades representations; architectural variations cannot fix signal sparsity. See `data/analysis/h1200_invalidation.md`.
 2. **DRKG embedding ensembles (h1215 family)** — **VALIDATED at +1.32pp on 5-seed; refined to +1.32pp raw concat / +1.94pp soft-blend GLOBAL at 20-seed**. Canonical recipe (post-h1269/h1275/h1281): `soft_blend(w=0.5)` on SUBSET_D_GLOBAL = `0.5·z(n2v) + 0.5·z(concat_l2)` every disease. 20-seed ceilings: concat_l2_raw R@30 21.35%±1.13%, soft_blend_GLOBAL R@30 21.54%±1.12% / per-dis-AUPRC 0.1275±0.0102 / per-dis-AUROC 0.6345±0.0049. Linear weight axis EXHAUSTED (h1275). Per-category hard fit INVALIDATED (h1281). Open follow-ups: h1286 shrinkage per-category w, h1277 three-embedding concat, h1266 RRF, h1287 w=0.25 fine-grid.
-3. **LINCS L1000 reverse-connectivity** (h1201) — orthogonal transcriptomic signal. Unchanged; now the top recall-lever priority. Expected: +5-10pp in fusion.
-4. **Expert-calibrated confidence tiers** (h1203) — classifier trained on Ryland Mortlock's blinded review labels. Decouples calibration from embedding choice.
-5. **Hybrid fusion** (h1202) — primary Nature-paper claim. Gated on h1201 landing.
+3. **~~LINCS L1000 reverse-connectivity (h1201)~~** — **INCONCLUSIVE as standalone recall lever** (2026-04-19). Built full pipeline (1,593 LINCS drug signatures, 92 CREEDS-mapped DRKG diseases, 559 evaluable treatment edges), scored via -cos(drug, disease). Result: R@30 1.46% ± 1.0% vs 1.88% random baseline; AUROC 0.524; canonical positive controls scattered (Hydroxychloroquine rank 1509/1593 for RA, Letrozole 1335 for breast cancer, Albuterol 1373 for asthma). Reverse-connectivity works for cytotoxics / metabolic modulators but fails structurally for receptor antagonists, hormonal modulators, enzyme inhibitors. LINCS-as-feature in fusion (h1290) and KS-statistic scoring (h1291) are viable salvage paths. See `data/analysis/h1201_inconclusive.md`.
+4. **Expert-calibrated confidence tiers** (h1203) — classifier trained on Ryland Mortlock's blinded review labels. Decouples calibration from embedding choice. **Precision lever, not recall** — doesn't help push R@30 past 21.54%.
+5. **~~Hybrid fusion (h1202)~~** — **MOOT in its original form** (required both h1200 and h1201 to land). Salvage path: h1290 (LINCS-as-feature in gradient-boosted fusion with kNN ranks) could add marginal lift via error orthogonality even with weak standalone LINCS signal.
 
 Evaluation standard: **every experiment reports all five metrics** — R@30 per-drug, Hits@K, MRR, AUPRC, AUROC. h1199 is the prerequisite multi-metric benchmark.
 
-Hypothesis labels: **Recall lever** (h1215 ensembles + h1201 LINCS), **Calibration lever** (h1203 Ryland labels), **Infrastructure** (h1199, h907), **Complementary** (lower priority).
+Hypothesis labels: **Recall lever** (h1215 ensembles — plateaued around 21.5%), **Calibration lever** (h1203 Ryland labels), **Infrastructure** (h1199, h907), **Salvage** (h1290 LINCS-as-feature, h1291 KS scoring).
 
-**Honest probability (recalibrated post-h1275):** With Path A invalidated and the linear weight axis exhausted, the DRKG ceiling is soft_blend_GLOBAL w=0.5 at 21.54% R@30 (20-seed) — or 21.68% if using the R@30-Pareto w=0.4 dual recipe. Reaching 40% R@30 requires h1201 (LINCS) to deliver the promised +5-10pp AND fusion to be additive. Estimate ~30% chance of ≥35% R@30, ~10% of ≥45%. The h1200 failure was instructive but narrows the attainable outcome.
+**Honest probability (recalibrated post-h1201):** With Paths A and B both failed as standalone recall levers, the DRKG + external-data ceiling is now empirically ~21.5% R@30 (h1215/h1269/h1275 all converge here). Reaching 35% R@30 is now **~10% likely** (would require h1290 fusion salvage to deliver +10pp — unprecedented lift from a weak standalone signal); ≥45% is effectively off the table. **Paper reframe:** honest positioning is "we report the DRKG+ceiling (~21.5% R@30) and contribute an expert-calibrated confidence tier system that enables clinical triage at this ceiling." This beats TxGNN's inductive 6-14% and is a genuine contribution even without hitting a recall SOTA.
 
 **See also:** `research_loop/prompts/research_spec.md`, `~/.claude/projects/-Users-jimhuff/memory/project_open_cure_pivot_37_60.md`.
 
