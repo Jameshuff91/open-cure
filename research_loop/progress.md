@@ -5300,3 +5300,48 @@ A larger rewrite around the v3 hybrid framing (h1200 GNN + h1201 LINCS + h1203 e
 
 ### Recommended next hypothesis
 **h1201 (P1, recall lever)** — LINCS L1000 reverse-connectivity is now the main recall lever on the critical path to the v3 paper. Alternatively **h1251** to retrain no-treatment FastRP and check whether concat_l2 fusion has better leakage retention than either parent (stays in the methodology-audit thread started here).
+
+
+## Current Session: h1249 — Production routing benchmark (INVALIDATED on success criteria) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1249 (INVALIDATED on success threshold; mechanism confirmed)
+
+### What was shipped
+`scripts/h1249_entropy_routed_benchmark.py` — wires the h1247+h1248 two-axis routing rule into a forked clean_embedding_benchmark. Evaluates three modes per disease in parallel (node2vec, concat_l2, entropy_routed) on the 1,011-disease intersection across 5 seeds. Per-seed protocol uses leak-bounded entropy tercile cuts: cuts are recomputed each seed using ONLY training-side n_gt≥51 diseases (148±5 of them), then holdouts are classified into low/mid/high using those cuts. Routing rule:
+- n_gt < 51 → concat_l2
+- n_gt ≥ 51 + low/high entropy → concat_l2
+- n_gt ≥ 51 + mid entropy → node2vec (the only flipped subset, 13 diseases/seed avg)
+
+### Headline result
+| Mode | R@30 | hits@30 (drug) | MRR | AUPRC | AUROC |
+|---|---|---|---|---|---|
+| node2vec | 19.55%±1.18% | 19.55% | 0.0284 | 0.0569 | 0.5766 |
+| concat_l2 | 20.87%±0.91% | 20.87% | 0.0296 | 0.0642 | 0.5851 |
+| **entropy_routed** | **20.92%±0.89%** | 20.92% | 0.0297 | **0.0628** | **0.5834** |
+
+### Paired-t tests vs concat_l2 anchor
+**Per-seed (n=5):** Δ R@30 = +0.05pp (t=2.18, p=0.095); Δ AUPRC = -0.0014 (t=-2.71, **p=0.054 REGRESSION**); Δ AUROC = -0.0017 (t=-2.46, **p=0.069 REGRESSION**).
+
+**Per-disease (n=1,002):** Δ R@30 = +0.049pp (t=2.03, **p=0.043**); Δ hits@30 = +0.040 drugs/disease (t=1.71, p=0.087).
+
+**Restricted to flipped subset (n=65 disease-seed rows routed to node2vec):** Δ R@30 = **+0.76pp** (t=2.08, **p=0.042**); Δ hits@30 = +0.62 drugs/disease (t=1.74, p=0.087).
+
+### Why it failed the +0.3pp success threshold
+The rule WORKS on its targeted subset (+0.76pp R@30, p=0.042) but only ~6% of test diseases qualify, so the global lift dilutes to +0.05pp — well below the +0.3pp gate.
+
+### Why AUPRC/AUROC regress
+Per-disease score scales differ across the two embeddings. Swapping a disease's mode rebalances candidates within its own list (R@30 changes locally) but distorts the GLOBAL pooled ranking that AUPRC/AUROC are computed on. **This is the same failure mode as h1228 (category-gated fusion: R@30 +0.19pp, AUPRC -0.0019, AUROC regress).** Hard switching across embedding score spaces is structurally incompatible with global ranking metrics.
+
+### Per-category breakdown of the flipped subset (n=65)
+GAINERS: cardiovascular +2.36pp (n=13), metabolic +6.11pp (n=4), infectious +1.13pp (n=7), autoimmune +1.88pp (n=3), neurological +1.51pp (n=3) — these align with h1218's "fusion-loser" categories, where node2vec dominates.
+
+REGRESSORS: gastrointestinal -2.30pp (n=4), hematological -3.60pp (n=2), musculoskeletal -1.65pp (n=3) — these align with h1218's "fusion-gainer" categories, where concat_l2 dominates. Entropy is a noisy proxy for the cleaner category signal.
+
+### New hypotheses
+- **h1255 (P2, recall):** Score-scale-normalised SOFT-blend fusion — swap hard 0/1 routing for w·z(node2vec) + (1-w)·z(concat_l2) with w varying by (n_gt, entropy_tercile). Should preserve concat_l2's AUPRC advantage while still recovering the +0.76pp targeted lift.
+- **h1256 (P3, error analysis):** Category-restricted entropy routing — flip ONLY (n_gt≥51 mid-entropy) diseases in CV/metabolic/infectious/autoimmune/neurological. The category split predicts the bimodal h1249 outcome perfectly; restricted routing may dodge the AUPRC regression.
+- **h1257 (P3, error analysis):** Mechanistic audit — why does node2vec beat concat_l2 on (n_gt≥51 + mid-entropy)? Test FastRP-only R@30, score-rank correlation collapse, score-distribution width on the flipped subset.
+- **h1258 (P3, infrastructure):** Score-scale audit on the full benchmark — quantify whether concat_l2 has systematically larger non-zero candidate density than node2vec, justifying per-disease z-norm in production AUPRC reporting.
+
+### Recommended next hypothesis
+**h1255 (P2, recall)** — direct fix for the AUPRC regression that killed both h1228 and h1249. Soft-blend with z-normalised scores per disease is a 60-line extension of `h1249_entropy_routed_benchmark.py`. Alternatively **h1256** if the category-restricted version is faster to test.

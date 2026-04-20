@@ -2885,7 +2885,7 @@
     {
       "id": "h1249",
       "title": "Production routing benchmark \u2014 wire (n_gt \u00d7 ATC entropy) routing into clean_embedding_benchmark",
-      "status": "pending",
+      "status": "invalidated",
       "priority": 2,
       "expected_impact": "high",
       "effort": "medium",
@@ -2899,7 +2899,9 @@
         "Update CLAUDE.md key-metrics table with the new ceiling.",
         "Save data/analysis/h1249_entropy_routed_benchmark.{json,md}."
       ],
-      "success_criteria": "Entropy-routed fusion beats global concat_l2 by \u2265+0.3pp R@30 across 5 seeds, with hits@30 lift \u2265+0.1 drugs/disease at p<0.1. If yes, this becomes the new DRKG-only ceiling and ships to the deliverable."
+      "success_criteria": "Entropy-routed fusion beats global concat_l2 by \u2265+0.3pp R@30 across 5 seeds, with hits@30 lift \u2265+0.1 drugs/disease at p<0.1. If yes, this becomes the new DRKG-only ceiling and ships to the deliverable.",
+      "findings": "INVALIDATED on success criteria. Built scripts/h1249_entropy_routed_benchmark.py wiring the h1247+h1248 routing rule (route n_gt\u226551 + mid-entropy diseases to node2vec, everything else to concat_l2) with leak-bounded per-seed entropy tercile cuts on training-side n_gt\u226551 diseases. 5-seed result: entropy_routed R@30 = 20.92% \u00b1 0.89% vs concat_l2 20.87% \u00b1 0.91% = +0.05pp (per-seed paired t=2.18 p=0.095; per-disease paired t=2.03 p=0.043). Falls FAR below the +0.3pp success threshold. AUPRC and AUROC REGRESS significantly: \u0394AUPRC=-0.0014 (per-seed t=-2.71 p=0.054), \u0394AUROC=-0.0017 (t=-2.46 p=0.069). Restricted to the 65 disease-seed rows actually flipped to node2vec: \u0394 R@30=+0.76pp t=2.08 p=0.042 \u2014 the rule WORKS on its targeted subset but the subset is too small (~6%) to move the global needle, and the score-scale mismatch between the two embeddings drags AUPRC/AUROC down. SAME failure mode as h1228 (cat-gated fusion: +0.19pp R@30, AUPRC -0.0019, AUROC regress) \u2014 hard switching across embedding spaces is structurally incompatible with global ranking metrics.",
+      "result_metric": "R@30 +0.05pp (vs +0.3pp target, INVALIDATED); AUPRC -0.0014 p=0.054 (REGRESSION); flipped-subset R@30 +0.76pp p=0.042 (mechanism confirmed, scale insufficient)"
     },
     {
       "id": "h1250",
@@ -2980,6 +2982,75 @@
       ],
       "result_metric": "Preprint methods section S4 added + Section 3.1 clarified + Limitations note",
       "findings": "Three surgical edits to paper/preprint_draft.md: (1) Section 3.1 extended to note that 71.0% retention is methodology-specific and to cite 54.4% as the conservative stack. (2) New Supplementary Section S4 with the full 8-cell factorial, per-axis effect paragraph, and pointer to h1214 artifacts. (3) Limitations section extended with a 'Methodology sensitivity of the leakage number' sub-paragraph pointing to S4. The v1 narrative (26.06% / 36.59% / 71.0%) is preserved unchanged; only clarifying material was added. A larger rewrite to reframe the paper around the h1214 54.4% number (or around the h1200/h1201 pivot) is deferred to the v3 revision."
+    },
+    {
+      "id": "h1255",
+      "title": "Score-scale-normalised soft-blend fusion \u2014 fix the AUPRC/AUROC regression that killed h1228 and h1249",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "medium",
+      "label": "recall",
+      "rationale": "Both h1228 (category-gated) and h1249 (n_gt\u00d7entropy-gated) fusion routing showed the same failure mode: hard-switching between concat_l2 and node2vec lifts R@30 modestly on the targeted subset (h1249 flipped R@30 +0.76pp p=0.042) but regresses AUPRC/AUROC at p<0.1 globally. Root cause: per-disease score scales differ across embeddings, so swapping a disease's mode rebalances its candidates within its own list (R@30 changes) but distorts the global pooled ranking (AUPRC/AUROC degrade). A soft blend with z-normalised scores per disease should preserve concat_l2's AUPRC/AUROC advantage while still recovering recall on the targeted subset.",
+      "steps": [
+        "Extend scripts/h1249_entropy_routed_benchmark.py: add a `soft_blend` mode where score = w_node2vec * z(node2vec_scores) + (1-w_node2vec) * z(concat_l2_scores), with w_node2vec being a function of (n_gt, entropy_tercile) instead of a hard 0/1 switch.",
+        "Initial w schedule: w=0.5 only for n_gt\u226551 + mid-entropy (the h1248 negative-trend subset); w=0 elsewhere (= concat_l2).",
+        "Sweep w \u2208 {0.0, 0.25, 0.5, 0.75, 1.0} on the (n_gt\u226551, mid) subset; pick the per-disease w* that maximises a (R@30 + 100\u00b7AUPRC) joint utility.",
+        "Run 5-seed paired-t vs concat_l2 anchor on R@30, hits@30, MRR, AUPRC, AUROC.",
+        "Save data/analysis/h1255_soft_blend_fusion.{json,md}; update CLAUDE.md if blend wins on \u22653 metrics with no regressions >0.5\u03c3."
+      ],
+      "success_criteria": "Soft-blend fusion lifts R@30 by \u22650.1pp AND keeps AUPRC + AUROC within \u00b10.0005 of concat_l2 (no significant regression at p<0.1)."
+    },
+    {
+      "id": "h1256",
+      "title": "Per-flipped-category audit \u2014 which categories among the (n_gt\u226551 + mid-entropy) flipped subset drove the +0.76pp lift?",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "error_analysis",
+      "rationale": "h1249 found that the 65 disease-seed rows flipped to node2vec gained +0.76pp R@30 in aggregate, but the per-category breakdown is bimodal: cardiovascular (+2.36pp n=13), metabolic (+6.11pp n=4), infectious (+1.13pp n=7), autoimmune (+1.88pp n=3), neurological (+1.51pp n=3) all gained, while gastrointestinal (-2.30pp n=4), hematological (-3.60pp n=2), musculoskeletal (-1.65pp n=3) regressed. The h1218 category-level fusion deltas predicted exactly this split: CV/metabolic are fusion-LOSERS (best routed away), GI/hematological are fusion-GAINERS (worst routed away). Entropy is a noisy proxy for category. A category-restricted entropy rule (only flip CV+metabolic+infectious+autoimmune subset to node2vec) might lift R@30 without dragging AUPRC down on GI/hematological.",
+      "steps": [
+        "Re-run h1249 with `--flip-categories cardiovascular,metabolic,infectious,autoimmune,neurological` restriction (only these categories' n_gt\u226551 mid-entropy diseases route to node2vec; everything else stays concat_l2).",
+        "Compare to the unrestricted h1249 entropy_routed mode AND to flat concat_l2 on all 5 metrics.",
+        "If category-restricted routing keeps the +0.76pp R@30 flipped lift but recovers AUPRC/AUROC, ship as the canonical recipe.",
+        "Save data/analysis/h1256_category_restricted_routing.{json,md}."
+      ],
+      "success_criteria": "Category-restricted routing matches h1249's flipped-subset R@30 lift while AUPRC and AUROC come within \u00b10.0003 of concat_l2."
+    },
+    {
+      "id": "h1257",
+      "title": "Why does node2vec beat concat_l2 on (n_gt\u226551 + mid-entropy) diseases? \u2014 mechanistic audit",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "error_analysis",
+      "rationale": "h1248/h1249 confirmed that on the n_gt\u226551 mid-entropy subset, concat_l2 hurts vs node2vec by a robust margin. WHY? Hypotheses worth disambiguating: (a) FastRP injects high-frequency noise that swamps node2vec's signal precisely on diseases with intermediate ATC heterogeneity (low-entropy diseases benefit because the noise is averaged across a coherent cluster; high-entropy doesn't matter because GT is too diffuse to retrieve). (b) FastRP's random-projection structure mis-ranks ATC-mid drugs because they sit at sub-cluster boundaries. (c) Bias-variance: concat_l2 over-smooths score gradients on this subset specifically. Test (a) by computing FastRP-only kNN R@30 on the flipped subset; test (b) by per-disease score-rank correlation; test (c) by score-distribution width.",
+      "steps": [
+        "On the 65 flipped disease-seed rows from h1249, compute (i) Node2Vec-only R@30, (ii) FastRP-only R@30, (iii) concat_l2 R@30. If FastRP-only is markedly worse than Node2Vec-only on this subset, hypothesis (a) is confirmed.",
+        "Compute per-disease Spearman rank correlation between Node2Vec score order and FastRP score order on the candidate pool. If correlation collapses on this subset relative to (n_gt\u226551 low-entropy), hypothesis (b) is confirmed.",
+        "Compute per-disease coefficient of variation of top-30 scores under each embedding. If concat_l2 has anomalously low CV on this subset, hypothesis (c).",
+        "Save data/analysis/h1257_flipped_subset_mechanism.{json,md}."
+      ],
+      "success_criteria": "Identify which of (a)/(b)/(c) is the dominant mechanism; informs whether the fix is at fusion time (h1255 score-scale norm) or at FastRP-training time."
+    },
+    {
+      "id": "h1258",
+      "title": "Score-scale audit on full benchmark \u2014 does concat_l2 produce systematically larger pooled scores than node2vec?",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1228 and h1249 both regress AUPRC/AUROC when swapping concat_l2\u2192node2vec on a subset, while their R@30 stays stable or improves. This is consistent with concat_l2 producing a globally higher score floor for non-zero candidates (scaling AUPRC denominator favourably). Quantifying this scale gap is a 30-line audit on the existing per-seed score arrays.",
+      "steps": [
+        "From h1249's per-disease score buffers, compute the (mean, std, max) of non-zero candidate scores per disease per mode.",
+        "Test whether concat_l2 has systematically larger non-zero score density (mean count of non-zero candidates per disease).",
+        "If yes, normalising z-scores per disease before computing global AUPRC/AUROC should converge the metrics across modes.",
+        "Save data/analysis/h1258_score_scale_audit.{json,md}."
+      ],
+      "success_criteria": "Quantitative confirmation (or rebuttal) of the score-scale-mismatch hypothesis; informs whether AUPRC/AUROC reporting needs per-disease normalisation in the production benchmark."
     }
   ],
   "completed": [
@@ -3015,6 +3086,13 @@
     "h23"
   ],
   "learnings": [
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1249",
+      "finding": "Hard-switch fusion routing (concat_l2 \u2194 node2vec) is structurally incompatible with global ranking metrics. Both h1228 (category-gated) and h1249 (entropy-gated) show the same pattern: the rule WORKS on its targeted subset (h1249 flipped R@30 +0.76pp p=0.042) but the global lift is tiny (+0.05pp R@30) and AUPRC/AUROC regress at p~0.06. The root cause is per-disease score-scale mismatch across embeddings. Future routing experiments must (a) normalise scores per disease before pooling, or (b) soft-blend instead of hard-switch (h1255), or (c) restrict the rule to the categories where node2vec actually beats concat_l2 (h1256, mostly CV/metabolic/infectious/autoimmune/neurological).",
+      "implication": "Fusion-routing direction is not closed but the simplest implementation is. h1255 (soft-blend with z-norm) is the natural next test; h1228 + h1249 are both invalidated as hard-switch baselines.",
+      "source": "data/analysis/h1249_entropy_routed_benchmark.json"
+    },
     {
       "date": "2026-01-25",
       "finding": "Fuzzy disease matching improved R@30 from 37.4% to 41.8%",

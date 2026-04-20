@@ -1,0 +1,94 @@
+========================================================================
+h1249: Entropy-routed fusion benchmark — node2vec_256 + fastrp_256
+       k=20 seeds=[42, 123, 456, 789, 2024]
+========================================================================
+Loading embeddings...
+  49,616 (A) + 49,616 (B) entities
+Building concat_l2 lookup...
+  49,616 entities in intersection
+eval_gt: 3,589 diseases, 57,805 pairs
+knn_gt: 1,078 diseases
+db_lookup: 10,474 DrugBank entries
+Disease universe (knn_gt ∩ A ∩ B): 1,011
+Pre-computing per-disease n_gt + ATC L3 entropy (using expanded_gt)...
+  n_gt>=51 globally: 182 of 1011
+  Setup complete in 0.4s
+
+=== SEED 42 (1/5) ===
+Train: 808  Holdout: 203
+  Train-side n_gt>=51 entropy distribution: n=150, tercile cuts low=3.212, high=3.994
+  Candidate drug pool: 1,345
+  [node2vec      ] R@30=18.77%  H30drug=18.77%  MRR=0.0302  AUPRC=0.0565  AUROC=0.5796
+  [concat_l2     ] R@30=20.68%  H30drug=20.68%  MRR=0.0321  AUPRC=0.0653  AUROC=0.5897
+  [entropy_routed] R@30=20.79%  H30drug=20.79%  MRR=0.0322  AUPRC=0.0656  AUROC=0.5901
+  routing: {'concat_l2|hd=False|t=n/a': 170, 'concat_l2|hd=True|t=high': 13, 'concat_l2|hd=True|t=low': 12, 'node2vec|hd=True|t=mid': 7}
+  (1.1s)
+
+=== SEED 123 (2/5) ===
+Train: 808  Holdout: 203
+  Train-side n_gt>=51 entropy distribution: n=148, tercile cuts low=3.168, high=4.007
+  Candidate drug pool: 1,336
+  [node2vec      ] R@30=21.07%  H30drug=21.07%  MRR=0.0272  AUPRC=0.0552  AUROC=0.5698
+  [concat_l2     ] R@30=20.86%  H30drug=20.86%  MRR=0.0277  AUPRC=0.0629  AUROC=0.5766
+  [entropy_routed] R@30=20.87%  H30drug=20.87%  MRR=0.0274  AUPRC=0.0605  AUROC=0.5753
+  routing: {'concat_l2|hd=False|t=n/a': 166, 'node2vec|hd=True|t=mid': 14, 'concat_l2|hd=True|t=high': 10, 'concat_l2|hd=True|t=low': 10}
+  (1.1s)
+
+=== SEED 456 (3/5) ===
+Train: 808  Holdout: 203
+  Train-side n_gt>=51 entropy distribution: n=147, tercile cuts low=3.212, high=4.008
+  Candidate drug pool: 1,335
+  [node2vec      ] R@30=18.16%  H30drug=18.16%  MRR=0.0297  AUPRC=0.0590  AUROC=0.5827
+  [concat_l2     ] R@30=21.00%  H30drug=21.00%  MRR=0.0314  AUPRC=0.0680  AUROC=0.5936
+  [entropy_routed] R@30=21.08%  H30drug=21.08%  MRR=0.0315  AUPRC=0.0663  AUROC=0.5917
+  routing: {'node2vec|hd=True|t=mid': 12, 'concat_l2|hd=False|t=n/a': 165, 'concat_l2|hd=True|t=low': 13, 'concat_l2|hd=True|t=high': 10}
+  (1.1s)
+
+=== SEED 789 (4/5) ===
+Train: 808  Holdout: 203
+  Train-side n_gt>=51 entropy distribution: n=149, tercile cuts low=3.168, high=4.015
+  Candidate drug pool: 1,317
+  [node2vec      ] R@30=20.85%  H30drug=20.85%  MRR=0.0312  AUPRC=0.0601  AUROC=0.5835
+  [concat_l2     ] R@30=22.34%  H30drug=22.34%  MRR=0.0333  AUPRC=0.0664  AUROC=0.5924
+  [entropy_routed] R@30=22.33%  H30drug=22.33%  MRR=0.0336  AUPRC=0.0640  AUROC=0.5885
+  routing: {'concat_l2|hd=False|t=n/a': 167, 'concat_l2|hd=True|t=low': 9, 'concat_l2|hd=True|t=high': 8, 'node2vec|hd=True|t=mid': 16}
+  (1.1s)
+
+=== SEED 2024 (5/5) ===
+Train: 808  Holdout: 203
+  Train-side n_gt>=51 entropy distribution: n=138, tercile cuts low=3.168, high=4.006
+  Candidate drug pool: 1,323
+  [node2vec      ] R@30=18.88%  H30drug=18.88%  MRR=0.0237  AUPRC=0.0538  AUROC=0.5673
+  [concat_l2     ] R@30=19.49%  H30drug=19.49%  MRR=0.0235  AUPRC=0.0584  AUROC=0.5729
+  [entropy_routed] R@30=19.55%  H30drug=19.55%  MRR=0.0238  AUPRC=0.0576  AUROC=0.5715
+  routing: {'concat_l2|hd=False|t=n/a': 156, 'concat_l2|hd=True|t=low': 13, 'concat_l2|hd=True|t=high': 15, 'node2vec|hd=True|t=mid': 16}
+  (1.2s)
+
+========================================================================
+AGGREGATE (mean ± std across seeds)
+========================================================================
+  node2vec        R@30=19.55%±1.18%  H30drug=19.55%±1.18%  MRR=0.0284  AUPRC=0.0569  AUROC=0.5766
+  concat_l2       R@30=20.87%±0.91%  H30drug=20.87%±0.91%  MRR=0.0296  AUPRC=0.0642  AUROC=0.5851
+  entropy_routed  R@30=20.92%±0.89%  H30drug=20.92%±0.89%  MRR=0.0297  AUPRC=0.0628  AUROC=0.5834
+
+========================================================================
+PAIRED-T (per-seed, n=5): entropy_routed vs concat_l2 anchor
+========================================================================
+  R@30           Δ_mean=+0.0490  t=+2.180  p=0.0948
+  hits30_drug    Δ_mean=+0.0490  t=+2.180  p=0.0948
+  MRR            Δ_mean=+0.0001  t=+1.175  p=0.305
+  AUPRC          Δ_mean=-0.0014  t=-2.708  p=0.0536
+  AUROC          Δ_mean=-0.0017  t=-2.464  p=0.0694
+
+========================================================================
+PAIRED-T (per-disease rows): entropy_routed vs concat_l2 anchor
+========================================================================
+  R@30           n=1002  Δ_mean=+0.0491  t=+2.027  p=0.0429
+  hits30         n=1002  Δ_mean=+0.0399  t=+1.713  p=0.0869
+
+  Diseases routed to node2vec (the only flipped subset): 65
+  flipped R@30      n=65  Δ_mean=+0.7571  t=+2.075  p=0.042
+  flipped hits30    n=65  Δ_mean=+0.6154  t=+1.738  p=0.087
+
+Wrote data/analysis/h1249_entropy_routed_benchmark.json
+Wrote data/analysis/h1249_entropy_routed_benchmark.md
