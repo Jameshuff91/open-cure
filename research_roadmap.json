@@ -3899,6 +3899,250 @@
         "Save data/analysis/h1306_4ranker_per_disease.{json,md}"
       ],
       "success_criteria": "Cleanly actionable per-category map \u2014 identifies which diseases/categories RRF helps and hurts"
+    },
+    {
+      "id": "h1307",
+      "title": "Zero-shot LLM baseline \u2014 does Claude/GPT match our 21.5% without any KG?",
+      "category": "deep-learning",
+      "rationale": "We've never tested whether a modern LLM, given just (disease, drug) pairs, can match our Node2Vec kNN / h1215 ensemble. If Claude Opus / GPT-5 zero-shot gets 15%+ R@30 via pure reasoning over pretraining knowledge, it SUBSTANTIALLY reframes our work \u2014 means the KG+ensemble is adding less than we think on top of general biomedical knowledge, AND LLM can be a deployment-ready drop-in. If LLM zero-shot gets <5%, means our KG methods capture knowledge LLMs lack. Either outcome is publishable. Never tested \u2014 novel for us.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "For each disease in h1199 test set, compose prompt: 'Name the top 30 drugs most likely to treat [disease name] based on mechanism and literature.'",
+        "Call Claude Opus + GPT-5 + Gemini 2.0 Pro (at least 2 models)",
+        "Parse responses to drug names \u2192 map to DrugBank IDs via fuzzy match (use existing drug_name_to_db mapping)",
+        "Compute R@30 / Hits@K / MRR on same h1199 protocol",
+        "Cost: ~$10-30 for all queries across 1011 diseases \u00d7 3 models",
+        "Success threshold: any single model \u226510% R@30 is interesting; any \u226520% is a major finding; any \u226525% overturns the pivot"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1308",
+      "title": "Case-report GT expansion via TheraMind-style LLM mining \u2014 expand 4,968 \u2192 50,000+ treatment edges",
+      "category": "external-data",
+      "rationale": "TheraMind (npj Precision Oncology 2025) mined PubMed case reports via multi-LLM ensemble for NSCLC repurposing. Our 4,968 treatment edges come from DrugBank 'treats' relations \u2014 highly conservative. PubMed has ~500,000 case reports where individual patients' off-label drug use is described. LLM mining at scale could expand our positive examples 10-100x. More positives \u2192 better supervised GNN training (h1200's root cause was sparsity at 4968 positives!) AND better expanded_ground_truth for evaluation. High-leverage on the specific bottleneck we know is killing supervised methods.",
+      "expected_impact": "high",
+      "effort": "high",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Query PubMed eutils API for case reports: (is case report) AND (drug name) filter \u2014 ~500k candidate abstracts",
+        "Sample initial batch of 5,000 abstracts",
+        "Claude Haiku classify: does this case report describe off-label drug use with positive outcome? \u2192 (drug, disease, outcome) tuple",
+        "Manually QC 100 random positives \u2014 target precision \u226580% (TheraMind reports 85% on lung cancer)",
+        "If precision holds, scale to full 500k \u2014 estimated ~50k-100k candidate new treatment edges",
+        "Deduplicate vs DRKG existing edges; add new edges as 'case_report_treatment' relation with confidence scores",
+        "Retrain h1200 with expanded supervision (4968 \u2192 50k positives) \u2014 the supervised GNN that previously failed might now work",
+        "Success: expanded GT lifts h1200 supervised GraphSAGE past 19.55% Node2Vec baseline"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1309",
+      "title": "MoA-level prediction \u2014 ATC-class predictions instead of individual drug",
+      "category": "feature-engineering",
+      "rationale": "DRKG's 4,968 treatment edges connect 1,542 unique drugs. Many drugs share mechanism-of-action (MoA) / ATC class (e.g., 50+ ACE inhibitors, 30+ statins). Predicting at MoA-level instead of individual drug level could 10x the signal-to-noise: instead of 'does sildenafil treat erectile dysfunction?' ask 'does PDE5 inhibition treat erectile dysfunction?'. Model predicts (disease, ATC_class) \u2192 apply ranking, then expand ATC class back to member drugs at inference. Novel framing \u2014 our entire work has been drug-level. Might dramatically improve recall on rare diseases where individual-drug signal is thin.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Map each drug to ATC code (existing data/external/atc/ mapping)",
+        "Aggregate treatment edges to (disease, ATC_L3_class) level \u2014 should give ~1500 unique ATC classes, ~3000 disease-ATC positive edges (higher density)",
+        "Train kNN / fusion at ATC level instead of drug level \u2014 expect dramatically higher signal per edge",
+        "At inference: for each test disease, rank ATC classes. Expand each predicted ATC class to its member drugs for R@30 computation.",
+        "Compare to drug-level h1215 ensemble baseline (21.54%)",
+        "Success: +3pp on rare-disease subset (where drug-level signal is sparsest) OR +1pp overall"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1310",
+      "title": "Literature-as-feature (PubMedBERT per-pair) \u2014 novel evidence-based ranking",
+      "category": "external-data",
+      "rationale": "We use literature for VALIDATION (h771 literature_miner). Never used as FEATURE in ranking. Concretely: for each (drug, disease) candidate pair, retrieve top-10 PubMed abstracts mentioning both entities (OR semantic neighbors). Embed via PubMedBERT/BioLinkBERT. Use max-similarity-to-gt-patterns as auxiliary score. Novel because it directly encodes 'is there any literature evidence of this drug being tried for this disease?' which is orthogonal to graph topology. Worked poorly standalone in h920 (4.21% R@30 vs kNN 17.95%) but as FEATURE in fusion may add lift.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "For each (drug, disease) candidate pair in top-1000 per-disease kNN: query PubMed for co-mentioning abstracts",
+        "Embed top-10 abstracts per pair via PubMedBERT (existing infrastructure from h920)",
+        "Compute abstract-to-treatment-prior similarity \u2192 per-pair literature_score",
+        "Fuse as 3rd feature alongside kNN-score + h1215 ensemble score via gradient-boosted model",
+        "Evaluate on h1199 benchmark",
+        "Success: +0.5-1pp R@30 over h1215 ensemble, driven by rare-disease categories"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1311",
+      "title": "Prospective validation framework \u2014 commit novel predictions today, verify in 2027",
+      "category": "infrastructure",
+      "rationale": "Our R@30 measures retrospective recall on known indications. By definition we can't measure novel-prediction quality directly \u2014 that's what drug repurposing IS. Solution: commit today's top-100 GOLDEN novel predictions to a git-committed file with cryptographic hash, then every 6 months check which ones appear in new clinical trials / FDA approvals / publications. This is the closest we can get to honest prospective validation. Has not been done for our model. TxGNN claimed retrospective validation on 5 historical cases (h1107 found only 1 holds up). A cohort of 100 with dated hash is much more defensible for paper v3.",
+      "expected_impact": "high",
+      "effort": "low",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Generate top-100 GOLDEN novel (NOT in ground truth) predictions from current deliverable",
+        "Write to data/prospective/2026-04-19_novel_predictions.json with SHA256 hash",
+        "Commit to git (dated, immutable)",
+        "Schedule quarterly cron: query ClinicalTrials.gov + PubMed + FDA approval list for these drug-disease pairs; report any hits",
+        "Paper v3 will cite 'predictions made on 2026-04-19, N hits confirmed by [future date]' \u2014 genuine prospective evidence",
+        "Success: \u22655 of 100 confirmed within 18 months = strong prospective validation signal"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1312",
+      "title": "Active learning loop with Ryland labels \u2014 query-by-uncertainty for maximum label efficiency",
+      "category": "expert-calibration",
+      "rationale": "Ryland's review capacity is limited (855 GOLDEN derm predictions, ~8-12 weeks turnaround per batch). Rather than random sampling, use active learning: pick the 50 predictions where our model is MOST UNCERTAIN (probability ~0.5), Ryland reviews \u2192 retrain tier calibrator \u2192 next batch. Query-by-uncertainty ML literature shows 3-10x label efficiency over random sampling. For h1203, this means the calibrated tier classifier can be trained on 200 high-value labels instead of 2000 random labels. Novel for our workflow; may be the difference between h1203 being feasible vs requiring more Ryland time than available.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Compute prediction-uncertainty for every deliverable row: for GOLDEN/HIGH-tier predictions, derive uncertainty from h1215 ensemble disagreement \u00d7 tier-rule disagreement",
+        "Rank predictions by uncertainty descending",
+        "Submit batches of 50 to Ryland (smaller batches, faster iteration than current 855 all-at-once)",
+        "After each batch, retrain tier calibrator via h1203 pipeline \u2192 update uncertainty for remaining pool",
+        "Iterate 4-5 rounds (200-250 labels total vs 855 random)",
+        "Compare calibrator quality (ECE, Brier) vs random-sampling baseline",
+        "Success: 200 active-learning labels give calibration quality equal to or better than 855 random"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1313",
+      "title": "Drug-similarity graph from treatment co-occurrence \u2014 inductive extension for novel diseases",
+      "category": "feature-engineering",
+      "rationale": "If drug A treats disease X and drug A treats disease Y, then X and Y are 'drug-similar' independent of ontology. Build a disease-similarity graph from shared effective drugs. Use for inductive prediction: for a novel disease not in DRKG, find its nearest drug-similar diseases, transfer their drug rankings. Orthogonal to Node2Vec's graph-similarity (which uses ontology, gene overlap, etc.). May capture 'clinically similar' in a way ontology-based similarity doesn't. Potentially the biggest lever for rare-disease coverage (where h909 showed we are already data-complete but get weak signal).",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Build disease-disease adjacency from shared drug set: W_ij = |drugs(X) \u2229 drugs(Y)| / |drugs(X) \u222a drugs(Y)| (Jaccard)",
+        "Use 5-seed h393 disease holdout \u2014 for each test disease, find top-10 train-disease nearest-neighbors in this drug-shared graph",
+        "Pool ranked drugs from NN-diseases weighted by Jaccard \u2192 auxiliary disease-disease-kNN prediction",
+        "Fuse with existing Node2Vec kNN via weighted average",
+        "Evaluate on h1199 benchmark; stratify by rare-disease subset",
+        "Success: +2pp on rare-disease subset (n_gt \u2264 3), +0.5pp overall"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1314",
+      "title": "Clinical trial outcome features \u2014 FAERS + ClinicalTrials.gov as prediction signal",
+      "category": "external-data",
+      "rationale": "ClinicalTrials.gov has ~450k trials with drug-disease combinations, many completed with pass/fail outcomes. FAERS (FDA Adverse Event Reporting System) has 15M+ adverse event records. Current model does not use either. A drug that has been in a phase 2 or 3 trial for a disease is vastly more likely to eventually be approved for that disease than a random drug (obvious retrospectively, but we don't encode it). FAERS off-label use patterns similarly signal repurposing signal. Novel data channel independent of DRKG + literature.",
+      "expected_impact": "medium",
+      "effort": "high",
+      "priority": 4,
+      "status": "pending",
+      "steps": [
+        "Pull ClinicalTrials.gov AACT database (bulk download, SQL-queryable) \u2014 drug-disease-phase-outcome for ~450k trials",
+        "Pull FAERS quarterly reports 2015-2025 \u2014 drug-reaction-indication for 15M+ events",
+        "For each (drug, disease) in our deliverable: engineer features [had_trial, trial_phase_reached, trial_outcome, faers_off_label_count]",
+        "Train gradient-boosted ranker with these features on top of kNN score",
+        "Evaluate on h1199 with pointed attention to rare-disease + biologic subsets (where trial data is sparser but more informative)",
+        "Success: +1-2pp R@30 overall, +3pp on rare-disease subset"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1315",
+      "title": "ESM-2 disease-protein features \u2014 genuinely orthogonal modality (per arxiv 2603.01537)",
+      "category": "external-data",
+      "rationale": "arxiv 2603.01537 'Do We Need Chemical Structure for Drug Repurposing?' (2025) found drug-side chemistry (SMILES, Morgan, ChemBERTa) did NOT help, but disease-side ESM-2 protein embeddings DID (PR-AUC 0.5631 \u2192 0.5785 when chemistry was removed but proteins kept). For each DRKG disease, pull its associated genes via DRKG's disease-associates-gene edges, embed the gene's protein via ESM-2 (650M-param protein LM, pretrained), pool to a disease-level feature vector. Add as a 3rd embedding column in h1215 ensemble. This is the SINGLE direction in 2025-2026 literature with empirical evidence of adding lift beyond graph topology \u2014 not another KG embedding variant. NOVEL AND PROMISING.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Extract disease-associated genes from DRKG: Disease::MESH::X \u2192 Gene::Entrez::Y edges",
+        "Map Entrez gene IDs to UniProt protein IDs",
+        "Fetch ESM-2 embeddings: facebook/esm2_t33_650M_UR50D via HuggingFace; batch-embed proteins",
+        "For each disease, mean-pool its associated proteins' ESM-2 embeddings \u2192 disease_protein_feature \u2208 R^1280",
+        "Add as new fusion column in h1215 ensemble",
+        "Evaluate on h1199 benchmark. Report all 5 metrics vs 21.54% h1215 ceiling.",
+        "Success: +1pp R@30 \u2014 would be first genuinely orthogonal lever we've found."
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1316",
+      "title": "TransformerConv architecture swap \u2014 from KG-Bench 2025 benchmark",
+      "category": "deep-learning",
+      "rationale": "KG-Bench (Wei et al. bioRxiv 2025.10.13.682003) compared GCN / GraphSAGE / TransformerConv on Open Targets drug-disease prediction. TransformerConv beat GraphSAGE modestly (AUC 0.87 vs 0.85 at 1:1; 0.89 vs 0.87 at 1:10). Attention-based neighbor aggregation may pick up signal uniform mean aggregator misses. Quick architecture swap in existing h1200 GNN pipeline. Low-effort experiment; honest expected lift is marginal (under h1215 ensemble) but worth testing to close the architecture-space exploration.",
+      "expected_impact": "medium",
+      "effort": "low",
+      "priority": 3,
+      "status": "pending",
+      "steps": [
+        "Fork scripts/h1200_supervised_gnn_train.py \u2192 scripts/h1316_transformerconv_train.py",
+        "Swap SAGEConv for TransformerConv (PyG torch_geometric.nn.TransformerConv)",
+        "Warm-start x_param from Node2Vec (h1200 V2 best config)",
+        "Mixed loss: supervised + unsupervised (h1200 V3 config)",
+        "Train 50 epochs, evaluate via h1199 clean benchmark",
+        "Success: +1pp R@30 over h1200 V3's 10.81%. Honest ceiling: still under 21.5% h1215 ensemble."
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1317",
+      "title": "Temporal-split evaluation \u2014 methodology hardening (per KG-Bench)",
+      "category": "infrastructure",
+      "rationale": "h1199 benchmark uses random disease 80/20 split. KG-Bench (2025) argues for temporal splits: train on treatment edges known as of year X, test on Y. Simulates deployment-realistic scenario of predicting NEW approvals. Would reveal whether our 21.5% ceiling is inflated by disease-level leakage. If temporal-split R@30 << random-split R@30, our published numbers need disclaimer. If similar, our methodology is already robust. NOVEL for us, established practice in TxGNN / Open Targets.",
+      "expected_impact": "medium",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "For each DRKG treatment edge, determine drug approval year (use DrugBank approval_date + FDA/EMA records)",
+        "Build time-bucketed splits: pre-2015 (train), 2015-2019 (val), 2020-present (test)",
+        "Re-run Node2Vec kNN + h1215 ensemble under temporal split",
+        "Compare R@30 / Hits@K / MRR / AUPRC / AUROC vs random split",
+        "Document any drift; if temporal R@30 significantly lower, add disclaimer in paper",
+        "Success: temporal reproduces within \u00b13pp \u2192 our ceiling is methodology-honest"
+      ],
+      "findings": "",
+      "result_metric": ""
+    },
+    {
+      "id": "h1318",
+      "title": "Recurring literature research scan \u2014 quarterly harvest of novel methods",
+      "category": "infrastructure",
+      "rationale": "2026-04-19 literature scan found genuinely novel directions (ESM-2 disease-proteins, temporal-split eval, case-report GT expansion, LLM-as-reasoner). Drug repurposing methodology evolves fast (monthly SOTA claims on arxiv/bioRxiv). Structured recurring scan prevents the autonomous loop from drifting into incremental-only fusion-recipe tweaks (current failure mode per h1286-h1306 fusion series). Quarterly scan with LLM-assisted summarization, auto-file novel hypotheses.",
+      "expected_impact": "high",
+      "effort": "medium",
+      "priority": 2,
+      "status": "pending",
+      "steps": [
+        "Create scripts/h1318_literature_scan.py \u2014 auto-query arxiv/bioRxiv/PubMed for seed queries used on 2026-04-19",
+        "Filter papers: last 90 days, drug-repurposing or KG-completion focus",
+        "Use Claude Haiku to summarize each paper: method, dataset, claimed improvement, reproducible?, relevance to DRKG ceiling",
+        "Write summaries to docs/literature_review/YYYY-MM/; file new hypotheses for papers scoring \u22657/10 on relevance+novelty",
+        "Schedule via launchd quarterly",
+        "First run: 2026-07-19. Success: \u22651 new hypothesis filed that wouldn't have come from internal iteration"
+      ],
+      "findings": "",
+      "result_metric": ""
     }
   ],
   "completed": [

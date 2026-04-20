@@ -1,22 +1,26 @@
 # Open-Cure Drug Repurposing Research Specification
 
-## Current Phase (2026-04-19): 37→60 Hybrid Pivot
+## Current Phase (2026-04-19, revised evening): Ceiling Acknowledgment
 
-**PRIMARY RESEARCH DIRECTION: close the R@30 gap from ~26% (honest Node2Vec kNN) to the 60% Oracle ceiling on DRKG — then hybridize with external signals to exceed 60%.**
+**PRIMARY RESEARCH DIRECTION CHANGED.** After h1200 INVALIDATED and h1201 INCONCLUSIVE on 2026-04-19, both designed recall levers from the original 37→60 pivot have failed. **Empirical DRKG + external-data ceiling is ~21.5% R@30** (h1215 family, 20-seed). The "37→60" framing is deprecated — the 37% historical number was leakage-inflated and methodology-artifacted; the honest h1199 baseline is 19.55% (Node2Vec) / 21.54% (h1215 ensemble).
 
-After today's positive-control and h922-v2 findings, the research path is explicit:
+Research now focuses on: (a) small-margin fusion-recipe refinements within the h1215 family, (b) low-probability salvage paths for LINCS (h1290 fusion-feature, h1291 KS scoring), (c) h1203 expert-label calibration as the primary remaining high-impact direction (precision lever, gated on Ryland delivery), (d) paper reframe toward "honest ceiling + expert-calibrated tiers" rather than "SOTA recall race."
 
-1. **h1199 (infrastructure, p1):** multi-metric embedding-agnostic benchmark. Prerequisite for every subsequent experiment. Measures **five metrics on the same 5-seed splits without the tier system in the loop**: R@30 per-drug (our clinical framing), Hits@K for K∈{1,5,10,30,100} (TxGNN/DRKG comparability), MRR (standard KG-completion), AUPRC (TxGNN headline), AUROC. Every downstream experiment reports all five. ~2 days of work, CPU only. Must land before h1200/h1201 are trusted.
+1. **h1199 (infrastructure, p1):** COMPLETE. Multi-metric embedding-agnostic benchmark shipped (`scripts/clean_embedding_benchmark.py`). All h1200/h1201/h1215 numbers use it. Reports R@30 per-drug, Hits@K for K∈{1,5,10,30,100}, MRR, AUPRC, AUROC on 5-seed (now 20-seed default post-h1269).
 
-2. **h1200 (Path A, p1):** supervised GNN (GraphSAGE / HGT / R-GCN) trained on treatment edges as explicit labels. Different objective than h922-v2's unsupervised link prediction, which failed. Target: ≥35% R@30, stretch 45%. 2–3 weeks, ~$10 GPU.
+2. **~~h1200 (Path A, p1):~~ INVALIDATED 2026-04-19.** Three variants of supervised GraphSAGE (Xavier cold 7.99%, Node2Vec warm 11.47%, mixed-loss 10.81%) all underperform the 19.55% Node2Vec prior. Root cause: 4,968 treatment edges too sparse to train a 94k-node GNN. See `data/analysis/h1200_invalidation.md`. **Do not retry with HGT/R-GCN — the signal is the bottleneck, not the architecture.**
 
-3. **h1201 (Path B, p1):** LINCS L1000 reverse-connectivity. Orthogonal signal from transcriptomics. Targets diseases where kNN is weak. 1–2 weeks, CPU-only feasible.
+3. **~~h1201 (Path B, p1):~~ INCONCLUSIVE 2026-04-19.** LINCS × CREEDS standalone reverse-connectivity lands at R@30 1.46% (random baseline 1.88%). Canonical positive controls scattered — Hydroxychloroquine rank 1509/1593 for RA, Albuterol 1373 for asthma. Reverse-connectivity works for cytotoxics / metabolic modulators, fails structurally for receptor antagonists, hormonal modulators, enzyme inhibitors. **Scope note:** marked INCONCLUSIVE (not INVALIDATED) because LINCS-as-feature in fusion (h1290) and KS-statistic scoring (h1291) remain untested salvage paths. See `data/analysis/h1201_inconclusive.md`.
 
-4. **h1202 (Hybrid fusion, p2):** gated on h1200 + h1201 showing independent signal. Combine via weighted fusion or kNN-coverage-gated ensemble. This is the primary Nature-paper claim.
+4. **~~h1202 (Hybrid fusion, p2):~~ MOOT in original form** (required h1200 AND h1201 to land). Salvage path = h1290 (LINCS-as-feature in gradient-boosted fusion with kNN ranks).
 
-5. **h1203 (expert-label calibration, p2):** gated on Ryland returning his review (template at `data/deliverables/ryland_review_template.csv`). Train a calibrated classifier on expert labels to replace the 30-rule tier heuristics — decouples calibration from embedding choice (fixes the h922-v2 failure mode) and incorporates independent expert signal.
+5. **h1203 (expert-label calibration, p2):** Unchanged. Gated on Ryland returning his review. **Now the top remaining high-impact direction.** Trains a calibrated classifier on expert labels to replace the 30-rule tier heuristics. **PRECISION lever, not recall — does NOT push R@30 past 21.5%.** Its value is clinical triage quality at the ceiling, not ceiling lift.
 
-**Paper v3 framing:** "Hybrid DRKG collaborative filtering + LINCS expression reversal + expert-calibrated confidence tiers." The bioRxiv preprint already argued DRKG-alone has a ceiling; this is the architecture that exceeds it.
+6. **h1290 (salvage, p3):** LINCS-as-feature in gradient-boosted fusion. Bet on error orthogonality — even weak standalone LINCS may add marginal lift when combined with kNN. Expected ≤+1pp.
+
+7. **h1291 (salvage, p4):** KS-statistic CMap-style scoring instead of cosine. Quick check whether cosine was the wrong similarity function before closing LINCS entirely.
+
+**Paper reframe (2026-04-19):** Drop "hybrid architecture pushes to 60%" framing. New honest positioning: "we report the DRKG + public-external-data empirical ceiling (~21.5% R@30 per-drug) and contribute (a) the cleanest multi-metric embedding benchmark [h1199], (b) a validated ensemble recipe that tightens the ceiling by +2pp [h1215/h1269], and (c) an expert-calibrated confidence tier system that enables clinical triage at this ceiling [h1203 pending]." Beats TxGNN's inductive 6.7-14.5% by ~7-15pp; genuine contribution without needing a recall SOTA.
 
 **Deprioritised for this phase:**
 - Further rule-level tier calibration (diminishing returns — h904/h977/h986 closed the easy wins)
@@ -52,7 +56,7 @@ Tier-calibration hypotheses below priority 3 are deprioritised unless they are n
 
 Target architecture: supervised GNN on DRKG (h1200) + LINCS L1000 reverse-connectivity (h1201) + expert-calibrated tiers from Ryland's labels (h1203), fused (h1202). Every experiment reports **R@30 per-drug, Hits@K, MRR, AUPRC, and AUROC** on the same 5-seed splits — see h1199. The five metrics let us compare head-to-head with TxGNN (AUPRC 0.913), TransE/DistMult/RotatE DRKG baselines (Hits@10 30-50%, MRR 0.15-0.30), and HGTDR.
 
-Realistic target: 45-50% R@30 honest + beat published AUPRC / Hits@10 / MRR SOTA. 60% R@30 on DRKG alone is improbable; the hybrid with LINCS is the realistic path above that.
+Realistic target (revised post-h1200/h1201, 2026-04-19): ~21.5% R@30 is the empirical ceiling. Reaching 35%+ now requires the h1290 fusion-salvage to deliver unprecedented lift — low probability. Beat TxGNN inductive 6.7-14.5% (already done) and present the expert-calibrated tier system as the genuine contribution. **Stop framing research around 45-50% or 60% targets** — those are artifacts of the deprecated 37→60 pivot.
 
 Every hypothesis should be labeled as one of: **recall lever** (pushes the five metrics up), **calibration lever** (tightens tier precision / ECE / Brier), **infrastructure** (enables either), or **complementary** (lower priority).
 
@@ -65,10 +69,12 @@ Every hypothesis should be labeled as one of: **recall lever** (pushes the five 
 | **Production pipeline (h958, POST-fix)** | **19.49% ± 1.42%** | Per-disease macro-averaged R@30, 5-seed 80/20 disease holdout, expanded GT (57K pairs, 1011 diseases), kNN+tier overrides via `production_predictor.predict()` |
 | Production biologics (h958) | 30.31% ± 3.57% | Same eval framework restricted to biologic drug candidates |
 | Plain kNN baseline (h940) | 20.30% | Same holdout but direct kNN on disease_id, bypasses tier logic |
-| No-treatment kNN k=20 (fair transductive) | 26.06% ± 3.84% | kNN on embeddings that exclude treatment edges — honest transductive ceiling |
+| No-treatment kNN k=20 (fair transductive) | 26.06% ± 3.84% | kNN on embeddings that exclude treatment edges. **DEPRECATED for ceiling framing** — micro-avg + internal GT + embedding-native-universe inflated this number. h1199 macro-avg on expanded GT + 1,011-disease intersection gives 19.55% for Node2Vec 256. |
 | KEGG pathway kNN (fair inductive) | 15.73% ± 1.82% | TxGNN-comparable inductive baseline |
-| DRKG ceiling | ~37% | Maximum achievable from DRKG alone |
-| Oracle ceiling | ~60% | Upper bound with perfect ranking |
+| **h1199 Node2Vec 256 (honest macro, 5-seed)** | **19.55% ± 1.18%** | **Current canonical baseline** |
+| **h1215 Node2Vec+FastRP concat (20-seed)** | **21.54% ± 1.12%** | **Current empirical DRKG+external ceiling** |
+| ~~DRKG ceiling ~37%~~ | DEPRECATED | Leakage-inflated; historical artifact |
+| ~~Oracle ceiling ~60%~~ | DEPRECATED | Theoretical upper bound on GT coverage, not a training target |
 
 **Legacy number (do not compare against production directly):**
 - GB enhanced model: 41.8% R@30 — this is **micro-averaged pool recall** (`total_hits / total_gt_drugs` across all test pairs), computed on a smaller Every-Cure-only GT (3,618 pairs / 442 unique diseases, 1,236 total after fuzzy mapping). It's a feature-classifier model that predicts drug-disease pair plausibility on held-out pairs, not per-disease top-30 recall. The 25pp gap between 41.8% and 16.39%/19.49% is an eval-framework artifact, not a regression.
