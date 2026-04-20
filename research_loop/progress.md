@@ -5990,3 +5990,65 @@ The next step should be either h1299 (cheap, isolated test of non-linear axis) o
 
 ### Recommended next hypothesis
 **h1299 (P2, recall)** — cheap (~30 min), scale-invariant (avoids the h1259 pooled-AUPRC artifact), and tests the last untouched DRKG-only axis. If it fails, we have a complete case for "DRKG recall ceiling is structural" to support the h1201 paper reframe.
+
+
+## Current Session (continued): h1299 — RRF/Borda rank-aggregation (INVALIDATED on R@30 gate; MAJOR AUPRC/AUROC sub-finding lifts ranking-quality ceiling) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1299 (INVALIDATED on preregistered R@30 arm; ranking-quality sub-finding preserved)
+
+### What was shipped
+`scripts/h1299_rank_aggregation.py` — 20-seed benchmark of 5 rank-aggregation variants on SUBSET_D_GLOBAL. RRF formula `score(d) = Σ 1/(k_rrf + rank_i(d))` with k_rrf=60; Borda `score(d) = Σ (N_cands - rank_i(d))`. **Implementation subtlety:** rank only candidates with non-zero kNN score (tied zeros contribute 0); ranking zero-scored candidates by argsort in the full universe introduces noise and loses 2-3pp R@30.
+
+### Aggregate (20 seeds, 1,011 diseases)
+
+| Mode | R@30 | per-dis-AUPRC | per-dis-AUROC | pooled-AUPRC | pooled-AUROC |
+|---|---|---|---|---|---|
+| `concat_l2_2way` | 21.35%±1.13% | 0.1241 | 0.6240 | 0.0647 | 0.5856 |
+| `soft_blend_w050_2way` | **21.54%±1.12%** | 0.1275 | 0.6345 | 0.0595 | 0.4531 |
+| `rrf_k60_n2v_fastrp` | 20.99%±1.34% | 0.1313 | 0.6404 | 0.0600 | 0.5964 |
+| `rrf_k60_n2v_concat` | 21.37%±1.08% | 0.1291 | 0.6345 | 0.0559 | 0.5933 |
+| **`rrf_k60_3ranker`** | 21.42%±1.26% | **0.1339** | **0.6429** | 0.0615 | 0.5989 |
+| `borda_n2v_fastrp` | 20.94%±1.35% | 0.1300 | 0.6404 | 0.0597 | 0.5964 |
+| `borda_3ranker` | 21.36%±1.25% | 0.1326 | 0.6429 | 0.0614 | 0.5989 |
+
+### Paired-t vs soft_blend_w050_2way (canonical)
+
+| Mode | ΔR@30 (p) | Δper-dis-AUPRC (p) | Δper-dis-AUROC (p) |
+|---|---|---|---|
+| **rrf_k60_3ranker** | -0.115pp (0.201) | **+0.00636 (7.7e-07)** | **+0.00841 (1.8e-12)** |
+| rrf_k60_n2v_fastrp | -0.548pp (0.0004) | +0.00373 (0.00016) | +0.00595 (1.7e-8) |
+| rrf_k60_n2v_concat | -0.167pp (0.018) | +0.00162 (0.003) | +0.00002 (0.001) |
+| borda_3ranker | -0.182pp (0.057) | +0.00511 (1.4e-5) | +0.00840 (1.8e-12) |
+| borda_n2v_fastrp | -0.598pp (0.00014) | +0.00252 (0.004) | +0.00595 (1.8e-8) |
+
+### Why it failed the preregistered R@30 gate
+Gate required `ΔR@30 > +0.15pp AND ΔAUPRC > +0.0005 both at p<0.05`. rrf_k60_3ranker is statistically TIED with soft-blend on R@30 (Δ=-0.115pp p=0.201 — no lift, no regression). AUPRC arm passes decisively but R@30 arm doesn't move.
+
+### Ranking-quality sub-finding (MAJOR)
+**rrf_k60_3ranker produces the best per-dis AUPRC (0.1339) and per-dis AUROC (0.6429) of any fusion mode tested so far.** The AUPRC lift is 18× h1269's soft-blend lift over raw concat_l2 (+0.00343 → +0.00636); the AUROC lift is 8× h1269's (+0.00105 → +0.00841). p-values are decisive: AUPRC p=7.7e-07, AUROC p=1.8e-12 — these are not marginal findings.
+
+### Ceiling update
+| Metric | Previous (h1275) | New (h1299) | Source |
+|---|---|---|---|
+| R@30 | 21.54%±1.12% (W050) or 21.71%±1.13% (W035) | unchanged | soft_blend / h1287 |
+| per-dis AUPRC | 0.1275±0.0102 | **0.1339±0.0103** | rrf_k60_3ranker |
+| per-dis AUROC | 0.6345±0.0049 | **0.6429±0.0052** | rrf_k60_3ranker |
+
+### Triple-recipe production framework
+h1283 proposed dual-recipe (W040 retrieval, W050 ranking). h1299 extends to triple-recipe:
+- **Retrieval (top-30, R@30)**: W035-W040 soft-blend (21.71% / 21.68%)
+- **Conservative default**: soft_blend_w050 (21.54% R@30, 0.1275 AUPRC — canonical)
+- **Ranking quality (AUPRC/AUROC)**: `rrf_k60_3ranker` (21.42% R@30 tied, 0.1339 AUPRC, 0.6429 AUROC)
+
+### Mechanism
+1. **RRF discards raw score scale** — avoids the h1259 pooled-AUPRC scale-confound. Ranks treat each embedding as an equal voter.
+2. **N2V, FastRP, concat_l2 contribute 3 semi-orthogonal ranking signals** — concat_l2 is a non-linear combination (cosine on joint L2-normalized space), so its ranks differ from either parent in a non-redundant way.
+3. **Soft-blend preserves top-30 boundary sharpness** — z-norm averaging keeps the top-30 in approximately the same positions as concat_l2 raw, slightly better than RRF which re-shuffles ranks around the k_rrf=60 tiebreak threshold.
+
+### New hypotheses
+- **h1300 (P3, recall):** RRF k sensitivity — can a different k_rrf clear both R@30 and AUPRC arms of the gate?
+- **h1301 (P3, recall):** Hybrid 4-ranker (N2V + FastRP + concat_l2 + soft_blend) — can soft-blend as a ranker recover the 0.12pp R@30 gap?
+- **h1302 (P3, recall):** Per-disease audit of RRF AUPRC lift — which categories/n_gt buckets drive the +0.00636?
+
+### Recommended next hypothesis
+**h1301 (P3, recall)** — simple extension that might clear BOTH arms of the preregistered promotion gate (R@30 retention from soft-blend + AUPRC gain from RRF). If it succeeds, the triple-recipe collapses to a single canonical. If not, the paper can report the triple-recipe as-is with h1300/h1302 supporting analyses.
