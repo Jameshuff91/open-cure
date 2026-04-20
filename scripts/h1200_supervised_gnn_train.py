@@ -51,6 +51,14 @@ def parse_args() -> argparse.Namespace:
                    help="Epochs between holdout R@30 evals")
     p.add_argument("--smoke-test", action="store_true",
                    help="Subset to 50k mp edges + 100 treatment edges + 2 epochs")
+    p.add_argument("--init-embeddings", type=str, default=None,
+                   help="Prefix of existing embeddings to warm-start x_param "
+                        "(e.g. 'node2vec_256_no_treatment'). Missing nodes get Xavier init.")
+    p.add_argument("--unsup-weight", type=float, default=0.0,
+                   help="Weight for unsupervised link-prediction loss on random "
+                        "message-passing edges. 0.0 = pure supervised (h1200 default). "
+                        "0.5 = equal mix. Combined loss = "
+                        "sup_loss + unsup_weight * unsup_loss.")
     return p.parse_args()
 
 
@@ -233,6 +241,25 @@ def main() -> None:
 
     x = torch.empty(num_nodes, args.hidden)
     nn.init.xavier_normal_(x)
+    if args.init_embeddings:
+        emb_dir = Path(args.out_dir)
+        init_ents = np.load(
+            emb_dir / f"{args.init_embeddings}_entities.npy", allow_pickle=True
+        )
+        init_mat = np.load(emb_dir / f"{args.init_embeddings}_embeddings.npy").astype(np.float32)
+        if init_mat.shape[1] != args.hidden:
+            raise ValueError(
+                f"Init embedding dim {init_mat.shape[1]} != --hidden {args.hidden}"
+            )
+        init_lookup = {str(ent): i for i, ent in enumerate(init_ents)}
+        filled = 0
+        for i, ent in enumerate(entities):
+            j = init_lookup.get(ent)
+            if j is not None:
+                x[i] = torch.from_numpy(init_mat[j])
+                filled += 1
+        print(f"Warm-start from {args.init_embeddings}: {filled:,}/{num_nodes:,} "
+              f"nodes initialized ({100*filled/num_nodes:.1f}%)")
     data = Data(
         x=x,
         edge_index=torch.from_numpy(edge_index_bi).long(),
@@ -331,16 +358,38 @@ def main() -> None:
             neg_dst = emb[torch.from_numpy(neg_dis).to(device)]
             pos_logit = (pos_src * pos_dst).sum(-1)
             neg_logit = (neg_src * neg_dst).sum(-1)
-            logits = torch.cat([pos_logit, neg_logit])
-            labels = torch.cat([
+            sup_logits = torch.cat([pos_logit, neg_logit])
+            sup_labels = torch.cat([
                 torch.ones_like(pos_logit),
                 torch.zeros_like(neg_logit),
             ])
-            loss = F.binary_cross_entropy_with_logits(logits, labels)
+            loss = F.binary_cross_entropy_with_logits(sup_logits, sup_labels)
+
+            if args.unsup_weight > 0:
+                n_unsup = pos_d.shape[0] * (1 + args.neg_ratio)
+                unsup_edge_idx = rng.integers(0, num_edges, size=n_unsup)
+                us_pos_src = edge_index_np[0, unsup_edge_idx[: pos_d.shape[0]]]
+                us_pos_dst = edge_index_np[1, unsup_edge_idx[: pos_d.shape[0]]]
+                us_neg_src = rng.integers(0, num_nodes, size=pos_d.shape[0] * args.neg_ratio)
+                us_neg_dst = rng.integers(0, num_nodes, size=pos_d.shape[0] * args.neg_ratio)
+                us_ps = emb[torch.from_numpy(us_pos_src).to(device).long()]
+                us_pd = emb[torch.from_numpy(us_pos_dst).to(device).long()]
+                us_ns = emb[torch.from_numpy(us_neg_src).to(device).long()]
+                us_nd = emb[torch.from_numpy(us_neg_dst).to(device).long()]
+                us_pos_logit = (us_ps * us_pd).sum(-1)
+                us_neg_logit = (us_ns * us_nd).sum(-1)
+                us_logits = torch.cat([us_pos_logit, us_neg_logit])
+                us_labels = torch.cat([
+                    torch.ones_like(us_pos_logit),
+                    torch.zeros_like(us_neg_logit),
+                ])
+                unsup_loss = F.binary_cross_entropy_with_logits(us_logits, us_labels)
+                loss = loss + args.unsup_weight * unsup_loss
+
             loss.backward()
             optimizer.step()
-            total_loss += loss.item() * logits.numel()
-            n_seen += logits.numel()
+            total_loss += loss.item() * sup_logits.numel()
+            n_seen += sup_logits.numel()
         avg_loss = total_loss / max(n_seen, 1)
         dur = time.time() - t0
 

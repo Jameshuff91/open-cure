@@ -9,17 +9,18 @@ Current state (2026-04-19):
 - Published SOTA (TxGNN Nature Med 2024): AUPRC 0.913 standard eval, +49.2% on zero-shot indications
 - Goal: match and beat SOTA on Hits@K, MRR, AUPRC, AUROC, and R@30 simultaneously
 
-Target architecture (pivot committed 2026-04-19):
-1. **Supervised GNN on DRKG** (h1200) — replace unsupervised Node2Vec with GNN trained on treatment edges as explicit labels. Expected: 40-50% R@30.
-2. **LINCS L1000 reverse-connectivity** (h1201) — orthogonal transcriptomic signal. Expected: +5-10pp in fusion.
-3. **Expert-calibrated confidence tiers** (h1203) — classifier trained on Ryland Mortlock's blinded review labels. Decouples calibration from embedding choice.
-4. **Hybrid fusion** (h1202) — primary Nature-paper claim.
+Target architecture (revised 2026-04-19 post-h1200 invalidation):
+1. **~~Supervised GNN on DRKG (h1200)~~** — **INVALIDATED** across 3 variants (Xavier cold 7.99%, Node2Vec warm 11.47%, mixed loss 10.81%) vs 19.55% Node2Vec prior. The 4,968-edge supervision signal actively degrades representations; architectural variations cannot fix signal sparsity. See `data/analysis/h1200_invalidation.md`.
+2. **DRKG embedding ensembles (h1215 family)** — **VALIDATED at +1.32pp** (Node2Vec+FastRP concat: R@30 19.55% → 20.87%). Now the proven DRKG recall lever. Follow-ups: h1225 RRF, h1226 per-disease weights, h1227 three-embedding concat.
+3. **LINCS L1000 reverse-connectivity** (h1201) — orthogonal transcriptomic signal. Unchanged; now the top recall-lever priority. Expected: +5-10pp in fusion.
+4. **Expert-calibrated confidence tiers** (h1203) — classifier trained on Ryland Mortlock's blinded review labels. Decouples calibration from embedding choice.
+5. **Hybrid fusion** (h1202) — primary Nature-paper claim. Gated on h1201 landing.
 
 Evaluation standard: **every experiment reports all five metrics** — R@30 per-drug, Hits@K, MRR, AUPRC, AUROC. h1199 is the prerequisite multi-metric benchmark.
 
-Hypothesis labels: **Recall lever** (Paths A, B), **Calibration lever** (Path C), **Infrastructure** (h1199, h907), **Complementary** (lower priority).
+Hypothesis labels: **Recall lever** (h1215 ensembles + h1201 LINCS), **Calibration lever** (h1203 Ryland labels), **Infrastructure** (h1199, h907), **Complementary** (lower priority).
 
-**Honest probability:** Path A + Path B fused, ~55% chance of reaching 40% R@30, ~25% of 50%, ~8% of 55%+.
+**Honest probability (recalibrated post-h1200):** With Path A invalidated, the DRKG ceiling is roughly the h1215 ensemble (20.87%). Reaching 40% R@30 requires h1201 (LINCS) to deliver the promised +5-10pp AND fusion to be additive. Estimate ~30% chance of ≥35% R@30, ~10% of ≥45%. The h1200 failure was instructive but narrows the attainable outcome.
 
 **See also:** `research_loop/prompts/research_spec.md`, `~/.claude/projects/-Users-jimhuff/memory/project_open_cure_pivot_37_60.md`.
 
