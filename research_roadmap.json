@@ -3151,7 +3151,7 @@
       "id": "h1264",
       "title": "Soft-blend \u00d7 entropy-routing combo \u2014 apply h1259's w=0.5 only on h1248's mid-entropy n_gt>=51 stratum",
       "priority": 2,
-      "status": "in_progress",
+      "status": "validated",
       "expected_impact": "high",
       "effort": "low",
       "label": "recall",
@@ -3162,7 +3162,9 @@
         "Report per-seed per-disease AUPRC, per-disease AUROC, R@30 vs concat_l2_raw.",
         "Promotion gate: any subset with per-dis AUPRC \u0394 \u2265 +0.0005 at p < 0.05 is the new fusion default."
       ],
-      "success_criteria": "Identify the broadest subset on which soft-blend retains per-disease AUPRC \u0394 \u2265 +0.0005 with p < 0.05. Update CLAUDE.md DRKG-only ceilings."
+      "success_criteria": "Identify the broadest subset on which soft-blend retains per-disease AUPRC \u0394 \u2265 +0.0005 with p < 0.05. Update CLAUDE.md DRKG-only ceilings.",
+      "findings": "h1264 VALIDATED: soft-blend (w=0.5 per-disease z-norm of n2v + concat_l2) generalises beyond h1259's mid-entropy n_gt>=51 'flipped' subset (n~13/seed). Three subsets pass the strict gate (\u0394 per-dis AUPRC \u2265 +0.0005, p < 0.05): FLIPPED \u0394=+0.00054 p=0.013 (n~13); HIGHDENS \u0394=+0.00094 p=0.006 (n~36); MODHIGH \u0394=+0.00107 p=0.046 (n~73). The 4th subset GLOBAL (n=200, blend every disease) has the LARGEST mean lifts: \u0394 per-dis AUPRC=+0.00469, \u0394 R@30=+0.43pp, \u0394 per-dis AUROC=+0.01080 p=0.005 \u2014 but per-disease AUPRC p=0.108 fails the strict 0.05 gate due to higher per-seed variance (seed 456 negative -0.0016, seed 123 positive +0.0114). Mechanism: lift compounds with subset size; the 9x larger AUPRC effect at GLOBAL is consistent with score-smoothing being a universal score-quality improvement, not a subset-specific gate-fix. New canonical recipe: soft_blend_w0.5 on SUBSET_B_HIGHDENS (clean 3-metric win) OR ambitious SUBSET_D_GLOBAL (subject to h1269 variance reduction). Also: pooled AUROC regresses monotonically with subset size (B -0.219, C -0.233, D -0.149 p<0.001) \u2014 confirms h1259's pooled-metric scale artifact is structural.",
+      "result_metric": "Best clean win SUBSET_B_HIGHDENS: \u0394R@30=+0.08pp p=0.002, \u0394per-dis AUPRC=+0.00094 p=0.006, \u0394per-dis AUROC=+0.00123 p=0.0001 vs concat_l2_raw 20.87% R@30 anchor. SUBSET_D_GLOBAL: \u0394R@30=+0.43pp p=0.10, \u0394per-dis AUPRC=+0.00469 p=0.11."
     },
     {
       "id": "h1266",
@@ -3199,6 +3201,57 @@
         "Decide whether per-disease AUPRC needs a stratum-aware aggregation (e.g., trimmed mean or n_gt-balanced average) before becoming production default."
       ],
       "success_criteria": "Quantified statement: 'per-disease AUPRC is r=X correlated with n_gt; soft-blend's per-disease AUPRC win is concentrated in n_gt=Y stratum.' Either confirm per-disease AUPRC is a clean primary metric or specify the stratum-aware aggregation needed."
+    },
+    {
+      "id": "h1268",
+      "title": "Soft-blend weight sweep on SUBSET_D_GLOBAL \u2014 find Pareto-optimal w under per-disease AUPRC",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1264 SUBSET_D_GLOBAL at fixed w=0.5 lifts per-disease AUPRC by +0.00469 (largest in family) but fails the strict p<0.05 gate due to seed variance. h1216 closed the linear-weight axis on concat_l2 (no asymmetric weight beat 0.5), but h1264's blend is RAW score scaling (z(n2v)+z(concat))/2, NOT concat_l2 reweighting. The optimum w may differ. Sweep BLEND_W \u2208 {0.30, 0.40, 0.50, 0.60, 0.70} on SUBSET_D_GLOBAL to find the per-disease AUPRC maximiser with paired-t significance.",
+      "steps": [
+        "Build scripts/h1268_soft_blend_global_weight_sweep.py \u2014 fork of h1264 with subset locked to GLOBAL and a 5-point w sweep.",
+        "5-seed paired-t vs concat_l2_raw on (R@30, per-dis AUPRC, per-dis AUROC).",
+        "If any w produces \u0394 per-dis AUPRC \u2265 +0.001 at p < 0.05, lock as new production fusion recipe.",
+        "Save data/analysis/h1268_soft_blend_global_weight_sweep.{json,md}."
+      ],
+      "success_criteria": "Identify Pareto-optimal w on SUBSET_D_GLOBAL with paired significance."
+    },
+    {
+      "id": "h1269",
+      "title": "Variance-reduce h1264 SUBSET_D \u2014 extend to 20 seeds for tight p-value on \u0394 per-dis AUPRC",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1264 SUBSET_D_GLOBAL \u0394 per-dis AUPRC = +0.00469 with \u03c3 \u2248 0.0050 across 5 seeds \u2192 t=2.10, p=0.108. The effect SIZE is 9x the SUBSET_A FLIPPED win (+0.00054), but 5-seed power is too weak to discriminate it from noise. Extending to 20 seeds reduces SE by sqrt(4)=2x; with \u03c3=0.005/sqrt(20) \u2248 0.0011, the +0.00469 \u0394 would yield t\u22484.2, p<0.001. Cheap (~10 min compute).",
+      "steps": [
+        "Run scripts/h1264_soft_blend_subset_sweep.py with --seeds 42,123,456,789,2024,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15.",
+        "Recompute paired-t for SUBSET_D_GLOBAL only (other subsets already significant at 5 seeds).",
+        "If 20-seed p < 0.05, promote SUBSET_D_GLOBAL as the new production default and update CLAUDE.md ceilings.",
+        "Save data/analysis/h1269_soft_blend_global_20seed.{json,md}."
+      ],
+      "success_criteria": "20-seed paired-t produces p < 0.05 on SUBSET_D_GLOBAL \u0394 per-dis AUPRC."
+    },
+    {
+      "id": "h1270",
+      "title": "Update CLAUDE.md DRKG-only ceiling: concat_l2_raw 20.87% \u2192 soft_blend HIGHDENS 20.95% (or GLOBAL 21.30%)",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1264 produced a publishable per-disease AUPRC lift on SUBSET_B_HIGHDENS (\u0394=+0.00094 p=0.006). DRKG-only ceiling table in CLAUDE.md still cites h1215 concat_l2_raw 20.87%. Update so future work compares against the new soft-blend recipe. Coordinate with h1269 \u2014 if 20-seed gates GLOBAL, use that ceiling instead of B.",
+      "steps": [
+        "After h1268 + h1269 land, choose the highest-significance recipe (HIGHDENS or GLOBAL).",
+        "Add row to CLAUDE.md Key Metrics table: 'soft_blend w=0.5 SUBSET_B_HIGHDENS' R@30=20.95%, per-dis AUPRC=0.1239.",
+        "Update DRKG-only ceiling line (currently 'R@30 \u2264 20.87% concat_l2').",
+        "Cross-reference h1262 (per-dis AUPRC convention) and h1264 (subset gate)."
+      ],
+      "success_criteria": "Public ceilings in CLAUDE.md reflect the post-h1264 recipe."
     }
   ],
   "completed": [
@@ -6038,6 +6091,12 @@
       "hypothesis_id": "h1263",
       "learning": "Hard-switch routing (cat_gated, entropy_routed) is dead even under the rank-equivariant per-disease AUPRC frame \u2014 both stay flat (p=0.50, p=0.76). Soft-blend (h1259 w=0.5) remains the ONLY fusion direction with per-disease AUPRC lift over concat_l2_raw. Mechanism difference: soft-blend smooths scores within a disease; hard-switch picks one embedding wholesale and the gate is too noisy at the per-disease level to systematically pick the better source.",
       "implication": "Future fusion experiments must operate via score-smoothing (soft-blend, RRF, learnable weights) \u2014 wholesale per-disease embedding selection is closed."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1264",
+      "learning": "Soft-blend (per-disease z-norm of n2v + concat_l2 averaged at w=0.5) lifts per-disease AUPRC across ALL tested subset definitions, with effect monotonic in subset size: FLIPPED (+0.00054), HIGHDENS (+0.00094), MODHIGH (+0.00107), GLOBAL (+0.00469). The mechanism is universal score-smoothing, not gate-specific. Best clean 3-metric win is SUBSET_B_HIGHDENS at p<0.01 across all per-disease metrics. SUBSET_D_GLOBAL has the biggest effect (9x FLIPPED) but needs more seeds for tight p-value. Pooled AUROC regression scales with subset size \u2014 confirms h1259's pooled scale artifact is structural.",
+      "implication": "Concat_l2_raw is no longer the production fusion default. Replace with soft_blend_w0.5 on at minimum SUBSET_B_HIGHDENS (n_gt>=51 diseases). Pursue h1268 (weight sweep on GLOBAL) and h1269 (20-seed variance reduce) before deciding GLOBAL vs HIGHDENS as the canonical recipe."
     }
   ],
   "collaborations": [

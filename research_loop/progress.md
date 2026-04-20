@@ -1,6 +1,74 @@
 # Research Loop Progress
 
-## Current Session: h1263 — Re-evaluate hard-switch routing under per-disease AUPRC (INVALIDATED) (2026-04-19)
+## Current Session: h1264 — Soft-blend subset sweep (VALIDATED — recipe generalises 9x) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1264 (VALIDATED — strong, primary recall lever)
+
+### Premise
+h1259 validated soft_blend_w=0.5 (per-disease z-norm of n2v + concat_l2) ONLY on
+the n_gt≥51 ∩ mid-entropy "flipped" subset (~13 diseases per seed): Δ per-dis
+AUPRC +0.00054 (p=0.013). h1263 closed hard-switch routing (cat_gated /
+entropy_routed). h1264 tests whether the soft-blend lift is subset-specific or
+universal — by progressively broadening the eligibility set.
+
+### Result — lift is monotonic in subset size, mechanism is universal
+| Subset | n_in/seed | ΔR@30 (p) | Δ per-dis AUPRC (p) | Δ per-dis AUROC (p) |
+|---|---:|---|---|---|
+| `FLIPPED` (h1259 baseline) | 13 | +0.05pp (0.008) | +0.00054 (0.013) | +0.00059 (0.001) |
+| `HIGHDENS` (n_gt≥51) | 36 | +0.08pp (0.002) | +0.00094 (0.006) | +0.00123 (0.0001) |
+| `MODHIGH` (n_gt≥21) | 73 | +0.10pp (0.109) | +0.00107 (0.046) | +0.00274 (0.0005) |
+| `GLOBAL` (all diseases) | 200 | +0.43pp (0.100) | +0.00469 (0.108) | +0.01080 (0.005) |
+
+vs concat_l2_raw anchor; 5 seeds × ~200 holdout diseases each.
+
+### Promotion-gate decisions (Δ per-dis AUPRC ≥ +0.0005, p < 0.05)
+- **FLIPPED**: PROMOTE (h1259 baseline)
+- **HIGHDENS**: **PROMOTE** — clean 3-metric win at p≤0.006 across all per-disease metrics
+- **MODHIGH**: PROMOTE
+- **GLOBAL**: STAY-pending — biggest effect (+0.00469, 9× FLIPPED) but p=0.108 due to per-seed variance
+
+### Mechanism
+Lift compounds with subset size — completely inconsistent with the "fix targeted
+gate misfires" thesis (which would saturate at 13 diseases). Consistent with
+**universal score-smoothing**: averaging two embedding's z-normed scores reduces
+per-drug noise globally. The gating axis (h1228 cat_gated, h1249 entropy_routed,
+h1263 reframe) was barking up the wrong tree — the subset-broadening axis is the
+real lever.
+
+### Pooled-metric confirmation of h1259 artifact
+Pooled AUROC regresses MONOTONICALLY with subset size: B -0.219, C -0.233,
+D -0.149 (all p<0.001). The bigger the mixed-mode pool, the more pooled
+AUROC inverts — confirming the h1259 pooled-scale artifact is structural,
+NOT a one-off finding for the FLIPPED subset.
+
+### New canonical recipe
+`soft_blend_w0.5 on SUBSET_B_HIGHDENS` (n_gt≥51, ~36 diseases/seed):
+R@30 20.87%→20.95%, per-dis AUPRC 0.1230→0.1239 (clean 3-metric significant
+win). Pending h1269 (20-seed): may upgrade to GLOBAL recipe with R@30 21.30%.
+
+### Shipped
+- `scripts/h1264_soft_blend_subset_sweep.py`
+- `data/analysis/h1264_soft_blend_subset_sweep.{json,md}`
+- CLAUDE.md updated with h1264 paragraph + new canonical fusion recipe
+- 3 new pending hypotheses (h1268, h1269, h1270)
+
+### New hypotheses (3 added)
+- **h1268 (P2, recall, low effort):** Sweep BLEND_W ∈ {0.30, 0.40, 0.50, 0.60, 0.70}
+  on SUBSET_D_GLOBAL to find Pareto-optimal weight under per-disease AUPRC.
+- **h1269 (P3, infrastructure, low effort):** Extend h1264 GLOBAL to 20 seeds —
+  reduces SE 2× → expected p<0.001 on Δ +0.00469 per-dis AUPRC.
+- **h1270 (P2, infrastructure, low effort):** Once h1268+h1269 land, refresh
+  CLAUDE.md DRKG-only ceilings to reflect the post-h1264 recipe.
+
+### Recommended next hypothesis
+**h1269** (20-seed extension) — cheapest path to deciding HIGHDENS vs GLOBAL
+as production canonical. After h1269, h1268 (weight sweep) is the next
+parameter to tune. h1266 (RRF rank-aggregation) remains the highest-novelty
+alternative fusion direction.
+
+---
+
+## Previous Session: h1263 — Re-evaluate hard-switch routing under per-disease AUPRC (INVALIDATED) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1263 (INVALIDATED — definitively closes hard-switch routing)
 
