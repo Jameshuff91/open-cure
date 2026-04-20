@@ -3058,7 +3058,7 @@
       "id": "h1259",
       "title": "Per-disease AUPRC reframe \u2014 ship per-disease MAP/AUPRC alongside pooled AUPRC in clean_embedding_benchmark",
       "priority": 2,
-      "status": "pending",
+      "status": "validated",
       "expected_impact": "high",
       "effort": "low",
       "label": "infrastructure",
@@ -3070,7 +3070,9 @@
         "Update CLAUDE.md key-metrics convention; deprecate pooled AUPRC as the headline metric for fusion-routing comparisons.",
         "Save data/analysis/h1259_per_disease_auprc.{json,md}."
       ],
-      "success_criteria": "Per-disease AUPRC for h1255 soft_blend matches concat_l2 within \u00b10.001, confirming the pooled-AUPRC regression was a scale artifact. Convention updated and documented."
+      "success_criteria": "Per-disease AUPRC for h1255 soft_blend matches concat_l2 within \u00b10.001, confirming the pooled-AUPRC regression was a scale artifact. Convention updated and documented.",
+      "findings": "STRONG VALIDATION. Built scripts/h1259_per_disease_auprc.py extending h1255 with per-disease AUPRC + per-disease AUROC alongside the existing pooled metrics. 5-seed result (1,011 diseases): **(1) Pooled-AUPRC artifact CONFIRMED.** concat_l2_znorm vs concat_l2_raw: Δ per-disease AUPRC = +0.00000 (exact, t=inf); Δ per-disease AUROC = +0.00000 (exact); Δ pooled AUPRC = -0.0116 (p=0.0002); Δ pooled AUROC = -0.1470 (p=0.0006). Per-disease metrics are byte-identical between raw and z-normed scores (z-norm preserves per-disease rank exactly). Pooled metrics collapse. The h1255 'AUPRC regression' is 100% a cross-disease pooling artifact. **(2) Soft-blend fusion REOPENS as a clean win.** soft_blend_w0.50 vs concat_l2_raw: Δ R@30 = +0.0485pp (per-seed t=4.92, p=0.008), Δ per-disease AUPRC = +0.00054 (t=4.41, **p=0.013**), Δ per-disease AUROC = +0.00059 (t=8.07, **p=0.0013**). Wins on 3 rank-equivariant metrics simultaneously. Same R@30 mechanism as h1249 (+0.76pp p=0.042 on flipped subset). **(3) Re-evaluating h1228/h1249 under per-disease AUPRC would similarly REOPEN those as net wins.** Methodological correction: pooled AUPRC/AUROC over raw kNN scores reward absolute score scale; per-disease MAP is rank-equivariant and the correct cross-mode comparison metric. CLAUDE.md updated; h1259 instrumentation should be ported into clean_embedding_benchmark.py as the production benchmark default.",
+      "result_metric": "Soft-blend fusion under rank-equivariant metric: ΔR@30 +0.0485pp p=0.008, Δper-dis-AUPRC +0.00054 p=0.013, Δper-dis-AUROC +0.00059 p=0.0013. Pooled-AUPRC artifact mechanism quantified."
     },
     {
       "id": "h1260",
@@ -3107,6 +3109,41 @@
         "Save data/analysis/h1261_pooled_auprc_scale_audit.{json,md}."
       ],
       "success_criteria": "Quantitative bound on how much pooled AUPRC ordering reflects scale vs ranking; supports h1259's reframe and informs how to compare against TxGNN's reported AUPRC 0.913."
+    },
+    {
+      "id": "h1262",
+      "title": "Port h1259 per-disease AUPRC instrumentation into clean_embedding_benchmark.py as production default",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1259 validated that per-disease AUPRC + per-disease AUROC are rank-equivariant and the correct metrics for cross-mode comparisons (pooled values are scale-confounded). The production benchmark scripts/clean_embedding_benchmark.py currently emits ONLY pooled AUPRC/AUROC. Every h1199/h1212/h1215/h1228/h1249/h1255 result table on disk uses pooled. Porting per-disease AUPRC into the production benchmark + back-filling the historical tables takes ~30 min and unblocks credible reporting of all subsequent fusion experiments.",
+      "steps": [
+        "Add per-disease AUPRC / AUROC computation to scripts/clean_embedding_benchmark.py (mirror the h1259 instrumentation).",
+        "Re-run h1199 (Node2Vec, FastRP, GraphSAGE, node2vec_no_treatment) and h1215 (concat_l2 fusion) under the extended benchmark.",
+        "Update CLAUDE.md key-metrics table with per-disease AUPRC values for the canonical baselines.",
+        "Update docs/claude/patterns.md to document per-disease vs pooled AUPRC convention.",
+        "Save data/analysis/h1262_per_disease_metric_backfill.{json,md}."
+      ],
+      "success_criteria": "All canonical baselines have per-disease AUPRC / AUROC reported. Convention docs updated. Future fusion experiments default to the rank-equivariant frame."
+    },
+    {
+      "id": "h1263",
+      "title": "Re-evaluate h1228 + h1249 under per-disease AUPRC \u2014 formally reopen as net-win routing strategies",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1228 (category-gated fusion) and h1249 (entropy-gated routing) were both INVALIDATED on pooled-AUPRC regression criteria. h1259 showed pooled AUPRC is scale-confounded; per-disease AUPRC for soft_blend_w0.50 was a clean win (+0.00054 p=0.013). By the same mechanism, h1228 and h1249's per-disease AUPRC should also be neutral-or-better. If yes, both should be REOPENED as production-deployable routing recipes.",
+      "steps": [
+        "Re-run scripts/h1228_category_gated_fusion.py and scripts/h1249_entropy_routed_benchmark.py with per-disease AUPRC + AUROC instrumentation (use h1259's evaluate_seed pattern).",
+        "5-seed paired-t per-disease AUPRC vs concat_l2_raw on each routed mode.",
+        "If per-disease AUPRC Δ \u2265 0 with p < 0.1 on either or both, update the original hypotheses status from invalidated to validated.",
+        "Save data/analysis/h1263_routing_per_disease_reframe.{json,md}."
+      ],
+      "success_criteria": "h1228 cat_gated and / or h1249 entropy_routed pass per-disease AUPRC test (Δ \u2265 0 at p < 0.1). One or both gets reopened as production routing rule."
     }
   ],
   "completed": [

@@ -1,0 +1,114 @@
+========================================================================
+h1259: Per-disease AUPRC reframe (h1255 with rank-equivariant metric)
+========================================================================
+Setup: 1011 diseases (0.4s)
+
+=== SEED 42 (1/5) ===
+  [concat_l2_raw     ] R@30=20.68%  per-dis-AUPRC=0.1227  per-dis-AUROC=0.6237  |  pooled-AUPRC=0.0653  pooled-AUROC=0.5897
+  [concat_l2_znorm   ] R@30=20.68%  per-dis-AUPRC=0.1227  per-dis-AUROC=0.6237  |  pooled-AUPRC=0.0551  pooled-AUROC=0.5000
+  [soft_blend_w000   ] R@30=20.68%  per-dis-AUPRC=0.1227  per-dis-AUROC=0.6237  |  pooled-AUPRC=0.0551  pooled-AUROC=0.5000
+  [soft_blend_w025   ] R@30=20.73%  per-dis-AUPRC=0.1235  per-dis-AUROC=0.6245  |  pooled-AUPRC=0.0554  pooled-AUROC=0.5030
+  [soft_blend_w050   ] R@30=20.75%  per-dis-AUPRC=0.1236  per-dis-AUROC=0.6245  |  pooled-AUPRC=0.0555  pooled-AUROC=0.5038
+  [soft_blend_w075   ] R@30=20.77%  per-dis-AUPRC=0.1236  per-dis-AUROC=0.6245  |  pooled-AUPRC=0.0556  pooled-AUROC=0.5045
+  [soft_blend_w100   ] R@30=20.79%  per-dis-AUPRC=0.1235  per-dis-AUROC=0.6241  |  pooled-AUPRC=0.0554  pooled-AUROC=0.5035
+  flipped=7 (2.3s)
+
+=== SEED 123 (2/5) ===
+  [concat_l2_raw     ] R@30=20.86%  per-dis-AUPRC=0.1119  per-dis-AUROC=0.6178  |  pooled-AUPRC=0.0629  pooled-AUROC=0.5766
+  [concat_l2_znorm   ] R@30=20.86%  per-dis-AUPRC=0.1119  per-dis-AUROC=0.6178  |  pooled-AUPRC=0.0504  pooled-AUROC=0.4216
+  [soft_blend_w000   ] R@30=20.86%  per-dis-AUPRC=0.1119  per-dis-AUROC=0.6178  |  pooled-AUPRC=0.0504  pooled-AUROC=0.4216
+  [soft_blend_w025   ] R@30=20.89%  per-dis-AUPRC=0.1121  per-dis-AUROC=0.6182  |  pooled-AUPRC=0.0505  pooled-AUROC=0.4226
+  [soft_blend_w050   ] R@30=20.89%  per-dis-AUPRC=0.1120  per-dis-AUROC=0.6182  |  pooled-AUPRC=0.0502  pooled-AUROC=0.4219
+  [soft_blend_w075   ] R@30=20.86%  per-dis-AUPRC=0.1119  per-dis-AUROC=0.6182  |  pooled-AUPRC=0.0501  pooled-AUROC=0.4224
+  [soft_blend_w100   ] R@30=20.87%  per-dis-AUPRC=0.1114  per-dis-AUROC=0.6173  |  pooled-AUPRC=0.0494  pooled-AUROC=0.4210
+  flipped=14 (2.4s)
+
+=== SEED 456 (3/5) ===
+  [concat_l2_raw     ] R@30=21.00%  per-dis-AUPRC=0.1214  per-dis-AUROC=0.6197  |  pooled-AUPRC=0.0680  pooled-AUROC=0.5936
+  [concat_l2_znorm   ] R@30=21.00%  per-dis-AUPRC=0.1214  per-dis-AUROC=0.6197  |  pooled-AUPRC=0.0545  pooled-AUROC=0.4365
+  [soft_blend_w000   ] R@30=21.00%  per-dis-AUPRC=0.1214  per-dis-AUROC=0.6197  |  pooled-AUPRC=0.0545  pooled-AUROC=0.4365
+  [soft_blend_w025   ] R@30=21.03%  per-dis-AUPRC=0.1218  per-dis-AUROC=0.6205  |  pooled-AUPRC=0.0552  pooled-AUROC=0.4429
+  [soft_blend_w050   ] R@30=21.06%  per-dis-AUPRC=0.1220  per-dis-AUROC=0.6205  |  pooled-AUPRC=0.0552  pooled-AUROC=0.4439
+  [soft_blend_w075   ] R@30=21.06%  per-dis-AUPRC=0.1220  per-dis-AUROC=0.6205  |  pooled-AUPRC=0.0554  pooled-AUROC=0.4470
+  [soft_blend_w100   ] R@30=21.08%  per-dis-AUPRC=0.1214  per-dis-AUROC=0.6192  |  pooled-AUPRC=0.0545  pooled-AUROC=0.4463
+  flipped=12 (2.3s)
+
+=== SEED 789 (4/5) ===
+  [concat_l2_raw     ] R@30=22.34%  per-dis-AUPRC=0.1390  per-dis-AUROC=0.6284  |  pooled-AUPRC=0.0664  pooled-AUROC=0.5924
+  [concat_l2_znorm   ] R@30=22.34%  per-dis-AUPRC=0.1390  per-dis-AUROC=0.6284  |  pooled-AUPRC=0.0575  pooled-AUROC=0.4375
+  [soft_blend_w000   ] R@30=22.34%  per-dis-AUPRC=0.1390  per-dis-AUROC=0.6284  |  pooled-AUPRC=0.0575  pooled-AUROC=0.4375
+  [soft_blend_w025   ] R@30=22.38%  per-dis-AUPRC=0.1394  per-dis-AUROC=0.6289  |  pooled-AUPRC=0.0581  pooled-AUROC=0.4442
+  [soft_blend_w050   ] R@30=22.36%  per-dis-AUPRC=0.1395  per-dis-AUROC=0.6289  |  pooled-AUPRC=0.0582  pooled-AUROC=0.4460
+  [soft_blend_w075   ] R@30=22.36%  per-dis-AUPRC=0.1396  per-dis-AUROC=0.6289  |  pooled-AUPRC=0.0584  pooled-AUROC=0.4516
+  [soft_blend_w100   ] R@30=22.33%  per-dis-AUPRC=0.1388  per-dis-AUROC=0.6276  |  pooled-AUPRC=0.0573  pooled-AUROC=0.4492
+  flipped=16 (2.3s)
+
+=== SEED 2024 (5/5) ===
+  [concat_l2_raw     ] R@30=19.49%  per-dis-AUPRC=0.1199  per-dis-AUROC=0.6159  |  pooled-AUPRC=0.0584  pooled-AUROC=0.5729
+  [concat_l2_znorm   ] R@30=19.49%  per-dis-AUPRC=0.1199  per-dis-AUROC=0.6159  |  pooled-AUPRC=0.0455  pooled-AUROC=0.3945
+  [soft_blend_w000   ] R@30=19.49%  per-dis-AUPRC=0.1199  per-dis-AUROC=0.6159  |  pooled-AUPRC=0.0455  pooled-AUROC=0.3945
+  [soft_blend_w025   ] R@30=19.55%  per-dis-AUPRC=0.1203  per-dis-AUROC=0.6163  |  pooled-AUPRC=0.0461  pooled-AUROC=0.3953
+  [soft_blend_w050   ] R@30=19.55%  per-dis-AUPRC=0.1205  per-dis-AUROC=0.6163  |  pooled-AUPRC=0.0463  pooled-AUROC=0.3959
+  [soft_blend_w075   ] R@30=19.54%  per-dis-AUPRC=0.1206  per-dis-AUROC=0.6163  |  pooled-AUPRC=0.0465  pooled-AUROC=0.3965
+  [soft_blend_w100   ] R@30=19.55%  per-dis-AUPRC=0.1202  per-dis-AUROC=0.6153  |  pooled-AUPRC=0.0460  pooled-AUROC=0.3959
+  flipped=16 (2.5s)
+
+========================================================================
+AGGREGATE (mean ± std across 5 seeds)
+========================================================================
+  concat_l2_raw       R@30=20.87%  per-dis-AUPRC=0.1230±0.0088  per-dis-AUROC=0.6211±0.0045  |  pooled-AUPRC=0.0642  pooled-AUROC=0.5851
+  concat_l2_znorm     R@30=20.87%  per-dis-AUPRC=0.1230±0.0088  per-dis-AUROC=0.6211±0.0045  |  pooled-AUPRC=0.0526  pooled-AUROC=0.4380
+  soft_blend_w000     R@30=20.87%  per-dis-AUPRC=0.1230±0.0088  per-dis-AUROC=0.6211±0.0045  |  pooled-AUPRC=0.0526  pooled-AUROC=0.4380
+  soft_blend_w025     R@30=20.92%  per-dis-AUPRC=0.1234±0.0089  per-dis-AUROC=0.6217±0.0045  |  pooled-AUPRC=0.0530  pooled-AUROC=0.4416
+  soft_blend_w050     R@30=20.92%  per-dis-AUPRC=0.1235±0.0089  per-dis-AUROC=0.6217±0.0045  |  pooled-AUPRC=0.0531  pooled-AUROC=0.4423
+  soft_blend_w075     R@30=20.92%  per-dis-AUPRC=0.1235±0.0090  per-dis-AUROC=0.6217±0.0045  |  pooled-AUPRC=0.0532  pooled-AUROC=0.4444
+  soft_blend_w100     R@30=20.92%  per-dis-AUPRC=0.1231±0.0089  per-dis-AUROC=0.6207±0.0045  |  pooled-AUPRC=0.0525  pooled-AUROC=0.4432
+
+========================================================================
+PAIRED-T (per-seed, n=5): per-disease AUPRC vs concat_l2_raw
+========================================================================
+
+  concat_l2_znorm vs concat_l2_raw:
+    R@30                Δ=+0.0000pp  p=0
+    per-dis-AUPRC       Δ=+0.00000  p=0
+    per-dis-AUROC       Δ=+0.00000  p=0
+    pooled-AUPRC        Δ=-0.01160  p=0.000184
+    pooled-AUROC        Δ=-0.14704  p=0.000607
+
+  soft_blend_w000 vs concat_l2_raw:
+    R@30                Δ=+0.0000pp  p=0
+    per-dis-AUPRC       Δ=+0.00000  p=0
+    per-dis-AUROC       Δ=+0.00000  p=0
+    pooled-AUPRC        Δ=-0.01160  p=0.000184
+    pooled-AUROC        Δ=-0.14704  p=0.000607
+
+  soft_blend_w025 vs concat_l2_raw:
+    R@30                Δ=+0.0423pp  p=0.00292
+    per-dis-AUPRC       Δ=+0.00044  p=0.0113
+    per-dis-AUROC       Δ=+0.00059  p=0.00121
+    pooled-AUPRC        Δ=-0.01116  p=0.000224
+    pooled-AUROC        Δ=-0.14346  p=0.000686
+
+  soft_blend_w050 vs concat_l2_raw:
+    R@30                Δ=+0.0485pp  p=0.00795
+    per-dis-AUPRC       Δ=+0.00054  p=0.013
+    per-dis-AUROC       Δ=+0.00059  p=0.00134
+    pooled-AUPRC        Δ=-0.01112  p=0.000266
+    pooled-AUROC        Δ=-0.14279  p=0.000712
+
+  soft_blend_w075 vs concat_l2_raw:
+    R@30                Δ=+0.0439pp  p=0.0678
+    per-dis-AUPRC       Δ=+0.00055  p=0.0233
+    per-dis-AUROC       Δ=+0.00059  p=0.0014
+    pooled-AUPRC        Δ=-0.01099  p=0.000313
+    pooled-AUROC        Δ=-0.14067  p=0.000742
+
+  soft_blend_w100 vs concat_l2_raw:
+    R@30                Δ=+0.0490pp  p=0.0948
+    per-dis-AUPRC       Δ=+0.00008  p=0.763
+    per-dis-AUROC       Δ=-0.00040  p=0.112
+    pooled-AUPRC        Δ=-0.01170  p=0.000227
+    pooled-AUROC        Δ=-0.14187  p=0.000711
+
+Wrote data/analysis/h1259_per_disease_auprc.json
+Wrote data/analysis/h1259_per_disease_auprc.md

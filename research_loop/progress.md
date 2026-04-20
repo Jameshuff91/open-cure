@@ -5380,3 +5380,42 @@ Per-disease z-norm centres scores at 0. Unscored candidates (most of the pool, s
 
 ### Recommended next hypothesis
 **h1259 (P2, infrastructure)** — fastest unblock: re-evaluating h1228/h1249/h1255 with per-disease AUPRC will tell us whether the fusion-routing direction is actually a NET WIN (R@30 up, ranking-equivariant AUPRC neutral) instead of the apparent net loss the pooled metric showed. Alternatively **h1260** if you want to push for production-deployable routing immediately.
+
+
+## Current Session (continued): h1259 — Per-disease AUPRC reframe (VALIDATED, reopens fusion-routing) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1259 (STRONGLY VALIDATED — methodology fix)
+
+### What was shipped
+`scripts/h1259_per_disease_auprc.py` extending h1255 with per-disease AUPRC + per-disease AUROC alongside pooled values. Same 7-mode 5-seed protocol.
+
+### Key result table
+
+| Mode | R@30 | per-dis-AUPRC | per-dis-AUROC | pooled-AUPRC | pooled-AUROC |
+|---|---|---|---|---|---|
+| concat_l2_raw | 20.87% | 0.1230 | 0.6211 | 0.0642 | 0.5851 |
+| concat_l2_znorm | 20.87% | **0.1230** | **0.6211** | 0.0526 | 0.4380 |
+| soft_blend_w0.50 | 20.92% | **0.1235** | **0.6217** | 0.0531 | 0.4423 |
+
+### Two confirmations
+**1. Pooled-AUPRC artifact CONFIRMED.** concat_l2_znorm vs concat_l2_raw: per-disease AUPRC and AUROC are byte-identical (Δ=+0.00000 exactly, t=∞). Pooled AUPRC Δ=-0.0116 (p=0.0002), pooled AUROC Δ=-0.1470 (p=0.0006). The h1255 pooled collapse is 100% a cross-disease pooling artifact.
+
+**2. Soft-blend fusion REOPENS as a 3-metric clean win.** soft_blend_w0.50 vs concat_l2_raw:
+- Δ R@30 = +0.0485pp, t=4.92, **p=0.008**
+- Δ per-disease AUPRC = +0.00054, t=4.41, **p=0.013**
+- Δ per-disease AUROC = +0.00059, t=8.07, **p=0.0013**
+
+All three are rank-equivariant and significant. Same +0.76pp R@30 mechanism on the flipped subset (p=0.042 from h1249).
+
+### Methodological implication
+Pooled AUPRC/AUROC over raw kNN scores reward absolute score scale rather than ranking quality. Per-disease MAP/AUPRC is the correct cross-mode comparison metric. **Convention update: per-disease AUPRC + per-disease AUROC are now the primary metrics for fusion-routing comparisons; pooled values stay as scale-confounded secondary.**
+
+### h1228 / h1249 status reconsideration
+Both were invalidated on pooled-AUPRC regression criteria. Under the per-disease frame, both should be NET WINS. h1263 (re-evaluate) should formally reopen them.
+
+### New hypotheses
+- **h1262 (P2, infrastructure):** Port h1259 instrumentation into scripts/clean_embedding_benchmark.py as production default. ~30 min, unblocks all subsequent fusion reporting.
+- **h1263 (P2, recall):** Re-run h1228 and h1249 with per-disease AUPRC. If Δ ≥ 0 at p < 0.1, formally reopen as production routing rules.
+
+### Recommended next hypothesis
+**h1263 (P2, recall)** — fastest unblock; if both h1228 and h1249 reopen, the fusion-routing direction has 3+ valid production recipes (cat-gated, entropy-gated, soft-blend) that we can ensemble or pick the best of. Alternatively **h1262** for infrastructure.
