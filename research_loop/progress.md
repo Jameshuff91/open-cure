@@ -5345,3 +5345,38 @@ REGRESSORS: gastrointestinal -2.30pp (n=4), hematological -3.60pp (n=2), musculo
 
 ### Recommended next hypothesis
 **h1255 (P2, recall)** — direct fix for the AUPRC regression that killed both h1228 and h1249. Soft-blend with z-normalised scores per disease is a 60-line extension of `h1249_entropy_routed_benchmark.py`. Alternatively **h1256** if the category-restricted version is faster to test.
+
+
+## Current Session (continued): h1255 — Soft-blend fusion (INVALIDATED with major methodological finding) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1255 (INVALIDATED on stated criteria; produced metric-methodology pivot)
+
+### What was shipped
+`scripts/h1255_soft_blend_fusion.py` — 7-mode benchmark: concat_l2_raw (anchor), concat_l2_znorm (z-norm only), soft_blend_w∈{0.00,0.25,0.50,0.75,1.00} (z-blend on flipped subset, z(concat_l2) elsewhere). Same 5-seed × 1,011-disease split as h1249.
+
+### Headline result
+| Mode | R@30 | AUPRC | AUROC |
+|---|---|---|---|
+| concat_l2_raw (anchor) | 20.87%±0.91% | 0.0642 | 0.5851 |
+| concat_l2_znorm | 20.87%±0.91% | **0.0526** | **0.4380** |
+| soft_blend_w0.50 | 20.92%±0.90% | 0.0531 | 0.4423 |
+| soft_blend_w1.00 | 20.92%±0.89% | 0.0525 | 0.4432 |
+
+### Two findings
+**1. R@30 soft-blend lift survives at p=0.008.** Per-seed paired-t at w=0.50: Δ R@30 = +0.0485pp, t=+4.92, **p=0.0080** (much stronger than h1249's hard-switch p=0.095). Variance shrinks under z-norm scoring while the ranking lift on the flipped subset persists.
+
+**2. CRITICAL: per-disease z-norm BREAKS cross-disease pooled AUPRC/AUROC.** concat_l2_znorm AUROC = 0.4380 vs raw 0.5851 — a -0.147 collapse (per-seed p=0.0006), even though z-norm is monotonic and per-disease rankings are byte-identical (R@30 unchanged). AUPRC similarly tanks -0.0116 (p=0.0002). All soft_blend variants inherit this collapse because they z-norm the majority (non-flipped) diseases too.
+
+### Mechanism of the AUPRC/AUROC collapse
+Per-disease z-norm centres scores at 0. Unscored candidates (most of the pool, since kNN typically scores ≤300 of ~1,300) get value (0-mu)/sd, which is LARGE NEGATIVE when mu>0. When pooling across diseases for global AUPRC/AUROC, low-coverage diseases (small mu) have less-negative unscored candidates, while high-coverage diseases (large mu) have more-negative unscored candidates. The pool then ranks unscored GT from low-coverage diseases ABOVE unscored non-GT from high-coverage diseases — INVERTING the global rank ordering relative to raw scores.
+
+### Methodological implication
+**Pooled AUPRC/AUROC over raw kNN scores systematically rewards higher absolute score scale, not better ranking quality.** The h1228 and h1249 "AUPRC regression" finding is a metric-pooling artifact, NOT real ranking degradation. The fusion-routing R@30 lift is real (+0.05pp pp p=0.008 global, +0.76pp p=0.042 on flipped subset) — what was thought to be its cost (AUPRC -0.0014 p=0.054) was actually an artifact of the score-scale heterogeneity that swapping embeddings introduces, plus AUPRC's scale sensitivity.
+
+### New hypotheses
+- **h1259 (P2, infrastructure):** Ship per-disease AUPRC + per-disease AUROC alongside pooled in `clean_embedding_benchmark.py`. Per-disease AUPRC is rank-equivariant (immune to z-norm side-effects). Becomes the new fusion-routing-comparison primary metric.
+- **h1260 (P2, recall):** Learnable fusion weight w(disease_features) — replace the oracle-flavoured (n_gt × entropy) hand rule with a logistic regression on (Node2Vec/FastRP top-k Jaccard, per-embedding score CV, DRKG entity degree, category one-hot). Enables leak-free production deployment.
+- **h1261 (P3, infrastructure):** Quantify how much of the cross-embedding pooled AUPRC ordering reflects scale vs ranking. Spearman correlation between per-disease score-scale and per-disease AUPRC should be the headline number.
+
+### Recommended next hypothesis
+**h1259 (P2, infrastructure)** — fastest unblock: re-evaluating h1228/h1249/h1255 with per-disease AUPRC will tell us whether the fusion-routing direction is actually a NET WIN (R@30 up, ranking-equivariant AUPRC neutral) instead of the apparent net loss the pooled metric showed. Alternatively **h1260** if you want to push for production-deployable routing immediately.

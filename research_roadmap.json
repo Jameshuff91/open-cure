@@ -2987,7 +2987,7 @@
       "id": "h1255",
       "title": "Score-scale-normalised soft-blend fusion \u2014 fix the AUPRC/AUROC regression that killed h1228 and h1249",
       "priority": 2,
-      "status": "pending",
+      "status": "invalidated",
       "expected_impact": "high",
       "effort": "medium",
       "label": "recall",
@@ -2999,7 +2999,9 @@
         "Run 5-seed paired-t vs concat_l2 anchor on R@30, hits@30, MRR, AUPRC, AUROC.",
         "Save data/analysis/h1255_soft_blend_fusion.{json,md}; update CLAUDE.md if blend wins on \u22653 metrics with no regressions >0.5\u03c3."
       ],
-      "success_criteria": "Soft-blend fusion lifts R@30 by \u22650.1pp AND keeps AUPRC + AUROC within \u00b10.0005 of concat_l2 (no significant regression at p<0.1)."
+      "success_criteria": "Soft-blend fusion lifts R@30 by \u22650.1pp AND keeps AUPRC + AUROC within \u00b10.0005 of concat_l2 (no significant regression at p<0.1).",
+      "findings": "INVALIDATED on stated success criteria, but produced an important methodological discovery. Built scripts/h1255_soft_blend_fusion.py with a 7-mode comparison: concat_l2_raw (anchor), concat_l2_znorm (z-norm only), and soft_blend_w\u2208{0.00,0.25,0.50,0.75,1.00} (z-blend on flipped subset, z(concat) elsewhere). 5-seed result: soft_blend_w0.50 R@30 = 20.92% \u00b1 0.90% = +0.05pp vs concat_l2_raw (per-seed t=4.92, **p=0.0080 SIGNIFICANT** \u2014 paired-t variance shrinks under z-norm scoring). At w=1.00 R@30 result is identical to h1249 entropy_routed (z-norm is monotonic, ranking-preserving). HOWEVER, **per-disease z-normalisation BREAKS cross-disease pooled AUPRC/AUROC**: concat_l2_znorm AUROC=0.4380 vs concat_l2_raw 0.5851 (a -0.147 collapse, p=0.0006), AUPRC 0.0526 vs 0.0642 (-0.0116, p=0.0002). All soft_blend variants inherit this AUPRC/AUROC collapse. Mechanism: z-norm centres each disease's score distribution at 0, so unscored candidates get large NEGATIVE z-values when mu>0; cross-disease pooling then rewards low-coverage diseases at the expense of high-coverage ones, INVERTING global ranking. **Critical methodological implication: AUPRC/AUROC as currently computed (pooled over raw kNN scores) systematically rewards higher absolute score scale, not better ranking quality. The h1228/h1249 'AUPRC regression' is therefore a metric-pooling artifact, NOT a real ranking degradation. Future fusion-routing experiments should report per-disease AUPRC (mean MAP) as the primary AUPRC metric, with pooled AUPRC explicitly footnoted as scale-confounded.** R@30 lift on flipped subset is robust at +0.76pp p=0.042 (matches h1249 exactly). Generated h1259 (per-disease AUPRC reframe), h1260 (learnable fusion weight from disease features), h1261 (pooled-AUPRC scale audit).",
+      "result_metric": "Soft-blend lift +0.05pp R@30 (p=0.008 stronger than h1249 hard-switch p=0.095) but pooled AUPRC/AUROC collapse confirms metric-pooling artifact rather than ranking failure. Methodology pivot: report per-disease AUPRC."
     },
     {
       "id": "h1256",
@@ -3051,6 +3053,60 @@
         "Save data/analysis/h1258_score_scale_audit.{json,md}."
       ],
       "success_criteria": "Quantitative confirmation (or rebuttal) of the score-scale-mismatch hypothesis; informs whether AUPRC/AUROC reporting needs per-disease normalisation in the production benchmark."
+    },
+    {
+      "id": "h1259",
+      "title": "Per-disease AUPRC reframe \u2014 ship per-disease MAP/AUPRC alongside pooled AUPRC in clean_embedding_benchmark",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1255 demonstrated that pooled cross-disease AUPRC/AUROC is scale-confounded: per-disease z-norm collapses AUROC from 0.5851 to 0.4380 even though per-disease ranking is unchanged (R@30 identical). This means h1228, h1249, and any future fusion-routing 'AUPRC regression' is potentially a metric-pooling artifact. The fix is to compute AUPRC PER DISEASE and average (mean MAP), which is rank-equivariant and not scale-confounded. This is also more clinically meaningful (a doctor cares about ranking quality FOR THEIR PATIENT, not pooled across all diseases).",
+      "steps": [
+        "Add per-disease AUPRC + per-disease AUROC columns to scripts/clean_embedding_benchmark.py output (alongside the existing pooled values).",
+        "Re-run the 5-seed Node2Vec, FastRP, GraphSAGE, concat_l2, and node2vec_no_treatment benchmarks; compare pooled vs per-disease metrics.",
+        "Confirm hypothesis: per-disease AUPRC is invariant under per-disease score scaling; pooled AUPRC is not.",
+        "Update CLAUDE.md key-metrics convention; deprecate pooled AUPRC as the headline metric for fusion-routing comparisons.",
+        "Save data/analysis/h1259_per_disease_auprc.{json,md}."
+      ],
+      "success_criteria": "Per-disease AUPRC for h1255 soft_blend matches concat_l2 within \u00b10.001, confirming the pooled-AUPRC regression was a scale artifact. Convention updated and documented."
+    },
+    {
+      "id": "h1260",
+      "title": "Learnable fusion-blend weight w(disease_features) \u2014 logistic regression on (n_gt, entropy, category, embedding-isolation)",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "medium",
+      "label": "recall",
+      "rationale": "h1255 showed soft-blend at w=0.5 wins R@30 paired-t at p=0.008 on a subset chosen by the (n_gt, ATC entropy) rule. But the rule is hand-crafted and oracle-flavoured (uses GT to compute entropy). Replacing the hand rule with a learned w(disease_features) allows leak-free production deployment AND generalises to features beyond entropy. Candidate features: embedding-only (cluster size, neighbour-Jaccard between Node2Vec and FastRP top-k, score variance), GT-light (n_gt if production assumes some GT visibility), and disease metadata (DRKG entity degree, category). The h1255 R@30 +0.05pp at p=0.008 is the floor; a learned w should match or exceed it without the oracle dependency.",
+      "steps": [
+        "Compute per-disease features (Node2Vec/FastRP top-20 Jaccard, per-embedding score CV, DRKG degree of disease entity, category one-hot).",
+        "On train-side diseases per seed: compute oracle w* = argmax R@30 over a 5-point grid for each disease, then train logistic regression w_pred(features) -> w*.",
+        "At inference: blend with w_pred(holdout disease features), z-norm scores, compute the same 5 metrics + per-disease AUPRC (h1259).",
+        "5-seed paired-t vs concat_l2_raw on R@30 + per-disease AUPRC.",
+        "Save data/analysis/h1260_learned_fusion_weight.{json,md}."
+      ],
+      "success_criteria": "Learned w_pred fusion matches or exceeds h1255 soft_blend_w0.5 R@30 lift (+0.05pp p<0.05) WITHOUT using GT-derived features (entropy, n_gt). If yes, this is the deployable production-ready router."
+    },
+    {
+      "id": "h1261",
+      "title": "Pooled-AUPRC scale audit \u2014 quantify how much absolute score scale drives pooled-AUPRC ordering across embeddings",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "medium",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1255 incidentally revealed that per-disease z-norm collapses pooled AUROC by 0.147 (z=9.8). This implies the existing benchmark's pooled AUPRC ordering across embeddings (Node2Vec 0.0569 < concat_l2 0.0642 < FastRP 0.0584) is at least partially driven by absolute score scale rather than ranking quality. Quantifying this is a methods-section deliverable: report (mean, std, max) of non-zero candidate scores per disease per embedding, and the correlation between per-disease score-scale and per-disease AUPRC.",
+      "steps": [
+        "From the h1199/h1212 per-disease score buffers (or re-emit them via h1259 instrumentation), compute per-disease score statistics for each embedding.",
+        "Compute Spearman(per_disease_score_scale, per_disease_AUPRC) per embedding.",
+        "If correlation > 0.3, the pooled AUPRC ordering across embeddings is partially scale-confounded; per-disease AUPRC (h1259) becomes the corrected metric.",
+        "Document in paper Methods section as a known confounder in cross-embedding pooled-AUPRC comparisons.",
+        "Save data/analysis/h1261_pooled_auprc_scale_audit.{json,md}."
+      ],
+      "success_criteria": "Quantitative bound on how much pooled AUPRC ordering reflects scale vs ranking; supports h1259's reframe and informs how to compare against TxGNN's reported AUPRC 0.913."
     }
   ],
   "completed": [

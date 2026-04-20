@@ -1,0 +1,142 @@
+========================================================================
+h1255: Soft-blend fusion benchmark — node2vec_256 + fastrp_256
+       blend_weights=(0.0, 0.25, 0.5, 0.75, 1.0)  k=20  seeds=[42, 123, 456, 789, 2024]
+========================================================================
+Loading embeddings...
+  49,616 (A) + 49,616 (B) entities
+Building concat_l2 lookup...
+  49,616 entities in intersection
+eval_gt: 3,589 diseases, 57,805 pairs
+knn_gt: 1,078 diseases
+db_lookup: 10,474 DrugBank entries
+Disease universe (knn_gt ∩ A ∩ B): 1,011
+Pre-computing per-disease n_gt + ATC L3 entropy...
+  Setup complete in 0.4s
+
+=== SEED 42 (1/5) ===
+Train: 808  Holdout: 203
+  cuts low=3.212, high=3.994
+  [concat_l2_raw     ] R@30=20.68%  H30=20.68%  MRR=0.0321  AUPRC=0.0653  AUROC=0.5897
+  [concat_l2_znorm   ] R@30=20.68%  H30=20.68%  MRR=0.0321  AUPRC=0.0551  AUROC=0.5000
+  [soft_blend_w000   ] R@30=20.68%  H30=20.68%  MRR=0.0321  AUPRC=0.0551  AUROC=0.5000
+  [soft_blend_w025   ] R@30=20.73%  H30=20.73%  MRR=0.0322  AUPRC=0.0554  AUROC=0.5030
+  [soft_blend_w050   ] R@30=20.75%  H30=20.75%  MRR=0.0322  AUPRC=0.0555  AUROC=0.5038
+  [soft_blend_w075   ] R@30=20.77%  H30=20.77%  MRR=0.0323  AUPRC=0.0556  AUROC=0.5045
+  [soft_blend_w100   ] R@30=20.79%  H30=20.79%  MRR=0.0322  AUPRC=0.0554  AUROC=0.5035
+  flipped=7 of 202  (1.4s)
+
+=== SEED 123 (2/5) ===
+Train: 808  Holdout: 203
+  cuts low=3.168, high=4.007
+  [concat_l2_raw     ] R@30=20.86%  H30=20.86%  MRR=0.0277  AUPRC=0.0629  AUROC=0.5766
+  [concat_l2_znorm   ] R@30=20.86%  H30=20.86%  MRR=0.0277  AUPRC=0.0504  AUROC=0.4216
+  [soft_blend_w000   ] R@30=20.86%  H30=20.86%  MRR=0.0277  AUPRC=0.0504  AUROC=0.4216
+  [soft_blend_w025   ] R@30=20.89%  H30=20.89%  MRR=0.0277  AUPRC=0.0505  AUROC=0.4226
+  [soft_blend_w050   ] R@30=20.89%  H30=20.89%  MRR=0.0276  AUPRC=0.0502  AUROC=0.4219
+  [soft_blend_w075   ] R@30=20.86%  H30=20.86%  MRR=0.0276  AUPRC=0.0501  AUROC=0.4224
+  [soft_blend_w100   ] R@30=20.87%  H30=20.87%  MRR=0.0274  AUPRC=0.0494  AUROC=0.4210
+  flipped=14 of 200  (1.5s)
+
+=== SEED 456 (3/5) ===
+Train: 808  Holdout: 203
+  cuts low=3.212, high=4.008
+  [concat_l2_raw     ] R@30=21.00%  H30=21.00%  MRR=0.0314  AUPRC=0.0680  AUROC=0.5936
+  [concat_l2_znorm   ] R@30=21.00%  H30=21.00%  MRR=0.0314  AUPRC=0.0545  AUROC=0.4365
+  [soft_blend_w000   ] R@30=21.00%  H30=21.00%  MRR=0.0314  AUPRC=0.0545  AUROC=0.4365
+  [soft_blend_w025   ] R@30=21.03%  H30=21.03%  MRR=0.0316  AUPRC=0.0552  AUROC=0.4429
+  [soft_blend_w050   ] R@30=21.06%  H30=21.06%  MRR=0.0317  AUPRC=0.0552  AUROC=0.4439
+  [soft_blend_w075   ] R@30=21.06%  H30=21.06%  MRR=0.0316  AUPRC=0.0554  AUROC=0.4470
+  [soft_blend_w100   ] R@30=21.08%  H30=21.08%  MRR=0.0315  AUPRC=0.0545  AUROC=0.4463
+  flipped=12 of 200  (1.5s)
+
+=== SEED 789 (4/5) ===
+Train: 808  Holdout: 203
+  cuts low=3.168, high=4.015
+  [concat_l2_raw     ] R@30=22.34%  H30=22.34%  MRR=0.0333  AUPRC=0.0664  AUROC=0.5924
+  [concat_l2_znorm   ] R@30=22.34%  H30=22.34%  MRR=0.0333  AUPRC=0.0575  AUROC=0.4375
+  [soft_blend_w000   ] R@30=22.34%  H30=22.34%  MRR=0.0333  AUPRC=0.0575  AUROC=0.4375
+  [soft_blend_w025   ] R@30=22.38%  H30=22.38%  MRR=0.0335  AUPRC=0.0581  AUROC=0.4442
+  [soft_blend_w050   ] R@30=22.36%  H30=22.36%  MRR=0.0336  AUPRC=0.0582  AUROC=0.4460
+  [soft_blend_w075   ] R@30=22.36%  H30=22.36%  MRR=0.0337  AUPRC=0.0584  AUROC=0.4516
+  [soft_blend_w100   ] R@30=22.33%  H30=22.33%  MRR=0.0336  AUPRC=0.0573  AUROC=0.4492
+  flipped=16 of 200  (1.5s)
+
+=== SEED 2024 (5/5) ===
+Train: 808  Holdout: 203
+  cuts low=3.168, high=4.006
+  [concat_l2_raw     ] R@30=19.49%  H30=19.49%  MRR=0.0235  AUPRC=0.0584  AUROC=0.5729
+  [concat_l2_znorm   ] R@30=19.49%  H30=19.49%  MRR=0.0235  AUPRC=0.0455  AUROC=0.3945
+  [soft_blend_w000   ] R@30=19.49%  H30=19.49%  MRR=0.0235  AUPRC=0.0455  AUROC=0.3945
+  [soft_blend_w025   ] R@30=19.55%  H30=19.55%  MRR=0.0236  AUPRC=0.0461  AUROC=0.3953
+  [soft_blend_w050   ] R@30=19.55%  H30=19.55%  MRR=0.0236  AUPRC=0.0463  AUROC=0.3959
+  [soft_blend_w075   ] R@30=19.54%  H30=19.54%  MRR=0.0237  AUPRC=0.0465  AUROC=0.3965
+  [soft_blend_w100   ] R@30=19.55%  H30=19.55%  MRR=0.0238  AUPRC=0.0460  AUROC=0.3959
+  flipped=16 of 200  (1.6s)
+
+========================================================================
+AGGREGATE (mean ± std across seeds)
+========================================================================
+  concat_l2_raw       R@30=20.87%±0.91%  H30=20.87%  MRR=0.0296  AUPRC=0.0642  AUROC=0.5851
+  concat_l2_znorm     R@30=20.87%±0.91%  H30=20.87%  MRR=0.0296  AUPRC=0.0526  AUROC=0.4380
+  soft_blend_w000     R@30=20.87%±0.91%  H30=20.87%  MRR=0.0296  AUPRC=0.0526  AUROC=0.4380
+  soft_blend_w025     R@30=20.92%±0.90%  H30=20.92%  MRR=0.0297  AUPRC=0.0530  AUROC=0.4416
+  soft_blend_w050     R@30=20.92%±0.90%  H30=20.92%  MRR=0.0298  AUPRC=0.0531  AUROC=0.4423
+  soft_blend_w075     R@30=20.92%±0.90%  H30=20.92%  MRR=0.0298  AUPRC=0.0532  AUROC=0.4444
+  soft_blend_w100     R@30=20.92%±0.89%  H30=20.92%  MRR=0.0297  AUPRC=0.0525  AUROC=0.4432
+
+========================================================================
+PAIRED-T (per-seed, n=5): each mode vs concat_l2_raw
+========================================================================
+
+  concat_l2_znorm (vs concat_l2_raw):
+    R@30     Δ=+0.0000  t=+inf  p=0
+    H30drug  Δ=+0.0000  t=+inf  p=0
+    MRR      Δ=+0.0000  t=+inf  p=0
+    AUPRC    Δ=-0.0116  t=-13.307  p=0.000184
+    AUROC    Δ=-0.1470  t=-9.802  p=0.000607
+
+  soft_blend_w000 (vs concat_l2_raw):
+    R@30     Δ=+0.0000  t=+inf  p=0
+    H30drug  Δ=+0.0000  t=+inf  p=0
+    MRR      Δ=+0.0000  t=+inf  p=0
+    AUPRC    Δ=-0.0116  t=-13.307  p=0.000184
+    AUROC    Δ=-0.1470  t=-9.802  p=0.000607
+
+  soft_blend_w025 (vs concat_l2_raw):
+    R@30     Δ=+0.0423  t=+6.483  p=0.00292
+    H30drug  Δ=+0.0423  t=+6.483  p=0.00292
+    MRR      Δ=+0.0001  t=+5.649  p=0.00484
+    AUPRC    Δ=-0.0112  t=-12.664  p=0.000224
+    AUROC    Δ=-0.1435  t=-9.498  p=0.000686
+
+  soft_blend_w050 (vs concat_l2_raw):
+    R@30     Δ=+0.0485  t=+4.916  p=0.00795
+    H30drug  Δ=+0.0485  t=+4.916  p=0.00795
+    MRR      Δ=+0.0002  t=+2.395  p=0.0748
+    AUPRC    Δ=-0.0111  t=-12.113  p=0.000266
+    AUROC    Δ=-0.1428  t=-9.406  p=0.000712
+
+  soft_blend_w075 (vs concat_l2_raw):
+    R@30     Δ=+0.0439  t=+2.485  p=0.0678
+    H30drug  Δ=+0.0439  t=+2.485  p=0.0678
+    MRR      Δ=+0.0002  t=+2.217  p=0.0909
+    AUPRC    Δ=-0.0110  t=-11.626  p=0.000313
+    AUROC    Δ=-0.1407  t=-9.307  p=0.000742
+
+  soft_blend_w100 (vs concat_l2_raw):
+    R@30     Δ=+0.0490  t=+2.180  p=0.0948
+    H30drug  Δ=+0.0490  t=+2.180  p=0.0948
+    MRR      Δ=+0.0001  t=+1.175  p=0.305
+    AUPRC    Δ=-0.0117  t=-12.617  p=0.000227
+    AUROC    Δ=-0.1419  t=-9.410  p=0.000711
+
+  Per-disease paired-t (n=1002): soft_blend_w100 vs concat_l2_raw
+    R@30   n=1002  Δ_mean=+0.0491pp  t=+2.027  p=0.0429
+    hits30 n=1002  Δ_mean=+0.0399    t=+1.713  p=0.0869
+
+  Flipped-subset paired-t (n=65): soft_blend_w100 vs concat_l2_raw
+    R@30   n=65  Δ_mean=+0.7571pp  t=+2.075  p=0.042
+    hits30 n=65  Δ_mean=+0.6154    t=+1.738  p=0.087
+
+Wrote data/analysis/h1255_soft_blend_fusion.json
+Wrote data/analysis/h1255_soft_blend_fusion.md
