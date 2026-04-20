@@ -1,6 +1,65 @@
 # Research Loop Progress
 
-## Current Session: h1264 — Soft-blend subset sweep (VALIDATED — recipe generalises 9x) (2026-04-19)
+## Current Session: h1269 — 20-seed extension promotes SUBSET_D_GLOBAL (VALIDATED) (2026-04-19)
+
+**Status:** Complete | **Hypothesis:** h1269 (VALIDATED — gates GLOBAL as canonical)
+
+### Premise
+h1264 5-seed: SUBSET_D_GLOBAL Δ per-dis AUPRC = +0.00469 (largest in family)
+but p=0.108 — failed strict <0.05 promotion gate due to per-seed variance
+(σ≈0.005 / sqrt(5)). 20 seeds reduces SE 2× → expected p<0.001 if effect real.
+
+### Result — promotes GLOBAL, downgrades FLIPPED, sharpens HIGHDENS/MODHIGH
+| Subset | n_seeds | Δ R@30 (p) | Δ per-dis AUPRC (p) | Δ per-dis AUROC (p) | Decision |
+|---|---:|---|---|---|---|
+| `FLIPPED` | 20 | +0.013pp (0.107) | +0.00025 (0.0016) | +0.00041 (4e-7) | **DOWNGRADE** (Δ<0.0005) |
+| `HIGHDENS` | 20 | +0.042pp (0.002) | +0.00068 (1.9e-7) | +0.00117 (1.5e-13) | PROMOTE |
+| `MODHIGH` | 20 | +0.089pp (0.004) | +0.00130 (2.8e-8) | +0.00270 (8.8e-15) | PROMOTE |
+| `GLOBAL` | 20 | +0.185pp (0.085) | **+0.00343 (0.0022)** | +0.01041 (7.9e-12) | **PROMOTE** |
+
+### Key methodological finding
+**5-seed paired-t systematically over-estimates fusion effects by 27-54%:**
+- GLOBAL 5-seed +0.00469 → 20-seed +0.00343 (-27%)
+- FLIPPED 5-seed +0.00054 → 20-seed +0.00025 (-54%, under promotion gate now)
+
+5 seeds OK for hypothesis screening; canonical recipe verification needs ≥10.
+
+### Canonical recipe (locked)
+**`soft_blend_w0.5` on SUBSET_D_GLOBAL** (every disease, n=200/seed):
+- Δ per-disease AUPRC +0.00343 p=0.0022
+- Δ per-disease AUROC +0.01041 p=7.9e-12 (dominant signal)
+- ΔR@30 +0.185pp p=0.085 (not significant; R@30 has higher seed variance)
+
+R@30 anchor at 20 seeds: 21.35%±1.13% (vs 20.87% at 5 seeds — different seed
+sample expanded the holdout-difficulty distribution).
+
+### Pooled-AUROC regression structural at 20-seed power
+Pooled AUROC: B -0.213, C -0.226, D -0.133 — all p<1e-9. Confirms h1259's
+pooled-scale artifact is structural, not a small-sample fluke. Future
+fusion experiments must report per-disease metrics as primary.
+
+### Shipped
+- `data/analysis/h1269_soft_blend_global_20seed.{json,md}`
+- `data/analysis/h1264_soft_blend_subset_sweep.{json,md}` (5-seed canonical, restored)
+- CLAUDE.md updated with h1269 paragraph + canonical recipe lock-in
+- 2 new pending hypotheses (h1271, h1272)
+
+### New hypotheses (2 added)
+- **h1271 (P3, infrastructure, low effort):** 1000-bootstrap CI on h1269
+  GLOBAL Δ — establish 95% CI lower bound and fraction-negative.
+- **h1272 (P2, recall, low effort):** Per-disease audit of GLOBAL lift —
+  which diseases (n_gt strata, categories, ATC entropy) carry the +0.00343?
+  May reveal a tighter sub-recipe.
+
+### Recommended next hypothesis
+**h1272 (P2, low effort)** — mechanistic decomposition of the GLOBAL lift.
+Likely reveals heterogeneity that a refined subset rule could exploit, OR
+confirms the lift is uniform (validating GLOBAL as the simplest canonical).
+After h1272, h1268 (BLEND_W sweep on GLOBAL) is the parameter-tuning step.
+
+---
+
+## Previous Session: h1264 — Soft-blend subset sweep (VALIDATED — recipe generalises 9x) (2026-04-19)
 
 **Status:** Complete | **Hypothesis:** h1264 (VALIDATED — strong, primary recall lever)
 

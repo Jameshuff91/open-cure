@@ -1,0 +1,1329 @@
+{
+  "hypothesis": "h1264",
+  "blend_w": 0.5,
+  "anchor": "concat_l2_raw",
+  "subsets": [
+    "SUBSET_A_FLIPPED",
+    "SUBSET_B_HIGHDENS",
+    "SUBSET_C_MODHIGH",
+    "SUBSET_D_GLOBAL"
+  ],
+  "seeds": [
+    42,
+    123,
+    456,
+    789,
+    2024,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "n_diseases_universe": 1011,
+  "aggregate": {
+    "concat_l2_raw": {
+      "r30": [
+        0.21354371689906215,
+        0.011285976452244327
+      ],
+      "per_disease_auprc": [
+        0.12409391361855493,
+        0.009410432735606373
+      ],
+      "per_disease_auroc": [
+        0.6240487192304255,
+        0.005404107053261262
+      ],
+      "pooled_auprc": [
+        0.06470290031117326,
+        0.0052030051605899755
+      ],
+      "pooled_auroc": [
+        0.5855665973585757,
+        0.006433527852508669
+      ],
+      "in_subset_mean": 0.0
+    },
+    "SUBSET_A_FLIPPED": {
+      "r30": [
+        0.21367367465294018,
+        0.011186660800758244
+      ],
+      "per_disease_auprc": [
+        0.12433935024014427,
+        0.009369142446819955
+      ],
+      "per_disease_auroc": [
+        0.6244558024297573,
+        0.005366520551949405
+      ],
+      "pooled_auprc": [
+        0.06417098094144319,
+        0.00714696972614068
+      ],
+      "pooled_auroc": [
+        0.5364861466613486,
+        0.021343963683288107
+      ],
+      "in_subset_mean": 10.9
+    },
+    "SUBSET_B_HIGHDENS": {
+      "r30": [
+        0.21396692439963835,
+        0.011072628268324895
+      ],
+      "per_disease_auprc": [
+        0.12477197361148348,
+        0.009394960215135056
+      ],
+      "per_disease_auroc": [
+        0.6252207016028426,
+        0.00531802409253868
+      ],
+      "pooled_auprc": [
+        0.07787655274960784,
+        0.00788430537667435
+      ],
+      "pooled_auroc": [
+        0.37234665777386533,
+        0.023753639233297288
+      ],
+      "in_subset_mean": 34.55
+    },
+    "SUBSET_C_MODHIGH": {
+      "r30": [
+        0.21443034007868306,
+        0.01121519216463033
+      ],
+      "per_disease_auprc": [
+        0.12539689932422346,
+        0.00931609808367049
+      ],
+      "per_disease_auroc": [
+        0.6267493596794259,
+        0.005268245375021562
+      ],
+      "pooled_auprc": [
+        0.07517381464375487,
+        0.007290888547896874
+      ],
+      "pooled_auroc": [
+        0.35942680927074616,
+        0.02268063096941783
+      ],
+      "in_subset_mean": 71.05
+    },
+    "SUBSET_D_GLOBAL": {
+      "r30": [
+        0.21539179616545204,
+        0.0111520000277622
+      ],
+      "per_disease_auprc": [
+        0.12752151436193387,
+        0.010164102254246056
+      ],
+      "per_disease_auroc": [
+        0.6344619688744171,
+        0.004927718520192598
+      ],
+      "pooled_auprc": [
+        0.0594801440399199,
+        0.005244115793029919
+      ],
+      "pooled_auroc": [
+        0.4530605320761462,
+        0.03496322706972132
+      ],
+      "in_subset_mean": 199.7
+    }
+  },
+  "paired_t_per_seed_vs_anchor": {
+    "SUBSET_A_FLIPPED": {
+      "R@30": {
+        "mean": 0.00012995775387808077,
+        "p": 0.10648942548503364
+      },
+      "per_disease_AUPRC": {
+        "mean": 0.0002454366215893317,
+        "p": 0.0015795116390056746
+      },
+      "per_disease_AUROC": {
+        "mean": 0.00040708319933177584,
+        "p": 4.223827141953433e-07
+      },
+      "pooled_AUPRC": {
+        "mean": -0.0005319193697300589,
+        "p": 0.4930951573428852
+      },
+      "pooled_AUROC": {
+        "mean": -0.04908045069722705,
+        "p": 3.3882971723029494e-09
+      }
+    },
+    "SUBSET_B_HIGHDENS": {
+      "R@30": {
+        "mean": 0.0004232075005762545,
+        "p": 0.00241987694865836
+      },
+      "per_disease_AUPRC": {
+        "mean": 0.0006780599929285536,
+        "p": 1.8713822388085088e-07
+      },
+      "per_disease_AUROC": {
+        "mean": 0.0011719823724169799,
+        "p": 1.5427988414887622e-13
+      },
+      "pooled_AUPRC": {
+        "mean": 0.013173652438434599,
+        "p": 1.4721348786596709e-12
+      },
+      "pooled_AUROC": {
+        "mean": -0.21321993958471033,
+        "p": 1.493119693062942e-21
+      }
+    },
+    "SUBSET_C_MODHIGH": {
+      "R@30": {
+        "mean": 0.0008866231796209462,
+        "p": 0.0038981165783152317
+      },
+      "per_disease_AUPRC": {
+        "mean": 0.0013029857056685384,
+        "p": 2.844029148743385e-08
+      },
+      "per_disease_AUROC": {
+        "mean": 0.0027006404490004855,
+        "p": 8.79825537434418e-15
+      },
+      "pooled_AUPRC": {
+        "mean": 0.010470914332581632,
+        "p": 9.475853187387685e-11
+      },
+      "pooled_AUROC": {
+        "mean": -0.22613978808782956,
+        "p": 2.282533810474912e-22
+      }
+    },
+    "SUBSET_D_GLOBAL": {
+      "R@30": {
+        "mean": 0.0018480792663899432,
+        "p": 0.08482235155226552
+      },
+      "per_disease_AUPRC": {
+        "mean": 0.0034276007433789273,
+        "p": 0.0022250810961856942
+      },
+      "per_disease_AUROC": {
+        "mean": 0.010413249643991606,
+        "p": 7.935691271363516e-12
+      },
+      "pooled_AUPRC": {
+        "mean": -0.005222756271253343,
+        "p": 1.296342294385978e-09
+      },
+      "pooled_AUROC": {
+        "mean": -0.13250606528242942,
+        "p": 1.967844407503596e-13
+      }
+    }
+  },
+  "promotion": {
+    "SUBSET_A_FLIPPED": {
+      "delta": 0.0002454366215893317,
+      "p": 0.0015795116390056746,
+      "passes_gate": false,
+      "decision": "STAY"
+    },
+    "SUBSET_B_HIGHDENS": {
+      "delta": 0.0006780599929285536,
+      "p": 1.8713822388085088e-07,
+      "passes_gate": true,
+      "decision": "PROMOTE"
+    },
+    "SUBSET_C_MODHIGH": {
+      "delta": 0.0013029857056685384,
+      "p": 2.844029148743385e-08,
+      "passes_gate": true,
+      "decision": "PROMOTE"
+    },
+    "SUBSET_D_GLOBAL": {
+      "delta": 0.0034276007433789273,
+      "p": 0.0022250810961856942,
+      "passes_gate": true,
+      "decision": "PROMOTE"
+    }
+  },
+  "per_seed_summaries": [
+    {
+      "seed": 42,
+      "n_eval": 202,
+      "cut_low": 3.212135722414549,
+      "cut_high": 3.993942707918269,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.20677113564070912,
+          "per_disease_auprc_mean": 0.12272531616757386,
+          "per_disease_auroc_mean": 0.6237254065338729,
+          "pooled_auprc": 0.06528708957882641,
+          "pooled_auroc": 0.5897385645568148,
+          "in_subset_count": 0,
+          "n_test_diseases": 202
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.20752174933070108,
+          "per_disease_auprc_mean": 0.1235964152086964,
+          "per_disease_auroc_mean": 0.6244868704348825,
+          "pooled_auprc": 0.06622924613741835,
+          "pooled_auroc": 0.5630144349702368,
+          "in_subset_count": 7,
+          "n_test_diseases": 202
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.20775804757914165,
+          "per_disease_auprc_mean": 0.12408047270599105,
+          "per_disease_auroc_mean": 0.6248629919621973,
+          "pooled_auprc": 0.07630755828028339,
+          "pooled_auroc": 0.4047416209331734,
+          "in_subset_count": 32,
+          "n_test_diseases": 202
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.20686970610742786,
+          "per_disease_auprc_mean": 0.12308093537070447,
+          "per_disease_auroc_mean": 0.6264870781185916,
+          "pooled_auprc": 0.07040749399984836,
+          "pooled_auroc": 0.3888504034089417,
+          "in_subset_count": 74,
+          "n_test_diseases": 202
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.2066921176472244,
+          "per_disease_auprc_mean": 0.12981180336758943,
+          "per_disease_auroc_mean": 0.6313652091355634,
+          "pooled_auprc": 0.059185315604535646,
+          "pooled_auroc": 0.5041803572846613,
+          "in_subset_count": 202,
+          "n_test_diseases": 202
+        }
+      }
+    },
+    {
+      "seed": 123,
+      "n_eval": 200,
+      "cut_low": 3.1677725470689486,
+      "cut_high": 4.007196489685617,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.2086110029967354,
+          "per_disease_auprc_mean": 0.11193782859728298,
+          "per_disease_auroc_mean": 0.6177914223460336,
+          "pooled_auprc": 0.0629198131780058,
+          "pooled_auroc": 0.5766475306620056,
+          "in_subset_count": 0,
+          "n_test_diseases": 200
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.2088807983768428,
+          "per_disease_auprc_mean": 0.11202695677119039,
+          "per_disease_auroc_mean": 0.6182159979383249,
+          "pooled_auprc": 0.05579359942608785,
+          "pooled_auroc": 0.5405426756653603,
+          "in_subset_count": 14,
+          "n_test_diseases": 200
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.20931449647146255,
+          "per_disease_auprc_mean": 0.1123956334476287,
+          "per_disease_auroc_mean": 0.6189190450337075,
+          "pooled_auprc": 0.07322994105081913,
+          "pooled_auroc": 0.3334254167485365,
+          "in_subset_count": 34,
+          "n_test_diseases": 200
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.21147143461472026,
+          "per_disease_auprc_mean": 0.11382575053295213,
+          "per_disease_auroc_mean": 0.6215569116042073,
+          "pooled_auprc": 0.07359265193519031,
+          "pooled_auroc": 0.3219924226362046,
+          "in_subset_count": 73,
+          "n_test_diseases": 200
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.2190194030936098,
+          "per_disease_auprc_mean": 0.12325756716663598,
+          "per_disease_auroc_mean": 0.6360526088851444,
+          "pooled_auprc": 0.055157569739055494,
+          "pooled_auroc": 0.4108929020539069,
+          "in_subset_count": 200,
+          "n_test_diseases": 200
+        }
+      }
+    },
+    {
+      "seed": 456,
+      "n_eval": 200,
+      "cut_low": 3.212135722414549,
+      "cut_high": 4.0081320258334,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.21000214656028496,
+          "per_disease_auprc_mean": 0.1214062592799942,
+          "per_disease_auroc_mean": 0.6197028179310287,
+          "pooled_auprc": 0.06799543159057161,
+          "pooled_auroc": 0.5936334553953231,
+          "in_subset_count": 0,
+          "n_test_diseases": 200
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.2106105745195901,
+          "per_disease_auprc_mean": 0.1220224827757135,
+          "per_disease_auroc_mean": 0.6204817347107979,
+          "pooled_auprc": 0.06847446748941127,
+          "pooled_auroc": 0.5470525465000484,
+          "in_subset_count": 12,
+          "n_test_diseases": 200
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.2106740543160241,
+          "per_disease_auprc_mean": 0.12242618512944681,
+          "per_disease_auroc_mean": 0.6209518757306667,
+          "pooled_auprc": 0.08889504098045761,
+          "pooled_auroc": 0.38442386716319243,
+          "in_subset_count": 35,
+          "n_test_diseases": 200
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.2103400398766951,
+          "per_disease_auprc_mean": 0.12208355142683609,
+          "per_disease_auroc_mean": 0.6221275707962771,
+          "pooled_auprc": 0.08573971749754576,
+          "pooled_auroc": 0.36703201360732385,
+          "in_subset_count": 65,
+          "n_test_diseases": 200
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.21080744257203896,
+          "per_disease_auprc_mean": 0.11975695763749972,
+          "per_disease_auroc_mean": 0.6294054505416424,
+          "pooled_auprc": 0.060594179083339895,
+          "pooled_auroc": 0.4404537245973925,
+          "in_subset_count": 200,
+          "n_test_diseases": 200
+        }
+      }
+    },
+    {
+      "seed": 789,
+      "n_eval": 200,
+      "cut_low": 3.1676202452005255,
+      "cut_high": 4.014686243363885,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.22337973958079949,
+          "per_disease_auprc_mean": 0.13895578234468126,
+          "per_disease_auroc_mean": 0.6283986547313496,
+          "pooled_auprc": 0.06639945045406287,
+          "pooled_auroc": 0.5924415349099882,
+          "in_subset_count": 0,
+          "n_test_diseases": 200
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.22362387517793464,
+          "per_disease_auprc_mean": 0.1395052743621477,
+          "per_disease_auroc_mean": 0.6289064502551862,
+          "pooled_auprc": 0.06960517807173702,
+          "pooled_auroc": 0.48037977876326116,
+          "in_subset_count": 16,
+          "n_test_diseases": 200
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.22388972154642425,
+          "per_disease_auprc_mean": 0.13956304758653407,
+          "per_disease_auroc_mean": 0.6294727891875184,
+          "pooled_auprc": 0.08132549483706812,
+          "pooled_auroc": 0.38476393037519635,
+          "in_subset_count": 33,
+          "n_test_diseases": 200
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.22406850844321724,
+          "per_disease_auprc_mean": 0.13933073826701814,
+          "per_disease_auroc_mean": 0.6305887715791136,
+          "pooled_auprc": 0.08061779468898576,
+          "pooled_auroc": 0.3667942179306251,
+          "in_subset_count": 68,
+          "n_test_diseases": 200
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.23084208209179088,
+          "per_disease_auprc_mean": 0.14007593614499933,
+          "per_disease_auroc_mean": 0.6357955426174189,
+          "pooled_auprc": 0.06409501493464279,
+          "pooled_auroc": 0.4402209972256979,
+          "in_subset_count": 200,
+          "n_test_diseases": 200
+        }
+      }
+    },
+    {
+      "seed": 2024,
+      "n_eval": 200,
+      "cut_low": 3.1677725470689486,
+      "cut_high": 4.005532150029028,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.19492970685351751,
+          "per_disease_auprc_mean": 0.11988768172875572,
+          "per_disease_auroc_mean": 0.6158509888265342,
+          "pooled_auprc": 0.0584306867314794,
+          "pooled_auroc": 0.5729012927007863,
+          "in_subset_count": 0,
+          "n_test_diseases": 200
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.19548062014651615,
+          "per_disease_auprc_mean": 0.120457422679887,
+          "per_disease_auroc_mean": 0.616337027323619,
+          "pooled_auprc": 0.058245520264139025,
+          "pooled_auroc": 0.5113235650087206,
+          "in_subset_count": 16,
+          "n_test_diseases": 200
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.19605001818136963,
+          "per_disease_auprc_mean": 0.12116590614785394,
+          "per_disease_auroc_mean": 0.617403117209914,
+          "pooled_auprc": 0.06929992325264492,
+          "pooled_auroc": 0.3221948650936301,
+          "in_subset_count": 44,
+          "n_test_diseases": 200
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.19599338983239034,
+          "per_disease_auprc_mean": 0.12194131733532078,
+          "per_disease_auroc_mean": 0.6184325077109143,
+          "pooled_auprc": 0.06385522507618015,
+          "pooled_auroc": 0.31581239075025247,
+          "in_subset_count": 84,
+          "n_test_diseases": 200
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.1977364299020558,
+          "per_disease_auprc_mean": 0.125478118475986,
+          "per_disease_auroc_mean": 0.6268660325428305,
+          "pooled_auprc": 0.05198327415397433,
+          "pooled_auroc": 0.38529271001702575,
+          "in_subset_count": 200,
+          "n_test_diseases": 200
+        }
+      }
+    },
+    {
+      "seed": 1,
+      "n_eval": 199,
+      "cut_low": 3.214185324963406,
+      "cut_high": 3.9621031651557956,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.20715506543246537,
+          "per_disease_auprc_mean": 0.12979038376203844,
+          "per_disease_auroc_mean": 0.6207550627462566,
+          "pooled_auprc": 0.07267821455069731,
+          "pooled_auroc": 0.5900522777811357,
+          "in_subset_count": 0,
+          "n_test_diseases": 199
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.20703520524815436,
+          "per_disease_auprc_mean": 0.12996854922610088,
+          "per_disease_auroc_mean": 0.6209263791032131,
+          "pooled_auprc": 0.07337411973493846,
+          "pooled_auroc": 0.5579629255717496,
+          "in_subset_count": 6,
+          "n_test_diseases": 199
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.20820326805059847,
+          "per_disease_auprc_mean": 0.13045739434783368,
+          "per_disease_auroc_mean": 0.6219137384571889,
+          "pooled_auprc": 0.08905560043201091,
+          "pooled_auroc": 0.38120405338554303,
+          "in_subset_count": 34,
+          "n_test_diseases": 199
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.20904822963800368,
+          "per_disease_auprc_mean": 0.1307467898940953,
+          "per_disease_auroc_mean": 0.6230726589294546,
+          "pooled_auprc": 0.08405152815924749,
+          "pooled_auroc": 0.37365333369872694,
+          "in_subset_count": 73,
+          "n_test_diseases": 199
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.21142360125295553,
+          "per_disease_auprc_mean": 0.12805038281238695,
+          "per_disease_auroc_mean": 0.6292989853558931,
+          "pooled_auprc": 0.06620648674413912,
+          "pooled_auroc": 0.48774611620408465,
+          "in_subset_count": 199,
+          "n_test_diseases": 199
+        }
+      }
+    },
+    {
+      "seed": 2,
+      "n_eval": 200,
+      "cut_low": 3.1781116297886958,
+      "cut_high": 4.005532150029028,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.22918412135852997,
+          "per_disease_auprc_mean": 0.12063521113904191,
+          "per_disease_auroc_mean": 0.6269099678091286,
+          "pooled_auprc": 0.06011885887417301,
+          "pooled_auroc": 0.5868668164062694,
+          "in_subset_count": 0,
+          "n_test_diseases": 200
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.22882321217301246,
+          "per_disease_auprc_mean": 0.12067183367868321,
+          "per_disease_auroc_mean": 0.6270886523701822,
+          "pooled_auprc": 0.05612170634133616,
+          "pooled_auroc": 0.5378399681386774,
+          "in_subset_count": 12,
+          "n_test_diseases": 200
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.22875573229906634,
+          "per_disease_auprc_mean": 0.12090699932460904,
+          "per_disease_auroc_mean": 0.6279781877851751,
+          "pooled_auprc": 0.0683703497583063,
+          "pooled_auroc": 0.3870405541991078,
+          "in_subset_count": 34,
+          "n_test_diseases": 200
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.2299747317233776,
+          "per_disease_auprc_mean": 0.12159237753045747,
+          "per_disease_auroc_mean": 0.6293566758065374,
+          "pooled_auprc": 0.06867046375630534,
+          "pooled_auroc": 0.3753999227993135,
+          "in_subset_count": 67,
+          "n_test_diseases": 200
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.22965336610499187,
+          "per_disease_auprc_mean": 0.12169090944217334,
+          "per_disease_auroc_mean": 0.6391421007473227,
+          "pooled_auprc": 0.058281646606467764,
+          "pooled_auroc": 0.49790284719511935,
+          "in_subset_count": 200,
+          "n_test_diseases": 200
+        }
+      }
+    },
+    {
+      "seed": 3,
+      "n_eval": 200,
+      "cut_low": 3.3030031797158723,
+      "cut_high": 4.004555369515117,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.2221883185481493,
+          "per_disease_auprc_mean": 0.1369080337814905,
+          "per_disease_auroc_mean": 0.626801482413322,
+          "pooled_auprc": 0.06938351988282446,
+          "pooled_auroc": 0.585936728410238,
+          "in_subset_count": 0,
+          "n_test_diseases": 200
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.22247498430322857,
+          "per_disease_auprc_mean": 0.13692760630433645,
+          "per_disease_auroc_mean": 0.6269133515965234,
+          "pooled_auprc": 0.06815995112125003,
+          "pooled_auroc": 0.5682926970491532,
+          "in_subset_count": 4,
+          "n_test_diseases": 200
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.22270285158133518,
+          "per_disease_auprc_mean": 0.1374746754608037,
+          "per_disease_auroc_mean": 0.6283123331838101,
+          "pooled_auprc": 0.08369215071966596,
+          "pooled_auroc": 0.37713576895988843,
+          "in_subset_count": 39,
+          "n_test_diseases": 200
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.22184111807529303,
+          "per_disease_auprc_mean": 0.13750248203383625,
+          "per_disease_auroc_mean": 0.6295167455517948,
+          "pooled_auprc": 0.0756219992060888,
+          "pooled_auroc": 0.3669964251839515,
+          "in_subset_count": 66,
+          "n_test_diseases": 200
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.22086006981928347,
+          "per_disease_auprc_mean": 0.1408572950421896,
+          "per_disease_auroc_mean": 0.6347140201117957,
+          "pooled_auprc": 0.06278690196377712,
+          "pooled_auroc": 0.4686406010595267,
+          "in_subset_count": 200,
+          "n_test_diseases": 200
+        }
+      }
+    },
+    {
+      "seed": 4,
+      "n_eval": 201,
+      "cut_low": 3.1677725470689486,
+      "cut_high": 3.9621031651557956,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.22066685692892052,
+          "per_disease_auprc_mean": 0.12640355401040126,
+          "per_disease_auroc_mean": 0.6291188619622536,
+          "pooled_auprc": 0.06715271766172161,
+          "pooled_auroc": 0.5876577734907281,
+          "in_subset_count": 0,
+          "n_test_diseases": 201
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.22080064797704674,
+          "per_disease_auprc_mean": 0.12661953540595416,
+          "per_disease_auroc_mean": 0.6292975788861005,
+          "pooled_auprc": 0.06538863655956381,
+          "pooled_auroc": 0.5496980221238682,
+          "in_subset_count": 9,
+          "n_test_diseases": 201
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.22095354285603266,
+          "per_disease_auprc_mean": 0.12713570594754922,
+          "per_disease_auroc_mean": 0.6299666645659635,
+          "pooled_auprc": 0.08127704290450133,
+          "pooled_auroc": 0.3585745928171448,
+          "in_subset_count": 31,
+          "n_test_diseases": 201
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.22285757407801232,
+          "per_disease_auprc_mean": 0.12783664630971794,
+          "per_disease_auroc_mean": 0.6311008320313121,
+          "pooled_auprc": 0.0802630157859281,
+          "pooled_auroc": 0.3417074051708263,
+          "in_subset_count": 64,
+          "n_test_diseases": 201
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.21464073097830796,
+          "per_disease_auprc_mean": 0.12986415715160682,
+          "per_disease_auroc_mean": 0.6394619029176118,
+          "pooled_auprc": 0.05773456555679832,
+          "pooled_auroc": 0.40639663431168616,
+          "in_subset_count": 201,
+          "n_test_diseases": 201
+        }
+      }
+    },
+    {
+      "seed": 5,
+      "n_eval": 201,
+      "cut_low": 3.196957186327418,
+      "cut_high": 4.004555369515117,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.20839719990002115,
+          "per_disease_auprc_mean": 0.13088247323721752,
+          "per_disease_auroc_mean": 0.6262293697002159,
+          "pooled_auprc": 0.06725941578539987,
+          "pooled_auroc": 0.5871278651524902,
+          "in_subset_count": 0,
+          "n_test_diseases": 201
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.20842966028466153,
+          "per_disease_auprc_mean": 0.13107053748862732,
+          "per_disease_auroc_mean": 0.6266010862698718,
+          "pooled_auprc": 0.06446166992356821,
+          "pooled_auroc": 0.5597252808233388,
+          "in_subset_count": 10,
+          "n_test_diseases": 201
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.2087332522757602,
+          "per_disease_auprc_mean": 0.13170003160308244,
+          "per_disease_auroc_mean": 0.627447746889414,
+          "pooled_auprc": 0.08183125981118292,
+          "pooled_auroc": 0.3671873433304969,
+          "in_subset_count": 36,
+          "n_test_diseases": 201
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.2081870315304206,
+          "per_disease_auprc_mean": 0.13193096684284156,
+          "per_disease_auroc_mean": 0.6292683002796258,
+          "pooled_auprc": 0.0758342574571281,
+          "pooled_auroc": 0.3583963613584709,
+          "in_subset_count": 71,
+          "n_test_diseases": 201
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.21275117501836613,
+          "per_disease_auprc_mean": 0.13541560925318533,
+          "per_disease_auroc_mean": 0.6329442371087528,
+          "pooled_auprc": 0.06007311870561809,
+          "pooled_auroc": 0.4535109063513363,
+          "in_subset_count": 201,
+          "n_test_diseases": 201
+        }
+      }
+    },
+    {
+      "seed": 6,
+      "n_eval": 199,
+      "cut_low": 3.1781116297886958,
+      "cut_high": 4.0081320258334,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.2376392589021727,
+          "per_disease_auprc_mean": 0.13691613219754756,
+          "per_disease_auroc_mean": 0.6350599303705866,
+          "pooled_auprc": 0.06925107282291743,
+          "pooled_auroc": 0.5898087243517786,
+          "in_subset_count": 0,
+          "n_test_diseases": 199
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.23747402147299126,
+          "per_disease_auprc_mean": 0.13702896476879445,
+          "per_disease_auroc_mean": 0.6356881932475205,
+          "pooled_auprc": 0.06418674416532358,
+          "pooled_auroc": 0.5262385673572406,
+          "in_subset_count": 14,
+          "n_test_diseases": 199
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.23755978735896385,
+          "per_disease_auprc_mean": 0.13744603781091735,
+          "per_disease_auroc_mean": 0.6363764279331239,
+          "pooled_auprc": 0.08165887081054808,
+          "pooled_auroc": 0.37930741011311525,
+          "in_subset_count": 36,
+          "n_test_diseases": 199
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.23795119309800541,
+          "per_disease_auprc_mean": 0.1395392207950587,
+          "per_disease_auroc_mean": 0.6380467694059685,
+          "pooled_auprc": 0.08648594299076307,
+          "pooled_auroc": 0.3714074721866257,
+          "in_subset_count": 71,
+          "n_test_diseases": 199
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.2376381337397199,
+          "per_disease_auprc_mean": 0.14687185951246565,
+          "per_disease_auroc_mean": 0.6424144884076728,
+          "pooled_auprc": 0.06840171603277331,
+          "pooled_auroc": 0.46740855832726524,
+          "in_subset_count": 199,
+          "n_test_diseases": 199
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "n_eval": 200,
+      "cut_low": 3.214185324963406,
+      "cut_high": 4.004555369515117,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.21028696267955915,
+          "per_disease_auprc_mean": 0.11335996467012385,
+          "per_disease_auroc_mean": 0.6243655796343401,
+          "pooled_auprc": 0.05790551167565578,
+          "pooled_auroc": 0.5833737230213757,
+          "in_subset_count": 0,
+          "n_test_diseases": 200
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.20990384299645853,
+          "per_disease_auprc_mean": 0.11319975269685084,
+          "per_disease_auroc_mean": 0.6243652965146724,
+          "pooled_auprc": 0.05902946101614403,
+          "pooled_auroc": 0.5496753056541419,
+          "in_subset_count": 8,
+          "n_test_diseases": 200
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.2093266700436779,
+          "per_disease_auprc_mean": 0.11334259818209722,
+          "per_disease_auroc_mean": 0.6249169682779605,
+          "pooled_auprc": 0.07480959467451832,
+          "pooled_auroc": 0.345546928830983,
+          "in_subset_count": 34,
+          "n_test_diseases": 200
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.20897119830707056,
+          "per_disease_auprc_mean": 0.11382504657927697,
+          "per_disease_auroc_mean": 0.6261184397989084,
+          "pooled_auprc": 0.07177654384470383,
+          "pooled_auroc": 0.33058606696419307,
+          "in_subset_count": 66,
+          "n_test_diseases": 200
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.20559627461964688,
+          "per_disease_auprc_mean": 0.11116672669463473,
+          "per_disease_auroc_mean": 0.6350248586933457,
+          "pooled_auprc": 0.052784376849190975,
+          "pooled_auroc": 0.4413919583536149,
+          "in_subset_count": 200,
+          "n_test_diseases": 200
+        }
+      }
+    },
+    {
+      "seed": 8,
+      "n_eval": 202,
+      "cut_low": 3.214185324963406,
+      "cut_high": 4.007196489685617,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.2189750364128014,
+          "per_disease_auprc_mean": 0.12854460514185911,
+          "per_disease_auroc_mean": 0.6226555841225746,
+          "pooled_auprc": 0.06338551826694196,
+          "pooled_auroc": 0.5820905754568699,
+          "in_subset_count": 0,
+          "n_test_diseases": 202
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.21931396292897495,
+          "per_disease_auprc_mean": 0.1288334686445554,
+          "per_disease_auroc_mean": 0.622913705464686,
+          "pooled_auprc": 0.06292393563934082,
+          "pooled_auroc": 0.5267583348318724,
+          "in_subset_count": 9,
+          "n_test_diseases": 202
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.21991296605880262,
+          "per_disease_auprc_mean": 0.1294382722316632,
+          "per_disease_auroc_mean": 0.6237799211905188,
+          "pooled_auprc": 0.07557861762158856,
+          "pooled_auroc": 0.37122986295602645,
+          "in_subset_count": 32,
+          "n_test_diseases": 202
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.22000324755430664,
+          "per_disease_auprc_mean": 0.13017737282145128,
+          "per_disease_auroc_mean": 0.6258085665566848,
+          "pooled_auprc": 0.07518346954453858,
+          "pooled_auroc": 0.35399126371635575,
+          "in_subset_count": 67,
+          "n_test_diseases": 202
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.22569042341474987,
+          "per_disease_auprc_mean": 0.1325501465285126,
+          "per_disease_auroc_mean": 0.6336887411627963,
+          "pooled_auprc": 0.05991613735975084,
+          "pooled_auroc": 0.4546429939072888,
+          "in_subset_count": 202,
+          "n_test_diseases": 202
+        }
+      }
+    },
+    {
+      "seed": 9,
+      "n_eval": 197,
+      "cut_low": 3.212135722414549,
+      "cut_high": 4.007196489685617,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.22191193202207404,
+          "per_disease_auprc_mean": 0.11632113017991882,
+          "per_disease_auroc_mean": 0.6258276002638838,
+          "pooled_auprc": 0.06280683689613958,
+          "pooled_auroc": 0.5907265795473067,
+          "in_subset_count": 0,
+          "n_test_diseases": 197
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.22200103349020975,
+          "per_disease_auprc_mean": 0.11633704478126233,
+          "per_disease_auroc_mean": 0.6261957973481083,
+          "pooled_auprc": 0.06177016262386649,
+          "pooled_auroc": 0.5452871905541197,
+          "in_subset_count": 7,
+          "n_test_diseases": 197
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.22184668884434108,
+          "per_disease_auprc_mean": 0.11644285486425725,
+          "per_disease_auroc_mean": 0.6265540358075502,
+          "pooled_auprc": 0.07347561947854238,
+          "pooled_auroc": 0.3940547223438695,
+          "in_subset_count": 24,
+          "n_test_diseases": 197
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.22155498972994123,
+          "per_disease_auprc_mean": 0.11772728805963148,
+          "per_disease_auroc_mean": 0.6277618924228939,
+          "pooled_auprc": 0.07310437049040107,
+          "pooled_auroc": 0.367215765693914,
+          "in_subset_count": 63,
+          "n_test_diseases": 197
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.21739743897639166,
+          "per_disease_auprc_mean": 0.11767687500969476,
+          "per_disease_auroc_mean": 0.6358570278591279,
+          "pooled_auprc": 0.05897263648263683,
+          "pooled_auroc": 0.45601555316132186,
+          "in_subset_count": 197,
+          "n_test_diseases": 197
+        }
+      }
+    },
+    {
+      "seed": 10,
+      "n_eval": 198,
+      "cut_low": 3.1676202452005255,
+      "cut_high": 4.004555369515117,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.19832967200520424,
+          "per_disease_auprc_mean": 0.10858117733008123,
+          "per_disease_auroc_mean": 0.6226382773010334,
+          "pooled_auprc": 0.06259608088986848,
+          "pooled_auroc": 0.5842847167566575,
+          "in_subset_count": 0,
+          "n_test_diseases": 198
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.19832181295906773,
+          "per_disease_auprc_mean": 0.10916702921843224,
+          "per_disease_auroc_mean": 0.6231526879947314,
+          "pooled_auprc": 0.060729338022907614,
+          "pooled_auroc": 0.5316260587060442,
+          "in_subset_count": 14,
+          "n_test_diseases": 198
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.19842532980486555,
+          "per_disease_auprc_mean": 0.1095185059938007,
+          "per_disease_auroc_mean": 0.6239147036723842,
+          "pooled_auprc": 0.07202961307069684,
+          "pooled_auroc": 0.38134702184659686,
+          "in_subset_count": 37,
+          "n_test_diseases": 198
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.1996555000142652,
+          "per_disease_auprc_mean": 0.11076694458948334,
+          "per_disease_auroc_mean": 0.6263275284587643,
+          "pooled_auprc": 0.07201060575335935,
+          "pooled_auroc": 0.3774361834491331,
+          "in_subset_count": 77,
+          "n_test_diseases": 198
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.20252541349023934,
+          "per_disease_auprc_mean": 0.11399810390128523,
+          "per_disease_auroc_mean": 0.6400400465950347,
+          "pooled_auprc": 0.05880193295935311,
+          "pooled_auroc": 0.49664472443744256,
+          "in_subset_count": 198,
+          "n_test_diseases": 198
+        }
+      }
+    },
+    {
+      "seed": 11,
+      "n_eval": 202,
+      "cut_low": 3.212135722414549,
+      "cut_high": 3.993942707918269,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.22576513838818674,
+          "per_disease_auprc_mean": 0.13780117312220536,
+          "per_disease_auroc_mean": 0.6352156619436986,
+          "pooled_auprc": 0.07530310679575322,
+          "pooled_auroc": 0.5952628277898238,
+          "in_subset_count": 0,
+          "n_test_diseases": 202
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.2258642161642402,
+          "per_disease_auprc_mean": 0.1378577454856642,
+          "per_disease_auroc_mean": 0.6355235232547272,
+          "pooled_auprc": 0.08451773918226935,
+          "pooled_auroc": 0.5519253499149651,
+          "in_subset_count": 9,
+          "n_test_diseases": 202
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.2263168713794433,
+          "per_disease_auprc_mean": 0.13844222440741294,
+          "per_disease_auroc_mean": 0.6363153599247011,
+          "pooled_auprc": 0.09420220368111479,
+          "pooled_auroc": 0.3919646843162755,
+          "in_subset_count": 37,
+          "n_test_diseases": 202
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.22877873333318316,
+          "per_disease_auprc_mean": 0.13965524864323167,
+          "per_disease_auroc_mean": 0.6380368931949517,
+          "pooled_auprc": 0.08851253186802498,
+          "pooled_auroc": 0.3791351226188175,
+          "in_subset_count": 77,
+          "n_test_diseases": 202
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.23108982295862923,
+          "per_disease_auprc_mean": 0.14453727941238861,
+          "per_disease_auroc_mean": 0.6459130840317311,
+          "pooled_auprc": 0.06883635633940785,
+          "pooled_auroc": 0.4589866662311041,
+          "in_subset_count": 202,
+          "n_test_diseases": 202
+        }
+      }
+    },
+    {
+      "seed": 12,
+      "n_eval": 198,
+      "cut_low": 3.1677725470689486,
+      "cut_high": 4.014686243363885,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.20100429346232557,
+          "per_disease_auprc_mean": 0.11743680613376402,
+          "per_disease_auroc_mean": 0.6217156371124413,
+          "pooled_auprc": 0.06619020014765846,
+          "pooled_auroc": 0.588059765772408,
+          "in_subset_count": 0,
+          "n_test_diseases": 198
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.20175319834259164,
+          "per_disease_auprc_mean": 0.11809865500474818,
+          "per_disease_auroc_mean": 0.6226726120054531,
+          "pooled_auprc": 0.06915438370097474,
+          "pooled_auroc": 0.5116029207664102,
+          "in_subset_count": 17,
+          "n_test_diseases": 198
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.20219225198212068,
+          "per_disease_auprc_mean": 0.11856123994720001,
+          "per_disease_auroc_mean": 0.6234672396693126,
+          "pooled_auprc": 0.07588053490543842,
+          "pooled_auroc": 0.3995630013333721,
+          "in_subset_count": 38,
+          "n_test_diseases": 198
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.20345277458369754,
+          "per_disease_auprc_mean": 0.11899185641401887,
+          "per_disease_auroc_mean": 0.6241943301242467,
+          "pooled_auprc": 0.07219132376561854,
+          "pooled_auroc": 0.38986968432566643,
+          "in_subset_count": 75,
+          "n_test_diseases": 198
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.20943480255770414,
+          "per_disease_auprc_mean": 0.1273985386263191,
+          "per_disease_auroc_mean": 0.6324667798290525,
+          "pooled_auprc": 0.06107590003664157,
+          "pooled_auroc": 0.45208914589248383,
+          "in_subset_count": 198,
+          "n_test_diseases": 198
+        }
+      }
+    },
+    {
+      "seed": 13,
+      "n_eval": 198,
+      "cut_low": 3.164178154029514,
+      "cut_high": 3.9621031651557956,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.20393238696276825,
+          "per_disease_auprc_mean": 0.10947628297442225,
+          "per_disease_auroc_mean": 0.6190256761153292,
+          "pooled_auprc": 0.051622315373811706,
+          "pooled_auroc": 0.570243097787243,
+          "in_subset_count": 0,
+          "n_test_diseases": 198
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.20377702835250155,
+          "per_disease_auprc_mean": 0.10968480140747032,
+          "per_disease_auroc_mean": 0.6193360115971547,
+          "pooled_auprc": 0.04975330668103736,
+          "pooled_auroc": 0.519547713189393,
+          "in_subset_count": 12,
+          "n_test_diseases": 198
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.20439640839772757,
+          "per_disease_auprc_mean": 0.11017450039251142,
+          "per_disease_auroc_mean": 0.6201853144504305,
+          "pooled_auprc": 0.05838711825263217,
+          "pooled_auroc": 0.3239025059002334,
+          "in_subset_count": 34,
+          "n_test_diseases": 198
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.20602476083319302,
+          "per_disease_auprc_mean": 0.11101749283236513,
+          "per_disease_auroc_mean": 0.6218419488989323,
+          "pooled_auprc": 0.05860854829883651,
+          "pooled_auroc": 0.31353504884539385,
+          "in_subset_count": 77,
+          "n_test_diseases": 198
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.20561091896436004,
+          "per_disease_auprc_mean": 0.11036835696921264,
+          "per_disease_auroc_mean": 0.6284665649434151,
+          "pooled_auprc": 0.04629531779850176,
+          "pooled_auroc": 0.3909244366626739,
+          "in_subset_count": 198,
+          "n_test_diseases": 198
+        }
+      }
+    },
+    {
+      "seed": 14,
+      "n_eval": 199,
+      "cut_low": 3.2203372407945308,
+      "cut_high": 4.016112960285172,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.22202240942219661,
+          "per_disease_auprc_mean": 0.13209799764971972,
+          "per_disease_auroc_mean": 0.6250348691223522,
+          "pooled_auprc": 0.06451512940135255,
+          "pooled_auroc": 0.5843602391977507,
+          "in_subset_count": 0,
+          "n_test_diseases": 199
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.2218574666865623,
+          "per_disease_auprc_mean": 0.13186870779937018,
+          "per_disease_auroc_mean": 0.6253595192912879,
+          "pooled_auprc": 0.06215583949418245,
+          "pooled_auroc": 0.5105564783342236,
+          "in_subset_count": 10,
+          "n_test_diseases": 199
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.22215132196677814,
+          "per_disease_auprc_mean": 0.13212224848569995,
+          "per_disease_auroc_mean": 0.6259732681826532,
+          "pooled_auprc": 0.07920725174192762,
+          "pooled_auroc": 0.3950235940518689,
+          "in_subset_count": 29,
+          "n_test_diseases": 199
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.22213517440245906,
+          "per_disease_auprc_mean": 0.13292316264677312,
+          "per_disease_auroc_mean": 0.6275772002411846,
+          "pooled_auprc": 0.07325282337830713,
+          "pooled_auroc": 0.3769539491259223,
+          "in_subset_count": 66,
+          "n_test_diseases": 199
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.22039503644077219,
+          "per_disease_auprc_mean": 0.12722549956338,
+          "per_disease_auroc_mean": 0.6320694181720254,
+          "pooled_auprc": 0.060230755526565156,
+          "pooled_auroc": 0.5091857800869412,
+          "in_subset_count": 199,
+          "n_test_diseases": 199
+        }
+      }
+    },
+    {
+      "seed": 15,
+      "n_eval": 198,
+      "cut_low": 3.196957186327418,
+      "cut_high": 4.005532150029028,
+      "modes": {
+        "concat_l2_raw": {
+          "per_drug_r30": 0.19972195392382072,
+          "per_disease_auprc_mean": 0.12181047892297936,
+          "per_disease_auroc_mean": 0.6141515336222731,
+          "pooled_auprc": 0.06285703566560348,
+          "pooled_auroc": 0.5801178580245203,
+          "in_subset_count": 0,
+          "n_test_diseases": 198
+        },
+        "SUBSET_A_FLIPPED": {
+          "per_drug_r30": 0.19952558212751742,
+          "per_disease_auprc_mean": 0.12184422109440038,
+          "per_disease_auroc_mean": 0.6146535729881012,
+          "pooled_auprc": 0.06334461323336721,
+          "pooled_auroc": 0.5406731193041473,
+          "in_subset_count": 12,
+          "n_test_diseases": 198
+        },
+        "SUBSET_B_HIGHDENS": {
+          "per_drug_r30": 0.20017520699883154,
+          "per_disease_auprc_mean": 0.12264493821277729,
+          "per_disease_auroc_mean": 0.6157023029426577,
+          "pooled_auprc": 0.07901726872820919,
+          "pooled_auroc": 0.364301410779056,
+          "in_subset_count": 38,
+          "n_test_diseases": 198
+        },
+        "SUBSET_C_MODHIGH": {
+          "per_drug_r30": 0.19942746579798126,
+          "per_disease_auprc_mean": 0.12344279755939898,
+          "per_disease_auroc_mean": 0.6177655720781544,
+          "pooled_auprc": 0.0736959853780964,
+          "pooled_auroc": 0.351770731944264,
+          "in_subset_count": 77,
+          "n_test_diseases": 198
+        },
+        "SUBSET_D_GLOBAL": {
+          "per_drug_r30": 0.198031239666203,
+          "per_disease_auprc_mean": 0.12437816452653161,
+          "per_disease_auroc_mean": 0.6282522778301636,
+          "pooled_auprc": 0.05818967832122817,
+          "pooled_auroc": 0.43868302816235116,
+          "in_subset_count": 198,
+          "n_test_diseases": 198
+        }
+      }
+    }
+  ]
+}

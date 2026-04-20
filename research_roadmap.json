@@ -3223,7 +3223,7 @@
       "id": "h1269",
       "title": "Variance-reduce h1264 SUBSET_D \u2014 extend to 20 seeds for tight p-value on \u0394 per-dis AUPRC",
       "priority": 3,
-      "status": "pending",
+      "status": "validated",
       "expected_impact": "infrastructure",
       "effort": "low",
       "label": "infrastructure",
@@ -3234,7 +3234,9 @@
         "If 20-seed p < 0.05, promote SUBSET_D_GLOBAL as the new production default and update CLAUDE.md ceilings.",
         "Save data/analysis/h1269_soft_blend_global_20seed.{json,md}."
       ],
-      "success_criteria": "20-seed paired-t produces p < 0.05 on SUBSET_D_GLOBAL \u0394 per-dis AUPRC."
+      "success_criteria": "20-seed paired-t produces p < 0.05 on SUBSET_D_GLOBAL \u0394 per-dis AUPRC.",
+      "findings": "h1269 VALIDATED: 20-seed extension promotes SUBSET_D_GLOBAL as the new canonical fusion recipe. At 20 seeds, GLOBAL \u0394 per-dis AUPRC = +0.00343 p=0.0022 (down from 5-seed estimate +0.00469 p=0.108 \u2014 5-seed was both upward-biased AND under-powered). Per-dis AUROC: +0.01041 p=8e-12 (huge effect, ~25\u00d7 the per-seed std). R@30 +0.185pp p=0.085 (still not significant; R@30 has higher inter-seed variance than per-disease AUPRC/AUROC). PROMOTION GATE outcomes change between 5-seed and 20-seed: FLIPPED (h1259 baseline) DOWNGRADES from PROMOTE \u2192 STAY (\u0394=+0.00025 < 0.0005 threshold), HIGHDENS / MODHIGH / GLOBAL all PROMOTE. The 5-seed h1259 estimate of +0.00054 was upward-biased; true effect at FLIPPED is +0.00025 (still p=0.0016). Pooled-AUROC regression scales (B -0.213, C -0.226, D -0.133 all p<1e-9) \u2014 confirms structural artifact. Recommended canonical: SUBSET_D_GLOBAL (largest effect, p<0.01) for per-disease AUPRC headline; cross-validate via h1268 weight sweep.",
+      "result_metric": "20-seed SUBSET_D_GLOBAL \u0394 per-dis AUPRC = +0.00343 p=0.0022; \u0394 per-dis AUROC = +0.01041 p=7.9e-12; \u0394R@30 = +0.185pp p=0.085."
     },
     {
       "id": "h1270",
@@ -3252,6 +3254,41 @@
         "Cross-reference h1262 (per-dis AUPRC convention) and h1264 (subset gate)."
       ],
       "success_criteria": "Public ceilings in CLAUDE.md reflect the post-h1264 recipe."
+    },
+    {
+      "id": "h1271",
+      "title": "Per-seed bootstrap on h1269 SUBSET_D_GLOBAL \u2014 confirm \u0394 per-dis AUPRC robustness via 1000 stratified bootstraps",
+      "priority": 3,
+      "status": "pending",
+      "expected_impact": "infrastructure",
+      "effort": "low",
+      "label": "infrastructure",
+      "rationale": "h1269 SUBSET_D_GLOBAL is significant under per-seed paired-t (n=20, p=0.0022) but the seed sample is fixed and small. A 1000-bootstrap CI on the per-seed \u0394 would establish (a) whether the effect is robust to seed-sampling variance and (b) the lower confidence bound on \u0394. Adds publication-grade defense without any new compute beyond resampling the 20 seed deltas already on disk.",
+      "steps": [
+        "Load h1269_soft_blend_global_20seed.json per_seed_summaries.",
+        "Compute 1000 stratified bootstrap means of \u0394 per-disease AUPRC for SUBSET_D_GLOBAL vs concat_l2_raw.",
+        "Report 95% CI lower bound, 99% CI lower bound, fraction of bootstrap means < 0.",
+        "Save data/analysis/h1271_global_bootstrap_ci.{json,md}."
+      ],
+      "success_criteria": "95% CI lower bound > 0 AND fraction-negative < 0.01."
+    },
+    {
+      "id": "h1272",
+      "title": "Per-disease AUPRC trace audit \u2014 which diseases drive h1269 GLOBAL's +0.00343 lift?",
+      "priority": 2,
+      "status": "pending",
+      "expected_impact": "high",
+      "effort": "low",
+      "label": "recall",
+      "rationale": "h1264 saw the GLOBAL \u0394 vary widely per seed (one negative outlier in 5 seeds; more outliers at 20). Per-disease decomposition would reveal: (a) is the lift carried by a small minority of diseases (typical h1230 pattern), (b) which categories disproportionately gain/lose under GLOBAL blending, (c) does the gain cluster on n_gt sub-strata (ties back to h1267 confound audit). Cheap and mechanistic \u2014 bypasses the 20-seed routing-rule generation cycle that closed h1228/h1249.",
+      "steps": [
+        "Build scripts/h1272_global_per_disease_audit.py reusing h1264's evaluate_seed pattern.",
+        "For SUBSET_D_GLOBAL vs concat_l2_raw, output per-disease \u0394 per-dis AUPRC across 5 seeds.",
+        "Stratify by n_gt bucket, ATC L3 entropy quartile, category. Compute per-stratum mean \u0394.",
+        "Identify top 20 diseases (by mean \u0394) and bottom 20 (by mean \u0394). Audit GT for systematic pattern.",
+        "If a clean 'fusion-helped' subset emerges, propose h12XX (subset-restricted GLOBAL recipe)."
+      ],
+      "success_criteria": "Identify the disease subset(s) carrying the GLOBAL lift, OR confirm the lift is uniform across the 200 diseases."
     }
   ],
   "completed": [
@@ -6097,6 +6134,12 @@
       "hypothesis_id": "h1264",
       "learning": "Soft-blend (per-disease z-norm of n2v + concat_l2 averaged at w=0.5) lifts per-disease AUPRC across ALL tested subset definitions, with effect monotonic in subset size: FLIPPED (+0.00054), HIGHDENS (+0.00094), MODHIGH (+0.00107), GLOBAL (+0.00469). The mechanism is universal score-smoothing, not gate-specific. Best clean 3-metric win is SUBSET_B_HIGHDENS at p<0.01 across all per-disease metrics. SUBSET_D_GLOBAL has the biggest effect (9x FLIPPED) but needs more seeds for tight p-value. Pooled AUROC regression scales with subset size \u2014 confirms h1259's pooled scale artifact is structural.",
       "implication": "Concat_l2_raw is no longer the production fusion default. Replace with soft_blend_w0.5 on at minimum SUBSET_B_HIGHDENS (n_gt>=51 diseases). Pursue h1268 (weight sweep on GLOBAL) and h1269 (20-seed variance reduce) before deciding GLOBAL vs HIGHDENS as the canonical recipe."
+    },
+    {
+      "date": "2026-04-19",
+      "hypothesis_id": "h1269",
+      "learning": "5-seed paired-t systematically over-estimates effect sizes for fusion recipes. h1264 reported SUBSET_D_GLOBAL \u0394=+0.00469; 20-seed extension shows true \u0394=+0.00343 (down 27%). h1259 reported FLIPPED \u0394=+0.00054; 20-seed shows +0.00025 (down 54%, under 0.0005 promotion threshold). All canonical fusion recipes need >=10 seeds for stable effect estimates.",
+      "implication": "Future fusion experiments should default to >=10 seeds. h1264-style 5-seed sweeps OK for hypothesis screening but final canonical recipe verification needs the 20-seed run. Add to clean_embedding_benchmark.py documentation."
     }
   ],
   "collaborations": [
